@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,26 +18,24 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#ifndef _SDL_uikitmodes_h
-#define _SDL_uikitmodes_h
+#ifndef SDL_uikitmodes_h_
+#define SDL_uikitmodes_h_
 
 #include "SDL_uikitvideo.h"
 
-typedef struct
-{
-    UIScreen *uiscreen;
-    CGFloat scale;
-} SDL_DisplayData;
+@interface SDL_DisplayData : NSObject
 
-typedef struct
-{
-    UIScreenMode *uiscreenmode;
-    CGFloat scale;
-} SDL_DisplayModeData;
+@property (nonatomic, strong) UIScreen *uiscreen;
 
-extern BOOL SDL_UIKit_supports_multiple_displays;
+@end
+
+@interface SDL_DisplayModeData : NSObject
+
+@property (nonatomic, strong) UIScreenMode *uiscreenmode;
+
+@end
 
 extern SDL_bool UIKit_IsDisplayLandscape(UIScreen *uiscreen);
 
@@ -45,7 +43,12 @@ extern int UIKit_InitModes(_THIS);
 extern void UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * display);
 extern int UIKit_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 extern void UIKit_QuitModes(_THIS);
+extern int UIKit_GetDisplayUsableBounds(_THIS, SDL_VideoDisplay * display, SDL_Rect * rect);
 
-#endif /* _SDL_uikitmodes_h */
+#if !TARGET_OS_TV
+extern void SDL_OnApplicationDidChangeStatusBarOrientation(void);
+#endif
+
+#endif /* SDL_uikitmodes_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

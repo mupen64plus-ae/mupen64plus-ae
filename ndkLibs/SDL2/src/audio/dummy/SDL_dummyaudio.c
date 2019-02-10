@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,31 +18,48 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 /* Output audio to nowhere... */
 
+#include "SDL_timer.h"
 #include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_dummyaudio.h"
 
 static int
-DUMMYAUD_OpenDevice(_THIS, const char *devname, int iscapture)
+DUMMYAUDIO_OpenDevice(_THIS, void *handle, const char *devname, int iscapture)
 {
     return 0;                   /* always succeeds. */
 }
 
 static int
-DUMMYAUD_Init(SDL_AudioDriverImpl * impl)
+DUMMYAUDIO_CaptureFromDevice(_THIS, void *buffer, int buflen)
+{
+    /* Delay to make this sort of simulate real audio input. */
+    SDL_Delay((this->spec.samples * 1000) / this->spec.freq);
+
+    /* always return a full buffer of silence. */
+    SDL_memset(buffer, this->spec.silence, buflen);
+    return buflen;
+}
+
+static int
+DUMMYAUDIO_Init(SDL_AudioDriverImpl * impl)
 {
     /* Set the function pointers */
-    impl->OpenDevice = DUMMYAUD_OpenDevice;
+    impl->OpenDevice = DUMMYAUDIO_OpenDevice;
+    impl->CaptureFromDevice = DUMMYAUDIO_CaptureFromDevice;
+
     impl->OnlyHasDefaultOutputDevice = 1;
+    impl->OnlyHasDefaultCaptureDevice = 1;
+    impl->HasCaptureSupport = SDL_TRUE;
+
     return 1;   /* this audio target is available. */
 }
 
-AudioBootStrap DUMMYAUD_bootstrap = {
-    "dummy", "SDL dummy audio driver", DUMMYAUD_Init, 1
+AudioBootStrap DUMMYAUDIO_bootstrap = {
+    "dummy", "SDL dummy audio driver", DUMMYAUDIO_Init, 1
 };
 
 /* vi: set ts=4 sw=4 expandtab: */

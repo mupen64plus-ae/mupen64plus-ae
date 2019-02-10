@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_DRIVER_WINDOWS
 
@@ -45,7 +45,7 @@ Win32_CreateShaper(SDL_Window * window) {
     return result;
 }
 
-void
+static void
 CombineRectRegions(SDL_ShapeTree* node,void* closure) {
     HRGN mask_region = *((HRGN*)closure),temp_region = NULL;
     if(node->kind == OpaqueShape) {

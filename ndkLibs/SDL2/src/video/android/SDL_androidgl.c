@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,110 +18,43 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_DRIVER_ANDROID
 
 /* Android SDL video driver implementation */
 
 #include "SDL_video.h"
+#include "../SDL_egl_c.h"
+#include "SDL_androidwindow.h"
 
 #include "SDL_androidvideo.h"
+#include "SDL_androidgl.h"
 #include "../../core/android/SDL_android.h"
 
 #include <android/log.h>
 
 #include <dlfcn.h>
 
-static void* Android_GLHandle = NULL;
+SDL_EGL_CreateContext_impl(Android)
+SDL_EGL_MakeCurrent_impl(Android)
 
-/* GL functions */
 int
-Android_GL_LoadLibrary(_THIS, const char *path)
+Android_GLES_SwapWindow(_THIS, SDL_Window * window)
 {
-    if (!Android_GLHandle) {
-        Android_GLHandle = dlopen("libGLESv1_CM.so",RTLD_GLOBAL);
-        if (!Android_GLHandle) {
-            return SDL_SetError("Could not initialize GL ES library\n");
-        }
-    }
-    return 0;
-}
-
-void *
-Android_GL_GetProcAddress(_THIS, const char *proc)
-{
-    /*
-       !!! FIXME: this _should_ use eglGetProcAddress(), but it appears to be
-       !!! FIXME:  busted on Android at the moment...
-       !!! FIXME:  http://code.google.com/p/android/issues/detail?id=7681
-       !!! FIXME: ...so revisit this later.  --ryan.
-    */
-    return dlsym(Android_GLHandle, proc);
-}
-
-void
-Android_GL_UnloadLibrary(_THIS)
-{
-    if(Android_GLHandle) {
-        dlclose(Android_GLHandle);
-        Android_GLHandle = NULL;
-    }
-}
-
-SDL_GLContext
-Android_GL_CreateContext(_THIS, SDL_Window * window)
-{
-    if (!Android_JNI_CreateContext(_this->gl_config.major_version,
-                                   _this->gl_config.minor_version,
-                                   _this->gl_config.red_size,
-                                   _this->gl_config.green_size,
-                                   _this->gl_config.blue_size,
-                                   _this->gl_config.alpha_size,
-                                   _this->gl_config.buffer_size,
-                                   _this->gl_config.depth_size,
-                                   _this->gl_config.stencil_size,
-                                   _this->gl_config.multisamplebuffers,
-                                   _this->gl_config.multisamplesamples)) {
-        SDL_SetError("Couldn't create OpenGL context - see Android log for details");
-        return NULL;
-    }
-    return (SDL_GLContext)1;
+    /* The following two calls existed in the original Java code
+     * If you happen to have a device that's affected by their removal,
+     * please report to Bugzilla. -- Gabriel
+     */
+    
+    /*_this->egl_data->eglWaitNative(EGL_CORE_NATIVE_ENGINE);
+    _this->egl_data->eglWaitGL();*/
+    return SDL_EGL_SwapBuffers(_this, ((SDL_WindowData *) window->driverdata)->egl_surface);
 }
 
 int
-Android_GL_MakeCurrent(_THIS, SDL_Window * window, SDL_GLContext context)
-{
-    /* There's only one context, nothing to do... */
-    return 0;
-}
-
-int
-Android_GL_SetSwapInterval(_THIS, int interval)
-{
-    __android_log_print(ANDROID_LOG_INFO, "SDL", "[STUB] GL_SetSwapInterval\n");
-    return 0;
-}
-
-int
-Android_GL_GetSwapInterval(_THIS)
-{
-    __android_log_print(ANDROID_LOG_INFO, "SDL", "[STUB] GL_GetSwapInterval\n");
-    return 0;
-}
-
-void
-Android_GL_SwapWindow(_THIS, SDL_Window * window)
-{
-    Android_JNI_SwapWindow();
-}
-
-void
-Android_GL_DeleteContext(_THIS, SDL_GLContext context)
-{
-    if (context) {
-        Android_JNI_DeleteContext();
-    }
+Android_GLES_LoadLibrary(_THIS, const char *path) {
+    return SDL_EGL_LoadLibrary(_this, path, (NativeDisplayType) 0, 0);
 }
 
 #endif /* SDL_VIDEO_DRIVER_ANDROID */

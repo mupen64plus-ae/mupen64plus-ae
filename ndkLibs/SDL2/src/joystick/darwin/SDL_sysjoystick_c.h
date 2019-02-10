@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,38 +18,26 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifndef SDL_JOYSTICK_IOKIT_H
-
+#define SDL_JOYSTICK_IOKIT_H
 
 #include <IOKit/hid/IOHIDLib.h>
-#include <IOKit/hid/IOHIDKeys.h>
-#include <IOKit/IOKitLib.h>
-
+#include <ForceFeedback/ForceFeedback.h>
+#include <ForceFeedback/ForceFeedbackConstants.h>
 
 struct recElement
 {
-    IOHIDElementCookie cookie;  /* unique value which identifies element, will NOT change */
-    long usagePage, usage;      /* HID usage */
-    long min;                   /* reported min value possible */
-    long max;                   /* reported max value possible */
-#if 0
-    /* TODO: maybe should handle the following stuff somehow? */
-
-    long scaledMin;             /* reported scaled min value possible */
-    long scaledMax;             /* reported scaled max value possible */
-    long size;                  /* size in bits of data return from element */
-    Boolean relative;           /* are reports relative to last report (deltas) */
-    Boolean wrapping;           /* does element wrap around (one value higher than max is min) */
-    Boolean nonLinear;          /* are the values reported non-linear relative to element movement */
-    Boolean preferredState;     /* does element have a preferred state (such as a button) */
-    Boolean nullState;          /* does element have null state */
-#endif                          /* 0 */
+    IOHIDElementRef elementRef;
+    IOHIDElementCookie cookie;
+    uint32_t usagePage, usage;      /* HID usage */
+    SInt32 min;                   /* reported min value possible */
+    SInt32 max;                   /* reported max value possible */
 
     /* runtime variables used for auto-calibration */
-    long minReport;             /* min returned value */
-    long maxReport;             /* max returned value */
+    SInt32 minReport;             /* min returned value */
+    SInt32 maxReport;             /* max returned value */
 
     struct recElement *pNext;   /* next element in list */
 };
@@ -57,34 +45,35 @@ typedef struct recElement recElement;
 
 struct joystick_hwdata
 {
+    IOHIDDeviceRef deviceRef;   /* HIDManager device handle */
     io_service_t ffservice;     /* Interface for force feedback, 0 = no ff */
-    IOHIDDeviceInterface **interface;   /* interface to device, NULL = no interface */
-    IONotificationPortRef notificationPort; /* port to be notified on joystick removal */
-    io_iterator_t portIterator; /* iterator for removal callback */
+    FFDeviceObjectReference ffdevice;
+    FFEFFECT *ffeffect;
+    FFEffectObjectReference ffeffect_ref;
+    SDL_bool ff_initialized;
 
     char product[256];          /* name of product */
-    long usage;                 /* usage page from IOUSBHID Parser.h which defines general usage */
-    long usagePage;             /* usage within above page from IOUSBHID Parser.h which defines specific usage */
+    uint32_t usage;                 /* usage page from IOUSBHID Parser.h which defines general usage */
+    uint32_t usagePage;             /* usage within above page from IOUSBHID Parser.h which defines specific usage */
 
-    long axes;                  /* number of axis (calculated, not reported by device) */
-    long buttons;               /* number of buttons (calculated, not reported by device) */
-    long hats;                  /* number of hat switches (calculated, not reported by device) */
-    long elements;              /* number of total elements (should be total of above) (calculated, not reported by device) */
+    int axes;                  /* number of axis (calculated, not reported by device) */
+    int buttons;               /* number of buttons (calculated, not reported by device) */
+    int hats;                  /* number of hat switches (calculated, not reported by device) */
+    int elements;              /* number of total elements (should be total of above) (calculated, not reported by device) */
 
     recElement *firstAxis;
     recElement *firstButton;
     recElement *firstHat;
 
-    int removed;
-    int uncentered;
+    SDL_bool removed;
 
     int instance_id;
     SDL_JoystickGUID guid;
-    Uint8 send_open_event;      /* 1 if we need to send an Added event for this device */
 
     struct joystick_hwdata *pNext;      /* next device */
 };
 typedef struct joystick_hwdata recDevice;
 
-
 #endif /* SDL_JOYSTICK_IOKIT_H */
+
+/* vi: set ts=4 sw=4 expandtab: */

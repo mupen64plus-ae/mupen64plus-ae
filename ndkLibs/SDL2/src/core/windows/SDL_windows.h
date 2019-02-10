@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,6 +24,7 @@
 #ifndef _INCLUDED_WINDOWS_H
 #define _INCLUDED_WINDOWS_H
 
+#if defined(__WIN32__)
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #ifndef UNICODE
@@ -31,17 +32,23 @@
 #endif
 #undef _WIN32_WINNT
 #define _WIN32_WINNT  0x501   /* Need 0x410 for AlphaBlend() and 0x500 for EnumDisplayDevices(), 0x501 for raw input */
+#endif
 
 #include <windows.h>
+#include <basetyps.h>   /* for REFIID with broken mingw.org headers */
 
 /* Routines to convert from UTF8 to native Windows text */
 #if UNICODE
-#define WIN_StringToUTF8(S) SDL_iconv_string("UTF-8", "UCS-2-INTERNAL", (char *)(S), (SDL_wcslen(S)+1)*sizeof(WCHAR))
-#define WIN_UTF8ToString(S) (WCHAR *)SDL_iconv_string("UCS-2-INTERNAL", "UTF-8", (char *)(S), SDL_strlen(S)+1)
+#define WIN_StringToUTF8(S) SDL_iconv_string("UTF-8", "UTF-16LE", (char *)(S), (SDL_wcslen(S)+1)*sizeof(WCHAR))
+#define WIN_UTF8ToString(S) (WCHAR *)SDL_iconv_string("UTF-16LE", "UTF-8", (char *)(S), SDL_strlen(S)+1)
 #else
+/* !!! FIXME: UTF8ToString() can just be a SDL_strdup() here. */
 #define WIN_StringToUTF8(S) SDL_iconv_string("UTF-8", "ASCII", (char *)(S), (SDL_strlen(S)+1))
 #define WIN_UTF8ToString(S) SDL_iconv_string("ASCII", "UTF-8", (char *)(S), SDL_strlen(S)+1)
 #endif
+
+/* Sets an error message based on a given HRESULT */
+extern int WIN_SetErrorFromHRESULT(const char *prefix, HRESULT hr);
 
 /* Sets an error message based on GetLastError(). Always return -1. */
 extern int WIN_SetError(const char *prefix);
@@ -49,6 +56,19 @@ extern int WIN_SetError(const char *prefix);
 /* Wrap up the oddities of CoInitialize() into a common function. */
 extern HRESULT WIN_CoInitialize(void);
 extern void WIN_CoUninitialize(void);
+
+/* Returns SDL_TRUE if we're running on Windows Vista and newer */
+extern BOOL WIN_IsWindowsVistaOrGreater(void);
+
+/* Returns SDL_TRUE if we're running on Windows 7 and newer */
+extern BOOL WIN_IsWindows7OrGreater(void);
+
+/* You need to SDL_free() the result of this call. */
+extern char *WIN_LookupAudioDeviceName(const WCHAR *name, const GUID *guid);
+
+/* Checks to see if two GUID are the same. */
+extern BOOL WIN_IsEqualGUID(const GUID * a, const GUID * b);
+extern BOOL WIN_IsEqualIID(REFIID a, REFIID b);
 
 #endif /* _INCLUDED_WINDOWS_H */
 

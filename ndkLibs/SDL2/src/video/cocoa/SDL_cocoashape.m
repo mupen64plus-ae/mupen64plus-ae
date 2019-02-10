@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_DRIVER_COCOA
 
@@ -30,13 +30,12 @@
 #include "SDL_assert.h"
 
 SDL_WindowShaper*
-Cocoa_CreateShaper(SDL_Window* window) {
+Cocoa_CreateShaper(SDL_Window* window)
+{
     SDL_WindowData* windata = (SDL_WindowData*)window->driverdata;
     [windata->nswindow setOpaque:NO];
 
-    if ([windata->nswindow respondsToSelector:@selector(setStyleMask:)]) {
-        [windata->nswindow setStyleMask:NSBorderlessWindowMask];
-    }
+    [windata->nswindow setStyleMask:NSWindowStyleMaskBorderless];
 
     SDL_WindowShaper* result = result = malloc(sizeof(SDL_WindowShaper));
     result->window = window;
@@ -63,7 +62,8 @@ typedef struct {
 } SDL_CocoaClosure;
 
 void
-ConvertRects(SDL_ShapeTree* tree,void* closure) {
+ConvertRects(SDL_ShapeTree* tree, void* closure)
+{
     SDL_CocoaClosure* data = (SDL_CocoaClosure*)closure;
     if(tree->kind == OpaqueShape) {
         NSRect rect = NSMakeRect(tree->data.shape.x,data->window->h - tree->data.shape.y,tree->data.shape.w,tree->data.shape.h);
@@ -72,37 +72,37 @@ ConvertRects(SDL_ShapeTree* tree,void* closure) {
 }
 
 int
-Cocoa_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_WindowShapeMode *shape_mode) {
+Cocoa_SetWindowShape(SDL_WindowShaper *shaper, SDL_Surface *shape, SDL_WindowShapeMode *shape_mode)
+{ @autoreleasepool
+{
     SDL_ShapeData* data = (SDL_ShapeData*)shaper->driverdata;
     SDL_WindowData* windata = (SDL_WindowData*)shaper->window->driverdata;
     SDL_CocoaClosure closure;
-    NSAutoreleasePool *pool = NULL;
     if(data->saved == SDL_TRUE) {
         [data->context restoreGraphicsState];
         data->saved = SDL_FALSE;
     }
 
-    //[data->context saveGraphicsState];
-    //data->saved = SDL_TRUE;
+    /*[data->context saveGraphicsState];*/
+    /*data->saved = SDL_TRUE;*/
     [NSGraphicsContext setCurrentContext:data->context];
 
     [[NSColor clearColor] set];
     NSRectFill([[windata->nswindow contentView] frame]);
     data->shape = SDL_CalculateShapeTree(*shape_mode,shape);
 
-    pool = [[NSAutoreleasePool alloc] init];
     closure.view = [windata->nswindow contentView];
-    closure.path = [[NSBezierPath bezierPath] autorelease];
+    closure.path = [NSBezierPath bezierPath];
     closure.window = shaper->window;
     SDL_TraverseShapeTree(data->shape,&ConvertRects,&closure);
     [closure.path addClip];
-    [pool release];
 
     return 0;
-}
+}}
 
 int
-Cocoa_ResizeWindowShape(SDL_Window *window) {
+Cocoa_ResizeWindowShape(SDL_Window *window)
+{
     SDL_ShapeData* data = window->shaper->driverdata;
     SDL_assert(data != NULL);
     return 0;

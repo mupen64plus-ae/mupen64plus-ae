@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,9 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+#include "../../SDL_internal.h"
 
+#if SDL_THREAD_PSP
 
 /* PSP thread management routines for SDL */
 
@@ -50,8 +52,8 @@ int SDL_SYS_CreateThread(SDL_Thread *thread, void *args)
         priority = status.currentPriority;
     }
 
-    thread->handle = sceKernelCreateThread("SDL thread", ThreadEntry,
-                           priority, 0x8000,
+    thread->handle = sceKernelCreateThread(thread->name, ThreadEntry,
+                           priority, thread->stacksize ? ((int) thread->stacksize) : 0x8000,
                            PSP_THREAD_ATTR_VFPU, NULL);
     if (thread->handle < 0) {
         return SDL_SetError("sceKernelCreateThread() failed");
@@ -77,6 +79,12 @@ void SDL_SYS_WaitThread(SDL_Thread *thread)
     sceKernelDeleteThread(thread->handle);
 }
 
+void SDL_SYS_DetachThread(SDL_Thread *thread)
+{
+    /* !!! FIXME: is this correct? */
+    sceKernelDeleteThread(thread->handle);
+}
+
 void SDL_SYS_KillThread(SDL_Thread *thread)
 {
     sceKernelTerminateDeleteThread(thread->handle);
@@ -89,6 +97,8 @@ int SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority)
     if (priority == SDL_THREAD_PRIORITY_LOW) {
         value = 19;
     } else if (priority == SDL_THREAD_PRIORITY_HIGH) {
+        value = -10;
+    } else if (priority == SDL_THREAD_PRIORITY_TIME_CRITICAL) {
         value = -20;
     } else {
         value = 0;
@@ -97,6 +107,8 @@ int SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority)
     return sceKernelChangeThreadPriority(sceKernelGetThreadId(),value);
 
 }
+
+#endif /* SDL_THREAD_PSP */
 
 /* vim: ts=4 sw=4
  */

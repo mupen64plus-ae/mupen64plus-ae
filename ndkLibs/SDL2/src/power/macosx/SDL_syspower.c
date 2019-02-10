@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,18 +18,18 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifndef SDL_POWER_DISABLED
 #if SDL_POWER_MACOSX
 
-#include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/ps/IOPowerSources.h>
 #include <IOKit/ps/IOPSKeys.h>
 
 #include "SDL_power.h"
 
-/* Carbon is so verbose... */
+/* CoreFoundation is so verbose... */
 #define STRMATCH(a,b) (CFStringCompare(a, b, 0) == kCFCompareEqualTo)
 #define GETVAL(k,v) \
     CFDictionaryGetValueIfPresent(dict, CFSTR(k), (const void **) v)

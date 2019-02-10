@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,21 +19,18 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
-/* General mouse handling code for SDL */
+/* General gesture handling code for SDL */
 
 #include "SDL_events.h"
+#include "SDL_endian.h"
 #include "SDL_events_c.h"
 #include "SDL_gesture_c.h"
 
-#if !defined(__PSP__)
-#include <memory.h>
-#endif
-
-#include <string.h>
+/*
 #include <stdio.h>
-#include <math.h>
+*/
 
 /* TODO: Replace with malloc */
 
@@ -74,9 +71,9 @@ typedef struct {
     SDL_bool recording;
 } SDL_GestureTouch;
 
-SDL_GestureTouch *SDL_gestureTouch;
-int SDL_numGestureTouches = 0;
-SDL_bool recordAll;
+static SDL_GestureTouch *SDL_gestureTouch;
+static int SDL_numGestureTouches = 0;
+static SDL_bool recordAll;
 
 #if 0
 static void PrintPath(SDL_FloatPoint *path)
@@ -104,6 +101,12 @@ int SDL_RecordGesture(SDL_TouchID touchId)
     return (touchId < 0);
 }
 
+void SDL_GestureQuit()
+{
+    SDL_free(SDL_gestureTouch);
+    SDL_gestureTouch = NULL;
+}
+
 static unsigned long SDL_HashDollar(SDL_FloatPoint* points)
 {
     unsigned long hash = 5381;
@@ -116,50 +119,69 @@ static unsigned long SDL_HashDollar(SDL_FloatPoint* points)
 }
 
 
-static int SaveTemplate(SDL_DollarTemplate *templ, SDL_RWops * src)
+static int SaveTemplate(SDL_DollarTemplate *templ, SDL_RWops *dst)
 {
-    if (src == NULL) return 0;
-
-
-    //No Longer storing the Hash, rehash on load
-    //if(SDL_RWops.write(src,&(templ->hash),sizeof(templ->hash),1) != 1) return 0;
-
-    if (SDL_RWwrite(src,templ->path,
-                    sizeof(templ->path[0]),DOLLARNPOINTS) != DOLLARNPOINTS)
+    if (dst == NULL) {
         return 0;
+    }
+
+    /* No Longer storing the Hash, rehash on load */
+    /* if (SDL_RWops.write(dst, &(templ->hash), sizeof(templ->hash), 1) != 1) return 0; */
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+    if (SDL_RWwrite(dst, templ->path,
+                    sizeof(templ->path[0]),DOLLARNPOINTS) != DOLLARNPOINTS) {
+        return 0;
+    }
+#else
+    {
+        SDL_DollarTemplate copy = *templ;
+        SDL_FloatPoint *p = copy.path;
+        int i;
+        for (i = 0; i < DOLLARNPOINTS; i++, p++) {
+            p->x = SDL_SwapFloatLE(p->x);
+            p->y = SDL_SwapFloatLE(p->y);
+        }
+
+        if (SDL_RWwrite(dst, copy.path,
+                        sizeof(copy.path[0]),DOLLARNPOINTS) != DOLLARNPOINTS) {
+            return 0;
+        }
+    }
+#endif
 
     return 1;
 }
 
 
-int SDL_SaveAllDollarTemplates(SDL_RWops *src)
+int SDL_SaveAllDollarTemplates(SDL_RWops *dst)
 {
     int i,j,rtrn = 0;
     for (i = 0; i < SDL_numGestureTouches; i++) {
         SDL_GestureTouch* touch = &SDL_gestureTouch[i];
         for (j = 0; j < touch->numDollarTemplates; j++) {
-            rtrn += SaveTemplate(&touch->dollarTemplate[i],src);
+            rtrn += SaveTemplate(&touch->dollarTemplate[j], dst);
         }
     }
     return rtrn;
 }
 
-int SDL_SaveDollarTemplate(SDL_GestureID gestureId, SDL_RWops *src)
+int SDL_SaveDollarTemplate(SDL_GestureID gestureId, SDL_RWops *dst)
 {
     int i,j;
     for (i = 0; i < SDL_numGestureTouches; i++) {
         SDL_GestureTouch* touch = &SDL_gestureTouch[i];
         for (j = 0; j < touch->numDollarTemplates; j++) {
-            if (touch->dollarTemplate[i].hash == gestureId) {
-                return SaveTemplate(&touch->dollarTemplate[i],src);
+            if (touch->dollarTemplate[j].hash == gestureId) {
+                return SaveTemplate(&touch->dollarTemplate[j], dst);
             }
         }
     }
     return SDL_SetError("Unknown gestureId");
 }
 
-//path is an already sampled set of points
-//Returns the index of the gesture on success, or -1
+/* path is an already sampled set of points
+Returns the index of the gesture on success, or -1 */
 static int SDL_AddDollarGesture_one(SDL_GestureTouch* inTouch, SDL_FloatPoint* path)
 {
     SDL_DollarTemplate* dollarTemplate;
@@ -189,19 +211,17 @@ static int SDL_AddDollarGesture(SDL_GestureTouch* inTouch, SDL_FloatPoint* path)
     int index = -1;
     int i = 0;
     if (inTouch == NULL) {
-        if (SDL_numGestureTouches == 0) return -1;
+        if (SDL_numGestureTouches == 0) return SDL_SetError("no gesture touch devices registered");
         for (i = 0; i < SDL_numGestureTouches; i++) {
             inTouch = &SDL_gestureTouch[i];
             index = SDL_AddDollarGesture_one(inTouch, path);
             if (index < 0)
                 return -1;
         }
-        // Use the index of the last one added.
+        /* Use the index of the last one added. */
         return index;
-    } else {
-        return SDL_AddDollarGesture_one(inTouch, path);
     }
-    return -1;
+    return SDL_AddDollarGesture_one(inTouch, path);
 }
 
 int SDL_LoadDollarTemplates(SDL_TouchID touchId, SDL_RWops *src)
@@ -210,29 +230,45 @@ int SDL_LoadDollarTemplates(SDL_TouchID touchId, SDL_RWops *src)
     SDL_GestureTouch *touch = NULL;
     if (src == NULL) return 0;
     if (touchId >= 0) {
-        for (i = 0; i < SDL_numGestureTouches; i++)
-            if (SDL_gestureTouch[i].id == touchId)
+        for (i = 0; i < SDL_numGestureTouches; i++) {
+            if (SDL_gestureTouch[i].id == touchId) {
                 touch = &SDL_gestureTouch[i];
-        if (touch == NULL) return -1;
+            }
+        }
+        if (touch == NULL) {
+            return SDL_SetError("given touch id not found");
+        }
     }
 
     while (1) {
         SDL_DollarTemplate templ;
 
-        if (SDL_RWread(src,templ.path,sizeof(templ.path[0]),DOLLARNPOINTS) <
-           DOLLARNPOINTS) break;
+        if (SDL_RWread(src,templ.path,sizeof(templ.path[0]),DOLLARNPOINTS) < DOLLARNPOINTS) {
+            if (loaded == 0) {
+                return SDL_SetError("could not read any dollar gesture from rwops");
+            }
+            break;
+        }
+
+#if SDL_BYTEORDER != SDL_LIL_ENDIAN
+        for (i = 0; i < DOLLARNPOINTS; i++) {
+            SDL_FloatPoint *p = &templ.path[i];
+            p->x = SDL_SwapFloatLE(p->x);
+            p->y = SDL_SwapFloatLE(p->y);
+        }
+#endif
 
         if (touchId >= 0) {
-            //printf("Adding loaded gesture to 1 touch\n");
+            /* printf("Adding loaded gesture to 1 touch\n"); */
             if (SDL_AddDollarGesture(touch, templ.path) >= 0)
                 loaded++;
         }
         else {
-            //printf("Adding to: %i touches\n",SDL_numGestureTouches);
+            /* printf("Adding to: %i touches\n",SDL_numGestureTouches); */
             for (i = 0; i < SDL_numGestureTouches; i++) {
                 touch = &SDL_gestureTouch[i];
-                //printf("Adding loaded gesture to + touches\n");
-                //TODO: What if this fails?
+                /* printf("Adding loaded gesture to + touches\n"); */
+                /* TODO: What if this fails? */
                 SDL_AddDollarGesture(touch,templ.path);
             }
             loaded++;
@@ -245,7 +281,7 @@ int SDL_LoadDollarTemplates(SDL_TouchID touchId, SDL_RWops *src)
 
 static float dollarDifference(SDL_FloatPoint* points,SDL_FloatPoint* templ,float ang)
 {
-    //  SDL_FloatPoint p[DOLLARNPOINTS];
+    /*  SDL_FloatPoint p[DOLLARNPOINTS]; */
     float dist = 0;
     SDL_FloatPoint p;
     int i;
@@ -261,9 +297,10 @@ static float dollarDifference(SDL_FloatPoint* points,SDL_FloatPoint* templ,float
 
 static float bestDollarDifference(SDL_FloatPoint* points,SDL_FloatPoint* templ)
 {
-    //------------BEGIN DOLLAR BLACKBOX----------------//
-    //-TRANSLATED DIRECTLY FROM PSUDEO-CODE AVAILABLE AT-//
-    //-"http://depts.washington.edu/aimgroup/proj/dollar/"-//
+    /*------------BEGIN DOLLAR BLACKBOX------------------
+      -TRANSLATED DIRECTLY FROM PSUDEO-CODE AVAILABLE AT-
+      -"http://depts.washington.edu/aimgroup/proj/dollar/"
+    */
     double ta = -M_PI/4;
     double tb = M_PI/4;
     double dt = M_PI/90;
@@ -296,7 +333,7 @@ static float bestDollarDifference(SDL_FloatPoint* points,SDL_FloatPoint* templ)
     return SDL_min(f1,f2);
 }
 
-//DollarPath contains raw points, plus (possibly) the calculated length
+/* DollarPath contains raw points, plus (possibly) the calculated length */
 static int dollarNormalize(const SDL_DollarPath *path,SDL_FloatPoint *points)
 {
     int i;
@@ -309,7 +346,7 @@ static int dollarNormalize(const SDL_DollarPath *path,SDL_FloatPoint *points)
     float w,h;
     float length = path->length;
 
-    //Calculate length if it hasn't already been done
+    /* Calculate length if it hasn't already been done */
     if (length <= 0) {
         for (i=1;i < path->numPoints; i++) {
             float dx = path->p[i  ].x - path->p[i-1].x;
@@ -318,17 +355,17 @@ static int dollarNormalize(const SDL_DollarPath *path,SDL_FloatPoint *points)
         }
     }
 
-    //Resample
+    /* Resample */
     interval = length/(DOLLARNPOINTS - 1);
     dist = interval;
 
     centroid.x = 0;centroid.y = 0;
 
-    //printf("(%f,%f)\n",path->p[path->numPoints-1].x,path->p[path->numPoints-1].y);
+    /* printf("(%f,%f)\n",path->p[path->numPoints-1].x,path->p[path->numPoints-1].y); */
     for (i = 1; i < path->numPoints; i++) {
         float d = (float)(SDL_sqrt((path->p[i-1].x-path->p[i].x)*(path->p[i-1].x-path->p[i].x)+
                                    (path->p[i-1].y-path->p[i].y)*(path->p[i-1].y-path->p[i].y)));
-        //printf("d = %f dist = %f/%f\n",d,dist,interval);
+        /* printf("d = %f dist = %f/%f\n",d,dist,interval); */
         while (dist + d > interval) {
             points[numPoints].x = path->p[i-1].x +
                 ((interval-dist)/d)*(path->p[i].x-path->p[i-1].x);
@@ -343,18 +380,18 @@ static int dollarNormalize(const SDL_DollarPath *path,SDL_FloatPoint *points)
         dist += d;
     }
     if (numPoints < DOLLARNPOINTS-1) {
-        SDL_SetError("ERROR: NumPoints = %i\n",numPoints);
+        SDL_SetError("ERROR: NumPoints = %i", numPoints);
         return 0;
     }
-    //copy the last point
+    /* copy the last point */
     points[DOLLARNPOINTS-1] = path->p[path->numPoints-1];
     numPoints = DOLLARNPOINTS;
 
     centroid.x /= numPoints;
     centroid.y /= numPoints;
 
-    //printf("Centroid (%f,%f)",centroid.x,centroid.y);
-    //Rotate Points so point 0 is left of centroid and solve for the bounding box
+    /* printf("Centroid (%f,%f)",centroid.x,centroid.y); */
+    /* Rotate Points so point 0 is left of centroid and solve for the bounding box */
     xmin = centroid.x;
     xmax = centroid.x;
     ymin = centroid.y;
@@ -378,7 +415,7 @@ static int dollarNormalize(const SDL_DollarPath *path,SDL_FloatPoint *points)
         if (points[i].y > ymax) ymax = points[i].y;
     }
 
-    //Scale points to DOLLARSIZE, and translate to the origin
+    /* Scale points to DOLLARSIZE, and translate to the origin */
     w = xmax-xmin;
     h = ymax-ymin;
 
@@ -399,7 +436,7 @@ static float dollarRecognize(const SDL_DollarPath *path,int *bestTempl,SDL_Gestu
 
     dollarNormalize(path,points);
 
-    //PrintPath(points);
+    /* PrintPath(points); */
     *bestTempl = -1;
     for (i = 0; i < touch->numDollarTemplates; i++) {
         float diff = bestDollarDifference(points,touch->dollarTemplate[i].path);
@@ -420,14 +457,31 @@ int SDL_GestureAddTouch(SDL_TouchID touchId)
 
     SDL_gestureTouch = gestureTouch;
 
-    SDL_gestureTouch[SDL_numGestureTouches].numDownFingers = 0;
+    SDL_zero(SDL_gestureTouch[SDL_numGestureTouches]);
     SDL_gestureTouch[SDL_numGestureTouches].id = touchId;
-
-    SDL_gestureTouch[SDL_numGestureTouches].numDollarTemplates = 0;
-
-    SDL_gestureTouch[SDL_numGestureTouches].recording = SDL_FALSE;
-
     SDL_numGestureTouches++;
+    return 0;
+}
+
+int SDL_GestureDelTouch(SDL_TouchID touchId)
+{
+    int i;
+    for (i = 0; i < SDL_numGestureTouches; i++) {
+        if (SDL_gestureTouch[i].id == touchId) {
+            break;
+        }
+    }
+
+    if (i == SDL_numGestureTouches) {
+        /* not found */
+        return -1;
+    }
+
+    SDL_free(SDL_gestureTouch[i].dollarTemplate);
+    SDL_zero(SDL_gestureTouch[i]);
+
+    SDL_numGestureTouches--;
+    SDL_memcpy(&SDL_gestureTouch[i], &SDL_gestureTouch[SDL_numGestureTouches], sizeof(SDL_gestureTouch[i]));
     return 0;
 }
 
@@ -435,14 +489,14 @@ static SDL_GestureTouch * SDL_GetGestureTouch(SDL_TouchID id)
 {
     int i;
     for (i = 0; i < SDL_numGestureTouches; i++) {
-        //printf("%i ?= %i\n",SDL_gestureTouch[i].id,id);
+        /* printf("%i ?= %i\n",SDL_gestureTouch[i].id,id); */
         if (SDL_gestureTouch[i].id == id)
             return &SDL_gestureTouch[i];
     }
     return NULL;
 }
 
-int SDL_SendGestureMulti(SDL_GestureTouch* touch,float dTheta,float dDist)
+static int SDL_SendGestureMulti(SDL_GestureTouch* touch,float dTheta,float dDist)
 {
     SDL_Event event;
     event.mgesture.type = SDL_MULTIGESTURE;
@@ -461,11 +515,11 @@ static int SDL_SendGestureDollar(SDL_GestureTouch* touch,
     SDL_Event event;
     event.dgesture.type = SDL_DOLLARGESTURE;
     event.dgesture.touchId = touch->id;
-    event.mgesture.x = touch->centroid.x;
-    event.mgesture.y = touch->centroid.y;
+    event.dgesture.x = touch->centroid.x;
+    event.dgesture.y = touch->centroid.y;
     event.dgesture.gestureId = gestureId;
     event.dgesture.error = error;
-    //A finger came up to trigger this event.
+    /* A finger came up to trigger this event. */
     event.dgesture.numFingers = touch->numDownFingers + 1;
     return SDL_PushEvent(&event) > 0;
 }
@@ -484,7 +538,6 @@ static int SDL_SendDollarRecord(SDL_GestureTouch* touch,SDL_GestureID gestureId)
 void SDL_GestureProcessEvent(SDL_Event* event)
 {
     float x,y;
-    SDL_FloatPoint path[DOLLARNPOINTS];
     int index;
     int i;
     float pathDx, pathDy;
@@ -500,21 +553,23 @@ void SDL_GestureProcessEvent(SDL_Event* event)
         event->type == SDL_FINGERUP) {
         SDL_GestureTouch* inTouch = SDL_GetGestureTouch(event->tfinger.touchId);
 
-        //Shouldn't be possible
+        /* Shouldn't be possible */
         if (inTouch == NULL) return;
 
         x = event->tfinger.x;
         y = event->tfinger.y;
 
-        //Finger Up
+        /* Finger Up */
         if (event->type == SDL_FINGERUP) {
+            SDL_FloatPoint path[DOLLARNPOINTS];
+
             inTouch->numDownFingers--;
 
 #ifdef ENABLE_DOLLAR
             if (inTouch->recording) {
                 inTouch->recording = SDL_FALSE;
                 dollarNormalize(&inTouch->dollarPath,path);
-                //PrintPath(path);
+                /* PrintPath(path); */
                 if (recordAll) {
                     index = SDL_AddDollarGesture(NULL,path);
                     for (i = 0; i < SDL_numGestureTouches; i++)
@@ -537,14 +592,14 @@ void SDL_GestureProcessEvent(SDL_Event* event)
                 error = dollarRecognize(&inTouch->dollarPath,
                                         &bestTempl,inTouch);
                 if (bestTempl >= 0){
-                    //Send Event
+                    /* Send Event */
                     unsigned long gestureId = inTouch->dollarTemplate[bestTempl].hash;
                     SDL_SendGestureDollar(inTouch,gestureId,error);
-                    //printf ("%s\n",);("Dollar error: %f\n",error);
+                    /* printf ("%s\n",);("Dollar error: %f\n",error); */
                 }
             }
 #endif
-            //inTouch->gestureLast[j] = inTouch->gestureLast[inTouch->numDownFingers];
+            /* inTouch->gestureLast[j] = inTouch->gestureLast[inTouch->numDownFingers]; */
             if (inTouch->numDownFingers > 0) {
                 inTouch->centroid.x = (inTouch->centroid.x*(inTouch->numDownFingers+1)-
                                        x)/inTouch->numDownFingers;
@@ -574,22 +629,22 @@ void SDL_GestureProcessEvent(SDL_Event* event)
 
             inTouch->centroid.x += dx/inTouch->numDownFingers;
             inTouch->centroid.y += dy/inTouch->numDownFingers;
-            //printf("Centrid : (%f,%f)\n",inTouch->centroid.x,inTouch->centroid.y);
+            /* printf("Centrid : (%f,%f)\n",inTouch->centroid.x,inTouch->centroid.y); */
             if (inTouch->numDownFingers > 1) {
-                SDL_FloatPoint lv; //Vector from centroid to last x,y position
-                SDL_FloatPoint v; //Vector from centroid to current x,y position
-                //lv = inTouch->gestureLast[j].cv;
+                SDL_FloatPoint lv; /* Vector from centroid to last x,y position */
+                SDL_FloatPoint v; /* Vector from centroid to current x,y position */
+                /* lv = inTouch->gestureLast[j].cv; */
                 lv.x = lastP.x - lastCentroid.x;
                 lv.y = lastP.y - lastCentroid.y;
                 lDist = (float)SDL_sqrt(lv.x*lv.x + lv.y*lv.y);
-                //printf("lDist = %f\n",lDist);
+                /* printf("lDist = %f\n",lDist); */
                 v.x = x - inTouch->centroid.x;
                 v.y = y - inTouch->centroid.y;
-                //inTouch->gestureLast[j].cv = v;
+                /* inTouch->gestureLast[j].cv = v; */
                 Dist = (float)SDL_sqrt(v.x*v.x+v.y*v.y);
-                // SDL_cos(dTheta) = (v . lv)/(|v| * |lv|)
+                /* SDL_cos(dTheta) = (v . lv)/(|v| * |lv|) */
 
-                //Normalize Vectors to simplify angle calculation
+                /* Normalize Vectors to simplify angle calculation */
                 lv.x/=lDist;
                 lv.y/=lDist;
                 v.x/=Dist;
@@ -597,41 +652,40 @@ void SDL_GestureProcessEvent(SDL_Event* event)
                 dtheta = (float)SDL_atan2(lv.x*v.y - lv.y*v.x,lv.x*v.x + lv.y*v.y);
 
                 dDist = (Dist - lDist);
-                if (lDist == 0) {dDist = 0;dtheta = 0;} //To avoid impossible values
+                if (lDist == 0) {dDist = 0;dtheta = 0;} /* To avoid impossible values */
 
-                //inTouch->gestureLast[j].dDist = dDist;
-                //inTouch->gestureLast[j].dtheta = dtheta;
+                /* inTouch->gestureLast[j].dDist = dDist;
+                inTouch->gestureLast[j].dtheta = dtheta;
 
-                //printf("dDist = %f, dTheta = %f\n",dDist,dtheta);
-                //gdtheta = gdtheta*.9 + dtheta*.1;
-                //gdDist  =  gdDist*.9 +  dDist*.1
-                //knob.r += dDist/numDownFingers;
-                //knob.ang += dtheta;
-                //printf("thetaSum = %f, distSum = %f\n",gdtheta,gdDist);
-                //printf("id: %i dTheta = %f, dDist = %f\n",j,dtheta,dDist);
+                printf("dDist = %f, dTheta = %f\n",dDist,dtheta);
+                gdtheta = gdtheta*.9 + dtheta*.1;
+                gdDist  =  gdDist*.9 +  dDist*.1
+                knob.r += dDist/numDownFingers;
+                knob.ang += dtheta;
+                printf("thetaSum = %f, distSum = %f\n",gdtheta,gdDist);
+                printf("id: %i dTheta = %f, dDist = %f\n",j,dtheta,dDist); */
                 SDL_SendGestureMulti(inTouch,dtheta,dDist);
             }
             else {
-                //inTouch->gestureLast[j].dDist = 0;
-                //inTouch->gestureLast[j].dtheta = 0;
-                //inTouch->gestureLast[j].cv.x = 0;
-                //inTouch->gestureLast[j].cv.y = 0;
+                /* inTouch->gestureLast[j].dDist = 0;
+                inTouch->gestureLast[j].dtheta = 0;
+                inTouch->gestureLast[j].cv.x = 0;
+                inTouch->gestureLast[j].cv.y = 0; */
             }
-            //inTouch->gestureLast[j].f.p.x = x;
-            //inTouch->gestureLast[j].f.p.y = y;
-            //break;
-            //pressure?
+            /* inTouch->gestureLast[j].f.p.x = x;
+            inTouch->gestureLast[j].f.p.y = y;
+            break;
+            pressure? */
         }
-
-        if (event->type == SDL_FINGERDOWN) {
+        else if (event->type == SDL_FINGERDOWN) {
 
             inTouch->numDownFingers++;
             inTouch->centroid.x = (inTouch->centroid.x*(inTouch->numDownFingers - 1)+
                                    x)/inTouch->numDownFingers;
             inTouch->centroid.y = (inTouch->centroid.y*(inTouch->numDownFingers - 1)+
                                    y)/inTouch->numDownFingers;
-            //printf("Finger Down: (%f,%f). Centroid: (%f,%f\n",x,y,
-            //     inTouch->centroid.x,inTouch->centroid.y);
+            /* printf("Finger Down: (%f,%f). Centroid: (%f,%f\n",x,y,
+                 inTouch->centroid.x,inTouch->centroid.y); */
 
 #ifdef ENABLE_DOLLAR
             inTouch->dollarPath.length = 0;

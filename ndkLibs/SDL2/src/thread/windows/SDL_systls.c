@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,20 +19,20 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
-#include "SDL_thread.h"
-#include "../SDL_thread_c.h"
+#include "../../SDL_internal.h"
 
 #if SDL_THREAD_WINDOWS
 
 #include "../../core/windows/SDL_windows.h"
 
+#include "SDL_thread.h"
+#include "../SDL_thread_c.h"
 
 static DWORD thread_local_storage = TLS_OUT_OF_INDEXES;
 static SDL_bool generic_local_storage = SDL_FALSE;
 
 SDL_TLSData *
-SDL_SYS_GetTLSData()
+SDL_SYS_GetTLSData(void)
 {
     if (thread_local_storage == TLS_OUT_OF_INDEXES && !generic_local_storage) {
         static SDL_SpinLock lock;

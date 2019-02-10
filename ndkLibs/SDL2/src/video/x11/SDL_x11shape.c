@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_DRIVER_X11
 
@@ -28,14 +28,11 @@
 #include "SDL_x11window.h"
 #include "../SDL_shape_internals.h"
 
-SDL_Window*
-X11_CreateShapedWindow(const char *title,unsigned int x,unsigned int y,unsigned int w,unsigned int h,Uint32 flags) {
-    return SDL_CreateWindow(title,x,y,w,h,flags);
-}
-
 SDL_WindowShaper*
 X11_CreateShaper(SDL_Window* window) {
     SDL_WindowShaper* result = NULL;
+    SDL_ShapeData* data = NULL;
+    int resized_properly;
 
 #if SDL_VIDEO_DRIVER_X11_XSHAPE
     if (SDL_X11_HAVE_XSHAPE) {  /* Make sure X server supports it. */
@@ -44,12 +41,12 @@ X11_CreateShaper(SDL_Window* window) {
         result->mode.mode = ShapeModeDefault;
         result->mode.parameters.binarizationCutoff = 1;
         result->userx = result->usery = 0;
-        SDL_ShapeData* data = SDL_malloc(sizeof(SDL_ShapeData));
+        data = SDL_malloc(sizeof(SDL_ShapeData));
         result->driverdata = data;
         data->bitmapsize = 0;
         data->bitmap = NULL;
         window->shaper = result;
-        int resized_properly = X11_ResizeWindowShape(window);
+        resized_properly = X11_ResizeWindowShape(window);
         SDL_assert(resized_properly == 0);
     }
 #endif
@@ -60,9 +57,9 @@ X11_CreateShaper(SDL_Window* window) {
 int
 X11_ResizeWindowShape(SDL_Window* window) {
     SDL_ShapeData* data = window->shaper->driverdata;
+    unsigned int bitmapsize = window->w / 8;
     SDL_assert(data != NULL);
 
-    unsigned int bitmapsize = window->w / 8;
     if(window->w % 8 > 0)
         bitmapsize += 1;
     bitmapsize *= window->h;
@@ -86,6 +83,10 @@ X11_ResizeWindowShape(SDL_Window* window) {
 
 int
 X11_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_WindowShapeMode *shape_mode) {
+    SDL_ShapeData *data = NULL;
+    SDL_WindowData *windowdata = NULL;
+    Pixmap shapemask;
+    
     if(shaper == NULL || shape == NULL || shaper->driverdata == NULL)
         return -1;
 
@@ -94,22 +95,21 @@ X11_SetWindowShape(SDL_WindowShaper *shaper,SDL_Surface *shape,SDL_WindowShapeMo
         return -2;
     if(shape->w != shaper->window->w || shape->h != shaper->window->h)
         return -3;
-    SDL_ShapeData *data = shaper->driverdata;
+    data = shaper->driverdata;
 
     /* Assume that shaper->alphacutoff already has a value, because SDL_SetWindowShape() should have given it one. */
     SDL_CalculateShapeBitmap(shaper->mode,shape,data->bitmap,8);
 
-    SDL_WindowData *windowdata = (SDL_WindowData*)(shaper->window->driverdata);
-    Pixmap shapemask = XCreateBitmapFromData(windowdata->videodata->display,windowdata->xwindow,data->bitmap,shaper->window->w,shaper->window->h);
+    windowdata = (SDL_WindowData*)(shaper->window->driverdata);
+    shapemask = X11_XCreateBitmapFromData(windowdata->videodata->display,windowdata->xwindow,data->bitmap,shaper->window->w,shaper->window->h);
 
-    XShapeCombineMask(windowdata->videodata->display,windowdata->xwindow, ShapeBounding, 0, 0,shapemask, ShapeSet);
-    XSync(windowdata->videodata->display,False);
+    X11_XShapeCombineMask(windowdata->videodata->display,windowdata->xwindow, ShapeBounding, 0, 0,shapemask, ShapeSet);
+    X11_XSync(windowdata->videodata->display,False);
 
-    XFreePixmap(windowdata->videodata->display,shapemask);
+    X11_XFreePixmap(windowdata->videodata->display,shapemask);
 #endif
 
     return 0;
 }
 
 #endif /* SDL_VIDEO_DRIVER_X11 */
-

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_DRIVER_DUMMY
 
@@ -38,9 +38,7 @@ int SDL_DUMMY_CreateWindowFramebuffer(_THIS, SDL_Window * window, Uint32 * forma
 
     /* Free the old framebuffer surface */
     surface = (SDL_Surface *) SDL_GetWindowData(window, DUMMY_SURFACE);
-    if (surface) {
-        SDL_FreeSurface(surface);
-    }
+    SDL_FreeSurface(surface);
 
     /* Create a new one */
     SDL_PixelFormatEnumToMasks(surface_format, &bpp, &Rmask, &Gmask, &Bmask, &Amask);
@@ -83,9 +81,7 @@ void SDL_DUMMY_DestroyWindowFramebuffer(_THIS, SDL_Window * window)
     SDL_Surface *surface;
 
     surface = (SDL_Surface *) SDL_SetWindowData(window, DUMMY_SURFACE, NULL);
-    if (surface) {
-        SDL_FreeSurface(surface);
-    }
+    SDL_FreeSurface(surface);
 }
 
 #endif /* SDL_VIDEO_DRIVER_DUMMY */

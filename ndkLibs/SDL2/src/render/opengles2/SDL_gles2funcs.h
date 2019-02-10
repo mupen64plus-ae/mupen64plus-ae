@@ -1,7 +1,29 @@
+/*
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
 SDL_PROC(void, glActiveTexture, (GLenum))
 SDL_PROC(void, glAttachShader, (GLuint, GLuint))
 SDL_PROC(void, glBindAttribLocation, (GLuint, GLuint, const char *))
 SDL_PROC(void, glBindTexture, (GLenum, GLuint))
+SDL_PROC(void, glBlendEquationSeparate, (GLenum, GLenum))
 SDL_PROC(void, glBlendFuncSeparate, (GLenum, GLenum, GLenum, GLenum))
 SDL_PROC(void, glClear, (GLbitfield))
 SDL_PROC(void, glClearColor, (GLclampf, GLclampf, GLclampf, GLclampf))
@@ -32,7 +54,11 @@ SDL_PROC(void, glPixelStorei, (GLenum, GLint))
 SDL_PROC(void, glReadPixels, (GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLvoid*))
 SDL_PROC(void, glScissor, (GLint, GLint, GLsizei, GLsizei))
 SDL_PROC(void, glShaderBinary, (GLsizei, const GLuint *, GLenum, const void *, GLsizei))
-SDL_PROC(void, glShaderSource, (GLuint, GLsizei, const char **, const GLint *))
+#if __NACL__ || __ANDROID__
+SDL_PROC(void, glShaderSource, (GLuint, GLsizei, const GLchar **, const GLint *))
+#else
+SDL_PROC(void, glShaderSource, (GLuint, GLsizei, const GLchar* const*, const GLint *))
+#endif
 SDL_PROC(void, glTexImage2D, (GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const void *))
 SDL_PROC(void, glTexParameteri, (GLenum, GLenum, GLint))
 SDL_PROC(void, glTexSubImage2D, (GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *))
@@ -46,3 +72,9 @@ SDL_PROC(void, glBindFramebuffer, (GLenum, GLuint))
 SDL_PROC(void, glFramebufferTexture2D, (GLenum, GLenum, GLenum, GLuint, GLint))
 SDL_PROC(GLenum, glCheckFramebufferStatus, (GLenum))
 SDL_PROC(void, glDeleteFramebuffers, (GLsizei, const GLuint *))
+SDL_PROC(GLint, glGetAttribLocation, (GLuint, const GLchar *))
+SDL_PROC(void, glGetProgramInfoLog, (GLuint, GLsizei, GLsizei*, GLchar*))
+SDL_PROC(void, glGenBuffers, (GLsizei, GLuint *))
+SDL_PROC(void, glBindBuffer, (GLenum, GLuint))
+SDL_PROC(void, glBufferData, (GLenum, GLsizeiptr, const GLvoid *, GLenum))
+SDL_PROC(void, glBufferSubData, (GLenum, GLintptr, GLsizeiptr, const GLvoid *))

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,20 +18,36 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if defined(SDL_TIMER_DUMMY) || defined(SDL_TIMERS_DISABLED)
 
 #include "SDL_timer.h"
 
+static SDL_bool ticks_started = SDL_FALSE;
+
 void
-SDL_StartTicks(void)
+SDL_TicksInit(void)
 {
+    if (ticks_started) {
+        return;
+    }
+    ticks_started = SDL_TRUE;
+}
+
+void
+SDL_TicksQuit(void)
+{
+    ticks_started = SDL_FALSE;
 }
 
 Uint32
 SDL_GetTicks(void)
 {
+    if (!ticks_started) {
+        SDL_TicksInit();
+    }
+
     SDL_Unsupported();
     return 0;
 }

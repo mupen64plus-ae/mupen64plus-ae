@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifndef __SDL_QSA_AUDIO_H__
 #define __SDL_QSA_AUDIO_H__
@@ -34,7 +34,7 @@
 struct SDL_PrivateAudioData
 {
     /* SDL capture state */
-    int iscapture;
+    SDL_bool iscapture;
 
     /* The audio device handle */
     int cardno;

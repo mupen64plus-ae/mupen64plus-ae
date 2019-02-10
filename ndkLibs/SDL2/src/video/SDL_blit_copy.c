@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 #include "SDL_video.h"
 #include "SDL_blit.h"
@@ -27,7 +27,7 @@
 
 #ifdef __SSE__
 /* This assumes 16-byte aligned src and dst */
-static __inline__ void
+static SDL_INLINE void
 SDL_memcpySSE(Uint8 * dst, const Uint8 * src, int len)
 {
     int i;
@@ -56,7 +56,7 @@ SDL_memcpySSE(Uint8 * dst, const Uint8 * src, int len)
 #ifdef _MSC_VER
 #pragma warning(disable:4799)
 #endif
-static __inline__ void
+static SDL_INLINE void
 SDL_memcpyMMX(Uint8 * dst, const Uint8 * src, int len)
 {
     const int remain = (len & 63);
@@ -109,10 +109,20 @@ SDL_BlitCopy(SDL_BlitInfo * info)
         overlap = (src < (dst + h*dstskip));
     }
     if (overlap) {
-        while (h--) {
-            SDL_memmove(dst, src, w);
-            src += srcskip;
-            dst += dstskip;
+        if ( dst < src ) {
+                while ( h-- ) {
+                        SDL_memmove(dst, src, w);
+                        src += srcskip;
+                        dst += dstskip;
+                }
+        } else {
+                src += ((h-1) * srcskip);
+                dst += ((h-1) * dstskip);
+                while ( h-- ) {
+                        SDL_memmove(dst, src, w);
+                        src -= srcskip;
+                        dst -= dstskip;
+                }
         }
         return;
     }

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,8 +25,8 @@
  *  Defines keyboard scancodes.
  */
 
-#ifndef _SDL_scancode_h
-#define _SDL_scancode_h
+#ifndef SDL_scancode_h_
+#define SDL_scancode_h_
 
 #include "SDL_stdinc.h"
 
@@ -38,7 +38,7 @@
  *  SDL_Event structure.
  *
  *  The values in this enumeration are based on the USB usage page standard:
- *  http://www.usb.org/developers/devclass_docs/Hut1_12v2.pdf
+ *  http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
  */
 typedef enum
 {
@@ -49,7 +49,7 @@ typedef enum
      *
      *  These values are from usage page 0x07 (USB keyboard page).
      */
-    /*@{*/
+    /* @{ */
 
     SDL_SCANCODE_A = 4,
     SDL_SCANCODE_B = 5,
@@ -339,14 +339,14 @@ typedef enum
                                  *   special KMOD_MODE for it I'm adding it here
                                  */
 
-    /*@}*//*Usage page 0x07*/
+    /* @} *//* Usage page 0x07 */
 
     /**
      *  \name Usage page 0x0C
      *
      *  These values are mapped from usage page 0x0C (USB consumer page).
      */
-    /*@{*/
+    /* @{ */
 
     SDL_SCANCODE_AUDIONEXT = 258,
     SDL_SCANCODE_AUDIOPREV = 259,
@@ -366,14 +366,14 @@ typedef enum
     SDL_SCANCODE_AC_REFRESH = 273,
     SDL_SCANCODE_AC_BOOKMARKS = 274,
 
-    /*@}*//*Usage page 0x0C*/
+    /* @} *//* Usage page 0x0C */
 
     /**
      *  \name Walther keys
      *
      *  These are values that Christian Walther added (for mac keyboard?).
      */
-    /*@{*/
+    /* @{ */
 
     SDL_SCANCODE_BRIGHTNESSDOWN = 275,
     SDL_SCANCODE_BRIGHTNESSUP = 276,
@@ -388,7 +388,19 @@ typedef enum
     SDL_SCANCODE_APP1 = 283,
     SDL_SCANCODE_APP2 = 284,
 
-    /*@}*//*Walther keys*/
+    /* @} *//* Walther keys */
+
+    /**
+     *  \name Usage page 0x0C (additional media keys)
+     *
+     *  These values are mapped from usage page 0x0C (USB consumer page).
+     */
+    /* @{ */
+
+    SDL_SCANCODE_AUDIOREWIND = 285,
+    SDL_SCANCODE_AUDIOFASTFORWARD = 286,
+
+    /* @} *//* Usage page 0x0C (additional media keys) */
 
     /* Add any other keys here. */
 
@@ -396,6 +408,6 @@ typedef enum
                                  for array bounds */
 } SDL_Scancode;
 
-#endif /* _SDL_scancode_h */
+#endif /* SDL_scancode_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

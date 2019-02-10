@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -166,9 +166,9 @@ static UIKitKeyInfo unicharToUIKeyInfoTable[] = {
 /*  124 */{    SDL_SCANCODE_BACKSLASH, KMOD_SHIFT },    /* plus shift modifier '|' */
 /*  125 */{    SDL_SCANCODE_RIGHTBRACKET, KMOD_SHIFT },    /* plus shift modifier '}' */
 /*  126 */{    SDL_SCANCODE_GRAVE, KMOD_SHIFT },         /* plus shift modifier '~' */
-/*  127 */{    SDL_SCANCODE_DELETE, KMOD_SHIFT }
+/*  127 */{    SDL_SCANCODE_BACKSPACE, KMOD_SHIFT }
 };
 
-#endif /* UIKitKeyInfo */
+#endif /* _UIKIT_KeyInfo */
 
 /* vi: set ts=4 sw=4 expandtab: */

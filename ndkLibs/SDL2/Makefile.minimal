@@ -19,8 +19,11 @@ SOURCES = \
 	src/joystick/dummy/*.c \
 	src/loadso/dummy/*.c \
 	src/power/*.c \
+	src/filesystem/dummy/*.c \
 	src/render/*.c \
 	src/render/software/*.c \
+	src/sensor/*.c \
+	src/sensor/dummy/*.c \
 	src/stdlib/*.c \
 	src/thread/*.c \
 	src/thread/generic/*.c \

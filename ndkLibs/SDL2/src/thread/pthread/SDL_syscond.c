@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,9 +18,10 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 #include <errno.h>
 #include <pthread.h>
@@ -41,7 +42,7 @@ SDL_CreateCond(void)
 
     cond = (SDL_cond *) SDL_malloc(sizeof(SDL_cond));
     if (cond) {
-        if (pthread_cond_init(&cond->cond, NULL) < 0) {
+        if (pthread_cond_init(&cond->cond, NULL) != 0) {
             SDL_SetError("pthread_cond_init() failed");
             SDL_free(cond);
             cond = NULL;
@@ -98,17 +99,26 @@ int
 SDL_CondWaitTimeout(SDL_cond * cond, SDL_mutex * mutex, Uint32 ms)
 {
     int retval;
+#ifndef HAVE_CLOCK_GETTIME
     struct timeval delta;
+#endif
     struct timespec abstime;
 
     if (!cond) {
         return SDL_SetError("Passed a NULL condition variable");
     }
 
+#ifdef HAVE_CLOCK_GETTIME
+    clock_gettime(CLOCK_REALTIME, &abstime);
+
+    abstime.tv_nsec += (ms % 1000) * 1000000;
+    abstime.tv_sec += ms / 1000;
+#else
     gettimeofday(&delta, NULL);
 
     abstime.tv_sec = delta.tv_sec + (ms / 1000);
     abstime.tv_nsec = (delta.tv_usec + (ms % 1000) * 1000) * 1000;
+#endif
     if (abstime.tv_nsec > 1000000000) {
         abstime.tv_sec += 1;
         abstime.tv_nsec -= 1000000000;
@@ -119,7 +129,7 @@ SDL_CondWaitTimeout(SDL_cond * cond, SDL_mutex * mutex, Uint32 ms)
     switch (retval) {
     case EINTR:
         goto tryagain;
-        break;
+        /* break; -Wunreachable-code-break */
     case ETIMEDOUT:
         retval = SDL_MUTEX_TIMEDOUT;
         break;

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_PSP
 
@@ -50,6 +50,8 @@ static SDL_Renderer *PSP_CreateRenderer(SDL_Window * window, Uint32 flags);
 static void PSP_WindowEvent(SDL_Renderer * renderer,
                              const SDL_WindowEvent *event);
 static int PSP_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture);
+static int PSP_SetTextureColorMod(SDL_Renderer * renderer,
+                                   SDL_Texture * texture);
 static int PSP_UpdateTexture(SDL_Renderer * renderer, SDL_Texture * texture,
                               const SDL_Rect * rect, const void *pixels,
                               int pitch);
@@ -183,18 +185,6 @@ TextureNextPow2(unsigned int w)
     return n;
 }
 
-
-static int
-GetScaleQuality(void)
-{
-    const char *hint = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
-
-    if (!hint || *hint == '0' || SDL_strcasecmp(hint, "nearest") == 0) {
-        return GU_NEAREST; /* GU_NEAREST good for tile-map */
-    } else {
-        return GU_LINEAR; /* GU_LINEAR good for scaling */
-    }
-}
 
 static int
 PixelFormatToPSPFMT(Uint32 format)
@@ -359,6 +349,7 @@ PSP_CreateRenderer(SDL_Window * window, Uint32 flags)
 
     renderer->WindowEvent = PSP_WindowEvent;
     renderer->CreateTexture = PSP_CreateTexture;
+    renderer->SetTextureColorMod = PSP_SetTextureColorMod;
     renderer->UpdateTexture = PSP_UpdateTexture;
     renderer->LockTexture = PSP_LockTexture;
     renderer->UnlockTexture = PSP_UnlockTexture;
@@ -375,7 +366,7 @@ PSP_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->DestroyTexture = PSP_DestroyTexture;
     renderer->DestroyRenderer = PSP_DestroyRenderer;
     renderer->info = PSP_RenderDriver.info;
-    renderer->info.flags = SDL_RENDERER_ACCELERATED;
+    renderer->info.flags = (SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     renderer->driverdata = data;
     renderer->window = window;
 
@@ -458,8 +449,8 @@ PSP_WindowEvent(SDL_Renderer * renderer, const SDL_WindowEvent *event)
 static int
 PSP_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
 {
-//      PSP_RenderData *renderdata = (PSP_RenderData *) renderer->driverdata;
-    PSP_TextureData* psp_texture = (PSP_TextureData*) SDL_calloc(1, sizeof(*psp_texture));;
+/*      PSP_RenderData *renderdata = (PSP_RenderData *) renderer->driverdata; */
+    PSP_TextureData* psp_texture = (PSP_TextureData*) SDL_calloc(1, sizeof(*psp_texture));
 
     if(!psp_texture)
         return -1;
@@ -501,12 +492,17 @@ PSP_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
     return 0;
 }
 
+static int
+PSP_SetTextureColorMod(SDL_Renderer * renderer, SDL_Texture * texture)
+{
+    return SDL_Unsupported();
+}
 
 void
 TextureActivate(SDL_Texture * texture)
 {
     PSP_TextureData *psp_texture = (PSP_TextureData *) texture->driverdata;
-    int scaleMode = GetScaleQuality();
+    int scaleMode = (texture->scaleMode == SDL_ScaleModeNearest) ? GU_NEAREST : GU_LINEAR;
 
     /* Swizzling is useless with small textures. */
     if (texture->w >= 16 || texture->h >= 16)
@@ -528,7 +524,7 @@ static int
 PSP_UpdateTexture(SDL_Renderer * renderer, SDL_Texture * texture,
                    const SDL_Rect * rect, const void *pixels, int pitch)
 {
-//  PSP_TextureData *psp_texture = (PSP_TextureData *) texture->driverdata;
+/*  PSP_TextureData *psp_texture = (PSP_TextureData *) texture->driverdata; */
     const Uint8 *src;
     Uint8 *dst;
     int row, length,dpitch;
@@ -853,7 +849,7 @@ PSP_RenderReadPixels(SDL_Renderer * renderer, const SDL_Rect * rect,
                     Uint32 pixel_format, void * pixels, int pitch)
 
 {
-        return 0;
+    return SDL_Unsupported();
 }
 
 
@@ -895,8 +891,8 @@ PSP_RenderCopyEx(SDL_Renderer * renderer, SDL_Texture * texture,
         sceGuColor(0xFFFFFFFF);
     }
 
-//      x += width * 0.5f;
-//      y += height * 0.5f;
+/*      x += width * 0.5f; */
+/*      y += height * 0.5f; */
     x += centerx;
     y += centery;
 
@@ -904,8 +900,8 @@ PSP_RenderCopyEx(SDL_Renderer * renderer, SDL_Texture * texture,
 
     MathSincos(degToRad(angle), &s, &c);
 
-//      width *= 0.5f;
-//      height *= 0.5f;
+/*      width *= 0.5f; */
+/*      height *= 0.5f; */
     width  -= centerx;
     height -= centery;
 
@@ -941,11 +937,11 @@ PSP_RenderCopyEx(SDL_Renderer * renderer, SDL_Texture * texture,
     vertices[3].y = y + sw - ch;
     vertices[3].z = 0;
 
-    if (flip & SDL_FLIP_HORIZONTAL) {
+    if (flip & SDL_FLIP_VERTICAL) {
                 Swap(&vertices[0].v, &vertices[2].v);
                 Swap(&vertices[1].v, &vertices[3].v);
     }
-    if (flip & SDL_FLIP_VERTICAL) {
+    if (flip & SDL_FLIP_HORIZONTAL) {
                 Swap(&vertices[0].u, &vertices[2].u);
                 Swap(&vertices[1].u, &vertices[3].u);
     }
@@ -968,7 +964,7 @@ PSP_RenderPresent(SDL_Renderer * renderer)
     sceGuFinish();
     sceGuSync(0,0);
 
-//  if(data->vsync)
+/*  if(data->vsync) */
         sceDisplayWaitVblankStart();
 
     data->backbuffer = data->frontbuffer;
@@ -988,10 +984,7 @@ PSP_DestroyTexture(SDL_Renderer * renderer, SDL_Texture * texture)
     if(psp_texture == 0)
         return;
 
-    if(psp_texture->data != 0)
-    {
-        SDL_free(psp_texture->data);
-    }
+    SDL_free(psp_texture->data);
     SDL_free(psp_texture);
     texture->driverdata = NULL;
 }
@@ -1007,8 +1000,8 @@ PSP_DestroyRenderer(SDL_Renderer * renderer)
         StartDrawing(renderer);
 
         sceGuTerm();
-//      vfree(data->backbuffer);
-//      vfree(data->frontbuffer);
+/*      vfree(data->backbuffer); */
+/*      vfree(data->frontbuffer); */
 
         data->initialized = SDL_FALSE;
         data->displayListAvail = SDL_FALSE;

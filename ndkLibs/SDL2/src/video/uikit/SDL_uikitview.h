@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,53 +20,21 @@
 */
 
 #import <UIKit/UIKit.h>
-#import "SDL_uikitviewcontroller.h"
+
+#include "../SDL_sysvideo.h"
 
 #include "SDL_touch.h"
 
-#define IPHONE_TOUCH_EFFICIENT_DANGEROUS
+@interface SDL_uikitview : UIView
 
-#ifndef IPHONE_TOUCH_EFFICIENT_DANGEROUS
-#define MAX_SIMULTANEOUS_TOUCHES 5
-#endif
+- (instancetype)initWithFrame:(CGRect)frame;
 
-#if SDL_IPHONE_KEYBOARD
-@interface SDL_uikitview : UIView<UITextFieldDelegate> {
-#else
-@interface SDL_uikitview : UIView {
-#endif
+- (void)setSDLWindow:(SDL_Window *)window;
 
-    SDL_TouchID touchId;
-    UITouch *leftFingerDown;
-#ifndef IPHONE_TOUCH_EFFICIENT_DANGEROUS
-    UITouch *finger[MAX_SIMULTANEOUS_TOUCHES];
-#endif
-
-#if SDL_IPHONE_KEYBOARD
-    UITextField *textField;
-    BOOL keyboardVisible;
-#endif
-
-@public
-    SDL_uikitviewcontroller *viewcontroller;
-}
 - (CGPoint)touchLocation:(UITouch *)touch shouldNormalize:(BOOL)normalize;
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
-
-#if SDL_IPHONE_KEYBOARD
-- (void)showKeyboard;
-- (void)hideKeyboard;
-- (void)initializeKeyboard;
-@property (readonly) BOOL keyboardVisible;
-
-SDL_bool UIKit_HasScreenKeyboardSupport(_THIS);
-void UIKit_ShowScreenKeyboard(_THIS, SDL_Window *window);
-void UIKit_HideScreenKeyboard(_THIS, SDL_Window *window);
-SDL_bool UIKit_IsScreenKeyboardShown(_THIS, SDL_Window *window);
-
-#endif
 
 @end
 

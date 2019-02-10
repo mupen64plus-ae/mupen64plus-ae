@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifdef SDL_TIMER_UNIX
 
@@ -28,6 +28,8 @@
 #include <errno.h>
 
 #include "SDL_timer.h"
+#include "SDL_assert.h"
+#include "../SDL_timer_c.h"
 
 /* The clock_gettime provides monotonous time, so we should use it if
    it's available. The clock_gettime function is behind ifdef
@@ -47,6 +49,15 @@
 #include <mach/mach_time.h>
 #endif
 
+/* Use CLOCK_MONOTONIC_RAW, if available, which is not subject to adjustment by NTP */
+#if HAVE_CLOCK_GETTIME
+#ifdef CLOCK_MONOTONIC_RAW
+#define SDL_MONOTONIC_CLOCK CLOCK_MONOTONIC_RAW
+#else
+#define SDL_MONOTONIC_CLOCK CLOCK_MONOTONIC
+#endif
+#endif
+
 /* The first ticks value of the application */
 #if HAVE_CLOCK_GETTIME
 static struct timespec start_ts;
@@ -56,13 +67,19 @@ mach_timebase_info_data_t mach_base_info;
 #endif
 static SDL_bool has_monotonic_time = SDL_FALSE;
 static struct timeval start_tv;
+static SDL_bool ticks_started = SDL_FALSE;
 
 void
-SDL_StartTicks(void)
+SDL_TicksInit(void)
 {
+    if (ticks_started) {
+        return;
+    }
+    ticks_started = SDL_TRUE;
+
     /* Set first ticks value */
 #if HAVE_CLOCK_GETTIME
-    if (clock_gettime(CLOCK_MONOTONIC, &start_ts) == 0) {
+    if (clock_gettime(SDL_MONOTONIC_CLOCK, &start_ts) == 0) {
         has_monotonic_time = SDL_TRUE;
     } else
 #elif defined(__APPLE__)
@@ -77,27 +94,38 @@ SDL_StartTicks(void)
     }
 }
 
+void
+SDL_TicksQuit(void)
+{
+    ticks_started = SDL_FALSE;
+}
+
 Uint32
 SDL_GetTicks(void)
 {
     Uint32 ticks;
+    if (!ticks_started) {
+        SDL_TicksInit();
+    }
+
     if (has_monotonic_time) {
 #if HAVE_CLOCK_GETTIME
         struct timespec now;
-        clock_gettime(CLOCK_MONOTONIC, &now);
+        clock_gettime(SDL_MONOTONIC_CLOCK, &now);
         ticks = (now.tv_sec - start_ts.tv_sec) * 1000 + (now.tv_nsec -
                                                  start_ts.tv_nsec) / 1000000;
 #elif defined(__APPLE__)
         uint64_t now = mach_absolute_time();
-        ticks = (((now - start_mach) * mach_base_info.numer) / mach_base_info.denom) / 1000000;
+        ticks = (Uint32)((((now - start_mach) * mach_base_info.numer) / mach_base_info.denom) / 1000000);
+#else
+        SDL_assert(SDL_FALSE);
+        ticks = 0;
 #endif
     } else {
         struct timeval now;
 
         gettimeofday(&now, NULL);
-        ticks =
-            (now.tv_sec - start_tv.tv_sec) * 1000 + (now.tv_usec -
-                                                  start_tv.tv_usec) / 1000;
+        ticks = (Uint32)((now.tv_sec - start_tv.tv_sec) * 1000 + (now.tv_usec - start_tv.tv_usec) / 1000);
     }
     return (ticks);
 }
@@ -106,16 +134,23 @@ Uint64
 SDL_GetPerformanceCounter(void)
 {
     Uint64 ticks;
+    if (!ticks_started) {
+        SDL_TicksInit();
+    }
+
     if (has_monotonic_time) {
 #if HAVE_CLOCK_GETTIME
         struct timespec now;
 
-        clock_gettime(CLOCK_MONOTONIC, &now);
+        clock_gettime(SDL_MONOTONIC_CLOCK, &now);
         ticks = now.tv_sec;
         ticks *= 1000000000;
         ticks += now.tv_nsec;
 #elif defined(__APPLE__)
         ticks = mach_absolute_time();
+#else
+        SDL_assert(SDL_FALSE);
+        ticks = 0;
 #endif
     } else {
         struct timeval now;
@@ -131,6 +166,10 @@ SDL_GetPerformanceCounter(void)
 Uint64
 SDL_GetPerformanceFrequency(void)
 {
+    if (!ticks_started) {
+        SDL_TicksInit();
+    }
+
     if (has_monotonic_time) {
 #if HAVE_CLOCK_GETTIME
         return 1000000000;
@@ -140,9 +179,9 @@ SDL_GetPerformanceFrequency(void)
         freq /= mach_base_info.numer;
         return freq;
 #endif
-    } else {
-        return 1000000;
-    }
+    } 
+        
+    return 1000000;
 }
 
 void

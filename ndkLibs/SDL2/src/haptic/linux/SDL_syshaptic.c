@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,15 +18,17 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifdef SDL_HAPTIC_LINUX
 
+#include "SDL_assert.h"
 #include "SDL_haptic.h"
 #include "../SDL_syshaptic.h"
 #include "SDL_joystick.h"
 #include "../../joystick/SDL_sysjoystick.h"     /* For the real SDL_Joystick */
 #include "../../joystick/linux/SDL_sysjoystick_c.h"     /* For joystick hwdata */
+#include "../../core/linux/SDL_udev.h"
 
 #include <unistd.h>             /* close */
 #include <linux/input.h>        /* Force feedback linux stuff. */
@@ -44,15 +46,22 @@
 
 #define MAX_HAPTICS  32         /* It's doubtful someone has more then 32 evdev */
 
+static int MaybeAddDevice(const char *path);
+#if SDL_USE_LIBUDEV
+static int MaybeRemoveDevice(const char *path);
+static void haptic_udev_callback(SDL_UDEV_deviceevent udev_type, int udev_class, const char *devpath);
+#endif /* SDL_USE_LIBUDEV */
 
 /*
  * List of available haptic devices.
  */
-static struct
+typedef struct SDL_hapticlist_item
 {
     char *fname;                /* Dev path name (like /dev/input/event1) */
-    SDL_Haptic *haptic;         /* Assosciated haptic. */
-} SDL_hapticlist[MAX_HAPTICS];
+    SDL_Haptic *haptic;         /* Associated haptic. */
+    dev_t dev_num;
+    struct SDL_hapticlist_item *next;
+} SDL_hapticlist_item;
 
 
 /*
@@ -73,7 +82,9 @@ struct haptic_hweffect
     struct ff_effect effect;    /* The linux kernel effect structure. */
 };
 
-
+static SDL_hapticlist_item *SDL_hapticlist = NULL;
+static SDL_hapticlist_item *SDL_hapticlist_tail = NULL;
+static int numhaptics = 0;
 
 #define test_bit(nr, addr) \
    (((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
@@ -100,7 +111,7 @@ EV_IsHaptic(int fd)
     EV_TEST(FF_CONSTANT, SDL_HAPTIC_CONSTANT);
     EV_TEST(FF_SINE, SDL_HAPTIC_SINE);
     /* !!! FIXME: put this back when we have more bits in 2.1 */
-    /*EV_TEST(FF_SQUARE, SDL_HAPTIC_SQUARE);*/
+    /* EV_TEST(FF_SQUARE, SDL_HAPTIC_SQUARE); */
     EV_TEST(FF_TRIANGLE, SDL_HAPTIC_TRIANGLE);
     EV_TEST(FF_SAW_UP, SDL_HAPTIC_SAWTOOTHUP);
     EV_TEST(FF_SAW_DOWN, SDL_HAPTIC_SAWTOOTHDOWN);
@@ -147,15 +158,8 @@ int
 SDL_SYS_HapticInit(void)
 {
     const char joydev_pattern[] = "/dev/input/event%d";
-    dev_t dev_nums[MAX_HAPTICS];
     char path[PATH_MAX];
-    struct stat sb;
-    int fd;
-    int i, j, k;
-    int duplicate;
-    int numhaptics;
-
-    numhaptics = 0;
+    int i, j;
 
     /*
      * Limit amount of checks to MAX_HAPTICS since we may or may not have
@@ -165,44 +169,183 @@ SDL_SYS_HapticInit(void)
     for (j = 0; j < MAX_HAPTICS; ++j) {
 
         snprintf(path, PATH_MAX, joydev_pattern, i++);
-
-        /* check to see if file exists */
-        if (stat(path, &sb) != 0)
-            break;
-
-        /* check for duplicates */
-        duplicate = 0;
-        for (k = 0; (k < numhaptics) && !duplicate; ++k) {
-            if (sb.st_rdev == dev_nums[k]) {
-                duplicate = 1;
-            }
-        }
-        if (duplicate) {
-            continue;
-        }
-
-        /* try to open */
-        fd = open(path, O_RDWR, 0);
-        if (fd < 0)
-            continue;
-
-#ifdef DEBUG_INPUT_EVENTS
-        printf("Checking %s\n", path);
-#endif
-
-        /* see if it works */
-        if (EV_IsHaptic(fd) > 0) {
-            SDL_hapticlist[numhaptics].fname = SDL_strdup(path);
-            SDL_hapticlist[numhaptics].haptic = NULL;
-            dev_nums[numhaptics] = sb.st_rdev;
-            ++numhaptics;
-        }
-        close(fd);
+        MaybeAddDevice(path);
     }
+
+#if SDL_USE_LIBUDEV
+    if (SDL_UDEV_Init() < 0) {
+        return SDL_SetError("Could not initialize UDEV");
+    }
+
+    if ( SDL_UDEV_AddCallback(haptic_udev_callback) < 0) {
+        SDL_UDEV_Quit();
+        return SDL_SetError("Could not setup haptic <-> udev callback");
+    }
+
+    /* Force a scan to build the initial device list */
+    SDL_UDEV_Scan();
+#endif /* SDL_USE_LIBUDEV */
 
     return numhaptics;
 }
 
+int
+SDL_SYS_NumHaptics(void)
+{
+    return numhaptics;
+}
+
+static SDL_hapticlist_item *
+HapticByDevIndex(int device_index)
+{
+    SDL_hapticlist_item *item = SDL_hapticlist;
+
+    if ((device_index < 0) || (device_index >= numhaptics)) {
+        return NULL;
+    }
+
+    while (device_index > 0) {
+        SDL_assert(item != NULL);
+        --device_index;
+        item = item->next;
+    }
+
+    return item;
+}
+
+#if SDL_USE_LIBUDEV
+static void haptic_udev_callback(SDL_UDEV_deviceevent udev_type, int udev_class, const char *devpath)
+{
+    if (devpath == NULL || !(udev_class & SDL_UDEV_DEVICE_JOYSTICK)) {
+        return;
+    }
+
+    switch( udev_type )
+    {
+        case SDL_UDEV_DEVICEADDED:
+            MaybeAddDevice(devpath);
+            break;
+
+        case SDL_UDEV_DEVICEREMOVED:
+            MaybeRemoveDevice(devpath);
+            break;
+
+        default:
+            break;
+    }
+
+}
+#endif /* SDL_USE_LIBUDEV */
+
+static int
+MaybeAddDevice(const char *path)
+{
+    struct stat sb;
+    int fd;
+    int success;
+    SDL_hapticlist_item *item;
+
+    if (path == NULL) {
+        return -1;
+    }
+
+    /* check to see if file exists */
+    if (stat(path, &sb) != 0) {
+        return -1;
+    }
+
+    /* check for duplicates */
+    for (item = SDL_hapticlist; item != NULL; item = item->next) {
+        if (item->dev_num == sb.st_rdev) {
+            return -1;  /* duplicate. */
+        }
+    }
+
+    /* try to open */
+    fd = open(path, O_RDWR, 0);
+    if (fd < 0) {
+        return -1;
+    }
+
+#ifdef DEBUG_INPUT_EVENTS
+    printf("Checking %s\n", path);
+#endif
+
+    /* see if it works */
+    success = EV_IsHaptic(fd);
+    close(fd);
+    if (success <= 0) {
+        return -1;
+    }
+
+    item = (SDL_hapticlist_item *) SDL_calloc(1, sizeof (SDL_hapticlist_item));
+    if (item == NULL) {
+        return -1;
+    }
+
+    item->fname = SDL_strdup(path);
+    if (item->fname == NULL) {
+        SDL_free(item);
+        return -1;
+    }
+
+    item->dev_num = sb.st_rdev;
+
+    /* TODO: should we add instance IDs? */
+    if (SDL_hapticlist_tail == NULL) {
+        SDL_hapticlist = SDL_hapticlist_tail = item;
+    } else {
+        SDL_hapticlist_tail->next = item;
+        SDL_hapticlist_tail = item;
+    }
+
+    ++numhaptics;
+
+    /* !!! TODO: Send a haptic add event? */
+
+    return numhaptics;
+}
+
+#if SDL_USE_LIBUDEV
+static int
+MaybeRemoveDevice(const char* path)
+{
+    SDL_hapticlist_item *item;
+    SDL_hapticlist_item *prev = NULL;
+
+    if (path == NULL) {
+        return -1;
+    }
+
+    for (item = SDL_hapticlist; item != NULL; item = item->next) {
+        /* found it, remove it. */
+        if (SDL_strcmp(path, item->fname) == 0) {
+            const int retval = item->haptic ? item->haptic->index : -1;
+
+            if (prev != NULL) {
+                prev->next = item->next;
+            } else {
+                SDL_assert(SDL_hapticlist == item);
+                SDL_hapticlist = item->next;
+            }
+            if (item == SDL_hapticlist_tail) {
+                SDL_hapticlist_tail = prev;
+            }
+
+            /* Need to decrement the haptic count */
+            --numhaptics;
+            /* !!! TODO: Send a haptic remove event? */
+
+            SDL_free(item->fname);
+            SDL_free(item);
+            return retval;
+        }
+        prev = item;
+    }
+
+    return -1;
+}
+#endif /* SDL_USE_LIBUDEV */
 
 /*
  * Gets the name from a file descriptor.
@@ -227,22 +370,24 @@ SDL_SYS_HapticNameFromFD(int fd)
 const char *
 SDL_SYS_HapticName(int index)
 {
+    SDL_hapticlist_item *item;
     int fd;
     const char *name;
 
+    item = HapticByDevIndex(index);
     /* Open the haptic device. */
     name = NULL;
-    fd = open(SDL_hapticlist[index].fname, O_RDONLY, 0);
+    fd = open(item->fname, O_RDONLY, 0);
 
     if (fd >= 0) {
 
         name = SDL_SYS_HapticNameFromFD(fd);
         if (name == NULL) {
             /* No name found, return device character device */
-            name = SDL_hapticlist[index].fname;
+            name = item->fname;
         }
+        close(fd);
     }
-    close(fd);
 
     return name;
 }
@@ -291,7 +436,7 @@ SDL_SYS_HapticOpenFromFD(SDL_Haptic * haptic, int fd)
   open_err:
     close(fd);
     if (haptic->hwdata != NULL) {
-        free(haptic->hwdata);
+        SDL_free(haptic->hwdata);
         haptic->hwdata = NULL;
     }
     return -1;
@@ -306,12 +451,14 @@ SDL_SYS_HapticOpen(SDL_Haptic * haptic)
 {
     int fd;
     int ret;
+    SDL_hapticlist_item *item;
 
+    item = HapticByDevIndex(haptic->index);
     /* Open the character device */
-    fd = open(SDL_hapticlist[haptic->index].fname, O_RDWR, 0);
+    fd = open(item->fname, O_RDWR, 0);
     if (fd < 0) {
         return SDL_SetError("Haptic: Unable to open %s: %s",
-                            SDL_hapticlist[haptic->index], strerror(errno));
+                            item->fname, strerror(errno));
     }
 
     /* Try to create the haptic. */
@@ -321,7 +468,7 @@ SDL_SYS_HapticOpen(SDL_Haptic * haptic)
     }
 
     /* Set the fname. */
-    haptic->hwdata->fname = SDL_hapticlist[haptic->index].fname;
+    haptic->hwdata->fname = SDL_strdup( item->fname );
     return 0;
 }
 
@@ -333,24 +480,26 @@ int
 SDL_SYS_HapticMouse(void)
 {
     int fd;
-    int i;
+    int device_index = 0;
+    SDL_hapticlist_item *item;
 
-    for (i = 0; i < SDL_numhaptics; i++) {
-
+    for (item = SDL_hapticlist; item; item = item->next) {
         /* Open the device. */
-        fd = open(SDL_hapticlist[i].fname, O_RDWR, 0);
+        fd = open(item->fname, O_RDWR, 0);
         if (fd < 0) {
             return SDL_SetError("Haptic: Unable to open %s: %s",
-                                SDL_hapticlist[i], strerror(errno));
+                                item->fname, strerror(errno));
         }
 
         /* Is it a mouse? */
         if (EV_IsMouse(fd)) {
             close(fd);
-            return i;
+            return device_index;
         }
 
         close(fd);
+
+        ++device_index;
     }
 
     return -1;
@@ -368,7 +517,7 @@ SDL_SYS_JoystickIsHaptic(SDL_Joystick * joystick)
 
 
 /*
- * Checks to see if the haptic device and joystick and in reality the same.
+ * Checks to see if the haptic device and joystick are in reality the same.
  */
 int
 SDL_SYS_JoystickSameHaptic(SDL_Haptic * haptic, SDL_Joystick * joystick)
@@ -388,22 +537,21 @@ SDL_SYS_JoystickSameHaptic(SDL_Haptic * haptic, SDL_Joystick * joystick)
 int
 SDL_SYS_HapticOpenFromJoystick(SDL_Haptic * haptic, SDL_Joystick * joystick)
 {
-    int i;
+    int device_index = 0;
     int fd;
     int ret;
-
+    SDL_hapticlist_item *item;
 
     /* Find the joystick in the haptic list. */
-    for (i = 0; i < MAX_HAPTICS; i++) {
-        if (SDL_hapticlist[i].fname != NULL) {
-            if (SDL_strcmp(SDL_hapticlist[i].fname, joystick->hwdata->fname)
-                == 0) {
-                haptic->index = i;
-                break;
-            }
+    for (item = SDL_hapticlist; item; item = item->next) {
+        if (SDL_strcmp(item->fname, joystick->hwdata->fname) == 0) {
+            break;
         }
+        ++device_index;
     }
-    if (i >= MAX_HAPTICS) {
+    haptic->index = device_index;
+
+    if (device_index >= MAX_HAPTICS) {
         return SDL_SetError("Haptic: Joystick doesn't have Haptic capabilities");
     }
 
@@ -417,7 +565,8 @@ SDL_SYS_HapticOpenFromJoystick(SDL_Haptic * haptic, SDL_Joystick * joystick)
         return -1;
     }
 
-    haptic->hwdata->fname = SDL_hapticlist[haptic->index].fname;
+    haptic->hwdata->fname = SDL_strdup( joystick->hwdata->fname );
+
     return 0;
 }
 
@@ -439,6 +588,7 @@ SDL_SYS_HapticClose(SDL_Haptic * haptic)
         close(haptic->hwdata->fd);
 
         /* Free */
+        SDL_free(haptic->hwdata->fname);
         SDL_free(haptic->hwdata);
         haptic->hwdata = NULL;
     }
@@ -454,15 +604,25 @@ SDL_SYS_HapticClose(SDL_Haptic * haptic)
 void
 SDL_SYS_HapticQuit(void)
 {
-    int i;
+    SDL_hapticlist_item *item = NULL;
+    SDL_hapticlist_item *next = NULL;
 
-    for (i = 0; SDL_hapticlist[i].fname != NULL; i++) {
+    for (item = SDL_hapticlist; item; item = next) {
+        next = item->next;
         /* Opened and not closed haptics are leaked, this is on purpose.
          * Close your haptic devices after usage. */
-
-        SDL_free(SDL_hapticlist[i].fname);
+        SDL_free(item->fname);
+        SDL_free(item);
     }
-    SDL_hapticlist[0].fname = NULL;
+
+#if SDL_USE_LIBUDEV
+    SDL_UDEV_DelCallback(haptic_udev_callback);
+    SDL_UDEV_Quit();
+#endif /* SDL_USE_LIBUDEV */
+
+    numhaptics = 0;
+    SDL_hapticlist = NULL;
+    SDL_hapticlist_tail = NULL;
 }
 
 
@@ -489,15 +649,14 @@ SDL_SYS_ToButton(Uint16 button)
 
 
 /*
- * Returns the ff_effect usable direction from a SDL_HapticDirection.
+ * Initializes the ff_effect usable direction from a SDL_HapticDirection.
  */
-static Uint16
-SDL_SYS_ToDirection(SDL_HapticDirection * dir)
+static int
+SDL_SYS_ToDirection(Uint16 *dest, SDL_HapticDirection * src)
 {
     Uint32 tmp;
-    float f;                    /* Ideally we'd use fixed point math instead of floats... */
 
-    switch (dir->type) {
+    switch (src->type) {
     case SDL_HAPTIC_POLAR:
         /* Linux directions start from south.
                 (and range from 0 to 0xFFFF)
@@ -507,25 +666,34 @@ SDL_SYS_ToDirection(SDL_HapticDirection * dir)
                         90 deg -> 0x4000 (left)
                         180 deg -> 0x8000 (up)
                         270 deg -> 0xC000 (right)
+                   The force pulls into the direction specified by Linux directions,
+                   i.e. the opposite convention of SDL directions.
                     */
-        tmp = (((18000 + dir->dir[0]) % 36000) * 0xFFFF) / 36000; /* convert to range [0,0xFFFF] */
-        return (Uint16) tmp;
+        tmp = ((src->dir[0] % 36000) * 0x8000) / 18000; /* convert to range [0,0xFFFF] */
+        *dest = (Uint16) tmp;
+        break;
 
-       case SDL_HAPTIC_SPHERICAL:
+    case SDL_HAPTIC_SPHERICAL:
             /*
                 We convert to polar, because that's the only supported direction on Linux.
                 The first value of a spherical direction is practically the same as a
                 Polar direction, except that we have to add 90 degrees. It is the angle
                 from EAST {1,0} towards SOUTH {0,1}.
                 --> add 9000
-                --> finally add 18000 and convert to [0,0xFFFF] as in case SDL_HAPTIC_POLAR.
+                --> finally convert to [0,0xFFFF] as in case SDL_HAPTIC_POLAR.
             */
-            tmp = ((dir->dir[0]) + 9000) % 36000;    /* Convert to polars */
-        tmp = (((18000 + tmp) % 36000) * 0xFFFF) / 36000; /* convert to range [0,0xFFFF] */
-        return (Uint16) tmp;
+            tmp = ((src->dir[0]) + 9000) % 36000;    /* Convert to polars */
+        tmp = (tmp * 0x8000) / 18000; /* convert to range [0,0xFFFF] */
+        *dest = (Uint16) tmp;
+        break;
 
     case SDL_HAPTIC_CARTESIAN:
-        f = atan2(dir->dir[1], dir->dir[0]);
+        if (!src->dir[1])
+            *dest = (src->dir[0] >= 0 ? 0x4000 : 0xC000);
+        else if (!src->dir[0])
+            *dest = (src->dir[1] >= 0 ? 0x8000 : 0);
+        else {
+            float f = SDL_atan2(src->dir[1], src->dir[0]);    /* Ideally we'd use fixed point math instead of floats... */
                     /*
                       atan2 takes the parameters: Y-axis-value and X-axis-value (in that order)
                        - Y-axis-value is the second coordinate (from center to SOUTH)
@@ -534,14 +702,16 @@ SDL_SYS_ToDirection(SDL_HapticDirection * dir)
                         have the first spherical value. Therefore we proceed as in case
                         SDL_HAPTIC_SPHERICAL and add another 9000 to get the polar value.
                       --> add 45000 in total
-                      --> finally add 18000 and convert to [0,0xFFFF] as in case SDL_HAPTIC_POLAR.
+                      --> finally convert to [0,0xFFFF] as in case SDL_HAPTIC_POLAR.
                     */
-                tmp = (((int) (f * 18000. / M_PI)) + 45000) % 36000;
-        tmp = (((18000 + tmp) % 36000) * 0xFFFF) / 36000; /* convert to range [0,0xFFFF] */
-        return (Uint16) tmp;
+                tmp = (((Sint32) (f * 18000. / M_PI)) + 45000) % 36000;
+            tmp = (tmp * 0x8000) / 18000; /* convert to range [0,0xFFFF] */
+            *dest = (Uint16) tmp;
+        }
+        break;
 
     default:
-        return (Uint16) SDL_SetError("Haptic: Unsupported direction type.");
+        return SDL_SetError("Haptic: Unsupported direction type.");
     }
 
     return 0;
@@ -556,7 +726,6 @@ SDL_SYS_ToDirection(SDL_HapticDirection * dir)
 static int
 SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
 {
-    Uint32 tmp;
     SDL_HapticConstant *constant;
     SDL_HapticPeriodic *periodic;
     SDL_HapticCondition *condition;
@@ -572,8 +741,7 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
 
         /* Header */
         dest->type = FF_CONSTANT;
-        dest->direction = SDL_SYS_ToDirection(&constant->direction);
-        if (dest->direction == (Uint16) - 1)
+        if (SDL_SYS_ToDirection(&dest->direction, &constant->direction) == -1)
             return -1;
 
         /* Replay */
@@ -600,7 +768,7 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
 
     case SDL_HAPTIC_SINE:
     /* !!! FIXME: put this back when we have more bits in 2.1 */
-    /*case SDL_HAPTIC_SQUARE:*/
+    /* case SDL_HAPTIC_SQUARE: */
     case SDL_HAPTIC_TRIANGLE:
     case SDL_HAPTIC_SAWTOOTHUP:
     case SDL_HAPTIC_SAWTOOTHDOWN:
@@ -608,8 +776,7 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
 
         /* Header */
         dest->type = FF_PERIODIC;
-        dest->direction = SDL_SYS_ToDirection(&periodic->direction);
-        if (dest->direction == (Uint16) - 1)
+        if (SDL_SYS_ToDirection(&dest->direction, &periodic->direction) == -1)
             return -1;
 
         /* Replay */
@@ -625,8 +792,8 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
         if (periodic->type == SDL_HAPTIC_SINE)
             dest->u.periodic.waveform = FF_SINE;
         /* !!! FIXME: put this back when we have more bits in 2.1 */
-        /*else if (periodic->type == SDL_HAPTIC_SQUARE)
-            dest->u.periodic.waveform = FF_SQUARE;*/
+        /* else if (periodic->type == SDL_HAPTIC_SQUARE)
+            dest->u.periodic.waveform = FF_SQUARE; */
         else if (periodic->type == SDL_HAPTIC_TRIANGLE)
             dest->u.periodic.waveform = FF_TRIANGLE;
         else if (periodic->type == SDL_HAPTIC_SAWTOOTHUP)
@@ -634,11 +801,11 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
         else if (periodic->type == SDL_HAPTIC_SAWTOOTHDOWN)
             dest->u.periodic.waveform = FF_SAW_DOWN;
         dest->u.periodic.period = CLAMP(periodic->period);
-        dest->u.periodic.magnitude = periodic->magnitude;
+        /* Linux expects 0-65535, so multiply by 2 */
+        dest->u.periodic.magnitude = CLAMP(periodic->magnitude) * 2;
         dest->u.periodic.offset = periodic->offset;
-        /* Phase is calculated based of offset from period and then clamped. */
-        tmp = ((periodic->phase % 36000) * dest->u.periodic.period) / 36000;
-        dest->u.periodic.phase = CLAMP(tmp);
+        /* Linux phase is defined in interval "[0x0000, 0x10000[", corresponds with "[0deg, 360deg[" phase shift. */
+        dest->u.periodic.phase = ((Uint32)periodic->phase * 0x10000U) / 36000;
 
         /* Envelope */
         dest->u.periodic.envelope.attack_length =
@@ -678,20 +845,18 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
 
         /* Condition */
         /* X axis */
-        dest->u.condition[0].right_saturation =
-            CLAMP(condition->right_sat[0]);
-        dest->u.condition[0].left_saturation = CLAMP(condition->left_sat[0]);
+        dest->u.condition[0].right_saturation = condition->right_sat[0];
+        dest->u.condition[0].left_saturation = condition->left_sat[0];
         dest->u.condition[0].right_coeff = condition->right_coeff[0];
         dest->u.condition[0].left_coeff = condition->left_coeff[0];
-        dest->u.condition[0].deadband = CLAMP(condition->deadband[0]);
+        dest->u.condition[0].deadband = condition->deadband[0];
         dest->u.condition[0].center = condition->center[0];
         /* Y axis */
-        dest->u.condition[1].right_saturation =
-            CLAMP(condition->right_sat[1]);
-        dest->u.condition[1].left_saturation = CLAMP(condition->left_sat[1]);
+        dest->u.condition[1].right_saturation = condition->right_sat[1];
+        dest->u.condition[1].left_saturation = condition->left_sat[1];
         dest->u.condition[1].right_coeff = condition->right_coeff[1];
         dest->u.condition[1].left_coeff = condition->left_coeff[1];
-        dest->u.condition[1].deadband = CLAMP(condition->deadband[1]);
+        dest->u.condition[1].deadband = condition->deadband[1];
         dest->u.condition[1].center = condition->center[1];
 
         /*
@@ -705,8 +870,7 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
 
         /* Header */
         dest->type = FF_RAMP;
-        dest->direction = SDL_SYS_ToDirection(&ramp->direction);
-        if (dest->direction == (Uint16) - 1)
+        if (SDL_SYS_ToDirection(&dest->direction, &ramp->direction) == -1)
             return -1;
 
         /* Replay */
@@ -745,11 +909,11 @@ SDL_SYS_ToFFEffect(struct ff_effect *dest, SDL_HapticEffect * src)
         dest->trigger.button = 0;
         dest->trigger.interval = 0;
 
-        /* Rumble */
-        dest->u.rumble.strong_magnitude = leftright->large_magnitude;
-        dest->u.rumble.weak_magnitude = leftright->small_magnitude;
+        /* Rumble (Linux expects 0-65535, so multiply by 2) */
+        dest->u.rumble.strong_magnitude = CLAMP(leftright->large_magnitude) * 2;
+        dest->u.rumble.weak_magnitude = CLAMP(leftright->small_magnitude) * 2;
 
-	break;
+        break;
 
 
     default:
@@ -793,7 +957,7 @@ SDL_SYS_HapticNewEffect(SDL_Haptic * haptic, struct haptic_effect *effect,
     return 0;
 
   new_effect_err:
-    free(effect->hweffect);
+    SDL_free(effect->hweffect);
     effect->hweffect = NULL;
     return -1;
 }
@@ -997,5 +1161,6 @@ SDL_SYS_HapticStopAll(SDL_Haptic * haptic)
     return 0;
 }
 
-
 #endif /* SDL_HAPTIC_LINUX */
+
+/* vi: set ts=4 sw=4 expandtab: */

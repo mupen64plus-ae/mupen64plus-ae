@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 /* This a stretch blit implementation based on ideas given to me by
    Tomasz Cejner - thanks! :)
@@ -33,12 +33,12 @@
    into the general blitting mechanism.
 */
 
-#if ((defined(_MFC_VER) && defined(_M_IX86)) || \
-     defined(__WATCOMC__) || \
+#if ((defined(_MSC_VER) && defined(_M_IX86))    || \
+     (defined(__WATCOMC__) && defined(__386__)) || \
      (defined(__GNUC__) && defined(__i386__))) && SDL_ASSEMBLY_ROUTINES
 /* There's a bug with gcc 4.4.1 and -O2 where srcp doesn't get the correct
  * value after the first scanline.  FIXME? */
-/*#define USE_ASM_STRETCH*/
+/* #define USE_ASM_STRETCH */
 #endif
 
 #ifdef USE_ASM_STRETCH
@@ -53,7 +53,7 @@
 #define PAGE_ALIGNED
 #endif
 
-#if defined(_M_IX86) || defined(i386)
+#if defined(_M_IX86) || defined(__i386__) || defined(__386__)
 #define PREFIX16    0x66
 #define STORE_BYTE  0xAA
 #define STORE_WORD  0xAB
@@ -102,7 +102,7 @@ generate_rowbytes(int src_w, int dst_w, int bpp)
         store = STORE_WORD;
         break;
     default:
-        return SDL_SetError("ASM stretch of %d bytes isn't supported\n", bpp);
+        return SDL_SetError("ASM stretch of %d bytes isn't supported", bpp);
     }
 #ifdef HAVE_MPROTECT
     /* Make the code writeable */

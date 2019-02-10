@@ -1,5 +1,5 @@
 /*
-    SDL_main.c, placed in the public domain by Sam Lantinga  4/13/98
+    SDL_windows_main.c, placed in the public domain by Sam Lantinga  4/13/98
 
     The WinMain function -- calls your program's main() function
 */
@@ -7,11 +7,8 @@
 
 #ifdef __WIN32__
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+/* Include this so we define UNICODE properly */
+#include "../../core/windows/SDL_windows.h"
 
 /* Include the SDL main definition header */
 #include "SDL.h"
@@ -54,7 +51,7 @@ ParseCommandLine(char *cmdline, char **argv)
     argc = last_argc = 0;
     for (bufp = cmdline; *bufp;) {
         /* Skip leading whitespace */
-        while (SDL_isspace(*bufp)) {
+        while (*bufp == ' ' || *bufp == '\t') {
             ++bufp;
         }
         /* Skip over argument */
@@ -80,7 +77,7 @@ ParseCommandLine(char *cmdline, char **argv)
                 ++argc;
             }
             /* Skip over word */
-            while (*bufp && !SDL_isspace(*bufp)) {
+            while (*bufp && (*bufp != ' ' && *bufp != '\t')) {
                 ++bufp;
             }
         }
@@ -103,85 +100,108 @@ ParseCommandLine(char *cmdline, char **argv)
     return (argc);
 }
 
-/* Show an error message */
-static void
-ShowError(const char *title, const char *message)
-{
-/* If USE_MESSAGEBOX is defined, you need to link with user32.lib */
-#ifdef USE_MESSAGEBOX
-    MessageBox(NULL, message, title, MB_ICONEXCLAMATION | MB_OK);
-#else
-    fprintf(stderr, "%s: %s\n", title, message);
-#endif
-}
-
 /* Pop up an out of memory message, returns to Windows */
 static BOOL
 OutOfMemory(void)
 {
-    ShowError("Fatal Error", "Out of memory - aborting");
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", "Out of memory - aborting", NULL);
     return FALSE;
 }
 
 #if defined(_MSC_VER)
-/* The VC++ compiler needs main defined */
-#define console_main main
+/* The VC++ compiler needs main/wmain defined */
+# define console_ansi_main main
+# if UNICODE
+#  define console_wmain wmain
+# endif
 #endif
 
-/* This is where execution begins [console apps] */
-int
-console_main(int argc, char *argv[])
-{
-    int status;
-
-    SDL_SetMainReady();
-
-    /* Run the application main() code */
-    status = SDL_main(argc, argv);
-
-    /* Exit cleanly, calling atexit() functions */
-    exit(status);
-
-    /* Hush little compiler, don't you cry... */
-    return 0;
-}
-
-/* This is where execution begins [windowed apps] */
-int WINAPI
-WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
+/* Gets the arguments with GetCommandLine, converts them to argc and argv
+   and calls SDL_main */
+static int
+main_getcmdline()
 {
     char **argv;
     int argc;
-    char *cmdline;
+    char *cmdline = NULL;
+    int retval = 0;
+    int cmdalloc = 0;
+    const TCHAR *text = GetCommandLine();
+    const TCHAR *ptr;
+    int argc_guess = 2;  /* space for NULL and initial argument. */
+    int rc;
 
-    /* Grab the command line */
-    TCHAR *text = GetCommandLine();
+    /* make a rough guess of command line arguments. Overestimates if there
+       are quoted things. */
+    for (ptr = text; *ptr; ptr++) {
+        if ((*ptr == ' ') || (*ptr == '\t')) {
+            argc_guess++;
+        }
+    }
+
 #if UNICODE
-    cmdline = SDL_iconv_string("UTF-8", "UCS-2-INTERNAL", (char *)(text), (SDL_wcslen(text)+1)*sizeof(WCHAR));
+    rc = WideCharToMultiByte(CP_UTF8, 0, text, -1, NULL, 0, NULL, NULL);
+    if (rc > 0) {
+        cmdalloc = rc + (sizeof (char *) * argc_guess);
+        argv = (char **) VirtualAlloc(NULL, cmdalloc, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+        if (argv) {
+            int rc2;
+            cmdline = (char *) (argv + argc_guess);
+            rc2 = WideCharToMultiByte(CP_UTF8, 0, text, -1, cmdline, rc, NULL, NULL);
+            SDL_assert(rc2 == rc);
+        }
+    }
 #else
-    cmdline = SDL_strdup(text);
+    /* !!! FIXME: are these in the system codepage? We need to convert to UTF-8. */
+    rc = ((int) SDL_strlen(text)) + 1;
+    cmdalloc = rc + (sizeof (char *) * argc_guess);
+    argv = (char **) VirtualAlloc(NULL, cmdalloc, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+    if (argv) {
+        cmdline = (char *) (argv + argc_guess);
+        SDL_strcpy(cmdline, text);
+    }
 #endif
     if (cmdline == NULL) {
         return OutOfMemory();
     }
 
     /* Parse it into argv and argc */
-    argc = ParseCommandLine(cmdline, NULL);
-    argv = SDL_stack_alloc(char *, argc + 1);
-    if (argv == NULL) {
-        return OutOfMemory();
-    }
-    ParseCommandLine(cmdline, argv);
+    SDL_assert(ParseCommandLine(cmdline, NULL) <= argc_guess);
+    argc = ParseCommandLine(cmdline, argv);
 
-    /* Run the main program */
-    console_main(argc, argv);
+    SDL_SetMainReady();
 
-    SDL_stack_free(argv);
+    /* Run the application main() code */
+    retval = SDL_main(argc, argv);
 
-    SDL_free(cmdline);
+    VirtualFree(argv, cmdalloc, MEM_DECOMMIT);
+    VirtualFree(argv, 0, MEM_RELEASE);
 
-    /* Hush little compiler, don't you cry... */
-    return 0;
+    return retval;
+}
+
+/* This is where execution begins [console apps, ansi] */
+int
+console_ansi_main(int argc, char *argv[])
+{
+    return main_getcmdline();
+}
+
+
+#if UNICODE
+/* This is where execution begins [console apps, unicode] */
+int
+console_wmain(int argc, wchar_t *wargv[], wchar_t *wenvp)
+{
+    return main_getcmdline();
+}
+#endif
+
+/* This is where execution begins [windowed apps] */
+int WINAPI
+WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
+{
+    return main_getcmdline();
 }
 
 #endif /* __WIN32__ */

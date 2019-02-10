@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 /* Microsoft WAVE file loading routines */
 
@@ -61,7 +61,7 @@ InitMS_ADPCM(WaveFMT * format)
         SDL_SwapLE16(format->bitspersample);
     rogue_feel = (Uint8 *) format + sizeof(*format);
     if (sizeof(*format) == 16) {
-        /*const Uint16 extra_info = ((rogue_feel[1] << 8) | rogue_feel[0]);*/
+        /* const Uint16 extra_info = ((rogue_feel[1] << 8) | rogue_feel[0]); */
         rogue_feel += sizeof(Uint16);
     }
     MS_ADPCM_state.wSamplesPerBlock = ((rogue_feel[1] << 8) | rogue_feel[0]);
@@ -121,7 +121,8 @@ MS_ADPCM_decode(Uint8 ** audio_buf, Uint32 * audio_len)
     struct MS_ADPCM_decodestate *state[2];
     Uint8 *freeable, *encoded, *decoded;
     Sint32 encoded_len, samplesleft;
-    Sint8 nybble, stereo;
+    Sint8 nybble;
+    Uint8 stereo;
     Sint16 *coeff[2];
     Sint32 new_sample;
 
@@ -242,7 +243,7 @@ InitIMA_ADPCM(WaveFMT * format)
         SDL_SwapLE16(format->bitspersample);
     rogue_feel = (Uint8 *) format + sizeof(*format);
     if (sizeof(*format) == 16) {
-        /*const Uint16 extra_info = ((rogue_feel[1] << 8) | rogue_feel[0]);*/
+        /* const Uint16 extra_info = ((rogue_feel[1] << 8) | rogue_feel[0]); */
         rogue_feel += sizeof(Uint16);
     }
     IMA_ADPCM_state.wSamplesPerBlock = ((rogue_feel[1] << 8) | rogue_feel[0]);
@@ -278,7 +279,8 @@ IMA_ADPCM_nibble(struct IMA_ADPCM_decodestate *state, Uint8 nybble)
     } else if (state->index < 0) {
         state->index = 0;
     }
-    step = step_table[state->index];
+    /* explicit cast to avoid gcc warning about using 'char' as array index */
+    step = step_table[(int)state->index];
     delta = step >> 3;
     if (nybble & 0x04)
         delta += step;
@@ -343,8 +345,8 @@ IMA_ADPCM_decode(Uint8 ** audio_buf, Uint32 * audio_len)
     /* Check to make sure we have enough variables in the state array */
     channels = IMA_ADPCM_state.wavefmt.channels;
     if (channels > SDL_arraysize(IMA_ADPCM_state.state)) {
-        SDL_SetError("IMA ADPCM decoder can only handle %d channels",
-                     SDL_arraysize(IMA_ADPCM_state.state));
+        SDL_SetError("IMA ADPCM decoder can only handle %u channels",
+                     (unsigned int)SDL_arraysize(IMA_ADPCM_state.state));
         return (-1);
     }
     state = IMA_ADPCM_state.state;
@@ -401,6 +403,47 @@ IMA_ADPCM_decode(Uint8 ** audio_buf, Uint32 * audio_len)
     return (0);
 }
 
+
+static int
+ConvertSint24ToSint32(Uint8 ** audio_buf, Uint32 * audio_len)
+{
+    const double DIVBY8388608 = 0.00000011920928955078125;
+    const Uint32 original_len = *audio_len;
+    const Uint32 samples = original_len / 3;
+    const Uint32 expanded_len = samples * sizeof (Uint32);
+    Uint8 *ptr = (Uint8 *) SDL_realloc(*audio_buf, expanded_len);
+    const Uint8 *src;
+    Uint32 *dst;
+    Uint32 i;
+
+    if (!ptr) {
+        return SDL_OutOfMemory();
+    }
+
+    *audio_buf = ptr;
+    *audio_len = expanded_len;
+
+    /* work from end to start, since we're expanding in-place. */
+    src = (ptr + original_len) - 3;
+    dst = ((Uint32 *) (ptr + expanded_len)) - 1;
+    for (i = 0; i < samples; i++) {
+        /* There's probably a faster way to do all this. */
+        const Sint32 converted = ((Sint32) ( (((Uint32) src[2]) << 24) |
+                                             (((Uint32) src[1]) << 16) |
+                                             (((Uint32) src[0]) << 8) )) >> 8;
+        const double scaled = (((double) converted) * DIVBY8388608);
+        src -= 3;
+        *(dst--) = (Sint32) (scaled * 2147483647.0);
+    }
+
+    return 0;
+}
+
+
+/* GUIDs that are used by WAVE_FORMAT_EXTENSIBLE */
+static const Uint8 extensible_pcm_guid[16] = { 1, 0, 0, 0, 0, 0, 16, 0, 128, 0, 0, 170, 0, 56, 155, 113 };
+static const Uint8 extensible_ieee_guid[16] = { 3, 0, 0, 0, 0, 0, 16, 0, 128, 0, 0, 170, 0, 56, 155, 113 };
+
 SDL_AudioSpec *
 SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
                SDL_AudioSpec * spec, Uint8 ** audio_buf, Uint32 * audio_len)
@@ -419,6 +462,7 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
 
     /* FMT chunk */
     WaveFMT *format = NULL;
+    WaveExtensibleFMT *ext = NULL;
 
     SDL_zero(chunk);
 
@@ -449,10 +493,8 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
     /* Read the audio data format chunk */
     chunk.data = NULL;
     do {
-        if (chunk.data != NULL) {
-            SDL_free(chunk.data);
-            chunk.data = NULL;
-        }
+        SDL_free(chunk.data);
+        chunk.data = NULL;
         lenread = ReadChunk(src, &chunk);
         if (lenread < 0) {
             was_error = 1;
@@ -460,7 +502,7 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
         }
         /* 2 Uint32's for chunk header+len, plus the lenread */
         headerDiff += lenread + 2 * sizeof(Uint32);
-    } while ((chunk.magic == FACT) || (chunk.magic == LIST));
+    } while ((chunk.magic == FACT) || (chunk.magic == LIST) || (chunk.magic == BEXT) || (chunk.magic == JUNK));
 
     /* Decode the audio data format */
     format = (WaveFMT *) chunk.data;
@@ -494,9 +536,26 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
         }
         IMA_ADPCM_encoded = 1;
         break;
+    case EXTENSIBLE_CODE:
+        /* note that this ignores channel masks, smaller valid bit counts
+           inside a larger container, and most subtypes. This is just enough
+           to get things that didn't really _need_ WAVE_FORMAT_EXTENSIBLE
+           to be useful working when they use this format flag. */
+        ext = (WaveExtensibleFMT *) format;
+        if (SDL_SwapLE16(ext->size) < 22) {
+            SDL_SetError("bogus extended .wav header");
+            was_error = 1;
+            goto done;
+        }
+        if (SDL_memcmp(ext->subformat, extensible_pcm_guid, 16) == 0) {
+            break;  /* cool. */
+        } else if (SDL_memcmp(ext->subformat, extensible_ieee_guid, 16) == 0) {
+            IEEE_float_encoded = 1;
+            break;
+        }
+        break;
     case MP3_CODE:
-        SDL_SetError("MPEG Layer 3 data not supported",
-                     SDL_SwapLE16(format->encoding));
+        SDL_SetError("MPEG Layer 3 data not supported");
         was_error = 1;
         goto done;
     default:
@@ -505,7 +564,7 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
         was_error = 1;
         goto done;
     }
-    SDL_memset(spec, 0, (sizeof *spec));
+    SDL_zerop(spec);
     spec->freq = SDL_SwapLE32(format->frequency);
 
     if (IEEE_float_encoded) {
@@ -529,6 +588,9 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
         case 16:
             spec->format = AUDIO_S16;
             break;
+        case 24:  /* convert this. */
+            spec->format = AUDIO_S32;
+            break;
         case 32:
             spec->format = AUDIO_S32;
             break;
@@ -549,10 +611,8 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
     /* Read the audio data chunk */
     *audio_buf = NULL;
     do {
-        if (*audio_buf != NULL) {
-            SDL_free(*audio_buf);
-            *audio_buf = NULL;
-        }
+        SDL_free(*audio_buf);
+        *audio_buf = NULL;
         lenread = ReadChunk(src, &chunk);
         if (lenread < 0) {
             was_error = 1;
@@ -578,14 +638,19 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
         }
     }
 
+    if (SDL_SwapLE16(format->bitspersample) == 24) {
+        if (ConvertSint24ToSint32(audio_buf, audio_len) < 0) {
+            was_error = 1;
+            goto done;
+        }
+    }
+
     /* Don't return a buffer that isn't a multiple of samplesize */
     samplesize = ((SDL_AUDIO_BITSIZE(spec->format)) / 8) * spec->channels;
     *audio_len &= ~(samplesize - 1);
 
   done:
-    if (format != NULL) {
-        SDL_free(format);
-    }
+    SDL_free(format);
     if (src) {
         if (freesrc) {
             SDL_RWclose(src);
@@ -606,9 +671,7 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
 void
 SDL_FreeWAV(Uint8 * audio_buf)
 {
-    if (audio_buf != NULL) {
-        SDL_free(audio_buf);
-    }
+    SDL_free(audio_buf);
 }
 
 static int

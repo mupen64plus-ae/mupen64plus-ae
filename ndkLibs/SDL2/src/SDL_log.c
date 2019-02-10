@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2018 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,19 +18,22 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "./SDL_internal.h"
+
+#if defined(__WIN32__) || defined(__WINRT__)
+#include "core/windows/SDL_windows.h"
+#endif
 
 /* Simple log messages in SDL */
 
+#include "SDL_error.h"
 #include "SDL_log.h"
 
 #if HAVE_STDIO_H
 #include <stdio.h>
 #endif
 
-#if defined(__WIN32__)
-#include "core/windows/SDL_windows.h"
-#elif defined(__ANDROID__)
+#if defined(__ANDROID__)
 #include <android/log.h>
 #endif
 
@@ -38,9 +41,6 @@
 #define DEFAULT_ASSERT_PRIORITY         SDL_LOG_PRIORITY_WARN
 #define DEFAULT_APPLICATION_PRIORITY    SDL_LOG_PRIORITY_INFO
 #define DEFAULT_TEST_PRIORITY           SDL_LOG_PRIORITY_VERBOSE
-
-/* Forward definition of error function */
-extern int SDL_SetError(const char *fmt, ...);
 
 typedef struct SDL_LogLevel
 {
@@ -50,9 +50,7 @@ typedef struct SDL_LogLevel
 } SDL_LogLevel;
 
 /* The default log output function */
-static void SDL_LogOutput(void *userdata,
-                          int category, SDL_LogPriority priority,
-                          const char *message);
+static void SDLCALL SDL_LogOutput(void *userdata, int category, SDL_LogPriority priority, const char *message);
 
 static SDL_LogLevel *SDL_loglevels;
 static SDL_LogPriority SDL_default_priority = DEFAULT_PRIORITY;
@@ -84,6 +82,7 @@ static const char *SDL_category_prefixes[SDL_LOG_CATEGORY_RESERVED1] = {
 };
 
 static int SDL_android_priority[SDL_NUM_LOG_PRIORITIES] = {
+    ANDROID_LOG_UNKNOWN,
     ANDROID_LOG_VERBOSE,
     ANDROID_LOG_DEBUG,
     ANDROID_LOG_INFO,
@@ -169,7 +168,7 @@ SDL_LogResetPriorities(void)
 }
 
 void
-SDL_Log(const char *fmt, ...)
+SDL_Log(SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -179,7 +178,7 @@ SDL_Log(const char *fmt, ...)
 }
 
 void
-SDL_LogVerbose(int category, const char *fmt, ...)
+SDL_LogVerbose(int category, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -189,7 +188,7 @@ SDL_LogVerbose(int category, const char *fmt, ...)
 }
 
 void
-SDL_LogDebug(int category, const char *fmt, ...)
+SDL_LogDebug(int category, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -199,7 +198,7 @@ SDL_LogDebug(int category, const char *fmt, ...)
 }
 
 void
-SDL_LogInfo(int category, const char *fmt, ...)
+SDL_LogInfo(int category, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -209,7 +208,7 @@ SDL_LogInfo(int category, const char *fmt, ...)
 }
 
 void
-SDL_LogWarn(int category, const char *fmt, ...)
+SDL_LogWarn(int category, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -219,7 +218,7 @@ SDL_LogWarn(int category, const char *fmt, ...)
 }
 
 void
-SDL_LogError(int category, const char *fmt, ...)
+SDL_LogError(int category, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -229,7 +228,7 @@ SDL_LogError(int category, const char *fmt, ...)
 }
 
 void
-SDL_LogCritical(int category, const char *fmt, ...)
+SDL_LogCritical(int category, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -239,7 +238,7 @@ SDL_LogCritical(int category, const char *fmt, ...)
 }
 
 void
-SDL_LogMessage(int category, SDL_LogPriority priority, const char *fmt, ...)
+SDL_LogMessage(int category, SDL_LogPriority priority, SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list ap;
 
@@ -303,28 +302,31 @@ SDL_LogMessageV(int category, SDL_LogPriority priority, const char *fmt, va_list
     SDL_stack_free(message);
 }
 
-#if defined(__WIN32__)
-/* Flag tracking the attachment of the console: 0=unattached, 1=attached, -1=error */
+#if defined(__WIN32__) && !defined(HAVE_STDIO_H) && !defined(__WINRT__)
+/* Flag tracking the attachment of the console: 0=unattached, 1=attached to a console, 2=attached to a file, -1=error */
 static int consoleAttached = 0;
 
 /* Handle to stderr output of console. */
 static HANDLE stderrHandle = NULL;
 #endif
 
-static void
+static void SDLCALL
 SDL_LogOutput(void *userdata, int category, SDL_LogPriority priority,
               const char *message)
 {
-#if defined(__WIN32__)
+#if defined(__WIN32__) || defined(__WINRT__)
     /* Way too many allocations here, urgh */
     /* Note: One can't call SDL_SetError here, since that function itself logs. */
     {
         char *output;
         size_t length;
         LPTSTR tstr;
+
+#if !defined(HAVE_STDIO_H) && !defined(__WINRT__)
         BOOL attachResult;
         DWORD attachError;
         unsigned long charsWritten; 
+        DWORD consoleMode;
 
         /* Maybe attach console and get stderr handle */
         if (consoleAttached == 0) {
@@ -332,45 +334,59 @@ SDL_LogOutput(void *userdata, int category, SDL_LogPriority priority,
             if (!attachResult) {
                     attachError = GetLastError();
                     if (attachError == ERROR_INVALID_HANDLE) {
-                        OutputDebugString(TEXT("Parent process has no console"));
+                        /* This is expected when running from Visual Studio */
+                        /*OutputDebugString(TEXT("Parent process has no console\r\n"));*/
                         consoleAttached = -1;
                     } else if (attachError == ERROR_GEN_FAILURE) {
-                         OutputDebugString(TEXT("Could not attach to console of parent process"));
+                         OutputDebugString(TEXT("Could not attach to console of parent process\r\n"));
                          consoleAttached = -1;
                     } else if (attachError == ERROR_ACCESS_DENIED) {  
                          /* Already attached */
                         consoleAttached = 1;
                     } else {
-                        OutputDebugString(TEXT("Error attaching console"));
+                        OutputDebugString(TEXT("Error attaching console\r\n"));
                         consoleAttached = -1;
                     }
                 } else {
                     /* Newly attached */
                     consoleAttached = 1;
                 }
-			
+
                 if (consoleAttached == 1) {
                         stderrHandle = GetStdHandle(STD_ERROR_HANDLE);
+
+                        if (GetConsoleMode(stderrHandle, &consoleMode) == 0) {
+                            /* WriteConsole fails if the output is redirected to a file. Must use WriteFile instead. */
+                            consoleAttached = 2;
+                        }
                 }
         }
+#endif /* !defined(HAVE_STDIO_H) && !defined(__WINRT__) */
 
-        length = SDL_strlen(SDL_priority_prefixes[priority]) + 2 + SDL_strlen(message) + 1 + 1;
+        length = SDL_strlen(SDL_priority_prefixes[priority]) + 2 + SDL_strlen(message) + 1 + 1 + 1;
         output = SDL_stack_alloc(char, length);
-        SDL_snprintf(output, length, "%s: %s\n", SDL_priority_prefixes[priority], message);
+        SDL_snprintf(output, length, "%s: %s\r\n", SDL_priority_prefixes[priority], message);
         tstr = WIN_UTF8ToString(output);
         
         /* Output to debugger */
         OutputDebugString(tstr);
        
+#if !defined(HAVE_STDIO_H) && !defined(__WINRT__)
         /* Screen output to stderr, if console was attached. */
         if (consoleAttached == 1) {
                 if (!WriteConsole(stderrHandle, tstr, lstrlen(tstr), &charsWritten, NULL)) {
-                    OutputDebugString(TEXT("Error calling WriteConsole"));
+                    OutputDebugString(TEXT("Error calling WriteConsole\r\n"));
+                    if (GetLastError() == ERROR_NOT_ENOUGH_MEMORY) {
+                        OutputDebugString(TEXT("Insufficient heap memory to write message\r\n"));
+                    }
                 }
-                if (charsWritten == ERROR_NOT_ENOUGH_MEMORY) {
-                    OutputDebugString(TEXT("Insufficient heap memory to write message"));
-                }
+
+        } else if (consoleAttached == 2) {
+            if (!WriteFile(stderrHandle, output, lstrlenA(output), &charsWritten, NULL)) {
+                OutputDebugString(TEXT("Error calling WriteFile\r\n"));
+            }
         }
+#endif /* !defined(HAVE_STDIO_H) && !defined(__WINRT__) */
 
         SDL_free(tstr);
         SDL_stack_free(output);
@@ -407,6 +423,9 @@ SDL_LogOutput(void *userdata, int category, SDL_LogPriority priority,
 #endif
 #if HAVE_STDIO_H
     fprintf(stderr, "%s: %s\n", SDL_priority_prefixes[priority], message);
+#if __NACL__
+    fflush(stderr);
+#endif
 #endif
 }
 
