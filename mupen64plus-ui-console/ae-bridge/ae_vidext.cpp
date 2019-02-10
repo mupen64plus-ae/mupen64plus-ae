@@ -24,7 +24,7 @@ int FPSRecalcPeriod = 0;
 uint32_t frameCount = 0;
 int64_t oldTime;
 int vsync = 0;
-int oldVsync = 0;
+int oldVsync = 1;
 bool isPaused = false;
 
 EGLint const defaultAttributeList[] = {
