@@ -6,7 +6,7 @@ LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./upstream/src
 
 LOCAL_MODULE := mupen64plus-ui-console
-LOCAL_SHARED_LIBRARIES := ae-imports ae-vidext SDL2
+LOCAL_SHARED_LIBRARIES := ae-imports ae-vidext SDL2 libhidapi
 #LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \

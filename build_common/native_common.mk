@@ -4,6 +4,13 @@ ifeq ($(NDK_DEBUG), 1)
     BUILD_VARIANT := debug
 endif
 
+
+#SDL2 hidapi
+include $(CLEAR_VARS)
+LOCAL_MODULE := libhidapi
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libhidapi.so
+include $(PREBUILT_SHARED_LIBRARY)
+
 #SDL2
 include $(CLEAR_VARS)
 LOCAL_MODULE := SDL2
