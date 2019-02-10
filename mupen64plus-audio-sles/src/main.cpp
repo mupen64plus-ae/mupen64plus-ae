@@ -25,16 +25,17 @@
 
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <pthread.h>
-#include <errno.h>
-#include <math.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <thread>
+#include <cerrno>
+#include <cmath>
 #include <SoundTouch.h>
 
 #define M64P_PLUGIN_PROTOTYPES 1
+
 #include "m64p_common.h"
 #include "m64p_config.h"
 #include "m64p_plugin.h"
@@ -42,13 +43,12 @@
 #include "m64p_frontend.h"
 #include "main.h"
 #include "osal_dynamiclib.h"
-#include "threadqueue.h"
+#include "BlockingQueue.h"
 #include <jni.h>
 
 #include <SLES/OpenSLES_Android.h>
 
-typedef struct slesState
-{
+typedef struct slesState {
     int value;
     int limit;
     int errors;
@@ -83,21 +83,22 @@ typedef struct slesState
 #endif
 
 /* local variables */
-static void (*l_DebugCallback)(void *, int, const char *) = NULL;
-static void *l_DebugCallContext = NULL;
+static void (*l_DebugCallback)(void *, int, const char *) = nullptr;
+
+static void *l_DebugCallContext = nullptr;
 static int l_PluginInit = 0;
 static m64p_handle l_ConfigAudio;
 
 /* Read header for type definition */
 static AUDIO_INFO AudioInfo;
 /* Pointer to the primary audio buffer */
-static unsigned char *primaryBuffer = NULL;
+static unsigned char *primaryBuffer = nullptr;
 /* Size of the primary buffer */
 static int primaryBufferBytes = 0;
 /* Size of the primary audio buffer in equivalent output samples */
 static int PrimaryBufferSize = PRIMARY_BUFFER_SIZE;
 /* Pointer to secondary buffers */
-static unsigned char ** secondaryBuffers = NULL;
+static unsigned char **secondaryBuffers = nullptr;
 /* Size of a single secondary audio buffer in output samples */
 static int SecondaryBufferSize = DEFAULT_SECONDARY_BUFFER_SIZE;
 /** Time stretched audio enabled */
@@ -121,19 +122,16 @@ static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
 static int critical_failure = 0;
 
-typedef struct queueData_ {
-    unsigned char *data;
-    unsigned int length;
-    timespec timestamp;
-} queueData;
+void processAudio(const unsigned char *buffer, unsigned int length);
 
-void processAudio(const unsigned char* buffer, unsigned int length);
-static void* audioConsumerStretch(void*);
-static void* audioConsumerNoStretch(void*);
-static pthread_t audioConsumerThread;
-static struct threadqueue audioConsumerQueue;
+static void audioConsumerStretch();
 
-static volatile bool shutdown = true;
+static void audioConsumerNoStretch();
+
+static std::thread audioConsumerThread;
+static BlockingQueue<QueueData *> audioConsumerQueue;
+
+static volatile bool shutdownThread = true;
 
 using namespace soundtouch;
 static SoundTouch soundTouch;
@@ -142,188 +140,157 @@ static SoundTouch soundTouch;
 slesState state;
 
 /* Engine interfaces */
-SLObjectItf engineObject = NULL;
-SLEngineItf engineEngine = NULL;
+SLObjectItf engineObject = nullptr;
+SLEngineItf engineEngine = nullptr;
 
 /* Output mix interfaces */
-SLObjectItf outputMixObject = NULL;
+SLObjectItf outputMixObject = nullptr;
 
 /* Player interfaces */
-SLObjectItf playerObject = NULL;
-SLPlayItf playerPlay = NULL;
+SLObjectItf playerObject = nullptr;
+SLPlayItf playerPlay = nullptr;
 
 /* Buffer queue interfaces */
-SLAndroidSimpleBufferQueueItf bufferQueue = NULL;
+SLAndroidSimpleBufferQueueItf bufferQueue = nullptr;
 
 /* Definitions of pointers to Core config functions */
-ptr_ConfigOpenSection      ConfigOpenSection = NULL;
-ptr_ConfigDeleteSection    ConfigDeleteSection = NULL;
-ptr_ConfigSaveSection      ConfigSaveSection = NULL;
-ptr_ConfigSetParameter     ConfigSetParameter = NULL;
-ptr_ConfigGetParameter     ConfigGetParameter = NULL;
-ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
-ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
-ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat = NULL;
-ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
-ptr_ConfigSetDefaultString ConfigSetDefaultString = NULL;
-ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
-ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
-ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
-ptr_ConfigGetParamString   ConfigGetParamString = NULL;
-ptr_CoreDoCommand          CoreDoCommand = NULL;
+ptr_ConfigOpenSection ConfigOpenSection = nullptr;
+ptr_ConfigDeleteSection ConfigDeleteSection = nullptr;
+ptr_ConfigSaveSection ConfigSaveSection = nullptr;
+ptr_ConfigSetParameter ConfigSetParameter = nullptr;
+ptr_ConfigGetParameter ConfigGetParameter = nullptr;
+ptr_ConfigGetParameterHelp ConfigGetParameterHelp = nullptr;
+ptr_ConfigSetDefaultInt ConfigSetDefaultInt = nullptr;
+ptr_ConfigSetDefaultFloat ConfigSetDefaultFloat = nullptr;
+ptr_ConfigSetDefaultBool ConfigSetDefaultBool = nullptr;
+ptr_ConfigSetDefaultString ConfigSetDefaultString = nullptr;
+ptr_ConfigGetParamInt ConfigGetParamInt = nullptr;
+ptr_ConfigGetParamFloat ConfigGetParamFloat = nullptr;
+ptr_ConfigGetParamBool ConfigGetParamBool = nullptr;
+ptr_ConfigGetParamString ConfigGetParamString = nullptr;
+ptr_CoreDoCommand CoreDoCommand = nullptr;
 
 /* Global functions */
-static void DebugMessage(int level, const char *message, ...)
-{
+static void DebugMessage(int level, const char *message, ...) {
     char msgbuf[1024];
     va_list args;
-    
-    if (l_DebugCallback == NULL)
+
+    if (l_DebugCallback == nullptr)
         return;
-    
+
     va_start(args, message);
     vsprintf(msgbuf, message, args);
-    
+
     (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
-    
+
     va_end(args);
 }
 
 void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context);
 
-static void CloseAudio(void)
-{
-    if(!shutdown)
-    {
-       shutdown = true;
-       pthread_join(audioConsumerThread,NULL);
+static void CloseAudio() {
+    if (!shutdownThread) {
+        shutdownThread = true;
 
-       thread_queue_cleanup(&audioConsumerQueue, 1);
+        if (audioConsumerThread.joinable()) {
+            audioConsumerThread.join();
+        }
     }
 
     int i = 0;
-    
+
     secondaryBufferIndex = 0;
-    
+
     /* Delete Primary buffer */
-    if (primaryBuffer != NULL)
-    {
+    if (primaryBuffer != nullptr) {
         primaryBufferBytes = 0;
-        free(primaryBuffer);
-        primaryBuffer = NULL;
+        delete[] primaryBuffer;
+        primaryBuffer = nullptr;
     }
 
     /* Delete Secondary buffers */
-    if (secondaryBuffers != NULL)
-    {
-        for(i=0;i<SecondaryBufferNbr;i++)
-        {
-            if (secondaryBuffers[i] != NULL)
-            {
-                free(secondaryBuffers[i]);
-                secondaryBuffers[i] = NULL;
+    if (secondaryBuffers != nullptr) {
+        for (i = 0; i < SecondaryBufferNbr; i++) {
+            if (secondaryBuffers[i] != nullptr) {
+                delete[] secondaryBuffers[i];
+                secondaryBuffers[i] = nullptr;
             }
         }
-        free(secondaryBuffers);
-        secondaryBuffers = NULL;
+        delete[] secondaryBuffers;
+        secondaryBuffers = nullptr;
     }
 
     /* Destroy buffer queue audio player object, and invalidate all associated interfaces */
-    if (playerObject != NULL && playerPlay != NULL)
-    {
+    if (playerObject != nullptr && playerPlay != nullptr) {
         SLuint32 state = SL_PLAYSTATE_PLAYING;
         (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
-    
-        while(state != SL_PLAYSTATE_STOPPED)
+
+        while (state != SL_PLAYSTATE_STOPPED)
             (*playerPlay)->GetPlayState(playerPlay, &state);
-    
+
         (*playerObject)->Destroy(playerObject);
-        playerObject = NULL;
-        playerPlay = NULL;
-        bufferQueue = NULL;
+        playerObject = nullptr;
+        playerPlay = nullptr;
+        bufferQueue = nullptr;
     }
-    
+
     /* Destroy output mix object, and invalidate all associated interfaces */
-    if (outputMixObject != NULL)
-    {
+    if (outputMixObject != nullptr) {
         (*outputMixObject)->Destroy(outputMixObject);
-        outputMixObject = NULL;
+        outputMixObject = nullptr;
     }
-    
+
     /* Destroy engine object, and invalidate all associated interfaces */
-    if (engineObject != NULL)
-    {
+    if (engineObject != nullptr) {
         (*engineObject)->Destroy(engineObject);
-        engineObject = NULL;
-        engineEngine = NULL;
+        engineObject = nullptr;
+        engineEngine = nullptr;
     }
 }
 
-static int CreatePrimaryBuffer(void)
-{
-    unsigned int primaryBytes = (unsigned int) (PrimaryBufferSize * N64_SAMPLE_BYTES);
+static void CreatePrimaryBuffer() {
+    auto primaryBytes = (unsigned int) (PrimaryBufferSize * N64_SAMPLE_BYTES);
 
-    DebugMessage(M64MSG_VERBOSE, "Allocating memory for primary audio buffer: %i bytes.", primaryBytes);
+    DebugMessage(M64MSG_VERBOSE, "Allocating memory for primary audio buffer: %i bytes.",
+                 primaryBytes);
 
-    primaryBuffer = (unsigned char*) malloc(primaryBytes);
+    primaryBuffer = new unsigned char[primaryBytes];;
 
-    if (primaryBuffer == NULL)
-        return 0;
-
-    memset(primaryBuffer, 0, primaryBytes);
+    std::memset(primaryBuffer, 0, primaryBytes);
     primaryBufferBytes = primaryBytes;
-
-    return 1;
 }
 
-static int CreateSecondaryBuffers(void)
-{
-    int i = 0;
-    int status = 1;
+static void CreateSecondaryBuffers() {
     int secondaryBytes = SecondaryBufferSize * SLES_SAMPLE_BYTES;
 
-    DebugMessage(M64MSG_VERBOSE, "Allocating memory for %d secondary audio buffers: %i bytes.", SecondaryBufferNbr, secondaryBytes);
+    DebugMessage(M64MSG_VERBOSE, "Allocating memory for %d secondary audio buffers: %i bytes.",
+                 SecondaryBufferNbr, secondaryBytes);
 
     /* Allocate number of secondary buffers */
-    secondaryBuffers = (unsigned char**) malloc(sizeof(char*) * SecondaryBufferNbr);
-
-    if (secondaryBuffers == NULL)
-        return 0;
+    secondaryBuffers = new unsigned char *[SecondaryBufferNbr];
 
     /* Allocate size of each secondary buffers */
-    for(i=0;i<SecondaryBufferNbr;i++)
-    {
-        secondaryBuffers[i] = (unsigned char*) malloc((size_t)secondaryBytes);
-
-        if (secondaryBuffers[i] == NULL)
-        {
-            status = 0;
-            break;
-        }
-
-        memset(secondaryBuffers[i], 0, (size_t)secondaryBytes);
+    for (int index = 0; index < SecondaryBufferNbr; index++) {
+        secondaryBuffers[index] = new unsigned char[secondaryBytes];
+        std::memset(secondaryBuffers[index], 0, (size_t) secondaryBytes);
     }
-
-    return status;
 }
 
-void OnInitFailure(void)
-{
-   DebugMessage(M64MSG_ERROR, "Couldn't open OpenSLES audio");
-   CloseAudio();
-   critical_failure = 1;
+void OnInitFailure() {
+    DebugMessage(M64MSG_ERROR, "Couldn't open OpenSLES audio");
+    CloseAudio();
+    critical_failure = 1;
 }
 
-static void InitializeAudio(int freq)
-{
-   /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
-   GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
-   SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
-   PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
-   SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-   TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
-   SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
-   TimeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
+static void InitializeAudio(int freq) {
+    /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
+    GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
+    SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
+    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
+    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
+    TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
+    SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+    TimeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 
     SLuint32 sample_rate;
 
@@ -334,47 +301,47 @@ static void InitializeAudio(int freq)
     if (critical_failure)
         return;
 
-	/* This is important for the sync */
-	GameFreq = freq;
+    /* This is important for the sync */
+    GameFreq = freq;
 
-	if (SamplingRateSelection == 0) {
-		if ((freq / 1000) <= 11) {
-			OutputFreq = 11025;
-			sample_rate = SL_SAMPLINGRATE_11_025;
-		} else if ((freq / 1000) <= 22) {
-			OutputFreq = 22050;
-			sample_rate = SL_SAMPLINGRATE_22_05;
-		} else if ((freq / 1000) <= 32) {
-			OutputFreq = 32000;
-			sample_rate = SL_SAMPLINGRATE_32;
-		} else {
-			OutputFreq = 44100;
-			sample_rate = SL_SAMPLINGRATE_44_1;
-		}
-	} else {
-		OutputFreq = SamplingRateSelection;
+    if (SamplingRateSelection == 0) {
+        if ((freq / 1000) <= 11) {
+            OutputFreq = 11025;
+            sample_rate = SL_SAMPLINGRATE_11_025;
+        } else if ((freq / 1000) <= 22) {
+            OutputFreq = 22050;
+            sample_rate = SL_SAMPLINGRATE_22_05;
+        } else if ((freq / 1000) <= 32) {
+            OutputFreq = 32000;
+            sample_rate = SL_SAMPLINGRATE_32;
+        } else {
+            OutputFreq = 44100;
+            sample_rate = SL_SAMPLINGRATE_44_1;
+        }
+    } else {
+        OutputFreq = SamplingRateSelection;
 
-		switch (SamplingRateSelection) {
-			case 16000:
-				sample_rate = SL_SAMPLINGRATE_16;
-				break;
-			case 24000:
-				sample_rate = SL_SAMPLINGRATE_24;
-				break;
-			case 32000:
-				sample_rate = SL_SAMPLINGRATE_32;
-				break;
-			case 44100:
-				sample_rate = SL_SAMPLINGRATE_44_1;
-				break;
-			case 48000:
-				sample_rate = SL_SAMPLINGRATE_48;
-				break;
-			default:
-				OutputFreq = 32000;
-				sample_rate = SL_SAMPLINGRATE_32;
-		}
-	}
+        switch (SamplingRateSelection) {
+            case 16000:
+                sample_rate = SL_SAMPLINGRATE_16;
+                break;
+            case 24000:
+                sample_rate = SL_SAMPLINGRATE_24;
+                break;
+            case 32000:
+                sample_rate = SL_SAMPLINGRATE_32;
+                break;
+            case 44100:
+                sample_rate = SL_SAMPLINGRATE_44_1;
+                break;
+            case 48000:
+                sample_rate = SL_SAMPLINGRATE_48;
+                break;
+            default:
+                OutputFreq = 32000;
+                sample_rate = SL_SAMPLINGRATE_32;
+        }
+    }
 
     DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz.", OutputFreq);
 
@@ -382,61 +349,49 @@ static void InitializeAudio(int freq)
     CloseAudio();
 
     /* Create primary buffer */
-    if(!CreatePrimaryBuffer())
-    {
-       OnInitFailure();
-       return;
-    }
+    CreatePrimaryBuffer();
 
     /* Create secondary buffers */
-    if(!CreateSecondaryBuffers())
-    {
-       OnInitFailure();
-       return;
-    }
+    CreateSecondaryBuffers();
 
     state.value = state.limit = SecondaryBufferNbr;
     state.totalBuffersProcessed = 0;
     state.errors = 0;
 
     /* Engine object */
-    SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    SLresult result = slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     /* Output mix object */
-    result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, NULL, NULL);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, nullptr, nullptr);
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
-    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, SecondaryBufferNbr*2};
+    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
+                                                       SecondaryBufferNbr * 2};
 
 #ifdef FP_ENABLED
 
@@ -444,83 +399,74 @@ static void InitializeAudio(int freq)
                    32, 32, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
                    SL_BYTEORDER_LITTLEENDIAN, SL_ANDROID_PCM_REPRESENTATION_FLOAT};
 #else
-    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM,2, sample_rate,
-                   SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-                   (SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT), SL_BYTEORDER_LITTLEENDIAN};
+    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, sample_rate,
+                                   SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
+                                   (SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT),
+                                   SL_BYTEORDER_LITTLEENDIAN};
 #endif
 
     SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
     /* Configure audio sink */
     SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
-    SLDataSink audioSnk = {&loc_outmix, NULL};
+    SLDataSink audioSnk = {&loc_outmix, nullptr};
 
     /* Create audio player */
     const SLInterfaceID ids1[] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
     const SLboolean req1[] = {SL_BOOLEAN_TRUE};
-    result = (*engineEngine)->CreateAudioPlayer(engineEngine, &(playerObject), &audioSrc, &audioSnk, 1, ids1, req1);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    result = (*engineEngine)->CreateAudioPlayer(engineEngine, &(playerObject), &audioSrc, &audioSnk,
+                                                1, ids1, req1);
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     /* Realize the player */
     result = (*playerObject)->Realize(playerObject, SL_BOOLEAN_FALSE);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     /* Get the play interface */
     result = (*playerObject)->GetInterface(playerObject, SL_IID_PLAY, &(playerPlay));
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     /* Get the buffer queue interface */
-    result = (*playerObject)->GetInterface(playerObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &(bufferQueue));
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    result = (*playerObject)->GetInterface(playerObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
+                                           &(bufferQueue));
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     /* register callback on the buffer queue */
     result = (*bufferQueue)->RegisterCallback(bufferQueue, queueCallback, &state);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
     /* set the player's state to playing */
     result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
-    if(result != SL_RESULT_SUCCESS)
-    {
-       OnInitFailure();
-       return;
+    if (result != SL_RESULT_SUCCESS) {
+        OnInitFailure();
+        return;
     }
 
-    thread_queue_init(&audioConsumerQueue);
-    shutdown = false;
-    if(TimeStretchEnabled)
-    {
-        pthread_create( &audioConsumerThread, NULL, audioConsumerStretch, NULL);
-    }
-    else
-    {
-        pthread_create( &audioConsumerThread, NULL, audioConsumerNoStretch, NULL);
-    }
+    shutdownThread = false;
 
-    return;
+    if (TimeStretchEnabled) {
+        audioConsumerThread = std::thread(audioConsumerStretch);
+    } else {
+        audioConsumerThread = std::thread(audioConsumerNoStretch);
+    }
 }
 
-static void ReadConfig(void)
-{
+static void ReadConfig() {
     /* read the configuration values into our static variables */
     GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
     SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
@@ -533,13 +479,12 @@ static void ReadConfig(void)
 
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                   void (*DebugCallback)(void *, int, const char *))
-{
+                                     void (*DebugCallback)(void *, int, const char *)) {
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
-    
+
     int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion, bSaveConfig;
     float fConfigParamsVersion = 0.0f;
-    
+
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
 
@@ -548,40 +493,56 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     l_DebugCallContext = Context;
 
     /* attach and call the CoreGetAPIVersions function, check Config API version for compatibility */
-    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
-    if (CoreAPIVersionFunc == NULL)
-    {
+    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle,
+                                                                      "CoreGetAPIVersions");
+    if (CoreAPIVersionFunc == nullptr) {
         DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
         return M64ERR_INCOMPATIBLE;
     }
-    
-    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
-    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
-    {
-        DebugMessage(M64MSG_ERROR, "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
-                VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
+
+    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, nullptr);
+    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000)) {
+        DebugMessage(M64MSG_ERROR,
+                     "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
+                     VERSION_PRINTF_SPLIT(ConfigAPIVersion),
+                     VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
         return M64ERR_INCOMPATIBLE;
     }
 
     /* Get the core config function pointers from the library handle */
-    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
-    ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle, "ConfigDeleteSection");
-    ConfigSaveSection = (ptr_ConfigSaveSection) osal_dynlib_getproc(CoreLibHandle, "ConfigSaveSection");
-    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
-    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
-    ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
-    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
-    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
-    ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultString");
-    ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamInt");
-    ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
-    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
-    ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
-    CoreDoCommand =  (ptr_CoreDoCommand) osal_dynlib_getproc(CoreLibHandle, "CoreDoCommand");
+    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle,
+                                                                    "ConfigOpenSection");
+    ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle,
+                                                                        "ConfigDeleteSection");
+    ConfigSaveSection = (ptr_ConfigSaveSection) osal_dynlib_getproc(CoreLibHandle,
+                                                                    "ConfigSaveSection");
+    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle,
+                                                                      "ConfigSetParameter");
+    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle,
+                                                                      "ConfigGetParameter");
+    ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle,
+                                                                        "ConfigSetDefaultInt");
+    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle,
+                                                                            "ConfigSetDefaultFloat");
+    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle,
+                                                                          "ConfigSetDefaultBool");
+    ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle,
+                                                                              "ConfigSetDefaultString");
+    ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle,
+                                                                    "ConfigGetParamInt");
+    ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle,
+                                                                        "ConfigGetParamFloat");
+    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle,
+                                                                      "ConfigGetParamBool");
+    ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle,
+                                                                          "ConfigGetParamString");
+    CoreDoCommand = (ptr_CoreDoCommand) osal_dynlib_getproc(CoreLibHandle, "CoreDoCommand");
 
     if (!ConfigOpenSection || !ConfigDeleteSection || !ConfigSetParameter || !ConfigGetParameter ||
-        !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
-        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
+        !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool ||
+        !ConfigSetDefaultString ||
+        !ConfigGetParamInt || !ConfigGetParamFloat || !ConfigGetParamBool ||
+        !ConfigGetParamString ||
         !CoreDoCommand)
         return M64ERR_INCOMPATIBLE;
 
@@ -590,46 +551,53 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         return M64ERR_INCOMPATIBLE;
 
     /* get a configuration section handle */
-    if (ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio) != M64ERR_SUCCESS)
-    {
+    if (ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio) != M64ERR_SUCCESS) {
         DebugMessage(M64MSG_ERROR, "Couldn't open config section 'Audio-OpenSLES'");
         return M64ERR_INPUT_NOT_FOUND;
     }
 
     /* check the section version number */
     bSaveConfig = 0;
-    if (ConfigGetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
-    {
-        DebugMessage(M64MSG_WARNING, "No version number in 'Audio-OpenSLES' config section. Setting defaults.");
+    if (ConfigGetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fConfigParamsVersion,
+                           sizeof(float)) != M64ERR_SUCCESS) {
+        DebugMessage(M64MSG_WARNING,
+                     "No version number in 'Audio-OpenSLES' config section. Setting defaults.");
         ConfigDeleteSection("Audio-OpenSLES");
         ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio);
         bSaveConfig = 1;
-    }
-    else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
-    {
-        DebugMessage(M64MSG_WARNING, "Incompatible version %.2f in 'Audio-OpenSLES' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
+    } else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION)) {
+        DebugMessage(M64MSG_WARNING,
+                     "Incompatible version %.2f in 'Audio-OpenSLES' config section: current is %.2f. Setting defaults.",
+                     fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
         ConfigDeleteSection("Audio-OpenSLES");
         ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio);
         bSaveConfig = 1;
-    }
-    else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f)
-    {
+    } else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f) {
         /* handle upgrades */
         float fVersion = CONFIG_PARAM_VERSION;
         ConfigSetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fVersion);
-        DebugMessage(M64MSG_INFO, "Updating parameter set version in 'Audio-OpenSLES' config section to %.2f", fVersion);
+        DebugMessage(M64MSG_INFO,
+                     "Updating parameter set version in 'Audio-OpenSLES' config section to %.2f",
+                     fVersion);
         bSaveConfig = 1;
     }
 
     /* set the default values for this plugin */
-    ConfigSetDefaultFloat(l_ConfigAudio, "Version",             CONFIG_PARAM_VERSION,  "Mupen64Plus SDL Audio Plugin config parameter version number");
-    ConfigSetDefaultInt(l_ConfigAudio, "DEFAULT_FREQUENCY",     DEFAULT_FREQUENCY,     "Frequency which is used if rom doesn't want to change it");
-    ConfigSetDefaultBool(l_ConfigAudio, "SWAP_CHANNELS",        0,                     "Swaps left and right channels");
-    ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
-    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", DEFAULT_SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
-    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR" , SECONDARY_BUFFER_NBR,  "Number of secondary buffers.");
-    ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE" ,        0,                     "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
-    ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,                     "Enable audio time stretching to prevent crackling");
+    ConfigSetDefaultFloat(l_ConfigAudio, "Version", CONFIG_PARAM_VERSION,
+                          "Mupen64Plus SDL Audio Plugin config parameter version number");
+    ConfigSetDefaultInt(l_ConfigAudio, "DEFAULT_FREQUENCY", DEFAULT_FREQUENCY,
+                        "Frequency which is used if rom doesn't want to change it");
+    ConfigSetDefaultBool(l_ConfigAudio, "SWAP_CHANNELS", 0, "Swaps left and right channels");
+    ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE", PRIMARY_BUFFER_SIZE,
+                        "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
+    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", DEFAULT_SECONDARY_BUFFER_SIZE,
+                        "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
+    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR", SECONDARY_BUFFER_NBR,
+                        "Number of secondary buffers.");
+    ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE", 0,
+                        "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
+    ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,
+                         "Enable audio time stretching to prevent crackling");
 
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-OpenSLES");
@@ -639,54 +607,37 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     return M64ERR_SUCCESS;
 }
 
-EXPORT m64p_error CALL PluginShutdown(void)
-{
-    if (!l_PluginInit)
-        return M64ERR_NOT_INIT;
-
-    CloseAudio();
-
-    /* reset some local variables */
-    l_DebugCallback = NULL;
-    l_DebugCallContext = NULL;
-    l_PluginInit = 0;
-
-    return M64ERR_SUCCESS;
-}
-
-EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
-{
+EXPORT m64p_error CALL
+PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion,
+                 const char **PluginNamePtr, int *Capabilities) {
     /* set version info */
-    if (PluginType != NULL)
+    if (PluginType != nullptr)
         *PluginType = M64PLUGIN_AUDIO;
 
-    if (PluginVersion != NULL)
+    if (PluginVersion != nullptr)
         *PluginVersion = OPENSLES_AUDIO_PLUGIN_VERSION;
 
-    if (APIVersion != NULL)
+    if (APIVersion != nullptr)
         *APIVersion = AUDIO_PLUGIN_API_VERSION;
-    
-    if (PluginNamePtr != NULL)
+
+    if (PluginNamePtr != nullptr)
         *PluginNamePtr = "Mupen64Plus OpenSLES Audio Plugin";
 
-    if (Capabilities != NULL)
-    {
+    if (Capabilities != nullptr) {
         *Capabilities = 0;
     }
-                    
+
     return M64ERR_SUCCESS;
 }
 
 /* ----------- Audio Functions ------------- */
-EXPORT void CALL AiDacrateChanged( int SystemType )
-{
+EXPORT void CALL AiDacrateChanged(int SystemType) {
     int f = GameFreq;
 
     if (!l_PluginInit)
         return;
 
-    switch (SystemType)
-    {
+    switch (SystemType) {
         case SYSTEM_NTSC:
             f = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
@@ -696,26 +647,27 @@ EXPORT void CALL AiDacrateChanged( int SystemType )
         case SYSTEM_MPAL:
             f = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
+        default:
+            f = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
+            break;
     }
 
     InitializeAudio(f);
 }
 
-bool isSpeedLimiterEnabled(void)
-{
-   int e = 1;
-   CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_LIMITER, &e);
-   return  e;
+bool isSpeedLimiterEnabled() {
+    int e = 1;
+    CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_LIMITER, &e);
+    return static_cast<bool>(e);
 }
 
-EXPORT void CALL AiLenChanged(void)
-{
+EXPORT void CALL AiLenChanged(void) {
     static const double minSleepNeededForReset = -5.0;
     static const double minSleepNeeded = -0.1;
     static const double maxSleepNeeded = 0.5;
     static bool hasBeenReset = false;
     static unsigned long totalElapsedSamples = 0;
-    static double gameStartTime = 0;
+    static std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<double>> gameStartTime;
     static int lastSpeedFactor = 100;
     static bool lastSpeedLimiterEnabledState = false;
     static bool busyWait = false;
@@ -730,17 +682,14 @@ EXPORT void CALL AiLenChanged(void)
         return;
 
     bool limiterEnabled = isSpeedLimiterEnabled();
-    
-    timespec time;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-    double timeDouble = static_cast<double>(time.tv_sec) +
-          static_cast<double>(time.tv_nsec)/1.0e9;
+
+    auto currentTime = std::chrono::steady_clock::now();
 
     //if this is the first time or we are resuming from pause
-    if(gameStartTime == 0 || !hasBeenReset || lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled)
-    {
+    if (gameStartTime.time_since_epoch().count() == 0 || !hasBeenReset ||
+        lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled) {
         lastSpeedLimiterEnabledState = limiterEnabled;
-        gameStartTime = timeDouble;
+        gameStartTime = currentTime;
         totalElapsedSamples = 0;
         hasBeenReset = true;
         totalElapsedSamples = 0;
@@ -750,113 +699,90 @@ EXPORT void CALL AiLenChanged(void)
     lastSpeedFactor = speed_factor;
 
     unsigned int LenReg = *AudioInfo.AI_LEN_REG;
-    unsigned char * p = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
-    
-    queueData* theQueueData = (queueData*)malloc(sizeof(queueData));
-    theQueueData->data = (unsigned char*)malloc(LenReg);
+    unsigned char *inputAudio = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
+
+    //Add data to the queue
+    auto theQueueData = new QueueData;
+    theQueueData->data = new unsigned char[LenReg];
     theQueueData->length = LenReg;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &theQueueData->timestamp);
-
-    memcpy(theQueueData->data, p, LenReg);
-
-    thread_queue_add(&audioConsumerQueue, theQueueData, 0);
+    std::chrono::duration<double> timeSinceStart = currentTime - gameStartTime;
+    theQueueData->timeSinceStart = timeSinceStart.count();
+    std::copy(inputAudio, inputAudio + LenReg, theQueueData->data);
+    audioConsumerQueue.push(theQueueData);
 
     //Calculate total ellapsed game time
-    totalElapsedSamples += LenReg/N64_SAMPLE_BYTES;
-    double speedFactor = static_cast<double>(speed_factor)/100.0;
-    double totalElapsedGameTime = ((double)totalElapsedSamples)/(double)GameFreq/speedFactor;
+    totalElapsedSamples += LenReg / N64_SAMPLE_BYTES;
+    double speedFactor = static_cast<double>(speed_factor) / 100.0;
+    double totalElapsedGameTime = ((double) totalElapsedSamples) / (double) GameFreq / speedFactor;
 
     //Slow the game down if sync game to audio is enabled
-    if(!limiterEnabled)
-    {
-        double totalRealTimeElapsed = timeDouble - gameStartTime;
-        double sleepNeeded = totalElapsedGameTime - totalRealTimeElapsed;
+    if (!limiterEnabled) {
+        double sleepNeeded = totalElapsedGameTime - timeSinceStart.count();
 
-        if(sleepNeeded < minSleepNeededForReset || sleepNeeded > (maxSleepNeeded/speedFactor))
-        {
+        if (sleepNeeded < minSleepNeededForReset || sleepNeeded > (maxSleepNeeded / speedFactor)) {
             hasBeenReset = false;
         }
 
         //We don't want to let the game get too far ahead, otherwise we may have a sudden burst of speed
-        if(sleepNeeded < minSleepNeeded)
-        {
-            gameStartTime -= minSleepNeeded;
+        if (sleepNeeded < minSleepNeeded) {
+            gameStartTime -= std::chrono::duration<double>(minSleepNeeded);
         }
 
         //Enable busywait mode if we have X callbacks of negative sleep. Don't disable busywait
         //until we have X positive callbacks
-        if(sleepNeeded <= 0.0) {
+        if (sleepNeeded <= 0.0) {
             ++busyWaitEnableCount;
         } else {
             busyWaitEnableCount = 0;
         }
 
-        if(busyWaitEnableCount == busyWaitCheck) {
+        if (busyWaitEnableCount == busyWaitCheck) {
             busyWait = true;
             busyWaitEnableCount = 0;
             busyWaitDisableCount = 0;
         }
 
-        if(busyWait) {
-            if(sleepNeeded > 0) {
+        if (busyWait) {
+            if (sleepNeeded > 0) {
                 ++busyWaitDisableCount;
             }
 
-            if(busyWaitDisableCount == busyWaitCheck) {
+            if (busyWaitDisableCount == busyWaitCheck) {
                 busyWait = false;
             }
         }
 
-       //Useful logging
-       //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
-       //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
+        //Useful logging
+        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
+        //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
         if (sleepNeeded > 0.0 && sleepNeeded < (maxSleepNeeded / speedFactor)) {
+            auto endTime = currentTime + std::chrono::duration<double>(sleepNeeded);
+
             if (busyWait) {
-                double endTime = timeDouble + sleepNeeded;
-
-                timespec time;
-                clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-                double currTime = static_cast<double>(time.tv_sec) +
-                                  static_cast<double>(time.tv_nsec) / 1.0e9;
-                while (currTime < endTime) {
-                    clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-                    currTime = static_cast<double>(time.tv_sec) +
-                               static_cast<double>(time.tv_nsec) / 1.0e9;
-                }
-            } else {
-                //Assumes sleep time of less than 2 seconds
-                time_t sleepSec = static_cast<time_t>(sleepNeeded);
-                long sleepNanosec = (sleepNeeded - sleepSec) * 1e9;
-
-                if (sleepSec > 0 || sleepNanosec != 0) {
-                    timespec sleepTime;
-                    sleepTime.tv_sec = sleepSec;
-                    sleepTime.tv_nsec = sleepNanosec;
-                    nanosleep(&sleepTime, NULL);
-                }
+                while (std::chrono::steady_clock::now() < endTime);
+            }
+            else {
+                std::this_thread::sleep_until(endTime);
             }
         }
     }
 }
 
-double TimeDiff(struct timespec* currTime, struct timespec* prevTime)
-{
-   return ((double)currTime->tv_sec+((double)currTime->tv_nsec)/1.0e9) -
-         ((double)prevTime->tv_sec+((double)prevTime->tv_nsec)/1.0e9);
+double TimeDiff(struct timespec *currTime, struct timespec *prevTime) {
+    return ((double) currTime->tv_sec + ((double) currTime->tv_nsec) / 1.0e9) -
+           ((double) prevTime->tv_sec + ((double) prevTime->tv_nsec) / 1.0e9);
 }
 
-float GetAverageTime( double* feedTimes, int numTimes)
-{
-   float sum = 0;
-   for(int index = 0; index < numTimes; ++index)
-   {
-      sum += feedTimes[index];
-   }
+float GetAverageTime(const double *feedTimes, int numTimes) {
+    float sum = 0;
+    for (int index = 0; index < numTimes; ++index) {
+        sum += feedTimes[index];
+    }
 
-   return sum/(float)numTimes;
+    return sum / (float) numTimes;
 }
 
-void *audioConsumerStretch(void *param) {
+void audioConsumerStretch() {
     /*
 	static int sequenceLenMS = 63;
 	static int seekWindowMS = 16;
@@ -875,13 +801,13 @@ void *audioConsumerStretch(void *param) {
     soundTouch.setTempo(speedFactor);
 
     double bufferMultiplier = ((double) OutputFreq / DEFAULT_FREQUENCY) *
-            ((double)DEFAULT_SECONDARY_BUFFER_SIZE/SecondaryBufferSize);
+                              ((double) DEFAULT_SECONDARY_BUFFER_SIZE / SecondaryBufferSize);
 
-	int bufferLimit = state.limit - 20;
+    int bufferLimit = state.limit - 20;
     int maxQueueSize = (int) ((TargetSecondaryBuffers + 30.0) * bufferMultiplier);
-	if (maxQueueSize > bufferLimit) {
-		maxQueueSize = bufferLimit;
-	}
+    if (maxQueueSize > bufferLimit) {
+        maxQueueSize = bufferLimit;
+    }
     int minQueueSize = (int) (TargetSecondaryBuffers * bufferMultiplier);
     bool drainQueue = false;
 
@@ -897,47 +823,37 @@ void *audioConsumerStretch(void *param) {
     const double maxSlowValue = 3.0;
     const float maxSpeedUpRate = 0.5;
     const float slowRate = 0.05;
-	const float defaultSampleLength = 0.01666;
-    queueData *currQueueData = NULL;
-    struct timespec prevTime;
+    const float defaultSampleLength = 0.01666;
 
-    clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
+    double prevTime = 0;
 
-    //How long to wait for some data
-    struct timespec waitTime;
-    waitTime.tv_sec = 1;
-    waitTime.tv_nsec = 0;
+    static const int maxWindowSize = 500;
 
-	int maxWindowSize = 500;
-
-	int feedTimeWindowSize = 50;
+    int feedTimeWindowSize = 50;
 
     int feedTimeIndex = 0;
     bool feedTimesSet = false;
-    double feedTimes[maxWindowSize];
-    double gameTimes[maxWindowSize];
-    float averageGameTime = defaultSampleLength;
-    float averageFeedTime = defaultSampleLength;
+    double feedTimes[maxWindowSize] = {};
+    double gameTimes[maxWindowSize] = {};
+    double averageGameTime = defaultSampleLength;
+    double averageFeedTime = defaultSampleLength;
 
-    while (!shutdown) {
+    while (!shutdownThread) {
         int slesQueueLength = state.limit - state.value;
 
         ranDry = slesQueueLength < minQueueSize;
 
-        struct threadmsg msg;
+        QueueData* currQueueData;
 
-        int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
+        if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
+            int threadQueueLength = audioConsumerQueue.size();
 
-        if (result != ETIMEDOUT) {
-            int threadQueueLength = thread_queue_length(&audioConsumerQueue);
-
-            currQueueData = (queueData *) msg.data;
             unsigned int dataLength = currQueueData->length;
-			float temp = averageGameTime / averageFeedTime;
+            double temp = averageGameTime / averageFeedTime;
 
             if (state.totalBuffersProcessed < state.limit) {
 
-                speedFactor = static_cast<double>(speed_factor)/100.0;
+                speedFactor = static_cast<double>(speed_factor) / 100.0;
                 soundTouch.setTempo(speedFactor);
 
                 processAudio(currQueueData->data, dataLength);
@@ -948,15 +864,16 @@ void *audioConsumerStretch(void *param) {
                 if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
                     drainQueue = true;
                     currAdjustment = temp +
-                                     (float) (slesQueueLength - minQueueSize) / (float) (state.limit - minQueueSize) *
+                                     (float) (slesQueueLength - minQueueSize) /
+                                     (float) (state.limit - minQueueSize) *
                                      maxSpeedUpRate;
                 }
-                //Device can't keep up with the game
+                    //Device can't keep up with the game
                 else if (ranDry) {
                     drainQueue = false;
                     currAdjustment = temp - slowRate;
-				//Good case
-                } else if (!ranDry && slesQueueLength < maxQueueSize) {
+                    //Good case
+                } else if (slesQueueLength < maxQueueSize) {
                     currAdjustment = temp;
                 }
 
@@ -975,30 +892,26 @@ void *audioConsumerStretch(void *param) {
                 processAudio(currQueueData->data, dataLength);
             }
 
-			++state.totalBuffersProcessed;
+            ++state.totalBuffersProcessed;
 
             //Useful logging
             //if(slesQueueLength == 0)
             //{
             // DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d count=%d",
-			//            slesQueueLength, threadQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize, state.totalBuffersProcessed);
+            //            slesQueueLength, threadQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize, state.totalBuffersProcessed);
             //}
 
             //We don't want to calculate the average until we give everything a time to settle.
 
             //Figure out how much to slow down by
-            double timeDiff = TimeDiff(&currQueueData->timestamp, &prevTime);
+            double timeDiff = currQueueData->timeSinceStart - prevTime;
 
-            prevTime = currQueueData->timestamp;
+            prevTime = currQueueData->timeSinceStart;
 
-            //sometimes this ends up as less than 0, not sure how
-            if (timeDiff > 0) {
-                feedTimes[feedTimeIndex] = timeDiff;
-            }
-
+            feedTimes[feedTimeIndex] = timeDiff;
             averageFeedTime = GetAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-            gameTimes[feedTimeIndex] = (float) dataLength / (float) N64_SAMPLE_BYTES / (float) GameFreq;
+            gameTimes[feedTimeIndex] = (float)dataLength / (float)N64_SAMPLE_BYTES / (float)GameFreq;
             averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
             ++feedTimeIndex;
@@ -1007,157 +920,129 @@ void *audioConsumerStretch(void *param) {
                 feedTimesSet = true;
             }
 
-			//Normalize window size
-			feedTimeWindowSize = static_cast<int>(defaultSampleLength/averageGameTime*50);
-			if(feedTimeWindowSize > maxWindowSize) {
-				feedTimeWindowSize = maxWindowSize;
-			}
+            //Normalize window size
+            feedTimeWindowSize = static_cast<int>(defaultSampleLength / averageGameTime * 50);
+            if (feedTimeWindowSize > maxWindowSize) {
+                feedTimeWindowSize = maxWindowSize;
+            }
 
-            free(currQueueData->data);
-            free(currQueueData);
+            delete [] currQueueData->data;
+            delete currQueueData;
         }
     }
-
-    return 0;
 }
 
 
-void* audioConsumerNoStretch(void* param)
-{
+void audioConsumerNoStretch() {
     soundTouch.setSampleRate(GameFreq);
     soundTouch.setChannels(2);
-    soundTouch.setSetting( SETTING_USE_QUICKSEEK, 1 );
-    soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
-    double speedFactor = static_cast<double>(speed_factor)/100.0;
+    soundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
+    soundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
+    double speedFactor = static_cast<double>(speed_factor) / 100.0;
     soundTouch.setTempo(speedFactor);
 
-    soundTouch.setRate((double)GameFreq/(double)OutputFreq);
-    queueData* currQueueData = NULL;
+    soundTouch.setRate((double) GameFreq / (double) OutputFreq);
+    QueueData* currQueueData = nullptr;
 
     int lastSpeedFactor = speed_factor;
 
-    //How long to wait for some data
-    struct timespec waitTime;
-    waitTime.tv_sec = 1;
-    waitTime.tv_nsec = 0;
-
-    while(!shutdown)
+    while (!shutdownThread)
     {
-        struct threadmsg msg;
+        if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
+            unsigned int dataLength = currQueueData->length;
 
-        int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
-
-        if( result != ETIMEDOUT )
-        {
-            currQueueData = (queueData*)msg.data;
-            int dataLength = currQueueData->length;
-
-            if(lastSpeedFactor != speed_factor)
+            if (lastSpeedFactor != speed_factor)
             {
                 lastSpeedFactor = speed_factor;
-                double speedFactor = static_cast<double>(speed_factor)/100.0;
-                soundTouch.setTempo(speedFactor);
+                soundTouch.setTempo(static_cast<double>(speed_factor) / 100.0);
             }
 
             processAudio(currQueueData->data, dataLength);
 
-            free(currQueueData->data);
-            free(currQueueData);
+            delete [] currQueueData->data;
+            delete currQueueData;
         }
     }
-
-    return 0;
 }
 
 /* This callback handler is called every time a buffer finishes playing */
-void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
-{
-    slesState *state = (slesState *) context;
+void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context) {
+    auto state = (slesState *) context;
 
     SLAndroidSimpleBufferQueueState st;
     SLresult result = (*bufferQueue)->GetState(bufferQueue, &st);
 
     if (result == SL_RESULT_SUCCESS) {
-		state->value = state->limit - st.count;
+        state->value = state->limit - st.count;
     }
 }
 
-void processAudio(const unsigned char* buffer, unsigned int length)
-{
-   if (length < primaryBufferBytes)
-   {
-       unsigned int i;
+void processAudio(const unsigned char *buffer, unsigned int length) {
+    if (length < primaryBufferBytes) {
+        unsigned int i;
 
-       for ( i = 0 ; i < length ; i += 4 )
-       {
-           if(SwapChannels == 0)
-           {
-               /* Left channel */
-              primaryBuffer[ i ] = buffer[ i + 2 ];
-              primaryBuffer[ i + 1 ] = buffer[ i + 3 ];
+        for (i = 0; i < length; i += 4) {
+            if (SwapChannels == 0) {
+                /* Left channel */
+                primaryBuffer[i] = buffer[i + 2];
+                primaryBuffer[i + 1] = buffer[i + 3];
 
-               /* Right channel */
-              primaryBuffer[ i + 2 ] = buffer[ i ];
-              primaryBuffer[ i + 3 ] = buffer[ i + 1 ];
-           }
-           else
-           {
-               /* Left channel */
-              primaryBuffer[ i ] = buffer[ i ];
-              primaryBuffer[ i + 1 ] = buffer[ i + 1 ];
+                /* Right channel */
+                primaryBuffer[i + 2] = buffer[i];
+                primaryBuffer[i + 3] = buffer[i + 1];
+            } else {
+                /* Left channel */
+                primaryBuffer[i] = buffer[i];
+                primaryBuffer[i + 1] = buffer[i + 1];
 
-               /* Right channel */
-              primaryBuffer[ i + 2 ] = buffer[ i + 2 ];
-              primaryBuffer[ i + 3 ] = buffer[ i + 3 ];
-           }
-       }
-   }
-   else
-       DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
+                /* Right channel */
+                primaryBuffer[i + 2] = buffer[i + 2];
+                primaryBuffer[i + 3] = buffer[i + 3];
+            }
+        }
+    } else
+        DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
 
 #ifdef FP_ENABLED
-   int numSamples = length/sizeof(short);
-   short* primaryBufferShort = (short*)primaryBuffer;
-   float primaryBufferFloat[numSamples];
+    int numSamples = length/sizeof(int16_t);
+    int16_t* primaryBufferShort = reinterpret_cast<int16_t*>(primaryBuffer);
+    float primaryBufferFloat[numSamples];
 
-   for(int index = 0; index < numSamples; ++index)
-   {
-      primaryBufferFloat[index] = static_cast<float>(primaryBufferShort[index])/32767.0;
-   }
+    for(int index = 0; index < numSamples; ++index)
+    {
+       primaryBufferFloat[index] = static_cast<float>(primaryBufferShort[index])/32767.0;
+    }
 
-   soundTouch.putSamples((SAMPLETYPE*)primaryBufferFloat, length/N64_SAMPLE_BYTES);
+    soundTouch.putSamples(reinterpret_cast<SAMPLETYPE*>(primaryBufferFloat), length/N64_SAMPLE_BYTES);
 
 #else
-   soundTouch.putSamples((SAMPLETYPE*)primaryBuffer, length/N64_SAMPLE_BYTES);
+    soundTouch.putSamples(reinterpret_cast<SAMPLETYPE*>(primaryBuffer), length / N64_SAMPLE_BYTES);
 #endif
 
-   int outSamples = 0;
+    unsigned int outSamples = 0;
 
-   do
-   {
-      outSamples = soundTouch.receiveSamples((SAMPLETYPE*)secondaryBuffers[secondaryBufferIndex], SecondaryBufferSize);
+    do {
+        outSamples = soundTouch.receiveSamples(reinterpret_cast<SAMPLETYPE*>(secondaryBuffers[secondaryBufferIndex]),
+                static_cast<unsigned int>(SecondaryBufferSize));
 
-      if(outSamples != 0 && state.value > 0)
-      {
-         SLresult result = (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex],
-            outSamples*SLES_SAMPLE_BYTES);
+        if (outSamples != 0 && state.value > 0) {
+            SLresult result = (*bufferQueue)->Enqueue(bufferQueue,
+                                                      secondaryBuffers[secondaryBufferIndex],
+                                                      outSamples * SLES_SAMPLE_BYTES);
 
-          if(result != SL_RESULT_SUCCESS)
-          {
-              state.errors++;
-          }
+            if (result != SL_RESULT_SUCCESS) {
+                state.errors++;
+            }
 
-         secondaryBufferIndex++;
+            secondaryBufferIndex++;
 
-         if(secondaryBufferIndex > (SecondaryBufferNbr-1))
-            secondaryBufferIndex = 0;
-      }
-   }
-   while (outSamples != 0);
+            if (secondaryBufferIndex > (SecondaryBufferNbr - 1))
+                secondaryBufferIndex = 0;
+        }
+    } while (outSamples != 0);
 }
 
-EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
-{
+EXPORT int CALL InitiateAudio(AUDIO_INFO Audio_Info) {
     if (!l_PluginInit)
         return 0;
 
@@ -1165,8 +1050,7 @@ EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
     return 1;
 }
 
-EXPORT int CALL RomOpen(void)
-{
+EXPORT int CALL RomOpen(void) {
     if (!l_PluginInit)
         return 0;
 
@@ -1176,54 +1060,45 @@ EXPORT int CALL RomOpen(void)
     return 1;
 }
 
-EXPORT void CALL RomClosed( void )
-{
+EXPORT void CALL RomClosed(void) {
     if (!l_PluginInit)
         return;
 
     if (critical_failure == 1)
-       return;
+        return;
 
     DebugMessage(M64MSG_VERBOSE, "Cleaning up OpenSLES sound plugin...");
 
     CloseAudio();
 }
 
-EXPORT void CALL ProcessAList(void)
-{
+EXPORT void CALL ProcessAList(void) {
 }
 
-EXPORT void CALL SetSpeedFactor(int percentage)
-{	
+EXPORT void CALL SetSpeedFactor(int percentage) {
     if (!l_PluginInit)
         return;
     if (percentage >= 10 && percentage <= 300)
         speed_factor = percentage;
 }
 
-EXPORT void CALL VolumeMute(void)
-{
+EXPORT void CALL VolumeMute(void) {
 }
 
-EXPORT void CALL VolumeUp(void)
-{
+EXPORT void CALL VolumeUp(void) {
 }
 
-EXPORT void CALL VolumeDown(void)
-{
+EXPORT void CALL VolumeDown(void) {
 }
 
-EXPORT int CALL VolumeGetLevel(void)
-{
+EXPORT int CALL VolumeGetLevel(void) {
     return 100;
 }
 
-EXPORT void CALL VolumeSetLevel(int level)
-{
+EXPORT void CALL VolumeSetLevel(int level) {
 }
 
-EXPORT const char * CALL VolumeGetString(void)
-{
+EXPORT const char *CALL VolumeGetString(void) {
     return "100%";
 }
 

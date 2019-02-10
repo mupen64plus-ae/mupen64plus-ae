@@ -48,3 +48,8 @@ extern ptr_ConfigGetParamFloat    ConfigGetParamFloat;
 extern ptr_ConfigGetParamBool     ConfigGetParamBool;
 extern ptr_ConfigGetParamString   ConfigGetParamString;
 
+struct QueueData {
+    unsigned char *data;
+    unsigned int length;
+    double timeSinceStart;
+};

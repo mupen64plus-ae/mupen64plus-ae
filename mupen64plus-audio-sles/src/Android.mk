@@ -24,8 +24,7 @@ MY_LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
 MY_LOCAL_SRC_FILES :=            \
     main.cpp                    \
-    osal_dynamiclib_unix.cpp    \
-    threadqueue.cpp             \
+    osal_dynamiclib_unix.cpp
 
 MY_LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
