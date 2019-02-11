@@ -832,7 +832,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mGameSidebar.reload();
         }
 
-        if (!AppData.IS_OREO)
+        if (!AppData.IS_OREO || mAppData.isAndroidTv)
         {
             mGameSidebar.getMenu().removeItem(R.id.menuItem_createShortcut);
             mGameSidebar.reload();
