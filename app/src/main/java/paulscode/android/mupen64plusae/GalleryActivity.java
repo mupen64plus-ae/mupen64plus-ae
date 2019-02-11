@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 
@@ -689,7 +690,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             gameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             gameIntent.setAction("LOCATION_SHORTCUT");
 
-            Bitmap bitmap = item.artBitmap.getBitmap();
+            Bitmap bitmap;
+            if (item.artBitmap != null) {
+                bitmap = item.artBitmap.getBitmap();
+            } else {
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_coverart);
+            }
+
             int dimension = Math.min(bitmap.getWidth(), bitmap.getHeight());
             Bitmap croppedBitmap = ThumbnailUtils.extractThumbnail(bitmap, dimension, dimension);
 
