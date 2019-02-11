@@ -827,6 +827,10 @@ void audioConsumerStretch() {
 
     while (!shutdownThread) {
 
+        if (bufferQueue == nullptr) {
+            return;
+        }
+
         SLAndroidSimpleBufferQueueState slesState;
         (*bufferQueue)->GetState(bufferQueue, &slesState);
         int slesQueueLength = slesState.count;
