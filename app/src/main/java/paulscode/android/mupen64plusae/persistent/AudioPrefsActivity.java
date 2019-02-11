@@ -112,12 +112,14 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         // Enable audio prefs if audio is enabled
-        PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
-        PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN) && mGlobalPrefs.enableSLESAudioTimeSretching);
-        PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
-        PrefUtil.enablePreference(this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
-        PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
-        PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);
+        if (mGlobalPrefs.audioPlugin.name != null) {
+            PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
+            PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
+            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
+            PrefUtil.enablePreference(this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
+            PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
+            PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);
+        }
 
         if(!AppData.IS_LOLLIPOP)
         {
