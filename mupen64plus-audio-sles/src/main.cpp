@@ -1021,10 +1021,8 @@ void processAudio(const int16_t* buffer, unsigned int samples) {
     } while (outSamples != 0);
 }
 
-static int resample(unsigned char *input, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
+static int resample(const unsigned char *input, int bytesPerSample, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
 {
-    int *psrc = (int*)input;
-    int *pdest = (int*)output;
     int i = 0, j = 0;
 
     if (newsamplerate >= oldsamplerate)
@@ -1034,9 +1032,9 @@ static int resample(unsigned char *input, int oldsamplerate, unsigned char *outp
         int dldf = newsamplerate;
         int const1 = const2 - 2*dldf;
         int criteria = const2 - dldf;
-        for (i = 0; i < output_needed/4; i++)
+        for (i = 0; i < output_needed/bytesPerSample; i++)
         {
-            pdest[i] = psrc[j];
+            std::copy_n(input + j*bytesPerSample, bytesPerSample, output + i*bytesPerSample);
             if(criteria >= 0)
             {
                 ++j;
@@ -1044,15 +1042,16 @@ static int resample(unsigned char *input, int oldsamplerate, unsigned char *outp
             }
             else criteria += const2;
         }
-        return j * 4; //number of bytes consumed
+        return j * bytesPerSample; //number of bytes consumed
     }
+
     // newsamplerate < oldsamplerate, this only happens when speed_factor > 1
-    for (i = 0; i < output_needed/4; i++)
+    for (i = 0; i < output_needed/bytesPerSample; i++)
     {
         j = i * oldsamplerate / newsamplerate;
-        pdest[i] = psrc[j];
+        std::copy_n(input + j*bytesPerSample, bytesPerSample, output + i*bytesPerSample);
     }
-    return j * 4; //number of bytes consumed
+    return j * bytesPerSample; //number of bytes consumed
 }
 
 
@@ -1068,18 +1067,14 @@ void processAudioNoStretch(const int16_t* buffer, unsigned int samples)
     int oldsamplerate = GameFreq;
     static int secondaryBufferIndex = 0;
 
-//    while (primaryBufferPos >= secondaryBufferBytes)
     while (primaryBufferPos >= ((secondaryBufferBytes * oldsamplerate) / newsamplerate))
     {
-        int input_used = resample(primaryBuffer, oldsamplerate, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes, newsamplerate);
-        //int input_used = secondaryBufferBytes;
-        //std::copy_n(primaryBuffer, secondaryBufferBytes, secondaryBuffers[secondaryBufferIndex]);
+        int input_used = resample(primaryBuffer, SLES_SAMPLE_BYTES, oldsamplerate, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes, newsamplerate);
         (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes);
 
-        DebugMessage(M64MSG_ERROR, "input_used=%d primaryBufferPos=%d", input_used, primaryBufferPos);
         memmove(primaryBuffer, &primaryBuffer[input_used], primaryBufferPos - input_used);
         primaryBufferPos -= input_used;
-
+        
         secondaryBufferIndex = (secondaryBufferIndex + 1)%SecondaryBufferNbr;
     }
 }
