@@ -156,26 +156,21 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         final String countryCodeString = config.get( md5, "countryCode" );
         CountryCode countryCode = CountryCode.UNKNOWN;
 
-        //We can't really do much if the rompath is null
-        if (romPath != null)
+        if (countryCodeString != null)
         {
-            if (countryCodeString != null)
-            {
-                countryCode = CountryCode.getCountryCode(Byte.parseByte(countryCodeString));
-            }
-            final String lastPlayedStr = config.get(md5, "lastPlayed");
-
-            int lastPlayed = 0;
-            if (lastPlayedStr != null)
-                lastPlayed = Integer.parseInt(lastPlayedStr);
-
-            if (crc != null && headerName != null && countryCodeString != null)
-            {
-                item = new GalleryItem(mContext.get(), md5, crc, headerName, countryCode, goodName, displayName, romPath,
-                        zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
-            }
+            countryCode = CountryCode.getCountryCode(Byte.parseByte(countryCodeString));
         }
+        final String lastPlayedStr = config.get(md5, "lastPlayed");
 
+        int lastPlayed = 0;
+        if (lastPlayedStr != null)
+            lastPlayed = Integer.parseInt(lastPlayedStr);
+
+        if (crc != null && headerName != null && countryCodeString != null)
+        {
+            item = new GalleryItem(mContext.get(), md5, crc, headerName, countryCode, goodName, displayName, romPath,
+                    zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
+        }
         return item;
     }
 
@@ -197,38 +192,43 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             if ( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) ) {
                 final ConfigFile.ConfigSection section = mConfig.get( md5 );
 
-                String displayName;
+                String romPath = section.get("romPath");
 
-                if (mGlobalPrefs.sortByRomName) {
-                    if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
-                        displayName = section.get( "goodName" );
-                    else
-                        displayName = section.get( "baseName" );
-                } else {
-                    displayName = new File(section.get("romPath")).getName();
-                }
+                // We can't do much with an invalid Rom path
+                if (romPath != null) {
 
-                boolean matchesSearch = true;
-                if ( searches != null && searches.length > 0 && displayName != null) {
-                    // Make sure the ROM name contains every token in the query
-                    final String lowerName = displayName.toLowerCase( Locale.US );
-                    for ( final String search : searches ) {
-                        if ( search.length() > 0 && !lowerName.contains( search ) ) {
-                            matchesSearch = false;
-                            break;
+                    String displayName;
+                    if (mGlobalPrefs.sortByRomName) {
+                        if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
+                            displayName = section.get( "goodName" );
+                        else
+                            displayName = section.get( "baseName" );
+                    } else {
+                        displayName = new File(section.get("romPath")).getName();
+                    }
+
+                    boolean matchesSearch = true;
+                    if ( searches != null && searches.length > 0 && displayName != null) {
+                        // Make sure the ROM name contains every token in the query
+                        final String lowerName = displayName.toLowerCase( Locale.US );
+                        for ( final String search : searches ) {
+                            if ( search.length() > 0 && !lowerName.contains( search ) ) {
+                                matchesSearch = false;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if ( matchesSearch && displayName != null) {
-                    GalleryItem item = createGalleryItem(mConfig, md5, displayName);
+                    if ( matchesSearch && displayName != null) {
+                        GalleryItem item = createGalleryItem(mConfig, md5, displayName);
 
-                    if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
-                            searches != null)) {
-                        items.add(item);
-                        boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
-                        if (isNotOld) {
-                            recentItems.add(item);
+                        if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
+                                searches != null)) {
+                            items.add(item);
+                            boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
+                            if (isNotOld) {
+                                recentItems.add(item);
+                            }
                         }
                     }
                 }
