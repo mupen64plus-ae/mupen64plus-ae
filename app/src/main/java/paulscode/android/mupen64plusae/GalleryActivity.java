@@ -161,7 +161,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
 
                 if( !TextUtils.isEmpty( givenRomPath ) ) {
-                    getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                    //noinspection ConstantConditions
+                    getIntent().replaceExtras((Bundle)null);
+
                     launchGameOnCreation(givenRomPath);
                 }
             } else {
@@ -185,15 +187,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                 launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, true );
 
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
-                getIntent().removeExtra(ActivityHelper.Keys.ZIP_PATH );
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_MD5);
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_CRC);
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_HEADER_NAME);
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE);
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_DISPLAY_NAME);
+                //noinspection ConstantConditions
+                getIntent().replaceExtras((Bundle)null);
             }
         } else {
             Intent intent = new Intent(CoreService.SERVICE_EVENT);
