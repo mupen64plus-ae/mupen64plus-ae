@@ -100,6 +100,8 @@ static unsigned char **secondaryBuffers = nullptr;
 static int SecondaryBufferSize = DEFAULT_SECONDARY_BUFFER_SIZE;
 /** Time stretched audio enabled */
 static int TimeStretchEnabled = true;
+/** Sampling type 0=trivial 1=Soundtouch*/
+static int SamplingType = 0;
 /* Number of secondary buffers */
 static unsigned int SecondaryBufferNbr = SECONDARY_BUFFER_NBR;
 /* Audio frequency, this is usually obtained from the game, but for compatibility we set default value */
@@ -117,8 +119,8 @@ static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
 static int critical_failure = 0;
 
-void processAudio(const int16_t* buffer, unsigned int samples);
-void processAudioNoStretch(const int16_t* buffer, unsigned int samples);
+void processAudioSoundTouch(const int16_t *buffer, unsigned int samples);
+void processAudioTrivial(const int16_t *buffer, unsigned int samples);
 
 static void audioConsumerStretch();
 
@@ -284,6 +286,7 @@ static void InitializeAudio(int freq) {
     SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
     TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
     SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+    SamplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
     TimeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 
     SLuint32 sample_rate;
@@ -466,6 +469,7 @@ static void ReadConfig() {
     SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
     TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
     SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+    SamplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
     TimeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 }
 
@@ -588,6 +592,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
                         "Number of secondary buffers.");
     ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE", 0,
                         "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
+    ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_TYPE", 0,
+                        "Sampling type when not time streteching, (0=trivial, 1=soundtouch");
     ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,
                          "Enable audio time stretching to prevent crackling");
 
@@ -595,6 +601,21 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         ConfigSaveSection("Audio-OpenSLES");
 
     l_PluginInit = 1;
+
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginShutdown(void)
+{
+    if (!l_PluginInit)
+        return M64ERR_NOT_INIT;
+
+    CloseAudio();
+
+    /* reset some local variables */
+    l_DebugCallback = nullptr;
+    l_DebugCallContext = nullptr;
+    l_PluginInit = 0;
 
     return M64ERR_SUCCESS;
 }
@@ -848,7 +869,7 @@ void audioConsumerStretch() {
                 speedFactor = static_cast<double>(speed_factor) / 100.0;
                 soundTouch.setTempo(speedFactor);
 
-                processAudio(currQueueData->data, currQueueData->samples);
+                processAudioSoundTouch(currQueueData->data, currQueueData->samples);
 
             } else {
 
@@ -881,7 +902,7 @@ void audioConsumerStretch() {
                     soundTouch.setTempo(slowAdjustment);
                 }
 
-                processAudio(currQueueData->data, currQueueData->samples);
+                processAudioSoundTouch(currQueueData->data, currQueueData->samples);
             }
 
             //Useful logging
@@ -924,16 +945,48 @@ void audioConsumerStretch() {
 
 
 void audioConsumerNoStretch() {
-    QueueData* currQueueData = nullptr;
 
-    while (!shutdownThread)
-    {
-        if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
+    if (SamplingType == 0) {
+        QueueData* currQueueData = nullptr;
 
-            processAudioNoStretch(currQueueData->data, currQueueData->samples);
+        while (!shutdownThread)
+        {
+            if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
 
-            delete [] currQueueData->data;
-            delete currQueueData;
+                processAudioTrivial(currQueueData->data, currQueueData->samples);
+
+                delete [] currQueueData->data;
+                delete currQueueData;
+            }
+        }
+    } else {
+        soundTouch.setSampleRate(GameFreq);
+        soundTouch.setChannels(2);
+        soundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
+        soundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
+        double speedFactor = static_cast<double>(speed_factor) / 100.0;
+        soundTouch.setTempo(speedFactor);
+
+        soundTouch.setRate((double) GameFreq / (double) OutputFreq);
+        QueueData* currQueueData = nullptr;
+
+        int lastSpeedFactor = speed_factor;
+
+        while (!shutdownThread)
+        {
+            if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
+
+                if (lastSpeedFactor != speed_factor)
+                {
+                    lastSpeedFactor = speed_factor;
+                    soundTouch.setTempo(static_cast<double>(speed_factor) / 100.0);
+                }
+
+                processAudioSoundTouch(currQueueData->data, currQueueData->samples);
+
+                delete [] currQueueData->data;
+                delete currQueueData;
+            }
         }
     }
 }
@@ -950,7 +1003,7 @@ void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context) {
     }
 }
 
-void convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int& outputBufferStart)
+int convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart)
 {
     if (inputSamples*SLES_SAMPLE_BYTES < primaryBufferBytes) {
 
@@ -992,15 +1045,14 @@ void convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSam
 
         outputBufferStart += inputSamples*SLES_SAMPLE_BYTES;
     } else
-        DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
+        DebugMessage(M64MSG_WARNING, "convertBufferToSlesBuffer(): Audio primary buffer overflow.");
 
-
+    return outputBufferStart;
 }
 
-void processAudio(const int16_t* buffer, unsigned int samples) {
+void processAudioSoundTouch(const int16_t *buffer, unsigned int samples) {
 
-    int primaryBufferEnd = 0;
-    convertBufferToSlesBuffer(buffer, samples, primaryBuffer, primaryBufferEnd);
+    convertBufferToSlesBuffer(buffer, samples, primaryBuffer, 0);
 
     soundTouch.putSamples(reinterpret_cast<SAMPLETYPE*>(primaryBuffer), samples);
 
@@ -1059,13 +1111,13 @@ static int resample(const unsigned char *input, int bytesPerSample, int oldsampl
 }
 
 
-void processAudioNoStretch(const int16_t* buffer, unsigned int samples)
+void processAudioTrivial(const int16_t *buffer, unsigned int samples)
 {
     static const int secondaryBufferBytes = SecondaryBufferSize*SLES_SAMPLE_BYTES;
 
     static int primaryBufferPos = 0;
 
-    convertBufferToSlesBuffer(buffer, samples, primaryBuffer, primaryBufferPos);
+    primaryBufferPos = convertBufferToSlesBuffer(buffer, samples, primaryBuffer, primaryBufferPos);
 
     int newsamplerate = OutputFreq * 100 / speed_factor;
     int oldsamplerate = GameFreq;

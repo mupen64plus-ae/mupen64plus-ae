@@ -307,6 +307,9 @@ public class GlobalPrefs
     /** Number of SLES sampling rate. */
     public final int audioSLESSamplingRate;
 
+    /** SLES sampling type, 0=trivial, 1=soundtouch. */
+    public final int audioSLESSamplingType;
+
     /** Use SLES floating point samples */
     public final boolean audioSLESFloatingPoint;
 
@@ -571,6 +574,7 @@ public class GlobalPrefs
         enableSLESAudioTimeSretching = mPreferences.getBoolean( "audioSLESTimeStretch", true );
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
         audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
+        audioSLESSamplingType = getSafeInt( mPreferences, "audioSLESSamplingType", 0 );
 
         boolean audioSlesSamplingRateGame = mPreferences.getString( "audioSLESSamplingRate2", "game" ).equals("game");
 

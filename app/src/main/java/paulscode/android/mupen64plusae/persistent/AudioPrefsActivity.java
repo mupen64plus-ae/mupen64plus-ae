@@ -39,6 +39,7 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     private static final String AUDIO_SLES_TIME_STRETCH = "audioSLESTimeStretch";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr2";
     private static final String AUDIO_SLES_SAMPLING_RATE = "audioSLESSamplingRate2";
+    private static final String AUDIO_SLES_SAMPLING_TYPE = "audioSLESSamplingType";
     private static final String AUDIO_SLES_FLOATING_POINT = "audioSLESFloatingPoint";
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
@@ -116,6 +117,7 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
             PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
             PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
             PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
+            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_TYPE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) && !mGlobalPrefs.enableSLESAudioTimeSretching);
             PrefUtil.enablePreference(this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
             PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
             PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);

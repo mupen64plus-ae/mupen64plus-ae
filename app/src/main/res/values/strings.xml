@@ -601,6 +601,9 @@
     <string name="audioSLESRate_title">Sampling Rate</string>
     <string name="audioSLESRate_entry_orig">Set by game</string>
     <string name="audioSLESRate_best_for_hw">Best for hardware</string>
+    <string name="audioSLESSamplingType_title">Sampling Type</string>
+    <string name="audioSLESSamplingType_trivial">Trivial</string>
+    <string name="audioSLESSamplingType_soundtouch">SoundTouch</string>
     <string name="audioSLESFloatingPoint_title">Floating Point Samples</string>
     <string name="audioSLESFloatingPoint_summary">Higher quality FP audio. Some devices may not be compatible.</string>
     <string name="localeOverride_entrySystemDefault">System default</string>

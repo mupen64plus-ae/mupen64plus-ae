@@ -455,6 +455,7 @@
     <string name="audioSLESRate_title">Tasa de muestreo</string>
     <string name="audioSLESRate_entry_orig">Fijada por el juego</string>
     <string name="audioSLESRate_best_for_hw">Mejor para el dispositivo</string>
+    <string name="audioSLESSamplingType_title">Tipo de Muestreo</string>
     <string name="audioSLESFloatingPoint_title">Flotación de puntos de muestras</string>
     <string name="audioSLESFloatingPoint_summary">FP de audio de mayor calidad. Algunos dispositivos pueden no ser compatibles.</string>
     <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>

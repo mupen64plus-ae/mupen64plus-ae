@@ -80,30 +80,31 @@ class NativeConfigFiles
 
         // glide64 config file
         final ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
-        glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                       // Stretch to SurfaceView, Java will manage aspect ratio
+        glide64_conf.put( "DEFAULT", "aspect", "2" );
 
         // Core and rice config file
         final ConfigFile mupen64plus_cfg = new ConfigFile( game.getMupen64plusCfg() );
 
-        mupen64plus_cfg.put( "Audio-OpenSLES", "Version", "1.000000" );                                                          // Mupen64Plus OpenSLES Audio Plugin config parameter version number
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );                          // Swaps left and right channels
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSLESSecondaryBufferSize ) ); // Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_NBR", String.valueOf( global.audioSLESSecondaryBufferNbr ) );   // Number of secondary buffer.
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SAMPLING_RATE", String.valueOf( global.audioSLESSamplingRate ) );                // Sampling rate
-        mupen64plus_cfg.put( "Audio-OpenSLES", "TIME_STRETCH_ENABLED", boolToTF( global.enableSLESAudioTimeSretching ) );        // Enable audio time stretching to prevent crackling
+        mupen64plus_cfg.put( "Audio-OpenSLES", "Version", "1.000000" );
+        mupen64plus_cfg.put( "Audio-OpenSLES", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );
+        mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSLESSecondaryBufferSize ) );
+        mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_NBR", String.valueOf( global.audioSLESSecondaryBufferNbr ) );
+        mupen64plus_cfg.put( "Audio-OpenSLES", "SAMPLING_RATE", String.valueOf( global.audioSLESSamplingRate ) );
+        mupen64plus_cfg.put( "Audio-OpenSLES", "SAMPLING_TYPE", String.valueOf( global.audioSLESSamplingType ) );
+        mupen64plus_cfg.put( "Audio-OpenSLES", "TIME_STRETCH_ENABLED", boolToTF( global.enableSLESAudioTimeSretching ) );
 
-        mupen64plus_cfg.put( "Core", "Version", "1.010000" );                                                               // Mupen64Plus Core config parameter set version number.  Please don't change this version number.
-        mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );                                                          // Draw on-screen display if True, otherwise don't draw OSD
-        mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );                                                 // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
-        mupen64plus_cfg.put( "Core", "DisableExtraMem", boolToTF(game.disableExpansionPak) );                                         // Disable 4MB expansion RAM pack. May be necessary for some games
-        mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );                                                   // Increment the save state slot after each save operation
-        mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + game.getScreenshotDir() + '"' );                                    // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
-        mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.getSlotSaveDir() + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
-        mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
-        mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );                             // Path to a directory to search when looking for shared data files
-        mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );                                     // Count per op
+        mupen64plus_cfg.put( "Core", "Version", "1.010000" );
+        mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );
+        mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );
+        mupen64plus_cfg.put( "Core", "DisableExtraMem", boolToTF(game.disableExpansionPak) );
+        mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );
+        mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + game.getScreenshotDir() + '"' );
+        mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.getSlotSaveDir() + '"' );
+        mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
+        mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );
+        mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );
 
-        mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );                                                         // Mupen64Plus CoreEvents config parameter set version number.  Please don't change this version number.
+        mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fullscreen", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Save State", EMPTY );
@@ -133,8 +134,8 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Fast Forward", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Gameshark", EMPTY );
 
-        mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
-        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
+        mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );
+        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );
 
         mupen64plus_cfg.put( "Transferpak", "GB-rom-1", game.getTransferPakRom(1) );
         mupen64plus_cfg.put( "Transferpak", "GB-ram-1", game.getTransferPakRam(1) );
@@ -164,7 +165,7 @@ class NativeConfigFiles
         // Angrylion was replaced with Angrylion RDP Plus
         videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-angrylion.so", "libmupen64plus-video-angrylion-rdp-plus.so");
 
-        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );                              // Filename of video plugin
+        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );
 
         //Use the FP version of the SLES audio plugin if the API level is high enough
         String audioPluginString = global.audioPlugin.path;
@@ -178,15 +179,15 @@ class NativeConfigFiles
             }
         }
 
-        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );                            // Filename of audio plugin
+        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );
 
         if (useRaphnet) {
             mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLibRaphnet + '"' );
         } else {
-            mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
+            mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );
         }
 
-        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + game.rspPluginPath + '"' );                                       // Filename of RSP plugin
+        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + game.rspPluginPath + '"' );
 
         mupen64plus_cfg.put( "rsp-cxd4", "Version", "1" );
         mupen64plus_cfg.put( "rsp-cxd4", "DisplayListToGraphicsPlugin", boolToNum(game.rspHleVideo) );
@@ -199,15 +200,15 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Rsp-HLE", "DisplayListToGraphicsPlugin", "1" );
         mupen64plus_cfg.put( "Rsp-HLE", "AudioListToAudioPlugin", "0" );
 
-        mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );                                                      // Use fullscreen mode if True, or windowed mode if False
-        mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );                     // Width of output window or fullscreen width
-        mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( game.videoRenderHeight ) );                   // Height of output window or fullscreen height
-        mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );                                                    // If true, activate the SDL_GL_SWAP_CONTROL attribute
+        mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );
+        mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );
+        mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( game.videoRenderHeight ) );
+        mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );
 
-        mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );                                                        // Vertical sync
-        mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", boolToNum( global.isPolygonOffsetHackEnabled ) );  // If true, use polygon offset values specified below
-        mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( global.videoPolygonOffset ) );    // Specifies a scale factor that is used to create a variable depth offset for each polygon
-        mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( global.videoPolygonOffset ) );     // Is multiplied by an implementation-specific value to create a constant depth offset
+        mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", boolToNum( global.isPolygonOffsetHackEnabled ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( global.videoPolygonOffset ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( global.videoPolygonOffset ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.glide64mk2Prefs.autoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64mk2Prefs.maxFrameskip ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "filtering", String.valueOf( game.glide64mk2Prefs.filtering ) );
@@ -316,21 +317,21 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceGammaCorrection", boolToTF( game.glideN64Prefs.forceGammaCorrection ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "GammaCorrectionLevel", String.valueOf( game.glideN64Prefs.gammaCorrectionLevel ) );
 
-        mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );           // If true, use polygon offset values specified below
-        mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );            // Specifies a scale factor that is used to create a variable depth offset for each polygon
-        mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );             // Is multiplied by an implementation-specific value to create a constant depth offset
-        mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", game.riceScreenUpdateType );                              // Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
-        mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( game.isRiceFastTextureLoadingEnabled ) );        // Use a faster algorithm to speed up texture loading and CRC computation
-        mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( game.isRiceAutoFrameskipEnabled ) );                      // If this option is enabled, the plugin will skip every other frame
-        mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", boolToTF( game.isRiceHiResTexturesEnabled ) );              // Enable hi-resolution texture file loading
-        if( game.isRiceForceTextureFilterEnabled )                                                                          // Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)
+        mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
+        mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
+        mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );
+        mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", game.riceScreenUpdateType );
+        mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( game.isRiceFastTextureLoadingEnabled ) );
+        mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( game.isRiceAutoFrameskipEnabled ) );
+        mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", boolToTF( game.isRiceHiResTexturesEnabled ) );
+        if( game.isRiceForceTextureFilterEnabled )
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
         else
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
-        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", game.riceTextureEnhancement );                             // Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)
-        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );                                              // Secondary texture enhancement filter (0 = none, 1-4 = filtered)
-        mupen64plus_cfg.put( "Video-Rice", "Mipmapping", "0" );                                                             // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
-        mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isRiceFogEnabled ) );                               // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
+        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", game.riceTextureEnhancement );
+        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );
+        mupen64plus_cfg.put( "Video-Rice", "Mipmapping", "0" );
+        mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isRiceFogEnabled ) );
 
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "Parallel", boolToTF( game.angrylionPlusPrefs.parallel ) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "NumWorkers", String.valueOf(game.angrylionPlusPrefs.numWorkers));
