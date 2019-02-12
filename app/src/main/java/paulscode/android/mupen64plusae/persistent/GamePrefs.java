@@ -469,15 +469,16 @@ public class GamePrefs
         boolean isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion-rdp-plus.so" );
         angrylionPlusPrefs = new AngrylionPlusPrefs(context, emulationProfile);
 
-        final String scaling = mPreferences.getString( "displayScalingGame", "default" );
-
-        boolean stretch = scaling.equals("default") ? globalPrefs.stretchScreen : scaling.equals( "stretch" );
         boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled;
+
+        final String scaling = mPreferences.getString( "displayScalingGame", "default" );
+        GlobalPrefs.DisplayScaling displayScaling = gliden64Widescreenhack ? GlobalPrefs.DisplayScaling.STRETCH :
+                scaling.equals("default") ? globalPrefs.displayScaling : GlobalPrefs.DisplayScaling.getScaling(scaling);
 
         //Stretch screen if the GLideN64 wide screen hack is enabled and the current video plugin is GLideN64
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
-        globalPrefs.determineResolutionData(context, gliden64Widescreenhack || stretch);
+        globalPrefs.determineResolutionData(context, displayScaling);
         videoSurfaceWidth = globalPrefs.getSurfaceResolutionWidth();
         videoSurfaceHeight = globalPrefs.getSurfaceResolutionHeight();
 

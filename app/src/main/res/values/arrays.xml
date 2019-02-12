@@ -219,10 +219,12 @@
     <string-array name="displayScaling_entries" translatable="false">
         <item>@string/displayScaling_entryOriginal</item>
         <item>@string/displayScaling_entryStretch</item>
+        <item>@string/displayScaling_entryStretch169</item>
     </string-array>
     <string-array name="displayScaling_values" translatable="false">
         <item>original</item>
         <item>stretch</item>
+        <item>stretch169</item>
     </string-array>
     <string name="displayScaling_default" translatable="false">original</string>
 
@@ -252,11 +254,13 @@
         <item>@string/default_profile_title</item>
         <item>@string/displayScaling_entryOriginal</item>
         <item>@string/displayScaling_entryStretch</item>
+        <item>@string/displayScaling_entryStretch169</item>
     </string-array>
     <string-array name="displayScalingGame_values" translatable="false">
         <item>default</item>
         <item>original</item>
         <item>stretch</item>
+        <item>stretch169</item>
     </string-array>
     <string name="displayScalingGame_default" translatable="false">default</string>
 

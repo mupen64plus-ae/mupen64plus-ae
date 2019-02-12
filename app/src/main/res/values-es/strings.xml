@@ -281,6 +281,7 @@
     <string name="displayScaling_entryZoom">Acercamiento\n<small>Rellena la pantalla, sin distorsión (agrega barras negras)</small></string>
     <string name="displayScaling_entryCrop">Cortar\n<small>Rellena la pantalla, sin distorsión (corta las gráficas)</small></string>
     <string name="displayScaling_entryStretch">Estirar\n<small>Rellena la pantalla, sin barras negras (agrega distorsión)</small></string>
+    <string name="displayScaling_entryStretch169">Estirar 16:9\n<small>Cambia el aspecto de la imagen a 16:9 (agrega distorsión)</small></string>
     <string name="displayFps_title">Velocidad de Cuadros</string>
     <string name="displayFps_entryOff">No mostrar</string>
     <string name="displayFps_entryTopLeft">Arriba a la izquierda</string>

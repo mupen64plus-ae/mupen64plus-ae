@@ -339,6 +339,7 @@
     <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
+    <string name="displayScaling_entryStretch169">Stretch 16:9\n<small>Changes the aspect ratio of the image to 16:9 (adds distortion)</small></string>
     <string name="displayFps_title">Framerate</string>
     <string name="displayFps_entryOff">Off</string>
     <string name="displayFps_entryTopLeft">Top left</string>

@@ -25,7 +25,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
@@ -57,7 +56,6 @@ import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
-import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -91,8 +89,35 @@ import static java.lang.Integer.parseInt;
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
  */
+@SuppressWarnings({"WeakerAccess", "FieldCanBeLocal", "ConstantConditions"})
 public class GlobalPrefs
 {
+    public enum DisplayScaling
+    {
+        ORIGINAL("original"),
+        STRETCH("stretch"),
+        STRETCH_169("stretch169");
+
+        private String text;
+
+        DisplayScaling(String text) {
+            this.text = text;
+        }
+
+        public String getValue() {
+            return text;
+        }
+
+        public static DisplayScaling getScaling(String input)
+        {
+            DisplayScaling[] values = DisplayScaling.values();
+            for (DisplayScaling value : values)
+                if (value.getValue().equals(input))
+                    return value;
+            return DisplayScaling.ORIGINAL;
+        }
+    }
+
     /** The subdirectory containing cover art files. */
     public final String coverArtDir;
 
@@ -210,8 +235,8 @@ public class GlobalPrefs
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
 
-    /** Default resolution */
-    final boolean stretchScreen;
+    /** Display scaling */
+    final DisplayScaling displayScaling;
 
     /** The width of the viewing surface, in pixels with the correct aspect ratio. */
     private int videoSurfaceWidthOriginal;
@@ -220,10 +245,10 @@ public class GlobalPrefs
     private int videoSurfaceHeightOriginal;
 
     /** The rendering width in pixels with the correct aspect ratio. */
-    private int videoRenderWidthOriginal;
+    private int videoRenderWidthNative;
 
     /** The rendering heigh in pixels with the correct aspect ratio. */
-    private int videoRenderHeightOriginal;
+    private int videoRenderHeightNative;
 
     /** The width of the viewing surface, in pixels with the stretched aspect ratio. */
     private int videoSurfaceWidthStretch;
@@ -236,9 +261,6 @@ public class GlobalPrefs
 
     /** The screen orientation for the game activity. */
     public final int displayOrientation;
-
-    /** Current screen orientation */
-    private final int currentDisplayOrientation;
 
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
@@ -390,7 +412,7 @@ public class GlobalPrefs
             final Locale locale = createLocale( values[i] );
 
             // Get intersection of languages (available on device) and (translated for Mupen)
-            if( ArrayUtils.contains( availableLocales, locale ) )
+            if( locale != null && ArrayUtils.contains( availableLocales, locale ) )
             {
                 // Get the name of the language, as written natively
                 entries[i] = WordUtils.capitalize( locale.getDisplayName( locale ) );
@@ -469,7 +491,7 @@ public class GlobalPrefs
         // Video prefs
         displayResolution = getSafeInt( mPreferences, "displayResolution", 480 );
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
-        stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
+        displayScaling = DisplayScaling.getScaling(mPreferences.getString( "displayScaling", "original" ));
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode_v2", true );
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
@@ -656,8 +678,6 @@ public class GlobalPrefs
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
-
-        currentDisplayOrientation = context.getResources().getConfiguration().orientation;
     }
 
     public void changeLocale( final Activity activity )
@@ -924,54 +944,60 @@ public class GlobalPrefs
             return null;
     }
 
-    void determineResolutionData(Context context, boolean stretch)
+    void determineResolutionData(Context context, DisplayScaling scaling)
     {
         // Determine the pixel dimensions of the rendering context and view surface
         // Screen size
         final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
         final Display display = windowManager != null ? windowManager.getDefaultDisplay() : null;
 
-        final Point dimensions = new Point();
+        final Point dimensions = new Point(0,0);
 
-        if( display == null )
+        if( display != null )
         {
-            videoSurfaceWidthStretch = videoSurfaceHeightStretch = 0;
-        }
-        else if(isImmersiveModeEnabled )
-        {
-            display.getRealSize(dimensions);
-            videoSurfaceWidthStretch = dimensions.x;
-            videoSurfaceHeightStretch = dimensions.y;
-        }
-        else
-        {
-            display.getSize(dimensions);
-            videoSurfaceWidthStretch = dimensions.x;
-            videoSurfaceHeightStretch = dimensions.y;
+            if(isImmersiveModeEnabled )
+            {
+                display.getRealSize(dimensions);
+            }
+            else
+            {
+                display.getSize(dimensions);
+            }
         }
 
-        aspect = stretch ? 9f/16f : 3f/4f;
+        videoSurfaceWidthStretch = dimensions.x;
+        videoSurfaceHeightStretch = dimensions.y;
+
+        switch (scaling) {
+            case ORIGINAL:
+                aspect = 3f/4f;
+                break;
+            case STRETCH:
+                aspect = (float)Math.min(dimensions.x, dimensions.y)/Math.max(dimensions.x, dimensions.y);
+                break;
+            case STRETCH_169:
+                aspect = 9f/16f;
+                break;
+        }
+
+        int minDimension = Math.min(dimensions.x, dimensions.y);
+        videoRenderWidthNative = Math.round( minDimension/aspect );
+        videoRenderHeightNative = minDimension;
 
         // Assume we are are in portrait mode if height is greater than the width
-        boolean portrait = videoSurfaceHeightStretch > videoSurfaceWidthStretch;
-
+        boolean portrait = dimensions.y > dimensions.x;
         if(portrait)
         {
-            videoSurfaceWidthOriginal = videoSurfaceWidthStretch;
-            videoSurfaceHeightOriginal = Math.round( videoSurfaceWidthOriginal*aspect);
-            videoRenderWidthOriginal = Math.round( videoSurfaceWidthStretch/aspect );
-            videoRenderHeightOriginal = videoSurfaceWidthStretch;
+            videoSurfaceWidthOriginal = minDimension;
+            videoSurfaceHeightOriginal = Math.round( minDimension*aspect);
         }
         else
         {
-            videoSurfaceWidthOriginal = Math.round( videoSurfaceHeightStretch/aspect );
-            videoSurfaceHeightOriginal = videoSurfaceHeightStretch;
-            videoRenderWidthOriginal = videoSurfaceWidthOriginal;
-            videoRenderHeightOriginal = videoSurfaceHeightOriginal;
+            videoSurfaceWidthOriginal = Math.round( minDimension/aspect );
+            videoSurfaceHeightOriginal = minDimension;
         }
 
-        Log.i("GlobalPrefs", "render_width=" + videoRenderWidthOriginal + " render_height=" + videoRenderHeightOriginal);
-
+        Log.i("GlobalPrefs", "render_width=" + videoRenderWidthNative + " render_height=" + videoRenderHeightNative);
     }
 
     int getResolutionWidth(boolean stretch, int hResolution)
@@ -983,10 +1009,10 @@ public class GlobalPrefs
 
         if (hResolution == 0)
         {
-            hResolution = videoRenderHeightOriginal;
+            hResolution = videoRenderHeightNative;
         }
 
-        float aspect = stretch ? 16f/9f : 4f/3f;
+        float aspect = stretch ? (float)videoSurfaceWidthStretch/videoSurfaceHeightStretch : 4f/3f;
 
         return Math.round((float)hResolution*aspect);
     }
@@ -997,7 +1023,7 @@ public class GlobalPrefs
             hResolution = displayResolution;
         }
 
-        return hResolution == 0 ? videoRenderHeightOriginal : hResolution;
+        return hResolution == 0 ? videoRenderHeightNative : hResolution;
     }
 
     int getSurfaceResolutionHeight()
