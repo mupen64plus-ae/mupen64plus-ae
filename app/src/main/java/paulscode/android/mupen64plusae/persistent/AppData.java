@@ -613,27 +613,30 @@ public class AppData
     public boolean isValidInstallation() {
         // Installation validity
         return libraryExists("libae-exports") &&
-                libraryExists("libae-imports") &&
-                libraryExists("libae-vidext") &&
-                libraryExists("libc++_shared") &&
-                libraryExists("libfreetype") &&
-                libraryExists("libmupen64plus-audio-sles-fp") &&
-                libraryExists("libmupen64plus-audio-sles") &&
-                libraryExists("libmupen64plus-core") &&
-                libraryExists("libmupen64plus-input-android") &&
-                libraryExists("libmupen64plus-rsp-cxd4") &&
-                libraryExists("libmupen64plus-rsp-hle") &&
-                libraryExists("libmupen64plus-ui-console") &&
-                libraryExists("libmupen64plus-video-angrylion-rdp-plus") &&
-                libraryExists("libmupen64plus-video-glide64mk2-egl") &&
-                libraryExists("libmupen64plus-video-glide64mk2") &&
-                libraryExists("libmupen64plus-video-gliden64") &&
-                libraryExists("libmupen64plus-video-gln64") &&
-                libraryExists("libmupen64plus-video-rice") &&
-                libraryExists("libosal") &&
-                libraryExists("libSDL2") &&
-                libraryExists("libsoundtouch_fp") &&
-                libraryExists("libsoundtouch");
+               libraryExists("libae-imports") &&
+               libraryExists("libae-vidext") &&
+               libraryExists("libc++_shared") &&
+               libraryExists("libfreetype") &&
+               libraryExists("libhidapi") &&
+               libraryExists("libmupen64plus-audio-sles-fp") &&
+               libraryExists("libmupen64plus-audio-sles") &&
+               libraryExists("libmupen64plus-core") &&
+               libraryExists("libmupen64plus-input-android") &&
+               libraryExists("libmupen64plus-input-raphnet") &&
+               libraryExists("libmupen64plus-rsp-cxd4") &&
+               libraryExists("libmupen64plus-rsp-hle") &&
+               libraryExists("libmupen64plus-ui-console") &&
+               libraryExists("libmupen64plus-video-angrylion-rdp-plus") &&
+               libraryExists("libmupen64plus-video-glide64mk2-egl") &&
+               libraryExists("libmupen64plus-video-glide64mk2") &&
+               libraryExists("libmupen64plus-video-gliden64") &&
+               libraryExists("libmupen64plus-video-gln64") &&
+               libraryExists("libmupen64plus-video-rice") &&
+               libraryExists("libosal") &&
+               libraryExists("libSDL2") &&
+               libraryExists("libsoundtouch_fp") &&
+               libraryExists("libsoundtouch") &&
+               libraryExists("libusb1.0");
     }
 
     @SuppressWarnings("deprecation")
