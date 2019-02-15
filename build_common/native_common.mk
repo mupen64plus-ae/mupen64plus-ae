@@ -67,11 +67,7 @@ COMMON_FLAGS +=                     \
     -mfpu=neon
 endif
 
-COMMON_LDFLAGS :=
-
-ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-COMMON_LDFLAGS += -Wl,--fix-cortex-a8
-endif
+COMMON_LDFLAGS := -fuse-ld=lld
 
 ifneq ($(BUILD_VARIANT), debug)
 ifneq ($(HOST_OS),windows)
