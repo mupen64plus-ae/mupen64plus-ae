@@ -459,10 +459,10 @@ void F5INDI_RebuildAndAdjustColors(u32 _w0, u32 _w1)
 	std::vector<u32> vres(count);
 	for (u32 i = 0; i < count; ++i) {
 		u16 V = data[i ^ 1];
-		u32 I = (V >> 8) & 0xF8;
-		u32 J = (V & 0x7E0) >> 3;
-		u32 K = (V & 0x1F) << 3;
-		vres[i] = (I << 24) | (J << 16) | (K << 8) | 0xFF;
+		u32 R = (V >> 8) & 0xF8;
+		u32 G = (V & 0x7E0) >> 3;
+		u32 B = (V & 0x1F) << 3;
+		vres[i] = (R << 24) | (G << 16) | (B << 8) | 0xFF;
 	}
 	memcpy(DMEM + addr, vres.data(), count << 2);
 }
@@ -644,8 +644,7 @@ void F5INDI_CalcST(const u32* params, u32 * _st)
 		if (R > 0x0000FFFFFFFF)
 			R1 = 0x7FFF0000 | (R & 0xFFFF);
 		u32 D = static_cast<u32>(sqrt(R1));
-		D = (0xFFFFFFFF / D) >> 1;
-		D = (D * 0xAB) >> 16;
+		D = 0xFFFFFFFF / (D * 0x300);
 		u32 V = static_cast<u32>((D * X2) >> 16);
 		u32 W = static_cast<u32>((D * Y2) >> 16);
 		u32 S = (V * muls[0 ^ 1]) >> 16;
