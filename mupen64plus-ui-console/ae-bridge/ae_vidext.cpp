@@ -69,6 +69,16 @@ size_t FindIndex( const EGLint a[], size_t size, int value )
     return ( index == (size/sizeof(EGLint)) ? -1 : index );
 }
 
+
+JavaVM* mJavaVM;
+
+// Library init
+extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+	mJavaVM = vm;
+	return JNI_VERSION_1_6;
+}
+
 extern DECLSPEC m64p_error VidExtFuncInit()
 {
 	std::unique_lock<std::mutex> guard(nativeWindowAccess);
@@ -89,6 +99,7 @@ extern DECLSPEC m64p_error VidExtFuncInit()
         LOGE("eglInitialize() returned error %d", eglGetError());
         return M64ERR_INVALID_STATE;
     }
+
     return M64ERR_SUCCESS;
 }
 
@@ -460,6 +471,10 @@ extern DECLSPEC m64p_error VidExtFuncQuit()
 	if (display != EGL_NO_DISPLAY) {
 		eglTerminate(display);
 		display = EGL_NO_DISPLAY;
+	}
+
+	if (detachOnQuit()) {
+        mJavaVM->DetachCurrentThread();
 	}
 
 	return M64ERR_SUCCESS;

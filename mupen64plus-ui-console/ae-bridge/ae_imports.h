@@ -55,6 +55,10 @@ extern void         Android_JNI_StateCallback(void* context, m64p_core_param par
 
 // Called by ae-vidext
 extern void         Android_JNI_FPSCounter(int fps);
+
+
+extern int detachOnQuit();
+
 #ifdef __cplusplus
 }
 #endif

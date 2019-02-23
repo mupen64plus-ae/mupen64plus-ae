@@ -35,6 +35,9 @@ static jclass mActivityClass;
 static jmethodID midStateCallback;
 static jmethodID midFPSCounter;
 
+
+static bool detachOnQuitCore = false;
+
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
@@ -104,8 +107,14 @@ extern DECLSPEC void Android_JNI_FPSCounter(int fps)
 {
     JNIEnv *env;
     if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-        mJavaVM->AttachCurrentThread(&env, NULL);
+        mJavaVM->AttachCurrentThread(&env, nullptr);
+        detachOnQuitCore = true;
         return;
     }
     env->CallStaticVoidMethod(mActivityClass, midFPSCounter, fps);
+}
+
+extern DECLSPEC int detachOnQuit()
+{
+    return detachOnQuitCore;
 }
