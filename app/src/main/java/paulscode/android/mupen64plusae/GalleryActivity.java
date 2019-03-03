@@ -93,6 +93,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
+    public static final String KEY_IS_SHORTCUT = "KEY_IS_SHORTCUT";
 
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
 
@@ -176,7 +177,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 String md5 = extras.getString(ActivityHelper.Keys.ROM_MD5);
                 String crc = extras.getString(ActivityHelper.Keys.ROM_CRC);
                 String headerName = extras.getString(ActivityHelper.Keys.ROM_HEADER_NAME);
-                byte countryCode = extras.getByte(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+
+                byte countryCode;
+                if (extras.getBoolean(KEY_IS_SHORTCUT)) {
+                    countryCode = (byte)extras.getInt(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+                } else {
+                    countryCode = extras.getByte(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+                }
+
                 String artPath = extras.getString(ActivityHelper.Keys.ROM_ART_PATH);
                 String goodName = extras.getString(ActivityHelper.Keys.ROM_GOOD_NAME);
                 String displayName = extras.getString(ActivityHelper.Keys.ROM_DISPLAY_NAME);
@@ -673,6 +681,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             Intent gameIntent = new Intent(this, SplashActivity.class);
             gameIntent.putExtra(GalleryActivity.KEY_IS_LEANBACK, true);
+            gameIntent.putExtra(GalleryActivity.KEY_IS_SHORTCUT, true);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romFile != null ? item.romFile.getAbsolutePath() : null);
             gameIntent.putExtra(ActivityHelper.Keys.ZIP_PATH, item.zipFile != null ? item.zipFile.getAbsolutePath() : null);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_MD5, item.md5);

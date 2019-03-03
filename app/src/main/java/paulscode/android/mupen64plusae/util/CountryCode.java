@@ -25,7 +25,7 @@ public enum CountryCode {
 	private byte value;
 	private String text;
 	
-	private CountryCode(int value, String text) {
+	CountryCode(int value, String text) {
 		this.value = (byte)value;
 		this.text = text;
 	}
