@@ -170,10 +170,10 @@ public class GameDataManager
         FileUtil.makeDirs(mGamePrefs.getAutoSaveDir());
         FileUtil.makeDirs(mGamePrefs.getSlotSaveDir());
         FileUtil.makeDirs(mGamePrefs.getUserSaveDir());
-        FileUtil.makeDirs(mGamePrefs.getScreenshotDir());
         FileUtil.makeDirs(mGamePrefs.getCoreUserConfigDir());
         FileUtil.makeDirs(mGlobalPrefs.coreUserDataDir);
         FileUtil.makeDirs(mGlobalPrefs.coreUserCacheDir);
+        FileUtil.makeDirs(mGlobalPrefs.screenshotsDir);
         mAutoSavePath = mGamePrefs.getAutoSaveDir() + "/";
     }
 

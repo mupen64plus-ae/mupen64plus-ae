@@ -124,6 +124,9 @@ public class GlobalPrefs
     /** The subdirectory containing unzipped ROM files. */
     public final String unzippedRomsDir;
 
+    /** The subdirectory containing screenshot files. */
+    public final String screenshotsDir;
+
     /** The subdirectory containing crash logs. */
     public final String crashLogDir;
 
@@ -435,6 +438,7 @@ public class GlobalPrefs
         String galleryCacheDir = appData.userDataDir + "/GalleryCache";
         coverArtDir = galleryCacheDir + "/CoverArt";
         unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
+        screenshotsDir = appData.userDataDir + "/Screenshots";
         String profilesDir = appData.userDataDir + "/Profiles";
         crashLogDir = appData.userDataDir + "/CrashLogs";
         final String coreConfigDir = appData.userDataDir + "/CoreConfig";

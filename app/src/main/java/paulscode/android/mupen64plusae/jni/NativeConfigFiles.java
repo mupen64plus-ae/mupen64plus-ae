@@ -98,7 +98,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );
         mupen64plus_cfg.put( "Core", "DisableExtraMem", boolToTF(game.disableExpansionPak) );
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );
-        mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + game.getScreenshotDir() + '"' );
+        mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + global.screenshotsDir + '"' );
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.getSlotSaveDir() + '"' );
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );
