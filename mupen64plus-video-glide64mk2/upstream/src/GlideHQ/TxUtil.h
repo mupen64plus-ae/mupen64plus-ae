@@ -24,9 +24,6 @@
 #ifndef __TXUTIL_H__
 #define __TXUTIL_H__
 
-/* maximum number of CPU cores allowed */
-#define MAX_NUMCORE 8
-
 #include "TxInternal.h"
 #include <string>
 

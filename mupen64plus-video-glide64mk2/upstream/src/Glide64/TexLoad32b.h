@@ -58,7 +58,11 @@ wxUint32 Load32bRGBA (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int 
   for (t = 0; t < (wxUint32)height; t++)
   {
     wxUint32 tline = tbase + line * t;
+#if defined(M64P_BIG_ENDIAN)
+    wxUint32 xorval = (t & 1) ? 2 : 0;
+#else
     wxUint32 xorval = (t & 1) ? 3 : 1;
+#endif
     for (s = 0; s < width; s++)
     {
       wxUint32 taddr = ((tline + s) ^ xorval) & 0x3ff;
@@ -108,7 +112,11 @@ void LoadTile32b (wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 width, w
   {
     tline = tbase + line * j;
     s = ((j + ul_t) * rdp.timg.width) + ul_s;
-    xorval = (j & 1) ? 3 : 1;				
+#if defined(M64P_BIG_ENDIAN)
+    xorval = (j & 1) ? 2 : 0;	
+#else
+    xorval = (j & 1) ? 3 : 1;
+#endif
     for (wxUint32 i = 0; i < width; i++)
     {
       c = src[addr + s + i];
@@ -149,7 +157,11 @@ void LoadBlock32b(wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 lr_s, wx
     for (wxUint32 i = 0; i < width; i += 2)
     {
       oldt = t;
+#if defined(M64P_BIG_ENDIAN)
+      t = ((j >> 11) & 1) ? 2 : 0;
+#else
       t = ((j >> 11) & 1) ? 3 : 1;
+#endif
       if (t != oldt)
         i += line;
       ptr = ((tb + i) ^ t) & 0x3ff;
@@ -169,7 +181,7 @@ void LoadBlock32b(wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 lr_s, wx
     wxUint32 c, ptr;
     for (wxUint32 i = 0; i < width; i ++)
     {
-      ptr = ((tb + i) ^ 1) & 0x3ff;
+      ptr = (SHORTADDR(tb + i)) & 0x3ff;
       c = src[addr + i];
       tmem16[ptr] = c >> 16;
       tmem16[ptr|0x400] = c & 0xffff;

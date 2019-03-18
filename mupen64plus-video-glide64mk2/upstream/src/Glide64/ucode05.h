@@ -48,7 +48,7 @@ static void uc5_dma_offsets ()
   dma_offset_mtx = rdp.cmd0 & 0x00FFFFFF;
   dma_offset_vtx = rdp.cmd1 & 0x00FFFFFF;
   vtx_last = 0;
-  FRDP("uc5:dma_offsets - mtx: %08lx, vtx: %08lx\n", dma_offset_mtx, dma_offset_vtx);
+  FRDP("uc5:dma_offsets - mtx: %08x, vtx: %08x\n", dma_offset_mtx, dma_offset_vtx);
 }
 
 static void uc5_matrix ()
@@ -71,7 +71,7 @@ static void uc5_matrix ()
 
   cur_mtx = n;
 
-  FRDP("uc5:matrix - #%d, addr: %08lx\n", n, addr);
+  FRDP("uc5:matrix - #%d, addr: %08x\n", n, addr);
 
   if (multiply)
   {
@@ -128,7 +128,7 @@ static void uc5_vertex ()
     vtx_last = 0;
 
   int first = ((rdp.cmd0 >> 9) & 0x1F) + vtx_last;
-  FRDP ("uc5:vertex - addr: %08lx, first: %d, count: %d, matrix: %08lx\n", addr, first, n, cur_mtx);
+  FRDP ("uc5:vertex - addr: %08x, first: %d, count: %d, matrix: %08x\n", addr, first, n, cur_mtx);
 
   int prj = cur_mtx;
 
@@ -138,9 +138,9 @@ static void uc5_vertex ()
   {
     start = (i-first) * 10;
     VERTEX *v = &rdp.vtx[i];
-    x   = (float)((short*)gfx.RDRAM)[(((addr+start) >> 1) + 0)^1];
-    y   = (float)((short*)gfx.RDRAM)[(((addr+start) >> 1) + 1)^1];
-    z   = (float)((short*)gfx.RDRAM)[(((addr+start) >> 1) + 2)^1];
+    x   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+start) >> 1) + 0)];
+    y   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+start) >> 1) + 1)];
+    z   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+start) >> 1) + 2)];
 
     v->x = x*rdp.dkrproj[prj][0][0] + y*rdp.dkrproj[prj][1][0] + z*rdp.dkrproj[prj][2][0] + rdp.dkrproj[prj][3][0];
     v->y = x*rdp.dkrproj[prj][0][1] + y*rdp.dkrproj[prj][1][1] + z*rdp.dkrproj[prj][2][1] + rdp.dkrproj[prj][3][1];
@@ -173,10 +173,10 @@ static void uc5_vertex ()
     if (v->w < 0.1f) v->scr_off |= 16;
     if (fabs(v->z_w) > 1.0) v->scr_off |= 32;
 
-    v->r = ((wxUint8*)gfx.RDRAM)[(addr+start + 6)^3];
-    v->g = ((wxUint8*)gfx.RDRAM)[(addr+start + 7)^3];
-    v->b = ((wxUint8*)gfx.RDRAM)[(addr+start + 8)^3];
-    v->a = ((wxUint8*)gfx.RDRAM)[(addr+start + 9)^3];
+    v->r = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+start + 6)];
+    v->g = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+start + 7)];
+    v->b = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+start + 8)];
+    v->a = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+start + 9)];
     CalculateFog (v);
 
 #ifdef EXTREME_LOGGING
@@ -202,7 +202,7 @@ static void uc5_tridma ()
   wxUint32 addr = segoffset(rdp.cmd1) & BMASK;
   int num = (rdp.cmd0 & 0xFFF0) >> 4;
   //int num = ((rdp.cmd0 & 0x00F00000) >> 20) + 1;  // same thing!
-  FRDP("uc5:tridma #%d - addr: %08lx, count: %d\n", rdp.tri_n, addr, num);
+  FRDP("uc5:tridma #%d - addr: %08x, count: %d\n", rdp.tri_n, addr, num);
 
   int start, v0, v1, v2, flags;
   for (int i=0; i<num; i++)
@@ -266,7 +266,7 @@ static void uc5_dl_in_mem ()
 {
   wxUint32 addr = segoffset(rdp.cmd1) & BMASK;
   int count = (rdp.cmd0 & 0x00FF0000) >> 16;
-  FRDP ("uc5:dl_in_mem - addr: %08lx, count: %d\n", addr, count);
+  FRDP ("uc5:dl_in_mem - addr: %08x, count: %d\n", addr, count);
 
   if (rdp.pc_i >= 9) {
     RDP_E ("** DL stack overflow **\n");
@@ -296,11 +296,11 @@ static void uc5_moveword()
       rdp.clip_ratio = sqrt((float)rdp.cmd1);
       rdp.update |= UPDATE_VIEWPORT;
     }
-    FRDP ("clip %08lx, %08lx\n", rdp.cmd0, rdp.cmd1);
+    FRDP ("clip %08x, %08x\n", rdp.cmd0, rdp.cmd1);
     break;
 
   case 0x06:  // segment (verified same)
-    FRDP ("segment: %08lx -> seg%d\n", rdp.cmd1, (rdp.cmd0 >> 10) & 0x0F);
+    FRDP ("segment: %08x -> seg%d\n", rdp.cmd1, (rdp.cmd0 >> 10) & 0x0F);
     rdp.segment[(rdp.cmd0 >> 10) & 0x0F] = rdp.cmd1;
     break;
 
@@ -319,13 +319,13 @@ static void uc5_moveword()
     break;
 
   default:
-    FRDP ("(unknown) %02lx - IGNORED\n", rdp.cmd0&0xFF);
+    FRDP ("(unknown) %02x - IGNORED\n", rdp.cmd0&0xFF);
   }
 }
 
 static void uc5_setgeometrymode()
 {
-  FRDP("uc0:setgeometrymode %08lx\n", rdp.cmd1);
+  FRDP("uc0:setgeometrymode %08x\n", rdp.cmd1);
 
   rdp.geom_mode |= rdp.cmd1;
 
@@ -351,7 +351,7 @@ static void uc5_setgeometrymode()
 
 static void uc5_cleargeometrymode()
 {
-  FRDP("uc0:cleargeometrymode %08lx\n", rdp.cmd1);
+  FRDP("uc0:cleargeometrymode %08x\n", rdp.cmd1);
 
   rdp.geom_mode &= (~rdp.cmd1);
 

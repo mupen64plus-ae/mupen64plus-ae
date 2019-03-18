@@ -93,7 +93,7 @@ static void uc7_vertex ()
   rdp.v0 = v0 = (rdp.cmd0 & 0x0F0000) >> 16;
   rdp.vn = n = ((rdp.cmd0 & 0xF00000) >> 20) + 1;
 
-  FRDP ("uc7:vertex n: %d, v0: %d, from: %08lx\n", n, v0, addr);
+  FRDP ("uc7:vertex n: %d, v0: %d, from: %08x\n", n, v0, addr);
 
   vtx_uc7 *vertex = (vtx_uc7 *)&gfx.RDRAM[addr];
 
@@ -109,7 +109,7 @@ static void uc7_vertex ()
     v->uv_scaled = 0;
 
 #ifdef EXTREME_LOGGING
-//    FRDP ("before: v%d - x: %f, y: %f, z: %f, flags: %04lx, ou: %f, ov: %f\n", i>>4, x, y, z, v->flags, v->ou, v->ov);
+//    FRDP ("before: v%d - x: %f, y: %f, z: %f, flags: %04x, ou: %f, ov: %f\n", i>>4, x, y, z, v->flags, v->ou, v->ov);
 #endif
 
     v->x = x*rdp.combined[0][0] + y*rdp.combined[1][0] + z*rdp.combined[2][0] + rdp.combined[3][0];

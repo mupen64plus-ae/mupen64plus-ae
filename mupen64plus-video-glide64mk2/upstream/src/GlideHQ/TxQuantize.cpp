@@ -1825,20 +1825,20 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
     }
 
 #if !defined(NO_FILTER_THREAD)
-    unsigned int numcore = _numcore;
+    unsigned int numcore = (_numcore < 32) ? _numcore : 32;
     unsigned int blkrow = 0;
     while (numcore > 1 && blkrow == 0) {
       blkrow = (height >> 2) / numcore;
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      SDL_Thread *thrd[MAX_NUMCORE];
-      QuantizeParams params[MAX_NUMCORE];
+      SDL_Thread *thrd[32];
+      QuantizeParams params[32];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (width * blkheight) << (2 - bpp_shift);
       unsigned int destStride = srcStride << bpp_shift;
-      for (i = 0; i < numcore - 1; i++) {
+      for (i = 0; i < numcore; i++) {
           params[i].func = quantizer;
           params[i].src = (uint32*) src;
           params[i].dest = (uint32*) dest;
@@ -1897,15 +1897,15 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
     }
 
 #if !defined(NO_FILTER_THREAD)
-    unsigned int numcore = _numcore;
+    unsigned int numcore = (_numcore < 32) ? _numcore : 32;
     unsigned int blkrow = 0;
     while (numcore > 1 && blkrow == 0) {
       blkrow = (height >> 2) / numcore;
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      SDL_Thread *thrd[MAX_NUMCORE];
-      QuantizeParams params[MAX_NUMCORE];
+      SDL_Thread *thrd[32];
+      QuantizeParams params[32];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (width * blkheight) << 2;
@@ -1968,15 +1968,15 @@ TxQuantize::FXT1(uint8 *src, uint8 *dest,
     int srcRowStride = (srcwidth << 2);
 
 #if !defined(NO_FILTER_THREAD)
-    unsigned int numcore = _numcore;
+    unsigned int numcore = (_numcore < 32) ? _numcore : 32;
     unsigned int blkrow = 0;
     while (numcore > 1 && blkrow == 0) {
       blkrow = (srcheight >> 2) / numcore;
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      SDL_Thread     *thrd[MAX_NUMCORE];
-      CompressParams  params[MAX_NUMCORE];
+      SDL_Thread     *thrd[32];
+      CompressParams  params[32];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (srcwidth * blkheight) << 2;
@@ -2084,15 +2084,15 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
       }
 
 #if !defined(NO_FILTER_THREAD)
-      unsigned int numcore = _numcore;
+      unsigned int numcore = (_numcore < 32) ? _numcore : 32;
       unsigned int blkrow = 0;
       while (numcore > 1 && blkrow == 0) {
         blkrow = (srcheight >> 2) / numcore;
         numcore--;
       }
       if (blkrow > 0 && numcore > 1) {
-        SDL_Thread     *thrd[MAX_NUMCORE];
-        CompressParams  params[MAX_NUMCORE];
+        SDL_Thread     *thrd[32];
+        CompressParams  params[32];
         unsigned int i;
         int blkheight = blkrow << 2;
         unsigned int srcStride = (srcwidth * blkheight) << 2;

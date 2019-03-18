@@ -117,7 +117,7 @@ extern wxUint32 frame_count; // frame counter
 #if defined(_MSC_VER)
 #define DECLAREALIGN16VAR(var) __declspec(align(16)) float var
 #elif defined(__GNUG__)
-#define DECLAREALIGN16VAR(var) float (var) __attribute__ ((aligned(16)))
+#define DECLAREALIGN16VAR(var) float var __attribute__ ((aligned(16)))
 #endif
 
 // Vertex structure

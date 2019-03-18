@@ -23,11 +23,17 @@
 
 #include <m64p_types.h>
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 #define LOGINFO(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
 #ifdef __cplusplus
 extern "C" {
 #endif
-void WriteLog(m64p_msg_level level, const char *msg, ...);
+void WriteLog(m64p_msg_level level, const char *msg, ...) ATTR_FMT(2,3);
 #ifdef __cplusplus
 }
 #endif
@@ -128,8 +134,7 @@ extern "C" {
 #endif // _WIN32
 #include "glide.h"
 
-void display_warning(const unsigned char *text, ...);
-void display_warning(const char *text, ...);
+void display_warning(const char *text, ...) ATTR_FMT(1,2);
 void init_geometry();
 void init_textures();
 void init_combiner();
@@ -387,7 +392,7 @@ grConstantColorValueExt(GrChipID_t    tmu,
 #ifdef LOGGING
 void OPEN_LOG();
 void CLOSE_LOG();
-void LOG(const char *text, ...);
+void LOG(const char *text, ...) ATTR_FMT(1,2);
 #else // LOGGING
 #define OPEN_LOG()
 #define CLOSE_LOG()

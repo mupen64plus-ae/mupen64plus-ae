@@ -311,7 +311,7 @@ void microcheck ()
     uc_crc += ((wxUint32*)microcode)[i];
   }
 
-  FRDP_E ("crc: %08lx\n", uc_crc);
+  FRDP_E ("crc: %08x\n", uc_crc);
 
 #ifdef LOG_UCODE
   std::ofstream ucf;
@@ -319,18 +319,18 @@ void microcheck ()
   char d;
   for (i=0; i<0x400000; i++)
   {
-    d = ((char*)gfx.RDRAM)[i^3];
+    d = ((char*)gfx.RDRAM)[BYTEADDR(i)];
     ucf.write (&d, 1);
   }
   ucf.close ();
 #endif
 
-  FRDP("ucode = %08lx\n", uc_crc);
+  FRDP("ucode = %08x\n", uc_crc);
 
   Ini * ini = Ini::OpenIni();
   ini->SetPath("UCODE");
   char str[9];
-  sprintf (str, "%08lx", (unsigned long)uc_crc);
+  sprintf (str, "%08x", uc_crc);
   int uc = ini->Read(str, -2);
 
   if (uc == -2 && ucode_error_report)
@@ -338,7 +338,7 @@ void microcheck ()
     settings.ucode = Config_ReadInt("ucode", "Force microcode", 0, TRUE, FALSE);
 
     ReleaseGfx ();
-    ERRLOG("Error: uCode crc not found in INI, using currently selected uCode\n\n%08lx", (unsigned long)uc_crc);
+    ERRLOG("Error: uCode crc not found in INI, using currently selected uCode\n\n%08x", uc_crc);
 
     ucode_error_report = FALSE; // don't report any more ucode errors from this game
   }
@@ -347,7 +347,7 @@ void microcheck ()
     settings.ucode = ini->Read(_T("/SETTINGS/ucode"), 0);
 
     ReleaseGfx ();
-    ERRLOG("Error: Unsupported uCode!\n\ncrc: %08lx", (unsigned long)uc_crc);
+    ERRLOG("Error: Unsupported uCode!\n\ncrc: %08x", uc_crc);
 
     ucode_error_report = FALSE; // don't report any more ucode errors from this game
   }
@@ -407,7 +407,7 @@ static void copyWhiteToRDRAM()
         for(wxUint32 x = 0; x < rdp.ci_width; x++)
         {
             if(rdp.ci_size == 2)
-                ptr_dst[(x + y * rdp.ci_width) ^ 1] = 0xFFFF;
+                ptr_dst[SHORTADDR(x + y * rdp.ci_width)] = 0xFFFF;
             else
                 ptr_dst32[x + y * rdp.ci_width] = 0xFFFFFFFF;
         }
@@ -418,7 +418,7 @@ static void CopyFrameBuffer (GrBuffer_t buffer = GR_BUFFER_BACKBUFFER)
 {
   if (!fullscreen)
     return;
-  FRDP ("CopyFrameBuffer: %08lx... ", rdp.cimg);
+  FRDP ("CopyFrameBuffer: %08x... ", rdp.cimg);
 
   // don't bother to write the stuff in asm... the slow part is the read from video card,
   //   not the copy.
@@ -468,7 +468,7 @@ static void CopyFrameBuffer (GrBuffer_t buffer = GR_BUFFER_BACKBUFFER)
             c = (c&0xFFC0) | ((c&0x001F) << 1) | 1;
           }
           if (rdp.ci_size == 2)
-            ptr_dst[(x + y * width)^1] = c;
+            ptr_dst[SHORTADDR(x + y * width)] = c;
           else
             ptr_dst32[x + y * width] = RGBA16TO32(c);
         }
@@ -526,7 +526,7 @@ static void CopyFrameBuffer (GrBuffer_t buffer = GR_BUFFER_BACKBUFFER)
             if (read_alpha && c == 1)
               c = 0;
             if (rdp.ci_size <= 2)
-              ptr_dst[(x + y * width)^1] = c;
+              ptr_dst[SHORTADDR(x + y * width)] = c;
             else
               ptr_dst32[x + y * width] = RGBA16TO32(c);
           }
@@ -736,8 +736,8 @@ EXPORT void CALL ProcessDList(void)
   // Get the start of the display list and the length of it
   wxUint32 dlist_start = *(wxUint32*)(gfx.DMEM+0xFF0);
   wxUint32 dlist_length = *(wxUint32*)(gfx.DMEM+0xFF4);
-  FRDP("--- NEW DLIST --- crc: %08lx, ucode: %d, fbuf: %08lx, fbuf_width: %d, dlist start: %08lx, dlist_length: %d, x_scale: %f, y_scale: %f\n", uc_crc, settings.ucode, *gfx.VI_ORIGIN_REG, *gfx.VI_WIDTH_REG, dlist_start, dlist_length, (*gfx.VI_X_SCALE_REG & 0xFFF)/1024.0f, (*gfx.VI_Y_SCALE_REG & 0xFFF)/1024.0f);
-  FRDP_E("--- NEW DLIST --- crc: %08lx, ucode: %d, fbuf: %08lx\n", uc_crc, settings.ucode, *gfx.VI_ORIGIN_REG);
+  FRDP("--- NEW DLIST --- crc: %08x, ucode: %d, fbuf: %08x, fbuf_width: %d, dlist start: %08x, dlist_length: %d, x_scale: %f, y_scale: %f\n", uc_crc, settings.ucode, *gfx.VI_ORIGIN_REG, *gfx.VI_WIDTH_REG, dlist_start, dlist_length, (*gfx.VI_X_SCALE_REG & 0xFFF)/1024.0f, (*gfx.VI_Y_SCALE_REG & 0xFFF)/1024.0f);
+  FRDP_E("--- NEW DLIST --- crc: %08x, ucode: %d, fbuf: %08x\n", uc_crc, settings.ucode, *gfx.VI_ORIGIN_REG);
 
   // Do nothing if dlist is empty
   if (dlist_start == 0)
@@ -782,9 +782,9 @@ EXPORT void CALL ProcessDList(void)
 
         // Output the address before the command
 #ifdef LOG_COMMANDS
-        FRDP ("%08lx (c0:%08lx, c1:%08lx): ", a, rdp.cmd0, rdp.cmd1);
+        FRDP ("%08x (c0:%08x, c1:%08x): ", a, rdp.cmd0, rdp.cmd1);
 #else
-        FRDP ("%08lx: ", a);
+        FRDP ("%08x: ", a);
 #endif
 
         // Go to the next instruction
@@ -811,7 +811,7 @@ EXPORT void CALL ProcessDList(void)
 
 #ifdef PERFORMANCE
         perf_next = wxDateTime::UNow();
-        sprintf (out_buf, "perf %08lx: %016I64d\n", a-8, (perf_next-perf_cur).Format(_T("%l")).mb_str());
+        sprintf (out_buf, "perf %08x: %016I64d\n", a-8, (perf_next-perf_cur).Format(_T("%l")).mb_str());
         rdp_log << out_buf;
 #endif
 
@@ -867,8 +867,8 @@ EXPORT void CALL ProcessDList(void)
 // undef - undefined instruction, always ignore
 static void undef()
 {
-  FRDP_E("** undefined ** (%08lx)\n", rdp.cmd0);
-  FRDP("** undefined ** (%08lx) - IGNORED\n", rdp.cmd0);
+  FRDP_E("** undefined ** (%08x)\n", rdp.cmd0);
+  FRDP("** undefined ** (%08x) - IGNORED\n", rdp.cmd0);
 #ifdef _ENDUSER_RELEASE_
   *gfx.MI_INTR_REG |= 0x20;
   gfx.CheckInterrupts();
@@ -934,7 +934,7 @@ static void pm_palette_mod ()
   wxUint16 * dst = (wxUint16*)(gfx.RDRAM+rdp.cimg);
   for (int i = 0; i < 16; i++)
   {
-    dst[i^1] = (rdp.pal_8[i]&1) ? prim16 : env16;
+    dst[SHORTADDR(i)] = (rdp.pal_8[i]&1) ? prim16 : env16;
   }
   LRDP("Texrect palette modification\n");
 }
@@ -952,8 +952,8 @@ static void pd_zcopy ()
   {
     c = ptr_src[x];
     c = ((c<<8)&0xFF00) | (c >> 8);
-    ptr_dst[(ul_x+x)^1] = c;
-    //      FRDP("dst[%d]=%04lx \n", (x + ul_x)^1, c);
+    ptr_dst[SHORTADDR(ul_x+x)] = c;
+    //      FRDP("dst[%d]=%04x \n", SHORTADDR(x + ul_x), c);
   }
 }
 
@@ -1021,7 +1021,7 @@ static void rdp_texrect()
 
   if ((settings.ucode == ucode_CBFD) && rdp.cur_image && rdp.cur_image->format)
   {
-    //FRDP("Wrong Texrect. texaddr: %08lx, cimg: %08lx, cimg_end: %08lx\n", rdp.timg.addr, rdp.maincimg[1].addr, rdp.maincimg[1].addr+rdp.ci_width*rdp.ci_height*rdp.ci_size);
+    //FRDP("Wrong Texrect. texaddr: %08x, cimg: %08x, cimg_end: %08x\n", rdp.timg.addr, rdp.maincimg[1].addr, rdp.maincimg[1].addr+rdp.ci_width*rdp.ci_height*rdp.ci_size);
     LRDP("Shadow texrect is skipped.\n");
     rdp.tri_n += 2;
     return;
@@ -1045,7 +1045,7 @@ static void rdp_texrect()
     return;
   }
 
-  //  FRDP ("rdp.cycle1 %08lx, rdp.cycle2 %08lx\n", rdp.cycle1, rdp.cycle2);
+  //  FRDP ("rdp.cycle1 %08x, rdp.cycle2 %08x\n", rdp.cycle1, rdp.cycle2);
 
   float ul_x, ul_y, lr_x, lr_y;
   if (rdp.cycle_mode == 2)
@@ -1100,7 +1100,7 @@ static void rdp_texrect()
       d.imageH  = (wxUint16)rdp.tbuff_tex->height;
       d.frameY  = (wxUint16)ul_y;
       d.frameH  = (wxUint16)(rdp.tbuff_tex->height);
-      FRDP("texrect. ul_x: %d, ul_y: %d, lr_x: %d, lr_y: %d, width: %d, height: %d\n", ul_x, ul_y, lr_x, lr_y, rdp.tbuff_tex->width, rdp.tbuff_tex->height);
+      FRDP("texrect. ul_x: %lf, ul_y: %lf, lr_x: %lf, lr_y: %lf, width: %d, height: %d\n", ul_x, ul_y, lr_x, lr_y, rdp.tbuff_tex->width, rdp.tbuff_tex->height);
       d.scaleX  = 1.0f;
       d.scaleY  = 1.0f;
       DrawHiresImage(d, rdp.tbuff_tex->width == rdp.ci_width);
@@ -1117,7 +1117,7 @@ static void rdp_texrect()
   //hack for Zelda MM. it removes black texrects which cover all geometry in "Link meets Zelda" cut scene
   if ((settings.hacks&hack_Zelda) && rdp.timg.addr >= rdp.cimg && rdp.timg.addr < rdp.ci_end)
   {
-    FRDP("Wrong Texrect. texaddr: %08lx, cimg: %08lx, cimg_end: %08lx\n", rdp.cur_cache[0]->addr, rdp.cimg, rdp.cimg+rdp.ci_width*rdp.ci_height*2);
+    FRDP("Wrong Texrect. texaddr: %08x, cimg: %08x, cimg_end: %08x\n", rdp.cur_cache[0]->addr, rdp.cimg, rdp.cimg+rdp.ci_width*rdp.ci_height*2);
     rdp.tri_n += 2;
     return;
   }
@@ -1136,7 +1136,7 @@ static void rdp_texrect()
     if (fb_emulation_enabled)
       if (rdp.ci_count > 0 && rdp.frame_buffers[rdp.ci_count-1].status == ci_copy_self)
       {
-        //FRDP("Wrong Texrect. texaddr: %08lx, cimg: %08lx, cimg_end: %08lx\n", rdp.timg.addr, rdp.maincimg[1], rdp.maincimg[1]+rdp.ci_width*rdp.ci_height*rdp.ci_size);
+        //FRDP("Wrong Texrect. texaddr: %08x, cimg: %08x, cimg_end: %08x\n", rdp.timg.addr, rdp.maincimg[1], rdp.maincimg[1]+rdp.ci_width*rdp.ci_height*rdp.ci_size);
         LRDP("Wrong Texrect.\n");
         rdp.tri_n += 2;
         return;
@@ -1559,7 +1559,7 @@ static void rdp_setkeygb()
   wxUint32 cG = (rdp.cmd1>>24)&0xFF;
   rdp.SCALE = (rdp.SCALE&0xFF0000FF) | (sG<<16) | (sB<<8);
   rdp.CENTER = (rdp.CENTER&0xFF0000FF) | (cG<<16) | (cB<<8);
-  FRDP("setkeygb. cG=%02lx, sG=%02lx, cB=%02lx, sB=%02lx\n", cG, sG, cB, sB);
+  FRDP("setkeygb. cG=%02x, sG=%02x, cB=%02x, sB=%02x\n", cG, sG, cB, sB);
 }
 
 static void rdp_setkeyr()
@@ -1568,7 +1568,7 @@ static void rdp_setkeyr()
   wxUint32 cR = (rdp.cmd1>>8)&0xFF;
   rdp.SCALE = (rdp.SCALE&0x00FFFFFF) | (sR<<24);
   rdp.CENTER = (rdp.CENTER&0x00FFFFFF) | (cR<<24);
-  FRDP("setkeyr. cR=%02lx, sR=%02lx\n", cR, sR);
+  FRDP("setkeyr. cR=%02x, sR=%02x\n", cR, sR);
 }
 
 static void rdp_setconvert()
@@ -1583,7 +1583,7 @@ static void rdp_setconvert()
   rdp.K4 = (wxUint8)(rdp.cmd1>>9)&0x1FF;
   rdp.K5 = (wxUint8)(rdp.cmd1&0x1FF);
   //  RDP_E("setconvert - IGNORED\n");
-  FRDP("setconvert. K4=%02lx K5=%02lx\n", rdp.K4, rdp.K5);
+  FRDP("setconvert. K4=%02x K5=%02x\n", rdp.K4, rdp.K5);
 }
 
 //
@@ -1663,14 +1663,14 @@ void load_palette (wxUint32 addr, wxUint16 start, wxUint16 count)
   wxUint16 *spal = (wxUint16*)(gfx.RDRAM + (addr & BMASK));
 #endif
 
+  addr >>= 1;
   for (wxUint16 i=start; i<end; i++)
   {
-    *(dpal++) = *(wxUint16 *)(gfx.RDRAM + (addr^2));
-    addr += 2;
-
+    *(dpal++) = ((wxUint16 *)gfx.RDRAM)[SHORTADDR(addr)];
 #ifdef TLUT_LOGGING
-    FRDP ("%d: %08lx\n", i, *(wxUint16 *)(gfx.RDRAM + (addr^2)));
+    FRDP ("%d: %08x\n", i, ((wxUint16 *)gfx.RDRAM)[SHORTADDR(addr)]);
 #endif
+    addr++;
   }
 #ifdef TEXTURE_FILTER
   if (settings.ghq_hirs)
@@ -1700,7 +1700,7 @@ static void rdp_loadtlut()
 
   if (start+count > 256) count = 256-start;
 
-  FRDP("loadtlut: tile: %d, start: %d, count: %d, from: %08lx\n", tile, start, count,
+  FRDP("loadtlut: tile: %d, start: %d, count: %d, from: %08x\n", tile, start, count,
     rdp.timg.addr);
 
   load_palette (rdp.timg.addr, start, count);
@@ -1795,7 +1795,7 @@ void setTBufTex(wxUint16 t_mem, wxUint32 cnt)
     } else {
       FRDP("rdp.aTBuffTex[%d]=0\n", i);
     }
-    if ((rdp.aTBuffTex[i] == 0 && rdp.aTBuffTex[i^1] != pTbufTex) || (rdp.aTBuffTex[i] && rdp.aTBuffTex[i]->t_mem >= t_mem && rdp.aTBuffTex[i]->t_mem < t_mem + cnt))
+    if ((rdp.aTBuffTex[i] == 0 && rdp.aTBuffTex[SHORTADDR(i)] != pTbufTex) || (rdp.aTBuffTex[i] && rdp.aTBuffTex[i]->t_mem >= t_mem && rdp.aTBuffTex[i]->t_mem < t_mem + cnt))
     {
       if (pTbufTex)
       {
@@ -2009,7 +2009,7 @@ static void rdp_loadblock()
     cnt <<= 1;
 
   if (((rdp.tiles[tile].t_mem + cnt) << 3) > sizeof(rdp.tmem)) {
-    WriteLog(M64MSG_INFO, "rdp_loadblock wanted to write %u bytes after the end of tmem", ((rdp.tiles[tile].t_mem + cnt) << 3) - sizeof(rdp.tmem));
+    WriteLog(M64MSG_INFO, "rdp_loadblock wanted to write %lu bytes after the end of tmem", ((rdp.tiles[tile].t_mem + cnt) << 3) - sizeof(rdp.tmem));
     cnt = (sizeof(rdp.tmem) >> 3) - (rdp.tiles[tile].t_mem);
   }
 
@@ -2023,7 +2023,7 @@ static void rdp_loadblock()
 
   rdp.update |= UPDATE_TEXTURE;
 
-  FRDP ("loadblock: tile: %d, ul_s: %d, ul_t: %d, lr_s: %d, dxt: %08lx -> %08lx\n",
+  FRDP ("loadblock: tile: %d, ul_s: %d, ul_t: %d, lr_s: %d, dxt: %08x -> %08x\n",
     tile, ul_s, ul_t, lr_s,
     dxt, _dxt);
 
@@ -2287,7 +2287,7 @@ static void rdp_settile()
   rdp.update |= UPDATE_TEXTURE;
 
   FRDP ("settile: tile: %d, format: %s, size: %s, line: %d, "
-    "t_mem: %08lx, palette: %d, clamp_t/mirror_t: %s, mask_t: %d, "
+    "t_mem: %08x, palette: %d, clamp_t/mirror_t: %s, mask_t: %d, "
     "shift_t: %d, clamp_s/mirror_s: %s, mask_s: %d, shift_s: %d\n",
     rdp.last_tile, str_format[tile->format], str_size[tile->size], tile->line,
     tile->t_mem, tile->palette, str_cm[(tile->clamp_t<<1)|tile->mirror_t], tile->mask_t,
@@ -2550,7 +2550,7 @@ static void rdp_setfillcolor()
   rdp.fill_color = rdp.cmd1;
   rdp.update |= UPDATE_ALPHA_COMPARE | UPDATE_COMBINE;
 
-  FRDP("setfillcolor: %08lx\n", rdp.cmd1);
+  FRDP("setfillcolor: %08x\n", rdp.cmd1);
 }
 
 static void rdp_setfogcolor()
@@ -2558,7 +2558,7 @@ static void rdp_setfogcolor()
   rdp.fog_color = rdp.cmd1;
   rdp.update |= UPDATE_COMBINE | UPDATE_FOG_ENABLED;
 
-  FRDP("setfogcolor - %08lx\n", rdp.cmd1);
+  FRDP("setfogcolor - %08x\n", rdp.cmd1);
 }
 
 static void rdp_setblendcolor()
@@ -2566,7 +2566,7 @@ static void rdp_setblendcolor()
   rdp.blend_color = rdp.cmd1;
   rdp.update |= UPDATE_COMBINE;
 
-  FRDP("setblendcolor: %08lx\n", rdp.cmd1);
+  FRDP("setblendcolor: %08x\n", rdp.cmd1);
 }
 
 static void rdp_setprimcolor()
@@ -2576,7 +2576,7 @@ static void rdp_setprimcolor()
   rdp.prim_lodfrac = max(rdp.cmd0 & 0xFF, rdp.prim_lodmin);
   rdp.update |= UPDATE_COMBINE;
 
-  FRDP("setprimcolor: %08lx, lodmin: %d, lodfrac: %d\n", rdp.cmd1, rdp.prim_lodmin,
+  FRDP("setprimcolor: %08x, lodmin: %d, lodfrac: %d\n", rdp.cmd1, rdp.prim_lodmin,
     rdp.prim_lodfrac);
 }
 
@@ -2585,7 +2585,7 @@ static void rdp_setenvcolor()
   rdp.env_color = rdp.cmd1;
   rdp.update |= UPDATE_COMBINE;
 
-  FRDP("setenvcolor: %08lx\n", rdp.cmd1);
+  FRDP("setenvcolor: %08x\n", rdp.cmd1);
 }
 
 static void rdp_setcombine()
@@ -2640,7 +2640,7 @@ static void rdp_settextureimage()
     if (rdp.timg.format == 0)
     {
       wxUint16 * t = (wxUint16*)(gfx.RDRAM+ucode5_texshiftaddr);
-      ucode5_texshift = t[ucode5_texshiftcount^1];
+      ucode5_texshift = t[SHORTADDR(ucode5_texshiftcount)];
       rdp.timg.addr += ucode5_texshift;
     }
     else
@@ -2668,7 +2668,7 @@ static void rdp_settextureimage()
   if (fb_hwfbe_enabled) //search this texture among drawn texture buffers
     FindTextureBuffer(rdp.timg.addr, rdp.timg.width);
 
-  FRDP("settextureimage: format: %s, size: %s, width: %d, addr: %08lx\n",
+  FRDP("settextureimage: format: %s, size: %s, width: %d, addr: %08x\n",
     format[rdp.timg.format], size[rdp.timg.size],
     rdp.timg.width, rdp.timg.addr);
 }
@@ -2677,7 +2677,7 @@ static void rdp_setdepthimage()
 {
   rdp.zimg = segoffset(rdp.cmd1) & BMASK;
   rdp.zi_width = rdp.ci_width;
-  FRDP("setdepthimage - %08lx\n", rdp.zimg);
+  FRDP("setdepthimage - %08x\n", rdp.zimg);
 }
 
 int SwapOK = TRUE;
@@ -2944,7 +2944,7 @@ static void rdp_setcolorimage()
           {
             for (int x=0; x<width; x++)
             {
-              c = ((ptr_src[(x + y * width)^1]) >> 1) | 0x8000;
+              c = ((ptr_src[SHORTADDR(x + y * width)]) >> 1) | 0x8000;
               ptr_dst[x + y * width] = c;
             }
           }
@@ -3015,8 +3015,8 @@ static void rdp_setcolorimage()
   wxUint32 format = (rdp.cmd0 >> 21) & 0x7;
   rdp.ci_size = (rdp.cmd0 >> 19) & 0x3;
   rdp.ci_end = rdp.cimg + ((rdp.ci_width*rdp.ci_height)<<(rdp.ci_size-1));
-  FRDP("setcolorimage - %08lx, width: %d,  height: %d, format: %d, size: %d\n", rdp.cmd1, rdp.ci_width, rdp.ci_height, format, rdp.ci_size);
-  FRDP("cimg: %08lx, ocimg: %08lx, SwapOK: %d\n", rdp.cimg, rdp.ocimg, SwapOK);
+  FRDP("setcolorimage - %08x, width: %d,  height: %d, format: %d, size: %d\n", rdp.cmd1, rdp.ci_width, rdp.ci_height, format, rdp.ci_size);
+  FRDP("cimg: %08x, ocimg: %08x, SwapOK: %d\n", rdp.cimg, rdp.ocimg, SwapOK);
 
   if (format != 0) //can't draw into non RGBA buffer
   {
@@ -3058,7 +3058,7 @@ static void rdp_setcolorimage()
         if (rdp.copy_ci_index && rdp.ci_count > 0 && (rdp.frame_buffers[rdp.ci_count-1].status != ci_zimg))
         {
           int idx = (rdp.frame_buffers[rdp.ci_count].status == ci_aux_copy) ? rdp.main_ci_index : rdp.copy_ci_index;
-          FRDP("attempt open tex buffer. status: %s, addr: %08lx\n", CIStatus[rdp.frame_buffers[idx].status], rdp.frame_buffers[idx].addr);
+          FRDP("attempt open tex buffer. status: %s, addr: %08x\n", CIStatus[rdp.frame_buffers[idx].status], rdp.frame_buffers[idx].addr);
           OpenTextureBuffer(rdp.frame_buffers[idx]);
           if (rdp.frame_buffers[rdp.copy_ci_index].status == ci_main) //tidal wave
             rdp.copy_ci_index = 0;
@@ -3078,7 +3078,7 @@ static void rsp_reserved0()
   {
     ucode5_texshiftaddr = segoffset(rdp.cmd1);
     ucode5_texshiftcount = 0;
-    FRDP("uc5_texshift. addr: %08lx\n", ucode5_texshiftaddr);
+    FRDP("uc5_texshift. addr: %08x\n", ucode5_texshiftaddr);
   }
   else
   {
@@ -3208,7 +3208,7 @@ EXPORT void CALL FBRead(wxUint32 addr)
   }
   cpu_fb_read_called = TRUE;
   wxUint32 a = segoffset(addr);
-  FRDP("FBRead. addr: %08lx\n", a);
+  FRDP("FBRead. addr: %08x\n", a);
   if (!rdp.fb_drawn && (a >= rdp.cimg) && (a < rdp.ci_end))
   {
     fbreads_back++;
@@ -3282,7 +3282,7 @@ EXPORT void CALL FBWrite(wxUint32 addr, wxUint32 size)
   }
   cpu_fb_write_called = TRUE;
   wxUint32 a = segoffset(addr);
-  FRDP("FBWrite. addr: %08lx\n", a);
+  FRDP("FBWrite. addr: %08x\n", a);
   if (a < rdp.cimg || a > rdp.ci_end)
     return;
   cpu_fb_write = TRUE;
@@ -3500,7 +3500,7 @@ void DetectFrameBufferUsage ()
   LRDP("detect fb final results: \n");
   for (i = 0; i < rdp.ci_count; i++)
   {
-    FRDP("rdp.frame_buffers[%d].status = %s, addr: %08lx, height: %d\n", i, CIStatus[rdp.frame_buffers[i].status], rdp.frame_buffers[i].addr, rdp.frame_buffers[i].height);
+    FRDP("rdp.frame_buffers[%d].status = %s, addr: %08x, height: %d\n", i, CIStatus[rdp.frame_buffers[i].status], rdp.frame_buffers[i].addr, rdp.frame_buffers[i].height);
   }
 
   rdp.cimg = ci;

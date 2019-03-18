@@ -61,7 +61,7 @@ static void uc3_vertex()
 
 static void uc3_tri1()
 {
-  FRDP("uc3:tri1 #%d - %d, %d, %d - %08lx - %08lx\n", rdp.tri_n,
+  FRDP("uc3:tri1 #%d - %d, %d, %d - %08x - %08x\n", rdp.tri_n,
     ((rdp.cmd1 >> 16) & 0xFF)/5,
     ((rdp.cmd1 >> 8) & 0xFF)/5,
     ((rdp.cmd1     ) & 0xFF)/5, rdp.cmd0, rdp.cmd1);

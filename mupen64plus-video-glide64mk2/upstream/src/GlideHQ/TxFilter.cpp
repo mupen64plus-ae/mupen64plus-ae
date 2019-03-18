@@ -283,15 +283,15 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
         uint8 *_tmptex  = tmptex;
 
 #if !defined(NO_FILTER_THREAD)
-        unsigned int numcore = _numcore;
+        unsigned int numcore = (_numcore < 32) ? _numcore : 32;
         unsigned int blkrow = 0;
         while (numcore > 1 && blkrow == 0) {
           blkrow = (srcheight >> 2) / numcore;
           numcore--;
         }
         if (blkrow > 0 && numcore > 1) {
-          SDL_Thread *thrd[MAX_NUMCORE];
-          FilterParams params[MAX_NUMCORE];
+          SDL_Thread *thrd[32];
+          FilterParams params[32];
           unsigned int i;
           int blkheight = blkrow << 2;
           unsigned int srcStride = (srcwidth * blkheight) << 2;

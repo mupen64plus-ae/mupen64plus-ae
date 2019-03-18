@@ -108,6 +108,15 @@ ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
   NO_ASM := 1
   $(warning Architecture "$(HOST_CPU)" not officially supported.')
 endif
+ifneq ("$(filter ppc64le powerpc64le,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 64BITS
+  BIG_ENDIAN := 0
+  PIC ?= 1
+  NO_ASM := 1
+  NO_SSE := 1
+  $(warning Architecture "$(HOST_CPU)" not officially supported.')
+endif
 ifneq ("$(filter arm%,$(HOST_CPU))","")
   ifeq ("$(filter arm%b,$(HOST_CPU))","")
     CPU := ARM
@@ -118,6 +127,15 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
     $(warning Architecture "$(HOST_CPU)" not officially supported.')
   endif
 endif
+ifneq ("$(filter aarch64,$(HOST_CPU))","")
+    CPU := AARCH
+    ARCH_DETECTED := 64BITS
+    PIC ?= 1
+    NEW_DYNAREC := 1
+    NO_ASM := 1
+    NO_SSE := 1
+endif
+
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'https://github.com/mupen64plus/mupen64plus-core/issues')
 endif

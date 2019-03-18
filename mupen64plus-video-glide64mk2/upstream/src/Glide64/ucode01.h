@@ -59,7 +59,7 @@ static void uc1_tri1()
     LRDP("uc1:tri1. skipped\n");
     return;
   }
-  FRDP("uc1:tri1 #%d - %d, %d, %d - %08lx - %08lx\n", rdp.tri_n,
+  FRDP("uc1:tri1 #%d - %d, %d, %d - %08x - %08x\n", rdp.tri_n,
     ((rdp.cmd1 >> 17) & 0x7F),
     ((rdp.cmd1 >> 9) & 0x7F),
     ((rdp.cmd1 >> 1) & 0x7F), rdp.cmd0, rdp.cmd1);
@@ -154,7 +154,7 @@ static void uc1_rdphalf_1()
 static void uc1_branch_z()
 {
   wxUint32 addr = segoffset(branch_dl);
-  FRDP ("uc1:branch_less_z, addr: %08lx\n", addr);
+  FRDP ("uc1:branch_less_z, addr: %08x\n", addr);
   wxUint32 vtx = (rdp.cmd0 >> 1) & 0x7FF;
   const wxUint32 zTest = wxUint32((rdp.vtx[vtx].z / rdp.vtx[vtx].w) * 1023.0f);
   if (zTest > 0x03FF || zTest <= rdp.cmd1)

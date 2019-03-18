@@ -37,6 +37,12 @@
 //
 //****************************************************************
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 #define SELECTED_NONE	0x00000000
 #define SELECTED_TRI	0x00000001
 #define SELECTED_TEX	0x00000002
@@ -134,4 +140,5 @@ void debug_capture ();
 void debug_cacheviewer ();
 void debug_mouse ();
 void debug_keys ();
-void output (float x, float y, int scale, const char *fmt, ...);
+void output (float x, float y, int scale, const char *fmt, ...) ATTR_FMT(4,5);
+

@@ -32,11 +32,10 @@ TxDbg::TxDbg()
 {
   _level = DBG_LEVEL;
 
-  if (!_dbgfile)
 #ifdef GHQCHK
-    _dbgfile = fopen("ghqchk.txt", "w");
+  _dbgfile = fopen("ghqchk.txt", "w");
 #else
-    _dbgfile = fopen("glidehq.dbg", "w");
+  _dbgfile = fopen("glidehq.dbg", "w");
 #endif
 }
 

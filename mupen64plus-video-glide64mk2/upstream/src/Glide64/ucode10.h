@@ -44,7 +44,7 @@
 static void uc10_branch_w()
 {
   wxUint32 addr = segoffset(branch_dl);
-  FRDP ("uc10:branch_less_w, addr: %08lx\n", addr);
+  FRDP ("uc10:branch_less_w, addr: %08x\n", addr);
 
   wxUint32 vtx = (rdp.cmd0 >> 1) & 0x7F;
 

@@ -31,15 +31,21 @@
 #include <stdio.h>
 
 #define PLUGIN_NAME                 "Glide64mk2 Video Plugin"
-#define PLUGIN_VERSION              0x020500
+#define PLUGIN_VERSION              0x020509
 #define VIDEO_PLUGIN_API_VERSION	0x020200
 #define CONFIG_API_VERSION          0x020000
 #define VIDEXT_API_VERSION          0x030000
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-void WriteLog(m64p_msg_level level, const char *msg, ...);
+void WriteLog(m64p_msg_level level, const char *msg, ...) ATTR_FMT(2,3);
 #ifdef __cplusplus
 }
 #endif

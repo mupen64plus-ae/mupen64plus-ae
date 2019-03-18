@@ -349,7 +349,7 @@ void draw_tri (VERTEX **vtx, wxUint16 linew)
           else  // prim color
           {
 #ifdef EXTREME_LOGGING
-            FRDP(" * Prim shaded %08lx\n", rdp.prim_color);
+            FRDP(" * Prim shaded %08x\n", rdp.prim_color);
 #endif
             v->a = (wxUint8)(rdp.prim_color & 0xFF);
             v->b = (wxUint8)((rdp.prim_color >> 8) & 0xFF);
@@ -1875,7 +1875,7 @@ void update ()
   // Force blend
   if (rdp.render_mode_changed & 0xFFFF0000)
   {
-    FRDP (" |- render_mode_changed force_blend - %08lx\n", rdp.othermode_l&0xFFFF0000);
+    FRDP (" |- render_mode_changed force_blend - %08x\n", rdp.othermode_l&0xFFFF0000);
     rdp.render_mode_changed &= 0x0000FFFF;
 
     rdp.fbl_a0 = (wxUint8)((rdp.othermode_l>>30)&0x3);
@@ -1980,7 +1980,7 @@ void update ()
         wxUint8 reference = (wxUint8)(rdp.blend_color&0xFF);
         grAlphaTestFunction (reference ? GR_CMP_GEQUAL : GR_CMP_GREATER);
         grAlphaTestReferenceValue (reference);
-        FRDP (" |- alpha compare: blend: %02lx\n", reference);
+        FRDP (" |- alpha compare: blend: %02x\n", reference);
       }
       else
       {
@@ -1998,7 +1998,7 @@ void update ()
             if (rdp.acmp == 3)
             {
               grAlphaTestReferenceValue ((wxUint8)(rdp.blend_color&0xFF));
-              FRDP (" |- alpha compare: blend: %02lx\n", rdp.blend_color&0xFF);
+              FRDP (" |- alpha compare: blend: %02x\n", rdp.blend_color&0xFF);
             }
             else
             {

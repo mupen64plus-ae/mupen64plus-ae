@@ -257,11 +257,11 @@ void init_combiner()
   if(!log_length)
   {
     glGetInfoLogARB(fragment_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
     glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
     glGetInfoLogARB(program_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
   }
 
   texture0_location = glGetUniformLocationARB(program_object, "texture0");
@@ -281,11 +281,11 @@ void init_combiner()
   if(!log_length)
   {
     glGetInfoLogARB(fragment_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
     glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
     glGetInfoLogARB(program_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
   }
 
   texture0_location = glGetUniformLocationARB(program_object, "texture0");
@@ -497,12 +497,12 @@ void compile_shader()
   {
     glGetInfoLogARB(shader_programs[number_of_programs].fragment_shader_object, 
       2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
     glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
     glGetInfoLogARB(program_object, 
       2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
+    if(log_length) display_warning("%s", shader_log);
   }
 
   texture0_location = glGetUniformLocationARB(program_object, "texture0");

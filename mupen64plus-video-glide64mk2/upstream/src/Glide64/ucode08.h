@@ -59,7 +59,7 @@ static void uc8_vertex ()
 	rdp.vn = n = (rdp.cmd0 >> 12) & 0xFF;
 	rdp.v0 = v0 = ((rdp.cmd0 >> 1) & 0x7F) - n;
 
-	FRDP ("uc8:vertex n: %d, v0: %d, from: %08lx\n", n, v0, addr);
+	FRDP ("uc8:vertex n: %d, v0: %d, from: %08x\n", n, v0, addr);
 
 	if (v0 < 0)
 	{
@@ -87,14 +87,14 @@ static void uc8_vertex ()
 	for (i=0; i < (n<<4); i+=16)
 	{
 		VERTEX *v = &rdp.vtx[v0 + (i>>4)];
-		x   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 0)^1];
-		y   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 1)^1];
-		z   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 2)^1];
-		v->flags  = ((wxUint16*)gfx.RDRAM)[(((addr+i) >> 1) + 3)^1];
-		v->ou   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 4)^1];
-		v->ov   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 5)^1];
+		x   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 0)];
+		y   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 1)];
+		z   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 2)];
+		v->flags  = ((wxUint16*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 3)];
+		v->ou   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 4)];
+		v->ov   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 5)];
         v->uv_scaled = 0;
-		v->a    = ((wxUint8*)gfx.RDRAM)[(addr+i + 15)^3];
+		v->a    = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 15)];
 
 #ifdef EXTREME_LOGGING
 		FRDP ("before v%d - x: %f, y: %f, z: %f\n", i>>4, x, y, z);
@@ -125,18 +125,18 @@ static void uc8_vertex ()
 		if (v->y > v->w) v->scr_off |= 8;
 		if (v->w < 0.1f) v->scr_off |= 16;
 		///*
-		v->r = ((wxUint8*)gfx.RDRAM)[(addr+i + 12)^3];
-		v->g = ((wxUint8*)gfx.RDRAM)[(addr+i + 13)^3];
-		v->b = ((wxUint8*)gfx.RDRAM)[(addr+i + 14)^3];
+		v->r = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 12)];
+		v->g = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 13)];
+		v->b = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 14)];
 #ifdef EXTREME_LOGGING
-		FRDP ("r: %02lx, g: %02lx, b: %02lx, a: %02lx\n", v->r, v->g, v->b, v->a);
+		FRDP ("r: %02x, g: %02x, b: %02x, a: %02x\n", v->r, v->g, v->b, v->a);
 #endif
 
 		if ((rdp.geom_mode & 0x00020000))
 		{
 			wxUint32 shift = v0 << 1;
-			v->vec[0] = ((char*)gfx.RDRAM)[(uc8_normale_addr + (i>>3) + shift + 0)^3];
-			v->vec[1] = ((char*)gfx.RDRAM)[(uc8_normale_addr + (i>>3) + shift + 1)^3];
+			v->vec[0] = ((char*)gfx.RDRAM)[BYTEADDR(uc8_normale_addr + (i>>3) + shift + 0)];
+			v->vec[1] = ((char*)gfx.RDRAM)[BYTEADDR(uc8_normale_addr + (i>>3) + shift + 1)];
 			v->vec[2] = (char)(v->flags&0xff);
 
   			if (rdp.geom_mode & 0x80000)
@@ -153,8 +153,8 @@ static void uc8_vertex ()
   				FRDP ("calc sphere: v%d - u: %f, v: %f\n", i>>4, v->ou, v->ov);
 #endif
   			}
-			//     FRDP("calc light. r: 0x%02lx, g: 0x%02lx, b: 0x%02lx, nx: %.3f, ny: %.3f, nz: %.3f\n", v->r, v->g, v->b, v->vec[0], v->vec[1], v->vec[2]);
-			FRDP("v[%d] calc light. r: 0x%02lx, g: 0x%02lx, b: 0x%02lx\n", i>>4, v->r, v->g, v->b);
+			//     FRDP("calc light. r: 0x%02x, g: 0x%02x, b: 0x%02x, nx: %.3f, ny: %.3f, nz: %.3f\n", v->r, v->g, v->b, v->vec[0], v->vec[1], v->vec[2]);
+			FRDP("v[%d] calc light. r: 0x%02x, g: 0x%02x, b: 0x%02x\n", i>>4, v->r, v->g, v->b);
 			float color[3] = {rdp.light[rdp.num_lights].r, rdp.light[rdp.num_lights].g, rdp.light[rdp.num_lights].b};
 			FRDP("ambient light. r: %f, g: %f, b: %f\n", color[0], color[1], color[2]);
 			float light_intensity = 0.0f;
@@ -227,7 +227,7 @@ static void uc8_vertex ()
 			v->g = (wxUint8)(((float)v->g)*color[1]);
 			v->b = (wxUint8)(((float)v->b)*color[2]);
 #ifdef EXTREME_LOGGING
-		FRDP("color after light: r: 0x%02lx, g: 0x%02lx, b: 0x%02lx\n", v->r, v->g, v->b);
+		FRDP("color after light: r: 0x%02x, g: 0x%02x, b: 0x%02x\n", v->r, v->g, v->b);
 #endif
 		}
   }
@@ -258,12 +258,12 @@ static void uc8_moveword ()
       rdp.clip_ratio = sqrt((float)rdp.cmd1);
       rdp.update |= UPDATE_VIEWPORT;
     }
-		FRDP ("mw_clip %08lx, %08lx\n", rdp.cmd0, rdp.cmd1);
+		FRDP ("mw_clip %08x, %08x\n", rdp.cmd0, rdp.cmd1);
 		break;
 
 	case 0x06:  // moveword SEGMENT
 		{
-			FRDP ("SEGMENT %08lx -> seg%d\n", data, offset >> 2);
+			FRDP ("SEGMENT %08x -> seg%d\n", data, offset >> 2);
 			rdp.segment[(offset >> 2) & 0xF] = data;
 		}
 		break;
@@ -289,7 +289,7 @@ static void uc8_moveword ()
 		{
 			wxUint8 n = offset >> 2;
 
-			FRDP ("coord mod:%d, %08lx\n", n, data);
+			FRDP ("coord mod:%d, %08x\n", n, data);
 			if (rdp.cmd0&8)
 				return;
 			wxUint32 idx = (rdp.cmd0>>1)&3;
@@ -326,8 +326,8 @@ static void uc8_moveword ()
 		break;
 
 	default:
-		FRDP_E("uc8:moveword unknown (index: 0x%08lx, offset 0x%08lx)\n", index, offset);
-		FRDP ("unknown (index: 0x%08lx, offset 0x%08lx)\n", index, offset);
+		FRDP_E("uc8:moveword unknown (index: 0x%08x, offset 0x%08x)\n", index, offset);
+		FRDP ("unknown (index: 0x%08x, offset 0x%08x)\n", index, offset);
   }
 }
 
@@ -344,12 +344,12 @@ static void uc8_movemem ()
 	case 8:   // VIEWPORT
 		{
 			wxUint32 a = addr >> 1;
-			short scale_x = ((short*)gfx.RDRAM)[(a+0)^1] >> 2;
-			short scale_y = ((short*)gfx.RDRAM)[(a+1)^1] >> 2;
-			short scale_z = ((short*)gfx.RDRAM)[(a+2)^1];
-			short trans_x = ((short*)gfx.RDRAM)[(a+4)^1] >> 2;
-			short trans_y = ((short*)gfx.RDRAM)[(a+5)^1] >> 2;
-			short trans_z = ((short*)gfx.RDRAM)[(a+6)^1];
+			short scale_x = ((short*)gfx.RDRAM)[SHORTADDR(a+0)] >> 2;
+			short scale_y = ((short*)gfx.RDRAM)[SHORTADDR(a+1)] >> 2;
+			short scale_z = ((short*)gfx.RDRAM)[SHORTADDR(a+2)];
+			short trans_x = ((short*)gfx.RDRAM)[SHORTADDR(a+4)] >> 2;
+			short trans_y = ((short*)gfx.RDRAM)[SHORTADDR(a+5)] >> 2;
+			short trans_z = ((short*)gfx.RDRAM)[SHORTADDR(a+6)];
 			rdp.view_scale[0] = scale_x * rdp.scale_x;
 			rdp.view_scale[1] = -scale_y * rdp.scale_y;
 			rdp.view_scale[2] = 32.0f * scale_z;
@@ -359,7 +359,7 @@ static void uc8_movemem ()
 
 			rdp.update |= UPDATE_VIEWPORT;
 
-			FRDP ("viewport scale(%d, %d), trans(%d, %d), from:%08lx\n", scale_x, scale_y,
+			FRDP ("viewport scale(%d, %d), trans(%d, %d), from:%08x\n", scale_x, scale_y,
 				trans_x, trans_y, a);
 		}
 		break;
@@ -369,11 +369,11 @@ static void uc8_movemem ()
 			int n = (ofs / 48);
             if (n < 2)
             {
-              char dir_x = ((char*)gfx.RDRAM)[(addr+8)^3];
+              char dir_x = ((char*)gfx.RDRAM)[BYTEADDR(addr+8)];
               rdp.lookat[n][0] = (float)(dir_x) / 127.0f;
-              char dir_y = ((char*)gfx.RDRAM)[(addr+9)^3];
+              char dir_y = ((char*)gfx.RDRAM)[BYTEADDR(addr+9)];
               rdp.lookat[n][1] = (float)(dir_y) / 127.0f;
-              char dir_z = ((char*)gfx.RDRAM)[(addr+10)^3];
+              char dir_z = ((char*)gfx.RDRAM)[BYTEADDR(addr+10)];
               rdp.lookat[n][2] = (float)(dir_z) / 127.0f;
               rdp.use_lookat = TRUE;
               if (n == 1)
@@ -385,26 +385,26 @@ static void uc8_movemem ()
               return;
             }
             n -= 2;
-			wxUint8 col = gfx.RDRAM[(addr+0)^3];
+			wxUint8 col = gfx.RDRAM[BYTEADDR(addr+0)];
 			rdp.light[n].r = (float)col / 255.0f;
 			rdp.light[n].nonblack = col;
-			col = gfx.RDRAM[(addr+1)^3];
+			col = gfx.RDRAM[BYTEADDR(addr+1)];
 			rdp.light[n].g = (float)col / 255.0f;
 			rdp.light[n].nonblack += col;
-			col = gfx.RDRAM[(addr+2)^3];
+			col = gfx.RDRAM[BYTEADDR(addr+2)];
 			rdp.light[n].b = (float)col / 255.0f;
 			rdp.light[n].nonblack += col;
 			rdp.light[n].a = 1.0f;
-			rdp.light[n].dir_x = (float)(((char*)gfx.RDRAM)[(addr+8)^3]) / 127.0f;
-			rdp.light[n].dir_y = (float)(((char*)gfx.RDRAM)[(addr+9)^3]) / 127.0f;
-			rdp.light[n].dir_z = (float)(((char*)gfx.RDRAM)[(addr+10)^3]) / 127.0f;
+			rdp.light[n].dir_x = (float)(((char*)gfx.RDRAM)[BYTEADDR(addr+8)]) / 127.0f;
+			rdp.light[n].dir_y = (float)(((char*)gfx.RDRAM)[BYTEADDR(addr+9)]) / 127.0f;
+			rdp.light[n].dir_z = (float)(((char*)gfx.RDRAM)[BYTEADDR(addr+10)]) / 127.0f;
 			// **
 			wxUint32 a = addr >> 1;
-			rdp.light[n].x = (float)(((short*)gfx.RDRAM)[(a+16)^1]);
-			rdp.light[n].y = (float)(((short*)gfx.RDRAM)[(a+17)^1]);
-			rdp.light[n].z = (float)(((short*)gfx.RDRAM)[(a+18)^1]);
-			rdp.light[n].w = (float)(((short*)gfx.RDRAM)[(a+19)^1]);
-			rdp.light[n].nonzero = gfx.RDRAM[(addr+12)^3];
+			rdp.light[n].x = (float)(((short*)gfx.RDRAM)[SHORTADDR(a+16)]);
+			rdp.light[n].y = (float)(((short*)gfx.RDRAM)[SHORTADDR(a+17)]);
+			rdp.light[n].z = (float)(((short*)gfx.RDRAM)[SHORTADDR(a+18)]);
+			rdp.light[n].w = (float)(((short*)gfx.RDRAM)[SHORTADDR(a+19)]);
+			rdp.light[n].nonzero = gfx.RDRAM[BYTEADDR(addr+12)];
 			rdp.light[n].ca = (float)rdp.light[n].nonzero / 16.0f;
 			//rdp.light[n].la = rdp.light[n].ca * 1.0f;
 #ifdef EXTREME_LOGGING
@@ -417,7 +417,7 @@ static void uc8_movemem ()
 #ifdef EXTREME_LOGGING
 			for (int t=0; t < 24; t++)
 			{
-				FRDP ("light[%d] = 0x%04lx \n", t, ((wxUint16*)gfx.RDRAM)[(a+t)^1]);
+				FRDP ("light[%d] = 0x%04x \n", t, ((wxUint16*)gfx.RDRAM)[SHORTADDR(a+t)]);
 			}
 #endif
 		}
@@ -426,19 +426,19 @@ static void uc8_movemem ()
 	case 14: //Normales
 		{
 			uc8_normale_addr = segoffset(rdp.cmd1);
-			FRDP ("Normale - addr: %08lx\n", uc8_normale_addr);
+			FRDP ("Normale - addr: %08x\n", uc8_normale_addr);
 #ifdef EXTREME_LOGGING
       int i;
 			for (i = 0; i < 32; i++)
 			{
-				char x = ((char*)gfx.RDRAM)[uc8_normale_addr + ((i<<1) + 0)^3];
-				char y = ((char*)gfx.RDRAM)[uc8_normale_addr + ((i<<1) + 1)^3];
+				char x = ((char*)gfx.RDRAM)[uc8_normale_addr + BYTEADDR((i<<1) + 0)];
+				char y = ((char*)gfx.RDRAM)[uc8_normale_addr + BYTEADDR((i<<1) + 1)];
 				FRDP("#%d x = %d, y = %d\n", i, x, y);
 			}
 			wxUint32 a = uc8_normale_addr >> 1;
 			for (i = 0; i < 32; i++)
 			{
-				FRDP ("n[%d] = 0x%04lx \n", i, ((wxUint16*)gfx.RDRAM)[(a+i)^1]);
+				FRDP ("n[%d] = 0x%04x \n", i, ((wxUint16*)gfx.RDRAM)[SHORTADDR(a+i)]);
 			}
 #endif
 		}

@@ -236,12 +236,13 @@ void Rasterize(vertexi * vtx, int vertices, int dzdx)
       min_y = vtx->y;
       min_vtx = vtx;
     }
-    else
+    else {
       if(vtx->y > max_y) {
         max_y = vtx->y;
         max_vtx = vtx;
       }
-      vtx++;
+    }
+    vtx++;
   }
   
   // OK, now we know where in the array we should start and
@@ -297,7 +298,7 @@ void Rasterize(vertexi * vtx, int vertices, int dzdx)
         if (trueZ < 0) trueZ = 0;
         else if (trueZ > 0x3FFFF) trueZ = 0x3FFFF;
         encodedZ = zLUT[trueZ];
-        idx = (shift+x)^1;
+        idx = SHORTADDR(shift+x);
         if(encodedZ < destptr[idx]) 
           destptr[idx] = encodedZ;
         z += dzdx;

@@ -209,7 +209,7 @@ static TBUFF_COLOR_IMAGE * AllocateTextureBuffer(COLOR_IMAGE & cimage)
 
 int OpenTextureBuffer(COLOR_IMAGE & cimage)
 {
-  FRDP("OpenTextureBuffer. cur_tex_buf: %d, addr: %08lx, width: %d, height: %d", rdp.cur_tex_buf, cimage.addr, cimage.width, cimage.height);
+  FRDP("OpenTextureBuffer. cur_tex_buf: %d, addr: %08x, width: %d, height: %d", rdp.cur_tex_buf, cimage.addr, cimage.width, cimage.height);
   if (!fullscreen) return FALSE;
 
   int found = FALSE, search = TRUE;
@@ -335,7 +335,7 @@ int OpenTextureBuffer(COLOR_IMAGE & cimage)
   }
   //*/
   //  memset(gfx.RDRAM+cimage.addr, 0, cimage.width*cimage.height*cimage.size);
-  FRDP("  texaddr: %08lx, tex_width: %d, tex_height: %d, cur_tex_buf: %d, texformat: %d, motionblur: %d\n", rdp.cur_image->tex_addr, rdp.cur_image->tex_width, rdp.cur_image->tex_height, rdp.cur_tex_buf, rdp.cur_image->info.format, rdp.motionblur);
+  FRDP("  texaddr: %08x, tex_width: %d, tex_height: %d, cur_tex_buf: %d, texformat: %d, motionblur: %d\n", rdp.cur_image->tex_addr, rdp.cur_image->tex_width, rdp.cur_image->tex_height, rdp.cur_tex_buf, rdp.cur_image->info.format, rdp.motionblur);
   if (!rdp.offset_x_bak)
   {
     rdp.offset_x_bak = rdp.offset_x;
@@ -690,7 +690,7 @@ int FindTextureBuffer(wxUint32 addr, wxUint16 width)
 {
   if (rdp.skip_drawing)
     return FALSE;
-  FRDP("FindTextureBuffer. addr: %08lx, width: %d, scale_x: %f\n", addr, width, rdp.scale_x);
+  FRDP("FindTextureBuffer. addr: %08x, width: %d, scale_x: %f\n", addr, width, rdp.scale_x);
   int found = FALSE;
   wxUint32 shift = 0;
   for (int i = 0; i < voodoo.num_tmu && !found; i++)
@@ -743,7 +743,7 @@ int FindTextureBuffer(wxUint32 addr, wxUint16 width)
       rdp.tbuff_tex->u_shift = 0;
     }
     FRDP("FindTextureBuffer, found, u_shift: %d,  v_shift: %d, format: %s\n", rdp.tbuff_tex->u_shift, rdp.tbuff_tex->v_shift, str_format[rdp.tbuff_tex->format]);
-    //FRDP("Buffer, addr=%08lx, end_addr=%08lx, width: %d, height: %d\n", rdp.tbuff_tex->addr, rdp.tbuff_tex->end_addr, rdp.tbuff_tex->width, rdp.tbuff_tex->height);
+    //FRDP("Buffer, addr=%08x, end_addr=%08x, width: %d, height: %d\n", rdp.tbuff_tex->addr, rdp.tbuff_tex->end_addr, rdp.tbuff_tex->width, rdp.tbuff_tex->height);
     return TRUE;
   }
   rdp.tbuff_tex = 0;

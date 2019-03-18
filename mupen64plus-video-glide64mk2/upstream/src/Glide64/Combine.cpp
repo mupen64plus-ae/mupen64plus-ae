@@ -15537,11 +15537,11 @@ void CountCombine ()
 
 void Combine ()
 {
-  FRDP (" | |- color combine: %08lx, #1: (%s-%s)*%s+%s, #2: (%s-%s)*%s+%s\n",
+  FRDP (" | |- color combine: %08x, #1: (%s-%s)*%s+%s, #2: (%s-%s)*%s+%s\n",
     ((rdp.cycle1 & 0xFFFF) << 16) | (rdp.cycle2 & 0xFFFF),
     Mode0[rdp.cycle1&0xF], Mode1[(rdp.cycle1>>4)&0xF], Mode2[(rdp.cycle1>>8)&0x1F], Mode3[(rdp.cycle1>>13)&7],
     Mode0[rdp.cycle2&0xF], Mode1[(rdp.cycle2>>4)&0xF], Mode2[(rdp.cycle2>>8)&0x1F], Mode3[(rdp.cycle2>>13)&7]);
-  FRDP (" | |- alpha combine: %08lx, #1: (%s-%s)*%s+%s, #2: (%s-%s)*%s+%s\n",
+  FRDP (" | |- alpha combine: %08x, #1: (%s-%s)*%s+%s, #2: (%s-%s)*%s+%s\n",
     (rdp.cycle1 & 0x0FFF0000) | ((rdp.cycle2 & 0x0FFF0000) >> 16),
     Alpha0[(rdp.cycle1>>16)&7], Alpha1[(rdp.cycle1>>19)&7], Alpha2[(rdp.cycle1>>22)&7], Alpha3[(rdp.cycle1>>25)&7],
     Alpha0[(rdp.cycle2>>16)&7], Alpha1[(rdp.cycle2>>19)&7], Alpha2[(rdp.cycle2>>22)&7], Alpha3[(rdp.cycle2>>25)&7]);

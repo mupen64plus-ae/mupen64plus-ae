@@ -149,7 +149,7 @@ static void DrawRE2Video(FB_TO_SCREEN_INFO & fb_info, float scale)
 
 static void DrawRE2Video256(FB_TO_SCREEN_INFO & fb_info)
 {
-  FRDP("DrawRE2Video256. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08lx\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
+  FRDP("DrawRE2Video256. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08x\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
   wxUint32 * src = (wxUint32*)(gfx.RDRAM+fb_info.addr);
   GrTexInfo t_info;
   t_info.smallLodLog2 = GR_LOD_LOG2_256;
@@ -196,7 +196,7 @@ static void DrawFrameBufferToScreen256(FB_TO_SCREEN_INFO & fb_info)
     DrawRE2Video256(fb_info);
     return;
   }
-  FRDP("DrawFrameBufferToScreen256. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08lx\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
+  FRDP("DrawFrameBufferToScreen256. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08x\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
   wxUint32 width = fb_info.lr_x - fb_info.ul_x + 1;
   wxUint32 height = fb_info.lr_y - fb_info.ul_y + 1;
   GrTexInfo t_info;
@@ -242,7 +242,7 @@ static void DrawFrameBufferToScreen256(FB_TO_SCREEN_INFO & fb_info)
         {
           for (wxUint32 x=0; x < cur_width; x++)
           {
-            idx = (x+256*w+(y+256*h)*fb_info.width)^1;
+            idx = SHORTADDR(x+256*w+(y+256*h)*fb_info.width);
             if (idx >= bound)
               break;
             c = src[idx];
@@ -314,7 +314,7 @@ bool DrawFrameBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
     DrawFrameBufferToScreen256(fb_info);
     return true;
   }
-  FRDP("DrawFrameBufferToScreen. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08lx\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
+  FRDP("DrawFrameBufferToScreen. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08x\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
   GrTexInfo t_info;
   wxUint8 * image = gfx.RDRAM+fb_info.addr;
   wxUint32 texwidth;
@@ -355,7 +355,7 @@ bool DrawFrameBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
     {
       for (wxUint32 x=0; x < width; x++)
       {
-        idx = (x+y*fb_info.width)^1;
+        idx = SHORTADDR(x+y*fb_info.width);
         if (idx >= bound)
           break;
         c = src[idx];
@@ -430,7 +430,7 @@ bool DrawFrameBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
 
 static void DrawDepthBufferToScreen256(FB_TO_SCREEN_INFO & fb_info)
 {
-  FRDP("DrawDepthBufferToScreen256. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08lx\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
+  FRDP("DrawDepthBufferToScreen256. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08x\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
   wxUint32 width = fb_info.lr_x - fb_info.ul_x + 1;
   wxUint32 height = fb_info.lr_y - fb_info.ul_y + 1;
   GrTexInfo t_info;
@@ -472,7 +472,7 @@ static void DrawDepthBufferToScreen256(FB_TO_SCREEN_INFO & fb_info)
       {
         for (wxUint32 x=0; x < cur_width; x++)
         {
-          *(dst++) = rdp.pal_8[src[(x+256*w+(y+256*h)*fb_info.width)^1]>>8];
+          *(dst++) = rdp.pal_8[src[SHORTADDR(x+256*w+(y+256*h)*fb_info.width)]>>8];
         }
         dst += cur_tail;
       }
@@ -502,7 +502,7 @@ static void DrawDepthBufferToScreen256(FB_TO_SCREEN_INFO & fb_info)
 
 static void DrawHiresDepthBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
 {
-  FRDP("DrawHiresDepthBufferToScreen. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08lx\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
+  FRDP("DrawHiresDepthBufferToScreen. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08x\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
   GrTexInfo t_info;
   float scale = 0.25f;
   GrLOD_t LOD = GR_LOD_LOG2_1024;
@@ -583,7 +583,7 @@ void DrawDepthBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
     DrawHiresDepthBufferToScreen(fb_info);
     return;
   }
-  FRDP("DrawDepthBufferToScreen. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08lx\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
+  FRDP("DrawDepthBufferToScreen. ul_x=%d, ul_y=%d, lr_x=%d, lr_y=%d, size=%d, addr=%08x\n", fb_info.ul_x, fb_info.ul_y, fb_info.lr_x, fb_info.lr_y, fb_info.size, fb_info.addr);
   GrTexInfo t_info;
   wxUint8 * image = gfx.RDRAM+fb_info.addr;
   wxUint32 texwidth;
@@ -618,7 +618,7 @@ void DrawDepthBufferToScreen(FB_TO_SCREEN_INFO & fb_info)
   {
     for (wxUint32 x=0; x < width; x++)
     {
-      *(dst++) = rdp.pal_8[src[(x+y*fb_info.width)^1]>>8];
+      *(dst++) = rdp.pal_8[src[SHORTADDR(x+y*fb_info.width)]>>8];
     }
     dst += texwidth-width;
   }

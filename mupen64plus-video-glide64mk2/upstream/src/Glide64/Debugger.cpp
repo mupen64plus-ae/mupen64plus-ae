@@ -493,29 +493,30 @@ void debug_capture ()
     static const char *cycle_mode_s[4] = { "1 cycle (0)", "2 cycle (1)", "copy (2)", "fill (3)" };
 
 #define OUTPUT(fmt,other) output(642,(float)i,1,fmt,other); i-=16;
+#define OUTPUT0(fmt) output(642,(float)i,1,fmt); i-=16;
 #define OUTPUT1(fmt,other,other1) output(642,(float)i,1,fmt,other,other1); i-=16;
-#define OUTPUT_(fmt,cc) COL_SEL(cc); x=642; output(x,(float)i,1,fmt,0); x+=8*(strlen(fmt)+1)
-#define _OUTPUT(fmt,cc) COL_SEL(cc); output(x,(float)i,1,fmt,0); x+=8*(strlen(fmt)+1)
+#define OUTPUT_(fmt,cc) COL_SEL(cc); x=642; output(x,(float)i,1,fmt); x+=8*(strlen(fmt)+1)
+#define _OUTPUT(fmt,cc) COL_SEL(cc); output(x,(float)i,1,fmt); x+=8*(strlen(fmt)+1)
     i = 740;
     float x;
     if (_debugger.page == PAGE_GENERAL && _debugger.tri_sel)
     {
       COL_CATEGORY();
-      OUTPUT ("GENERAL (page 1):",0);
+      OUTPUT0 ("GENERAL (page 1):");
       COL_TEXT();
       OUTPUT ("tri #%d", _debugger.tri_sel->tri_n);
       OUTPUT ("type: %s", tri_type[_debugger.tri_sel->type]);
-      OUTPUT ("geom:   0x%08lx", _debugger.tri_sel->geom_mode);
-      OUTPUT ("othermode_h: 0x%08lx", _debugger.tri_sel->othermode_h);
-      OUTPUT ("othermode_l: 0x%08lx", _debugger.tri_sel->othermode_l);
-      OUTPUT ("flags: 0x%08lx", _debugger.tri_sel->flags);
-      OUTPUT ("",0);
+      OUTPUT ("geom:   0x%08x", _debugger.tri_sel->geom_mode);
+      OUTPUT ("othermode_h: 0x%08x", _debugger.tri_sel->othermode_h);
+      OUTPUT ("othermode_l: 0x%08x", _debugger.tri_sel->othermode_l);
+      OUTPUT ("flags: 0x%08x", _debugger.tri_sel->flags);
+      OUTPUT ("%s", "");
       COL_CATEGORY();
-      OUTPUT ("COMBINE:",0);
+      OUTPUT0 ("COMBINE:");
       COL_TEXT();
       OUTPUT ("cycle_mode: %s", cycle_mode_s[_debugger.tri_sel->cycle_mode]);
-      OUTPUT ("cycle1: 0x%08lx", _debugger.tri_sel->cycle1);
-      OUTPUT ("cycle2: 0x%08lx", _debugger.tri_sel->cycle2);
+      OUTPUT ("cycle1: 0x%08x", _debugger.tri_sel->cycle1);
+      OUTPUT ("cycle2: 0x%08x", _debugger.tri_sel->cycle2);
       if (_debugger.tri_sel->uncombined & 1)
         COL_UCC();
       else
@@ -585,20 +586,20 @@ void debug_capture ()
     if (_debugger.page == PAGE_COLORS && _debugger.tri_sel)
     {
       COL_CATEGORY();
-      OUTPUT ("COLORS (page 4)", 0);
+      OUTPUT0 ("COLORS (page 4)");
       COL_TEXT();
-      OUTPUT ("fill:  %08lx", _debugger.tri_sel->fill_color);
-      OUTPUT ("prim:  %08lx", _debugger.tri_sel->prim_color);
-      OUTPUT ("blend: %08lx", _debugger.tri_sel->blend_color);
-      OUTPUT ("env:   %08lx", _debugger.tri_sel->env_color);
-      OUTPUT ("fog: %08lx", _debugger.tri_sel->fog_color);
+      OUTPUT ("fill:  %08x", _debugger.tri_sel->fill_color);
+      OUTPUT ("prim:  %08x", _debugger.tri_sel->prim_color);
+      OUTPUT ("blend: %08x", _debugger.tri_sel->blend_color);
+      OUTPUT ("env:   %08x", _debugger.tri_sel->env_color);
+      OUTPUT ("fog: %08x", _debugger.tri_sel->fog_color);
       OUTPUT ("prim_lodmin:  %d", _debugger.tri_sel->prim_lodmin);
       OUTPUT ("prim_lodfrac: %d", _debugger.tri_sel->prim_lodfrac);
     }
     if (_debugger.page == PAGE_FBL && _debugger.tri_sel)
     {
       COL_CATEGORY();
-      OUTPUT ("BLENDER", 0);
+      OUTPUT0 ("BLENDER");
       COL_TEXT();
       OUTPUT ("fbl_a0: %s", FBLa[(_debugger.tri_sel->othermode_l>>30)&0x3]);
       OUTPUT ("fbl_b0: %s", FBLb[(_debugger.tri_sel->othermode_l>>26)&0x3]);
@@ -608,16 +609,16 @@ void debug_capture ()
       OUTPUT ("fbl_b1: %s", FBLb[(_debugger.tri_sel->othermode_l>>24)&0x3]);
       OUTPUT ("fbl_c1: %s", FBLc[(_debugger.tri_sel->othermode_l>>20)&0x3]);
       OUTPUT ("fbl_d1: %s", FBLd[(_debugger.tri_sel->othermode_l>>16)&0x3]);
-      OUTPUT ("", 0);
-      OUTPUT ("fbl:    %08lx", _debugger.tri_sel->othermode_l&0xFFFF0000);
-      OUTPUT ("fbl #1: %08lx", _debugger.tri_sel->othermode_l&0xCCCC0000);
-      OUTPUT ("fbl #2: %08lx", _debugger.tri_sel->othermode_l&0x33330000);
+      OUTPUT ("%s", "");
+      OUTPUT ("fbl:    %08x", _debugger.tri_sel->othermode_l&0xFFFF0000);
+      OUTPUT ("fbl #1: %08x", _debugger.tri_sel->othermode_l&0xCCCC0000);
+      OUTPUT ("fbl #2: %08x", _debugger.tri_sel->othermode_l&0x33330000);
     }
     if (_debugger.page == PAGE_OTHERMODE_L && _debugger.tri_sel)
     {
       wxUint32 othermode_l = _debugger.tri_sel->othermode_l;
       COL_CATEGORY ();
-      OUTPUT ("OTHERMODE_L: %08lx", othermode_l);
+      OUTPUT ("OTHERMODE_L: %08x", othermode_l);
       OUTPUT_ ("AC_NONE", (othermode_l & 3) == 0);
       _OUTPUT ("AC_THRESHOLD", (othermode_l & 3) == 1);
       _OUTPUT ("AC_DITHER", (othermode_l & 3) == 3);
@@ -626,7 +627,7 @@ void debug_capture ()
       _OUTPUT ("ZS_PRIM", (othermode_l & 4));
       i -= 32;
       COL_CATEGORY ();
-      OUTPUT ("RENDERMODE: %08lx", othermode_l);
+      OUTPUT ("RENDERMODE: %08x", othermode_l);
       OUTPUT_ ("AA_EN", othermode_l & 0x08);
       i -= 16;
       OUTPUT_ ("Z_CMP", othermode_l & 0x10);
@@ -657,7 +658,7 @@ void debug_capture ()
     {
       wxUint32 othermode_h = _debugger.tri_sel->othermode_h;
       COL_CATEGORY ();
-      OUTPUT ("OTHERMODE_H: %08lx", othermode_h);
+      OUTPUT ("OTHERMODE_H: %08x", othermode_h);
       OUTPUT_ ("CK_NONE", (othermode_h & 0x100) == 0);
       _OUTPUT ("CK_KEY", (othermode_h & 0x100) == 1);
       i -= 16;
@@ -696,13 +697,13 @@ void debug_capture ()
       // change these to output whatever you need, ou for triangles, or u0 for texrects
       COL_TEXT();
       OUTPUT ("n: %d", _debugger.tri_sel->nv);
-      OUTPUT ("",0);
+      OUTPUT ("%s", "");
       for (j=0; j<_debugger.tri_sel->nv; j++)
       {
         OUTPUT1 ("v[%d].s0: %f", j, _debugger.tri_sel->v[j].ou);
         OUTPUT1 ("v[%d].t0: %f", j, _debugger.tri_sel->v[j].ov);
       }
-      OUTPUT ("",0);
+      OUTPUT ("%s", "");
       for (j=0; j<_debugger.tri_sel->nv; j++)
       {
         OUTPUT1 ("v[%d].s1: %f", j, _debugger.tri_sel->v[j].u0);
@@ -729,21 +730,21 @@ void debug_capture ()
     if (_debugger.page == PAGE_TEX_INFO && _debugger.tex_sel < (wxUint32)rdp.n_cached[_debugger.tmu])
     {
       COL_CATEGORY();
-      OUTPUT ("CACHE (page 0)", 0);
+      OUTPUT0 ("CACHE (page 0)");
       COL_TEXT();
-      //OUTPUT ("t_mem: %08lx", rdp.cache[0][_debugger.tex_sel].t_mem);
-      //OUTPUT ("crc: %08lx", rdp.cache[0][_debugger.tex_sel].crc);
-      OUTPUT ("addr: %08lx", cache[_debugger.tex_sel].addr);
+      //OUTPUT ("t_mem: %08x", rdp.cache[0][_debugger.tex_sel].t_mem);
+      //OUTPUT ("crc: %08x", rdp.cache[0][_debugger.tex_sel].crc);
+      OUTPUT ("addr: %08x", cache[_debugger.tex_sel].addr);
       OUTPUT ("scale_x: %f", cache[_debugger.tex_sel].scale_x);
       OUTPUT ("scale_y: %f", cache[_debugger.tex_sel].scale_y);
-      OUTPUT ("tmem_addr: %08lx", cache[_debugger.tex_sel].tmem_addr);
-      OUTPUT ("palette: %08lx", cache[_debugger.tex_sel].palette);
-      OUTPUT ("set_by: %08lx", cache[_debugger.tex_sel].set_by);
+      OUTPUT ("tmem_addr: %08x", cache[_debugger.tex_sel].tmem_addr);
+      OUTPUT ("palette: %08x", cache[_debugger.tex_sel].palette);
+      OUTPUT ("set_by: %08x", cache[_debugger.tex_sel].set_by);
       OUTPUT ("texrecting: %d", cache[_debugger.tex_sel].texrecting);
 
-      OUTPUT ("mod: %08lx", cache[_debugger.tex_sel].mod);
-      OUTPUT ("mod_col: %08lx", cache[_debugger.tex_sel].mod_color);
-      OUTPUT ("mod_col1: %08lx", cache[_debugger.tex_sel].mod_color1);
+      OUTPUT ("mod: %08x", cache[_debugger.tex_sel].mod);
+      OUTPUT ("mod_col: %08x", cache[_debugger.tex_sel].mod_color);
+      OUTPUT ("mod_col1: %08x", cache[_debugger.tex_sel].mod_color1);
       i=740;
       output(800,(float)i,1,"width: %d", cache[_debugger.tex_sel].width);
       i-=16;
@@ -753,19 +754,19 @@ void debug_capture ()
       i-=16;
       output(800,(float)i,1,"size: %d", cache[_debugger.tex_sel].size);
       i-=16;
-      output(800,(float)i,1,"crc: %08lx", cache[_debugger.tex_sel].crc);
+      output(800,(float)i,1,"crc: %08x", cache[_debugger.tex_sel].crc);
       i-=16;
 #ifdef TEXTURE_FILTER
-      output(800,(float)i,1,"RiceCrc: %08lx", (wxUint32)(rdp.cache[_debugger.tmu][_debugger.tex_sel].ricecrc&0xFFFFFFFF));
+      output(800,(float)i,1,"RiceCrc: %08x", (wxUint32)(rdp.cache[_debugger.tmu][_debugger.tex_sel].ricecrc&0xFFFFFFFF));
       i-=16;
-      output(800,(float)i,1,"RicePalCrc: %08lx", (wxUint32)(rdp.cache[_debugger.tmu][_debugger.tex_sel].ricecrc>>32));
+      output(800,(float)i,1,"RicePalCrc: %08x", (wxUint32)(rdp.cache[_debugger.tmu][_debugger.tex_sel].ricecrc>>32));
       i-=16;
 #endif
-      output(800,(float)i,1,"flags: %08lx", cache[_debugger.tex_sel].flags);
+      output(800,(float)i,1,"flags: %08x", cache[_debugger.tex_sel].flags);
       i-=16;
       output(800,(float)i,1,"line: %d", cache[_debugger.tex_sel].line);
       i-=16;
-      output(800,(float)i,1,"mod_factor: %08lx", cache[_debugger.tex_sel].mod_factor);
+      output(800,(float)i,1,"mod_factor: %08x", cache[_debugger.tex_sel].mod_factor);
       i-=32;
 
       output(800,(float)i,1,"lod: %s", str_lod[cache[_debugger.tex_sel].lod]);

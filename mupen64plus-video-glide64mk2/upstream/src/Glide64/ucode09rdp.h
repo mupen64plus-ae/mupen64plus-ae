@@ -44,7 +44,7 @@
 void uc9_rpdcmd ()
 {
   wxUint32 a = segoffset(rdp.cmd1) >> 2;
-  FRDP ("uc9:rdpcmd addr: %08lx\n", a);
+  FRDP ("uc9:rdpcmd addr: %08x\n", a);
   if (a)
   {
     rdp.LLE = 1;

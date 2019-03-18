@@ -105,7 +105,7 @@ static void t3dProcessRDP(wxUint32 a)
 static void t3dLoadGlobState(wxUint32 pgstate)
 {
   t3dGlobState *gstate = (t3dGlobState*)&gfx.RDRAM[segoffset(pgstate)];
-  FRDP ("Global state. pad0: %04lx, perspNorm: %04lx, flag: %08lx\n", gstate->pad0, gstate->perspNorm, gstate->flag);
+  FRDP ("Global state. pad0: %04x, perspNorm: %04x, flag: %08x\n", gstate->pad0, gstate->perspNorm, gstate->flag);
   rdp.cmd0 = gstate->othermode0;
   rdp.cmd1 = gstate->othermode1;
   rdp_setothermode();
@@ -113,7 +113,7 @@ static void t3dLoadGlobState(wxUint32 pgstate)
   for (int s = 0; s < 16; s++)
   {
     rdp.segment[s] = gstate->segBases[s];
-    FRDP ("segment: %08lx -> seg%d\n", rdp.segment[s], s);
+    FRDP ("segment: %08x -> seg%d\n", rdp.segment[s], s);
   }
 
   short scale_x = gstate->vsacle0 / 4;
@@ -146,17 +146,17 @@ static void t3d_vertex(wxUint32 addr, wxUint32 v0, wxUint32 n)
     for (wxUint32 i=0; i < n; i+=16)
     {
       VERTEX *v = &rdp.vtx[v0 + (i>>4)];
-      x   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 0)^1];
-      y   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 1)^1];
-      z   = (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 2)^1];
-      v->flags  = ((wxUint16*)gfx.RDRAM)[(((addr+i) >> 1) + 3)^1];
-      v->ou   = 2.0f * (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 4)^1];
-      v->ov   = 2.0f * (float)((short*)gfx.RDRAM)[(((addr+i) >> 1) + 5)^1];
+      x   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 0)];
+      y   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 1)];
+      z   = (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 2)];
+      v->flags  = ((wxUint16*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 3)];
+      v->ou   = 2.0f * (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 4)];
+      v->ov   = 2.0f * (float)((short*)gfx.RDRAM)[SHORTADDR(((addr+i) >> 1) + 5)];
       v->uv_scaled = 0;
-      v->r = ((wxUint8*)gfx.RDRAM)[(addr+i + 12)^3];
-      v->g = ((wxUint8*)gfx.RDRAM)[(addr+i + 13)^3];
-      v->b = ((wxUint8*)gfx.RDRAM)[(addr+i + 14)^3];
-      v->a    = ((wxUint8*)gfx.RDRAM)[(addr+i + 15)^3];
+      v->r = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 12)];
+      v->g = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 13)];
+      v->b = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 14)];
+      v->a    = ((wxUint8*)gfx.RDRAM)[BYTEADDR(addr+i + 15)];
 
       v->x = x*rdp.combined[0][0] + y*rdp.combined[1][0] + z*rdp.combined[2][0] + rdp.combined[3][0];
       v->y = x*rdp.combined[0][1] + y*rdp.combined[1][1] + z*rdp.combined[2][1] + rdp.combined[3][1];
@@ -197,7 +197,7 @@ static void t3dLoadObject(wxUint32 pstate, wxUint32 pvtx, wxUint32 ptri)
     rdp.tiles[rdp.cur_tile].t_scale = 0.015625;
 
 #ifdef EXTREME_LOGGING
-  FRDP("renderState: %08lx, textureState: %08lx, othermode0: %08lx, othermode1: %08lx, rdpCmds: %08lx, triCount : %d, v0: %d, vn: %d\n", ostate->renderState, ostate->textureState,
+  FRDP("renderState: %08x, textureState: %08x, othermode0: %08x, othermode1: %08x, rdpCmds: %08x, triCount : %d, v0: %d, vn: %d\n", ostate->renderState, ostate->textureState,
      ostate->othermode0, ostate->othermode1, ostate->rdpCmds, ostate->triCount, ostate->vtxV0, ostate->vtxCount);
 #endif
 
@@ -259,7 +259,7 @@ static void Turbo3D()
     pstate = ((wxUint32*)gfx.RDRAM)[(a>>2)+1];
     pvtx = ((wxUint32*)gfx.RDRAM)[(a>>2)+2];
     ptri = ((wxUint32*)gfx.RDRAM)[(a>>2)+3];
-    FRDP("GlobalState: %08lx, Object: %08lx, Vertices: %08lx, Triangles: %08lx\n", pgstate, pstate, pvtx, ptri);
+    FRDP("GlobalState: %08x, Object: %08x, Vertices: %08x, Triangles: %08x\n", pgstate, pstate, pvtx, ptri);
     if (!pstate)
     {
       rdp.halt = 1;
