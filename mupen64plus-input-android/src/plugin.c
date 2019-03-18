@@ -29,7 +29,7 @@
 // Internal macros
 #define PLUGIN_NAME                 "Mupen64Plus Android Input Plugin"
 #define PLUGIN_VERSION              0x010000
-#define INPUT_PLUGIN_API_VERSION    0x020000
+#define INPUT_PLUGIN_API_VERSION    0x020100
 #define PAK_IO_RUMBLE       		0xC000	// the address where rumble commands are sent
 #define PAK_TYPE_NONE               1;
 #define PAK_TYPE_MEM                2;

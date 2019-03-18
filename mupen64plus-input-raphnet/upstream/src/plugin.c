@@ -30,7 +30,7 @@
 // Internal macros
 #define PLUGIN_NAME                 "Mupen64Plus Raphnet Input Plugin"
 #define PLUGIN_VERSION              0x010000
-#define INPUT_PLUGIN_API_VERSION    0x020000
+#define INPUT_PLUGIN_API_VERSION    0x020100
 
 
 static int _pluginInitialized = 0;
