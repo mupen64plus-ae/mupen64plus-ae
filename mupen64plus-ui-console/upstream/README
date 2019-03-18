@@ -130,7 +130,18 @@ pc-1
   Print previous value of Program Counter register
 
 asm
-  Print assembly language instruction at current PC location
+  Print assembly language instructions. Several forms are supported:
+
+  asm                     Print one instruction at the Program Counter register
+
+  asm <addr>              Print one instruction at <addr>
+
+  asm <addr> <n>          Print <n> instructions starting at <addr>
+
+  asm <addr> <n> <flags>  Print <n> instructions starting at <addr> with flags
+    - If flags bit-3 is set (i.e. & 0x04): also print binary instruction data
+    - If flags bit-2 is set: prefix each instruction with its memory address
+    - If flags bit-1 is set: prefix each instruction with a counter from <addr>
 
 mem
   Print memory values. Several forms are supported:
@@ -149,8 +160,46 @@ mem
   mem /NxMw <addr>  Print <N> rows of <M> 32-bit words at <addr>
   mem /NxMd <addr>  Print <N> rows of <M> 64-bit double-words at <addr>
 
-bp add <addr>
-  Adds a breakpoint at a given address.
+write
+  Write values to memory. Several forms are supported:
+
+  write <addr> <value>    Write a (1) byte value to <addr>
+
+  write <addr> b <value>  Write a (1) byte value to <addr>
+  write <addr> h <value>  Write a half-word value (2 bytes) to <addr>
+  write <addr> w <value>  Write a word value (4 bytes) to <addr>
+  write <addr> d <value>  Write a double-word value (8 bytes) to <addr>
+
+translate
+  Translates virtual memory addresses to physical memory addresses. Memory
+  read/write breakpoints must operate on physical addresses, in contrast to the
+  memory read/write commands and execution breakpoints that operate on virtual
+  addresses.
+
+  translate <virtual address>  Print the 32-bit physical address for the
+                               provided <virtual address> argument.
+
+bp add
+  Adds a breakpoint at a given address. Several forms are supported:
+
+  bp add pc                  Add a breakpoint at the Program Counter, triggered
+                             on EXEC, READ, and WRITE.
+
+  bp add <addr>              Add a breakpoint at <addr>, triggered on EXEC,
+                             READ, and WRITE.
+
+  bp add <addr> <n>          Add a breakpoint starting at <addr>, extending <n>
+                             bytes, triggered on EXEC, READ, and WRITE.
+
+  bp add <addr> <n> <flags>  Add a breakpoint starting at <addr>, extending <n>
+                             bytes, with specified trigger flags.
+    - M64P_BKP_FLAG_READ = 0x02
+    - M64P_BKP_FLAG_WRITE = 0x04
+    - M64P_BKP_FLAG_EXEC = 0x08
+
+bp trig
+  Prints the reason for the most recently activated breakpoint trigger. Memory
+  read/write breakpoints will indicate the hit address.
 
 bp rm <addr|index>
   Removes a breakpoint by address or number.
@@ -160,4 +209,23 @@ bp list
 
 exit|quit
   Stop emulator and quit debugger
+
+-------------------------------------------------------------------------------
+64DD Support
+-------------------------------------------------------------------------------
+
+Some compatibility with the 64DD disk drive unit has been implemented, but there
+are a few small usability issues of which users should be aware.
+
+When using the 64DD, you need to pass a path to a cartridge rom, even if none is
+strictly required.  The IPL boot rom will execute first and select the disk if
+you have one inserted, or just show the boot menu otherwise.  We can remove this
+requirement at a later time. For now all we need to remember is to use a Japanese
+ROM (otherwise some region check will fail) with same features as the 64DD game
+you want to play (think RumblePak, TransferPak, otherwise, they won't be available).
+
+There is a sibling issue also with 64DD games in that there are no entries in the
+game db (mupen64plus.ini) for them, and the core currently only relies on the cart
+ROM loaded to fetch the ROM infos.
+
 

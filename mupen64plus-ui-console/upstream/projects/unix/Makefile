@@ -186,27 +186,12 @@ else
   endif
 endif
 
-# set special flags for given Makefile parameters
-# note: COREDIR _must_ end in a slash if you want it to work; not necessary for the others
-ifneq ($(PLUGINDIR),)
-  CFLAGS += '-DPLUGINDIR="$(PLUGINDIR)"'
-endif
-ifneq ($(COREDIR),)
-  CFLAGS += '-DCOREDIR="$(COREDIR)"'
-endif
-ifneq ($(SHAREDIR),)
-  CFLAGS += '-DSHAREDIR="$(SHAREDIR)"'
-endif
-ifeq ($(DEBUG),1)
-  CFLAGS += -g
-  INSTALL_STRIP_FLAG ?= 
-else
-  INSTALL_STRIP_FLAG ?= -s
-endif
-
 # set installation options
 ifeq ($(PREFIX),)
   PREFIX := /usr/local
+endif
+ifeq ($(LIBDIR),)
+  LIBDIR := $(PREFIX)/lib
 endif
 ifeq ($(BINDIR),)
   BINDIR := $(PREFIX)/bin
@@ -219,6 +204,28 @@ ifeq ($(APPSDIR),)
 endif
 ifeq ($(ICONSDIR),)
   ICONSDIR := $(PREFIX)/share/icons/hicolor
+endif
+
+# set special flags for given Makefile parameters
+ifeq ($(PLUGINDIR),)
+  CFLAGS += '-DPLUGINDIR="$(LIBDIR)/mupen64plus"'
+else
+  CFLAGS += '-DPLUGINDIR="$(PLUGINDIR)"'
+endif
+# note: COREDIR _must_ end in a slash if you want it to work; not necessary for the others
+ifeq ($(COREDIR),)
+  CFLAGS += '-DCOREDIR="$(LIBDIR)/"'
+else
+  CFLAGS += '-DCOREDIR="$(COREDIR)"'
+endif
+ifneq ($(SHAREDIR),)
+  CFLAGS += '-DSHAREDIR="$(SHAREDIR)"'
+endif
+ifeq ($(DEBUG),1)
+  CFLAGS += -g
+  INSTALL_STRIP_FLAG ?= 
+else
+  INSTALL_STRIP_FLAG ?= -s
 endif
 
 SRCDIR = ../../src

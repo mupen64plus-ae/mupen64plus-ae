@@ -22,7 +22,13 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-extern void DebugMessage(int level, const char *message, ...);
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
+extern void DebugMessage(int level, const char *message, ...) ATTR_FMT(2,3);
 extern void DebugCallback(void *Context, int level, const char *message);
 
 extern int  g_Verbose;

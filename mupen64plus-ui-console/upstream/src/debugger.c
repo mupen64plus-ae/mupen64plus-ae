@@ -131,6 +131,19 @@ int debugger_read_8(unsigned int addr) {
     return (*DebugMemRead8)(addr);
 }
 
+void debugger_write_64(unsigned int addr, unsigned long long value) {
+    (*DebugMemWrite64)(addr, value);
+}
+void debugger_write_32(unsigned int addr, unsigned int value) {
+    (*DebugMemWrite32)(addr, value);
+}
+void debugger_write_16(unsigned int addr, unsigned short value) {
+    (*DebugMemWrite16)(addr, value);
+}
+void debugger_write_8(unsigned int addr, unsigned char value) {
+    (*DebugMemWrite8)(addr, value);
+}
+
 int debugger_print_registers() {
     unsigned long long int *regs = (unsigned long long int *) (*DebugGetCPUDataPtr)(M64P_CPU_REG_REG);
     if (regs == NULL)
@@ -138,8 +151,8 @@ int debugger_print_registers() {
 
     printf("General Purpose Registers:\n");
     int i;
-    const char *format_padded = "%4s %016X ";
-    const char *format_nopad = "%4s %16X ";
+    const char *format_padded = "%4s %016llX ";
+    const char *format_nopad = "%4s %16llX ";
     for (i = 0; i < 32; ++i) {
         char val_changed = reg_ran_previously && regs[i] != prev_reg_values[i];
 
@@ -165,14 +178,11 @@ int debugger_print_registers() {
     return 0;
 }
 
-char *debugger_decode_op(unsigned int instruction, int instruction_addr,
-                         char *output) {
-    if (output == NULL)
-        output = (char *) calloc(40, sizeof(char));
-
-    (*DebugDecodeOp)(instruction, output, output + 10, instruction_addr);
-    return output;
-}
+typedef enum {
+    M64P_ASM_FLAG_INDEX = 0x01,
+    M64P_ASM_FLAG_ADDR = 0x02,
+    M64P_ASM_FLAG_BINARY = 0x04
+} disassembly_flags;
 
 /*
  * Debugger main loop
@@ -227,17 +237,48 @@ int debugger_loop(void *arg) {
         else if (strcmp(input, "pc-1") == 0) {
             printf("Previous PC: %08X\n", debugger_get_prev_pc());
         }
-        else if (strcmp(input, "asm") == 0) {
-            char decoded[64];
-            debugger_decode_op(debugger_read_32(cur_pc), cur_pc, decoded);
-            printf("%s", decoded);
-            printf(" %s\n", decoded + 10);
+        else if (strncmp(input, "asm", 3) == 0) {
+            // simple linear sweep disassembly
+            uint32_t addr = cur_pc, size=1, flags=0;
+
+            int i;
+            uint32_t lookupAddr, lookupData;
+            char op[64];
+            char args[64];
+
+            if (sscanf(input, "asm %i %i %i", &addr, &size, &flags) == 3) {
+            } else if (sscanf(input, "asm %i %i", &addr, &size) == 2) {
+            } else if (sscanf(input, "asm %i", &addr) == 1) {
+            } else if (strcmp(input, "asm") == 0) {
+            } else {
+                printf("Improperly formatted disassembly command: '%s'\n", input);
+                continue;
+            }
+            addr &= ~0x03; // align to 4 byte boundary
+            printf("Disassembly of %d instruction%s @ 0x%08x:\n", size, (size == 1 ? "" : "s"), addr);
+            for (i = 0; i < size; i++) {
+                lookupAddr = addr + (i * 4);
+                lookupData = debugger_read_32(lookupAddr);
+                (*DebugDecodeOp)(lookupData, op, args, lookupAddr);
+                if (flags & M64P_ASM_FLAG_INDEX) { // 0x01
+                    printf("% 3d ", i);
+                }
+                if (flags & M64P_ASM_FLAG_ADDR) { // 0x02
+                    printf("%08x ", lookupAddr);
+                }
+                if (flags & M64P_ASM_FLAG_BINARY) { // 0x04
+                    printf("[%08x] ", lookupData);
+                }
+                printf("%s %s\n", op, args);
+            }
         }
         else if (strncmp(input, "mem", 3) == 0) {
             uint32_t readAddr, length=1, rows=1, size=4;
             uint32_t i, j;
             char chSize;
-            if (sscanf(input, "mem /%ux%u%c %i", &rows, &length, &chSize, &readAddr) == 4 && (chSize == 'b' || chSize == 'h' || chSize == 'w' || chSize == 'd'))
+            if ((sscanf(input, "mem /%ux%u%c %x", &rows, &length, &chSize, &readAddr) == 4 ||
+                 sscanf(input, "mem /%ux%u%c %u", &rows, &length, &chSize, &readAddr) == 4)
+                && (chSize == 'b' || chSize == 'h' || chSize == 'w' || chSize == 'd'))
             {
                 if (chSize == 'b')
                     size = 1;
@@ -248,10 +289,13 @@ int debugger_loop(void *arg) {
                 else // chSize == 'd'
                     size = 8;
             }
-            else if (sscanf(input, "mem /%ux%u %i", &rows, &length, &readAddr) == 3)
+            else if (sscanf(input, "mem /%ux%u %x", &rows, &length, &readAddr) == 3 ||
+                     sscanf(input, "mem /%ux%u %u", &rows, &length, &readAddr) == 3)
             {
             }
-            else if (sscanf(input, "mem /%u%c %i", &length, &chSize, &readAddr) == 3 && (chSize == 'b' || chSize == 'h' || chSize == 'w' || chSize == 'd'))
+            else if ((sscanf(input, "mem /%u%c %x", &length, &chSize, &readAddr) == 3 ||
+                      sscanf(input, "mem /%u%c %u", &length, &chSize, &readAddr) == 3) 
+                     && (chSize == 'b' || chSize == 'h' || chSize == 'w' || chSize == 'd'))
             {
                 rows = 1;
                 if (chSize == 'b')
@@ -263,11 +307,13 @@ int debugger_loop(void *arg) {
                 else // chSize == 'd'
                     size = 8;
             }
-            else if (sscanf(input, "mem /%u %i", &length, &readAddr) == 2)
+            else if (sscanf(input, "mem /%u %x", &length, &readAddr) == 2 ||
+                     sscanf(input, "mem /%u %u", &length, &readAddr) == 2)
             {
                 rows = 1;
             }
-            else if (sscanf(input, "mem %i", &readAddr) == 1)
+            else if (sscanf(input, "mem %x", &readAddr) == 1 ||
+                     sscanf(input, "mem %u", &readAddr) == 1)
             {
                 rows = 1;
                 length = 1;
@@ -301,6 +347,56 @@ int debugger_loop(void *arg) {
                 printf("\n");
             }
         }
+        else if (strncmp(input, "translate", 9) == 0) {
+            uint32_t virt_addr, phys_addr;
+            if (sscanf(input, "translate %i", &virt_addr) == 1) {
+            } else {
+                printf("Improperly formatted translate command: '%s'\n", input);
+                continue;
+            }
+            phys_addr = (*DebugVirtualToPhysical)(virt_addr);
+            printf("virtual 0x%08x -> physical 0x%08x\n", virt_addr, phys_addr);
+        }
+        else if (strncmp(input, "write", 5) == 0) {
+            uint32_t writeAddr, size=1;
+            long long unsigned int writeVal;
+            char chSize;
+            if (sscanf(input, "write %i %c %llx", &writeAddr, &chSize, &writeVal) == 3 &&
+                (chSize == 'b' || chSize == 'h' || chSize == 'w' || chSize == 'd')) {
+                if (chSize == 'b') {
+                    size = 1;
+                } else if (chSize == 'h') {
+                    size = 2;
+                } else if (chSize == 'w') {
+                    size = 4;
+                } else {
+                    size = 8;
+                }
+            } else if (sscanf(input, "write %i %llx", &writeAddr, &writeVal) == 2) {
+            } else {
+                printf("Improperly formatted memory write command: '%s'\n", input);
+                continue;
+            }
+
+            switch(size) {
+                case 1:
+                    debugger_write_8(writeAddr, (unsigned char)writeVal);
+                    printf("0x%08x <- 0x%02x\n", writeAddr, (unsigned char)writeVal);
+                    break;
+                case 2:
+                    debugger_write_16(writeAddr, (unsigned short)writeVal);
+                    printf("0x%08x <- 0x%04x\n", writeAddr, (unsigned short)writeVal);
+                    break;
+                case 4:
+                    debugger_write_32(writeAddr, (unsigned int)writeVal);
+                    printf("0x%08x <- 0x%08x\n", writeAddr, (unsigned int)writeVal);
+                    break;
+                case 8:
+                    debugger_write_64(writeAddr, writeVal);
+                    printf("0x%08x <- 0x%016llx\n", writeAddr, writeVal);
+                    break;
+            }
+        }
         else if (strcmp(input, "bp list") == 0 || strcmp(input, "bp ls") == 0) {
             if (num_breakpoints == 0) {
                 printf("No breakpoints added. Add with 'bp add 0x...'\n");
@@ -312,43 +408,49 @@ int debugger_loop(void *arg) {
             unsigned int flags;
             for (i = 0; i < num_breakpoints; i++) {
                 flags = breakpoints[i].flags;
-                printf("[%d] 0x%08X [%c%c%c]",
-                       i, breakpoints[i].address,
-                       flags & M64P_BKP_FLAG_READ ? 'R' : ' ',
-                       flags & M64P_BKP_FLAG_WRITE ? 'W' : ' ',
-                       flags & M64P_BKP_FLAG_EXEC ? 'X' : ' ');
+                if (breakpoints[i].address == breakpoints[i].endaddr) {
+                    printf("[%d] 0x%08X [%c%c%c]",
+                           i, breakpoints[i].address,
+                           flags & M64P_BKP_FLAG_READ ? 'R' : ' ',
+                           flags & M64P_BKP_FLAG_WRITE ? 'W' : ' ',
+                           flags & M64P_BKP_FLAG_EXEC ? 'X' : ' ');
+                } else {
+                    printf("[%d] 0x%08X - 0x%08X [%c%c%c]",
+                           i, breakpoints[i].address, breakpoints[i].endaddr,
+                           flags & M64P_BKP_FLAG_READ ? 'R' : ' ',
+                           flags & M64P_BKP_FLAG_WRITE ? 'W' : ' ',
+                           flags & M64P_BKP_FLAG_EXEC ? 'X' : ' ');
+                }
+
                 if ((breakpoints[i].flags & M64P_BKP_FLAG_ENABLED) == 0)
                     printf(" (Disabled)");
                 printf("\n");
             }
         }
         else if (strncmp(input, "bp add ", 7) == 0) {
-            unsigned int value = 0;
-            if (strcmp(input, "bp add pc") == 0)
-                value = cur_pc;
-            else if (strncmp(input, "bp add 0x", 9) == 0) {
-                sscanf(input, "bp add 0x%x", &value);
-                if (value == 0)
-                    sscanf(input, "bp add 0x%X", &value);
-            }
-            else {
-                 sscanf(input, "bp add %x", &value);
-                 if (value == 0)
-                     sscanf(input, "bp add %X", &value);
+            uint32_t addr, size = 0, flags = M64P_BKP_FLAG_READ |
+                                             M64P_BKP_FLAG_WRITE |
+                                             M64P_BKP_FLAG_EXEC;
+            if (strcmp(input, "bp add pc") == 0) {
+                addr = cur_pc;
+            } else if (sscanf(input, "bp add %i %i %i", &addr, &size, &flags) == 3) {
+            } else if (sscanf(input, "bp add %i %i", &addr, &size) == 2) {
+            } else if (sscanf(input, "bp add %i", &addr) == 1) {
+            } else {
+                printf("Improperly formatted breakpoint add command: '%s'\n", input);
+                continue;
             }
 
-            if (value == 0) {
+            if (addr == 0) {
                 printf("Invalid breakpoint address.\n");
                 continue;
             }
 
             m64p_breakpoint bkpt;
-            bkpt.address = value;
-            bkpt.endaddr = value;
+            bkpt.address = addr;
+            bkpt.endaddr = addr + size;
             bkpt.flags = M64P_BKP_FLAG_ENABLED |
-                         M64P_BKP_FLAG_READ |
-                         M64P_BKP_FLAG_WRITE |
-                         M64P_BKP_FLAG_EXEC |
+                         flags |
                          M64P_BKP_FLAG_LOG;
             int numBkps =
                 (*DebugBreakpointCommand)(M64P_BKP_CMD_ADD_STRUCT, 0, &bkpt);
@@ -359,7 +461,32 @@ int debugger_loop(void *arg) {
 
             breakpoints[num_breakpoints] = bkpt;
             num_breakpoints++;
-            printf("Added breakpoint at 0x%08X.\n", value);
+            if (size > 0) {
+                printf("Added breakpoint at range [0x%08X to 0x%08X].\n", addr, addr + size);
+            } else {
+                printf("Added breakpoint at 0x%08X.\n", addr);
+            }
+
+            if (flags & (M64P_BKP_FLAG_READ | M64P_BKP_FLAG_WRITE)) {
+                // setting a memory read/write breakpoint -- warn if physical address differs from the user input
+                uint32_t phys_addr = (*DebugVirtualToPhysical)(addr);
+                if (phys_addr != 0 && addr != phys_addr) {
+                    printf("Warning: Physical address %08x != virtual address %08x for memory read/write breakpoint.\n",
+                            phys_addr, addr);
+                }
+            }
+        }
+        else if (strncmp(input, "bp trig", 7) == 0) {
+            uint32_t flags, addr;
+            (*DebugBreakpointTriggeredBy)(&flags, &addr);
+
+            if (flags != 0) {
+                printf("Breakpoint @ PC 0x%08x triggered on 0x%08x [%c%c%c]\n",
+                       cur_pc, addr,
+                       flags & M64P_BKP_FLAG_READ ? 'R' : ' ',
+                       flags & M64P_BKP_FLAG_WRITE ? 'W' : ' ',
+                       flags & M64P_BKP_FLAG_EXEC ? 'X' : ' ');
+            }
         }
         else if (strncmp(input, "bp rm ", 6) == 0) {
             int index = -1;

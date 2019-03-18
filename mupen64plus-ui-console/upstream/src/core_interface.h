@@ -73,6 +73,7 @@ extern ptr_ConfigGetParamString   ConfigGetParamString;
 extern ptr_ConfigExternalOpen         ConfigExternalOpen;
 extern ptr_ConfigExternalClose        ConfigExternalClose;
 extern ptr_ConfigExternalGetParameter ConfigExternalGetParameter;
+extern ptr_ConfigHasUnsavedChanges    ConfigHasUnsavedChanges;
 
 extern ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath;
 extern ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath;
@@ -103,6 +104,9 @@ extern ptr_DebugMemWrite8         DebugMemWrite8;
 extern ptr_DebugGetCPUDataPtr     DebugGetCPUDataPtr;
 extern ptr_DebugBreakpointLookup  DebugBreakpointLookup;
 extern ptr_DebugBreakpointCommand DebugBreakpointCommand;
+
+extern ptr_DebugBreakpointTriggeredBy DebugBreakpointTriggeredBy;
+extern ptr_DebugVirtualToPhysical     DebugVirtualToPhysical;
 
 #endif /* #define CORE_INTERFACE_H */
 

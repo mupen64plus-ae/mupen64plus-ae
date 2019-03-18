@@ -80,6 +80,7 @@ ptr_ConfigGetParamString   ConfigGetParamString = NULL;
 ptr_ConfigExternalOpen         ConfigExternalOpen = NULL;
 ptr_ConfigExternalClose        ConfigExternalClose = NULL;
 ptr_ConfigExternalGetParameter ConfigExternalGetParameter = NULL;
+ptr_ConfigHasUnsavedChanges    ConfigHasUnsavedChanges = NULL;
 
 ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
 ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath = NULL;
@@ -110,6 +111,9 @@ ptr_DebugMemWrite8         DebugMemWrite8 = NULL;
 ptr_DebugGetCPUDataPtr     DebugGetCPUDataPtr = NULL;
 ptr_DebugBreakpointLookup  DebugBreakpointLookup = NULL;
 ptr_DebugBreakpointCommand DebugBreakpointCommand = NULL;
+
+ptr_DebugBreakpointTriggeredBy DebugBreakpointTriggeredBy = NULL;
+ptr_DebugVirtualToPhysical     DebugVirtualToPhysical = NULL;
 
 /* global variables */
 m64p_dynlib_handle CoreHandle = NULL;
@@ -216,9 +220,9 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     }
     int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
     (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
-    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
+    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000) || ConfigAPIVersion < CONFIG_API_VERSION)
     {
-        DebugMessage(M64MSG_ERROR, "AttachCoreLib() Error: Emulator core '%s' incompatible; Config API major version %i.%i.%i doesn't match application: %i.%i.%i",
+        DebugMessage(M64MSG_ERROR, "AttachCoreLib() Error: Emulator core '%s' incompatible; Config API version %i.%i.%i doesn't match application: %i.%i.%i",
                 CoreLibFilepath, VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
         osal_dynlib_close(CoreHandle);
         CoreHandle = NULL;
@@ -268,6 +272,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     ConfigExternalOpen = (ptr_ConfigExternalOpen) osal_dynlib_getproc(CoreHandle, "ConfigExternalOpen");
     ConfigExternalClose = (ptr_ConfigExternalClose) osal_dynlib_getproc(CoreHandle, "ConfigExternalClose");
     ConfigExternalGetParameter = (ptr_ConfigExternalGetParameter) osal_dynlib_getproc(CoreHandle, "ConfigExternalGetParameter");
+    ConfigHasUnsavedChanges = (ptr_ConfigHasUnsavedChanges) osal_dynlib_getproc(CoreHandle, "ConfigHasUnsavedChanges");
 
     ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath) osal_dynlib_getproc(CoreHandle, "ConfigGetSharedDataFilepath");
     ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath) osal_dynlib_getproc(CoreHandle, "ConfigGetUserConfigPath");
@@ -290,14 +295,17 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     DebugMemRead16 = (ptr_DebugMemRead16) osal_dynlib_getproc(CoreHandle, "DebugMemRead16");
     DebugMemRead8 = (ptr_DebugMemRead8) osal_dynlib_getproc(CoreHandle, "DebugMemRead8");
 
-    DebugMemWrite64 = (ptr_DebugMemWrite64) osal_dynlib_getproc(CoreHandle, "DebugMemRead64");
-    DebugMemWrite32 = (ptr_DebugMemWrite32) osal_dynlib_getproc(CoreHandle, "DebugMemRead32");
-    DebugMemWrite16 = (ptr_DebugMemWrite16) osal_dynlib_getproc(CoreHandle, "DebugMemRead16");
-    DebugMemWrite8 = (ptr_DebugMemWrite8) osal_dynlib_getproc(CoreHandle, "DebugMemRead8");
+    DebugMemWrite64 = (ptr_DebugMemWrite64) osal_dynlib_getproc(CoreHandle, "DebugMemWrite64");
+    DebugMemWrite32 = (ptr_DebugMemWrite32) osal_dynlib_getproc(CoreHandle, "DebugMemWrite32");
+    DebugMemWrite16 = (ptr_DebugMemWrite16) osal_dynlib_getproc(CoreHandle, "DebugMemWrite16");
+    DebugMemWrite8 = (ptr_DebugMemWrite8) osal_dynlib_getproc(CoreHandle, "DebugMemWrite8");
 
     DebugGetCPUDataPtr = (ptr_DebugGetCPUDataPtr) osal_dynlib_getproc(CoreHandle, "DebugGetCPUDataPtr");
     DebugBreakpointLookup = (ptr_DebugBreakpointLookup) osal_dynlib_getproc(CoreHandle, "DebugBreakpointLookup");
     DebugBreakpointCommand = (ptr_DebugBreakpointCommand) osal_dynlib_getproc(CoreHandle, "DebugBreakpointCommand");
+
+    DebugBreakpointTriggeredBy = (ptr_DebugBreakpointTriggeredBy) osal_dynlib_getproc(CoreHandle, "DebugBreakpointTriggeredBy");
+    DebugVirtualToPhysical = (ptr_DebugVirtualToPhysical) osal_dynlib_getproc(CoreHandle, "DebugVirtualToPhysical");
 
     return M64ERR_SUCCESS;
 }
@@ -337,6 +345,7 @@ m64p_error DetachCoreLib(void)
     ConfigExternalOpen = NULL;
     ConfigExternalClose = NULL;
     ConfigExternalGetParameter = NULL;
+    ConfigHasUnsavedChanges = NULL;
 
     ConfigGetSharedDataFilepath = NULL;
     ConfigGetUserDataPath = NULL;
@@ -365,6 +374,9 @@ m64p_error DetachCoreLib(void)
     DebugGetCPUDataPtr = NULL;
     DebugBreakpointLookup = NULL;
     DebugBreakpointCommand = NULL;
+
+    DebugBreakpointTriggeredBy = NULL;
+    DebugVirtualToPhysical = NULL;
 
     /* detach the shared library */
     osal_dynlib_close(CoreHandle);
