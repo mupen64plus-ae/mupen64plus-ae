@@ -226,7 +226,7 @@ void check_compile(GLuint shader)
   {
     char log[1024];
     glGetShaderInfoLog(shader,1024,NULL,log);
-    LOGINFO(log);
+    LOGINFO("%s", log);
   }
 }
 
@@ -238,7 +238,7 @@ void check_link(GLuint program)
 {
     char log[1024];
     glGetProgramInfoLog(program,1024,NULL,log);
-    LOGINFO(log);
+    LOGINFO("%s", log);
   }
 }
 

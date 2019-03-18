@@ -221,7 +221,7 @@ void display_warning(const char *text, ...)
     vsprintf(buf, text, ap);
     va_end(ap);
     first_message--;
-    LOGINFO(buf);
+    LOGINFO("%s", buf);
   }
 }
 
