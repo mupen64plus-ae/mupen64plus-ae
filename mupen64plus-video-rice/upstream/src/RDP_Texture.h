@@ -1293,12 +1293,7 @@ void DLParser_LoadBlock(Gfx *gfx)
     info.tl = tile.tl = ult;
     info.th = tile.th = dxt;
     tile.bSizeIsValid = false;
-
-    for( int i=0; i<8; i++ )
-    {
-        if( tile.dwTMem == tile.dwTMem )
-            tile.lastTileCmd = CMD_LOADBLOCK;
-    }
+    tile.lastTileCmd = CMD_LOADBLOCK;
 
     info.dwLoadAddress = g_TI.dwAddr;
     info.bSetBy = CMD_LOADBLOCK;

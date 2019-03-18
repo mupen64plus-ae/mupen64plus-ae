@@ -591,7 +591,7 @@ uint32 CalculateRDRAMCRC(void *pPhysicalAddress, uint32 left, uint32 top, uint32
         }
 
         uint32 pitch = pitchInBytes>>2;
-        register uint32 *pStart = (uint32*)(pPhysicalAddress);
+        uint32 *pStart = (uint32*)(pPhysicalAddress);
         pStart += (top * pitch) + (((left<<size)+1)>>3);
 
         // The original assembly code had a bug in it (it incremented pStart by 'pitch' in bytes, not in dwords)

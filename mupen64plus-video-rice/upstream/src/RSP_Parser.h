@@ -21,6 +21,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __RICE_RDP_GFX_H__
 #define __RICE_RDP_GFX_H__
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 #include "typedefs.h"
 
 #define RSP_SPNOOP              0   // handle 0 gracefully 
@@ -628,7 +634,7 @@ uint32 DLParser_CheckUcode(uint32 ucStart, uint32 ucDStart, uint32 ucSize, uint3
 bool IsUsedAsDI(uint32 addr);
 
 #if defined(DEBUGGER)
-  void __cdecl LOG_UCODE(const char* szFormat, ...);
+  void __cdecl LOG_UCODE(const char* szFormat, ...) ATTR_FMT(1,2);
 #else
   inline void LOG_UCODE(...) {}
 #endif

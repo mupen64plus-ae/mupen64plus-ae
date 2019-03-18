@@ -143,5 +143,6 @@ void COGLTexture::EndUpdate(DrawInfo *di)
 #ifdef USE_GLES
     if(options.mipmapping)
         glGenerateMipmap(GL_TEXTURE_2D);
+        OPENGL_CHECK_ERRORS;
 #endif
 }

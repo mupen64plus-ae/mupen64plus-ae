@@ -977,13 +977,13 @@ uint32 LightVert(XVECTOR4 & norm, int vidx)
     float fCosT;
 
     // Do ambient
-    register float r = gRSP.fAmbientLightR;
-    register float g = gRSP.fAmbientLightG;
-    register float b = gRSP.fAmbientLightB;
+    float r = gRSP.fAmbientLightR;
+    float g = gRSP.fAmbientLightG;
+    float b = gRSP.fAmbientLightB;
 
     if( options.enableHackForGames != HACK_FOR_ZELDA_MM )
     {
-        for (register unsigned int l=0; l < gRSPnumLights; l++)
+        for (unsigned int l=0; l < gRSPnumLights; l++)
         {
             fCosT = norm.x*gRSPlights[l].x + norm.y*gRSPlights[l].y + norm.z*gRSPlights[l].z; 
 
@@ -1000,7 +1000,7 @@ uint32 LightVert(XVECTOR4 & norm, int vidx)
         XVECTOR4 v;
         bool transformed = false;
 
-        for (register unsigned int l=0; l < gRSPnumLights; l++)
+        for (unsigned int l=0; l < gRSPnumLights; l++)
         {
             if( gRSPlights[l].range == 0 )
             {
@@ -1058,12 +1058,12 @@ uint32 LightVertNew(XVECTOR4 & norm)
     float fCosT;
 
     // Do ambient
-    register float r = gRSP.fAmbientLightR;
-    register float g = gRSP.fAmbientLightG;
-    register float b = gRSP.fAmbientLightB;
+    float r = gRSP.fAmbientLightR;
+    float g = gRSP.fAmbientLightG;
+    float b = gRSP.fAmbientLightB;
 
 
-    for (register unsigned int l=0; l < gRSPnumLights; l++)
+    for (unsigned int l=0; l < gRSPnumLights; l++)
     {
         fCosT = norm.x*gRSPlights[l].tx + norm.y*gRSPlights[l].ty + norm.z*gRSPlights[l].tz; 
 
@@ -2173,7 +2173,7 @@ void SetLightDirection(uint32 dwLight, float x, float y, float z, float range)
     //gRSPlights[dwLight].oy = y;
     //gRSPlights[dwLight].oz = z;
 
-    register float w = range == 0 ? (float)sqrt(x*x+y*y+z*z) : 1;
+    float w = range == 0 ? (float)sqrt(x*x+y*y+z*z) : 1;
 
     gRSPlights[dwLight].x = x/w;
     gRSPlights[dwLight].y = y/w;

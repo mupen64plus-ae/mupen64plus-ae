@@ -341,7 +341,7 @@ void ConvertIA8(CTexture *pTexture, const TxtrInfo &tinfo)
     }
     else
     {
-        register const uint8* FourToEightArray = &FourToEight[0];
+        const uint8* FourToEightArray = &FourToEight[0];
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             uint8 *pDst = (uint8 *)dInfo.lpSurface + y * dInfo.lPitch;
@@ -351,7 +351,7 @@ void ConvertIA8(CTexture *pTexture, const TxtrInfo &tinfo)
 
             for (uint32 x = 0; x < tinfo.WidthToLoad; x++)
             {
-                register uint8 b = pSrc[(dwByteOffset++) ^ 0x3];
+                uint8 b = pSrc[(dwByteOffset++) ^ 0x3];
                 uint8 I = *(FourToEightArray+(b>>4));
 
                 *pDst++ = I;

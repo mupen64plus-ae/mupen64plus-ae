@@ -134,6 +134,14 @@ static void ResizeStep2(void)
 {
     g_CritialSection.Lock();
 
+    // if we are in fullscreen mode then we cannot resize
+    if (windowSetting.bDisplayFullscreen)
+    {
+        g_CritialSection.Unlock();
+        status.ToResize = false;
+        return;
+    }
+
     // Delete all OpenGL textures
     gTextureManager.CleanUp();
     RDP_Cleanup();

@@ -20,6 +20,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _DLLINTERFACE_H_
 #define _DLLINTERFACE_H_
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_config.h"
 #include "m64p_plugin.h"
@@ -164,7 +170,6 @@ extern unsigned char *g_pRDRAMu8;
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
 extern ptr_ConfigListParameters   ConfigListParameters;
-extern ptr_ConfigSaveFile         ConfigSaveFile;
 extern ptr_ConfigSetParameter     ConfigSetParameter;
 extern ptr_ConfigSetParameterHelp ConfigSetParameterHelp;
 extern ptr_ConfigGetParameter     ConfigGetParameter;
@@ -199,12 +204,12 @@ extern ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers;
 /* global functions provided by Video.cpp */
 extern char generalText[];
 extern void (*renderCallback)(int);
-void DebugMessage(int level, const char *message, ...);
+void DebugMessage(int level, const char *message, ...) ATTR_FMT(2,3);
 
 void SetVIScales();
-extern void _VIDEO_DisplayTemporaryMessage2(const char *msg, ...);
+extern void _VIDEO_DisplayTemporaryMessage2(const char *msg, ...) ATTR_FMT(1,2);
 extern void _VIDEO_DisplayTemporaryMessage(const char *msg);
-extern void XBOX_Debugger_Log(const char *Message, ...);
+extern void XBOX_Debugger_Log(const char *Message, ...) ATTR_FMT(1,2);
 
 #endif
 

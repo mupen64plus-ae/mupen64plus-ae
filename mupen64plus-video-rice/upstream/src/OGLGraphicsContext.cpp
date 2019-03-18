@@ -133,6 +133,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     SetWindowMode();
 
     m_pExtensionStr = glGetString(GL_EXTENSIONS);
+    OPENGL_CHECK_ERRORS
 
     const unsigned char* renderStr  = glGetString(GL_RENDERER);
     const unsigned char* versionStr = glGetString(GL_VERSION);

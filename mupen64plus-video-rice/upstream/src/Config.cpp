@@ -56,41 +56,6 @@ const char *frameBufferSettings[] =
 "With Emulator Write Only",
 };
 
-const int resolutions[][2] =
-{
-{320, 240},
-{400, 300},
-{480, 360},
-{512, 384},
-{640, 480},
-{800, 600},
-{1024, 768},
-{1152, 864},
-{1280, 960},
-{1400, 1050},
-{1600, 1200},
-{1920, 1440},
-{2048, 1536},
-};
-const int numberOfResolutions = sizeof(resolutions)/sizeof(int)/2;
-
-const char* resolutionsS[] =
-{
-"320 x 240",
-"400 x 300",
-"480 x 360",
-"512 x 384",
-"640 x 480",
-"800 x 600",
-"1024 x 768",
-"1152 x 864",
-"1280 x 960",
-"1400 x 1050",
-"1600 x 1200",
-"1920 x 1440",
-"2048 x 1536"
-};
-
 const char *frameBufferWriteBackControlSettings[] =
 {
 "Every Frame (default)",
@@ -339,7 +304,7 @@ BOOL InitConfiguration(void)
     }
 
     /* Set default config parameters */
-    ConfigSetDefaultBool(l_ConfigVideoGeneral, "Fullscreen", 0, "Use fullscreen mode if True, or windowed mode if False ");
+    ConfigSetDefaultBool(l_ConfigVideoGeneral, "Fullscreen", 0, "Use fullscreen mode if True, or windowed mode if False");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 640, "Width of output window or fullscreen width");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 480, "Height of output window or fullscreen height");
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "VerticalSync", 0, "If true, activate the SDL_GL_SWAP_CONTROL attribute");
@@ -348,11 +313,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferSetting", FRM_BUF_NONE, "Frame Buffer Emulation (0=ROM default, 1=disable)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferWriteBackControl", FRM_BUF_WRITEBACK_NORMAL, "Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "RenderToTexture", TXT_BUF_NONE, "Render-to-texture emulation (0=none, 1=ignore, 2=normal, 3=write back, 4=write back and reload)");
-#if defined(WIN32) || defined(__APPLE__)
     ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_1ST_CI_CHANGE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
-#else
-    ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_VI_UPDATE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
-#endif
     ConfigSetDefaultBool(l_ConfigVideoRice, "NormalAlphaBlender", FALSE, "Force to use normal alpha blender");
     ConfigSetDefaultBool(l_ConfigVideoRice, "FastTextureLoading", FALSE, "Use a faster algorithm to speed up texture loading and CRC computation");
     ConfigSetDefaultBool(l_ConfigVideoRice, "AccurateTextureMapping", TRUE, "Use different texture coordinate clamping code");
@@ -998,7 +959,7 @@ BOOL ReadIniFile()
         if (readinfo[0] == '/')
             continue;
 
-        if (!strcasecmp(readinfo,"")==0)
+        if (strlen(readinfo) > 0)
         {
             if (readinfo[0] == '{') //if a section heading
             {

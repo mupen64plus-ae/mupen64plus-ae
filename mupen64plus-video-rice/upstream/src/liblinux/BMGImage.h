@@ -26,7 +26,7 @@
 // POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "osal_preproc.h"
+#include "../osal_preproc.h"
 
 #if !defined(WIN32)
     typedef struct tagRGBQUAD

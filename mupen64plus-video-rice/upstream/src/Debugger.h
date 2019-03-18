@@ -20,6 +20,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #if !defined(DEBUGGER_H)
 #define DEBUGGER_H
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 #include "typedefs.h"
 
 #if defined(DEBUGGER)
@@ -93,7 +99,7 @@ enum {
 };
 
 void DebuggerPause();
-void __cdecl DebuggerAppendMsg(const char * Message, ...);
+void __cdecl DebuggerAppendMsg(const char * Message, ...) ATTR_FMT(1,2);
 void DumpHex(uint32 rdramAddr, int count);
 
 void DumpMatrix(const Matrix &mtx, const char* prompt);
@@ -165,7 +171,7 @@ void RDP_NOIMPL_Real(const char* op,uint32,uint32) ;
 #define DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(op)
 #define DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(op,dumpfuc)
 #define RSP_RDP_NOIMPL(a,b,c)
-void __cdecl DebuggerAppendMsg(const char * Message, ...);
+void __cdecl DebuggerAppendMsg(const char * Message, ...) ATTR_FMT(1,2);
 #define DumpHex(rdramAddr, count)   
 #define DEBUGGER_IF_DUMP(cond, dumpfunc)
 #define TXTRBUF_DUMP(dumpfunc)

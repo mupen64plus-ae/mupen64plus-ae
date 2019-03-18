@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - TextureFilters_hq4x.h                                   *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2003 MaxSt ( maxst@hiend3d.com )                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
