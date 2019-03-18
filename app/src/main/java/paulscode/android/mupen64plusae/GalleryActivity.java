@@ -937,6 +937,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
             }
 
+            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+            }
+
             if(mGameStartedExternally)
             {
                 finishAffinity();
