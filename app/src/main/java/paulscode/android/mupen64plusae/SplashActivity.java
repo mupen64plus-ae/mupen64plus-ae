@@ -406,10 +406,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
     private void checkExtractAssets()
     {
-        if (mAppData.getAppVersion() != mAppData.appVersionCode)
-        {
-            FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
-        }
+        FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
 
         if( mAppData.getAssetCheckNeeded() || mAppData.getAppVersion() != mAppData.appVersionCode ||
                 !ExtractAssetsTask.areAllAssetsValid(PreferenceManager.getDefaultSharedPreferences(this),
