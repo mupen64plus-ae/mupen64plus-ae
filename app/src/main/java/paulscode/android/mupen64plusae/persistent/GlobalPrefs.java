@@ -295,6 +295,9 @@ public class GlobalPrefs
     /** Enable hack to fix up upside down screen in GLideN64 GLES 3.0 for some devices */
     public final boolean enableBlitScreenWorkaround;
 
+    /** Enable threading in GLideN64*/
+    public final boolean threadedGLideN64;
+
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
 
@@ -571,6 +574,7 @@ public class GlobalPrefs
         }
 
         enableBlitScreenWorkaround = mPreferences.getBoolean( "enableBlitScreenWorkaround", false );
+        threadedGLideN64 = mPreferences.getBoolean( "threadedGLideN64", true );
 
         // Audio prefs
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);

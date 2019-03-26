@@ -106,6 +106,12 @@
         android:summary="@string/fix_GLideN64_summary"
         android:title="@string/fix_GLideN64_title" />
 
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="threadedGLideN64"
+        android:summary="@string/gliden64_threaded_video_summary"
+        android:title="@string/gliden64_threaded_video_title" />
+
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/videoHardwareType_default"
         android:entries="@array/videoHardwareType_entries"

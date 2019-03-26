@@ -292,6 +292,8 @@
     <string name="displayFps_entryBottomRight">Abajo a la derecha</string>
     <string name="fix_GLideN64_title">Corregir la pantalla invertida</string>
     <string name="fix_GLideN64_summary">Soluciona problemas con algunos dispositivos que muestran una pantalla invertida con GLideN64</string>
+    <string name="gliden64_threaded_video_title">Video multi-hilo para GLideN64</string>
+    <string name="gliden64_threaded_video_summary">Habilita backend de OpenGL con multi-hilo</string>
     <string name="videoPlugin_title">Plugin de video</string>
     <string name="videoPlugin_entryNone">Ninguno (video deshabilitado)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptación de GLN64 v0.4.1)</small></string>
