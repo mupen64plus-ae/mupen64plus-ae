@@ -584,7 +584,7 @@ namespace opengl {
 	void FunctionWrapper::wrUniform3fv(GLint location, GLsizei count, const GLfloat *value)
 	{
 		if (m_threaded_wrapper) {
-			PoolBufferPointer values = OpenGlCommand::m_ringBufferPool.createPoolBuffer(reinterpret_cast<const char*>(value), 3 * sizeof(GLfloat));
+			PoolBufferPointer values = OpenGlCommand::m_ringBufferPool.createPoolBuffer(reinterpret_cast<const char*>(value), 3 * sizeof(GLfloat) * count);
 			executeCommand(GlUniform3fvCommand::get(location, count, values));
 		} else
 			ptrUniform3fv(location, count, value);
@@ -593,7 +593,7 @@ namespace opengl {
 	void FunctionWrapper::wrUniform4fv(GLint location, GLsizei count, const GLfloat *value)
 	{
 		if (m_threaded_wrapper) {
-			PoolBufferPointer values = OpenGlCommand::m_ringBufferPool.createPoolBuffer(reinterpret_cast<const char*>(value), 4 * sizeof(GLfloat));
+			PoolBufferPointer values = OpenGlCommand::m_ringBufferPool.createPoolBuffer(reinterpret_cast<const char*>(value), 4 * sizeof(GLfloat) * count);
 			executeCommand(GlUniform4fvCommand::get(location, count, values));
 		} else
 			ptrUniform4fv(location, count, value);
@@ -1482,6 +1482,9 @@ namespace opengl {
 			break;
 		case GL_DEPTH_STENCIL:
 			components = 2;
+			break;
+		case GL_LUMINANCE:
+			components = 1;
 			break;
 		default:
 			components = -1;

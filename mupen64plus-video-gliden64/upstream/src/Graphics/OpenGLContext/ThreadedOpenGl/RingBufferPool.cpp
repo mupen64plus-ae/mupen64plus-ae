@@ -8,14 +8,16 @@ namespace opengl {
 PoolBufferPointer::PoolBufferPointer() :
 	m_offset(0),
 	m_size(0),
+	m_realSize(0),
 	m_isValid(false)
 {
 
 }
 
-PoolBufferPointer::PoolBufferPointer(size_t _offset, size_t _size, bool _isValid) :
+PoolBufferPointer::PoolBufferPointer(size_t _offset, size_t _size, size_t _realSize, bool _isValid) :
 	m_offset(_offset),
 	m_size(_size),
+	m_realSize(0),
 	m_isValid(_isValid)
 {
 }
@@ -23,6 +25,7 @@ PoolBufferPointer::PoolBufferPointer(size_t _offset, size_t _size, bool _isValid
 PoolBufferPointer::PoolBufferPointer(const PoolBufferPointer& other) :
 	m_offset(other.m_offset),
 	m_size(other.m_size),
+	m_realSize(other.m_realSize),
 	m_isValid(other.m_isValid)
 {
 }
@@ -31,6 +34,7 @@ PoolBufferPointer& PoolBufferPointer::operator=(const PoolBufferPointer& other)
 {
 	m_offset = other.m_offset;
 	m_size = other.m_size;
+	m_realSize = other.m_realSize;
 	m_isValid = other.m_isValid;
 	return *this;
 }
@@ -54,10 +58,16 @@ RingBufferPool::RingBufferPool(size_t _poolSize) :
 
 PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _bufferSize)
 {
+	size_t realBufferSize = _bufferSize;
+	size_t remainder = _bufferSize % 4;
+
+	if (remainder != 0)
+		realBufferSize = _bufferSize + 4 - remainder;
+
 	size_t remaining = m_inUseStartOffset > m_inUseEndOffset ? static_cast<size_t>(m_inUseStartOffset - m_inUseEndOffset) :
 		m_poolBuffer.size() - m_inUseEndOffset + m_inUseStartOffset;
 
-	bool isValid = remaining >= _bufferSize;
+	bool isValid = remaining >= realBufferSize;
 
 	size_t startOffset = 0;
 
@@ -65,39 +75,39 @@ PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _
 	if (isValid) {
 		// We don't want to split data between the end of the ring buffer and the start
 		// Re-check buffer size if we are going to start at the beginning of the ring buffer
-		if (m_inUseEndOffset + _bufferSize > m_poolBuffer.size()) {
-			isValid =  _bufferSize < m_inUseStartOffset || m_inUseStartOffset == m_inUseEndOffset;
+		if (m_inUseEndOffset + realBufferSize > m_poolBuffer.size()) {
+			isValid =  realBufferSize < m_inUseStartOffset || m_inUseStartOffset == m_inUseEndOffset;
 
 			if (isValid) {
 				startOffset = 0;
-				m_inUseEndOffset = _bufferSize;
+				m_inUseEndOffset = realBufferSize;
 			} else {
 				std::unique_lock<std::mutex> lock(m_mutex);
-				m_condition.wait(lock, [this, _bufferSize]{ return _bufferSize < m_inUseStartOffset || m_inUseStartOffset == m_inUseEndOffset; });
+				m_condition.wait(lock, [this, realBufferSize]{ return realBufferSize < m_inUseStartOffset || m_inUseStartOffset == m_inUseEndOffset; });
 
-				return createPoolBuffer(_buffer, _bufferSize);
+				return createPoolBuffer(_buffer, realBufferSize);
 			}
 		} else {
 			startOffset = m_inUseEndOffset;
-			m_inUseEndOffset += _bufferSize;
+			m_inUseEndOffset += realBufferSize;
 		}
 	} else {
 	    // Wait until enough space is avalable
         std::unique_lock<std::mutex> lock(m_mutex);
-        m_condition.wait(lock, [this, _bufferSize]{
+        m_condition.wait(lock, [this, realBufferSize]{
             size_t remaining = m_inUseStartOffset > m_inUseEndOffset ? static_cast<size_t>(m_inUseStartOffset - m_inUseEndOffset) :
                                m_poolBuffer.size() - m_inUseEndOffset + m_inUseStartOffset;
-            return remaining >= _bufferSize;
+            return remaining >= realBufferSize;
         });
 
-        return createPoolBuffer(_buffer, _bufferSize);
+        return createPoolBuffer(_buffer, realBufferSize);
 	}
 
 	if (isValid) {
-		std::copy_n(_buffer, _bufferSize, &m_poolBuffer[startOffset]);
+		std::copy_n(_buffer, realBufferSize, &m_poolBuffer[startOffset]);
 	}
 
-	return PoolBufferPointer(startOffset, _bufferSize, isValid);
+	return PoolBufferPointer(startOffset, _bufferSize, realBufferSize, isValid);
 }
 
 const char* RingBufferPool::getBufferFromPool(PoolBufferPointer _poolBufferPointer)

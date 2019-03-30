@@ -11,6 +11,7 @@
 #include <GL/glcorearb.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+#define GL_LUMINANCE 0x1909
 #elif defined(OS_MAC_OS_X)
 #include <OpenGL/OpenGL.h>
 #include <stddef.h>

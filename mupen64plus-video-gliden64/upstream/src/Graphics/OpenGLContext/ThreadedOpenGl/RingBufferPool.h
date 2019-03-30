@@ -18,10 +18,11 @@ public:
 	bool isValid() const;
 	size_t getSize() const;
 private:
-	PoolBufferPointer(size_t _offset, size_t _size, bool _isValid);
+	PoolBufferPointer(size_t _offset, size_t _size, size_t _realSize, bool _isValid);
 
 	size_t m_offset;
 	size_t m_size;
+	size_t m_realSize;
 	bool m_isValid;
 
 	friend class RingBufferPool;
