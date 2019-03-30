@@ -170,6 +170,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     void shutdownEmulator()
     {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+        tryShutdown();
+    }
+
+    private void tryShutdown()
+    {
         mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
         mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
 
@@ -728,7 +733,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             }
 
             // Call shutdown if it has not been done already
-            shutdownEmulator();
+            tryShutdown();
 
             mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
             mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);

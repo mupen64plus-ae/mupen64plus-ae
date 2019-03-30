@@ -421,7 +421,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onResume()
     {
-        Log.i("GalleryActivity", "onResume");
+        Log.e("GalleryActivity", "onResume");
 
         super.onResume();
 
@@ -433,6 +433,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
+        }
+
+        if(!mGlobalPrefs.cacheRecentlyPlayed)
+        {
+            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+        }
+
+        if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+        {
+            mDrawerLayout.closeDrawer( GravityCompat.START );
+        }
+
+        if(mGameStartedExternally)
+        {
+            finishAffinity();
         }
     }
 
@@ -928,23 +943,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery, searchSubdirectories);
                     }
                 }
-            }
-        }
-        else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
-        {
-            if(!mGlobalPrefs.cacheRecentlyPlayed)
-            {
-                FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
-            }
-
-            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
-            {
-                mDrawerLayout.closeDrawer( GravityCompat.START );
-            }
-
-            if(mGameStartedExternally)
-            {
-                finishAffinity();
             }
         }
     }
