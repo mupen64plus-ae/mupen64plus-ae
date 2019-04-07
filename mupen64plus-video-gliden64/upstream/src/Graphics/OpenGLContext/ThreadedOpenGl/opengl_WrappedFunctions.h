@@ -1075,7 +1075,6 @@ public:
 	void commandToExecute() override
 	{
 		auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
-		int count = 0;
 
 		for (auto& data : vertexAttributes) {
 			if (data.second.m_updated && data.second.m_enabled) {

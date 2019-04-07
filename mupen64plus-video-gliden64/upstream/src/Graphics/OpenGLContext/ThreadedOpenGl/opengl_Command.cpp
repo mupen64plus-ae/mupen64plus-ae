@@ -5,8 +5,8 @@
 
 namespace opengl {
 
-	// 5MB memory pool
-	RingBufferPool OpenGlCommand::m_ringBufferPool(1024 * 1024 * 5);
+	// 15MB memory pool
+	RingBufferPool OpenGlCommand::m_ringBufferPool(1024 * 1024 * 15 );
 
 	void OpenGlCommand::performCommandSingleThreaded()
 	{

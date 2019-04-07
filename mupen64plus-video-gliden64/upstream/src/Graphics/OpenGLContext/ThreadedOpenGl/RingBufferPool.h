@@ -45,7 +45,8 @@ private:
 	std::atomic<size_t> m_inUseEndOffset;
 	std::vector<char> m_poolBuffer;
 	std::mutex m_mutex;
-	std::condition_variable m_condition;
+	std::atomic<bool> m_full;
+	std::condition_variable_any m_condition;
 };
 
 }

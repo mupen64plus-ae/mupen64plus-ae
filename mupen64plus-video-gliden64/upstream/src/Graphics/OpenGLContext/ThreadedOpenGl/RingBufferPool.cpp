@@ -17,7 +17,7 @@ PoolBufferPointer::PoolBufferPointer() :
 PoolBufferPointer::PoolBufferPointer(size_t _offset, size_t _size, size_t _realSize, bool _isValid) :
 	m_offset(_offset),
 	m_size(_size),
-	m_realSize(0),
+	m_realSize(_realSize),
 	m_isValid(_isValid)
 {
 }
@@ -52,8 +52,10 @@ size_t PoolBufferPointer::getSize() const
 RingBufferPool::RingBufferPool(size_t _poolSize) :
 	m_poolBuffer(_poolSize, 0),
 	m_inUseStartOffset(0),
-	m_inUseEndOffset(0)
+	m_inUseEndOffset(0),
+    m_full(false)
 {
+
 }
 
 PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _bufferSize)
@@ -64,8 +66,11 @@ PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _
 	if (remainder != 0)
 		realBufferSize = _bufferSize + 4 - remainder;
 
-	size_t remaining = m_inUseStartOffset > m_inUseEndOffset ? static_cast<size_t>(m_inUseStartOffset - m_inUseEndOffset) :
-		m_poolBuffer.size() - m_inUseEndOffset + m_inUseStartOffset;
+	size_t tempInUseStart = m_inUseStartOffset;
+
+	size_t remaining = tempInUseStart > m_inUseEndOffset || m_full ?
+		static_cast<size_t>(tempInUseStart - m_inUseEndOffset) :
+		m_poolBuffer.size() - m_inUseEndOffset + tempInUseStart;
 
 	bool isValid = remaining >= realBufferSize;
 
@@ -73,19 +78,25 @@ PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _
 
 	// We have determined that it fits
 	if (isValid) {
+
 		// We don't want to split data between the end of the ring buffer and the start
 		// Re-check buffer size if we are going to start at the beginning of the ring buffer
 		if (m_inUseEndOffset + realBufferSize > m_poolBuffer.size()) {
-			isValid =  realBufferSize < m_inUseStartOffset || m_inUseStartOffset == m_inUseEndOffset;
+			isValid = realBufferSize < tempInUseStart || tempInUseStart == m_inUseEndOffset;
 
 			if (isValid) {
 				startOffset = 0;
 				m_inUseEndOffset = realBufferSize;
 			} else {
-				std::unique_lock<std::mutex> lock(m_mutex);
-				m_condition.wait(lock, [this, realBufferSize]{ return realBufferSize < m_inUseStartOffset || m_inUseStartOffset == m_inUseEndOffset; });
-
-				return createPoolBuffer(_buffer, realBufferSize);
+				{
+					std::unique_lock<std::mutex> lock(m_mutex);
+					m_condition.wait(lock, [this, realBufferSize] {
+						size_t tempInUseStartLocal = m_inUseStartOffset;
+						return realBufferSize < tempInUseStartLocal ||
+							   tempInUseStartLocal == m_inUseEndOffset;
+					});
+				}
+				return createPoolBuffer(_buffer, _bufferSize);
 			}
 		} else {
 			startOffset = m_inUseEndOffset;
@@ -93,19 +104,26 @@ PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _
 		}
 	} else {
 	    // Wait until enough space is avalable
-        std::unique_lock<std::mutex> lock(m_mutex);
-        m_condition.wait(lock, [this, realBufferSize]{
-            size_t remaining = m_inUseStartOffset > m_inUseEndOffset ? static_cast<size_t>(m_inUseStartOffset - m_inUseEndOffset) :
-                               m_poolBuffer.size() - m_inUseEndOffset + m_inUseStartOffset;
-            return remaining >= realBufferSize;
-        });
+		{
+			std::unique_lock<std::mutex> lock(m_mutex);
 
-        return createPoolBuffer(_buffer, realBufferSize);
+			m_condition.wait(lock, [this, realBufferSize] {
+				size_t tempInUseStartLocal = m_inUseStartOffset;
+				size_t remainingLocal =
+						tempInUseStartLocal > m_inUseEndOffset || m_full ? static_cast<size_t>(
+								tempInUseStartLocal - m_inUseEndOffset) :
+						m_poolBuffer.size() - m_inUseEndOffset + tempInUseStartLocal;
+
+				return remainingLocal >= realBufferSize;
+			});
+		}
+
+        return createPoolBuffer(_buffer, _bufferSize);
 	}
 
-	if (isValid) {
-		std::copy_n(_buffer, realBufferSize, &m_poolBuffer[startOffset]);
-	}
+	std::copy_n(_buffer, _bufferSize, &m_poolBuffer[startOffset]);
+
+    m_full = m_inUseEndOffset == tempInUseStart;
 
 	return PoolBufferPointer(startOffset, _bufferSize, realBufferSize, isValid);
 }
@@ -122,7 +140,8 @@ const char* RingBufferPool::getBufferFromPool(PoolBufferPointer _poolBufferPoint
 void RingBufferPool::removeBufferFromPool(PoolBufferPointer _poolBufferPointer)
 {
 	std::unique_lock<std::mutex> lock(m_mutex);
-	m_inUseStartOffset = _poolBufferPointer.m_offset + _poolBufferPointer.m_size;
+	m_inUseStartOffset = _poolBufferPointer.m_offset + _poolBufferPointer.m_realSize;
+    m_full = false;
 	m_condition.notify_one();
 }
 
