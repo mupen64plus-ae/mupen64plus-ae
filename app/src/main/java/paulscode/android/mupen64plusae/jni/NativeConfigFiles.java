@@ -433,7 +433,9 @@ class NativeConfigFiles
         // because it could be set that way there.
         // For GLES-3.0/3.1, some devices don't support fast async reads
         if (glideN64settingValue != null &&
-                !(!supportsFullGl && setting.equals("EnableCopyColorToRDRAM")))
+                !(!supportsFullGl && setting.equals("EnableCopyColorToRDRAM")) &&
+                !(!supportsFullGl && setting.equals("EnableCopyDepthToRDRAM"))
+                )
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
 
