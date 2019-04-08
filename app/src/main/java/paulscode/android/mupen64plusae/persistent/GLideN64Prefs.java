@@ -152,7 +152,7 @@ public class GLideN64Prefs {
     {
         String glesVersion = AppData.getOpenGlEsVersion(context);
         bilinearMode = emulationProfile.get( "bilinearMode", "True" ).equals( "True" );
-        enableHalosRemoval = emulationProfile.get( "enableHalosRemoval", "True" ).equals( "True" );
+        enableHalosRemoval = emulationProfile.get( "enableHalosRemoval", "False" ).equals( "True" );
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         enableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
