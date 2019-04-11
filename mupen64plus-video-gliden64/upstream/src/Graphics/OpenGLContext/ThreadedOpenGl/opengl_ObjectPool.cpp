@@ -70,31 +70,28 @@ namespace opengl {
 		} else {
 			bool found = false;
 			unsigned int index;
-			int totalCount = 0;
 			//Not found in most common case, so go ahead and search
 			for (index = currentIndex; index < currentPool.size() && !found; ++index) {
 				found = !currentPool[index]->isInUse();
-				++totalCount;
 			}
 
 			if (!found) {
-                for (index = 0; index < currentIndex && !found; ++index) {
-                    found = !currentPool[index]->isInUse();
-                    ++totalCount;
-                }
-            }
+				for (index = 0; index < currentIndex && !found; ++index) {
+					found = !currentPool[index]->isInUse();
+				}
+			}
 
 			if (found) {
-                currentIndex = index;
+				currentIndex = index;
 
-                if (currentIndex == currentPool.size()) {
-                    currentIndex = 0;
-                }
-                --index;
+				if (currentIndex == currentPool.size()) {
+					currentIndex = 0;
+				}
+				--index;
 
 				return currentPool[index];
 			} else {
-                currentIndex = 0;
+				currentIndex = 0;
 				return nullptr;
 			}
 		}

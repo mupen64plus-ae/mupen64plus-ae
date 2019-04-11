@@ -53,7 +53,7 @@ RingBufferPool::RingBufferPool(size_t _poolSize) :
 	m_poolBuffer(_poolSize, 0),
 	m_inUseStartOffset(0),
 	m_inUseEndOffset(0),
-    m_full(false)
+	m_full(false)
 {
 
 }
@@ -103,7 +103,7 @@ PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _
 			m_inUseEndOffset += realBufferSize;
 		}
 	} else {
-	    // Wait until enough space is avalable
+		// Wait until enough space is avalable
 		{
 			std::unique_lock<std::mutex> lock(m_mutex);
 
@@ -118,12 +118,12 @@ PoolBufferPointer RingBufferPool::createPoolBuffer(const char* _buffer, size_t _
 			});
 		}
 
-        return createPoolBuffer(_buffer, _bufferSize);
+		return createPoolBuffer(_buffer, _bufferSize);
 	}
 
 	std::copy_n(_buffer, _bufferSize, &m_poolBuffer[startOffset]);
 
-    m_full = m_inUseEndOffset == tempInUseStart;
+	m_full = m_inUseEndOffset == tempInUseStart;
 
 	return PoolBufferPointer(startOffset, _bufferSize, realBufferSize, isValid);
 }
@@ -141,7 +141,7 @@ void RingBufferPool::removeBufferFromPool(PoolBufferPointer _poolBufferPointer)
 {
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_inUseStartOffset = _poolBufferPointer.m_offset + _poolBufferPointer.m_realSize;
-    m_full = false;
+	m_full = false;
 	m_condition.notify_one();
 }
 
