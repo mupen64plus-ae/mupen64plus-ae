@@ -143,7 +143,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         final String romPath = config.get( md5, "romPath" );
         String zipPath = config.get( md5, "zipPath" );
         final String artFullPath = config.get( md5, "artPath" );
-        final String goodName = config.get( md5, "goodName" );;
+        final String goodName = config.get( md5, "goodName" );
 
         //We get the file name to support the old gallery format
         String artPath = !TextUtils.isEmpty(artFullPath) ? new File(artFullPath).getName() : null;
@@ -166,7 +166,11 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         if (lastPlayedStr != null)
             lastPlayed = Integer.parseInt(lastPlayedStr);
 
-        if (crc != null && headerName != null && countryCodeString != null)
+        // Some BETA ROMs don't have headers
+        if (headerName == null)
+            headerName = goodName;
+
+        if (crc != null && countryCodeString != null)
         {
             item = new GalleryItem(mContext.get(), md5, crc, headerName, countryCode, goodName, displayName, romPath,
                     zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
