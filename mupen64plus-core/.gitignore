@@ -2,6 +2,7 @@
 .externalNativeBuild
 src/main/libs
 src/main/obj
+/.cxx
 
 /upstream/src/asm_defines/armeabi-v7a/
 /upstream/src/asm_defines/arm64-v8a/
