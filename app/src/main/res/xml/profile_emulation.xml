@@ -590,6 +590,16 @@
             android:key="txSaveCache"
             android:summary="@string/gliden64_tx_save_cache_summary"
             android:title="@string/gliden64_tx_save_cache_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="txEnhancedTextureFileStorage"
+            android:summary="@string/gliden64_tx_enhanced_texture_file_storage_summary"
+            android:title="@string/gliden64_tx_enhanced_texture_file_storage_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="txHiresTextureFileStorage"
+            android:summary="@string/gliden64_tx_hires_texture_file_storage_summary"
+            android:title="@string/gliden64_tx_hires_texture_file_storage_title" />
     </androidx.preference.PreferenceCategory>
         
     <androidx.preference.PreferenceCategory

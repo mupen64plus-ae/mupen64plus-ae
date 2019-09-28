@@ -950,7 +950,7 @@
         <item>False</item>
         <item>True</item>
     </string-array>
-    <string name="gliden64_bilinear_default" translatable="false">0</string>
+    <string name="gliden64_bilinear_default" translatable="false">False</string>
 
     <!-- GLideN64 texrect coord list-->
     <string-array name="gliden64_texrect_coords_entries">

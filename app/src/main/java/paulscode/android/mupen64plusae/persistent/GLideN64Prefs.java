@@ -8,7 +8,7 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 26;
+    public static final int VERSION = 27;
 
     /** Enable/Disable Fast Approximate Anti-Aliasing FXAA */
     public final boolean fxaa;
@@ -142,6 +142,12 @@ public class GLideN64Prefs {
     /** Save texture cache to hard disk. */
     public final boolean txSaveCache;
 
+    /** Use file storage instead of memory cache for enhanced textures. */
+    public final boolean txEnhancedTextureFileStorage;
+
+    /** Use file storage instead of memory cache for hires textures. */
+    public final boolean txHiresTextureFileStorage;
+
     /** Force gamma correction. */
     public final boolean forceGammaCorrection;
 
@@ -188,6 +194,9 @@ public class GLideN64Prefs {
         txCacheCompression = emulationProfile.get( "txCacheCompression", "True" ).equals( "True" );
         txForce16bpp = emulationProfile.get( "txForce16bpp", "False" ).equals( "True" );
         txSaveCache = emulationProfile.get( "txSaveCache", "False" ).equals( "True" );
+        txEnhancedTextureFileStorage = emulationProfile.get( "txEnhancedTextureFileStorage", "False" ).equals( "True" );
+        txHiresTextureFileStorage = emulationProfile.get( "txHiresTextureFileStorage", "False" ).equals( "True" );
+
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
     }

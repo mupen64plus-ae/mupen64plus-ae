@@ -310,6 +310,8 @@ class NativeConfigFiles
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheCompression", boolToTF( game.glideN64Prefs.txCacheCompression ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txForce16bpp", boolToTF( game.glideN64Prefs.txForce16bpp ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txSaveCache", boolToTF( game.glideN64Prefs.txSaveCache ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancedTextureFileStorage", boolToTF( game.glideN64Prefs.txEnhancedTextureFileStorage ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresTextureFileStorage", boolToTF( game.glideN64Prefs.txHiresTextureFileStorage ) );
         }
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHresAltCRC", boolToTF( game.glideN64Prefs.txHresAltCRC ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontName", "DroidSans.ttf" );

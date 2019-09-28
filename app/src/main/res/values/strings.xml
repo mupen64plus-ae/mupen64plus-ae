@@ -404,7 +404,7 @@
 
     <string name="gliden64_category_texture_title">Texture</string>
     <string name="gliden64_fxaa_title">FXAA</string>
-    <string name="gliden64_fxaa_summary">Enable Fast Approximate Anti-Aliasing FXAA</string>
+    <string name="gliden64_fxaa_summary">Fast Approximate Anti-Aliasing FXAA</string>
     <string name="gliden64_bilinear_mode_title">Bilinear filtering mode</string>
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
     <string name="gliden64_bilinear_mode_entry_standard">Standard</string>
@@ -413,13 +413,13 @@
     <string name="gliden64_max_anisotropic_filtering_title">Max level of anisotropic filtering</string>
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Widescreen hack</string>
-    <string name="gliden64_enable_noise_title">Enable noise emulation</string>
-    <string name="gliden64_enable_lod_title">Enable LOD emulation</string>
-    <string name="gliden64_enable_hw_lighting_title">Enable hardware per-pixel lighting</string>
+    <string name="gliden64_enable_noise_title">Noise emulation</string>
+    <string name="gliden64_enable_lod_title">LOD emulation</string>
+    <string name="gliden64_enable_hw_lighting_title">Hardware per-pixel lighting</string>
     <string name="gliden64_enable_shader_storage_title">Use shader cache</string>
-    <string name="gliden64_enable_legacy_blending_title">Enable legacy blending</string>
+    <string name="gliden64_enable_legacy_blending_title">Legacy blending</string>
     <string name="gliden64_enable_legacy_blending_summary">Disabling this produces more correct lighting and fog, but it is slower on some devices.</string>
-    <string name="gliden64_enable_fragment_depth_write_title">Enable fragment based depth</string>
+    <string name="gliden64_enable_fragment_depth_write_title">Fragment based depth</string>
     <string name="gliden64_enable_fragment_depth_write_summary">Enable writing of fragment depth. Some devices are not compatible.</string>
     <string name="gliden64_category_2d_title">2D Settings</string>
     <string name="gliden64_correct_texrect_coords_title">Make texrect coordinates continuous</string>
@@ -432,7 +432,7 @@
     <string name="gliden64_render_backgrounds_mode_one_piece">One piece (fast)</string>
     <string name="gliden64_render_backgrounds_mode_stripped">Stripped (precise)</string>
     <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
-    <string name="gliden64_enable_fb_emulation_title">Enable frame and/or depth buffer emulation</string>
+    <string name="gliden64_enable_fb_emulation_title">Frame and/or depth buffer emulation</string>
     <string name="gliden64_swap_frame_buffers_title">Swap frame buffers</string>
     <string name="gliden64_swap_frame_buffers_entry_on_vi_update">On VI update call</string>
     <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">On VI origin change</string>
@@ -442,13 +442,13 @@
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Copy in sync mode</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Copy in async mode (2 buffers)</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode_3buffers">Copy in async mode (3 buffers)</string>
-    <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Enable copy auxiliary buffers to RDRAM</string>
+    <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Copy auxiliary buffers to RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_title">Copy depth buffer to RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Do not copy</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Hardware renderer</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Software renderer</string>
-    <string name="gliden64_enable_color_buffer_from_RDRAM_title">Enable color buffer copy from RDRAM</string>
-    <string name="gliden64_enable_n64_depth_compare_title">Enable N64 depth compare (Experimental)</string>
+    <string name="gliden64_enable_color_buffer_from_RDRAM_title">Color buffer copy from RDRAM</string>
+    <string name="gliden64_enable_n64_depth_compare_title">N64 depth compare (Experimental)</string>
     <string name="gliden64_enable_force_depth_buffer_clear">Force depth buffer clear</string>
     <string name="gliden64_use_native_resolution_factor_title">Use native resolution factor</string>
     <string name="gliden64_use_native_resolution_factor_off">Off</string>
@@ -489,11 +489,15 @@
     <string name="gliden64_tx_force_16bpp_title">Force 16bit texture format for HD textures</string>
     <string name="gliden64_tx_save_cache_title">Save texture cache to disk</string>
     <string name="gliden64_tx_save_cache_summary">Saves texture cache to disk on exit, causing a delay when exiting a game.</string>
+    <string name="gliden64_tx_enhanced_texture_file_storage_title">Enhanced texture file storage</string>
+    <string name="gliden64_tx_enhanced_texture_file_storage_summary">Use file storage instead of memory cache for enhanced textures.</string>
+    <string name="gliden64_tx_hires_texture_file_storage_title">Hires texture file storage</string>
+    <string name="gliden64_tx_hires_texture_file_storage_summary">Use file storage instead of memory cache for hires textures.</string>
     <string name="gliden64_category_gamma_title">Gamma Correction</string>
     <string name="gliden64_force_gamma_correction_title">Force gamma correction</string>
     <string name="gliden64_gamma_correction_level">Gamma correction value</string>
 
-    <string name="angrylion_parallel_mode_title">Enable threaded mode</string>
+    <string name="angrylion_parallel_mode_title">Threaded mode</string>
     <string name="angrylion_num_workers_title">Number of worker threads</string>
     <string name="angrylion_vi_mode_title">VI Mode</string>
     <string name="angrylion_vi_mode_entry_filtered">Filtered</string>
