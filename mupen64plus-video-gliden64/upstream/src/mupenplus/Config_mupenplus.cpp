@@ -5,6 +5,7 @@
 #include <string.h>
 #include <osal_files.h>
 #include <algorithm>
+#include <Config.h>
 
 #include "../Textures.h"
 #include "../Config.h"
@@ -47,6 +48,11 @@ bool Config_SetDefault()
 
 	res = ConfigSetDefaultBool(g_configVideoGliden64, "ThreadedVideo", config.video.threadedVideo, "Enable threaded video backend");
 	assert(res == M64ERR_SUCCESS);
+
+#if defined(EGL)
+	res = ConfigSetDefaultBool(g_configVideoGliden64, "EglInitHack", config.video.eglInitHack, "Enable EGL initialization hack needed for some devices");
+	assert(res == M64ERR_SUCCESS);
+#endif
 
 	res = ConfigSetDefaultInt(g_configVideoGliden64, "MultiSampling", config.video.multisampling, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
 	assert(res == M64ERR_SUCCESS);
@@ -378,6 +384,9 @@ void Config_LoadConfig()
 	config.video.windowedHeight = ConfigGetParamInt(g_configVideoGeneral, "ScreenHeight");
 	config.video.verticalSync = ConfigGetParamBool(g_configVideoGeneral, "VerticalSync");
 	config.video.threadedVideo = ConfigGetParamBool(g_configVideoGliden64, "ThreadedVideo");
+#if defined(EGL)
+	config.video.eglInitHack = ConfigGetParamBool(g_configVideoGliden64, "EglInitHack");
+#endif
 	const u32 multisampling = ConfigGetParamInt(g_configVideoGliden64, "MultiSampling");
 	config.video.multisampling = multisampling == 0 ? 0 : pow2(multisampling);
 	config.video.fxaa = ConfigGetParamBool(g_configVideoGliden64, "FXAA");

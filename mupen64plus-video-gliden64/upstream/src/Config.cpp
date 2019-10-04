@@ -26,6 +26,9 @@ void Config::resetToDefaults()
 	video.multisampling = 0;
 	video.verticalSync = 0;
 	video.threadedVideo = 0;
+#if defined(EGL)
+	video.eglInitHack = 0;
+#endif
 
 	texture.maxAnisotropy = 0;
 	texture.bilinearMode = BILINEAR_STANDARD;

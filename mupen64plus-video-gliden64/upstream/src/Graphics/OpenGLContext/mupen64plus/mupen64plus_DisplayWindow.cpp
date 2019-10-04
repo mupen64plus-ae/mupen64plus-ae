@@ -75,23 +75,13 @@ void DisplayWindowMupen64plus::_setAttributes()
 
 bool DisplayWindowMupen64plus::_start()
 {
-	FunctionWrapper::setThreadedMode(config.video.threadedVideo);
-
 #ifdef EGL
-	// Normally this is initialized externally through VidExt, but if VidExt is not implemented,
-	// do this here anyways. Calling eglInitialize has no negative effect according to the spec
-
-	EGLDisplay display;
-	if ((display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
-		LOG(LOG_ERROR, "eglGetDisplay() returned error %d", eglGetError());
-		return false;
-	}
-	if (!eglInitialize(display, nullptr, nullptr)) {
-		LOG(LOG_ERROR, "eglInitialize() returned error %d", eglGetError());
-		return false;
-	}
+	// This is needed for some devices/front-end combinations
+	if (config.video.eglInitHack)
+		eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), nullptr, nullptr);
 #endif
 
+	FunctionWrapper::setThreadedMode(config.video.threadedVideo);
 	FunctionWrapper::CoreVideo_Init();
 	_setAttributes();
 
