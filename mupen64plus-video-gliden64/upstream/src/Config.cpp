@@ -65,6 +65,7 @@ void Config::resetToDefaults()
 	frameBufferEmulation.nativeResFactor = 0;
 	frameBufferEmulation.fbInfoReadColorChunk = 0;
 	frameBufferEmulation.fbInfoReadDepthChunk = 1;
+	frameBufferEmulation.copyDepthToMainDepthBuffer = 0;
 #ifndef MUPENPLUSAPI
 	frameBufferEmulation.fbInfoDisabled = 0;
 #else
@@ -86,6 +87,9 @@ void Config::resetToDefaults()
 	textureFilter.txForce16bpp = 0;
 	textureFilter.txCacheCompression = 1;
 	textureFilter.txSaveCache = 1;
+
+	textureFilter.txEnhancedTextureFileStorage = 0;
+	textureFilter.txHiresTextureFileStorage = 0;
 
 	api().GetUserDataPath(textureFilter.txPath);
 	gln_wcscat(textureFilter.txPath, wst("/hires_texture"));

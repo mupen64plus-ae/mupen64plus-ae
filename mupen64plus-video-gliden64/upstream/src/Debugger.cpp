@@ -37,7 +37,7 @@ bool getCursorPos(long & _x, long & _y)
 	if (hWnd == NULL) {
 		wchar_t caption[64];
 # ifdef _DEBUG
-		swprintf(caption, 64, L"%ls debug. Revision %ls", pluginNameW, PLUGIN_REVISION_W);
+		swprintf(caption, 64, L"mupen64plus: %ls debug. Revision %ls", pluginNameW, PLUGIN_REVISION_W);
 # else // _DEBUG
 		swprintf(caption, 64, L"%s. Revision %s", pluginName, PLUGIN_REVISION);
 # endif // _DEBUG
@@ -284,7 +284,7 @@ void Debugger::_fillTriInfo(TriInfo & _info)
 
 void Debugger::_addTrianglesByElements(const Context::DrawTriangleParameters & _params)
 {
-	u8 * elements = reinterpret_cast<u8*>(_params.elements);
+	u16 * elements = reinterpret_cast<u16*>(_params.elements);
 	u32 cur_tri = static_cast<u32>(m_triangles.size());
 	for (u32 i = 0; i < _params.elementsCount;) {
 		m_triangles.emplace_back();
@@ -309,12 +309,14 @@ void Debugger::_addTriangles(const Context::DrawTriangleParameters & _params)
 		} else {
 			assert(_params.mode == drawmode::TRIANGLE_STRIP);
 			for (u32 j = 0; j < 3; ++j)
-				info.vertices[j] = Vertex(_params.vertices[i+j]);
+				info.vertices[j] = Vertex(_params.vertices[i + j]);
 			++i;
 		}
 		info.tri_n = cur_tri++;
 		info.type = ttTriangle;
 		_fillTriInfo(info);
+		if (i + 3 >= _params.verticesCount)
+			return;
 	}
 }
 
@@ -618,7 +620,7 @@ void Debugger::_drawFrameBuffer(FrameBuffer * _pBuffer)
 		pBufferTexture = _pBuffer->m_pResolveTexture;
 	}
 
-	s32 srcCoord[4] = { 0, 0, pBufferTexture->realWidth, (s32)(_pBuffer->m_height * _pBuffer->m_scale) };
+	s32 srcCoord[4] = { 0, 0, pBufferTexture->width, (s32)(_pBuffer->m_height * _pBuffer->m_scale) };
 	const s32 hOffset = (wnd.getScreenWidth() - wnd.getWidth()) / 2;
 	const s32 vOffset = (wnd.getScreenHeight() - wnd.getHeight()) / 2 + wnd.getHeightOffset() + wnd.getHeight()*3/8;
 	s32 dstCoord[4] = { hOffset, vOffset, hOffset + (s32)wnd.getWidth()*5/8, vOffset + (s32)wnd.getHeight()*5/8 };
@@ -635,8 +637,8 @@ void Debugger::_drawFrameBuffer(FrameBuffer * _pBuffer)
 	blitParams.srcY0 = srcCoord[3];
 	blitParams.srcX1 = srcCoord[2];
 	blitParams.srcY1 = srcCoord[1];
-	blitParams.srcWidth = pBufferTexture->realWidth;
-	blitParams.srcHeight = pBufferTexture->realHeight;
+	blitParams.srcWidth = pBufferTexture->width;
+	blitParams.srcHeight = pBufferTexture->height;
 	blitParams.dstX0 = dstCoord[0];
 	blitParams.dstY0 = dstCoord[1];
 	blitParams.dstX1 = dstCoord[2];

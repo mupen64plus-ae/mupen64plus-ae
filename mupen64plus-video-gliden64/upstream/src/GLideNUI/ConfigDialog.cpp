@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QCursor>
 #include <QRegExpValidator>
+#include <QInputDialog>
 
 #include "../Config.h"
 #include "../DebugDump.h"
@@ -66,8 +67,18 @@ u32 powof(u32 dim)
 }
 
 
-void ConfigDialog::_init()
+void ConfigDialog::_init(bool reInit, bool blockCustomSettings)
 {
+	if (m_blockReInit)
+		return;
+	m_blockReInit = true;
+
+	if (reInit && m_romName != nullptr && ui->customSettingsCheckBox->isChecked() && ui->settingsDestGameRadioButton->isChecked()) {
+		loadCustomRomSettings(m_strIniPath, m_romName);
+	} else if (reInit) {
+		loadSettings(m_strIniPath);
+	}
+
 	// Video settings
 	QStringList windowedModesList;
 	int windowedModesCurrent = -1;
@@ -111,13 +122,16 @@ void ConfigDialog::_init()
 	ui->fullScreenResolutionComboBox->setCurrentIndex(fullscreenMode);
 	ui->fullScreenRefreshRateComboBox->setCurrentIndex(fullscreenRate);
 
-	ui->fxaaCheckBox->toggle();
-	ui->fxaaCheckBox->setChecked(config.video.fxaa != 0);
-	ui->aliasingSlider->setValue(powof(config.video.multisampling));
-	ui->aliasingLabelVal->setText(QString::number(config.video.multisampling));
+	const unsigned int multisampling = config.video.fxaa == 0 && config.video.multisampling > 0
+		? config.video.multisampling
+		: 8;
+	ui->aliasingSlider->blockSignals(true);
+	ui->aliasingSlider->setValue(powof(multisampling));
+	ui->aliasingSlider->blockSignals(false);
+	ui->aliasingLabelVal->setText(QString::number(multisampling));
 	ui->anisotropicSlider->setValue(config.texture.maxAnisotropy);
 	ui->vSyncCheckBox->setChecked(config.video.verticalSync != 0);
-	ui->vThreadedVideoCheckBox->setChecked(config.video.threadedVideo != 0);
+	ui->threadedVideoCheckBox->setChecked(config.video.threadedVideo != 0);
 
 	switch (config.texture.bilinearMode) {
 	case BILINEAR_3POINT:
@@ -127,7 +141,6 @@ void ConfigDialog::_init()
 		ui->blnrStandardRadioButton->setChecked(true);
 		break;
 	}
-	ui->halosRemovalCheckBox->setChecked(config.texture.enableHalosRemoval != 0);
 
 	switch (config.texture.screenShotFormat) {
 	case 0:
@@ -143,9 +156,9 @@ void ConfigDialog::_init()
 	ui->emulateNoiseCheckBox->setChecked(config.generalEmulation.enableNoise != 0);
 	ui->enableHWLightingCheckBox->setChecked(config.generalEmulation.enableHWLighting != 0);
 	ui->enableShadersStorageCheckBox->setChecked(config.generalEmulation.enableShadersStorage != 0);
-	ui->customSettingsCheckBox->setChecked(config.generalEmulation.enableCustomSettings != 0);
+	if (!blockCustomSettings)
+		ui->customSettingsCheckBox->setChecked(config.generalEmulation.enableCustomSettings != 0);
 
-	// 2D graphics settings
 	switch (config.graphics2D.correctTexrectCoords) {
 	case Config::tcDisable:
 		ui->fixTexrectDisableRadioButton->setChecked(true);
@@ -157,6 +170,7 @@ void ConfigDialog::_init()
 		ui->fixTexrectForceRadioButton->setChecked(true);
 		break;
 	}
+
 	switch (config.graphics2D.bgMode) {
 	case Config::BGMode::bgOnePiece:
 		ui->bgModeOnePieceRadioButton->setChecked(true);
@@ -165,12 +179,15 @@ void ConfigDialog::_init()
 		ui->bgModeStrippedRadioButton->setChecked(true);
 		break;
 	}
+
+	ui->halosRemovalCheckBox->setChecked(config.texture.enableHalosRemoval != 0);
+
 	ui->nativeRes2D_checkBox->toggle();
 	ui->nativeRes2D_checkBox->setChecked(config.graphics2D.enableNativeResTexrects != 0);
 
-	ui->gammaCorrectionCheckBox->toggle();
+	ui->gammaCorrectionNoteFrame->setHidden(true);
+	ui->gammaLevelSpinBox->setValue(config.gammaCorrection.force != 0 ? config.gammaCorrection.level : 2.0);
 	ui->gammaCorrectionCheckBox->setChecked(config.gammaCorrection.force != 0);
-	ui->gammaLevelSpinBox->setValue(config.gammaCorrection.level);
 
 	ui->frameBufferSwapComboBox->setCurrentIndex(config.frameBufferEmulation.bufferSwapMode);
 
@@ -186,26 +203,34 @@ void ConfigDialog::_init()
 	ui->copyColorBufferComboBox->setCurrentIndex(config.frameBufferEmulation.copyToRDRAM);
 	ui->copyDepthBufferComboBox->setCurrentIndex(config.frameBufferEmulation.copyDepthToRDRAM);
 	ui->RenderFBCheckBox->setChecked(config.frameBufferEmulation.copyFromRDRAM != 0);
+	ui->copyDepthToMainDepthBufferCheckBox->setChecked(config.frameBufferEmulation.copyDepthToMainDepthBuffer != 0);
 	ui->n64DepthCompareCheckBox->toggle();
 	ui->n64DepthCompareCheckBox->setChecked(config.frameBufferEmulation.N64DepthCompare != 0);
 	ui->forceDepthBufferClearCheckBox->setChecked(config.frameBufferEmulation.forceDepthBufferClear != 0);
 
+	if (config.video.fxaa != 0)
+		ui->fxaaRadioButton->setChecked(true);
+	else if (config.video.multisampling == 0)
+		ui->noaaRadioButton->setChecked(true);
+	else
+		ui->msaaRadioButton->setChecked(true);
+
 	switch (config.frameBufferEmulation.aspect) {
 	case Config::aStretch:
-		ui->aspectStretchRadioButton->setChecked(true);
+		ui->aspectComboBox->setCurrentIndex(2);
 		break;
 	case Config::a43:
-		ui->aspect43RadioButton->setChecked(true);
+		ui->aspectComboBox->setCurrentIndex(0);
 		break;
 	case Config::a169:
-		ui->aspect169RadioButton->setChecked(true);
+		ui->aspectComboBox->setCurrentIndex(1);
 		break;
 	case Config::aAdjust:
-		ui->aspectAdjustRadioButton->setChecked(true);
+		ui->aspectComboBox->setCurrentIndex(3);
 		break;
 	}
 
-	ui->resolutionFactorSlider->valueChanged(2);
+	ui->resolutionFactorSpinBox->valueChanged(2);
 	ui->factor0xRadioButton->toggle();
 	ui->factor1xRadioButton->toggle();
 	ui->factorXxRadioButton->toggle();
@@ -218,7 +243,7 @@ void ConfigDialog::_init()
 		break;
 	default:
 		ui->factorXxRadioButton->setChecked(true);
-		ui->resolutionFactorSlider->setValue(config.frameBufferEmulation.nativeResFactor);
+		ui->resolutionFactorSpinBox->setValue(config.frameBufferEmulation.nativeResFactor);
 		break;
 	}
 
@@ -237,18 +262,20 @@ void ConfigDialog::_init()
 	ui->deposterizeCheckBox->setChecked(config.textureFilter.txDeposterize != 0);
 	ui->ignoreBackgroundsCheckBox->setChecked(config.textureFilter.txFilterIgnoreBG != 0);
 
-	ui->texturePackOnCheckBox->toggle();
-	ui->texturePackOnCheckBox->setChecked(config.textureFilter.txHiresEnable != 0);
+	ui->texturePackGroupBox->setChecked(config.textureFilter.txHiresEnable != 0);
 	ui->alphaChannelCheckBox->setChecked(config.textureFilter.txHiresFullAlphaChannel != 0);
 	ui->alternativeCRCCheckBox->setChecked(config.textureFilter.txHresAltCRC != 0);
+	ui->textureDumpCheckBox->toggle();
 	ui->textureDumpCheckBox->setChecked(config.textureFilter.txDump != 0);
 	ui->force16bppCheckBox->setChecked(config.textureFilter.txForce16bpp != 0);
 	ui->compressCacheCheckBox->setChecked(config.textureFilter.txCacheCompression != 0);
 	ui->saveTextureCacheCheckBox->setChecked(config.textureFilter.txSaveCache != 0);
+	ui->enhancedTexFileStorageCheckBox->setChecked(config.textureFilter.txEnhancedTextureFileStorage != 0);
+	ui->hiresTexFileStorageCheckBox->setChecked(config.textureFilter.txHiresTextureFileStorage != 0);
 
-	ui->txPathLabel->setText(QString::fromWCharArray(config.textureFilter.txPath));
-	ui->txCachePathLabel->setText(QString::fromWCharArray(config.textureFilter.txCachePath));
-	ui->txDumpPathLabel->setText(QString::fromWCharArray(config.textureFilter.txDumpPath));
+	ui->texPackPathLineEdit->setText(QString::fromWCharArray(config.textureFilter.txPath));
+	ui->texCachePathLineEdit->setText(QString::fromWCharArray(config.textureFilter.txCachePath));
+	ui->texDumpPathLineEdit->setText(QString::fromWCharArray(config.textureFilter.txDumpPath));
 
 	// OSD settings
 	QString fontName(config.font.name.c_str());
@@ -296,8 +323,9 @@ void ConfigDialog::_init()
 	ui->renderingResolutionCheckBox->setChecked(config.onScreenDisplay.renderingResolution != 0);
 
 	// Buttons
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
-	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Save and Close"));
+	ui->buttonBox->button(QDialogButtonBox::Save)->setText(tr("Save"));
+	ui->buttonBox->button(QDialogButtonBox::Close)->setText(tr("Close"));
 	ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setText(tr("Restore Defaults"));
 
 	ui->dumpLowCheckBox->setChecked((config.debug.dumpMode & DEBUG_LOW) != 0);
@@ -312,6 +340,8 @@ void ConfigDialog::_init()
 		}
 	}
 #endif
+
+	m_blockReInit = false;
 }
 
 void ConfigDialog::_getTranslations(QStringList & _translationFiles) const
@@ -353,26 +383,25 @@ void ConfigDialog::setIniPath(const QString & _strIniPath)
 	const QStringList aProfiles = getProfiles(m_strIniPath);
 	ui->profilesComboBox->addItems(aProfiles);
 	ui->profilesComboBox->setCurrentIndex(aProfiles.indexOf(getCurrentProfile(m_strIniPath)));
+	ui->profilesComboBox->insertSeparator(ui->profilesComboBox->count());
+	ui->profilesComboBox->insertItem(ui->profilesComboBox->count(), tr("New..."));
 	ui->profilesComboBox->blockSignals(false);
-	ui->removeProfilePushButton->setEnabled(ui->profilesComboBox->count() > 1);
+	ui->removeProfilePushButton->setEnabled(ui->profilesComboBox->count() > 3);
 }
 
 void ConfigDialog::setRomName(const char * _romName)
 {
 	const bool bRomNameIsEmpty = _romName == nullptr || strlen(_romName) == 0;
 	m_romName = bRomNameIsEmpty ? nullptr : _romName;
-	ui->customSettingsCheckBox->setEnabled(bRomNameIsEmpty);
-	ui->profilesComboBox->setEnabled(bRomNameIsEmpty);
-	ui->removeProfilePushButton->setEnabled(bRomNameIsEmpty && ui->profilesComboBox->count() > 1);
-	ui->addProfilePushButton->setEnabled(bRomNameIsEmpty);
-	ui->customSettingsWarningFrame->setVisible(!bRomNameIsEmpty && config.generalEmulation.enableCustomSettings != 0);
+	this->on_customSettingsCheckBox_toggled(ui->customSettingsCheckBox->isChecked());
 }
 
 ConfigDialog::ConfigDialog(QWidget *parent, Qt::WindowFlags f) :
 QDialog(parent, f),
 ui(new Ui::ConfigDialog),
 m_accepted(false),
-m_fontsInited(false)
+m_fontsInited(false),
+m_blockReInit(false)
 {
 	ui->setupUi(this);
 	_init();
@@ -383,8 +412,8 @@ ConfigDialog::~ConfigDialog()
 	delete ui;
 }
 
-void ConfigDialog::accept()
-{
+void ConfigDialog::accept(bool justSave) {
+
 	m_accepted = true;
 
 	int windowedValidatorPos = 0;
@@ -400,16 +429,19 @@ void ConfigDialog::accept()
 	getFullscreenResolutions(ui->fullScreenResolutionComboBox->currentIndex(), config.video.fullscreenWidth, config.video.fullscreenHeight);
 	getFullscreenRefreshRate(ui->fullScreenRefreshRateComboBox->currentIndex(), config.video.fullscreenRefresh);
 
-	config.video.fxaa = ui->fxaaCheckBox->isChecked() ? 1 : 0;
-	config.video.multisampling = (ui->fxaaCheckBox->isChecked() || ui->n64DepthCompareCheckBox->isChecked()) ? 0 : pow2(ui->aliasingSlider->value());
+	config.video.fxaa = ui->fxaaRadioButton->isChecked() ? 1 : 0;
+	config.video.multisampling = 
+		(ui->fxaaRadioButton->isChecked()
+			|| ui->n64DepthCompareCheckBox->isChecked()
+			|| ui->noaaRadioButton->isChecked()
+		) ? 0
+		: pow2(ui->aliasingSlider->value());
 	config.texture.maxAnisotropy = ui->anisotropicSlider->value();
 
 	if (ui->blnrStandardRadioButton->isChecked())
 		config.texture.bilinearMode = BILINEAR_STANDARD;
 	else if (ui->blnr3PointRadioButton->isChecked())
 		config.texture.bilinearMode = BILINEAR_3POINT;
-
-	config.texture.enableHalosRemoval = ui->halosRemovalCheckBox->isChecked() ? 1 : 0;
 
 	if (ui->pngRadioButton->isChecked())
 		config.texture.screenShotFormat = 0;
@@ -426,8 +458,7 @@ void ConfigDialog::accept()
 	}
 
 	config.video.verticalSync = ui->vSyncCheckBox->isChecked() ? 1 : 0;
-
-	config.video.threadedVideo = ui->vThreadedVideoCheckBox->isChecked() ? 1 : 0;
+	config.video.threadedVideo = ui->threadedVideoCheckBox->isChecked() ? 1 : 0;
 
 	// Emulation settings
 	config.generalEmulation.enableLOD = ui->emulateLodCheckBox->isChecked() ? 1 : 0;
@@ -445,12 +476,13 @@ void ConfigDialog::accept()
 		config.graphics2D.correctTexrectCoords = Config::tcSmart;
 	else if (ui->fixTexrectForceRadioButton->isChecked())
 		config.graphics2D.correctTexrectCoords = Config::tcForce;
-
+	
 	if (ui->bgModeOnePieceRadioButton->isChecked())
 		config.graphics2D.bgMode = Config::BGMode::bgOnePiece;
 	else if (ui->bgModeStrippedRadioButton->isChecked())
 		config.graphics2D.bgMode = Config::BGMode::bgStripped;
 
+	config.texture.enableHalosRemoval = ui->halosRemovalCheckBox->isChecked() ? 1 : 0;
 	config.graphics2D.enableNativeResTexrects = ui->nativeRes2D_checkBox->isChecked() ? 1 : 0;
 
 	config.frameBufferEmulation.enable = ui->frameBufferCheckBox->isChecked() ? 1 : 0;
@@ -459,17 +491,18 @@ void ConfigDialog::accept()
 	config.frameBufferEmulation.copyToRDRAM = ui->copyColorBufferComboBox->currentIndex();
 	config.frameBufferEmulation.copyDepthToRDRAM = ui->copyDepthBufferComboBox->currentIndex();
 	config.frameBufferEmulation.copyFromRDRAM = ui->RenderFBCheckBox->isChecked() ? 1 : 0;
+	config.frameBufferEmulation.copyDepthToMainDepthBuffer = ui->copyDepthToMainDepthBufferCheckBox->isChecked() ? 1 : 0;
 
 	config.frameBufferEmulation.N64DepthCompare = ui->n64DepthCompareCheckBox->isChecked() ? 1 : 0;
 	config.frameBufferEmulation.forceDepthBufferClear = ui->forceDepthBufferClearCheckBox->isChecked() ? 1 : 0;
 
-	if (ui->aspectStretchRadioButton->isChecked())
+	if (ui->aspectComboBox->currentIndex() == 2)
 		config.frameBufferEmulation.aspect = Config::aStretch;
-	else if (ui->aspect43RadioButton->isChecked())
+	else if (ui->aspectComboBox->currentIndex() == 0)
 		config.frameBufferEmulation.aspect = Config::a43;
-	else if (ui->aspect169RadioButton->isChecked())
+	else if (ui->aspectComboBox->currentIndex() == 1)
 		config.frameBufferEmulation.aspect = Config::a169;
-	else if (ui->aspectAdjustRadioButton->isChecked())
+	else if (ui->aspectComboBox->currentIndex() == 3)
 		config.frameBufferEmulation.aspect = Config::aAdjust;
 
 	if (ui->factor0xRadioButton->isChecked())
@@ -477,7 +510,7 @@ void ConfigDialog::accept()
 	else if (ui->factor1xRadioButton->isChecked())
 		config.frameBufferEmulation.nativeResFactor = 1;
 	else if (ui->factorXxRadioButton->isChecked())
-		config.frameBufferEmulation.nativeResFactor = ui->resolutionFactorSlider->value();
+		config.frameBufferEmulation.nativeResFactor = ui->resolutionFactorSpinBox->value();
 
 	config.frameBufferEmulation.copyAuxToRDRAM = ui->copyAuxBuffersCheckBox->isChecked() ? 1 : 0;
 	config.frameBufferEmulation.fbInfoDisabled = ui->fbInfoEnableCheckBox->isChecked() ? 0 : 1;
@@ -502,7 +535,7 @@ void ConfigDialog::accept()
 	config.textureFilter.txDeposterize = ui->deposterizeCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txFilterIgnoreBG = ui->ignoreBackgroundsCheckBox->isChecked() ? 1 : 0;
 
-	config.textureFilter.txHiresEnable = ui->texturePackOnCheckBox->isChecked() ? 1 : 0;
+	config.textureFilter.txHiresEnable = ui->texturePackGroupBox->isChecked() ? 1 : 0;
 	config.textureFilter.txHiresFullAlphaChannel = ui->alphaChannelCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txHresAltCRC = ui->alternativeCRCCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txDump = ui->textureDumpCheckBox->isChecked() ? 1 : 0;
@@ -510,16 +543,53 @@ void ConfigDialog::accept()
 	config.textureFilter.txCacheCompression = ui->compressCacheCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txForce16bpp = ui->force16bppCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txSaveCache = ui->saveTextureCacheCheckBox->isChecked() ? 1 : 0;
+	config.textureFilter.txEnhancedTextureFileStorage = ui->enhancedTexFileStorageCheckBox->isChecked() ? 1 : 0;
+	config.textureFilter.txHiresTextureFileStorage = ui->hiresTexFileStorageCheckBox->isChecked() ? 1 : 0;
 
-	QString txPath = ui->txPathLabel->text();
-	if (!txPath.isEmpty())
-		config.textureFilter.txPath[txPath.toWCharArray(config.textureFilter.txPath)] = L'\0';
-	QString txCachePath = ui->txCachePathLabel->text();
-	if (!txPath.isEmpty())
-		config.textureFilter.txCachePath[txCachePath.toWCharArray(config.textureFilter.txCachePath)] = L'\0';
-	QString txDumpPath = ui->txDumpPathLabel->text();
-	if (!txDumpPath.isEmpty())
-		config.textureFilter.txDumpPath[txDumpPath.toWCharArray(config.textureFilter.txDumpPath)] = L'\0';
+	QDir txPath(ui->texPackPathLineEdit->text());
+	if (txPath.exists()) {
+		config.textureFilter.txPath[txPath.absolutePath().toWCharArray(config.textureFilter.txPath)] = L'\0';
+	} else if (config.textureFilter.txHiresEnable != 0) {
+		QMessageBox msgBox;
+		msgBox.setStandardButtons(QMessageBox::Close);
+		msgBox.setWindowTitle("GLideN64");
+		msgBox.setText(tr("The texture pack folder is missing. Please change the folder or turn off texture packs."));
+		msgBox.exec();
+		ui->tabWidget->setCurrentIndex(3);
+		ui->texPackPathLineEdit->setFocus(Qt::PopupFocusReason);
+		ui->texPackPathLineEdit->selectAll();
+		return;
+	}
+
+	QDir txCachePath(ui->texCachePathLineEdit->text());
+	if (txCachePath.exists()) {
+		config.textureFilter.txCachePath[txCachePath.absolutePath().toWCharArray(config.textureFilter.txCachePath)] = L'\0';
+	} else if (config.textureFilter.txHiresEnable != 0) {
+		QMessageBox msgBox;
+		msgBox.setStandardButtons(QMessageBox::Close);
+		msgBox.setWindowTitle("GLideN64");
+		msgBox.setText(tr("The texture pack cache folder is missing. Please change the folder or turn off texture packs."));
+		msgBox.exec();
+		ui->tabWidget->setCurrentIndex(3);
+		ui->texCachePathLineEdit->setFocus(Qt::PopupFocusReason);
+		ui->texCachePathLineEdit->selectAll();
+		return;
+	}
+
+	QDir txDumpPath(ui->texDumpPathLineEdit->text());
+	if (txDumpPath.exists()) {
+		config.textureFilter.txDumpPath[txDumpPath.absolutePath().toWCharArray(config.textureFilter.txDumpPath)] = L'\0';
+	} else if (config.textureFilter.txHiresEnable != 0 && config.textureFilter.txDump != 0) {
+		QMessageBox msgBox;
+		msgBox.setStandardButtons(QMessageBox::Close);
+		msgBox.setWindowTitle("GLideN64");
+		msgBox.setText(tr("The texture dump folder is missing. Please change the folder or turn off dumping texture packs."));
+		msgBox.exec();
+		ui->tabWidget->setCurrentIndex(3);
+		ui->texDumpPathLineEdit->setFocus(Qt::PopupFocusReason);
+		ui->texDumpPathLineEdit->selectAll();
+		return;
+	}
 
 	// OSD settings
 	config.font.size = ui->fontSizeSpinBox->value();
@@ -565,12 +635,14 @@ void ConfigDialog::accept()
 	if (ui->dumpDetailCheckBox->isChecked())
 		config.debug.dumpMode |= DEBUG_DETAIL;
 
-	if (config.generalEmulation.enableCustomSettings != 0 && m_romName != nullptr)
+	if (config.generalEmulation.enableCustomSettings && ui->settingsDestGameRadioButton->isChecked() && m_romName != nullptr)
 		saveCustomRomSettings(m_strIniPath, m_romName);
 	else
 		writeSettings(m_strIniPath);
 
-	QDialog::accept();
+	if (!justSave) {
+		QDialog::accept();
+	}
 }
 
 void ConfigDialog::on_PickFontColorButton_clicked()
@@ -592,6 +664,11 @@ void ConfigDialog::on_PickFontColorButton_clicked()
 void ConfigDialog::on_aliasingSlider_valueChanged(int value)
 {
 	ui->aliasingLabelVal->setText(QString::number(pow2(value)));
+	if (value != 0) {
+		ui->msaaRadioButton->setChecked(true);
+	} else {
+		ui->noaaRadioButton->setChecked(true);
+	}
 }
 
 void ConfigDialog::on_buttonBox_clicked(QAbstractButton *button)
@@ -608,10 +685,14 @@ void ConfigDialog::on_buttonBox_clicked(QAbstractButton *button)
 			const u32 enableCustomSettings = config.generalEmulation.enableCustomSettings;
 			config.resetToDefaults();
 			config.generalEmulation.enableCustomSettings = enableCustomSettings;
-			_init();
 			setTitle();
 			setRomName(m_romName);
+			_init();
 		}
+	} else if ((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Save)) {
+		this->accept(true);
+	} else if ((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok)) {
+		this->accept(false);
 	}
 }
 
@@ -630,22 +711,21 @@ void ConfigDialog::on_texPackPathButton_clicked()
 	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
 	QString directory = QFileDialog::getExistingDirectory(this,
 		"",
-		ui->txPathLabel->text(),
+		ui->texPackPathLineEdit->text(),
 		options);
 	if (!directory.isEmpty())
-		ui->txPathLabel->setText(directory);
+		ui->texPackPathLineEdit->setText(directory);
 }
-
 
 void ConfigDialog::on_texCachePathButton_clicked()
 {
 	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
 	QString directory = QFileDialog::getExistingDirectory(this,
 		"",
-		ui->txCachePathLabel->text(),
+		ui->texCachePathLineEdit->text(),
 		options);
 	if (!directory.isEmpty())
-		ui->txCachePathLabel->setText(directory);
+		ui->texCachePathLineEdit->setText(directory);
 }
 
 void ConfigDialog::on_texDumpPathButton_clicked()
@@ -653,10 +733,10 @@ void ConfigDialog::on_texDumpPathButton_clicked()
 	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
 	QString directory = QFileDialog::getExistingDirectory(this,
 		"",
-		ui->txDumpPathLabel->text(),
+		ui->texDumpPathLineEdit->text(),
 		options);
 	if (!directory.isEmpty())
-		ui->txDumpPathLabel->setText(directory);
+		ui->texDumpPathLineEdit->setText(directory);
 }
 
 void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)
@@ -676,17 +756,79 @@ void ConfigDialog::on_overscanCheckBox_toggled(bool checked)
 	ui->overscanCheckBox->setText(tr("Overscan") + (checked ? QString(":") : QString("")));
 }
 
-void ConfigDialog::on_frameBufferCheckBox_toggled(bool checked)
+void ConfigDialog::on_aliasingWarningLabel_linkActivated(QString link)
 {
+	if (link == "#n64DepthCompare") {
+		ui->tabWidget->setCurrentIndex(2);
+		ui->n64DepthCompareCheckBox->setStyleSheet("background:yellow");
+	}
+}
 
-	if (!checked) {
-		ui->nativeRes2DFrame->setEnabled(true);
-	}  else {
-		ui->nativeRes2DFrame->setEnabled(!ui->factor1xRadioButton->isChecked());
+void ConfigDialog::on_frameBufferInfoLabel_linkActivated(QString link)
+{
+	if (link == "#frameBuffer") {
+		ui->tabWidget->setCurrentIndex(2);
+		ui->frameBufferCheckBox->setStyleSheet("background:yellow");
+	}
+}
+
+void ConfigDialog::on_customSettingsCheckBox_toggled(bool checked)
+{
+	const bool romLoaded = checked && m_romName != nullptr;
+	if (romLoaded) {
+		ui->settingsDestGameRadioButton->setText(QString::fromLatin1(m_romName));
+		ui->settingsDestGameRadioButton->setChecked(true);
+	} else {
+		ui->settingsDestProfileRadioButton->setChecked(true);
 	}
 
+	ui->profilesLabel->setHidden(romLoaded);
+	ui->settingsDestFrame->setVisible(romLoaded);
+	_init(false, true);
+}
+
+void ConfigDialog::on_frameBufferInfoLabel2_linkActivated(QString link)
+{
+	if (link == "#frameBuffer") {
+		ui->tabWidget->setCurrentIndex(2);
+		ui->frameBufferCheckBox->setStyleSheet("background:yellow");
+	}
+}
+
+void ConfigDialog::on_frameBufferCheckBox_toggled(bool checked)
+{
 	ui->readColorChunkCheckBox->setEnabled(checked && ui->fbInfoEnableCheckBox->isChecked());
 	ui->readDepthChunkCheckBox->setEnabled(checked && ui->fbInfoEnableCheckBox->isChecked());
+
+	if (!checked && ui->fxaaRadioButton->isChecked())
+		ui->noaaRadioButton->setChecked(true);
+
+	ui->frameBufferCheckBox->setStyleSheet("");
+}
+
+void ConfigDialog::on_n64DepthCompareCheckBox_toggled(bool checked)
+{
+	if (checked && ui->msaaRadioButton->isChecked())
+		ui->fxaaRadioButton->setChecked(true);
+	ui->n64DepthCompareCheckBox->setStyleSheet("");
+}
+
+void ConfigDialog::on_gammaLevelSpinBox_valueChanged(double /*value*/)
+{
+	ui->gammaCorrectionCheckBox->setChecked(true);
+}
+
+void ConfigDialog::on_gammaCorrectionCheckBox_toggled(bool checked)
+{
+	if (!checked) {
+		ui->gammaLevelSpinBox->setValue(2.0);
+		ui->gammaCorrectionCheckBox->setChecked(false);
+	}
+}
+
+void ConfigDialog::on_resolutionFactorSpinBox_valueChanged(int /*value*/)
+{
+	ui->factorXxRadioButton->setChecked(true);
 }
 
 void ConfigDialog::on_fontTreeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -744,86 +886,94 @@ void ConfigDialog::on_tabWidget_currentChanged(int tab)
 		ui->tabWidget->setCursor(QCursor(Qt::ArrowCursor));
 		m_fontsInited = true;
 	}
+
+	ui->n64DepthCompareCheckBox->setStyleSheet("");
+	ui->frameBufferCheckBox->setStyleSheet("");
 }
 
 void ConfigDialog::setTitle()
 {
-	if (config.generalEmulation.enableCustomSettings != 0 && m_romName != nullptr) {
-		QString title(tr("GLideN64 Settings for "));
-		title += QString::fromLatin1(m_romName);
-		setWindowTitle(title);
-	} else {
-		setWindowTitle(tr("GLideN64 Settings"));
-	}
+	setWindowTitle(tr("GLideN64 Settings"));
 }
 
 void ConfigDialog::on_profilesComboBox_currentIndexChanged(const QString &profile)
 {
+	ui->settingsDestProfileRadioButton->setChecked(true);
+	if (profile == tr("New...")) {
+		bool ok;
+		QString switchToProfile = getCurrentProfile(m_strIniPath);
+		QString newProfile = QInputDialog::getText(this,
+			tr("New Profile"), tr("New profile name:"), QLineEdit::Normal, "", &ok,
+			Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+		if (ok) {
+			ui->profilesComboBox->blockSignals(true);
+			if (newProfile == tr("New...")) {
+				QMessageBox msgBox(QMessageBox::Warning, tr("New Profile"),
+					tr("New settings profiles cannot be called \"New...\"."),
+					QMessageBox::Close, this
+				);
+				msgBox.exec();
+			} else if (newProfile.isEmpty()) {
+				QMessageBox msgBox(QMessageBox::Warning, tr("New Profile"),
+					tr("Please type a name for your new settings profile."),
+					QMessageBox::Close, this
+				);
+				msgBox.exec();
+			} else if (getProfiles(m_strIniPath).contains(newProfile)) {
+				QMessageBox msgBox(QMessageBox::Warning, tr("New Profile"),
+					tr("This settings profile already exists."),
+					QMessageBox::Close, this
+				);
+				msgBox.exec();
+			} else {
+				ui->profilesComboBox->insertItem(0, newProfile);
+				addProfile(m_strIniPath, newProfile);
+				if (ui->profilesComboBox->count() > 3) {
+					ui->removeProfilePushButton->setEnabled(true);
+				}
+				switchToProfile = newProfile;
+			}
+			ui->profilesComboBox->blockSignals(false);
+		}
+		for (int i = 0; i < ui->profilesComboBox->count(); ++i) {
+			if (ui->profilesComboBox->itemText(i) == switchToProfile) {
+				ui->profilesComboBox->setCurrentIndex(i);
+				break;
+			}
+		}
+		return;
+	}
 	changeProfile(m_strIniPath, profile);
-	_init();
+	_init(true);
 }
 
-void ConfigDialog::on_addProfilePushButton_clicked()
+void ConfigDialog::on_settingsDestProfileRadioButton_toggled(bool /*checked*/)
 {
-	QString profile = ui->profilesComboBox->currentText();
-	if (profile.isEmpty()) {
-		QMessageBox msgBox(QMessageBox::Warning, tr("Cannot add profile"),
-			tr("Empty profile name."),
-			QMessageBox::Ok, this
-		);
-		msgBox.exec();
-		return;
-	}
-	if (getProfiles(m_strIniPath).contains(profile)) {
-		QString msg(tr("Profile \""));
-		msg += profile + tr("\" already exists.");
-		QMessageBox msgBox(QMessageBox::Warning, tr("Cannot add profile"), msg, QMessageBox::Ok, this);
-		msgBox.exec();
-		return;
-	}
-	addProfile(m_strIniPath, profile);
-	ui->profilesComboBox->addItem(profile);
-	for (int i = 0; i < ui->profilesComboBox->count(); ++i) {
-		if (ui->profilesComboBox->itemText(i) == profile) {
-			ui->profilesComboBox->setCurrentIndex(i);
-			break;
-		}
-	}
-	ui->removeProfilePushButton->setDisabled(false);
+	_init(true, true);
 }
 
 void ConfigDialog::on_removeProfilePushButton_clicked()
 {
-	if (ui->profilesComboBox->count() < 2)
+	if (ui->profilesComboBox->count() == 3)
 		return;
 
 	QString profile = ui->profilesComboBox->currentText();
 	if (!getProfiles(m_strIniPath).contains(profile))
 		return;
-	QString msg(tr("Are you sure you want to remove profile \""));
-	msg += profile + "\"";
-	QMessageBox msgBox(QMessageBox::Warning, tr("Remove profile"),
+	QString msg(tr("Are you sure you want to remove the settings profile \""));
+	msg += "" + profile + tr("\"?");
+	QMessageBox msgBox(QMessageBox::Warning, tr("Remove Profile"),
 		msg, QMessageBox::Yes | QMessageBox::Cancel, this);
 	msgBox.setDefaultButton(QMessageBox::Cancel);
-	msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
-	msgBox.setButtonText(QMessageBox::Cancel, tr("Cancel"));
+	msgBox.setButtonText(QMessageBox::Yes, tr("Remove"));
+	msgBox.setButtonText(QMessageBox::No, tr("Cancel"));
 	if (msgBox.exec() == QMessageBox::Yes) {
 		removeProfile(m_strIniPath, profile);
 		ui->profilesComboBox->blockSignals(true);
 		ui->profilesComboBox->removeItem(ui->profilesComboBox->currentIndex());
 		changeProfile(m_strIniPath, ui->profilesComboBox->itemText(ui->profilesComboBox->currentIndex()));
 		ui->profilesComboBox->blockSignals(false);
-		_init();
-		ui->removeProfilePushButton->setDisabled(ui->profilesComboBox->count() < 2);
+		_init(true);
+		ui->removeProfilePushButton->setDisabled(ui->profilesComboBox->count() == 3);
 	}
-}
-
-void ConfigDialog::on_fxaaCheckBox_toggled(bool checked)
-{
-	ui->aliasingFrame->setEnabled(!checked && !ui->n64DepthCompareCheckBox->isChecked());
-}
-
-void ConfigDialog::on_n64DepthCompareCheckBox_toggled(bool checked)
-{
-	ui->aliasingFrame->setEnabled(!checked && !ui->fxaaCheckBox->isChecked());
 }

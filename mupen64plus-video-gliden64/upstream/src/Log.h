@@ -13,8 +13,18 @@
 #if LOG_LEVEL > 0
 
 #include "Types.h"
+#include <cstdio>
+#include <string>
 
-void LOG(u16 type, const char * format, ...);
+#ifdef OS_WINDOWS
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#else
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#endif //OS_WINDOWS
+
+#define LOG(...) LogDebug(__FILENAME__, __LINE__, __VA_ARGS__)
+
+void LogDebug(const char* _fileName, int _line, u16 _type, const char* _format, ...);
 
 #else
 
