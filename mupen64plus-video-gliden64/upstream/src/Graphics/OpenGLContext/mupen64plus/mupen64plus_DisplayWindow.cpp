@@ -75,12 +75,6 @@ void DisplayWindowMupen64plus::_setAttributes()
 
 bool DisplayWindowMupen64plus::_start()
 {
-#ifdef EGL
-	// This is needed for some devices/front-end combinations
-	if (config.video.eglInitHack)
-		eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), nullptr, nullptr);
-#endif
-
 	FunctionWrapper::setThreadedMode(config.video.threadedVideo);
 	FunctionWrapper::CoreVideo_Init();
 	_setAttributes();

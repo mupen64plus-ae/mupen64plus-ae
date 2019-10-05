@@ -29,9 +29,6 @@ struct Config
 		u32 multisampling;
 		u32 verticalSync;
 		u32 threadedVideo;
-#if defined(EGL)
-		u32 eglInitHack;
-#endif
 	} video;
 
 	struct
