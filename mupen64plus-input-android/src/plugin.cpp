@@ -19,12 +19,39 @@
  * Authors: littleguy77, Paul Lamb
  */
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
+#include <cmath>
 #include <jni.h>
 #include <android/log.h>
 
 #include "m64p_plugin.h"
+
+#ifndef DECLSPEC
+# if defined(__BEOS__) || defined(__HAIKU__)
+#  if defined(__GNUC__)
+#   define DECLSPEC __declspec(dllexport)
+#  else
+#   define DECLSPEC __declspec(export)
+#  endif
+# elif defined(__WIN32__)
+#  ifdef __BORLANDC__
+#   ifdef BUILD_SDL
+#    define DECLSPEC
+#   else
+#    define DECLSPEC    __declspec(dllimport)
+#   endif
+#  else
+#   define DECLSPEC __declspec(dllexport)
+#  endif
+# else
+#  if defined(__GNUC__) && __GNUC__ >= 4
+#   define DECLSPEC __attribute__ ((visibility("default")))
+#  else
+#   define DECLSPEC
+#  endif
+# endif
+#endif
 
 // Internal macros
 #define PLUGIN_NAME                 "Mupen64Plus Android Input Plugin"
@@ -66,9 +93,10 @@ static const unsigned short BUTTON_BITS[] =
 };
 
 // Internal variables
-static JavaVM* _javaVM;
-static jclass _jniClass = NULL;
+JavaVM* mJavaVM;
+static jclass mActivityClass;
 static jmethodID _jniRumble = NULL;
+
 static int _androidPluggedState[4];
 static int _androidPakType[4];
 static unsigned char _androidButtonState[4][16];
@@ -114,7 +142,7 @@ static unsigned char DataCRC(unsigned char* data, int length)
 
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
-    _javaVM = vm;
+    mJavaVM = vm;
     return JNI_VERSION_1_6;
 }
 
@@ -122,23 +150,23 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 // JNI exported function definitions
 //*****************************************************************************
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_init(JNIEnv* env, jclass cls)
+extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_init(JNIEnv* env, jclass cls)
 {
-    DebugMessage(M64MSG_INFO, "init()");
+    DebugMessage(M64MSG_ERROR, "init()");
 
     // Discard stale pointer
     _controllerInfos = NULL;
 
-    _jniClass = (jclass)(*env)->NewGlobalRef(env, cls);
+    mActivityClass = (jclass) env->NewGlobalRef(cls);
+    _jniRumble = env->GetStaticMethodID(cls, "rumble", "(IZ)V");
 
-    _jniRumble = (*env)->GetStaticMethodID(env, cls, "rumble", "(IZ)V");
     if (!_jniRumble)
     {
         DebugMessage(M64MSG_WARNING, "Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setConfig(JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged,
+extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setConfig(JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged,
         jint pakType)
 {
     if (controllerNum < 4 && controllerNum > -1)
@@ -156,16 +184,16 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setC
     }
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
+extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
         jint mp64pXAxis, jint mp64pYAxis)
 {
-    jboolean* elements = (*env)->GetBooleanArrayElements(env, mp64pButtons, NULL);
+    jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, NULL);
     int b;
     for (b = 0; b < 16; b++)
     {
         _androidButtonState[controllerNum][b] = elements[b];
     }
-    (*env)->ReleaseBooleanArrayElements(env, mp64pButtons, elements, 0);
+    env->ReleaseBooleanArrayElements(mp64pButtons, elements, 0);
 
     _androidAnalogX[controllerNum] = (signed char) ((int) mp64pXAxis);
     _androidAnalogY[controllerNum] = (signed char) ((int) mp64pYAxis);
@@ -175,13 +203,14 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setS
 // JNI imported function definitions
 //*****************************************************************************
 
-JNIEXPORT void JNICALL JNI_Rumble(int controllerNum, int active)
+extern "C" JNIEXPORT void JNI_Rumble(int controllerNum, int active)
 {
     JNIEnv *env;
-    if ((*_javaVM)->GetEnv(_javaVM, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
+    if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK)
         return;
+
     jboolean a = active == 0 ? JNI_FALSE : JNI_TRUE;
-    (*env)->CallStaticVoidMethod(env, _jniClass, _jniRumble, controllerNum, a);
+    env->CallStaticVoidMethod(mActivityClass, _jniRumble, controllerNum, a);
 }
 
 //*****************************************************************************
@@ -222,7 +251,7 @@ static void DebugMessage(int level, const char* message, ...)
 // Mupen64Plus common plugin function definitions
 //*****************************************************************************
 
-EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType, int* pluginVersion, int* apiVersion, const char** pluginNamePtr, int* capabilities)
+extern "C" EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType, int* pluginVersion, int* apiVersion, const char** pluginNamePtr, int* capabilities)
 {
     if (pluginType != NULL)
         *pluginType = M64PLUGIN_INPUT;
@@ -242,7 +271,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType, int* plugi
     return M64ERR_SUCCESS;
 }
 
-EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle coreLibHandle, void* context, void (*DebugCallback)(void*, int, const char*))
+extern "C" EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle coreLibHandle, void* context, void (*DebugCallback)(void*, int, const char*))
 {
     if (_pluginInitialized)
         return M64ERR_ALREADY_INIT;
@@ -251,7 +280,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle coreLibHandle, void* con
     return M64ERR_SUCCESS;
 }
 
-EXPORT m64p_error CALL PluginShutdown()
+extern "C" EXPORT m64p_error CALL PluginShutdown()
 {
     if (!_pluginInitialized)
         return M64ERR_NOT_INIT;
@@ -264,7 +293,7 @@ EXPORT m64p_error CALL PluginShutdown()
 // Mupen64Plus input plugin function definitions
 //*****************************************************************************
 
-EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
+extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
 {
     _controllerInfos = controlInfo.Controls;
 
@@ -278,7 +307,7 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
     }
 }
 
-EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
+extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
 {
     // Reset the controller state
     keys->Value = 0;
@@ -296,7 +325,7 @@ EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
     keys->Y_AXIS = _androidAnalogY[controllerNum];
 }
 
-EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)
+extern "C" EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)
 {
     if (controllerNum < 0)
         return;
@@ -327,23 +356,23 @@ EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)
     }
 }
 
-EXPORT void CALL ReadController(int control, unsigned char* command)
+extern "C" EXPORT void CALL ReadController(int control, unsigned char* command)
 {
 }
 
-EXPORT void CALL RomClosed()
+extern "C" EXPORT void CALL RomClosed()
 {
 }
 
-EXPORT int CALL RomOpen()
+extern "C" EXPORT int CALL RomOpen()
 {
     return 1;
 }
 
-EXPORT void CALL SDL_KeyDown(int keymod, int keysym)
+extern "C" EXPORT void CALL SDL_KeyDown(int keymod, int keysym)
 {
 }
 
-EXPORT void CALL SDL_KeyUp(int keymod, int keysym)
+extern "C" EXPORT void CALL SDL_KeyUp(int keymod, int keysym)
 {
 }
