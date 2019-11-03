@@ -25,6 +25,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -498,9 +499,13 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 View view = getWindow().getDecorView();
                 int newDragX = ( x - ( initialX - dragFrame.left ) ) * 100/( view.getWidth() - ( dragFrame.right - dragFrame.left ) );
                 int newDragY = ( y - ( initialY - dragFrame.top ) ) * 100/( view.getHeight() - ( dragFrame.bottom - dragFrame.top ) );
-                
-                newDragX = Math.min( Math.max( newDragX, 0 ), 100 );
-                newDragY = Math.min( Math.max( newDragY, 0 ), 100 );
+
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    newDragY = 2*(newDragY - 50);
+                }
+
+                newDragX = Math.min( Math.max( newDragX, 0 ), 110 );
+                newDragY = Math.min( Math.max( newDragY, 0 ), 110 );
                 
                 if ( newDragX != dragX || newDragY != dragY )
                 {

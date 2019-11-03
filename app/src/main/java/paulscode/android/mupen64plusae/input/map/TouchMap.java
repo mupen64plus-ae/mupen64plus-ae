@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -37,8 +38,6 @@ import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
-
-import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 /**
  * A class for mapping digitizer coordinates to N64 buttons/axes.
@@ -268,7 +267,7 @@ public class TouchMap
      */
     int getAdjustedYPos(int y)
     {
-        if(mResources.getConfiguration().orientation == ORIENTATION_PORTRAIT)
+        if(mResources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
             return 50 + (int)((y/100.0) * 50.0f);
         }
@@ -285,7 +284,7 @@ public class TouchMap
      */
     int getAdjustedFpsYPos(int y)
     {
-        if(mResources.getConfiguration().orientation == ORIENTATION_PORTRAIT)
+        if(mResources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
             return (int)((y/100.0) * 45.0f);
         }
@@ -421,6 +420,7 @@ public class TouchMap
                 matchDif = dif;
             }
         }
+
         return closestMatch;
     }
 
@@ -760,7 +760,7 @@ public class TouchMap
         int y = profile.getInt( name + "-y", -1 );
         int scaling = profile.getInt( name + "-scale", 100);
         
-        if( x >= 0 && y >= 0 )
+         if( x >= 0 && y >= 0 )
         {
             // Position (percentages of the digitizer dimensions)
             buttonX.add( x );
