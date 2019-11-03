@@ -24,6 +24,7 @@
 #include <cmath>
 #include <jni.h>
 #include <android/log.h>
+#include <algorithm>
 
 #include "m64p_plugin.h"
 
@@ -152,7 +153,7 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 
 extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_init(JNIEnv* env, jclass cls)
 {
-    DebugMessage(M64MSG_ERROR, "init()");
+    DebugMessage(M64MSG_INFO, "init()");
 
     // Discard stale pointer
     _controllerInfos = NULL;
@@ -320,9 +321,28 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
             keys->Value |= BUTTON_BITS[b];
     }
 
+    // Limit the speed of the analog stick under certain circumstances
+    static int actualXAxis[4] = {0};
+    static int actualYAxis[4] = {0};
+    static const int maxChange = 25;
+    static const double distanceForInstantChange = 115.0;
+
+    double distance = sqrt(pow(actualXAxis[controllerNum] - _androidAnalogX[controllerNum],2) +
+                           pow(actualYAxis[controllerNum] - _androidAnalogY[controllerNum],2));
+    bool instantChange = distance > distanceForInstantChange || distance < maxChange ||
+            (_androidAnalogX[controllerNum] == 0 && _androidAnalogY[controllerNum] == 0);
+
+    double xDiff = _androidAnalogX[controllerNum] - actualXAxis[controllerNum];
+    double yDiff = _androidAnalogY[controllerNum] - actualYAxis[controllerNum];
+
+    actualXAxis[controllerNum] = instantChange ? _androidAnalogX[controllerNum] :
+        actualXAxis[controllerNum] + static_cast<int>(copysign(1.0, xDiff)*std::min(static_cast<double>(maxChange), abs(xDiff)));
+    actualYAxis[controllerNum] = instantChange ? _androidAnalogY[controllerNum] :
+        actualYAxis[controllerNum] + static_cast<int>(copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff)));
+
     // Set the analog bytes
-    keys->X_AXIS = _androidAnalogX[controllerNum];
-    keys->Y_AXIS = _androidAnalogY[controllerNum];
+    keys->X_AXIS = actualXAxis[controllerNum];
+    keys->Y_AXIS = actualYAxis[controllerNum];
 }
 
 extern "C" EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)
