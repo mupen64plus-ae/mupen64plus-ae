@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="50dp"
+    android:insetRight="0dp" >
+
+    <shape
+        android:shape="line" >
+
+        <stroke
+            android:width="1dp"
+            android:color="@color/mupen_highlight" />
+
+        <size android:height="3dp" />
+
+    </shape>
+
+</inset>
+

@@ -13,7 +13,7 @@
         <menu>
             <item
                 android:id="@+id/menuItem_categoryLibrary"
-                android:title="@string/categoryLibrary_title"/>
+                android:title="@string/categoryLibrary_title" />
             <item
                 android:id="@+id/menuItem_categoryDisplay"
                 android:title="@string/categoryDisplay_title"/>

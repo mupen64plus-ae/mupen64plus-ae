@@ -9,13 +9,16 @@
     <LinearLayout
         android:id="@+id/imageLayout"
         android:layout_width="279dip"
-        android:layout_height="193dip"
+        android:layout_height="match_parent"
         android:focusable="false" >
 
         <ImageView
             android:id="@+id/imageArt"
             android:layout_width="match_parent"
-            android:layout_height="193dip"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:cropToPadding="false"
             android:focusable="false"
             android:src="@drawable/default_coverart"
             tools:ignore="ContentDescription" />
@@ -28,6 +31,6 @@
         android:focusable="false"
         android:padding="5dip"
         android:text="@string/galleryItemAdapter_dummyText"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        style="@style/Theme.Mupen64plusaeTheme" />
 
 </LinearLayout>

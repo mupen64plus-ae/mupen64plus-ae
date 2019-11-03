@@ -231,6 +231,7 @@ public class MenuListView extends ExpandableListView
                 ImageView indicator = view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
+                text1.setTextAppearance(R.style.Theme_Mupen64plusaeTheme);
                 if(item.getTitleCondensed().equals(item.getTitle()))
                 {
                     text2.setVisibility( View.GONE );
@@ -245,15 +246,13 @@ public class MenuListView extends ExpandableListView
                 } catch (android.content.res.Resources.NotFoundException e) {
                     Log.i("MenuListView", "Item does not have an icon");
                 }
-
-                view.setBackgroundColor( 0x0 );
                 
-                // Indent child views by 15 points
+                // Indent child views by 30 points
                 DisplayMetrics metrics = new DisplayMetrics();
                 ( (Activity) mListView.getContext() ).getWindowManager().getDefaultDisplay()
                         .getMetrics( metrics );
                 
-                view.setPadding( (int) ( 15 * metrics.density ), view.getPaddingTop(),
+                view.setPadding((int) ( 30 * metrics.density ), view.getPaddingTop(),
                         view.getPaddingRight(), view.getPaddingBottom() );
                 
                 if( !item.isCheckable() )
@@ -320,6 +319,7 @@ public class MenuListView extends ExpandableListView
                 ImageView indicator = view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
+
                 if(item.getTitleCondensed().equals(item.getTitle()))
                 {
                     text2.setVisibility( View.GONE );
@@ -330,11 +330,7 @@ public class MenuListView extends ExpandableListView
                 }
 
                 icon.setImageDrawable( item.getIcon() );
-
-                if( item.isChecked() )
-                    view.setBackgroundColor( 0x44FFFFFF );
-                else
-                    view.setBackgroundColor( 0x0 );
+                text1.setTextAppearance(R.style.darkParentMenuItem);
                 
                 if( item.getSubMenu() == null )
                     indicator.setImageResource( 0x0 );

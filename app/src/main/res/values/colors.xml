@@ -26,4 +26,9 @@
     <color name="holo_red1">#FF4444</color>
     <color name="holo_red2">#CC0000</color>
 
+    <color name="mupen_black">#252525</color>
+    <color name="mupen_white">#EFEFEF</color>
+    <color name="mupen_primary">#00DFDF</color>
+    <color name="mupen_highlight">#22808080</color>
+
 </resources>

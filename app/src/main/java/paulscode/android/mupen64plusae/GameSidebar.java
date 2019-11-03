@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,17 +38,16 @@ public class GameSidebar extends MenuListView
     private TextView mGameTitle;
     private GameSidebarActionHandler mActionHandler;
     private View mHeader;
-    
-    public GameSidebar( Context context, AttributeSet attrs )
-    {
+
+    public GameSidebar( Context context, AttributeSet attrs) {
         super( context, attrs );
-        
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         mHeader = inflater.inflate( R.layout.game_sidebar_header, this, false );
 
         mInfoArt = mHeader.findViewById( R.id.imageArt );
         mGameTitle = mHeader.findViewById( R.id.gameTitle );
-        
+
         setClipToPadding(true);
         addHeaderView(mHeader, null, false);
     }
@@ -77,15 +77,26 @@ public class GameSidebar extends MenuListView
     
     public void setImage( BitmapDrawable image )
     {
-        if( image != null )
-            mInfoArt.setImageDrawable( image );
+        if( image != null ) {
+            mInfoArt.setImageDrawable(image);
+        }
         else
             mInfoArt.setImageResource( R.drawable.default_coverart );
+    }
+
+    public void setImage(int resourceId) {
+        mInfoArt.setImageResource(resourceId);
     }
     
     public void setTitle( String title )
     {
         mGameTitle.setText( title );
+    }
+
+    public void hideTitle() {
+        mGameTitle.setVisibility(View.INVISIBLE);
+        mGameTitle.setHeight(0);
+        mGameTitle.setPadding(0,0,0,0);
     }
     
     public interface GameSidebarActionHandler extends OnKeyListener

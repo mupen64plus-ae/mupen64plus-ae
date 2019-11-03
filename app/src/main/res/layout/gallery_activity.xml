@@ -4,7 +4,8 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true"
+    style="@style/MupenTheme_Dark_Sidebar" > <!-- Setting this as a theme makes MenuListView throw exception -->
 
     <!-- activity view -->
 
@@ -40,9 +41,10 @@
         android:layout_width="280dip"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true" >
+        android:fitsSystemWindows="true"
+        style="@style/MupenTheme_Dark_Sidebar">
 
-        <paulscode.android.mupen64plusae.MenuListView
+        <paulscode.android.mupen64plusae.GameSidebar
             android:id="@+id/drawerNavigation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -51,14 +53,15 @@
             android:nextFocusLeft="@+id/drawerNavigation"
             android:nextFocusRight="@+id/drawerNavigation"
             android:nextFocusUp="@+id/drawerNavigation"
-            android:paddingTop="20dip" />
+            style="@style/MupenTheme_Dark_Sidebar" />
 
         <paulscode.android.mupen64plusae.GameSidebar
             android:id="@+id/gameSidebar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
-            android:visibility="gone" />
+            android:visibility="gone"
+            style="@style/MupenTheme_Dark_Sidebar" />
     </RelativeLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

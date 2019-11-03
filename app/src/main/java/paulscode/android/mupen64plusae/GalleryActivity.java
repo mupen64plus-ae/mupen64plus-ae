@@ -105,7 +105,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private RecyclerView mGridView;
     private DrawerLayout mDrawerLayout = null;
     private ActionBarDrawerToggle mDrawerToggle;
-    private MenuListView mDrawerList;
+    private GameSidebar mDrawerList;
     private GameSidebar mGameSidebar;
 
     // Searching
@@ -340,6 +340,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerList = findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
 
+        // Set up the header image in the navigation drawer
+        mDrawerList.setImage(R.drawable.ouya_icon);
+        mDrawerList.hideTitle();
+
         //Remove touch screen profile configuration if in TV mode
         if(mGlobalPrefs.isBigScreenMode)
         {
@@ -404,10 +408,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mExtractRomFragment = new ExtractRomFragment();
             fm.beginTransaction().add(mExtractRomFragment, STATE_EXTRACT_ROM_FRAGMENT).commit();
         }
-
-        // Set the sidebar opacity on the two sidebars
-        mDrawerList.setBackground( new DrawerDrawable( mGlobalPrefs.displayActionBarTransparency ) );
-        mGameSidebar.setBackground( new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency ) );
 
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
