@@ -4714,6 +4714,122 @@ private:
 	}
 };
 
+class GlCopyTexImage2DCommand : public OpenGlCommand
+{
+public:
+	GlCopyTexImage2DCommand() :
+			OpenGlCommand(false, false, "glCopyTexImage2D")
+	{
+	}
+
+	static std::shared_ptr<OpenGlCommand> get(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
+	{
+		static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+		auto ptr = getFromPool<GlCopyTexImage2DCommand>(poolId);
+		ptr->set(target, level, internalformat, x, y, width, height, border);
+		return ptr;
+	}
+
+	void commandToExecute() override
+	{
+		ptrCopyTexImage2D(m_target, m_level, m_internalformat, m_x, m_y, m_width, m_height, m_border);
+	}
+
+private:
+	void set(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
+	{
+		m_target = target;
+		m_level = level;
+		m_internalformat = internalformat;
+		m_x = x;
+		m_y = y;
+		m_width = width;
+		m_height = height;
+		m_border = border;
+	}
+
+	GLenum m_target;
+	GLint m_level;
+	GLenum m_internalformat;
+	GLint m_x;
+	GLint m_y;
+	GLsizei m_width;
+	GLsizei m_height;
+	GLint m_border;
+};
+
+class GlDebugMessageCallbackCommand : public OpenGlCommand
+{
+	public:
+	GlDebugMessageCallbackCommand() :
+				OpenGlCommand(true, false, "glDebugMessageCallback")
+	{
+	}
+
+	static std::shared_ptr<OpenGlCommand> get(GLDEBUGPROC callback, const void *userParam)
+	{
+		static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+		auto ptr = getFromPool<GlDebugMessageCallbackCommand>(poolId);
+		ptr->set(callback, userParam);
+		return ptr;
+	}
+
+	void commandToExecute() override
+	{
+		ptrDebugMessageCallback(m_callback, m_userParam);
+	}
+
+private:
+	void set(GLDEBUGPROC callback, const void *userParam)
+	{
+		m_callback = callback;
+		m_userParam = userParam;
+	}
+
+	GLDEBUGPROC m_callback;
+	const void* m_userParam;
+};
+
+class GlDebugMessageControlCommand : public OpenGlCommand
+{
+public:
+	GlDebugMessageControlCommand() :
+			OpenGlCommand(true, false, "glDebugMessageControl")
+	{
+	}
+
+	static std::shared_ptr<OpenGlCommand> get(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled)
+	{
+		static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+		auto ptr = getFromPool<GlDebugMessageControlCommand>(poolId);
+		ptr->set(source, type, severity, count, ids, enabled);
+		return ptr;
+	}
+
+	void commandToExecute() override
+	{
+		ptrDebugMessageControl(m_source, m_type, m_severity, m_count, m_ids, m_enabled);
+	}
+
+private:
+	void set(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled)
+	{
+		m_source = source;
+		m_type = type;
+		m_severity = severity;
+		m_count = count;
+		m_ids = ids;
+		m_enabled = enabled;
+	}
+
+	GLenum m_source;
+	GLenum m_type;
+	GLenum m_severity;
+	GLsizei m_count;
+	const GLuint* m_ids;
+	GLboolean m_enabled;
+};
+
 class GlEGLImageTargetTexture2DOESCommand : public OpenGlCommand
 {
 public:
@@ -4733,6 +4849,38 @@ public:
 	void commandToExecute() override
 	{
 		ptrEGLImageTargetTexture2DOES(m_target, m_image);
+	}
+
+private:
+	void set(GLenum target, void* image)
+	{
+		m_target = target;
+		m_image = image;
+	}
+
+	GLenum m_target;
+	void* m_image;
+};
+
+class GlEGLImageTargetRenderbufferStorageOESCommand : public OpenGlCommand
+{
+public:
+	GlEGLImageTargetRenderbufferStorageOESCommand() :
+			OpenGlCommand(false, false, "glEGLImageTargetRenderbufferStorageOES")
+	{
+	}
+
+	static std::shared_ptr<OpenGlCommand> get(GLenum target, void* image)
+	{
+		static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+		auto ptr = getFromPool<GlEGLImageTargetRenderbufferStorageOESCommand>(poolId);
+		ptr->set(target, image);
+		return ptr;
+	}
+
+	void commandToExecute() override
+	{
+		ptrEGLImageTargetRenderbufferStorageOES(m_target, m_image);
 	}
 
 private:
@@ -4820,23 +4968,25 @@ public:
 	{
 	}
 
-	static std::shared_ptr<OpenGlCommand> get()
+	static std::shared_ptr<OpenGlCommand> get(m64p_error& returnValue)
 	{
 		static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 		auto ptr = getFromPool<CoreVideoInitCommand>(poolId);
-		ptr->set();
+		ptr->set(returnValue);
 		return ptr;
 	}
 
 	void commandToExecute() override
 	{
-		::CoreVideo_Init();
+		*m_returnValue = ::CoreVideo_Init();
 	}
 
 private:
-	void set()
+	void set(m64p_error& returnValue)
 	{
+		m_returnValue = &returnValue;
 	}
+	m64p_error* m_returnValue;
 };
 
 class CoreVideoQuitCommand : public OpenGlCommand

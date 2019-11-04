@@ -5,6 +5,7 @@
 #include "opengl_WrappedFunctions.h"
 #include "opengl_Command.h"
 #include <thread>
+#include <map>
 
 #ifdef MUPENPLUSAPI
 #include <mupenplus/GLideN64_mupenplus.h>
@@ -33,6 +34,24 @@ namespace opengl {
 		static std::thread m_commandExecutionThread;
 		static std::mutex m_condvarMutex;
 		static std::condition_variable m_condition;
+
+#if defined(GL_DEBUG) && defined(GL_PROFILE)
+		static void logProfilingData();
+
+		struct FunctionProfilingData
+		{
+			double m_totalTime;
+			int m_callCount;
+
+			FunctionProfilingData()
+			{
+				m_totalTime = 0;
+				m_callCount = 0;
+			}
+		};
+		static std::map<std::string, FunctionProfilingData> m_functionProfiling;
+		static std::chrono::time_point<std::chrono::high_resolution_clock> m_lastProfilingOutput;
+#endif
 
 		static const int MAX_SWAP = 2;
 
@@ -171,7 +190,11 @@ namespace opengl {
 		static void wrDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const u16* indices, GLint basevertex);
 		static void wrFlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length);
 		static void wrFinish();
+		static void wrCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
+		static void wrDebugMessageCallback(GLDEBUGPROC callback, const void *userParam);
+		static void wrDebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled);
 		static void wrEGLImageTargetTexture2DOES(GLenum target, void* image);
+		static void wrEGLImageTargetRenderbufferStorageOES(GLenum target, void* image);
 
 #if defined(OS_ANDROID)
 		static EGLClientBuffer ewrGetNativeClientBufferANDROID(const AHardwareBuffer *buffer);
@@ -179,7 +202,7 @@ namespace opengl {
 
 #ifdef MUPENPLUSAPI
 		//Vid_ext functions
-		static void CoreVideo_Init();
+		static m64p_error CoreVideo_Init();
 		static void CoreVideo_Quit();
 		static m64p_error CoreVideo_SetVideoMode(int screenWidth, int screenHeight, int bitsPerPixel, m64p_video_mode mode, m64p_video_flags flags);
 		static void CoreVideo_GL_SetAttribute(m64p_GLattr attribute, int value);
