@@ -222,9 +222,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mGlobalPrefs = new GlobalPrefs( this, appData );
         
         // Update the dummy SurfaceView size in case global settings changed
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
-        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-        mSurface.setLayoutParams( params );
+        // FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
+        // params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        // mSurface.setLayoutParams( params );
         
         // Refresh the touchscreen controls
         refresh();

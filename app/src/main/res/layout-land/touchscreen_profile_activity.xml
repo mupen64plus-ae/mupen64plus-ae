@@ -8,12 +8,12 @@
         android:id="@+id/gameSurface"
         android:src="@drawable/dummy_screen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:focusable="false"
-        android:scaleType="fitCenter"
+        android:scaleType="fitStart"
         android:adjustViewBounds="true"
         android:focusableInTouchMode="false"
-        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         tools:ignore="ContentDescription" />
 
 
