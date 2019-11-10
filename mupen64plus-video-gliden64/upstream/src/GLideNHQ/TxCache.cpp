@@ -64,7 +64,7 @@ public:
 class TxMemoryCache : public TxCacheImpl
 {
 public:
-	TxMemoryCache(uint32 & _options, uint64 cacheLimit, dispInfoFuncExt callback);
+	TxMemoryCache(uint32 _options, uint64 cacheLimit, dispInfoFuncExt callback);
 	~TxMemoryCache();
 
 	bool add(Checksum checksum, GHQTexInfo *info, int dataSize = 0) override;
@@ -103,9 +103,9 @@ private:
 	uint32 _gzdestLen = 0;
 };
 
-TxMemoryCache::TxMemoryCache(uint32 & options,
-							uint64 cacheLimit,
-							dispInfoFuncExt callback)
+TxMemoryCache::TxMemoryCache(uint32 options,
+	uint64 cacheLimit,
+	dispInfoFuncExt callback)
 	: _options(options)
 	, _cacheLimit(cacheLimit)
 	, _callback(callback)
@@ -156,8 +156,7 @@ bool TxMemoryCache::add(Checksum checksum, GHQTexInfo *info, int dataSize)
 			if (compress2(dest, &destLen, info->data, dataSize, 1) != Z_OK) {
 				dest = info->data;
 				DBG_INFO(80, wst("Error: zlib compression failed!\n"));
-			}
-			else {
+			} else {
 				DBG_INFO(80, wst("zlib compressed: %.02fkb->%.02fkb\n"), (float)dataSize / 1000, (float)destLen / 1000);
 				dataSize = destLen;
 				format |= GL_TEXFMT_GZ;
@@ -165,7 +164,7 @@ bool TxMemoryCache::add(Checksum checksum, GHQTexInfo *info, int dataSize)
 		}
 	}
 
-  /* if cache size exceeds limit, remove old cache */
+	/* if cache size exceeds limit, remove old cache */
 	if (_cacheLimit != 0) {
 		_totalSize += dataSize;
 		if ((_totalSize > _cacheLimit) && !_cachelist.empty()) {
@@ -410,8 +409,7 @@ bool TxMemoryCache::load(const wchar_t *path, const wchar_t *filename, int confi
 					add(checksum, &tmpInfo, (tmpInfo.format & GL_TEXFMT_GZ) ? dataSize : 0);
 
 					free(tmpInfo.data);
-				}
-				else {
+				} else {
 					gzseek(gzfp, dataSize, SEEK_CUR);
 				}
 
@@ -483,7 +481,7 @@ void TxMemoryCache::clear()
 class TxFileStorage : public TxCacheImpl
 {
 public:
-	TxFileStorage(uint32 & _options, const wchar_t *cachePath, dispInfoFuncExt callback);
+	TxFileStorage(uint32 _options, const wchar_t *cachePath, dispInfoFuncExt callback);
 	~TxFileStorage() = default;
 
 	bool add(Checksum checksum, GHQTexInfo *info, int dataSize = 0) override;
@@ -510,7 +508,7 @@ private:
 
 	uint32 _options;
 	tx_wstring _cachePath;
-  tx_wstring _filename;
+	tx_wstring _filename;
 	std::string _fullPath;
 	dispInfoFuncExt _callback;
 	uint64 _totalSize = 0;
@@ -522,8 +520,8 @@ private:
 	uint8 *_gzdest1 = nullptr;
 	uint32 _gzdestLen = 0;
 
-  std::ifstream _infile;
-  std::ofstream _outfile;
+	std::ifstream _infile;
+	std::ofstream _outfile;
 	int64 _storagePos = 0;
 	bool _dirty = false;
 	static const int _fakeConfig;
@@ -533,7 +531,7 @@ private:
 const int TxFileStorage::_fakeConfig = -1;
 const int64 TxFileStorage::_initialPos = sizeof(int64) + sizeof(int);
 
-TxFileStorage::TxFileStorage(uint32 & options,
+TxFileStorage::TxFileStorage(uint32 options,
 	const wchar_t *cachePath,
 	dispInfoFuncExt callback)
 	: _options(options)
@@ -543,19 +541,16 @@ TxFileStorage::TxFileStorage(uint32 & options,
 	if (cachePath)
 		_cachePath.assign(cachePath);
 
-	/* zlib memory buffers to (de)compress hires textures */
-	if (_options & (GZ_TEXCACHE | GZ_HIRESTEXCACHE)) {
-		_gzdest0 = TxMemBuf::getInstance()->get(0);
-		_gzdest1 = TxMemBuf::getInstance()->get(1);
-		_gzdestLen = (TxMemBuf::getInstance()->size_of(0) < TxMemBuf::getInstance()->size_of(1)) ?
-			TxMemBuf::getInstance()->size_of(0) : TxMemBuf::getInstance()->size_of(1);
+	_gzdest0 = TxMemBuf::getInstance()->get(0);
+	_gzdest1 = TxMemBuf::getInstance()->get(1);
+	_gzdestLen = (TxMemBuf::getInstance()->size_of(0) < TxMemBuf::getInstance()->size_of(1)) ?
+		TxMemBuf::getInstance()->size_of(0) : TxMemBuf::getInstance()->size_of(1);
 
-		if (!_gzdest0 || !_gzdest1 || !_gzdestLen) {
-			_options &= ~(GZ_TEXCACHE | GZ_HIRESTEXCACHE);
-			_gzdest0 = nullptr;
-			_gzdest1 = nullptr;
-			_gzdestLen = 0;
-		}
+	if (!_gzdest0 || !_gzdest1 || !_gzdestLen) {
+		_options &= ~(GZ_TEXCACHE | GZ_HIRESTEXCACHE);
+		_gzdest0 = nullptr;
+		_gzdest1 = nullptr;
+		_gzdestLen = 0;
 	}
 }
 
@@ -564,9 +559,9 @@ TxFileStorage::TxFileStorage(uint32 & options,
 
 void TxFileStorage::buildFullPath()
 {
-	char cbuf[MAX_PATH*2];
+	char cbuf[MAX_PATH * 2];
 	tx_wstring filename = _cachePath + OSAL_DIR_SEPARATOR_STR + _filename;
-	wcstombs(cbuf, filename.c_str(), MAX_PATH*2);
+	wcstombs(cbuf, filename.c_str(), MAX_PATH * 2);
 	_fullPath = cbuf;
 }
 
@@ -656,6 +651,9 @@ bool TxFileStorage::readData(GHQTexInfo & info)
 	if (dataSize == 0)
 		return false;
 
+	if (_gzdest0 == nullptr)
+		return false;
+
 	_infile.read((char*)_gzdest0, dataSize);
 	if (!_infile.good())
 		return false;
@@ -670,8 +668,7 @@ bool TxFileStorage::readData(GHQTexInfo & info)
 		info.data = _gzdest1;
 		info.format &= ~GL_TEXFMT_GZ;
 		DBG_INFO(80, wst("zlib decompressed: %.02gkb->%.02gkb\n"), dataSize / 1024.0, destLen / 1024.0);
-	}
-	else {
+	} else {
 		info.data = _gzdest0;
 	}
 
@@ -713,8 +710,7 @@ bool TxFileStorage::add(Checksum checksum, GHQTexInfo *info, int dataSize)
 			if (compress2(dest, &destLen, info->data, dataSize, 1) != Z_OK) {
 				dest = info->data;
 				DBG_INFO(80, wst("Error: zlib compression failed!\n"));
-			}
-			else {
+			} else {
 				DBG_INFO(80, wst("zlib compressed: %.02fkb->%.02fkb\n"), dataSize / 1024.0, destLen / 1024.0);
 				dataSize = destLen;
 				format |= GL_TEXFMT_GZ;
@@ -825,7 +821,7 @@ bool TxFileStorage::load(const wchar_t *path, const wchar_t *filename, int confi
 	if (tmpconfig == _fakeConfig) {
 		if (_storagePos != _initialPos)
 			return false;
-	}	else if (tmpconfig != config && !force)
+	} else if (tmpconfig != config && !force)
 		return false;
 
 	if (_storagePos <= sizeof(config) + sizeof(_storagePos))
