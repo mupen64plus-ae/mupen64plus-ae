@@ -75,7 +75,13 @@
     #define APIENTRY
 #endif
 
+#if defined(WIN32)
+#include <windows.h>
+#include <GL/GL.h>
+#include <GL/glext.h>
+#else
 #include <SDL_opengl.h>
+#endif
 
 #define GLSL_VERSION "120"
 
