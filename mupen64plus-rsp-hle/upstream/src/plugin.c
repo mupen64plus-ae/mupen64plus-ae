@@ -43,7 +43,7 @@
 #define CONFIG_PARAM_VERSION     1.00
 
 #define RSP_API_VERSION   0x20000
-#define RSP_HLE_VERSION        0x020500
+#define RSP_HLE_VERSION        0x020509
 #define RSP_PLUGIN_API_VERSION 0x020000
 
 #define RSP_HLE_CONFIG_SECTION "Rsp-HLE"
@@ -81,7 +81,6 @@ static ptr_PluginShutdown l_PluginShutdown = NULL;
 /* definitions of pointers to Core functions */
 static ptr_ConfigOpenSection      ConfigOpenSection = NULL;
 static ptr_ConfigDeleteSection    ConfigDeleteSection = NULL;
-static ptr_ConfigSaveSection      ConfigSaveSection = NULL;
 static ptr_ConfigSetParameter     ConfigSetParameter = NULL;
 static ptr_ConfigGetParameter     ConfigGetParameter = NULL;
 static ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
@@ -289,7 +288,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
                                      void (*DebugCallback)(void *, int, const char *))
 {
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
-    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion, bSaveConfig;
+    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
     float fConfigParamsVersion = 0.0f;
 
     if (l_PluginInit)
@@ -318,7 +317,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     /* Get the core config function pointers from the library handle */
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
     ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle, "ConfigDeleteSection");
-    ConfigSaveSection = (ptr_ConfigSaveSection) osal_dynlib_getproc(CoreLibHandle, "ConfigSaveSection");
     ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
     ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
     ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
@@ -335,10 +333,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString)
         return M64ERR_INCOMPATIBLE;
 
-    /* ConfigSaveSection was added in Config API v2.1.0 */
-    if (ConfigAPIVersion >= 0x020100 && !ConfigSaveSection)
-        return M64ERR_INCOMPATIBLE;
-
     /* Get core DoCommand function */
     CoreDoCommand = (ptr_CoreDoCommand) osal_dynlib_getproc(CoreLibHandle, "CoreDoCommand");
     if (!CoreDoCommand) {
@@ -353,20 +347,17 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     }
 
     /* check the section version number */
-    bSaveConfig = 0;
     if (ConfigGetParameter(l_ConfigRspHle, RSP_HLE_CONFIG_VERSION, M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
     {
         HleWarnMessage(NULL, "No version number in '" RSP_HLE_CONFIG_SECTION "' config section. Setting defaults.");
         ConfigDeleteSection(RSP_HLE_CONFIG_SECTION);
         ConfigOpenSection(RSP_HLE_CONFIG_SECTION, &l_ConfigRspHle);
-        bSaveConfig = 1;
     }
     else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
     {
         HleWarnMessage(NULL, "Incompatible version %.2f in '" RSP_HLE_CONFIG_SECTION "' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
         ConfigDeleteSection(RSP_HLE_CONFIG_SECTION);
         ConfigOpenSection(RSP_HLE_CONFIG_SECTION, &l_ConfigRspHle);
-        bSaveConfig = 1;
     }
     else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f)
     {
@@ -374,7 +365,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         float fVersion = CONFIG_PARAM_VERSION;
         ConfigSetParameter(l_ConfigRspHle, "Version", M64TYPE_FLOAT, &fVersion);
         HleInfoMessage(NULL, "Updating parameter set version in '" RSP_HLE_CONFIG_SECTION "' config section to %.2f", fVersion);
-        bSaveConfig = 1;
     }
 
     /* set the default values for this plugin */
@@ -387,9 +377,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         "Send display lists to the graphics plugin");
     ConfigSetDefaultBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_AUD, 0,
         "Send audio lists to the audio plugin");
-
-    if (bSaveConfig && ConfigAPIVersion >= 0x020100)
-        ConfigSaveSection(RSP_HLE_CONFIG_SECTION);
 
     l_CoreHandle = CoreLibHandle;
 

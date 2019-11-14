@@ -22,12 +22,18 @@
 #ifndef HLE_EXTERNAL_H
 #define HLE_EXTERNAL_H
 
+#if defined(__GNUC__)
+#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
+#else
+#define ATTR_FMT(fmtpos, attrpos)
+#endif
+
 /* users of the hle core are expected to define these functions */
 
-void HleVerboseMessage(void* user_defined, const char *message, ...);
-void HleInfoMessage(void* user_defined, const char *message, ...);
-void HleErrorMessage(void* user_defined, const char *message, ...);
-void HleWarnMessage(void* user_defined, const char *message, ...);
+void HleVerboseMessage(void* user_defined, const char *message, ...) ATTR_FMT(2, 3);
+void HleInfoMessage(void* user_defined, const char *message, ...) ATTR_FMT(2, 3);
+void HleErrorMessage(void* user_defined, const char *message, ...) ATTR_FMT(2, 3);
+void HleWarnMessage(void* user_defined, const char *message, ...) ATTR_FMT(2, 3);
 
 void HleCheckInterrupts(void* user_defined);
 void HleProcessDlistList(void* user_defined);
