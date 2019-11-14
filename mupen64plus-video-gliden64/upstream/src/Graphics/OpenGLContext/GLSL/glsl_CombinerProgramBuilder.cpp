@@ -509,26 +509,17 @@ public:
 	{
 #if 1
 			m_part =
-				"  muxPM[0] = clampedColor;													\n"
-				"  lowp vec4 vprobe = vec4(0.0, 1.0, 2.0, 3.0);								\n"
-				"  if (uForceBlendCycle1 != 0) {											\n"
-				"    muxA[0] = clampedColor.a;												\n"
-				"    lowp float muxa = dot(muxA, vec4(equal(vec4(uBlendMux1[1]), vprobe)));	\n"
-				"    muxB[0] = 1.0 - muxa;													\n"
-				"    lowp vec4 muxpm0 = muxPM * vec4(equal(vec4(uBlendMux1[0]), vprobe));	\n"
-				"    lowp vec4 muxpm2 = muxPM * vec4(equal(vec4(uBlendMux1[2]), vprobe));	\n"
-				"    lowp float muxb = dot(muxB, vec4(equal(vec4(uBlendMux1[3]), vprobe)));	\n"
-				"    lowp vec4 blend1 = (muxpm0 * muxa) + (muxpm2 * muxb);					\n"
-				"    clampedColor.rgb = clamp(blend1.rgb, 0.0, 1.0);						\n"
-				"  } else {																	\n"
-// Workaround for Intel drivers for Mac, issue #1601
-#if defined(OS_MAC_OS_X)
-				"      clampedColor.rgb = muxPM[uBlendMux1[0]].rgb;							\n"
-#else
-				"      lowp vec4 muxpm0 = muxPM * vec4(equal(vec4(uBlendMux1[0]), vprobe));	\n"
-				"      clampedColor.rgb = muxpm0.rgb;										\n"
-#endif
-				"  }																		\n"
+				"  #define STVEC(pos) step(float(pos) - 0.5, vec4(0.0,1.0,2.0,3.0)) - step(float(pos) + 0.5, vec4(0.0,1.0,2.0,3.0)) \n" // Return the vector of the standard basis of R^4 with a 1 at position <pos> and 0 otherwise.
+				"  #define MUXA(pos) dot(muxA, STVEC(pos))				\n"
+				"  #define MUXB(pos) dot(muxB, STVEC(pos))				\n"
+				"  #define MUXPM(pos) muxPM*(STVEC(pos))				\n"
+				"  muxPM[0] = clampedColor;								\n"
+				"  if (uForceBlendCycle1 != 0) {						\n"
+				"    muxA[0] = clampedColor.a;							\n"
+				"    muxB[0] = 1.0 - MUXA(uBlendMux1[1]);				\n"
+				"    lowp vec4 blend1 = MUXPM(uBlendMux1[0]) * MUXA(uBlendMux1[1]) + MUXPM(uBlendMux1[2]) * MUXB(uBlendMux1[3]);	\n"
+				"    clampedColor.rgb = clamp(blend1.rgb, 0.0, 1.0);	\n"
+				"  } else clampedColor.rgb = (MUXPM(uBlendMux1[0])).rgb;	\n"
 				;
 #else
 		// Keep old code for reference
@@ -551,28 +542,16 @@ public:
 	ShaderBlender2()
 	{
 #if 1
-			m_part =
-				"  muxPM[0] = clampedColor;													\n"
-				"  muxPM[1] = vec4(0.0);													\n"
-				"  if (uForceBlendCycle2 != 0) {											\n"
-				"    muxA[0] = clampedColor.a;												\n"
-				"    lowp float muxa = dot(muxA, vec4(equal(vec4(uBlendMux2[1]), vprobe)));	\n"
-				"    muxB[0] = 1.0 - muxa;													\n"
-				"    lowp vec4 muxpm0 = muxPM*vec4(equal(vec4(uBlendMux2[0]), vprobe));		\n"
-				"    lowp vec4 muxpm2 = muxPM*vec4(equal(vec4(uBlendMux2[2]), vprobe));		\n"
-				"    lowp float muxb = dot(muxB,vec4(equal(vec4(uBlendMux2[3]), vprobe)));	\n"
-				"    lowp vec4 blend2 = muxpm0 * muxa + muxpm2 * muxb;						\n"
-				"    clampedColor.rgb = clamp(blend2.rgb, 0.0, 1.0);						\n"
-				"  } else {																	\n"
-// Workaround for Intel drivers for Mac, issue #1601
-#if defined(OS_MAC_OS_X)
-				"      clampedColor.rgb = muxPM[uBlendMux2[0]].rgb;							\n"
-#else
-				"      lowp vec4 muxpm0 = muxPM * vec4(equal(vec4(uBlendMux2[0]), vprobe));	\n"
-				"      clampedColor.rgb = muxpm0.rgb;										\n"
-#endif
-				"  }																		\n"
-				;
+		m_part =
+			"  muxPM[0] = clampedColor;								\n"
+			"  muxPM[1] = vec4(0.0);								\n"
+			"  if (uForceBlendCycle2 != 0) {						\n"
+			"    muxA[0] = clampedColor.a;							\n"
+			"    muxB[0] = 1.0 - MUXA(uBlendMux2[1]);				\n"
+			"    lowp vec4 blend2 = MUXPM(uBlendMux2[0]) * MUXA(uBlendMux2[1]) + MUXPM(uBlendMux2[2]) * MUXB(uBlendMux2[3]);	\n"
+			"    clampedColor.rgb = clamp(blend2.rgb, 0.0, 1.0);	\n"
+			"  } else clampedColor.rgb = (MUXPM(uBlendMux2[0])).rgb;	\n"
+			;
 #else
 		// Keep old code for reference
 		m_part =
@@ -625,7 +604,7 @@ public:
 	ShaderClamp()
 	{
 		m_part =
-			"  lowp vec4 wrappedColor = cmbRes + 2.0 * step(cmbRes, vec4(-0.51)) - 2.0*step(vec4(1.51), cmbRes); \n"
+			"  lowp vec4 wrappedColor = WRAP(cmbRes, -0.51, 1.51); \n"
 			"  lowp vec4 clampedColor = clamp(wrappedColor, 0.0, 1.0); \n"
 			;
 	}
@@ -644,7 +623,7 @@ public:
 	ShaderSignExtendColorC()
 	{
 		m_part =
-			"  color1 = color1 - 2.0*(vec3(1.0) - step(color1, vec3(1.0)));	\n"
+			" color1 = WRAP(color1, -1.01, 1.01); \n"
 			;
 	}
 };
@@ -655,7 +634,7 @@ public:
 	ShaderSignExtendAlphaC()
 	{
 		m_part =
-			"  alpha1 = alpha1 - 2.0*(1.0 - step(alpha1, 1.0));					\n"
+			" alpha1 = WRAP(alpha1, -1.01, 1.01); \n"
 			;
 	}
 };
@@ -676,7 +655,7 @@ public:
 	ShaderSignExtendColorABD()
 	{
 		m_part =
-			"  color1 = color1 + 2.0*step(color1, vec3(-0.51)) - 2.0*step(vec3(1.51), color1); \n"
+			" color1 = WRAP(color1, -0.51, 1.51); \n"
 			;
 	}
 };
@@ -687,7 +666,7 @@ public:
 	ShaderSignExtendAlphaABD()
 	{
 		m_part =
-			"  alpha1 = alpha1 + 2.0*step(alpha1, -0.51) - 2.0*step(1.51, alpha1); \n"
+			"  alpha1 = WRAP(alpha1, -0.51,1.51); \n"
 			;
 	}
 };
@@ -1273,18 +1252,22 @@ public:
 		m_part =
 			"void main() \n"
 			"{			 \n"
-		;
+			;
 		if (!_glinfo.isGLES2) {
 			m_part +=
 				"  highp float fragDepth = writeDepth();	\n"
-			;
+				;
 		}
 		m_part +=
 			"  lowp vec4 vec_color;				\n"
 			"  lowp float alpha1;				\n"
 			"  lowp vec3 color1, input_color;	\n"
-		;
+			;
+		m_part += "#define WRAP(x, low, high) mod((x)-(low), (high)-(low)) + (low) \n"; // Return wrapped value of x in interval [low, high)
+		// m_part += "#define WRAP(x, low, high) (x) - ((high)-(low)) * floor(((x)-(low))/((high)-(low)))  \n"; // Perhaps more compatible?
+		// m_part += "#define WRAP(x, low, high) (x) + ((high)-(low)) * (1.0-step(low,x)) - ((high)-(low)) * step(high,x) \n"; // Step based version. Only wraps correctly if input is in the range [low-(high-low), high + (high-low)). Similar to old code.
 	}
+
 };
 
 class ShaderFragmentMain2Cycle : public ShaderPart
@@ -1306,6 +1289,9 @@ public:
 			"  lowp float alpha1, alpha2;				\n"
 			"  lowp vec3 color1, color2, input_color;	\n"
 		;
+		m_part += "#define WRAP(x, low, high) mod((x)-(low), (high)-(low)) + (low) \n"; // Return wrapped value of x in interval [low, high)
+		// m_part += "#define WRAP(x, low, high) (x) - ((high)-(low)) * floor(((x)-(low))/((high)-(low)))  \n"; // Perhaps more compatible?
+		// m_part += "#define WRAP(x, low, high) (x) + (2.0) * (1.0-step(low,x)) - (2.0) * step(high,x) \n"; // Step based version. Only wraps correctly if input is in the range [low-(high-low), high + (high-low)). Similar to old code.
 	}
 };
 
