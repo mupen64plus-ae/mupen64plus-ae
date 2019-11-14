@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Module Subsystem Interface to SP Interpreter Core                  *
 * Authors:  Iconoclast                                                         *
-* Release:  2018.03.21                                                         *
+* Release:  2018.12.18                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -17,12 +17,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* time() (for helping srand()) */
+#include <time.h>
+
 #ifdef WIN32
 #include <windows.h>
-#endif
-
-#ifdef __APPLE__
-#import <CoreFoundation/CoreFoundation.h>
 #endif
 
 #include "module.h"
@@ -30,12 +29,6 @@
 
 #include <signal.h>
 #include <setjmp.h>
-
-#if defined(__GNUC__)
-#define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
-#else
-#define ATTR_FMT(fmtpos, attrpos)
-#endif
 
 static jmp_buf CPU_state;
 static void seg_av_handler(int signal_code)
@@ -49,200 +42,88 @@ static void ISA_op_illegal(int signal_code)
 }
 
 RSP_INFO RSP_INFO_NAME;
-
-#define RSP_CXD4_VERSION 0x0101
-
-#if defined(M64P_PLUGIN_API)
-
-#include <m64p_frontend.h>
-#include <stdarg.h>
-
-#define RSP_PLUGIN_API_VERSION 0x020000
-#define CONFIG_API_VERSION       0x020100
-#define CONFIG_PARAM_VERSION     1.00
-
-static void (*l_DebugCallback)(void *, int, const char *) = NULL;
-static void *l_DebugCallContext = NULL;
-static int l_PluginInit = 0;
-static m64p_handle l_ConfigRsp;
-
-#define VERSION_PRINTF_SPLIT(x) (((x) >> 16) & 0xffff), (((x) >> 8) & 0xff), ((x) & 0xff)
-
-ptr_ConfigOpenSection      ConfigOpenSection = NULL;
-ptr_ConfigDeleteSection    ConfigDeleteSection = NULL;
-ptr_ConfigSetParameter     ConfigSetParameter = NULL;
-ptr_ConfigGetParameter     ConfigGetParameter = NULL;
-ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
-ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
-ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
-ptr_CoreDoCommand          CoreDoCommand = NULL;
-
-NOINLINE void update_conf(const char* source)
-{
-    memset(conf, 0, 32);
-    m64p_rom_header ROM_HEADER;
-    CoreDoCommand(M64CMD_ROM_GET_HEADER, sizeof(ROM_HEADER), &ROM_HEADER);
-
-    CFG_HLE_GFX = ConfigGetParamBool(l_ConfigRsp, "DisplayListToGraphicsPlugin");
-    CFG_HLE_AUD = ConfigGetParamBool(l_ConfigRsp, "AudioListToAudioPlugin");
-    CFG_WAIT_FOR_CPU_HOST = ConfigGetParamBool(l_ConfigRsp, "WaitForCPUHost");
-    CFG_MEND_SEMAPHORE_LOCK = ConfigGetParamBool(l_ConfigRsp, "SupportCPUSemaphoreLock");
-}
-
-static void DebugMessage(int level, const char *message, ...) ATTR_FMT(2, 3);
-
-void DebugMessage(int level, const char *message, ...)
-{
-  char msgbuf[1024];
-  va_list args;
-
-  if (l_DebugCallback == NULL)
-      return;
-
-  va_start(args, message);
-  vsprintf(msgbuf, message, args);
-
-  (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
-
-  va_end(args);
-}
-
-EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                     void (*DebugCallback)(void *, int, const char *))
-{
-    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
-
-    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
-    float fConfigParamsVersion = 0.0f;
-
-    if (l_PluginInit)
-        return M64ERR_ALREADY_INIT;
-
-    /* first thing is to set the callback function for debug info */
-    l_DebugCallback = DebugCallback;
-    l_DebugCallContext = Context;
-
-    /* attach and call the CoreGetAPIVersions function, check Config API version for compatibility */
-    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
-    if (CoreAPIVersionFunc == NULL)
-    {
-        DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
-        return M64ERR_INCOMPATIBLE;
-    }
-
-    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
-    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
-    {
-        DebugMessage(M64MSG_ERROR, "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
-                VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
-        return M64ERR_INCOMPATIBLE;
-    }
-
-    /* Get the core config function pointers from the library handle */
-    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
-    ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle, "ConfigDeleteSection");
-    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
-    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
-    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
-    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
-    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
-    CoreDoCommand = (ptr_CoreDoCommand) osal_dynlib_getproc(CoreLibHandle, "CoreDoCommand");
-
-    if (!ConfigOpenSection || !ConfigDeleteSection || !ConfigSetParameter || !ConfigGetParameter ||
-        !ConfigSetDefaultBool || !ConfigGetParamBool || !ConfigSetDefaultFloat)
-        return M64ERR_INCOMPATIBLE;
-
-    /* get a configuration section handle */
-    if (ConfigOpenSection("rsp-cxd4", &l_ConfigRsp) != M64ERR_SUCCESS)
-    {
-        DebugMessage(M64MSG_ERROR, "Couldn't open config section 'rsp-cxd4'");
-        return M64ERR_INPUT_NOT_FOUND;
-    }
-
-    /* check the section version number */
-    if (ConfigGetParameter(l_ConfigRsp, "Version", M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
-    {
-        DebugMessage(M64MSG_WARNING, "No version number in 'rsp-cxd4' config section. Setting defaults.");
-        ConfigDeleteSection("rsp-cxd4");
-        ConfigOpenSection("rsp-cxd4", &l_ConfigRsp);
-    }
-    else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
-    {
-        DebugMessage(M64MSG_WARNING, "Incompatible version %.2f in 'rsp-cxd4' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
-        ConfigDeleteSection("rsp-cxd4");
-        ConfigOpenSection("rsp-cxd4", &l_ConfigRsp);
-    }
-    else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f)
-    {
-        /* handle upgrades */
-        float fVersion = CONFIG_PARAM_VERSION;
-        ConfigSetParameter(l_ConfigRsp, "Version", M64TYPE_FLOAT, &fVersion);
-        DebugMessage(M64MSG_INFO, "Updating parameter set version in 'rsp-cxd4' config section to %.2f", fVersion);
-    }
-
-#ifndef HLEVIDEO
-    int hlevideo = 0;
-#else
-    int hlevideo = 1;
-#endif
-    /* set the default values for this plugin */
-    ConfigSetDefaultFloat(l_ConfigRsp, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus cxd4 RSP Plugin config parameter version number");
-    ConfigSetDefaultBool(l_ConfigRsp, "DisplayListToGraphicsPlugin", hlevideo, "Send display lists to the graphics plugin");
-    ConfigSetDefaultBool(l_ConfigRsp, "AudioListToAudioPlugin", 0, "Send audio lists to the audio plugin");
-    ConfigSetDefaultBool(l_ConfigRsp, "WaitForCPUHost", 0, "Force CPU-RSP signals synchronization");
-    ConfigSetDefaultBool(l_ConfigRsp, "SupportCPUSemaphoreLock", 0, "Support CPU-RSP semaphore lock");
-
-    l_PluginInit = 1;
-    return M64ERR_SUCCESS;
-}
-
-EXPORT m64p_error CALL PluginShutdown(void)
-{
-    if (!l_PluginInit)
-        return M64ERR_NOT_INIT;
-
-    l_PluginInit = 0;
-    return M64ERR_SUCCESS;
-}
-
-EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
-{
-    /* set version info */
-    if (PluginType != NULL)
-        *PluginType = M64PLUGIN_RSP;
-
-    if (PluginVersion != NULL)
-        *PluginVersion = RSP_CXD4_VERSION;
-
-    if (APIVersion != NULL)
-        *APIVersion = RSP_PLUGIN_API_VERSION;
-
-    if (PluginNamePtr != NULL)
-        *PluginNamePtr = "Static Interpreter";
-
-    if (Capabilities != NULL)
-    {
-        *Capabilities = 0;
-    }
-
-    return M64ERR_SUCCESS;
-}
-
-EXPORT int CALL RomOpen(void)
-{
-    if (!l_PluginInit)
-        return 0;
-
-    update_conf(CFG_FILE);
-    return 1;
-}
-
-#else
-
 static const char DLL_about[] =
     "RSP Interpreter by Iconoclast\n"\
     "Thanks for test RDP:  Jabo, ziggy, angrylion\n"\
     "RSP driver examples:  bpoint, zilmar, Ville Linde";
+
+static void init_regs(void)
+{
+    register size_t i, j;
+
+    for (i = 0; i < 16; i++)
+        if (CR[i] == NULL)
+            raise(SIGTERM); /* Don't proceed if plugin hasn't initialized. */
+    srand(time(NULL));
+
+    for (i = 0; i < N; i++) {
+        VACC_H[i] = ((u64)0xFFFF00000000 >> 32) & 0x0000;
+        VACC_M[i] = ((u64)0x0000FFFF0000 >> 16) & 0x0000;
+        VACC_L[i] = ((u64)0x00000000FFFF >>  0) & 0x0000;
+    }
+#if 0
+    DPH = SP_DIV_PRECISION_SINGLE; /* static global maintained in vu/divide.o */
+#endif
+
+/*
+ * Based on krom's experiences at testing the RSP hardware with homebrew, it
+ * has become apparent that the bits in $vco, $vcc and $vce do NOT become
+ * random upon powering on the console.  However, this does not say that
+ * previous values of these flags aren't momentarily preserved before any
+ * bit rot loses them overtime.  Since it's not clear whether these flags are
+ * explicitly initialized to 0 at power-on or if they temporarily retain old
+ * decaying bits, we'll just make them 0 to hush krom's RSP test FAIL yells.
+ */
+    for (i = 0; i < N; i++) {
+        cf_ne[i]   = (rand() & (1 << 15)) ? 0*TRUE : FALSE;
+        cf_co[i]   = (rand() & (1 << 12)) ? 0*TRUE : FALSE;
+        cf_clip[i] = (rand() & (1 <<  9)) ? 0*TRUE : FALSE;
+        cf_comp[i] = (rand() & (1 <<  6)) ? 0*TRUE : FALSE;
+
+        cf_vce[i]  = (rand() & (1 <<  0)) ? 0*TRUE : FALSE;
+    }
+
+    for (i = 0; i < 32; i++)
+        SR[i] = (u32)rand();
+    SR[0] = 0x00000000;
+    for (i = 0; i < 32; i++)
+        for (j = 0; j < N; j++)
+            VR[i][j] = (u16)((u32)rand() & 0xFFFFu);
+
+    *(RSP_INFO_NAME.SP_PC_REG) = 0x04001000;
+
+    *CR[0x0] = 0x00000000; /* DMA transfer address for SP memory cache */
+    *CR[0x1] = 0x00000000; /* DMA transfer address for host DRAM */
+    *CR[0x2] = 0x00000000; /* DMA read transfer period */
+    *CR[0x3] = 0x00000000; /* DMA write transfer period */
+
+    *CR[0x4] = 0x00000001; /* SP status flags */
+    *CR[0x5] = 0x00000000; /* read-only DMA full indicator */
+    *CR[0x6] = 0x00000000; /* read-only DMA busy indicator */
+    *CR[0x7] = 0x00000000; /* CPU-RSP synchronicity semaphore */
+
+    *CR[0x8] = (u32)rand(); /* start address of RDP command buffer */
+    *CR[0x9] = (u32)rand(); /* end address of RDP command buffer */
+    *CR[0xA] = 0x00000000; /* read-only current RDP command buffer address */
+    *CR[0xB] &=     0x100; /* DP status flags:  DMA_BUSY flag is undefined. */
+
+    *CR[0xC] = 0x0000FFFF; /* RDP clock cycle counter */
+/*
+ * Technically these are random at startup on the hardware, but most emulators
+ * fail to ever clear these locks if randomly set, causing constant warnings.
+ */
+#if 0
+    *CR[0xD] = (u32)rand(); /* read-only RDP contiguous busy buffer cycles */
+    *CR[0xE] = (u32)rand(); /* read-only RDP contiguous busy pipe cycles */
+#endif
+    *CR[0xF] = (u32)rand(); /* read-only RDP contiguous TMEM import cycles */
+
+    *CR[0xB] |= 0x000000A8; /* GCLK, PIPE_BUSY and CMD_BUF_READY always set */
+#if 0
+    *CR[0xB] |= (irand() & 1) << 8; /* DP DMA busy status bit is undefined. */
+#endif
+    *CR[0xC] += *CR[0xD] + *CR[0xE] + *CR[0xF]; /* random total clock cycles */
+}
 
 EXPORT void CALL CloseDLL(void)
 {
@@ -274,9 +155,7 @@ EXPORT void CALL DllConfig(p_void hParent)
     return;
 }
 
-#endif
-
-EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
+EXPORT u32 CALL DoRspCycles(u32 cycles)
 {
     static char task_debug[] = "unknown task type:  0x????????";
     char* task_debug_type;
@@ -306,22 +185,15 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
 
         if (*(pi32)(DMEM + 0xFF0) == 0x00000000)
             break; /* Resident Evil 2, null task pointers */
-        GET_RCP_REG(SP_STATUS_REG) |=
-            SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
-        ;
-#if defined(M64P_PLUGIN_API)
-        if (GET_RSP_INFO(ProcessDlistList) == NULL)
-            { /* branch */ }
-        else
-            GET_RSP_INFO(ProcessDlistList)();
-#else
         if (GET_RSP_INFO(ProcessDList) == NULL)
             { /* branch */ }
         else
             GET_RSP_INFO(ProcessDList)();
-#endif
 
-        if ((GET_RCP_REG(SP_STATUS_REG) & SP_STATUS_INTR_BREAK) && (GET_RCP_REG(SP_STATUS_REG) & (SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT))) {
+        GET_RCP_REG(SP_STATUS_REG) |=
+            SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
+        ;
+        if (GET_RCP_REG(SP_STATUS_REG) & SP_STATUS_INTR_BREAK) {
             GET_RCP_REG(MI_INTR_REG) |= 0x00000001;
             GET_RSP_INFO(CheckInterrupts)();
         }
@@ -331,17 +203,10 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
         if (CFG_HLE_AUD == 0)
             break;
 
-#if defined(M64P_PLUGIN_API)
-        if (GET_RSP_INFO(ProcessAlistList) == NULL)
-            { /* branch */ }
-        else
-            GET_RSP_INFO(ProcessAlistList)();
-#else
         if (GET_RSP_INFO(ProcessAList) == NULL)
             { /* branch */ }
         else
             GET_RSP_INFO(ProcessAList)();
-#endif
 
         GET_RCP_REG(SP_STATUS_REG) |=
             SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
@@ -368,6 +233,8 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
         GET_RSP_INFO(ShowCFB)(); /* forced FB refresh in case gfx plugin skip */
         break;
     default:
+        if (task_type == 0x00000000)
+            break; /* generic or invoked without CPU filling in OSTask struct */
         if (task_type == 0x8BC43B5D)
             break; /* CIC boot code sent to the RSP */
         sprintf(task_debug_type, "%08lX", (unsigned long)task_type);
@@ -387,7 +254,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
  * to finally empty the MM state, at the end of a long interpreter loop.
  */
 #ifdef ARCH_MIN_SSE2
-    //_mm_empty();
+    _mm_empty();
 #endif
 
     if (*CR[0x4] & SP_STATUS_BROKE) /* normal exit, from executing BREAK */
@@ -453,7 +320,6 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
     CR[0x5] = &GET_RCP_REG(SP_DMA_FULL_REG);
     CR[0x6] = &GET_RCP_REG(SP_DMA_BUSY_REG);
     CR[0x7] = &GET_RCP_REG(SP_SEMAPHORE_REG);
-    *(RSP_INFO_NAME.SP_PC_REG) = 0x04001000;
     CR[0x8] = &GET_RCP_REG(DPC_START_REG);
     CR[0x9] = &GET_RCP_REG(DPC_END_REG);
     CR[0xA] = &GET_RCP_REG(DPC_CURRENT_REG);
@@ -462,6 +328,7 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
     CR[0xD] = &GET_RCP_REG(DPC_BUFBUSY_REG);
     CR[0xE] = &GET_RCP_REG(DPC_PIPEBUSY_REG);
     CR[0xF] = &GET_RCP_REG(DPC_TMEM_REG);
+    init_regs();
 
     MF_SP_STATUS_TIMEOUT = 32767;
 #if 1
@@ -498,21 +365,19 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
 
 EXPORT void CALL RomClosed(void)
 {
+    FILE* stream;
+
     GET_RCP_REG(SP_PC_REG) = 0x04001000;
 
 /*
  * Sometimes the end user won't correctly install to the right directory. :(
  * If the config file wasn't installed correctly, politely shut errors up.
  */
-#if !defined(M64P_PLUGIN_API)
-    FILE* stream = fopen(CFG_FILE, "wb");
+    stream = fopen(CFG_FILE, "wb");
     fwrite(conf, 8, 32 / 8, stream);
     fclose(stream);
-#endif
     return;
 }
-
-#if !defined(M64P_PLUGIN_API)
 
 NOINLINE void message(const char* body)
 {
@@ -544,19 +409,7 @@ NOINLINE void message(const char* body)
 #endif
     return;
 }
-#else
-NOINLINE void message(const char* body)
-{
-#if defined(M64P_PLUGIN_API)
-    DebugMessage(M64MSG_ERROR, "%s", body);
-#else
-    printf("%s\n", body);
-#endif
 
-}
-#endif
-
-#if !defined(M64P_PLUGIN_API)
 NOINLINE void update_conf(const char* source)
 {
     FILE* stream;
@@ -578,7 +431,6 @@ NOINLINE void update_conf(const char* source)
     fclose(stream);
     return;
 }
-#endif
 
 #ifdef SP_EXECUTE_LOG
 void step_SP_commands(uint32_t inst)

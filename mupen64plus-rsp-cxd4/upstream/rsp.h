@@ -39,11 +39,7 @@ extern "C" {
  * `GET_RCP_REG(MI_INTR_REG) |= MI_INTR_MASK_SP;'.
  */
 #ifndef RSP_INFO_NAME
-#ifdef M64P_PLUGIN_API
-#define RSP_INFO_NAME           RSP_info
-#else
 #define RSP_INFO_NAME           RCP_info_SP
-#endif
 #define GET_RSP_INFO(member)    ((RSP_INFO_NAME).member)
 #define GET_RCP_REG(member)     (*(RSP_INFO_NAME).member)
 #endif
@@ -75,7 +71,6 @@ typedef struct {
                            native hardware's endian over the MIPS target's */
 } PLUGIN_INFO;
 
-#if !defined(M64P_PLUGIN_API)
 typedef struct {
     p_void hInst;
     int MemorySwapped;
@@ -113,7 +108,6 @@ typedef struct {
     p_func ProcessRdpList;
     p_func ShowCFB;
 } RSP_INFO;
-#endif
 
 typedef struct {
     /* menu */
@@ -254,7 +248,7 @@ EXPORT void CALL RomClosed(void);
  * from Project64 in its commercial state, and there is no documentation of
  * these in the source to Project64 2.x as of yet.
  */
-#if (PLUGIN_API_VERSION >= 0x0102) && !defined(M64P_PLUGIN_API)
+#if (PLUGIN_API_VERSION >= 0x0102)
 EXPORT void CALL RomOpen(void);
 EXPORT void CALL EnableDebugging(int Enabled);
 EXPORT void CALL PluginLoaded(void);

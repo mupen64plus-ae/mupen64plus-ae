@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Divides         *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.03.23                                                         *
+* Release:  2018.12.18                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -17,9 +17,15 @@
 
 static s32 DivIn = 0; /* buffered numerator of division read from vector file */
 static s32 DivOut = 0; /* global division result set by VRCP/VRCPL/VRSQ/VRSQL */
-#if (0 != 0)
-static s32 MovIn; /* We do not emulate this register (obsolete, for VMOV). */
-#endif
+
+enum {
+    SP_DIV_SQRT_NO,
+    SP_DIV_SQRT_YES
+};
+enum {
+    SP_DIV_PRECISION_SINGLE = 0,
+    SP_DIV_PRECISION_DOUBLE = ~0
+};
 
 /*
  * Boolean flag:  Double-precision high was the last vector divide op?
@@ -31,7 +37,7 @@ static s32 MovIn; /* We do not emulate this register (obsolete, for VMOV). */
  * else if (lastDivideOp == VMOV, VNOP)
  *     DPH = DPH; // no change--divide-group ops but not real divides
  */
-static int DPH = 0;
+static int DPH = SP_DIV_PRECISION_SINGLE;
 
 /*
  * 11-bit vector divide result look-up table
@@ -1064,30 +1070,21 @@ static const u16 div_ROM[1 << 10] = {
     0x6A64u,
 };
 
-enum {
-    SP_DIV_SQRT_NO,
-    SP_DIV_SQRT_YES
-};
-enum {
-    SP_DIV_PRECISION_SINGLE = 0,
-    SP_DIV_PRECISION_DOUBLE = ~0
-/*, SP_DIV_PRECISION_CURRENT */
-};
-
 NOINLINE static void do_div(i32 data, int sqrt, int precision)
 {
     i32 addr;
-    int fetch;
     int shift;
 
-#if (~0 >> 1 == -1)
-    data ^= (s32)(data + 32768) >> 31; /* DP only:  (data < -32768) */
-    fetch = (s32)(data +     0) >> 31;
+#if ((~0 >> 1 == -1) && (0))
+    int fetch;
+
+    data ^= (s32)(((s64)data + 32768) >> 63); /* DP only:  (data < -32768) */
+    fetch = (s32)(((s32)data +     0) >> 31);
     data ^= fetch;
     data -= fetch; /* two's complement:  -x == ~x - (~0) on wrap-around */
 #else
     if (precision == SP_DIV_PRECISION_SINGLE)
-        data = (data < 0) ? -data : +data;
+        data = (data <       0) ? -data : +data;
     if (precision == SP_DIV_PRECISION_DOUBLE && data < 0)
         data = (data >= -32768) ? -data : ~data;
 #endif
@@ -1156,8 +1153,10 @@ VECTOR_OPERATION VRCPL(v16 vs, v16 vt)
     const int target = (inst_word >> 16) & 31;
     const unsigned int element = (inst_word >> 21) & 0x7;
 
-    DivIn &= DPH;
-    DivIn |= (u16)VR[target][element];
+    if (DPH == SP_DIV_PRECISION_SINGLE)
+        DivIn  = (s32)(s16)(VR[target][element]);
+    else
+        DivIn |= (s32)(u16)(VR[target][element] & 0xFFFFu);
     do_div(DivIn, SP_DIV_SQRT_NO, DPH);
 #ifdef ARCH_MIN_SSE2
     *(v16 *)VACC_L = vt;
@@ -1205,16 +1204,20 @@ VECTOR_OPERATION VRCPH(v16 vs, v16 vt)
 
 VECTOR_OPERATION VMOV(v16 vs, v16 vt)
 {
+    i32 MovIn;
     const int result = (inst_word & 0x000007FF) >>  6;
     const int source = (inst_word & 0x0000FFFF) >> 11;
-    const unsigned int element = (inst_word >> 21) & 0x7;
 
 #ifdef ARCH_MIN_SSE2
     *(v16 *)VACC_L = vt;
+    MovIn = VACC_L[source & 07]; /* _mm_extract_epi16(vt, source & 0x07); */
 #else
+    MovIn = vt[source & 07];
     vector_copy(VACC_L, vt);
 #endif
-    VR[result][source & 07] = VACC_L[element];
+
+    VR[result][source & 07] = (i16)(MovIn & 0x0000FFFF);
+
 #ifdef ARCH_MIN_SSE2
     COMPILER_FENCE();
     vs = *(v16 *)VR[result];
@@ -1260,8 +1263,10 @@ VECTOR_OPERATION VRSQL(v16 vs, v16 vt)
     const int target = (inst_word >> 16) & 31;
     const unsigned int element = (inst_word >> 21) & 0x7;
 
-    DivIn &= DPH;
-    DivIn |= (u16)VR[target][element];
+    if (DPH == SP_DIV_PRECISION_SINGLE)
+        DivIn  = (s32)(s16)(VR[target][element]);
+    else
+        DivIn |= (s32)(u16)(VR[target][element] & 0xFFFFu);
     do_div(DivIn, SP_DIV_SQRT_YES, DPH);
 #ifdef ARCH_MIN_SSE2
     *(v16 *)VACC_L = vt;
