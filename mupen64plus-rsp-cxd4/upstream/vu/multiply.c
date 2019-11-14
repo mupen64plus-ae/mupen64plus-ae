@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Multiplies      *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.11.30                                                         *
+* Release:  2018.03.18                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -16,35 +16,24 @@
 #include "multiply.h"
 
 #ifdef ARCH_MIN_SSE2
-#define _mm_cmple_epu16(dst, src) \
-    _mm_cmpeq_epi16(_mm_subs_epu16(dst, src), _mm_setzero_si128())
-#define _mm_cmpgt_epu16(dst, src) \
-    _mm_andnot_si128(_mm_cmpeq_epi16(dst, src), _mm_cmple_epu16(src, dst))
-#define _mm_cmplt_epu16(dst, src) \
-    _mm_cmpgt_epu16(src, dst)
 
-#define _mm_mullo_epu16(dst, src) \
-    _mm_mullo_epi16(dst, src)
+#define _mm_allones_si128()     \
+    _mm_cmpeq_epi16(_mm_setzero_si128(), _mm_setzero_si128())
+#define _mm_setmin_epi16()      \
+    _mm_slli_epi16(_mm_allones_si128(), 15)
 
-static INLINE void SIGNED_CLAMP_AM(pi16 VD)
-{ /* typical sign-clamp of accumulator-mid (bits 31:16) */
-    v16 dst, src;
-    v16 pvd, pvs;
+#define _mm_cmplt_epu16(dst, src)               \
+    _mm_cmplt_epi16(                            \
+        _mm_xor_si128(dst, _mm_setmin_epi16()), \
+        _mm_xor_si128(src, _mm_setmin_epi16())  \
+    )
 
-    pvs = _mm_load_si128((v16 *)VACC_H);
-    pvd = _mm_load_si128((v16 *)VACC_M);
-    dst = _mm_unpacklo_epi16(pvd, pvs);
-    src = _mm_unpackhi_epi16(pvd, pvs);
-
-    dst = _mm_packs_epi32(dst, src);
-    _mm_store_si128((v16 *)VD, dst);
-    return;
-}
 #else
+
 static INLINE void SIGNED_CLAMP_AM(pi16 VD)
 { /* typical sign-clamp of accumulator-mid (bits 31:16) */
     i16 hi[N], lo[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         lo[i]  = (VACC_H[i] < ~0);
@@ -61,15 +50,13 @@ static INLINE void SIGNED_CLAMP_AM(pi16 VD)
         VD[i] |= -(hi[i] ^ 0);
     for (i = 0; i < N; i++)
         VD[i] ^= 0x8000 * (hi[i] | lo[i]);
-    return;
 }
-#endif
 
 static INLINE void UNSIGNED_CLAMP(pi16 VD)
 { /* sign-zero hybrid clamp of accumulator-mid (bits 31:16) */
     ALIGNED i16 temp[N];
     i16 cond[N];
-    register int i;
+    register unsigned int i;
 
     SIGNED_CLAMP_AM(temp); /* no direct map in SSE, but closely based on this */
     for (i = 0; i < N; i++)
@@ -78,14 +65,13 @@ static INLINE void UNSIGNED_CLAMP(pi16 VD)
         VD[i] = temp[i] & ~(temp[i] >> 15); /* Only this clamp is unsigned. */
     for (i = 0; i < N; i++)
         VD[i] = VD[i] | cond[i];
-    return;
 }
 
 static INLINE void SIGNED_CLAMP_AL(pi16 VD)
 { /* sign-clamp accumulator-low (bits 15:0) */
     ALIGNED i16 temp[N];
     i16 cond[N];
-    register int i;
+    register unsigned int i;
 
     SIGNED_CLAMP_AM(temp); /* no direct map in SSE, but closely based on this */
     for (i = 0; i < N; i++)
@@ -94,64 +80,8 @@ static INLINE void SIGNED_CLAMP_AL(pi16 VD)
         temp[i] ^= 0x8000; /* clamps 0x0000:0xFFFF instead of -0x8000:+0x7FFF */
     for (i = 0; i < N; i++)
         VD[i] = (cond[i] ? temp[i] : VACC_L[i]);
-    return;
 }
-
-INLINE static void do_macf(pi16 VD, pi16 VS, pi16 VT)
-{
-    i32 product[N];
-    u32 addend[N];
-    register int i;
-
-    for (i = 0; i < N; i++)
-        product[i] = VS[i] * VT[i];
-    for (i = 0; i < N; i++)
-        addend[i] = (product[i] << 1) & 0x00000000FFFF;
-    for (i = 0; i < N; i++)
-        addend[i] = (u16)(VACC_L[i]) + addend[i];
-    for (i = 0; i < N; i++)
-        VACC_L[i] = (i16)(addend[i]);
-    for (i = 0; i < N; i++)
-        addend[i] = (addend[i] >> 16) + (u16)(product[i] >> 15);
-    for (i = 0; i < N; i++)
-        addend[i] = (u16)(VACC_M[i]) + addend[i];
-    for (i = 0; i < N; i++)
-        VACC_M[i] = (i16)(addend[i]);
-    for (i = 0; i < N; i++)
-        VACC_H[i] -= (product[i] < 0);
-    for (i = 0; i < N; i++)
-        VACC_H[i] += addend[i] >> 16;
-    SIGNED_CLAMP_AM(VD);
-    return;
-}
-
-INLINE static void do_macu(pi16 VD, pi16 VS, pi16 VT)
-{
-    i32 product[N];
-    u32 addend[N];
-    register int i;
-
-    for (i = 0; i < N; i++)
-        product[i] = VS[i] * VT[i];
-    for (i = 0; i < N; i++)
-        addend[i] = (product[i] << 1) & 0x00000000FFFF;
-    for (i = 0; i < N; i++)
-        addend[i] = (u16)(VACC_L[i]) + addend[i];
-    for (i = 0; i < N; i++)
-        VACC_L[i] = (i16)(addend[i]);
-    for (i = 0; i < N; i++)
-        addend[i] = (addend[i] >> 16) + (u16)(product[i] >> 15);
-    for (i = 0; i < N; i++)
-        addend[i] = (u16)(VACC_M[i]) + addend[i];
-    for (i = 0; i < N; i++)
-        VACC_M[i] = (i16)(addend[i]);
-    for (i = 0; i < N; i++)
-        VACC_H[i] -= (product[i] < 0);
-    for (i = 0; i < N; i++)
-        VACC_H[i] += addend[i] >> 16;
-    UNSIGNED_CLAMP(VD);
-    return;
-}
+#endif
 
 VECTOR_OPERATION VMULF(v16 vs, v16 vt)
 {
@@ -202,8 +132,7 @@ VECTOR_OPERATION VMULF(v16 vs, v16 vt)
 
     negative = _mm_xor_si128(negative, vs);
     *(v16 *)VACC_H = negative; /* 2*i16*i16 only fills L/M; VACC_H = 0 or ~0. */
-    vs = _mm_add_epi16(vs, prod_hi); /* prod_hi must be -32768; + -1 = +32767 */
-    return (vs);
+    return _mm_add_epi16(vs, prod_hi); /* prod_hi must be -32768; - 1 = +32767 */
 #else
     word_64 product[N]; /* (-32768 * -32768)<<1 + 32768 confuses 32-bit type. */
     register unsigned int i;
@@ -221,7 +150,6 @@ VECTOR_OPERATION VMULF(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] = -(product[i].SW < 0); /* product>>32 & 0xFFFF */
     SIGNED_CLAMP_AM(V_result);
-    return;
 #endif
 }
 
@@ -266,8 +194,7 @@ VECTOR_OPERATION VMULU(v16 vs, v16 vt)
 
     prod_lo = _mm_srai_epi16(prod_hi, 15); /* unsigned overflow mask */
     vs = _mm_or_si128(prod_hi, prod_lo);
-    vs = _mm_andnot_si128(negative, vs); /* unsigned underflow mask */
-    return (vs);
+    return _mm_andnot_si128(negative, vs); /* unsigned underflow mask */
 #else
     word_64 product[N]; /* (-32768 * -32768)<<1 + 32768 confuses 32-bit type. */
     register unsigned int i;
@@ -285,7 +212,6 @@ VECTOR_OPERATION VMULU(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] = -(product[i].SW < 0); /* product>>32 & 0xFFFF */
     UNSIGNED_CLAMP(V_result);
-    return;
 #endif
 }
 
@@ -309,7 +235,6 @@ VECTOR_OPERATION VMUDL(v16 vs, v16 vt)
     vector_copy(V_result, VACC_L);
     vector_wipe(VACC_M);
     vector_wipe(VACC_H);
-    return;
 #endif
 }
 
@@ -348,7 +273,6 @@ VECTOR_OPERATION VMUDM(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] = -(VACC_M[i] < 0);
     vector_copy(V_result, VACC_M);
-    return;
 #endif
 }
 
@@ -372,7 +296,7 @@ VECTOR_OPERATION VMUDN(v16 vs, v16 vt)
     *(v16 *)VACC_M = prod_hi;
     prod_hi = _mm_srai_epi16(prod_hi, 15);
     *(v16 *)VACC_H = prod_hi;
-    return (vs = prod_lo);
+    return (prod_lo);
 #else
     word_32 product[N];
     register unsigned int i;
@@ -386,7 +310,6 @@ VECTOR_OPERATION VMUDN(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] = -(VACC_M[i] < 0);
     vector_copy(V_result, VACC_L);
-    return;
 #endif
 }
 
@@ -413,8 +336,7 @@ VECTOR_OPERATION VMUDH(v16 vs, v16 vt)
  * Re-interleave or pack both 32-bit products in both xmm registers with
  * signed saturation:  prod < -32768 to -32768 and prod > +32767 to +32767.
  */
-    vs = _mm_packs_epi32(vs, vt);
-    return (vs);
+    return _mm_packs_epi32(vs, vt);
 #else
     word_32 product[N];
     register unsigned int i;
@@ -427,57 +349,143 @@ VECTOR_OPERATION VMUDH(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] = (s16)(product[i].W >> 16); /* product[i].HW[HES(2) >> 1] */
     SIGNED_CLAMP_AM(V_result);
-    return;
 #endif
 }
 
 VECTOR_OPERATION VMACF(v16 vs, v16 vt)
 {
-    ALIGNED i16 VD[N];
 #ifdef ARCH_MIN_SSE2
-    ALIGNED i16 VS[N], VT[N];
+    v16 acc_hi, acc_md, acc_lo;
+    v16 prod_hi, prod_lo;
+    v16 overflow, overflow_new;
+    v16 prod_neg, carry;
 
-    *(v16 *)VS = vs;
-    *(v16 *)VT = vt;
-#else
-    v16 VS, VT;
+    prod_hi = _mm_mulhi_epi16(vs, vt);
+    prod_lo = _mm_mullo_epi16(vs, vt);
+    prod_neg = _mm_srli_epi16(prod_hi, 15);
 
-    VS = vs;
-    VT = vt;
-#endif
-    do_macf(VD, VS, VT);
-#ifdef ARCH_MIN_SSE2
-    COMPILER_FENCE();
-    vs = *(v16 *)VD;
-    return (vs);
+    /* fractional adjustment by shifting left one bit */
+    overflow = _mm_srli_epi16(prod_lo, 15); /* hi bit lost when s16 += s16 */
+    prod_lo = _mm_add_epi16(prod_lo, prod_lo);
+    prod_hi = _mm_add_epi16(prod_hi, prod_hi);
+    prod_hi = _mm_or_si128(prod_hi, overflow); /* Carry lo's MSB to hi's LSB. */
+
+    acc_lo = *(v16 *)VACC_L;
+    acc_md = *(v16 *)VACC_M;
+    acc_hi = *(v16 *)VACC_H;
+
+    acc_lo = _mm_add_epi16(acc_lo, prod_lo);
+    *(v16 *)VACC_L = acc_lo;
+    overflow = _mm_cmplt_epu16(acc_lo, prod_lo); /* a + b < a + 0 ? ~0 : 0 */
+
+    acc_md = _mm_add_epi16(acc_md, prod_hi);
+    overflow_new = _mm_cmplt_epu16(acc_md, prod_hi);
+    acc_md = _mm_sub_epi16(acc_md, overflow); /* m - (overflow = ~0) == m + 1 */
+    carry = _mm_cmpeq_epi16(acc_md, _mm_setzero_si128());
+    carry = _mm_and_si128(carry, overflow); /* ~0 - (-1) == 0 && (-1) != 0 */
+    *(v16 *)VACC_M = acc_md;
+    overflow = _mm_or_si128(carry, overflow_new);
+
+    acc_hi = _mm_sub_epi16(acc_hi, overflow);
+    acc_hi = _mm_sub_epi16(acc_hi, prod_neg);
+    *(v16 *)VACC_H = acc_hi;
+
+    vt = _mm_unpackhi_epi16(acc_md, acc_hi);
+    vs = _mm_unpacklo_epi16(acc_md, acc_hi);
+    return _mm_packs_epi32(vs, vt);
 #else
-    vector_copy(V_result, VD);
-    return;
+    word_32 product[N], addend[N];
+    register unsigned int i;
+
+    for (i = 0; i < N; i++)
+        product[i].SW = vs[i] * vt[i];
+    for (i = 0; i < N; i++)
+        addend[i].UW = (product[i].SW << 1) & 0x00000000FFFF;
+    for (i = 0; i < N; i++)
+        addend[i].UW = (u16)(VACC_L[i]) + addend[i].UW;
+    for (i = 0; i < N; i++)
+        VACC_L[i] = (i16)(addend[i].UW);
+    for (i = 0; i < N; i++)
+        addend[i].UW = (addend[i].UW >> 16) + (u16)(product[i].SW >> 15);
+    for (i = 0; i < N; i++)
+        addend[i].UW = (u16)(VACC_M[i]) + addend[i].UW;
+    for (i = 0; i < N; i++)
+        VACC_M[i] = (i16)(addend[i].UW);
+    for (i = 0; i < N; i++)
+        VACC_H[i] -= (product[i].SW < 0);
+    for (i = 0; i < N; i++)
+        VACC_H[i] += addend[i].UW >> 16;
+    SIGNED_CLAMP_AM(V_result);
 #endif
 }
 
 VECTOR_OPERATION VMACU(v16 vs, v16 vt)
 {
-    ALIGNED i16 VD[N];
 #ifdef ARCH_MIN_SSE2
-    ALIGNED i16 VS[N], VT[N];
+    v16 acc_hi, acc_md, acc_lo;
+    v16 prod_hi, prod_lo;
+    v16 overflow, overflow_new;
+    v16 prod_neg, carry;
 
-    *(v16 *)VS = vs;
-    *(v16 *)VT = vt;
-#else
-    v16 VS, VT;
+    prod_hi = _mm_mulhi_epi16(vs, vt);
+    prod_lo = _mm_mullo_epi16(vs, vt);
+    prod_neg = _mm_srli_epi16(prod_hi, 15);
 
-    VS = vs;
-    VT = vt;
-#endif
-    do_macu(VD, VS, VT);
-#ifdef ARCH_MIN_SSE2
-    COMPILER_FENCE();
-    vs = *(v16 *)VD;
-    return (vs);
+    /* fractional adjustment by shifting left one bit */
+    overflow = _mm_srli_epi16(prod_lo, 15); /* hi bit lost when s16 += s16 */
+    prod_lo = _mm_add_epi16(prod_lo, prod_lo);
+    prod_hi = _mm_add_epi16(prod_hi, prod_hi);
+    prod_hi = _mm_or_si128(prod_hi, overflow); /* Carry lo's MSB to hi's LSB. */
+
+    acc_lo = *(v16 *)VACC_L;
+    acc_md = *(v16 *)VACC_M;
+    acc_hi = *(v16 *)VACC_H;
+
+    acc_lo = _mm_add_epi16(acc_lo, prod_lo);
+    *(v16 *)VACC_L = acc_lo;
+    overflow = _mm_cmplt_epu16(acc_lo, prod_lo); /* a + b < a + 0 ? ~0 : 0 */
+
+    acc_md = _mm_add_epi16(acc_md, prod_hi);
+    overflow_new = _mm_cmplt_epu16(acc_md, prod_hi);
+    acc_md = _mm_sub_epi16(acc_md, overflow); /* m - (overflow = ~0) == m + 1 */
+    carry = _mm_cmpeq_epi16(acc_md, _mm_setzero_si128());
+    carry = _mm_and_si128(carry, overflow); /* ~0 - (-1) == 0 && (-1) != 0 */
+    *(v16 *)VACC_M = acc_md;
+    overflow = _mm_or_si128(carry, overflow_new);
+
+    acc_hi = _mm_sub_epi16(acc_hi, overflow);
+    acc_hi = _mm_sub_epi16(acc_hi, prod_neg);
+    *(v16 *)VACC_H = acc_hi;
+
+    vt = _mm_unpackhi_epi16(acc_md, acc_hi);
+    vs = _mm_unpacklo_epi16(acc_md, acc_hi);
+    vs = _mm_packs_epi32(vs, vt);
+    overflow = _mm_cmplt_epi16(acc_md, vs);
+    vs = _mm_andnot_si128(_mm_srai_epi16(vs, 15), vs);
+    return _mm_or_si128(vs, overflow);
 #else
-    vector_copy(V_result, VD);
-    return;
+    word_32 product[N], addend[N];
+    register unsigned int i;
+
+    for (i = 0; i < N; i++)
+        product[i].SW = vs[i] * vt[i];
+    for (i = 0; i < N; i++)
+        addend[i].UW = (product[i].SW << 1) & 0x00000000FFFF;
+    for (i = 0; i < N; i++)
+        addend[i].UW = (u16)(VACC_L[i]) + addend[i].UW;
+    for (i = 0; i < N; i++)
+        VACC_L[i] = (i16)(addend[i].UW);
+    for (i = 0; i < N; i++)
+        addend[i].UW = (addend[i].UW >> 16) + (u16)(product[i].SW >> 15);
+    for (i = 0; i < N; i++)
+        addend[i].UW = (u16)(VACC_M[i]) + addend[i].UW;
+    for (i = 0; i < N; i++)
+        VACC_M[i] = (i16)(addend[i].UW);
+    for (i = 0; i < N; i++)
+        VACC_H[i] -= (product[i].SW < 0);
+    for (i = 0; i < N; i++)
+        VACC_H[i] += addend[i].UW >> 16;
+    UNSIGNED_CLAMP(V_result);
 #endif
 }
 
@@ -488,7 +496,7 @@ VECTOR_OPERATION VMADL(v16 vs, v16 vt)
     v16 prod_hi;
     v16 overflow, overflow_new;
 
- /* prod_lo = _mm_mullo_epu16(vs, vt); */
+ /* prod_lo = _mm_mullo_epi16(vs, vt); */
     prod_hi = _mm_mulhi_epu16(vs, vt);
 
     acc_lo = *(v16 *)VACC_L;
@@ -531,8 +539,7 @@ VECTOR_OPERATION VMADL(v16 vs, v16 vt)
     vs = _mm_and_si128(vs, acc_md); /* ... ? VS_clamped : 0x0000 */
     vs = _mm_or_si128(vs, acc_lo); /*                   : acc_lo */
     acc_md = _mm_slli_epi16(acc_md, 15); /* ... ? ^ 0x8000 : ^ 0x0000 */
-    vs = _mm_xor_si128(vs, acc_md); /* Stupid unsigned-clamp-ish adjustment. */
-    return (vs);
+    return _mm_xor_si128(vs, acc_md); /* stupid unsigned-clamp-ish adjustment */
 #else
     word_32 product[N], addend[N];
     register unsigned int i;
@@ -552,7 +559,6 @@ VECTOR_OPERATION VMADL(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] += addend[i].UW >> 16;
     SIGNED_CLAMP_AL(V_result);
-    return;
 #endif
 }
 
@@ -594,8 +600,7 @@ VECTOR_OPERATION VMADM(v16 vs, v16 vt)
 
     vt = _mm_unpackhi_epi16(acc_md, acc_hi);
     vs = _mm_unpacklo_epi16(acc_md, acc_hi);
-    vs = _mm_packs_epi32(vs, vt);
-    return (vs);
+    return _mm_packs_epi32(vs, vt);
 #else
     word_32 product[N], addend[N];
     register unsigned int i;
@@ -615,7 +620,6 @@ VECTOR_OPERATION VMADM(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] += addend[i].UW >> 16;
     SIGNED_CLAMP_AM(V_result);
-    return;
 #endif
 }
 
@@ -675,8 +679,7 @@ VECTOR_OPERATION VMADN(v16 vs, v16 vt)
     vs = _mm_and_si128(vs, acc_md); /* ... ? VS_clamped : 0x0000 */
     vs = _mm_or_si128(vs, acc_lo); /*                   : acc_lo */
     acc_md = _mm_slli_epi16(acc_md, 15); /* ... ? ^ 0x8000 : ^ 0x0000 */
-    vs = _mm_xor_si128(vs, acc_md); /* Stupid unsigned-clamp-ish adjustment. */
-    return (vs);
+    return _mm_xor_si128(vs, acc_md); /* stupid unsigned-clamp-ish adjustment */
 #else
     word_32 product[N], addend[N];
     register unsigned int i;
@@ -696,7 +699,6 @@ VECTOR_OPERATION VMADN(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] += addend[i].UW >> 16;
     SIGNED_CLAMP_AL(V_result);
-    return;
 #endif
 }
 
@@ -734,8 +736,7 @@ VECTOR_OPERATION VMADH(v16 vs, v16 vt)
     vs = *(v16 *)VACC_M;
     prod_high = _mm_unpackhi_epi16(vs, vt);
     vs        = _mm_unpacklo_epi16(vs, vt);
-    vs = _mm_packs_epi32(vs, prod_high);
-    return (vs);
+    return _mm_packs_epi32(vs, prod_high);
 #else
     word_32 product[N], addend[N];
     register unsigned int i;
@@ -749,6 +750,5 @@ VECTOR_OPERATION VMADH(v16 vs, v16 vt)
     for (i = 0; i < N; i++)
         VACC_H[i] += (addend[i].UW >> 16) + (product[i].SW >> 16);
     SIGNED_CLAMP_AM(V_result);
-    return;
 #endif
 }
