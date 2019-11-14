@@ -79,7 +79,8 @@ extern int buffer_cleared; // mark that the buffer has been cleared, used to che
 #if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 #include <windows.h>
 extern "C" {
-    #include <SDL_opengl.h>
+	#include <GL/GL.h>
+	#include <GL/glext.h>
     extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
     extern PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
     extern PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT;
