@@ -24,15 +24,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 #include "m64p_types.h"
 
-static void APIENTRY EmptyFunc(void) { return; }
+#if !defined(__APPLE__)
+    static void APIENTRY EmptyFunc(void) { return; }
+    #define INIT_EMPTY_FUNC(type, funcname) type funcname = (type) EmptyFunc;
+    #define INIT_GL_FUNC(type, funcname) \
+      funcname = (type) CoreVideo_GL_GetProcAddress(#funcname); \
+      if (funcname == NULL) { DebugMessage(M64MSG_WARNING, \
+      "Couldn't get address of OpenGL function: '%s'", #funcname); funcname = (type) EmptyFunc; }
+#endif
 
-#define INIT_EMPTY_FUNC(type, funcname) type funcname = (type) EmptyFunc;
-
-// Handy macro to load gl functions
-#define INIT_GL_FUNC(type, funcname) \
-  funcname = (type) CoreVideo_GL_GetProcAddress(#funcname); \
-  if (funcname == NULL) { DebugMessage(M64MSG_WARNING, \
-  "Couldn't get address of OpenGL function: '%s'", #funcname); funcname = (type) EmptyFunc; }
 
 #ifdef USE_GLES
     // OpenGL ES headers already load every functions so this place is reserved

@@ -733,9 +733,9 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
     float depth = (gRDP.otherMode.depth_source == 1 ? gRDP.fPrimitiveDepth : 0 );
     
     // -0.02 : hack here (arbitrary value...). I guess this offset has do be found "somewhere"
-    if( depth > 0.02 )
+    if( depth > 0.02f )
     {
-        depth -= 0.02;
+        depth -= 0.02f;
     }
 
     g_texRectTVtx[0].z = g_texRectTVtx[1].z = g_texRectTVtx[2].z = g_texRectTVtx[3].z = depth;

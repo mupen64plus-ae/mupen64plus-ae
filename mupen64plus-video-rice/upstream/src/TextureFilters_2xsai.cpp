@@ -24,62 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /************************************************************************/
 /* 2xSAI filters                                                        */
 /************************************************************************/
-static __inline int SAI_GetResult1_32( uint32 A, uint32 B, uint32 C, uint32 D, uint32 E )
-{
-    int x = 0;
-    int y = 0;
-    int r = 0;
-
-    if (A == C) x += 1; else if (B == C) y += 1;
-    if (A == D) x += 1; else if (B == D) y += 1;
-    if (x <= 1) r += 1; 
-    if (y <= 1) r -= 1;
-
-    return r;
-}
-
-static __inline uint16 SAI_GetResult1_16( uint16 A, uint16 B, uint16 C, uint16 D, uint16 E )
-{
-    uint16 x = 0;
-    uint16 y = 0;
-    uint16 r = 0;
-
-    if (A == C) x += 1; else if (B == C) y += 1;
-    if (A == D) x += 1; else if (B == D) y += 1;
-    if (x <= 1) r += 1; 
-    if (y <= 1 && r>0) r -= 1;
-
-    return r;
-}
-
-static __inline int SAI_GetResult2_32( uint32 A, uint32 B, uint32 C, uint32 D, uint32 E) 
-{
-    int x = 0; 
-    int y = 0;
-    int r = 0;
-
-    if (A == C) x += 1; else if (B == C) y += 1;
-    if (A == D) x += 1; else if (B == D) y += 1;
-    if (x <= 1) r -= 1; 
-    if (y <= 1) r += 1;
-
-    return r;
-}
-
-static __inline uint16 SAI_GetResult2_16( uint16 A, uint16 B, uint16 C, uint16 D, uint16 E) 
-{
-    uint16 x = 0; 
-    uint16 y = 0;
-    uint16 r = 0;
-
-    if (A == C) x += 1; else if (B == C) y += 1;
-    if (A == D) x += 1; else if (B == D) y += 1;
-    if (x <= 1 && r>0 ) r -= 1; 
-    if (y <= 1) r += 1;
-
-    return r;
-}
-
 
 static __inline int SAI_GetResult_32( uint32 A, uint32 B, uint32 C, uint32 D )
 {
