@@ -196,7 +196,7 @@ BOOL INI_Open ()
 #endif // _WIN32
             break;
     }
-    if (path == 0) return FALSE;
+    if (i == 0) return FALSE;
     path[i+1] = 0;
 
 #ifndef _WIN32

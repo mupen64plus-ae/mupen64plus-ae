@@ -885,9 +885,7 @@ void TexCache ()
   {
     for (int i=0; i<2; i++)
     {
-      int tmu;
-      if (i==0) tmu=tmu_0;
-      else if (i==1) tmu=tmu_1;
+      int tmu = (i==0) ? tmu_0 : tmu_1;
 
       if (tmu >= voodoo.num_tmu) continue;
 
