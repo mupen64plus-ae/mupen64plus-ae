@@ -241,7 +241,6 @@ int debugger_loop(void *arg) {
             // simple linear sweep disassembly
             uint32_t addr = cur_pc, size=1, flags=0;
 
-            int i;
             uint32_t lookupAddr, lookupData;
             char op[64];
             char args[64];
@@ -256,7 +255,7 @@ int debugger_loop(void *arg) {
             }
             addr &= ~0x03; // align to 4 byte boundary
             printf("Disassembly of %d instruction%s @ 0x%08x:\n", size, (size == 1 ? "" : "s"), addr);
-            for (i = 0; i < size; i++) {
+            for (uint32_t i = 0; i < size; i++) {
                 lookupAddr = addr + (i * 4);
                 lookupData = debugger_read_32(lookupAddr);
                 (*DebugDecodeOp)(lookupData, op, args, lookupAddr);
