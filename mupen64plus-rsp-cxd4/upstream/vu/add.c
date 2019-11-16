@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Adds            *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.03.23                                                         *
+* Release:  2018.03.18                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -72,7 +72,7 @@ static INLINE void SIGNED_CLAMP_ADD(pi16 VD, pi16 VS, pi16 VT)
 {
     i32 sum[N];
     i16 hi[N], lo[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         sum[i] = VS[i] + VT[i] + cf_co[i];
@@ -93,7 +93,7 @@ static INLINE void SIGNED_CLAMP_SUB(pi16 VD, pi16 VS, pi16 VT)
 {
     i32 dif[N];
     i16 hi[N], lo[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         dif[i] = VS[i] - VT[i] - cf_co[i];
@@ -114,7 +114,7 @@ static INLINE void SIGNED_CLAMP_SUB(pi16 VD, pi16 VS, pi16 VT)
 
 INLINE static void clr_ci(pi16 VD, pi16 VS, pi16 VT)
 { /* clear CARRY and carry in to accumulators */
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         VACC_L[i] = VS[i] + VT[i] + cf_co[i];
@@ -128,7 +128,7 @@ INLINE static void clr_ci(pi16 VD, pi16 VS, pi16 VT)
 
 INLINE static void clr_bi(pi16 VD, pi16 VS, pi16 VT)
 { /* clear CARRY and borrow in to accumulators */
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         VACC_L[i] = VS[i] - VT[i] - cf_co[i];
@@ -151,7 +151,7 @@ INLINE static void do_abs(pi16 VD, pi16 VS, pi16 VT)
     i16 neg[N], pos[N];
     i16 nez[N], cch[N]; /* corner case hack -- abs(-32768) == +32767 */
     ALIGNED i16 res[N];
-    register int i;
+    register unsigned int i;
 
     vector_copy(res, VT);
     for (i = 0; i < N; i++)
@@ -161,7 +161,8 @@ INLINE static void do_abs(pi16 VD, pi16 VS, pi16 VT)
         neg[i]  = (VS[i] <  0x0000);
     for (i = 0; i < N; i++)
         pos[i]  = (VS[i] >  0x0000);
-    vector_wipe(nez);
+    //vector_wipe(nez);
+	memset(&nez, 0, sizeof(nez));
 
     for (i = 0; i < N; i++)
         nez[i] -= neg[i];
@@ -180,7 +181,7 @@ INLINE static void do_abs(pi16 VD, pi16 VS, pi16 VT)
 INLINE static void set_co(pi16 VD, pi16 VS, pi16 VT)
 { /* set CARRY and carry out from sum */
     i32 sum[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         sum[i] = (u16)(VS[i]) + (u16)(VT[i]);
@@ -197,7 +198,7 @@ INLINE static void set_co(pi16 VD, pi16 VS, pi16 VT)
 INLINE static void set_bo(pi16 VD, pi16 VS, pi16 VT)
 { /* set CARRY and borrow out from difference */
     i32 dif[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         dif[i] = (u16)(VS[i]) - (u16)(VT[i]);

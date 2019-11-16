@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Multiplies      *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.11.30                                                         *
+* Release:  2018.03.17                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -94,34 +94,6 @@ static INLINE void SIGNED_CLAMP_AL(pi16 VD)
         temp[i] ^= 0x8000; /* clamps 0x0000:0xFFFF instead of -0x8000:+0x7FFF */
     for (i = 0; i < N; i++)
         VD[i] = (cond[i] ? temp[i] : VACC_L[i]);
-    return;
-}
-
-INLINE static void do_macf(pi16 VD, pi16 VS, pi16 VT)
-{
-    i32 product[N];
-    u32 addend[N];
-    register int i;
-
-    for (i = 0; i < N; i++)
-        product[i] = VS[i] * VT[i];
-    for (i = 0; i < N; i++)
-        addend[i] = (product[i] << 1) & 0x00000000FFFF;
-    for (i = 0; i < N; i++)
-        addend[i] = (u16)(VACC_L[i]) + addend[i];
-    for (i = 0; i < N; i++)
-        VACC_L[i] = (i16)(addend[i]);
-    for (i = 0; i < N; i++)
-        addend[i] = (addend[i] >> 16) + (u16)(product[i] >> 15);
-    for (i = 0; i < N; i++)
-        addend[i] = (u16)(VACC_M[i]) + addend[i];
-    for (i = 0; i < N; i++)
-        VACC_M[i] = (i16)(addend[i]);
-    for (i = 0; i < N; i++)
-        VACC_H[i] -= (product[i] < 0);
-    for (i = 0; i < N; i++)
-        VACC_H[i] += addend[i] >> 16;
-    SIGNED_CLAMP_AM(VD);
     return;
 }
 
@@ -433,26 +405,68 @@ VECTOR_OPERATION VMUDH(v16 vs, v16 vt)
 
 VECTOR_OPERATION VMACF(v16 vs, v16 vt)
 {
-    ALIGNED i16 VD[N];
 #ifdef ARCH_MIN_SSE2
-    ALIGNED i16 VS[N], VT[N];
+    v16 acc_hi, acc_md, acc_lo;
+    v16 prod_hi, prod_lo;
+    v16 overflow, overflow_new;
+    v16 prod_neg, old_acc_md;
 
-    *(v16 *)VS = vs;
-    *(v16 *)VT = vt;
-#else
-    v16 VS, VT;
+    prod_hi = _mm_mulhi_epi16(vs, vt);
+    prod_lo = _mm_mullo_epi16(vs, vt);
+    prod_neg = _mm_srli_epi16(prod_hi, 15);
 
-    VS = vs;
-    VT = vt;
-#endif
-    do_macf(VD, VS, VT);
-#ifdef ARCH_MIN_SSE2
-    COMPILER_FENCE();
-    vs = *(v16 *)VD;
-    return (vs);
+    /* fractional adjustment by shifting left one bit */
+    overflow = _mm_srli_epi16(prod_lo, 15); /* hi bit lost when s16 += s16 */
+    prod_lo = _mm_add_epi16(prod_lo, prod_lo);
+    prod_hi = _mm_add_epi16(prod_hi, prod_hi);
+    prod_hi = _mm_or_si128(prod_hi, overflow); /* Carry lo's MSB to hi's LSB. */
+
+    acc_lo = *(v16 *)VACC_L;
+    acc_md = *(v16 *)VACC_M;
+    acc_hi = *(v16 *)VACC_H;
+
+    acc_lo = _mm_add_epi16(acc_lo, prod_lo);
+    *(v16 *)VACC_L = acc_lo;
+    overflow = _mm_cmplt_epu16(acc_lo, prod_lo); /* a + b < a + 0 ? ~0 : 0 */
+
+    acc_md = _mm_add_epi16(acc_md, prod_hi);
+    overflow_new = _mm_cmplt_epu16(acc_md, prod_hi);
+    old_acc_md = acc_md;
+    acc_md = _mm_sub_epi16(acc_md, overflow); /* m - (overflow = ~0) == m + 1 */
+    overflow = _mm_cmplt_epu16(acc_md, old_acc_md);
+    *(v16 *)VACC_M = acc_md;
+    overflow = _mm_or_si128(overflow, overflow_new);
+
+    acc_hi = _mm_sub_epi16(acc_hi, overflow);
+    acc_hi = _mm_sub_epi16(acc_hi, prod_neg);
+    *(v16 *)VACC_H = acc_hi;
+
+    vt = _mm_unpackhi_epi16(acc_md, acc_hi);
+    vs = _mm_unpacklo_epi16(acc_md, acc_hi);
+    return _mm_packs_epi32(vs, vt);
 #else
-    vector_copy(V_result, VD);
-    return;
+    word_32 product[N], addend[N];
+    register int i;
+
+    for (i = 0; i < N; i++)
+        product[i].SW = vs[i] * vt[i];
+    for (i = 0; i < N; i++)
+        addend[i].UW = (product[i].SW << 1) & 0x00000000FFFF;
+    for (i = 0; i < N; i++)
+        addend[i].UW = (u16)(VACC_L[i]) + addend[i].UW;
+    for (i = 0; i < N; i++)
+        VACC_L[i] = (i16)(addend[i].UW);
+    for (i = 0; i < N; i++)
+        addend[i].UW = (addend[i].UW >> 16) + (u16)(product[i].SW >> 15);
+    for (i = 0; i < N; i++)
+        addend[i].UW = (u16)(VACC_M[i]) + addend[i].UW;
+    for (i = 0; i < N; i++)
+        VACC_M[i] = (i16)(addend[i].UW);
+    for (i = 0; i < N; i++)
+        VACC_H[i] -= (product[i].SW < 0);
+    for (i = 0; i < N; i++)
+        VACC_H[i] += addend[i].UW >> 16;
+    SIGNED_CLAMP_AM(V_result);
 #endif
 }
 
@@ -472,7 +486,6 @@ VECTOR_OPERATION VMACU(v16 vs, v16 vt)
 #endif
     do_macu(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
-    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
