@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Test Selects    *
 * Authors:  Iconoclast                                                         *
-* Release:  2018.03.18                                                         *
+* Release:  2018.11.26                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -245,10 +245,16 @@ INLINE static void do_ch(pi16 VD, pi16 VS, pi16 VT)
         cf_vce[i]  = (VS[i] == VC[i]); /* 2's complement:  VC = -VT - 1 = ~VT */
     for (i = 0; i < N; i++)
         cf_vce[i] &= sn[i];
+
+/*
+ * if (sign flag), then converts ~(VT) into -(VT) a.k.a. ~(VT) - (-1)
+ * Note that if (VT == INT16_MIN) a.k.a. cch[i], -(-32768) is undefined.
+ */
     for (i = 0; i < N; i++)
-        VC[i] -= sn[i] & cch[i]; /* converts ~(VT) into -(VT) if (sign) */
+        VC[i] -= sn[i] & ~cch[i]; /* cch[i] causes -(-32768) to stay ~-32768. */
+
     for (i = 0; i < N; i++)
-        eq[i]  = (VS[i] == VC[i]) & ~cch[i]; /* (VS == +32768) is never true. */
+        eq[i]  = (VS[i] == VC[i]) & ~cch[i]; /* VS = -(-32768) never happens. */
     for (i = 0; i < N; i++)
         eq[i] |= cf_vce[i];
 
