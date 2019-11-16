@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Emulation Layer for Vector Unit Computational Operations       *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.03.23                                                         *
+* Release:  2018.03.18                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -133,19 +133,20 @@ u16 get_VCC(void)
 }
 u8 get_VCE(void)
 {
-    int result;
+    unsigned int result;
     register u8 vce;
 
     result = 0x00
-      | (cf_vce[07] << 0x7)
-      | (cf_vce[06] << 0x6)
-      | (cf_vce[05] << 0x5)
-      | (cf_vce[04] << 0x4)
-      | (cf_vce[03] << 0x3)
-      | (cf_vce[02] << 0x2)
-      | (cf_vce[01] << 0x1)
-      | (cf_vce[00] << 0x0);
-    vce = result & 0xFF;
+      | (cf_vce[0x7] << 0x7)
+      | (cf_vce[0x6] << 0x6)
+      | (cf_vce[0x5] << 0x5)
+      | (cf_vce[0x4] << 0x4)
+      | (cf_vce[0x3] << 0x3)
+      | (cf_vce[0x2] << 0x2)
+      | (cf_vce[0x1] << 0x1)
+      | (cf_vce[0x0] << 0x0)
+    ;
+    vce = (u8)(result & 0xFF);
     return (vce); /* Big endian becomes little. */
 }
 #else
@@ -207,7 +208,7 @@ u8 get_VCE(void)
  */
 void set_VCO(u16 vco)
 {
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         cf_co[i] = (vco >> (i + 0x0)) & 1;
@@ -217,7 +218,7 @@ void set_VCO(u16 vco)
 }
 void set_VCC(u16 vcc)
 {
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         cf_comp[i] = (vcc >> (i + 0x0)) & 1;
@@ -227,7 +228,7 @@ void set_VCC(u16 vcc)
 }
 void set_VCE(u8 vce)
 {
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         cf_vce[i] = (vce >> i) & 1;

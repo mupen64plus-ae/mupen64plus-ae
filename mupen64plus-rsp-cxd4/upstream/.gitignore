@@ -1,8 +1,9 @@
 *.asm
 *.s
-*.o
 
-/obj
+*.o
+*.so
+obj
 
 *.obj
 *.dll

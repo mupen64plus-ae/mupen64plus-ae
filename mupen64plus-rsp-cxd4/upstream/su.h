@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Basic MIPS R4000 Instruction Set for Scalar Unit Operations        *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.11.05                                                         *
+* Release:  2018.03.17                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -22,8 +22,6 @@
 #include "my_types.h"
 #include "rsp.h"
 
-#define EXTERN_COMMAND_LIST_GBI
-#define EXTERN_COMMAND_LIST_ABI
 #define SEMAPHORE_LOCK_CORRECTIONS
 #define WAIT_FOR_CPU_HOST
 
@@ -34,10 +32,10 @@
 
 /*
  * Currently, the plugin system this module is written for doesn't notify us
- * of how much RDRAM is installed to the system, so we have to presume 8 MiB.
+ * of how much RDRAM is installed to the system, so we'll use signal handlers
+ * to catch memory segment access faults in the trial search to find it out.
  */
-#define MAX_DRAM_ADDR           0x007FFFFFul
-#define MAX_DRAM_DMA_ADDR       (MAX_DRAM_ADDR & ~7)
+extern unsigned long su_max_address;
 
 /*
  * Interact with memory using server-side byte order (MIPS big-endian) or
@@ -79,7 +77,9 @@
 
 typedef enum {
     zero = 0,
+
     at =  1,
+
 #ifdef TRUE_MIPS_AND_NOT_JUST_THE_RSP_SUBSET
     v0 =  2,
     v1 =  3,
@@ -117,7 +117,9 @@ typedef enum {
     sp = 29,
     fp = 30, /* new, official MIPS name for it:  "frame pointer" */
     ra = 31,
-    S8 = fp
+
+    NUMBER_OF_SCALAR_REGISTERS,
+    S8 = fp /* older name for GPR $fp as of the R4000 ISA */
 } GPR_specifier;
 
 extern RSP_INFO RSP_INFO_NAME;
@@ -125,7 +127,7 @@ extern pu8 DRAM;
 extern pu8 DMEM;
 extern pu8 IMEM;
 
-extern u8 conf[32];
+extern u8 conf[];
 
 /*
  * general-purpose scalar registers
@@ -133,7 +135,7 @@ extern u8 conf[32];
  * based on the MIPS instruction set architecture but without most of the
  * original register names (for example, no kernel-reserved registers)
  */
-extern u32 SR[32];
+extern u32 SR[];
 
 #define FIT_IMEM(PC)    ((PC) & 0xFFFu & 0xFFCu)
 
@@ -155,7 +157,7 @@ int stage;
 
 extern int temp_PC;
 #ifdef WAIT_FOR_CPU_HOST
-extern short MFC0_count[32];
+extern short MFC0_count[];
 /* Keep one C0 MF status read count for each scalar register. */
 #endif
 
@@ -266,8 +268,28 @@ extern void set_PC(unsigned int address);
 #define SP_STATUS_SIG6          (0x00000001ul << 13)
 #define SP_STATUS_SIG7          (0x00000001ul << 14)
 
-#define NUMBER_OF_CP0_REGISTERS         16
-extern pu32 CR[NUMBER_OF_CP0_REGISTERS];
+enum {
+    RCP_SP_MEM_ADDR_REG,
+    RCP_SP_DRAM_ADDR_REG,
+    RCP_SP_RD_LEN_REG,
+    RCP_SP_WR_LEN_REG,
+    RCP_SP_STATUS_REG,
+    RCP_SP_DMA_FULL_REG,
+    RCP_SP_DMA_BUSY_REG,
+    RCP_SP_SEMAPHORE_REG,
+
+    RCP_DPC_START_REG,
+    RCP_DPC_END_REG,
+    RCP_DPC_CURRENT_REG,
+    RCP_DPC_STATUS_REG,
+    RCP_DPC_CLOCK_REG,
+    RCP_DPC_BUFBUSY_REG,
+    RCP_DPC_PIPEBUSY_REG,
+    RCP_DPC_TMEM_REG,
+
+    NUMBER_OF_CP0_REGISTERS
+} CPR_specifier;
+extern pu32 CR[];
 
 extern void SP_DMA_READ(void);
 extern void SP_DMA_WRITE(void);

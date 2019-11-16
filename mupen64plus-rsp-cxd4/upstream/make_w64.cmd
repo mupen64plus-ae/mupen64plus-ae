@@ -1,8 +1,22 @@
 @ECHO OFF
 TITLE MinGW Compiler Suite Invocation
 
-set version=x86_64-5.1.0-win32-seh-rt_v4-rev0
-set MinGW="C:\Program Files\mingw-w64\%version%\mingw64"
+REM If you have installed MinGW-w64 without using MSYS2 to obtain the package
+REM (or just not yet installed at all), this build script may not work out of
+REM the box for most Windows users.  If you have Cygwin instead or whatever
+REM else, be sure to adjust the path below, or execute "make.sh" in a Git shell.
+
+REM The following line is the only one you should ever need to change.
+set mingw64=C:\msys64\mingw64
+
+REM The following two variables are irrelevant, unless you set a 32-bit target.
+set mingw32=%mingw64%\..\mingw32
+set lib=%mingw32%\i686-w64-mingw32\lib
+
+set lib64=%mingw64%\x86_64-w64-mingw32\lib
+set bin=%mingw64%\bin
+set inc=%lib64%\..\include
+
 REM set rsp=%USERPROFILE%\rsp
 set rsp=%CD%
 set obj=%rsp%\obj
@@ -15,21 +29,18 @@ set OBJ_LIST=^
 %obj%\vu\add.o ^
 %obj%\vu\select.o ^
 %obj%\vu\logical.o ^
-%obj%\vu\divide.o ^
-%MinGW%\x86_64-w64-mingw32\lib\libkernel32.a
+%obj%\vu\divide.o
 
-set FLAGS_ANSI=-Wall^
+set FLAGS_ANSI=-Wall -pedantic^
  -DPLUGIN_API_VERSION=0x0101^
- -march=native^
  -mstackrealign^
- -pedantic
-set FLAGS_x86=-Wall^
- -masm=intel^
+ -march=native
+set FLAGS_x86=-Wall -pedantic^
  -DPLUGIN_API_VERSION=0x0101^
  -DARCH_MIN_SSE2^
- -march=native^
+ -masm=intel^
  -mstackrealign^
- -pedantic
+ -march=native
 set C_FLAGS=%FLAGS_x86%
 
 if not exist obj (
@@ -37,31 +48,33 @@ mkdir obj
 cd obj
 mkdir vu
 )
-cd %MinGW%\bin
+cd /D %bin%
 
 ECHO Compiling C source code...
-%MinGW%\bin\gcc.exe -S -Os %C_FLAGS% -o %obj%\module.asm      %rsp%\module.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\su.asm          %rsp%\su.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\vu\vu.asm       %rsp%\vu\vu.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\vu\multiply.asm %rsp%\vu\multiply.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\vu\add.asm      %rsp%\vu\add.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\vu\select.asm   %rsp%\vu\select.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\vu\logical.asm  %rsp%\vu\logical.c
-%MinGW%\bin\gcc.exe -S -O3 %C_FLAGS% -o %obj%\vu\divide.asm   %rsp%\vu\divide.c
+@ECHO ON
+gcc -S -Os %C_FLAGS% -o %obj%\module.asm      %rsp%\module.c
+gcc -S -O3 %C_FLAGS% -o %obj%\su.asm          %rsp%\su.c
+gcc -S -O3 %C_FLAGS% -o %obj%\vu\vu.asm       %rsp%\vu\vu.c
+gcc -S -O3 %C_FLAGS% -o %obj%\vu\multiply.asm %rsp%\vu\multiply.c
+gcc -S -O3 %C_FLAGS% -o %obj%\vu\add.asm      %rsp%\vu\add.c
+gcc -S -O3 %C_FLAGS% -o %obj%\vu\select.asm   %rsp%\vu\select.c
+gcc -S -O3 %C_FLAGS% -o %obj%\vu\logical.asm  %rsp%\vu\logical.c
+gcc -S -O2 %C_FLAGS% -o %obj%\vu\divide.asm   %rsp%\vu\divide.c
+@ECHO OFF
 ECHO.
 
 ECHO Assembling compiled sources...
-%MinGW%\bin\as.exe -o %obj%\module.o      %obj%\module.asm
-%MinGW%\bin\as.exe -o %obj%\su.o          %obj%\su.asm
-%MinGW%\bin\as.exe -o %obj%\vu\vu.o       %obj%\vu\vu.asm
-%MinGW%\bin\as.exe -o %obj%\vu\multiply.o %obj%\vu\multiply.asm
-%MinGW%\bin\as.exe -o %obj%\vu\add.o      %obj%\vu\add.asm
-%MinGW%\bin\as.exe -o %obj%\vu\select.o   %obj%\vu\select.asm
-%MinGW%\bin\as.exe -o %obj%\vu\logical.o  %obj%\vu\logical.asm
-%MinGW%\bin\as.exe -o %obj%\vu\divide.o   %obj%\vu\divide.asm
+as -o %obj%\module.o            %obj%\module.asm
+as -o %obj%\su.o                %obj%\su.asm
+as -o %obj%\vu\vu.o             %obj%\vu\vu.asm
+as -o %obj%\vu\multiply.o       %obj%\vu\multiply.asm
+as -o %obj%\vu\add.o            %obj%\vu\add.asm
+as -o %obj%\vu\select.o         %obj%\vu\select.asm
+as -o %obj%\vu\logical.o        %obj%\vu\logical.asm
+as -o %obj%\vu\divide.o         %obj%\vu\divide.asm
 ECHO.
 
 ECHO Linking assembled object files...
-%MinGW%\bin\ld.exe --shared -e DllMain -o %obj%\rspdebug.dll %OBJ_LIST%
-%MinGW%\bin\strip.exe -o %obj%/rsp.dll %obj%/rspdebug.dll
+ld --shared -e DllMain -o %obj%\rspdebug.dll -L%lib64% %OBJ_LIST% -lmsvcrt
+strip -o %obj%\rsp.dll %obj%\rspdebug.dll --strip-all
 PAUSE

@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Scalar Unit Operations                    *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.11.05                                                         *
+* Release:  2018.03.17                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -21,14 +21,18 @@
  */
 #include "module.h"
 
+/* memcpy() and memset() in SP DMA */
+#include <string.h>
+
 u32 inst_word;
 
-u32 SR[32];
+u32 SR[NUMBER_OF_SCALAR_REGISTERS];
 typedef VECTOR_OPERATION(*p_vector_func)(v16, v16);
 
 pu8 DRAM;
 pu8 DMEM;
 pu8 IMEM;
+unsigned long su_max_address = 0x007FFFFFul;
 
 NOINLINE void res_S(void)
 {
@@ -98,36 +102,41 @@ static void MT_SP_STATUS(unsigned int rt)
     pu32 SP_STATUS_REG;
 
     if (SR[rt] & 0xFE000040)
-        message("MTC0\nSP_STATUS");
-    MI_INTR_REG = GET_RSP_INFO(MI_INTR_REG);
+        message("MTC0\nSP_STATUS"); /* bits we don't know what to do with */
     SP_STATUS_REG = GET_RSP_INFO(SP_STATUS_REG);
 
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00000001) <<  0);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000002) <<  0);
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00000004) <<  1);
-    *MI_INTR_REG &= ~((SR[rt] & 0x00000008) >> 3); /* SP_CLR_INTR */
-    *MI_INTR_REG |=  ((SR[rt] & 0x00000010) >> 4); /* SP_SET_INTR */
-    *SP_STATUS_REG |= (SR[rt] & 0x00000010) >> 4; /* int set halt */
+ /* DMA_BUSY, DMA_FULL, IO_FULL:  No feature exists to clear these. */
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00000020) <<  5);
- /* *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000040) <<  5); */
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00000080) <<  6);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000100) <<  6);
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00000200) <<  7);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000400) <<  7); /* yield request? */
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00000800) <<  8);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00001000) <<  8); /* yielded? */
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00002000) <<  9);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00004000) <<  9); /* task done? */
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00008000) << 10);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00010000) << 10);
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00020000) << 11);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00040000) << 11);
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00080000) << 12);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00100000) << 12);
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00200000) << 13);
-    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00400000) << 13);
     *SP_STATUS_REG &= ~(!!(SR[rt] & 0x00800000) << 14);
+
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000002) <<  0);
+ /* No feature exists to set BROKE:  (!!1 << 1) */
+ /* DMA_BUSY, DMA_FULL, IO_FULL:  No feature exists to set these. */
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000040) <<  5);
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000100) <<  6);
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00000400) <<  7); /* yield request? */
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00001000) <<  8); /* yielded? */
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00004000) <<  9); /* task done? */
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00010000) << 10);
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00040000) << 11);
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00100000) << 12);
+    *SP_STATUS_REG |=  (!!(SR[rt] & 0x00400000) << 13);
     *SP_STATUS_REG |=  (!!(SR[rt] & 0x01000000) << 14);
+
+    MI_INTR_REG = GET_RSP_INFO(MI_INTR_REG);
+    *MI_INTR_REG   &= ~((SR[rt] & 0x00000008) >> 3); /* SP_CLR_INTR */
+    *MI_INTR_REG   |=  ((SR[rt] & 0x00000010) >> 4); /* SP_SET_INTR */
+    *SP_STATUS_REG |=   (SR[rt] & 0x00000010) >> 4; /* int set halt */
     return;
 }
 static void MT_SP_RESERVED(unsigned int rt)
@@ -225,11 +234,12 @@ void SP_DMA_READ(void)
         do {
             offC = (count*length + *CR[0x0] + i) & 0x00001FF8ul;
             offD = (count*skip + *CR[0x1] + i) & 0x00FFFFF8ul;
-            *(pi64)(DMEM + offC) =
-                *(pi64)(DRAM + offD)
-              & (offD & ~MAX_DRAM_DMA_ADDR ? 0 : ~0) /* 0 if (addr > limit) */
-            ;
             i += 0x008;
+            if (offD > su_max_address) {
+                memset(DMEM + offC, 0x00, 8);
+                continue;
+            }
+            memcpy(DMEM + offC, DRAM + offD, 8);
         } while (i < length);
     } while (count);
 
@@ -264,8 +274,10 @@ void SP_DMA_WRITE(void)
         do {
             offC = (count*length + *CR[0x0] + i) & 0x00001FF8ul;
             offD = (count*skip + *CR[0x1] + i) & 0x00FFFFF8ul;
-            *(pi64)(DRAM + offD) = *(pi64)(DMEM + offC);
             i += 0x000008;
+            if (offD > su_max_address)
+                continue;
+            memcpy(DRAM + offD, DMEM + offC, 8);
         } while (i < length);
     } while (count);
 
@@ -825,30 +837,12 @@ void SDV(unsigned vt, unsigned element, signed offset, unsigned base)
     return;
 }
 
-static char transfer_debug[32] = "?WC2    $v00[0x0], 0x000($00)";
-static const char digits[16] = {
-    '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
-};
-
-NOINLINE void res_lsw(
-    unsigned vt,
-    unsigned element,
-    signed offset,
-    unsigned base)
+NOINLINE void
+res_lsw(unsigned vt, unsigned element, signed offset, unsigned base)
 {
-    transfer_debug[10] = '0' + (unsigned char)vt/10;
-    transfer_debug[11] = '0' + (unsigned char)vt%10;
-
-    transfer_debug[15] = digits[element & 0xF];
-
-    transfer_debug[21] = digits[(offset & 0xFFF) >>  8];
-    transfer_debug[22] = digits[(offset & 0x0FF) >>  4];
-    transfer_debug[23] = digits[(offset & 0x00F) >>  0];
-
-    transfer_debug[26] = '0' + (unsigned char)base/10;
-    transfer_debug[27] = '0' + (unsigned char)base%10;
-
-    message(transfer_debug);
+    message("Reserved vector unit transfer operation.");
+    if (vt != element + base || offset != 0) /* unused parameters */
+        return;
     return;
 }
 
@@ -1652,7 +1646,7 @@ void STV(unsigned vt, unsigned element, signed offset, unsigned base)
 
 int temp_PC;
 #ifdef WAIT_FOR_CPU_HOST
-short MFC0_count[32];
+short MFC0_count[NUMBER_OF_SCALAR_REGISTERS];
 #endif
 
 mwc2_func LWC2[2 * 8*2] = {
@@ -1828,7 +1822,7 @@ PROFILE_MODE void MWC2_load(u32 inst)
     offset <<= 5 + 4; /* safe on x86, skips 5-bit rd, 4-bit element */
     offset >>= 5 + 4;
 #else
-    offset = (inst & 64) ? -(s16)(~inst%64 + 1) : inst % 64;
+    offset = (inst & 64) ? -(s16)(~inst%64 + 1) : (s16)(inst % 64);
 #endif
     LWC2[IW_RD(inst)](vt, element, offset, base);
 }
@@ -1844,7 +1838,7 @@ PROFILE_MODE void MWC2_store(u32 inst)
     offset <<= 5 + 4; /* safe on x86, skips 5-bit rd, 4-bit element */
     offset >>= 5 + 4;
 #else
-    offset = (inst & 64) ? -(s16)(~inst%64 + 1) : inst % 64;
+    offset = (inst & 64) ? -(s16)(~inst%64 + 1) : (s16)(inst % 64);
 #endif
     SWC2[IW_RD(inst)](vt, element, offset, base);
 }
