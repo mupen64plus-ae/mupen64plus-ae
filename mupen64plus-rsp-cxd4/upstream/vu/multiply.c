@@ -44,7 +44,7 @@ static INLINE void SIGNED_CLAMP_AM(pi16 VD)
 static INLINE void SIGNED_CLAMP_AM(pi16 VD)
 { /* typical sign-clamp of accumulator-mid (bits 31:16) */
     i16 hi[N], lo[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         lo[i]  = (VACC_H[i] < ~0);
@@ -69,7 +69,7 @@ static INLINE void UNSIGNED_CLAMP(pi16 VD)
 { /* sign-zero hybrid clamp of accumulator-mid (bits 31:16) */
     ALIGNED i16 temp[N];
     i16 cond[N];
-    register int i;
+    register unsigned int i;
 
     SIGNED_CLAMP_AM(temp); /* no direct map in SSE, but closely based on this */
     for (i = 0; i < N; i++)
@@ -85,7 +85,7 @@ static INLINE void SIGNED_CLAMP_AL(pi16 VD)
 { /* sign-clamp accumulator-low (bits 15:0) */
     ALIGNED i16 temp[N];
     i16 cond[N];
-    register int i;
+    register unsigned int i;
 
     SIGNED_CLAMP_AM(temp); /* no direct map in SSE, but closely based on this */
     for (i = 0; i < N; i++)
@@ -101,7 +101,7 @@ INLINE static void do_macu(pi16 VD, pi16 VS, pi16 VT)
 {
     i32 product[N];
     u32 addend[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         product[i] = VS[i] * VT[i];
@@ -446,7 +446,7 @@ VECTOR_OPERATION VMACF(v16 vs, v16 vt)
     return _mm_packs_epi32(vs, vt);
 #else
     word_32 product[N], addend[N];
-    register int i;
+    register unsigned int i;
 
     for (i = 0; i < N; i++)
         product[i].SW = vs[i] * vt[i];
