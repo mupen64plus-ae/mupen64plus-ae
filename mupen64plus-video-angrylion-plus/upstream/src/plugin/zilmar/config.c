@@ -12,6 +12,7 @@
 
 #define SECTION_GENERAL "General"
 #define SECTION_VIDEO_INTERFACE "VideoInterface"
+#define SECTION_DISPLAY_PROCESSOR "DisplayProcessor"
 
 #define KEY_GEN_PARALLEL "parallel"
 #define KEY_GEN_NUM_WORKERS "num_workers"
@@ -20,11 +21,20 @@
 #define KEY_VI_INTERP "interpolation"
 #define KEY_VI_WIDESCREEN "widescreen"
 #define KEY_VI_HIDE_OVERSCAN "hide_overscan"
+#define KEY_VI_EXCLUSIVE "exclusive"
+#define KEY_VI_VSYNC "vsync"
+
+#define KEY_DP_COMPAT "compat"
 
 #define CONFIG_FILE_NAME CORE_SIMPLE_NAME "-config.ini"
 
+#define CONFIG_DLG_INIT_CHECKBOX(id, var, config) \
+    var = GetDlgItem(hwnd, id); \
+    SendMessage(var, BM_SETCHECK, (WPARAM)config, 0);
+
 static HINSTANCE inst;
-static struct rdp_config config;
+static struct n64video_config config;
+static bool config_stale;
 static char config_path[MAX_PATH + 1];
 
 static HWND dlg_combo_vi_mode;
@@ -33,6 +43,9 @@ static HWND dlg_check_trace;
 static HWND dlg_check_multithread;
 static HWND dlg_check_vi_widescreen;
 static HWND dlg_check_vi_overscan;
+static HWND dlg_check_vi_exclusive;
+static HWND dlg_check_vi_vsync;
+static HWND dlg_combo_dp_compat;
 static HWND dlg_spin_workers;
 static HWND dlg_edit_workers;
 
@@ -41,6 +54,7 @@ static void config_dialog_update_multithread(void)
     BOOL check = (BOOL)SendMessage(dlg_check_multithread, BM_GETCHECK, 0, 0);
     EnableWindow(dlg_spin_workers, check);
     EnableWindow(dlg_edit_workers, check);
+    EnableWindow(dlg_combo_dp_compat, check);
 }
 
 static void config_dialog_update_vi_mode(void)
@@ -64,9 +78,7 @@ INT_PTR CALLBACK config_dialog_proc(HWND hwnd, UINT iMessage, WPARAM wParam, LPA
         case WM_INITDIALOG: {
             SetWindowText(hwnd, CORE_BASE_NAME " Config");
 
-            if (!config_load()) {
-                rdp_config_defaults(&config);
-            }
+            config_load();
 
             char* vi_mode_strings[] = {
                 "Filtered",   // VI_MODE_NORMAL
@@ -86,14 +98,20 @@ INT_PTR CALLBACK config_dialog_proc(HWND hwnd, UINT iMessage, WPARAM wParam, LPA
             dlg_combo_vi_interp = GetDlgItem(hwnd, IDC_COMBO_VI_INTERP);
             config_dialog_fill_combo(dlg_combo_vi_interp, vi_interp_strings, VI_INTERP_NUM, config.vi.interp);
 
-            dlg_check_multithread = GetDlgItem(hwnd, IDC_CHECK_MULTITHREAD);
-            SendMessage(dlg_check_multithread, BM_SETCHECK, (WPARAM)config.parallel, 0);
+            char* dp_compat_strings[] = {
+                "Fast, most glitches",      // DP_COMPAT_LOW
+                "Moderate, some glitches",  // DP_COMPAT_MEDIUM
+                "Slow, few glitches"        // DP_COMPAT_HIGH
+            };
 
-            dlg_check_vi_widescreen = GetDlgItem(hwnd, IDC_CHECK_VI_WIDESCREEN);
-            SendMessage(dlg_check_vi_widescreen, BM_SETCHECK, (WPARAM)config.vi.widescreen, 0);
+            dlg_combo_dp_compat = GetDlgItem(hwnd, IDC_COMBO_DP_COMPAT);
+            config_dialog_fill_combo(dlg_combo_dp_compat, dp_compat_strings, DP_COMPAT_NUM, config.dp.compat);
 
-            dlg_check_vi_overscan = GetDlgItem(hwnd, IDC_CHECK_VI_OVERSCAN);
-            SendMessage(dlg_check_vi_overscan, BM_SETCHECK, (WPARAM)config.vi.hide_overscan, 0);
+            CONFIG_DLG_INIT_CHECKBOX(IDC_CHECK_MULTITHREAD, dlg_check_multithread, config.parallel);
+            CONFIG_DLG_INIT_CHECKBOX(IDC_CHECK_VI_WIDESCREEN, dlg_check_vi_widescreen, config.vi.widescreen);
+            CONFIG_DLG_INIT_CHECKBOX(IDC_CHECK_VI_OVERSCAN, dlg_check_vi_overscan, config.vi.hide_overscan);
+            CONFIG_DLG_INIT_CHECKBOX(IDC_CHECK_VI_EXCLUSIVE, dlg_check_vi_exclusive, config.vi.exclusive);
+            CONFIG_DLG_INIT_CHECKBOX(IDC_CHECK_VI_VSYNC, dlg_check_vi_vsync, config.vi.vsync);
 
             dlg_edit_workers = GetDlgItem(hwnd, IDC_EDIT_WORKERS);
             SetDlgItemInt(hwnd, IDC_EDIT_WORKERS, config.num_workers, FALSE);
@@ -132,10 +150,12 @@ INT_PTR CALLBACK config_dialog_proc(HWND hwnd, UINT iMessage, WPARAM wParam, LPA
                     config.vi.interp = SendMessage(dlg_combo_vi_interp, CB_GETCURSEL, 0, 0);
                     config.vi.widescreen = SendMessage(dlg_check_vi_widescreen, BM_GETCHECK, 0, 0);
                     config.vi.hide_overscan = SendMessage(dlg_check_vi_overscan, BM_GETCHECK, 0, 0);
+                    config.vi.exclusive = SendMessage(dlg_check_vi_exclusive, BM_GETCHECK, 0, 0);
+                    config.vi.vsync = SendMessage(dlg_check_vi_vsync, BM_GETCHECK, 0, 0);
+                    config.dp.compat = SendMessage(dlg_combo_dp_compat, CB_GETCURSEL, 0, 0);
                     config.parallel = SendMessage(dlg_check_multithread, BM_GETCHECK, 0, 0);
                     config.num_workers = GetDlgItemInt(hwnd, IDC_EDIT_WORKERS, FALSE, FALSE);
-
-                    rdp_update_config(&config);
+                    config_stale = true;
                     config_save();
 
                     // don't close dialog if "Apply" was pressed
@@ -172,6 +192,14 @@ static void config_handle(const char* key, const char* value, const char* sectio
             config.vi.widescreen = strtol(value, NULL, 0) != 0;
         } else if (!_strcmpi(key, KEY_VI_HIDE_OVERSCAN)) {
             config.vi.hide_overscan = strtol(value, NULL, 0) != 0;
+        } else if (!_strcmpi(key, KEY_VI_EXCLUSIVE)) {
+            config.vi.exclusive = strtol(value, NULL, 0) != 0;
+        } else if (!_strcmpi(key, KEY_VI_VSYNC)) {
+            config.vi.vsync = strtol(value, NULL, 0) != 0;
+        }
+    } else if (!_strcmpi(section, SECTION_DISPLAY_PROCESSOR)) {
+        if (!_strcmpi(key, KEY_DP_COMPAT)) {
+            config.dp.compat = strtol(value, NULL, 0);
         }
     }
 }
@@ -185,6 +213,9 @@ void config_init(HINSTANCE hInst)
     GetModuleFileName(inst, config_path, sizeof(config_path));
     PathRemoveFileSpec(config_path);
     PathAppend(config_path, CONFIG_FILE_NAME);
+
+    // load default config
+    n64video_config_init(&config);
 }
 
 void config_dialog(HWND hParent)
@@ -192,7 +223,7 @@ void config_dialog(HWND hParent)
     DialogBox(inst, MAKEINTRESOURCE(IDD_DIALOG1), hParent, config_dialog_proc);
 }
 
-struct rdp_config* config_get(void)
+struct n64video_config* config_get(void)
 {
     return &config;
 }
@@ -272,8 +303,23 @@ bool config_save(void)
     config_write_int32(fp, KEY_VI_INTERP, config.vi.interp);
     config_write_int32(fp, KEY_VI_WIDESCREEN, config.vi.widescreen);
     config_write_int32(fp, KEY_VI_HIDE_OVERSCAN, config.vi.hide_overscan);
+    config_write_int32(fp, KEY_VI_EXCLUSIVE, config.vi.exclusive);
+    config_write_int32(fp, KEY_VI_VSYNC, config.vi.vsync);
+    fputs("\n", fp);
+
+    config_write_section(fp, SECTION_DISPLAY_PROCESSOR);
+    config_write_int32(fp, KEY_DP_COMPAT, config.dp.compat);
 
     fclose(fp);
 
     return true;
+}
+
+void config_update(void)
+{
+    if (config_stale) {
+        n64video_close();
+        n64video_init(&config);
+        config_stale = false;
+    }
 }

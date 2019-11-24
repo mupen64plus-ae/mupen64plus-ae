@@ -1,6 +1,5 @@
 #include "gfx_1.3.h"
 
-#include "plugin/common/gl_screen.h"
 #include "wgl_ext.h"
 
 #include "core/screen.h"
@@ -16,25 +15,34 @@ extern GFX_INFO gfx;
 #define WINDOW_DEFAULT_WIDTH 640
 #define WINDOW_DEFAULT_HEIGHT 480
 
+// previous size of the window
+static int32_t win_width;
+static int32_t win_height;
+
 // context states
 static HDC dc;
 static HGLRC glrc;
 static HGLRC glrc_core;
 static bool fullscreen;
 
+// config states
+static bool exclusive;
+
 // Win32 helpers
 void win32_client_resize(HWND hWnd, HWND hStatus, int32_t nWidth, int32_t nHeight)
 {
     RECT rclient;
-    GetClientRect(hWnd, &rclient);
+    if (!GetClientRect(hWnd, &rclient)) {
+        return;
+    }
 
     RECT rwin;
-    GetWindowRect(hWnd, &rwin);
+    if (!GetWindowRect(hWnd, &rwin)) {
+        return;
+    }
 
-    if (hStatus) {
-        RECT rstatus;
-        GetClientRect(hStatus, &rstatus);
-
+    RECT rstatus;
+    if (hStatus && GetClientRect(hStatus, &rstatus)) {
         rclient.bottom -= rstatus.bottom;
     }
 
@@ -58,39 +66,41 @@ static int TestPointer(const PROC pTest)
 
 void* IntGetProcAddress(const char *name)
 {
-    HMODULE glMod = NULL;
     PROC pFunc = wglGetProcAddress((LPCSTR)name);
     if (TestPointer(pFunc)) {
         return pFunc;
     }
-    glMod = GetModuleHandleA("OpenGL32.dll");
-    return (PROC)GetProcAddress(glMod, (LPCSTR)name);
+    HMODULE glMod = GetModuleHandleA("OpenGL32.dll");
+    if (glMod == NULL) {
+        return glMod;
+    } else {
+        return (PROC)GetProcAddress(glMod, (LPCSTR)name);
+    }
 }
 
-void screen_init(struct rdp_config* config)
+void screen_init(struct n64video_config* config)
 {
+    exclusive = config->vi.exclusive;
+
+    // reset windowed size state
+    win_width = 0;
+    win_height = 0;
+
     // make window resizable for the user
     if (!fullscreen) {
         LONG style = GetWindowLong(gfx.hWnd, GWL_STYLE);
-        style |= WS_SIZEBOX | WS_MAXIMIZEBOX;
-        SetWindowLong(gfx.hWnd, GWL_STYLE, style);
 
-        BOOL zoomed = IsZoomed(gfx.hWnd);
+        if ((style & (WS_SIZEBOX | WS_MAXIMIZEBOX)) == 0) {
+            style |= WS_SIZEBOX | WS_MAXIMIZEBOX;
+            SetWindowLong(gfx.hWnd, GWL_STYLE, style);
 
-        if (zoomed) {
-            ShowWindow(gfx.hWnd, SW_RESTORE);
-        }
-
-        // Fix client size after changing the window style, otherwise the PJ64
-        // menu will be displayed incorrectly.
-        // For some reason, this needs to be called twice, probably because the
-        // style set above isn't applied immediately.
-        for (int i = 0; i < 2; i++) {
-            win32_client_resize(gfx.hWnd, gfx.hStatusBar, WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT);
-        }
-
-        if (zoomed) {
-            ShowWindow(gfx.hWnd, SW_MAXIMIZE);
+            // Fix client size after changing the window style, otherwise the PJ64
+            // menu will be displayed incorrectly.
+            // For some reason, this needs to be called twice, probably because the
+            // style set above isn't applied immediately.
+            for (int i = 0; i < 2; i++) {
+                win32_client_resize(gfx.hWnd, gfx.hStatusBar, WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT);
+            }
         }
     }
 
@@ -109,11 +119,13 @@ void screen_init(struct rdp_config* config)
     dc = GetDC(gfx.hWnd);
     if (!dc) {
         msg_error("Can't get device context.");
+        return;
     }
 
     int32_t win_pf = ChoosePixelFormat(dc, &win_pfd);
     if (!win_pf) {
         msg_error("Can't choose pixel format.");
+        return;
     }
     SetPixelFormat(dc, win_pf, &win_pfd);
 
@@ -121,6 +133,7 @@ void screen_init(struct rdp_config* config)
     glrc = wglCreateContext(dc);
     if (!glrc || !wglMakeCurrent(dc, glrc)) {
         msg_error("Can't create OpenGL context.");
+        return;
     }
 
     // load wgl extension
@@ -142,41 +155,28 @@ void screen_init(struct rdp_config* config)
         msg_warning("Can't create OpenGL 3.3 core context.");
     }
 
-    // enable vsync
-    wglSwapIntervalEXT(1);
-
-    gl_screen_init(config);
+    // enable or disable vsync
+    wglSwapIntervalEXT(config->vi.vsync ? 1 : 0);
 }
 
-void screen_write(struct rdp_frame_buffer* buffer, int32_t output_height)
+void screen_adjust(int32_t width_out, int32_t height_out, int32_t* width, int32_t* height, int32_t* x, int32_t* y)
 {
-    gl_screen_write(buffer, output_height);
-}
-
-void screen_read(struct rdp_frame_buffer* buffer, bool rgb)
-{
-    gl_screen_read(buffer, rgb);
-}
-
-void screen_swap(bool blank)
-{
-    // don't render when the window is minimized
-    if (IsIconic(gfx.hWnd)) {
+    // get size of window
+    RECT rect;
+    if (!GetClientRect(gfx.hWnd, &rect)) {
+        // window handle invalid?
+        *width = 0;
+        *height = 0;
+        *x = 0;
+        *y = 0;
         return;
     }
-
-    // clear current buffer, indicating the start of a new frame
-    gl_screen_clear();
-
-    RECT rect;
-    GetClientRect(gfx.hWnd, &rect);
 
     // status bar covers the client area, so exclude it from calculation
     RECT statusrect;
     SetRectEmpty(&statusrect);
 
-    if (gfx.hStatusBar) {
-        GetClientRect(gfx.hStatusBar, &statusrect);
+    if (gfx.hStatusBar && GetClientRect(gfx.hStatusBar, &statusrect)) {
         rect.bottom -= statusrect.bottom;
     }
 
@@ -187,21 +187,53 @@ void screen_swap(bool blank)
     int32_t win_x = 0;
     int32_t win_y = statusrect.bottom;
 
-    if (!blank) {
-        gl_screen_render(win_width, win_height, win_x, win_y);
+    // adjust windowed size after the output size has changed so that
+    // the output remains pixel-perfect until the user changes the window size
+    if (win_width != win_width || win_height != win_height) {
+        int32_t win_width_tmp = win_width = win_width;
+        int32_t win_height_tmp = win_height = win_height;
+
+        // double resolution for very small frame sizes, typically when
+        // unfiltered option is enabled
+        if (win_width_tmp <= 320) {
+            win_width_tmp <<= 1;
+            win_height_tmp <<= 1;
+        }
+
+        WINDOWPLACEMENT wndpl = { 0 };
+        GetWindowPlacement(gfx.hWnd, &wndpl);
+
+        // only fix size if windowed and not maximized
+        if (!fullscreen && wndpl.showCmd != SW_MAXIMIZE) {
+            win32_client_resize(gfx.hWnd, gfx.hStatusBar,
+                win_width_tmp, win_height_tmp);
+        }
     }
 
-    // swap front and back buffers
-    SwapBuffers(dc);
+    *width = win_width;
+    *height = win_height;
+    *x = win_x;
+    *y = win_y;
 }
 
-void screen_set_fullscreen(bool _fullscreen)
+void screen_update(void)
+{
+    // don't render when the window is minimized
+    if (!IsIconic(gfx.hWnd)) {
+        // swap front and back buffers
+        SwapBuffers(dc);
+    }
+}
+
+void screen_toggle_fullscreen(void)
 {
     static HMENU old_menu;
     static LONG old_style;
     static WINDOWPLACEMENT old_pos;
 
-    if (_fullscreen) {
+    fullscreen = !fullscreen;
+
+    if (fullscreen) {
         // hide curser
         ShowCursor(FALSE);
 
@@ -226,11 +258,16 @@ void screen_set_fullscreen(bool _fullscreen)
         // disable all styles to get a borderless window and save it to restore
         // it later
         old_style = GetWindowLong(gfx.hWnd, GWL_STYLE);
-        SetWindowLong(gfx.hWnd, GWL_STYLE, WS_VISIBLE);
+        LONG style = WS_VISIBLE;
+        if (exclusive) {
+            style |= WS_POPUP;
+        }
+        SetWindowLong(gfx.hWnd, GWL_STYLE, style);
 
         // resize window so it covers the entire virtual screen
         SetWindowPos(gfx.hWnd, HWND_TOP, 0, 0, vs_width, vs_height, SWP_SHOWWINDOW);
-    } else {
+    }
+    else {
         // restore cursor
         ShowCursor(TRUE);
 
@@ -251,19 +288,10 @@ void screen_set_fullscreen(bool _fullscreen)
         // restore window size and position
         SetWindowPlacement(gfx.hWnd, &old_pos);
     }
-
-    fullscreen = _fullscreen;
-}
-
-bool screen_get_fullscreen(void)
-{
-    return fullscreen;
 }
 
 void screen_close(void)
 {
-    gl_screen_close();
-
     if (glrc_core) {
         wglDeleteContext(glrc_core);
     }
