@@ -13,5 +13,9 @@ before_install:
   - unzip -qq android-ndk-r20b-linux-x86_64.zip
   - export ANDROID_NDK_HOME=$HOME/android-ndk-r20b
   - cd $TRAVIS_BUILD_DIR
+install:
+  - echo y | sdkmanager 'ndk-bundle'
+  - echo y | sdkmanager 'cmake;3.6.4111459'
+  - echo y | sdkmanager 'lldb;3.0'
 script:
   - ./gradlew assemble
