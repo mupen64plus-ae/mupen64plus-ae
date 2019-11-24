@@ -62,7 +62,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
-    private static final String LIBANGRYLION_SO = "libmupen64plus-video-angrylion-rdp-plus.so";
+    private static final String LIBANGRYLION_SO = "mupen64plus-video-angrylion-plus.so";
 
     private String mCurrentVideoPlugin = null;
     
@@ -147,7 +147,7 @@ public class EmulationProfileActivity extends ProfileActivity
                 if(angryLionIndex != -1)
                 {
                     videoEntriesArray.remove(angryLionIndex);
-                    videoValuesArray.remove("libmupen64plus-video-angrylion-rdp-plus.so");
+                    videoValuesArray.remove("mupen64plus-video-angrylion-plus.so");
                 }
 
                 preferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[0]));

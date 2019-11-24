@@ -164,6 +164,8 @@ class NativeConfigFiles
 
         // Angrylion was replaced with Angrylion RDP Plus
         videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-angrylion.so", "libmupen64plus-video-angrylion-rdp-plus.so");
+        // Library was renamed
+        videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-angrylion-rdp-plus.so", "mupen64plus-video-angrylion-plus.so");
 
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );
 

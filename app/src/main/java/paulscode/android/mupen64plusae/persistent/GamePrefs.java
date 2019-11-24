@@ -462,7 +462,7 @@ public class GamePrefs
 
 
         //Video preferences for angrylion
-        boolean isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion-rdp-plus.so" );
+        boolean isAngrylionEnabled = videoPlugin.name.equals( "mupen64plus-video-angrylion-plus.so" );
         angrylionPlusPrefs = new AngrylionPlusPrefs(context, emulationProfile);
 
         boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled;
