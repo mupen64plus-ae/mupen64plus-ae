@@ -39,9 +39,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 find_package(Git REQUIRED)
-find_package(PythonLibs)
+#find_package(PythonLibs)
 find_package(PythonInterp 3.2 REQUIRED)
-find_package(OpenGL REQUIRED)
+#find_package(OpenGL REQUIRED)
 
 set(PATH_SRC "src")
 
@@ -61,6 +61,14 @@ add_custom_command(
 
 # static core library
 file(GLOB SOURCES_CORE "${PATH_CORE}/*.c" "${PATH_CORE}/*.cpp")
+
+find_library( # Defines the name of the path variable that stores the
+        # location of the NDK library.
+        OPENGL_LIBRARIES
+
+        # Specifies the name of the NDK library that
+        # CMake needs to locate.
+        GLESv3 )
 
 add_library(alp-core STATIC ${SOURCES_CORE} ${PATH_VERSION})
 
