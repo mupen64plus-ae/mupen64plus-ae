@@ -11,9 +11,9 @@ def system(cmd, default):
 
 if __name__ == "__main__":
     branch = system("git rev-parse --abbrev-ref HEAD", "master")
-    hash = system("git log -1 --format=%H", "0" * 40)
+    hash = system("git show -s --format=%h", "0" * 40)
+    date = system("git show -s --format=%ci", "")[:10]
     tag = system("git describe --dirty --always --tags", "")
-    date = system("git show -s --format=%ci", "")
 
     # remove hash from git describe output
     tag = tag.split("-")

@@ -20,9 +20,6 @@
     <ClCompile Include="..\src\plugin\zilmar\msg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\plugin\zilmar\plugin.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\plugin\zilmar\screen.c">
       <Filter>Source Files</Filter>
     </ClCompile>

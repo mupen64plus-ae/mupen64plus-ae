@@ -32,18 +32,12 @@
     <ClInclude Include="..\src\plugin\mupen64plus\gfx_m64p.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\plugin\mupen64plus\screen.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\plugin\mupen64plus\gfx_m64p.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\plugin\mupen64plus\msg.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\plugin\mupen64plus\plugin.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\plugin\mupen64plus\screen.c">

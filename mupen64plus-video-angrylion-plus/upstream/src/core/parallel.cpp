@@ -12,12 +12,18 @@
 class Parallel
 {
 public:
-    Parallel(std::uint32_t num_workers) :
-        m_num_workers(std::min(num_workers, 64U))
+    Parallel(std::uint32_t num_workers)
     {
+        if (num_workers == 0) {
+            // auto-select number of workers based on the number of cores
+            m_num_workers = std::thread::hardware_concurrency();
+        } else {
+            m_num_workers = std::min(num_workers, PARALLEL_MAX_WORKERS);
+        }
+
         // mask for m_tasks_done when all workers have finished their task
         // except for worker 0, which runs in the main thread
-        m_all_tasks_done = ((1LL << m_num_workers) - 1) & ~1;
+        m_all_tasks_done = (1LL << m_num_workers) - 2;
 
         // give workers an empty task
         m_task = [](std::uint32_t) {};
@@ -80,7 +86,7 @@ private:
     std::atomic<uint64_t> m_tasks_done;
     std::uint64_t m_all_tasks_done;
     std::atomic<bool> m_accept_work;
-    const std::uint32_t m_num_workers;
+    std::uint32_t m_num_workers;
 
     void start_work() {
         std::unique_lock<std::mutex> ul(m_signal_mutex);
@@ -107,40 +113,16 @@ private:
 
                 // notify main thread
                 m_signal_done.notify_one();
+
+                // take a break and wait for more work
+                m_signal_work.wait(ul, [worker_mask, this] {
+                    return (m_tasks_done & worker_mask) == 0;
+                });
             }
-
-#ifdef ANDROID
-            //Busy loop wait for a bit to keep cores awake
-            bool workAvailable = false;
-            int count = 0;
-            while (!workAvailable && count++ < 10000) {
-                std::unique_lock<std::mutex> ul(m_signal_mutex);
-                workAvailable = (m_tasks_done & worker_mask) == 0;
-                std::this_thread::yield();
-            }
-#endif
-
-            std::unique_lock<std::mutex> ul(m_signal_mutex);
-
-            // take a break and wait for more work
-            m_signal_work.wait(ul, [worker_mask, this] {
-                return (m_tasks_done & worker_mask) == 0;
-            });
         }
     }
 
     void wait() {
-
-#ifdef ANDROID
-        //Busy loop wait for a bit to keep cores awake
-        bool waitingForWorkDone = true;
-        int count = 0;
-        while (waitingForWorkDone && count++ < 10000) {
-            waitingForWorkDone = m_tasks_done != m_all_tasks_done;
-            std::this_thread::yield();
-        }
-#endif
-
         // wait for all workers to set their task bits
         std::unique_lock<std::mutex> ul(m_signal_mutex);
         m_signal_done.wait(ul, [this] {
@@ -157,11 +139,6 @@ static std::unique_ptr<Parallel> parallel;
 
 void parallel_init(uint32_t num)
 {
-    // auto-select number of workers based on the number of cores
-    if (num == 0) {
-        num = std::thread::hardware_concurrency();
-    }
-
     parallel = std::make_unique<Parallel>(num);
 }
 
