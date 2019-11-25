@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/rdp.h"
+#include "core/n64video.h"
 #include "api/m64p_plugin.h"
 #include "api/m64p_common.h"
 

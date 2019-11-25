@@ -34,16 +34,19 @@
 #define KEY_VI_WIDESCREEN "ViWidescreen"
 #define KEY_VI_HIDE_OVERSCAN "ViHideOverscan"
 
+#define KEY_DP_COMPAT "DpCompat"
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "gfx_m64p.h"
-#include "screen.h"
 
 #include "api/m64p_types.h"
 #include "api/m64p_config.h"
 
+#include "core/screen.h"
+#include "core/vdac.h"
 #include "core/version.h"
 #include "core/msg.h"
 
@@ -53,12 +56,13 @@ static ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
 static ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
 static ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
 static ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
+static ptr_PluginGetVersion       CoreGetVersion = NULL;
 
 static bool warn_hle;
 static bool plugin_initialized;
 void (*debug_callback)(void *, int, const char *);
 void *debug_call_context;
-static struct rdp_config config;
+static struct n64video_config config;
 
 m64p_dynlib_handle CoreLibHandle;
 GFX_INFO gfx;
@@ -69,6 +73,10 @@ static m64p_handle configVideoAngrylionPlus = NULL;
 
 #define PLUGIN_VERSION              0x000100
 #define VIDEO_PLUGIN_API_VERSION    0x020200
+
+extern int32_t win_width;
+extern int32_t win_height;
+extern int32_t win_fullscreen;
 
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Context,
                                      void (*DebugCallback)(void *, int, const char *))
@@ -97,7 +105,9 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
     ConfigSetDefaultInt(configVideoGeneral, KEY_SCREEN_WIDTH, 640, "Width of output window or fullscreen width");
     ConfigSetDefaultInt(configVideoGeneral, KEY_SCREEN_HEIGHT, 480, "Height of output window or fullscreen height");
 
-    rdp_config_defaults(&config);
+    CoreGetVersion = (ptr_PluginGetVersion)DLSYM(CoreLibHandle, "PluginGetVersion");
+
+    n64video_config_init(&config);
 
     ConfigSetDefaultBool(configVideoAngrylionPlus, KEY_PARALLEL, config.parallel, "Distribute rendering between multiple processors if True");
     ConfigSetDefaultInt(configVideoAngrylionPlus, KEY_NUM_WORKERS, config.num_workers, "Rendering Workers (0=Use all logical processors)");
@@ -105,6 +115,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
     ConfigSetDefaultInt(configVideoAngrylionPlus, KEY_VI_INTERP, config.vi.interp, "Scaling interpolation type (0=NN, 1=Linear)");
     ConfigSetDefaultBool(configVideoAngrylionPlus, KEY_VI_WIDESCREEN, config.vi.widescreen, "Use anamorphic 16:9 output mode if True");
     ConfigSetDefaultBool(configVideoAngrylionPlus, KEY_VI_HIDE_OVERSCAN, config.vi.hide_overscan, "Hide overscan area in filteded mode if True");
+    ConfigSetDefaultInt(configVideoAngrylionPlus, KEY_DP_COMPAT, config.dp.compat, "Compatibility mode (0=Fast 1=Moderate 2=Slow");
 
     ConfigSaveSection("Video-General");
     ConfigSaveSection("Video-Angrylion-Plus");
@@ -167,21 +178,21 @@ EXPORT void CALL MoveScreen (int xpos, int ypos)
 EXPORT void CALL ProcessDList(void)
 {
     if (!warn_hle) {
-        msg_warning("Please disable 'Graphic HLE' in the plugin settings.");
+        msg_warning("HLE video emulation not supported, please use a LLE RSP plugin like mupen64plus-rsp-cxd4");
         warn_hle = true;
     }
 }
 
 EXPORT void CALL ProcessRDPList(void)
 {
-    rdp_update();
+    n64video_process_list();
 }
 
 EXPORT int CALL RomOpen (void)
 {
-    window_fullscreen = ConfigGetParamBool(configVideoGeneral, KEY_FULLSCREEN);
-    window_width = ConfigGetParamInt(configVideoGeneral, KEY_SCREEN_WIDTH);
-    window_height = ConfigGetParamInt(configVideoGeneral, KEY_SCREEN_HEIGHT);
+    win_fullscreen = ConfigGetParamBool(configVideoGeneral, KEY_FULLSCREEN);
+    win_width = ConfigGetParamInt(configVideoGeneral, KEY_SCREEN_WIDTH);
+    win_height = ConfigGetParamInt(configVideoGeneral, KEY_SCREEN_HEIGHT);
 
     config.parallel = ConfigGetParamBool(configVideoAngrylionPlus, KEY_PARALLEL);
     config.num_workers = ConfigGetParamInt(configVideoAngrylionPlus, KEY_NUM_WORKERS);
@@ -190,13 +201,33 @@ EXPORT int CALL RomOpen (void)
     config.vi.widescreen = ConfigGetParamBool(configVideoAngrylionPlus, KEY_VI_WIDESCREEN);
     config.vi.hide_overscan = ConfigGetParamBool(configVideoAngrylionPlus, KEY_VI_HIDE_OVERSCAN);
 
-    rdp_init(&config);
+    config.dp.compat = ConfigGetParamInt(configVideoAngrylionPlus, KEY_DP_COMPAT);
+
+    config.gfx.rdram = gfx.RDRAM;
+
+    int core_version;
+    CoreGetVersion(NULL, &core_version, NULL, NULL, NULL);
+    if (core_version >= 0x020501) {
+        config.gfx.rdram_size = *gfx.RDRAM_SIZE;
+    } else {
+        config.gfx.rdram_size = RDRAM_MAX_SIZE;
+    }
+
+    config.gfx.dmem = gfx.DMEM;
+    config.gfx.mi_intr_reg = (uint32_t*)gfx.MI_INTR_REG;
+    config.gfx.mi_intr_cb = gfx.CheckInterrupts;
+
+    config.gfx.vi_reg = (uint32_t**)&gfx.VI_STATUS_REG;
+    config.gfx.dp_reg = (uint32_t**)&gfx.DPC_START_REG;
+
+    n64video_init(&config);
+
     return 1;
 }
 
 EXPORT void CALL RomClosed (void)
 {
-    rdp_close();
+    n64video_close();
 }
 
 EXPORT void CALL ShowCFB (void)
@@ -205,7 +236,7 @@ EXPORT void CALL ShowCFB (void)
 
 EXPORT void CALL UpdateScreen (void)
 {
-    rdp_update_vi();
+    n64video_update_screen();
 }
 
 EXPORT void CALL ViStatusChanged (void)
@@ -223,16 +254,12 @@ EXPORT void CALL ChangeWindow(void)
 
 EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 {
-    struct rdp_frame_buffer fb = { 0 };
-    screen_read(&fb, true);
+    struct frame_buffer fb = { 0 };
+    fb.pixels = dest;
+    vdac_read(&fb, false);
 
     *width = fb.width;
     *height = fb.height;
-
-    if (dest) {
-        fb.pixels = dest;
-        screen_read(&fb, true);
-    }
 }
 
 EXPORT void CALL SetRenderingCallback(void (*callback)(int))
@@ -242,8 +269,8 @@ EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 
 EXPORT void CALL ResizeVideoOutput(int width, int height)
 {
-    window_width = width;
-    window_height = height;
+    win_width = width;
+    win_height = height;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

@@ -1,8 +1,7 @@
-#include "screen.h"
 #include "gfx_m64p.h"
+#include "api/m64p_vidext.h"
 
-#include "plugin/common/gl_screen.h"
-
+#include "core/screen.h"
 #include "core/msg.h"
 
 #include <stdlib.h>
@@ -20,19 +19,17 @@ static ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 static ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
 static ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
 
-static bool toggle_fs;
-
 // framebuffer texture states
-int32_t window_width;
-int32_t window_height;
-int32_t window_fullscreen;
+int32_t win_width;
+int32_t win_height;
+int32_t win_fullscreen;
 
 void* IntGetProcAddress(const char *name)
 {
     return CoreVideo_GL_GetProcAddress(name);
 }
 
-void screen_init(struct rdp_config* config)
+void screen_init(struct n64video_config* config)
 {
     /* Get the core Video Extension function pointers from the library handle */
     CoreVideo_Init = (ptr_VidExt_Init) DLSYM(CoreLibHandle, "VidExt_Init");
@@ -59,52 +56,29 @@ void screen_init(struct rdp_config* config)
     CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-    CoreVideo_SetVideoMode(window_width, window_height, 0, window_fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, M64VIDEOFLAG_SUPPORT_RESIZING);
-
-    gl_screen_init(config);
+    CoreVideo_SetVideoMode(win_width, win_height, 0, win_fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, M64VIDEOFLAG_SUPPORT_RESIZING);
 }
 
-void screen_swap(bool blank)
+void screen_adjust(int32_t width_out, int32_t height_out, int32_t* width, int32_t* height, int32_t* x, int32_t* y)
 {
-    if (toggle_fs) {
-        CoreVideo_ToggleFullScreen();
-        toggle_fs = false;
-    }
+    *width = win_width;
+    *height = win_height;
+    *x = 0;
+    *y = 0;
+}
 
-    // clear current buffer, indicating the start of a new frame
-    gl_screen_clear();
-
-    if (!blank) {
-        gl_screen_render(window_width, window_height, 0, 0);
-    }
-
+void screen_update(void)
+{
     (*render_callback)(1);
     CoreVideo_GL_SwapBuffers();
 }
 
-void screen_write(struct rdp_frame_buffer* buffer, int32_t output_height)
+void screen_toggle_fullscreen(void)
 {
-    gl_screen_write(buffer, output_height);
-}
-
-void screen_read(struct rdp_frame_buffer* buffer, bool rgb)
-{
-    gl_screen_read(buffer, rgb);
-}
-
-void screen_set_fullscreen(bool _fullscreen)
-{
-    toggle_fs = true;
-}
-
-bool screen_get_fullscreen(void)
-{
-    return false;
+    CoreVideo_ToggleFullScreen();
 }
 
 void screen_close(void)
 {
-    gl_screen_close();
-
     CoreVideo_Quit();
 }

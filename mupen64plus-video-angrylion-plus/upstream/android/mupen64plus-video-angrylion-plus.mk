@@ -25,13 +25,10 @@ MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -std=c++14 -g
 
 LOCAL_SRC_FILES := \
     $(SRCDIR)/core/parallel.cpp \
-    $(SRCDIR)/core/plugin.c \
-    $(SRCDIR)/core/rdp.c \
-    $(SRCDIR)/core/screen.c \
-    $(SRCDIR)/plugin/common/gl_screen.c \
+    $(SRCDIR)/core/n64video.c \
+    $(SRCDIR)/core/vdac.c \
     $(SRCDIR)/plugin/mupen64plus/gfx_m64p.c \
     $(SRCDIR)/plugin/mupen64plus/msg.c \
-    $(SRCDIR)/plugin/mupen64plus/plugin.c \
     $(SRCDIR)/plugin/mupen64plus/screen.c
 
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS)

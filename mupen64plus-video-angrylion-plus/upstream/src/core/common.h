@@ -21,3 +21,14 @@
 #endif
 
 #define DWORD_XOR_DWORD_SWAP 1
+
+// inlining
+#define INLINE inline
+
+#ifdef _MSC_VER
+#define STRICTINLINE __forceinline
+#elif defined(__GNUC__)
+#define STRICTINLINE __attribute__((always_inline)) inline
+#else
+#define STRICTINLINE inline
+#endif
