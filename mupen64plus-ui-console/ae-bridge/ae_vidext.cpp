@@ -29,10 +29,10 @@ bool isPaused = false;
 
 EGLint const defaultAttributeList[] = {
         EGL_BUFFER_SIZE, 0,
-        EGL_BLUE_SIZE, 0,
-        EGL_GREEN_SIZE, 0,
-        EGL_RED_SIZE, 0,
-        EGL_ALPHA_SIZE, 0,
+        EGL_BLUE_SIZE, 8,
+        EGL_GREEN_SIZE, 8,
+        EGL_RED_SIZE, 8,
+        EGL_ALPHA_SIZE, 8,
         EGL_DEPTH_SIZE, 16,
         EGL_SAMPLE_BUFFERS, 0,
         EGL_SAMPLES, 0,
@@ -256,7 +256,8 @@ extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
                 case M64P_GL_CONTEXT_PROFILE_ES:
                     eglBindAPI(EGL_OPENGL_ES_API);
                     my_index = FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE);
-                    attribList[my_index + 1] = EGL_OPENGL_ES2_BIT;
+                    //attribList[my_index + 1] = EGL_OPENGL_ES2_BIT;
+                    attribList[my_index + 1] = EGL_OPENGL_ES3_BIT;
                     break;
                 case M64P_GL_CONTEXT_PROFILE_CORE:
                 case M64P_GL_CONTEXT_PROFILE_COMPATIBILITY:
@@ -492,7 +493,7 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 extern DECLSPEC void vsyncEnabled(int enabled)
 {
-    vsync = enabled;
+    //vsync = enabled;
 }
 
 extern DECLSPEC void pauseEmulator()
