@@ -82,8 +82,6 @@ extern PFNGLACTIVETEXTUREPROC ptrActiveTexture;
 extern PFNGLBLENDCOLORPROC ptrBlendColor;
 extern PFNGLREADBUFFERPROC ptrReadBuffer;
 extern PFNGLFINISHPROC ptrFinish;
-extern PFNGLGETTEXLEVELPARAMETERIVPROC ptrGetTexLevelParameteriv;
-
 #if defined(OS_ANDROID)
 extern PFNEGLGETNATIVECLIENTBUFFERANDROIDPROC ptrGetNativeClientBufferANDROID;
 #endif
@@ -234,9 +232,6 @@ void initGLFunctions();
 #define glBlendColor(...) opengl::FunctionWrapper::wrBlendColor(__VA_ARGS__)
 #define glReadBuffer(...) opengl::FunctionWrapper::wrReadBuffer(__VA_ARGS__)
 #define glFinish(...) opengl::FunctionWrapper::wrFinish(__VA_ARGS__)
-#define glGetTexLevelParameteriv(...) opengl::FunctionWrapper::wrGetTexLevelParameteriv(__VA_ARGS__)
-
-extern PFNGLGETTEXLEVELPARAMETERIVPROC ptrGetTexLevelParameteriv;
 #if defined(OS_ANDROID)
 #define eglGetNativeClientBufferANDROID(...) opengl::FunctionWrapper::ewrGetNativeClientBufferANDROID(__VA_ARGS__)
 #endif
