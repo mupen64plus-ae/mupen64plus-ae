@@ -42,6 +42,17 @@ android {
             enableSplit false
         }
     }
+
+    sourceSets {
+        main {
+            debug {
+                jniLibs.srcDirs '../ndkLibs/libs/debug'
+            }
+            release {
+                jniLibs.srcDirs '../ndkLibs/libs/release'
+            }
+        }
+    }
 }
 
 dependencies {

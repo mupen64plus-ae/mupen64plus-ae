@@ -59,7 +59,7 @@ public class EmulationProfileActivity extends ProfileActivity
 
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
-    private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64.so";
+    private static final String LIBGLIDEN64_SO = "mupen64plus-video-GLideN64.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
     private static final String LIBANGRYLION_SO = "mupen64plus-video-angrylion-plus.so";
@@ -307,10 +307,10 @@ public class EmulationProfileActivity extends ProfileActivity
             //Support older string value for video plugin that could support multiple GLideN64 versions
             //There is now only one version
             if(key.equals("videoPlugin") &&
-                    value.contains("libmupen64plus-video-gliden64") &&
-                    !value.equals("libmupen64plus-video-gliden64.so"))
+                    value.toLowerCase().contains("libmupen64plus-video-gliden64") &&
+                    !value.equals("mupen64plus-video-GLideN64.so"))
             {
-                value = "libmupen64plus-video-gliden64.so";
+                value = "mupen64plus-video-GLideN64.so";
             }
         }
 

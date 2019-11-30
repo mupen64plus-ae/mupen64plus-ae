@@ -154,6 +154,7 @@ class NativeConfigFiles
             // Fix old format GLideN64 library using regular expression, for example, this will replace
             // libmupen64plus-video-gliden64-gles3.so with libmupen64plus-video-gliden64.so
             videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-gliden64.*so", "libmupen64plus-video-gliden64.so");
+            videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-gliden64.so", "mupen64plus-video-GLideN64.so");
         }
 
         if(game.isGlide64Enabled && supportsFullGl)

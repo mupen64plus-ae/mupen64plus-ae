@@ -629,10 +629,9 @@ public class AppData
                libraryExists("mupen64plus-video-angrylion-plus") &&
                libraryExists("libmupen64plus-video-glide64mk2-egl") &&
                libraryExists("libmupen64plus-video-glide64mk2") &&
-               libraryExists("libmupen64plus-video-gliden64") &&
+               libraryExists("mupen64plus-video-GLideN64") &&
                libraryExists("libmupen64plus-video-gln64") &&
                libraryExists("libmupen64plus-video-rice") &&
-               libraryExists("libosal") &&
                libraryExists("libSDL2") &&
                libraryExists("libsoundtouch_fp") &&
                libraryExists("libsoundtouch") &&

@@ -457,7 +457,7 @@ public class GamePrefs
         glide64mk2Prefs = new Glide64mk2Prefs(emulationProfile);
 
         // Video prefs - GLideN64, this is a more broad search because there used to be more than one GLideN64 version
-        isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
+        isGliden64Enabled = videoPlugin.name.contains( "mupen64plus-video-gliden64" );
         glideN64Prefs = new GLideN64Prefs(context, emulationProfile);
 
 

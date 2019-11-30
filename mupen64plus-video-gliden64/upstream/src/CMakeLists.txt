@@ -248,13 +248,50 @@ if(VERO4K)
    )
 endif(VERO4K)
 
-if(UNIX OR BCMHOST)
-  SET( FREETYPE_INCLUDE_DIRS "/usr/include/freetype2/" )
+if(ANDROID)
+  set( FREETYPE_INCLUDE_DIRS "${ANDROID_LIB_PATH}/freetype/include" )
+elseif(UNIX OR BCMHOST)
+  set( FREETYPE_INCLUDE_DIRS "/usr/include/freetype2/" )
 else(UNIX OR BCMHOST)
-  SET( ENV{FREETYPE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../freetype )
-endif(UNIX OR BCMHOST)
-FIND_PACKAGE( Freetype REQUIRED )
+  set( ENV{FREETYPE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../freetype )
+endif(ANDROID)
+
+if(ANDROID)
+    add_library( ANDROID_FREETYPE
+            SHARED
+            IMPORTED )
+
+    if( CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set( BUILD_VARIANT "debug" )
+    else()
+        set( BUILD_VARIANT "release" )
+    endif()
+
+    set_target_properties( # Specifies the target library.
+            ANDROID_FREETYPE
+
+            # Specifies the parameter you want to define.
+            PROPERTIES IMPORTED_LOCATION
+
+            # Provides the path to the library you want to import.
+            ${ANDROID_LIB_PATH}/libs/${BUILD_VARIANT}/${ANDROID_ABI}/libfreetype.so)
+    set(FREETYPE_LIBRARIES ANDROID_FREETYPE)
+elseif(ANDROID)
+    FIND_PACKAGE( Freetype REQUIRED )
+endif(ANDROID)
+
 include_directories( ${FREETYPE_INCLUDE_DIRS} )
+
+if(ANDROID)
+    if(ANDROID_ABI STREQUAL "armeabi-v7a" OR ANDROID_ABI STREQUAL "arm64-v8a")
+        set(NEON_OPT ON)
+        set(VEC4_OPT ON)
+        set(CRC_NEON ON)
+    elseif(ANDROID_ABI STREQUAL "x86" OR ANDROID_ABI STREQUAL "x86_64")
+        set(CRC_OPT ON)
+        set(VEC4_OPT ON)
+    endif()
+endif()
 
 if(VEC4_OPT)
   add_definitions(
@@ -271,11 +308,19 @@ if(CRC_ARMV8)
   )
 elseif(CRC_OPT)
   list(REMOVE_ITEM GLideN64_SOURCES
-        CRC32.cpp
+    CRC32.cpp
   )
   list(APPEND GLideN64_SOURCES
-        CRC_OPT.cpp
-        xxHash/xxhash.c
+    CRC_OPT.cpp
+    xxHash/xxhash.c
+  )
+elseif(CRC_NEON)
+  list(REMOVE_ITEM GLideN64_SOURCES
+    CRC32.cpp
+  )
+  list(APPEND GLideN64_SOURCES
+    Neon/CRC_OPT_NEON.cpp
+    xxHash/xxhash.c
   )
 endif(CRC_ARMV8)
 
@@ -321,7 +366,7 @@ if(EGL)
   add_definitions(
     -DEGL
   )
-  SET(OPENGL_LIBRARIES ${EGL_LIB})
+  set(OPENGL_LIBRARIES ${EGL_LIB})
 else(EGL)
   find_package(OpenGL REQUIRED)
   include_directories(${OpenGL_INCLUDE_DIRS})
@@ -342,12 +387,12 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
     message("Found compiler version " ${G++_VERSION})
     message(SEND_ERROR "You need at least Clang 3.3 to compile GLideN64!")
   endif()
-  SET(GCC_CPP11_COMPILE_FLAGS "-std=c++11")
-  SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CPP11_COMPILE_FLAGS}" )
+  set(GCC_CPP11_COMPILE_FLAGS "-std=c++11")
+  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CPP11_COMPILE_FLAGS}" )
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    SET(GCC_STATIC_LINK_FLAGS "-static-libgcc")
+    set(GCC_STATIC_LINK_FLAGS "-static-libgcc")
   endif()
-  SET( CMAKE_SHARED_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_STATIC_LINK_FLAGS}" )
+  set( CMAKE_SHARED_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_STATIC_LINK_FLAGS}" )
 endif()
 
 add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES})

@@ -1,6 +1,43 @@
-apply from: '../build_common/native_common.gradle'
+apply plugin: 'com.android.library'
+apply from: '../build_common/version_common.gradle'
 
 android {
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
+            jniDebuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "upstream/src/CMakeLists.txt"
+        }
+    }
+
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID=1", "-DMUPENPLUSAPI=1", "-DEGL=1", "-DVEC4_OPT=1", "-DCMAKE_BUILD_TYPE=Release", "-DUNIX=1",
+                    "-DANDROID_LIB_PATH=$projectDir/../ndkLibs",
+                    "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
+                cppFlags "-fexceptions"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
 
     packagingOptions {
         exclude 'lib/x86/libc++_shared.so'
