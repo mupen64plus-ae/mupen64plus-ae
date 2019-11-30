@@ -312,6 +312,14 @@ public class EmulationProfileActivity extends ProfileActivity
             {
                 value = "mupen64plus-video-GLideN64.so";
             }
+
+            //Fix old angrylion plugin library
+            if(key.equals("videoPlugin") &&
+                    value.toLowerCase().contains("angrylion") &&
+                    !value.equals("mupen64plus-video-angrylion-plus.so"))
+            {
+                value = "mupen64plus-video-angrylion-plus.so";
+            }
         }
 
         return value;
