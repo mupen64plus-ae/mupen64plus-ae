@@ -16,6 +16,7 @@ bool Context::ClipControl = false;
 bool Context::FramebufferFetch = false;
 bool Context::TextureBarrier = false;
 bool Context::EglImage = false;
+bool Context::EglImageFramebuffer = false;
 
 Context::Context() {}
 
@@ -40,6 +41,7 @@ void Context::init()
 	FramebufferFetch = m_impl->isSupported(SpecialFeatures::FramebufferFetch);
 	TextureBarrier = m_impl->isSupported(SpecialFeatures::TextureBarrier);
 	EglImage = m_impl->isSupported(SpecialFeatures::EglImage);
+	EglImageFramebuffer =  m_impl->isSupported(SpecialFeatures::EglImageFramebuffer);
 }
 
 void Context::destroy()
@@ -278,27 +280,27 @@ ShaderProgram * Context::createTexrectDrawerClearShader()
 	return m_impl->createTexrectDrawerClearShader();
 }
 
-TexrectCopyShaderProgram * Context::createTexrectCopyShader()
+ShaderProgram * Context::createTexrectCopyShader()
 {
 	return m_impl->createTexrectCopyShader();
 }
 
-TexrectCopyShaderProgram * Context::createTexrectColorAndDepthCopyShader()
+ShaderProgram * Context::createTexrectColorAndDepthCopyShader()
 {
 	return m_impl->createTexrectColorAndDepthCopyShader();
 }
 
-TexrectCopyShaderProgram * Context::createGammaCorrectionShader()
+ShaderProgram * Context::createGammaCorrectionShader()
 {
 	return m_impl->createGammaCorrectionShader();
 }
 
-TexrectCopyShaderProgram * Context::createOrientationCorrectionShader()
+ShaderProgram * Context::createOrientationCorrectionShader()
 {
 	return m_impl->createOrientationCorrectionShader();
 }
 
-TexrectCopyShaderProgram * Context::createFXAAShader()
+ShaderProgram * Context::createFXAAShader()
 {
 	return m_impl->createFXAAShader();
 }

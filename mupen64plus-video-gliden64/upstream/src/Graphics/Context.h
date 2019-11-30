@@ -26,7 +26,8 @@ namespace graphics {
 		ClipControl,
 		FramebufferFetch,
 		TextureBarrier,
-		EglImage
+		EglImage,
+		EglImageFramebuffer
 	};
 
 	enum class ClampMode {
@@ -232,15 +233,15 @@ namespace graphics {
 
 		ShaderProgram * createTexrectDrawerClearShader();
 
-		TexrectCopyShaderProgram * createTexrectCopyShader();
+		ShaderProgram * createTexrectCopyShader();
 
-		TexrectCopyShaderProgram * createTexrectColorAndDepthCopyShader();
+		ShaderProgram * createTexrectColorAndDepthCopyShader();
 
-		TexrectCopyShaderProgram * createGammaCorrectionShader();
+		ShaderProgram * createGammaCorrectionShader();
 
-		TexrectCopyShaderProgram * createOrientationCorrectionShader();
+		ShaderProgram * createOrientationCorrectionShader();
 
-		TexrectCopyShaderProgram * createFXAAShader();
+		ShaderProgram * createFXAAShader();
 
 		TextDrawerShaderProgram * createTextDrawerShader();
 
@@ -294,6 +295,7 @@ namespace graphics {
 		static bool FramebufferFetch;
 		static bool TextureBarrier;
 		static bool EglImage;
+		static bool EglImageFramebuffer;
 
 	private:
 		std::unique_ptr<ContextImpl> m_impl;
