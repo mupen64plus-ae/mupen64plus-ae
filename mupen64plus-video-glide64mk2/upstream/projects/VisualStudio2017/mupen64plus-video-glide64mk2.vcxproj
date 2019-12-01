@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A4D13408-A794-4199-8FC7-4A9A32505005}</ProjectGuid>
+    <RootNamespace>n64Glide</RootNamespace>
+    <ProjectName>mupen64plus-video-glide64mk2</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <IntDir>$(Platform)\Release\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <IntDir>$(Platform)\Release\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+    <OutDir>$(SolutionDir)$(Platform)\Debug\</OutDir>
+    <IntDir>$(Platform)\Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+    <OutDir>$(SolutionDir)$(Platform)\Debug\</OutDir>
+    <IntDir>$(Platform)\Debug\</IntDir>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\src\Glide64;..\..\src\Glide64\inc;..\..\src\GlideHQ;..\..\src\GlideHQ\tc-1.1+;..\..\src\Glitch64;..\..\src\Glitch64\inc;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\boost-1.66.0\;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\include;..\..\..\mupen64plus-win32-deps\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_VARIADIC_MAX=10;_CRT_SECURE_NO_WARNINGS;__MSC__;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;SDL2.lib;libpng16.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\mupen64plus-win32-deps\boost-1.66.0\lib32-msvc-14.1;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\lib\x86;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\lib\x86;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\src\Glide64;..\..\src\Glide64\inc;..\..\src\GlideHQ;..\..\src\GlideHQ\tc-1.1+;..\..\src\Glitch64;..\..\src\Glitch64\inc;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\boost-1.66.0\;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\include;..\..\..\mupen64plus-win32-deps\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_VARIADIC_MAX=10;_CRT_SECURE_NO_WARNINGS;__MSC__;WIN32;NO_ASM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;SDL2.lib;libpng16.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\mupen64plus-win32-deps\boost-1.66.0\lib64-msvc-14.1;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\lib\x64;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\lib\x64;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src\Glide64;..\..\src\Glide64\inc;..\..\src\GlideHQ;..\..\src\GlideHQ\tc-1.1+;..\..\src\Glitch64;..\..\src\Glitch64\inc;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\boost-1.66.0\;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\include;..\..\..\mupen64plus-win32-deps\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_VARIADIC_MAX=10;_CRT_SECURE_NO_WARNINGS;__MSC__;WIN32;__VISUALC__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;SDL2.lib;libpng16.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\mupen64plus-win32-deps\boost-1.66.0\lib32-msvc-14.1;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\lib\x86;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\lib\x86;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src\Glide64;..\..\src\Glide64\inc;..\..\src\GlideHQ;..\..\src\GlideHQ\tc-1.1+;..\..\src\Glitch64;..\..\src\Glitch64\inc;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\boost-1.66.0\;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\include;..\..\..\mupen64plus-win32-deps\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_VARIADIC_MAX=10;_CRT_SECURE_NO_WARNINGS;__MSC__;WIN32;__VISUALC__;NO_ASM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;SDL2.lib;libpng16.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\mupen64plus-win32-deps\boost-1.66.0\lib64-msvc-14.1;..\..\..\mupen64plus-win32-deps\libpng-1.6.37\lib\x64;..\..\..\mupen64plus-win32-deps\zlib-1.2.11\lib\x64;..\..\..\mupen64plus-win32-deps\SDL2-2.0.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Glide64\3dmath.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Combine.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Config.cpp" />
+    <ClCompile Include="..\..\src\Glide64\CRC.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Debugger.cpp" />
+    <ClCompile Include="..\..\src\Glide64\DepthBufferRender.cpp" />
+    <ClCompile Include="..\..\src\Glide64\FBtoScreen.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Ini.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Keys.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Main.cpp" />
+    <ClCompile Include="..\..\src\Glide64\osal_dynamiclib_win32.c" />
+    <ClCompile Include="..\..\src\Glide64\rdp.cpp" />
+    <ClCompile Include="..\..\src\Glide64\TexBuffer.cpp" />
+    <ClCompile Include="..\..\src\Glide64\TexCache.cpp" />
+    <ClCompile Include="..\..\src\Glide64\Util.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\Ext_TxFilter.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\tc-1.1+\fxt1.c" />
+    <ClCompile Include="..\..\src\GlideHQ\tc-1.1+\s2tc\s2tc_algorithm.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\tc-1.1+\s2tc\s2tc_libtxc_dxtn.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\tc-1.1+\texstore.c" />
+    <ClCompile Include="..\..\src\GlideHQ\tc-1.1+\wrapper.c" />
+    <ClCompile Include="..\..\src\GlideHQ\TextureFilters.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TextureFilters_2xsai.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TextureFilters_hq2x.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TextureFilters_hq4x.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxCache.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxDbg.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxFilter.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxFilterExport.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxHiResCache.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxImage.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxQuantize.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxReSample.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxTexCache.cpp" />
+    <ClCompile Include="..\..\src\GlideHQ\TxUtil.cpp" />
+    <ClCompile Include="..\..\src\Glitch64\OGLcombiner.cpp" />
+    <ClCompile Include="..\..\src\Glitch64\OGLgeometry.cpp" />
+    <ClCompile Include="..\..\src\Glitch64\OGLglitchmain.cpp" />
+    <ClCompile Include="..\..\src\Glitch64\OGLtextures.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\GlideHQ\tc-1.1+\s2tc\s2tc_algorithm.h" />
+    <ClInclude Include="..\..\src\GlideHQ\tc-1.1+\s2tc\s2tc_common.h" />
+    <ClInclude Include="..\..\src\GlideHQ\tc-1.1+\s2tc\s2tc_license.h" />
+    <ClInclude Include="..\..\src\GlideHQ\tc-1.1+\s2tc\txc_dxtn.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
