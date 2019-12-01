@@ -13,6 +13,13 @@ option(VERO4K "Set to ON if targeting a Vero4k" ${VERO4K})
 option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
 option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
 
+# run script to generate version.h
+add_custom_command(
+        OUTPUT Revision.h
+        COMMAND ./getRevision.sh
+        COMMENT "Generate Git version"
+)
+
 project( GLideN64 )
 
 set(GLideN64_SOURCES
