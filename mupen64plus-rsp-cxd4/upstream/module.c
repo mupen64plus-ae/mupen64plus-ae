@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Module Subsystem Interface to SP Interpreter Core                  *
 * Authors:  Iconoclast                                                         *
-* Release:  2018.03.21                                                         *
+* Release:  2018.12.18                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* time() (for helping srand()) */
+#include <time.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -244,6 +247,84 @@ static const char DLL_about[] =
     "Thanks for test RDP:  Jabo, ziggy, angrylion\n"\
     "RSP driver examples:  bpoint, zilmar, Ville Linde";
 
+static void init_regs(void)
+{
+    register size_t i, j;
+
+    for (i = 0; i < 16; i++)
+        if (CR[i] == NULL)
+            raise(SIGTERM); /* Don't proceed if plugin hasn't initialized. */
+    srand(time(NULL));
+
+    for (i = 0; i < N; i++) {
+        VACC_H[i] = ((u64)0xFFFF00000000 >> 32) & 0x0000;
+        VACC_M[i] = ((u64)0x0000FFFF0000 >> 16) & 0x0000;
+        VACC_L[i] = ((u64)0x00000000FFFF >>  0) & 0x0000;
+    }
+#if 0
+    DPH = SP_DIV_PRECISION_SINGLE; /* static global maintained in vu/divide.o */
+#endif
+
+/*
+ * Based on krom's experiences at testing the RSP hardware with homebrew, it
+ * has become apparent that the bits in $vco, $vcc and $vce do NOT become
+ * random upon powering on the console.  However, this does not say that
+ * previous values of these flags aren't momentarily preserved before any
+ * bit rot loses them overtime.  Since it's not clear whether these flags are
+ * explicitly initialized to 0 at power-on or if they temporarily retain old
+ * decaying bits, we'll just make them 0 to hush krom's RSP test FAIL yells.
+ */
+    for (i = 0; i < N; i++) {
+        cf_ne[i]   = (rand() & (1 << 15)) ? 0*TRUE : FALSE;
+        cf_co[i]   = (rand() & (1 << 12)) ? 0*TRUE : FALSE;
+        cf_clip[i] = (rand() & (1 <<  9)) ? 0*TRUE : FALSE;
+        cf_comp[i] = (rand() & (1 <<  6)) ? 0*TRUE : FALSE;
+
+        cf_vce[i]  = (rand() & (1 <<  0)) ? 0*TRUE : FALSE;
+    }
+
+    for (i = 0; i < 32; i++)
+        SR[i] = (u32)rand();
+    SR[0] = 0x00000000;
+    for (i = 0; i < 32; i++)
+        for (j = 0; j < N; j++)
+            VR[i][j] = (u16)((u32)rand() & 0xFFFFu);
+
+    *(RSP_INFO_NAME.SP_PC_REG) = 0x04001000;
+
+    *CR[0x0] = 0x00000000; /* DMA transfer address for SP memory cache */
+    *CR[0x1] = 0x00000000; /* DMA transfer address for host DRAM */
+    *CR[0x2] = 0x00000000; /* DMA read transfer period */
+    *CR[0x3] = 0x00000000; /* DMA write transfer period */
+
+    *CR[0x4] = 0x00000001; /* SP status flags */
+    *CR[0x5] = 0x00000000; /* read-only DMA full indicator */
+    *CR[0x6] = 0x00000000; /* read-only DMA busy indicator */
+    *CR[0x7] = 0x00000000; /* CPU-RSP synchronicity semaphore */
+
+    *CR[0x8] = (u32)rand(); /* start address of RDP command buffer */
+    *CR[0x9] = (u32)rand(); /* end address of RDP command buffer */
+    *CR[0xA] = 0x00000000; /* read-only current RDP command buffer address */
+    *CR[0xB] &=     0x100; /* DP status flags:  DMA_BUSY flag is undefined. */
+
+    *CR[0xC] = 0x0000FFFF; /* RDP clock cycle counter */
+/*
+ * Technically these are random at startup on the hardware, but most emulators
+ * fail to ever clear these locks if randomly set, causing constant warnings.
+ */
+#if 0
+    *CR[0xD] = (u32)rand(); /* read-only RDP contiguous busy buffer cycles */
+    *CR[0xE] = (u32)rand(); /* read-only RDP contiguous busy pipe cycles */
+#endif
+    *CR[0xF] = (u32)rand(); /* read-only RDP contiguous TMEM import cycles */
+
+    *CR[0xB] |= 0x000000A8; /* GCLK, PIPE_BUSY and CMD_BUF_READY always set */
+#if 0
+    *CR[0xB] |= (irand() & 1) << 8; /* DP DMA busy status bit is undefined. */
+#endif
+    *CR[0xC] += *CR[0xD] + *CR[0xE] + *CR[0xF]; /* random total clock cycles */
+}
+
 EXPORT void CALL CloseDLL(void)
 {
     DRAM = NULL; /* so DllTest benchmark doesn't think ROM is still open */
@@ -368,6 +449,8 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
         GET_RSP_INFO(ShowCFB)(); /* forced FB refresh in case gfx plugin skip */
         break;
     default:
+        if (task_type == 0x00000000)
+            break; /* generic or invoked without CPU filling in OSTask struct */
         if (task_type == 0x8BC43B5D)
             break; /* CIC boot code sent to the RSP */
         sprintf(task_debug_type, "%08lX", (unsigned long)task_type);
@@ -453,7 +536,6 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
     CR[0x5] = &GET_RCP_REG(SP_DMA_FULL_REG);
     CR[0x6] = &GET_RCP_REG(SP_DMA_BUSY_REG);
     CR[0x7] = &GET_RCP_REG(SP_SEMAPHORE_REG);
-    *(RSP_INFO_NAME.SP_PC_REG) = 0x04001000;
     CR[0x8] = &GET_RCP_REG(DPC_START_REG);
     CR[0x9] = &GET_RCP_REG(DPC_END_REG);
     CR[0xA] = &GET_RCP_REG(DPC_CURRENT_REG);
