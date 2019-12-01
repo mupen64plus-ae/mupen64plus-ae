@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/fzurita/GLideN64.git
+	branch = android_cmake
+	commit = 4e71e64bcbe8072f26f098cef13aa635f0be2aec
+	parent = 183c1cc78a9b1fd0d720eee95f0f5ec26528ba12
+	method = merge
+	cmdver = 0.4.0
