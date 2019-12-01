@@ -1,0 +1,228 @@
+.Dd September 20, 2013
+.Dt MUPEN64PLUS 6
+.Os
+.Sh NAME
+.Nm mupen64plus
+.Nd console front\(hyend for the Mupen64Plus N64 emulator
+.Sh SYNOPSIS
+.Nm
+.Op parameters
+.Ar romfile
+.Sh DESCRIPTION
+.Nm
+is a plugin\(hybased N64 emulator for Linux/Unix, OSX, and Windows which is capable of accurately playing many games.
+Included are four MIPS R4300 CPU emulators, with dynamic recompilers for 32\(hybit x86 and 64\(hybit amd64 systems, and necessary plugins for audio, graphical rendering (RDP), signal co\(hyprocessor (RSP), and input.
+There are several OpenGL video plugins available:
+.Bl -bullet
+.It
+Rice, included with the distribution
+.It
+Glide64Mk2, included with the distribution
+.It
+.Lk https://github.com/mupen64plus/mupen64plus-video-arachnoid Arachnoid
+.It
+.Lk https://github.com/mupen64plus/mupen64plus-video-glide64 Glide64
+(old)
+.It
+.Lk https://github.com/mupen64plus/mupen64plus-video-z64 Z64
+(must be used with the rsp-z64 plugin)
+.El
+.Pp
+The most current documentation can be found at the project\(cqs
+.Lk https://mupen64plus.org/ homepage .
+.Pp
+The options are as follows:
+.Bl -tag -width x
+.It Fl h , Fl Fl help
+Print help message.
+.It Fl Fl noosd
+Disable onscreen display.
+.It Fl Fl osd
+Enable onscreen display.
+.It Fl Fl fullscreen
+Run emulator in fullscreen display mode.
+.It Fl Fl windowed
+Run emulator in windowed display mode.
+.It Fl Fl resolution Ar res
+Display resolution (640\(mu480, 800\(mu600, 1024\(mu768, etc)
+.It Fl Fl nospeedlimit
+Disable core speed limiter.
+This should be used with the dummy audio plugin.
+.It Fl Fl cheats Ar cheat\(hyspec
+Enable or list cheat codes for the given rom file.
+.It Fl Fl corelib Ar filepath
+Specifies a filename (optionally with a preceding directory path) to load a specific
+.Nm
+core library.
+.It Fl Fl configdir Ar directory
+Specifies a directory to look for the
+.Pa mupen64plus.cfg
+file.
+Default is
+.Pa ~/.config/mupen64plus/ .
+.It Fl Fl datadir Ar directory
+Specifies a directory to search for shared data files (fonts, cheat codes, .ini files).
+Default is
+.Pa ${PREFIX}/share/mupen64plus/ .
+.It Fl Fl plugindir Ar directory
+Specifies a directory to search for plugin files.
+Default is
+.Pa ${PREFIX}/lib/mupen64plus/ .
+.It Fl Fl sshotdir Ar directory
+Specifies a directory to save screenshots captured during gameplay.
+Default is
+.Pa ~/.local/share/mupen64plus/screenshot/ .
+.It Fl Fl gfx Ar plugin\(hyspec
+Specifies a
+.Ar plugin\(hyspec
+to select a graphics plugin for use during emulation.
+.It Fl Fl audio Ar plugin\(hyspec
+Specifies a
+.Ar plugin\(hyspec
+to select an audio plugin for use during emulation.
+.It Fl Fl input Ar plugin\(hyspec
+Specifies a
+.Ar plugin\(hyspec
+to select an input plugin for use during emulation.
+.It Fl Fl rsp Ar plugin\(hyspec
+Specifies a
+.Ar plugin\(hyspec
+to select an RSP plugin for use during emulation.
+.It Fl Fl emumode Ar mode
+Specifies which mode the emulator core should run in.
+.Ar mode
+should be set to one of the following numbers:
+.Bl -inset
+.It 0
+Pure Interpreter
+.It 1
+Cached Interpreter
+.It 2
+Dynamic Recompiler (DynaRec)
+.El
+.It Fl Fl testshots Ar list
+Take screenshots at frames given in the comma\(hyseparated
+.Ar list ,
+then quit.
+.It Fl Fl core-compare-send
+Use the core comparison debugging feature, in data sending mode.
+If the core was not compiled with support for the Core Comparison feature, then the emulator will exit with an error.
+.It Fl Fl core-compare-recv
+Use the core comparison debugging feature, in data receiving mode.
+If the core was not compiled with support for the Core Comparison feature, then the emulator will exit with an error.
+.It Fl Fl set Ar param\(hyspec
+Set the value of a
+.Nm
+configuration parameter.
+This option may be used multiple times.
+The format of
+.Ar param\(hyspec
+is
+.Dl Section\(hyName[Param\(hyName]=Value
+.It Fl Fl nosaveoptions
+Do not save the given command\(hyline options into the
+.Nm
+configuration file to use as defaults in the future.
+.It Fl Fl verbose
+Print lots of information.
+Useful for debugging but unnecessary for normal use.
+.El
+.Sh plugin\(hyspec
+.Bl -ohang
+.It (plugin\(hyname)
+Filename (without path) of plugin to use.
+Application will search through several directories to look for a matching plugin name.
+.It (plugin\(hypath)
+Full directory path and filename of plugin.
+.It Sq dummy
+Use the dummy plugin.
+.El
+.Sh cheat\(hyspec
+.Bl -ohang
+.It Sq list
+Show all of the available cheat codes.
+.It Sq all
+Enable all of the available cheat codes.
+.It (codelist)
+A comma separated list of cheat code numbers to enable.
+.El
+.Sh KEY COMMANDS
+The following shortcut keys can be used during emulation.
+These are the default key values; nearly all of them may be set to different keys by editing the
+.Nm
+configuration file.
+.Bl -tag -width Alt\(hyEnter
+.It Escape
+Quit the emulator.
+.It 0\(en9
+Select virtual
+.Sq slot
+for save/load state.
+.It F5
+Save emulator state to current slot.
+.It F7
+Load emulator state from current slot.
+.It F9
+Reset emulator.
+.It F10
+Slow down emulator speed by 5 percent.
+.It F11
+Speed up emulator speed by 5 percent.
+.It F12
+Take screenshot.
+.It Alt\(hyEnter
+Toggle fullscreen mode.
+This is not supported on Windows.
+.It p or P
+Pause/continue emulation.
+.It m or M
+Mute/unmute sound.
+.It f or F
+Fast Forward (playback at 250% normal speed as long as key is pressed).
+.It g or G
+Press GameShark button (if cheats are enabled).
+.It / or \&?
+Advance one frame if paused.
+.It \(lB
+Decrease volume.
+.It \(rB
+Increase volume.
+.El
+.Sh FILES
+The default location for the
+.Nm
+configuration file is
+.Pa ~/.config/mupen64plus/ .
+The default location of the saved screenshots is
+.Pa ~/.local/share/mupen64plus/screenshot/ .
+The default location of the save states is
+.Pa ~/.local/share/mupen64plus/save/ .
+.Sh AUTHORS
+.An -nosplit
+.Nm
+was originally started by
+.An Richard42
+and
+.An nmn ,
+and is based on Mupen64 (originally written by
+.An Hacktarux ) .
+.Pp
+This man page was written by
+.An ebenblues ,
+and updated by
+.An Richard42
+and
+.An Anthony J. Bentley .
+.Sh COPYRIGHT
+Mupen64plus is \(co 2008\(en2013 The Mupen64plus Team
+.Pp
+License GPLv2+,
+.Lk https://gnu.org/licenses/gpl.html GNU GPL version 2 or later
+.Pp
+This is free software: you are free to change and redistribute it.
+There is
+.Em no warranty ,
+to the extent permitted by law.
+.Sh BUGS
+To report bugs or make feature requests, use the
+.Lk https://github.com/mupen64plus/mupen64plus-core/issues "issue tracker"
