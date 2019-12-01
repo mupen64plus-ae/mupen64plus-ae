@@ -10,6 +10,8 @@ option(ODROID "Set to ON if targeting an Odroid" ${ODROID})
 option(MUPENPLUSAPI "Set to ON for Mupen64Plus plugin" ${MUPENPLUSAPI})
 option(MESA "Set to ON to disable Raspberry Pi autodetection" ${MESA})
 option(VERO4K "Set to ON if targeting a Vero4k" ${VERO4K})
+option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
+option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
 
 project( GLideN64 )
 
@@ -249,6 +251,41 @@ if(VERO4K)
 endif(VERO4K)
 
 if(ANDROID)
+   add_definitions(-DOS_ANDROID -DEGL_EGLEXT_PROTOTYPES -DEGL)
+   set(EGL ON)
+
+   if(ANDROID_ABI STREQUAL "armeabi-v7a" OR ANDROID_ABI STREQUAL "arm64-v8a")
+       set(NEON_OPT ON)
+       set(VEC4_OPT ON)
+       set(CRC_NEON ON)
+   elseif(ANDROID_ABI STREQUAL "x86" OR ANDROID_ABI STREQUAL "x86_64")
+       set(CRC_OPT ON)
+       set(VEC4_OPT ON)
+   endif()
+
+   list(APPEND GLideN64_SOURCES
+           Log_android.cpp
+           Graphics/OpenGLContext/opengl_ColorBufferReaderWithEGLImage.cpp
+           Graphics/OpenGLContext/GraphicBuffer/PrivateApi/GraphicBuffer.cpp
+           Graphics/OpenGLContext/GraphicBuffer/PrivateApi/libhardware.cpp
+           Graphics/OpenGLContext/GraphicBuffer/PublicApi/android_hardware_buffer_compat.cpp
+           Graphics/OpenGLContext/GraphicBuffer/GraphicBufferWrapper.cpp
+           )
+
+   list(REMOVE_ITEM GLideN64_SOURCES
+           Log.cpp
+           )
+
+   find_library( # Defines the name of the path variable that stores the
+           # location of the NDK library.
+           LOG_LIB
+
+           # Specifies the name of the NDK library that
+           # CMake needs to locate.
+           log )
+endif(ANDROID)
+
+if(ANDROID)
   set( FREETYPE_INCLUDE_DIRS "${ANDROID_LIB_PATH}/freetype/include" )
 elseif(UNIX OR BCMHOST)
   set( FREETYPE_INCLUDE_DIRS "/usr/include/freetype2/" )
@@ -281,17 +318,6 @@ elseif(ANDROID)
 endif(ANDROID)
 
 include_directories( ${FREETYPE_INCLUDE_DIRS} )
-
-if(ANDROID)
-    if(ANDROID_ABI STREQUAL "armeabi-v7a" OR ANDROID_ABI STREQUAL "arm64-v8a")
-        set(NEON_OPT ON)
-        set(VEC4_OPT ON)
-        set(CRC_NEON ON)
-    elseif(ANDROID_ABI STREQUAL "x86" OR ANDROID_ABI STREQUAL "x86_64")
-        set(CRC_OPT ON)
-        set(VEC4_OPT ON)
-    endif()
-endif()
 
 if(VEC4_OPT)
   add_definitions(
@@ -362,6 +388,12 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 	)
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
+if(GL_PROFILE)
+    add_definitions(
+            -DGL_PROFILE -DGL_DEBUG
+    )
+endif(GL_PROFILE)
+
 if(EGL)
   add_definitions(
     -DEGL
@@ -408,15 +440,15 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
   if(SDL)
         if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osald )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osald )
 	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osald GLideNHQd )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osald GLideNHQd )
 	endif (NOHQ)
   else(SDL)
 	if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osald )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osald )
 	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osald GLideNHQd )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osald GLideNHQd )
 	endif (NOHQ)
   endif(SDL)
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -441,15 +473,15 @@ if( CMAKE_BUILD_TYPE STREQUAL "Release")
 
   if(SDL)
 	if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osal )
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osal )
 	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osal GLideNHQ )
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osal GLideNHQ )
 	endif (NOHQ)
   else(SDL)
 	if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osal )
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osal )
 	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osal GLideNHQ )
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} osal GLideNHQ )
 	endif (NOHQ)
   endif(SDL)
 endif( CMAKE_BUILD_TYPE STREQUAL "Release")

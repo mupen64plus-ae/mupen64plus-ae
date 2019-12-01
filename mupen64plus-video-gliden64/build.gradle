@@ -24,7 +24,7 @@ android {
     defaultConfig {
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID=1", "-DMUPENPLUSAPI=1", "-DEGL=1", "-DVEC4_OPT=1", "-DCMAKE_BUILD_TYPE=Release", "-DUNIX=1",
+                arguments "-DANDROID=1", "-DMUPENPLUSAPI=1", "-DCMAKE_BUILD_TYPE=Release", "-DUNIX=1",
                     "-DANDROID_LIB_PATH=$projectDir/../ndkLibs",
                     "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
                 cppFlags "-fexceptions"
