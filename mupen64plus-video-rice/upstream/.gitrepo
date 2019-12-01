@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/mupen64plus/mupen64plus-video-rice.git
+	branch = master
+	commit = 677257a3110abc4a5ce2fa3dd7e58443c2cdc7a0
+	parent = 245226071727f2f22da456ae5731d88116eee297
+	method = merge
+	cmdver = 0.4.0
