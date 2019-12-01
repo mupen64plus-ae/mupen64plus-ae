@@ -293,8 +293,10 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 	pb_controllerCommand(EMU_2_ADAP_PORT(Control), Command);
 }
 
+#ifndef ANDROID
 #if PLUGIN_VERSION >= 0x010002
 void SDL_PumpEvents(void);
+#endif
 #endif
 
 EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
@@ -304,8 +306,10 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 	   SDL, it must now call SDL_PumpEvents. Otherwise non-input events
 	   such as SDL_QUIT (which occur when one tries to close the window)
 	   are never emitted! */
+#ifndef ANDROID
 #if PLUGIN_VERSION >= 0x010002
 	SDL_PumpEvents();
+#endif
 #endif
 }
 
