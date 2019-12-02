@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/fzurita/GLideN64.git
 	branch = android_cmake
-	commit = 4e71e64bcbe8072f26f098cef13aa635f0be2aec
-	parent = 183c1cc78a9b1fd0d720eee95f0f5ec26528ba12
+	commit = 8adbfe757a6dc0028fe0228004154f8e7b110620
+	parent = 75fbbbad268fc919b06eb7866c33cb9e4ba00806
 	method = merge
 	cmdver = 0.4.0

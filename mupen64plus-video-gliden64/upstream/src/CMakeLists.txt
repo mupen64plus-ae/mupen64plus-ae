@@ -13,10 +13,11 @@ option(VERO4K "Set to ON if targeting a Vero4k" ${VERO4K})
 option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
 option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
 
-# run script to generate version.h
+# run script to generate Revision.h
+set(PATH_REVISION "Revision.h")
 add_custom_command(
-        OUTPUT Revision.h
-        COMMAND ./getRevision.sh
+        OUTPUT ${PATH_REVISION}
+        COMMAND ${CMAKE_SOURCE_DIR}/getRevision.sh
         COMMENT "Generate Git version"
 )
 
@@ -434,7 +435,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
   set( CMAKE_SHARED_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_STATIC_LINK_FLAGS}" )
 endif()
 
-add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES})
+add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES} ${PATH_REVISION})
 
 if( CMAKE_BUILD_TYPE STREQUAL "Debug")
   SET_TARGET_PROPERTIES(
