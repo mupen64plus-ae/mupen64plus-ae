@@ -51,6 +51,8 @@ enum { DEFAULT_COUNT_PER_OP = 2 };
 enum { DEFAULT_DISABLE_EXTRA_MEM = 0 };
 /* Default SI DMA duration */
 enum { DEFAULT_SI_DMA_DURATION = 0x900 };
+/* Force alignment of PI DMA */
+enum { DEFAULT_FORCE_ALIGNMENT_OF_PI_DMA = 0 };
 
 static romdatabase_entry* ini_search_by_md5(md5_byte_t* md5);
 
@@ -168,6 +170,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
     ROM_PARAMS.countperop = DEFAULT_COUNT_PER_OP;
     ROM_PARAMS.disableextramem = DEFAULT_DISABLE_EXTRA_MEM;
     ROM_PARAMS.sidmaduration = DEFAULT_SI_DMA_DURATION;
+    ROM_PARAMS.forcealignmentofpidma = DEFAULT_FORCE_ALIGNMENT_OF_PI_DMA;
     ROM_PARAMS.cheats = NULL;
 
     memcpy(ROM_PARAMS.headername, ROM_HEADER.Name, 20);
@@ -190,6 +193,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         ROM_PARAMS.countperop = entry->countperop;
         ROM_PARAMS.disableextramem = entry->disableextramem;
         ROM_PARAMS.sidmaduration = entry->sidmaduration;
+        ROM_PARAMS.forcealignmentofpidma = entry->forcealignmentofpidma;
         ROM_PARAMS.cheats = entry->cheats;
     }
     else
@@ -206,6 +210,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         ROM_PARAMS.countperop = DEFAULT_COUNT_PER_OP;
         ROM_PARAMS.disableextramem = DEFAULT_DISABLE_EXTRA_MEM;
         ROM_PARAMS.sidmaduration = DEFAULT_SI_DMA_DURATION;
+        ROM_PARAMS.forcealignmentofpidma = DEFAULT_FORCE_ALIGNMENT_OF_PI_DMA;
         ROM_PARAMS.cheats = NULL;
     }
 
@@ -374,6 +379,12 @@ static size_t romdatabase_resolve_round(void)
             entry->entry.set_flags |= ROMDATABASE_ENTRY_SIDMADURATION;
         }
 
+        if (!isset_bitmask(entry->entry.set_flags, ROMDATABASE_ENTRY_FORCEALIGNMENTOFPIDMA) &&
+            isset_bitmask(ref->set_flags, ROMDATABASE_ENTRY_FORCEALIGNMENTOFPIDMA)) {
+            entry->entry.sidmaduration = ref->forcealignmentofpidma;
+            entry->entry.set_flags |= ROMDATABASE_ENTRY_FORCEALIGNMENTOFPIDMA;
+        }
+
         free(entry->entry.refmd5);
         entry->entry.refmd5 = NULL;
     }
@@ -470,6 +481,7 @@ void romdatabase_open(void)
             search->entry.mempak = 1;
             search->entry.biopak = 0;
             search->entry.sidmaduration = DEFAULT_SI_DMA_DURATION;
+            search->entry.forcealignmentofpidma = 1; //If ROM is in database, force alignment by default
             search->entry.set_flags = ROMDATABASE_ENTRY_NONE;
 
             search->next_entry = NULL;
@@ -665,6 +677,11 @@ void romdatabase_open(void)
                 } else {
                     DebugMessage(M64MSG_WARNING, "ROM Database: Invalid SiDmaDuration on line %i", lineno);
                 }
+            }
+            else if(!strcmp(l.name, "ForceAlignmentOfPiDma"))
+            {
+                search->entry.forcealignmentofpidma = atoi(l.value);
+                search->entry.set_flags |= ROMDATABASE_ENTRY_FORCEALIGNMENTOFPIDMA;
             }
             else
             {

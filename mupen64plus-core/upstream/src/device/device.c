@@ -85,6 +85,7 @@ void init_device(struct device* dev,
     unsigned int count_per_op,
     int no_compiled_jump,
     int randomize_interrupt,
+    int forceAlignmentOfPiDma,
     /* ai */
     void* aout, const struct audio_out_backend_interface* iaout,
     /* si */
@@ -183,7 +184,7 @@ void init_device(struct device* dev,
     init_pi(&dev->pi,
             get_pi_dma_handler,
             &dev->cart, &dev->dd,
-            &dev->mi, &dev->ri, &dev->dp);
+            &dev->mi, &dev->ri, &dev->dp, forceAlignmentOfPiDma);
     init_ri(&dev->ri, &dev->rdram);
     init_si(&dev->si, si_dma_duration, &dev->mi, &dev->pif, &dev->ri);
     init_vi(&dev->vi, vi_clock, expected_refresh_rate, &dev->mi, &dev->dp);

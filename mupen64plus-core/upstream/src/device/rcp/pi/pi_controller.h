@@ -85,7 +85,8 @@ void init_pi(struct pi_controller* pi,
              struct dd_controller* dd,
              struct mi_controller* mi,
              struct ri_controller* ri,
-             struct rdp_core* dp);
+             struct rdp_core* dp,
+             int forceAlignmentOfPiDma);
 
 void poweron_pi(struct pi_controller* pi);
 
