@@ -20,29 +20,33 @@
 #ifndef FRAME_SKIPPER_H
 #define FRAME_SKIPPER_H
 
-class FrameSkipper
-{
+class FrameSkipper {
 public:
-  enum { AUTO, MANUAL };
+    enum {
+        AUTO, MANUAL
+    };
 
-  FrameSkipper();
+    FrameSkipper();
 
-  void setSkips(int type, int max) { _skipType = type; _maxSkips = max; }
+    void setSkips(int type, int max) {
+        _skipType = type;
+        _maxSkips = max;
+    }
 
-  void setTargetFPS(int fps) { _targetFPS = fps; }
+    void setTargetFPS(int fps) { _targetFPS = fps; }
 
-  bool willSkipNext() { return (_skipCounter > 0); }
+    bool willSkipNext();
 
-  void update();
+    void update();
 
 private:
-  int _skipType;
-  int _maxSkips;
-  int _targetFPS;
-  int _skipCounter;
-  unsigned int _initialTicks;
-  unsigned int _actualFrame;
+    int _skipType;
+    int _maxSkips;
+    int _targetFPS;
+    int _skipCounter;
+    unsigned int _desiredFrame;
+    unsigned int _initialTicks;
+    unsigned int _actualFrame;
 };
 
 #endif
-

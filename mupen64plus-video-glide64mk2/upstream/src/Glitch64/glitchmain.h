@@ -79,8 +79,7 @@ extern int buffer_cleared; // mark that the buffer has been cleared, used to che
 #if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 #include <windows.h>
 extern "C" {
-	#include <GL/gl.h>
-	#include <GL/glext.h>
+    #include <SDL_opengl.h>
     extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
     extern PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
     extern PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT;
@@ -137,7 +136,7 @@ extern "C" {
 
 void display_warning(const char *text, ...) ATTR_FMT(1,2);
 void init_geometry();
-void init_textures();
+void init_textures(int width, int height);
 void init_combiner();
 void free_textures();
 void updateCombiner(int i);

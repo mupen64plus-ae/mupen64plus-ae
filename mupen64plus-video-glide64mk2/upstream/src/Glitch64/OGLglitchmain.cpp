@@ -143,6 +143,19 @@ typedef struct
   int buff_clear;
 } fb;
 
+union PackedScreenResolution
+{
+    struct
+    {
+        int width : 16;
+        int height : 15;
+        int fullscreen : 1;
+    };
+    int resolution;
+};
+
+PackedScreenResolution packedScreenResolution;
+
 int nbTextureUnits;
 int nbAuxBuffers, current_buffer;
 int width, widtho, heighto, height;
@@ -200,8 +213,8 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-unsigned short frameBuffer[2048*2048*2]; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
-unsigned short depthBuffer[2048*2048];   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
+unsigned short* frameBuffer; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+unsigned short* depthBuffer;   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
 
 //#define VOODOO1
 
@@ -462,10 +475,22 @@ grSstWinOpen(
 {
   static int show_warning = 1;
 
+  packedScreenResolution.resolution = screen_resolution;
+
+  if (packedScreenResolution.width*packedScreenResolution.height < 2048*2048) {
+    packedScreenResolution.width = 2048;
+    packedScreenResolution.height = 2048;
+  }
+
+  // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+  frameBuffer = new unsigned short[packedScreenResolution.width*packedScreenResolution.height*2];
+  // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
+  depthBuffer = new unsigned short[packedScreenResolution.width*packedScreenResolution.height];
+
   // ZIGGY
   // allocate static texture names
   // the initial value should be big enough to support the maximal resolution
-  free_texture = 32*2048*2048;
+  free_texture = 32*packedScreenResolution.width*packedScreenResolution.height;
   default_texture = free_texture++;
   color_texture = free_texture++;
   depth_texture = free_texture++;
@@ -720,7 +745,7 @@ grSstWinOpen(
   FindBestDepthBias();
 
   init_geometry();
-  init_textures();
+  init_textures(packedScreenResolution.width, packedScreenResolution.height);
   init_combiner();
 
   // Aniso filter check
@@ -785,6 +810,8 @@ grSstWinClose( GrContext_t context )
   }
 #endif
   nb_fb = 0;
+  delete [] frameBuffer;
+  delete [] depthBuffer;
 
   free_textures();
 #ifndef _WIN32
@@ -1672,6 +1699,35 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 
   // ZIGGY TODO check that color mask is on
   buffer_cleared = 1;
+
+}
+
+FX_ENTRY void FX_CALL
+grBufferClearNoDepth( GrColor_t color, GrAlpha_t alpha )
+{
+LOG("grBufferClear(%d,%d,%d)\r\n", color, alpha);
+  switch(lfb_color_fmt)
+  {
+  case GR_COLORFORMAT_ARGB:
+  glClearColor(((color >> 16) & 0xFF) / 255.0f,
+  ((color >>  8) & 0xFF) / 255.0f,
+  ( color        & 0xFF) / 255.0f,
+  alpha / 255.0f);
+  break;
+  case GR_COLORFORMAT_RGBA:
+  glClearColor(((color >> 24) & 0xFF) / 255.0f,
+  ((color >> 16) & 0xFF) / 255.0f,
+  (color         & 0xFF) / 255.0f,
+  alpha / 255.0f);
+  break;
+  default:
+  display_warning("grBufferClear: unknown color format : %x", lfb_color_fmt);
+  }
+
+glClear(GL_COLOR_BUFFER_BIT);
+
+// ZIGGY TODO check that color mask is on
+buffer_cleared = 1;
 
 }
 

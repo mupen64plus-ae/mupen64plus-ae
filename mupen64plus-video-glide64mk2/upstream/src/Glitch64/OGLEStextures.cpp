@@ -134,7 +134,7 @@ void add_tex(unsigned int id)
   aux->next->next = aux2;
 }
 
-void init_textures()
+void init_textures(int width, int height)
 {
   tex0_width = tex0_height = tex1_width = tex1_height = 2;
   // ZIGGY because remove_tex isn't called (Pj64 doesn't like it), it's better
@@ -142,7 +142,8 @@ void init_textures()
   // 	list = NULL;
   // 	nbTex = 0;
 
-  if (!texture)	texture = (unsigned char*)malloc(2048*2048*4);
+  if (!texture)	texture = (unsigned char*)malloc(width*height*4);
+  TMU_SIZE = width*height*8;
 }
 
 void free_textures()

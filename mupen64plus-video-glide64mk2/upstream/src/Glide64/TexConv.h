@@ -85,26 +85,24 @@ static inline void texConv_AI88_ARGB4444(uint8_t *src, uint8_t *dst, int size)
 
 static inline void texConv_AI44_ARGB4444(uint8_t *src, uint8_t *dst, int size)
 {
-  uint32_t *v3;
-  uint32_t *v4;
-  int v5;
-  uint32_t v6;
-  uint32_t *v7;
+  uint32_t* source = (uint32_t *)src;
+  uint32_t* destination = (uint32_t *)dst;
+  int dstIndex = 0;
+  int srcIndex = 0;
 
-  v3 = (uint32_t *)src;
-  v4 = (uint32_t *)dst;
-  v5 = size;
-  do
-  {
-    v6 = *v3;
-    ++v3;
-    *v4 = ((((uint16_t)v6 << 8) & 0xFF00 & 0xF00u) >> 8) | ((((uint16_t)v6 << 8) & 0xFF00 & 0xF00u) >> 4) | (uint16_t)(((uint16_t)v6 << 8) & 0xFF00) | (((v6 << 16) & 0xF000000) >> 8) | (((v6 << 16) & 0xF000000) >> 4) | ((v6 << 16) & 0xFF000000);
-    v7 = v4 + 1;
-    *v7 = (((v6 >> 8) & 0xF00) >> 8) | (((v6 >> 8) & 0xF00) >> 4) | ((v6 >> 8) & 0xFF00) | ((v6 & 0xF000000) >> 8) | ((v6 & 0xF000000) >> 4) | (v6 & 0xFF000000);
-    v4 = v7 + 1;
-    --v5;
+  while (srcIndex < size) {
+
+    destination[dstIndex] = ((((uint16_t)source[srcIndex] << 8) & 0xFF00 & 0xF00u) >> 8) |
+            ((((uint16_t)source[srcIndex] << 8) & 0xFF00 & 0xF00u) >> 4) |
+            (uint16_t)(((uint16_t)source[srcIndex] << 8) & 0xFF00) | (((source[srcIndex] << 16) & 0xF000000) >> 8) |
+            (((source[srcIndex] << 16) & 0xF000000) >> 4) | ((source[srcIndex] << 16) & 0xFF000000);
+    ++dstIndex;
+    destination[dstIndex] = (((source[srcIndex] >> 8) & 0xF00) >> 8) |
+            (((source[srcIndex] >> 8) & 0xF00) >> 4) | ((source[srcIndex] >> 8) & 0xFF00) |
+            ((source[srcIndex] & 0xF000000) >> 8) | ((source[srcIndex] & 0xF000000) >> 4) | (source[srcIndex] & 0xFF000000);
+    ++dstIndex;
+    ++srcIndex;
   }
-  while ( v5 );
 }
 
 static inline void texConv_A8_ARGB4444(uint8_t *src, uint8_t *dst, int size)
@@ -133,35 +131,63 @@ static inline void texConv_A8_ARGB4444(uint8_t *src, uint8_t *dst, int size)
   while ( v5 );
 }
 
-void TexConv_ARGB1555_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height)
+void TexConv_ARGB1555_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height, int max)
 {
   int size = (width * height) >> 1;	// Hiroshi Morii <koolsmoky@users.sourceforge.net>
   // 2 pixels are converted in one loop
   // NOTE: width * height must be a multiple of 2
+
+  int maxUint32 = max/4;
+  if(size > maxUint32)
+  {
+    size = 0;
+  }
+
   texConv_ARGB1555_ARGB4444(src, dst, size);
 }
 
-void TexConv_AI88_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height)
+void TexConv_AI88_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height, int max)
 {
   int size = (width * height) >> 1;	// Hiroshi Morii <koolsmoky@users.sourceforge.net>
   // 2 pixels are converted in one loop
   // NOTE: width * height must be a multiple of 2
+
+  int maxUint32 = max/4;
+  if(size > maxUint32)
+  {
+    size = 0;
+  }
+
   texConv_AI88_ARGB4444(src, dst, size);
 }
 
-void TexConv_AI44_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height)
+void TexConv_AI44_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height, int max)
 {
   int size = (width * height) >> 2;	// Hiroshi Morii <koolsmoky@users.sourceforge.net>
   // 4 pixels are converted in one loop
   // NOTE: width * height must be a multiple of 4
+
+  int maxUint32 = max/8;
+  if(size > maxUint32)
+  {
+    size = 0;
+  }
+
   texConv_AI44_ARGB4444(src, dst, size);
 }
 
-void TexConv_A8_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height)
+void TexConv_A8_ARGB4444 (unsigned char * src, unsigned char * dst, int width, int height, int max)
 {
   int size = (width * height) >> 2;	// Hiroshi Morii <koolsmoky@users.sourceforge.net>
   // 4 pixels are converted in one loop
   // NOTE: width * height must be a multiple of 4
+
+  int maxUint32 = max/8;
+  if(size > maxUint32)
+  {
+    size = 0;
+  }
+
   texConv_A8_ARGB4444(src, dst, size);
 }
 

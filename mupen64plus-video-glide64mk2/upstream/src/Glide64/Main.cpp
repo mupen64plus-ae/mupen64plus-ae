@@ -2434,11 +2434,13 @@ void newSwapBuffers()
   {
     if  (debugging || settings.wireframe || settings.buff_clear || (settings.hacks&hack_PPL && settings.ucode == 6))
     {
-      if (settings.hacks&hack_RE2 && fb_depth_render_enabled)
+      if (settings.hacks&hack_RE2 && fb_depth_render_enabled) {
         grDepthMask (FXFALSE);
-      else
+        grBufferClearNoDepth (0, 0);
+      } else {
         grDepthMask (FXTRUE);
-      grBufferClear (0, 0, 0xFFFF);
+        grBufferClear (0, 0, 0xFFFF);
+      }
     }
     /* //let the game to clear the buffers
     else

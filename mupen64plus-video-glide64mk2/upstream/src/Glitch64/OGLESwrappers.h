@@ -83,7 +83,7 @@ static GLclampf cached_ClearColor_blue;
 static GLclampf cached_ClearColor_alpha;
 void inline cache_glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
-  if(red != cached_ClearColor_red || green != cached_ClearColor_green || blue != cached_ClearColor_blue || alpha != cached_ClearColor_alpha)
+  //if(red != cached_ClearColor_red || green != cached_ClearColor_green || blue != cached_ClearColor_blue || alpha != cached_ClearColor_alpha)
   {
     vbo_draw();
     glClearColor(red, green, blue, alpha);
@@ -98,7 +98,7 @@ void inline cache_glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLc
 static GLclampf cached_ClearDepthf_depth;
 void inline cache_glClearDepthf (GLclampf depth)
 {
-  if(depth != cached_ClearDepthf_depth)
+  //if(depth != cached_ClearDepthf_depth)
   {
     vbo_draw();
     glClearDepthf(depth);

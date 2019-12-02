@@ -45,5 +45,6 @@ void TexCache ();
 void ClearCache ();
 
 extern wxUint8 * texture_buffer;
+static const int TEX_SIZE = 1024*1024*4;
 
 #endif //TEXCACHE_H
