@@ -143,6 +143,19 @@ typedef struct
   int buff_clear;
 } fb;
 
+union PackedScreenResolution
+{
+    struct
+    {
+        int width : 16;
+        int height : 15;
+        int fullscreen : 1;
+    };
+    int resolution;
+};
+
+PackedScreenResolution packedScreenResolution;
+
 int nbTextureUnits;
 int nbAuxBuffers, current_buffer;
 int width, widtho, heighto, height;
@@ -200,8 +213,9 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-unsigned short frameBuffer[2048*2048*2]; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
-unsigned short depthBuffer[2048*2048];   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
+unsigned short* frameBuffer; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+unsigned short* depthBuffer;   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
+
 
 //#define VOODOO1
 
@@ -462,16 +476,6 @@ grSstWinOpen(
 {
   static int show_warning = 1;
 
-  // ZIGGY
-  // allocate static texture names
-  // the initial value should be big enough to support the maximal resolution
-  free_texture = 32*2048*2048;
-  default_texture = free_texture++;
-  color_texture = free_texture++;
-  depth_texture = free_texture++;
-
-  LOG("grSstWinOpen(%08lx, %d, %d, %d, %d, %d %d)\r\n", hWnd, screen_resolution&~0x80000000, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
-
 #ifdef _WIN32
   if ((HWND)hWnd == NULL) hWnd = GetActiveWindow();
   hwnd_win = (HWND)hWnd;
@@ -490,14 +494,36 @@ grSstWinOpen(
   ConfigOpenSection("Video-Glide64mk2", &video_glide64mk2_section);
   int aalevel = ConfigGetParamInt(video_glide64mk2_section, "wrpAntiAliasing");
 
-  screen_width = width = ConfigGetParamInt(video_general_section, "ScreenWidth");
-  screen_height = height = ConfigGetParamInt(video_general_section, "ScreenHeight");
   fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
   int vsync = ConfigGetParamBool(video_general_section, "VerticalSync");
 
   //viewport_offset = ((screen_resolution>>2) > 20) ? screen_resolution >> 2 : 20;
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
+
+  packedScreenResolution.resolution = screen_resolution;
+  screen_width = width = packedScreenResolution.width;
+  screen_height = height = packedScreenResolution.height;
+
+  if (packedScreenResolution.width*packedScreenResolution.height < 2048*2048) {
+    packedScreenResolution.width = 2048;
+    packedScreenResolution.height = 2048;
+  }
+
+  // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+  frameBuffer = new unsigned short[packedScreenResolution.width*packedScreenResolution.height*2];
+  // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
+  depthBuffer = new unsigned short[packedScreenResolution.width*packedScreenResolution.height];
+
+  // ZIGGY
+  // allocate static texture names
+  // the initial value should be big enough to support the maximal resolution
+  free_texture = 32*packedScreenResolution.width*packedScreenResolution.height;
+  default_texture = free_texture++;
+  color_texture = free_texture++;
+  depth_texture = free_texture++;
+
+  LOG("grSstWinOpen(%08lx, %d, %d, %d, %d, %d %d)\r\n", hWnd, screen_resolution&~0x80000000, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
 
   CoreVideo_Init();
 
@@ -716,7 +742,7 @@ grSstWinOpen(
   FindBestDepthBias();
 
   init_geometry();
-  init_textures();
+  init_textures(packedScreenResolution.width, packedScreenResolution.height);
   init_combiner();
 
   // Aniso filter check
@@ -781,6 +807,8 @@ grSstWinClose( GrContext_t context )
   }
 #endif
   nb_fb = 0;
+  delete [] frameBuffer;
+  delete [] depthBuffer;
 
   free_textures();
 #ifndef _WIN32
@@ -1671,6 +1699,35 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 
 }
 
+FX_ENTRY void FX_CALL
+grBufferClearNoDepth( GrColor_t color, GrAlpha_t alpha)
+{
+  LOG("grBufferClear(%d,%d,%d)\r\n", color, alpha);
+  switch(lfb_color_fmt)
+  {
+    case GR_COLORFORMAT_ARGB:
+      glClearColor(((color >> 16) & 0xFF) / 255.0f,
+                   ((color >>  8) & 0xFF) / 255.0f,
+                   ( color        & 0xFF) / 255.0f,
+                   alpha / 255.0f);
+          break;
+    case GR_COLORFORMAT_RGBA:
+      glClearColor(((color >> 24) & 0xFF) / 255.0f,
+                   ((color >> 16) & 0xFF) / 255.0f,
+                   (color         & 0xFF) / 255.0f,
+                   alpha / 255.0f);
+          break;
+    default:
+      display_warning("grBufferClear: unknown color format : %x", lfb_color_fmt);
+  }
+
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // ZIGGY TODO check that color mask is on
+  buffer_cleared = 1;
+
+}
+
 // #include <unistd.h>
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
@@ -1764,23 +1821,25 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
       } else {
         buf = (unsigned char*)malloc(width*height*4);
 
-        info->lfbPtr = frameBuffer;
-        info->strideInBytes = width*2;
-        info->writeMode = GR_LFBWRITEMODE_565;
-        info->origin = origin;
-        glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+        if (buf != NULL) {
+          info->lfbPtr = frameBuffer;
+          info->strideInBytes = width*2;
+          info->writeMode = GR_LFBWRITEMODE_565;
+          info->origin = origin;
+          glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 
-        for (j=0; j<height; j++)
-        {
-          for (i=0; i<width; i++)
+          for (j=0; j<height; j++)
           {
-            frameBuffer[(height-j-1)*width+i] =
-              ((buf[j*width*4+i*4+0] >> 3) << 11) |
-              ((buf[j*width*4+i*4+1] >> 2) <<  5) |
-              (buf[j*width*4+i*4+2] >> 3);
+            for (i=0; i<width; i++)
+            {
+              frameBuffer[(height-j-1)*width+i] =
+                      ((buf[j*width*4+i*4+0] >> 3) << 11) |
+                      ((buf[j*width*4+i*4+1] >> 2) <<  5) |
+                      (buf[j*width*4+i*4+2] >> 3);
+            }
           }
+          free(buf);
         }
-        free(buf);
       }
     }
     else
