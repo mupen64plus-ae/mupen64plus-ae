@@ -636,11 +636,9 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
 
-            String libsDir = extras.getString( ActivityHelper.Keys.LIBS_DIR );
-
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
-            NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
+            NativeExports.loadLibrariesIfNotLoaded( Build.VERSION.SDK_INT );
             NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
             mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -21,17 +21,15 @@
 package paulscode.android.mupen64plusae.jni;
 
 
-import android.util.Log;
 import android.view.Surface;
 
 /**
  * Call-outs made from Java to the native ae-exports library. Any function names changed here should
  * also be changed in the corresponding C code, and vice versa.
- * 
- * @see jni/ae-bridge/ae_exports.cpp
- * @see CoreInterface
+ *
+ * @see CoreService
  */
-public class NativeExports
+class NativeExports
 {
     static
     {
@@ -39,18 +37,14 @@ public class NativeExports
         System.loadLibrary( "ae-vidext" );
     }
 
-    static boolean mLibrariesLoaded = false;
+    private static boolean mLibrariesLoaded = false;
 
-
-    
-    // TODO: Add javadoc
-
-    static void loadLibrariesIfNotLoaded(String libPath, int androidSDK )
+    static void loadLibrariesIfNotLoaded()
     {
         if(!mLibrariesLoaded)
         {
             mLibrariesLoaded = true;
-            loadLibraries( libPath, androidSDK );
+            loadLibraries();
         }
     }
 
@@ -63,7 +57,7 @@ public class NativeExports
         }
     }
     
-    static native void loadLibraries( String libPath, int androidSDK );
+    static native void loadLibraries();
     
     static native void unloadLibraries();
     

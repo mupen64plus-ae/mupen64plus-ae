@@ -418,20 +418,20 @@ public class GamePrefs
 
         switch (rspSetting) {
             case "rsp-hle":
-                rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-hle.so";
+                rspPluginPath = "libmupen64plus-rsp-hle.so";
                 rspHleVideo = true;
                 break;
             case "rsp-cxd4-hle":
-                rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
+                rspPluginPath = "libmupen64plus-rsp-cxd4.so";
                 rspHleVideo = true;
                 break;
             default:
-                rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
+                rspPluginPath = "libmupen64plus-rsp-cxd4.so";
                 rspHleVideo = false;
         }
 
 
-        videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
+        videoPlugin = new Plugin( emulationProfile, "videoPlugin" );
 
         // Video prefs - gln64
         int maxFrameskip = getSafeInt( emulationProfile, "gln64Frameskip", 0 );

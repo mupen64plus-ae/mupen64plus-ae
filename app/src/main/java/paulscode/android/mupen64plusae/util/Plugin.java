@@ -42,27 +42,25 @@ public class Plugin
      * Instantiates a new plug-in meta-info object.
      * 
      * @param prefs The shared preferences containing plug-in information.
-     * @param libsDir The directory containing the plug-in file.
      * @param key The shared preference key for the plug-in.
      */
-    public Plugin( SharedPreferences prefs, String libsDir, String key )
+    public Plugin( SharedPreferences prefs, String key )
     {
         name = prefs.getString( key, "" );
         enabled = name.endsWith( ".so" );
-        path = enabled ? libsDir + "/" + name : "dummy";
+        path = enabled ? name : "dummy";
     }
     
     /**
      * Instantiates a new plug-in meta-info object.
      * 
      * @param profile The shared preferences containing plug-in information.
-     * @param libsDir The directory containing the plug-in file.
      * @param key The shared preference key for the plug-in.
      */
-    public Plugin( Profile profile, String libsDir, String key )
+    public Plugin( Profile profile, String key )
     {
         name = profile.get( key, "" );
         enabled = name.endsWith( ".so" );
-        path = enabled ? libsDir + "/" + name : "dummy";
+        path = enabled ? name : "dummy";
     }
 }

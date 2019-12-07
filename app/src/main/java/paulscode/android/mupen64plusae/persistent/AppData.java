@@ -118,9 +118,6 @@ public class AppData
      */
     public final String coreSharedDataDir;
     
-    /** The directory containing the native Mupen64Plus libraries. */
-    public final String libsDir;
-    
     /** The directory containing all touchscreen skin folders.  */
     public final String touchscreenSkinsDir;
     
@@ -239,10 +236,6 @@ public class AppData
         gameDataDir = tempGameDataDir + "/GameData";
 
         coreSharedDataDir = context.getFilesDir().getAbsolutePath();
-        String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
-        if( !( new File( _libsDir ) ).exists() )
-            _libsDir = context.getApplicationInfo().nativeLibraryDir + "/";
-        libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
         String profilesDir = coreSharedDataDir + "/profiles";
 
@@ -280,9 +273,9 @@ public class AppData
             }
         }
 
-        coreLib = libsDir + "/libmupen64plus-core.so";
-        inputLib = libsDir + "/libmupen64plus-input-android.so";
-        inputLibRaphnet =  libsDir + "/libmupen64plus-input-raphnet.so";
+        coreLib = "libmupen64plus-core.so";
+        inputLib = "libmupen64plus-input-android.so";
+        inputLibRaphnet = "libmupen64plus-input-raphnet.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
         glideN64_conf = coreSharedDataDir + "/GLideN64.custom.ini";
@@ -596,46 +589,6 @@ public class AppData
         //Return back to the original after we determine that full GL is supported
         EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
         return supportsFullGl;
-    }
-
-    private boolean libraryExists( String undecoratedName )
-    {
-        File library = new File( libsDir + undecoratedName + ".so" );
-
-        boolean libraryExists = library.exists();
-        if (!libraryExists) {
-            Log.e("AppData", "Missing library: " + library.getPath());
-        }
-
-        return libraryExists;
-    }
-
-    public boolean isValidInstallation() {
-        // Installation validity
-        return libraryExists("libae-exports") &&
-               libraryExists("libae-imports") &&
-               libraryExists("libae-vidext") &&
-               libraryExists("libc++_shared") &&
-               libraryExists("libfreetype") &&
-               libraryExists("libhidapi") &&
-               libraryExists("libmupen64plus-audio-sles-fp") &&
-               libraryExists("libmupen64plus-audio-sles") &&
-               libraryExists("libmupen64plus-core") &&
-               libraryExists("libmupen64plus-input-android") &&
-               libraryExists("libmupen64plus-input-raphnet") &&
-               libraryExists("libmupen64plus-rsp-cxd4") &&
-               libraryExists("libmupen64plus-rsp-hle") &&
-               libraryExists("libmupen64plus-ui-console") &&
-               libraryExists("mupen64plus-video-angrylion-plus") &&
-               libraryExists("libmupen64plus-video-glide64mk2-egl") &&
-               libraryExists("libmupen64plus-video-glide64mk2") &&
-               libraryExists("mupen64plus-video-GLideN64") &&
-               libraryExists("libmupen64plus-video-gln64") &&
-               libraryExists("libmupen64plus-video-rice") &&
-               libraryExists("libSDL2") &&
-               libraryExists("libsoundtouch_fp") &&
-               libraryExists("libsoundtouch") &&
-               libraryExists("libusb1.0");
     }
 
     @SuppressWarnings("deprecation")

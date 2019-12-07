@@ -210,26 +210,19 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         else /* otherwise search for a plugin specified in the config file */
         {
             const char *config_path = (*ConfigGetParamString)(ConfigUI, config_var);
+
+
+            DebugMessage(M64MSG_ERROR, "Loading library: %s", config_path);
+
             if (config_path != NULL && strlen(config_path) > 0)
             {
-                /* if full path was given, try loading exactly this file */
-                if (strchr(config_path, OSAL_DIR_SEPARATOR) != NULL)
-                {
-                    PluginLoadTry(config_path, i);
-                }
-                else if (strcmp(config_path, "dummy") == 0)
+                if (strcmp(config_path, "dummy") == 0)
                 {
                     use_dummy = 1;
                 }
-                else /* otherwise search through the plugin directory to find a match with this name */
+                else
                 {
-                    osal_lib_search *curr = lib_filelist;
-                    while (curr != NULL && g_PluginMap[i].handle == NULL)
-                    {
-                        if (strncmp(curr->filename, config_path, strlen(config_path)) == 0)
-                            PluginLoadTry(curr->filepath, i);
-                        curr = curr->next;
-                    }
+                    PluginLoadTry(config_path, i);
                 }
             }
         }

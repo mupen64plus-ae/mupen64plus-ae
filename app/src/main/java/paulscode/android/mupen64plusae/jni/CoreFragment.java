@@ -362,7 +362,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                 mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir,
+                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(),
                 mUseRaphnetIfAvailable);
     }
 

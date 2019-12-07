@@ -472,7 +472,7 @@ public class GlobalPrefs
         }
 
         // Plug-ins
-        audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
+        audioPlugin = new Plugin( mPreferences, "audioPlugin" );
 
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );

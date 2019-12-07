@@ -1069,14 +1069,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return;
         }
 
-        // Make sure that no libraries are missing
-        if( !mAppData.isValidInstallation())
-        {
-            Log.e( "GalleryActivity", "Invalid installation" );
-            Notifier.showToast(this, R.string.invalidInstall_message);
-            return;
-        }
-
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
         File romFileName = new File(romPath);

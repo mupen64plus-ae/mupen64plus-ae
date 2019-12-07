@@ -135,7 +135,6 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Gameshark", EMPTY );
 
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );
-        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );
 
         mupen64plus_cfg.put( "Transferpak", "GB-rom-1", game.getTransferPakRom(1) );
         mupen64plus_cfg.put( "Transferpak", "GB-ram-1", game.getTransferPakRam(1) );
@@ -199,7 +198,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "rsp-cxd4", "SupportCPUSemaphoreLock", "0" );
             
         mupen64plus_cfg.put( "Rsp-HLE", "Version", "1" );
-        mupen64plus_cfg.put( "Rsp-HLE", "RspFallback", appData.libsDir + "/libmupen64plus-rsp-cxd4.so" );
+        mupen64plus_cfg.put( "Rsp-HLE", "RspFallback", "libmupen64plus-rsp-cxd4.so" );
         mupen64plus_cfg.put( "Rsp-HLE", "DisplayListToGraphicsPlugin", "1" );
         mupen64plus_cfg.put( "Rsp-HLE", "AudioListToAudioPlugin", "0" );
 

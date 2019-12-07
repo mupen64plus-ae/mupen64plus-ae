@@ -69,10 +69,10 @@ void checkLibraryError(const char* message)
         LOGE("%s: %s", message, error);
 }
 
-void* loadLibrary(const char* libPath, const char* libName)
+void* loadLibrary(const char* libName)
 {
     char path[256];
-    sprintf(path, "%s/lib%s.so", libPath, libName);
+    sprintf(path, "lib%s.so", libName);
     void* handle = dlopen(path, RTLD_NOW);
     if (!handle)
         LOGE("Failed to load lib%s.so", libName);
@@ -118,23 +118,17 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  Functions called by Java code
  *******************************************************************************/
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_loadLibraries(JNIEnv* env, jclass cls, jstring jlibPath, jint jandroidSDK)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_loadLibraries(JNIEnv* env, jclass cls)
 {
     LOGI("Loading native libraries");
 
     // Clear stale error messages
     dlerror();
 
-    // Get the library path from the java-managed string
-    const char *libPath = env->GetStringUTFChars(jlibPath, 0);
-    char path[256];
-    strcpy(path, libPath);
-    env->ReleaseStringUTFChars(jlibPath, libPath);
-
     // Open shared libraries
-    handleAEI      = loadLibrary(path, "ae-imports");
-    handleCore     = loadLibrary(path, "mupen64plus-core");
-    handleFront    = loadLibrary(path, "mupen64plus-ui-console");
+    handleAEI      = loadLibrary("ae-imports");
+    handleCore     = loadLibrary("mupen64plus-core");
+    handleFront    = loadLibrary("mupen64plus-ui-console");
 
     // Make sure we don't have any typos
     if (!handleAEI || !handleCore || !handleFront )
