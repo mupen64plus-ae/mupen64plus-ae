@@ -20,3 +20,10 @@
 
 -keep, includedescriptorclasses class paulscode.android.mupen64plusae.jni.NativeImports { *; }
 -keep, includedescriptorclasses class paulscode.android.mupen64plusae.jni.NativeInput { *; }
+
+-dontwarn java.awt.event.*
+-dontwarn java.awt.dnd.*
+-dontwarn java.awt.*
+-dontwarn javax.swing.*
+-keep class com.sun.jna.* { *; }
+-keepclassmembers class * extends com.sun.jna.* { public *; }

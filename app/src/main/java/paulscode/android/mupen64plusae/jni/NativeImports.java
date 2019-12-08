@@ -103,14 +103,14 @@ public class NativeImports
         }
     }
 
-    static void addOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    static void addOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod, CoreInterface coreInterface )
     {
         synchronized (sFpsListeners)
         {
             if(fpsListener != null && !sFpsListeners.contains(fpsListener))
             {
                 sFpsListeners.add(fpsListener);
-                NativeExports.FPSEnabled(fpsRecalcPeriod);
+                coreInterface.FPSEnabled(fpsRecalcPeriod);
             }
         }
     }

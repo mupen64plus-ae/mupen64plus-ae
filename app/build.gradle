@@ -28,7 +28,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled true
@@ -53,6 +53,11 @@ android {
             }
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+    }
 }
 
 dependencies {
@@ -65,6 +70,10 @@ dependencies {
     //noinspection GradleDependency Any higher requires API level 26 for commons-compress
     implementation 'org.apache.commons:commons-compress:1.12'
     implementation 'org.tukaani:xz:1.8'
+    implementation ('net.java.dev.jna:jna-platform:5.5.0') {
+        exclude group: 'net.java.dev.jna', module: 'jna'
+    }
+    implementation 'net.java.dev.jna:jna:5.5.0@aar'
     testImplementation 'junit:junit:4.12'
     implementation project(':mupen64plus-audio-sles')
     implementation project(':mupen64plus-core')

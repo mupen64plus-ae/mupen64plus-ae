@@ -11,6 +11,8 @@
 #include <mutex>
 #include <thread>
 #include <unistd.h>
+#include <dlfcn.h>
+#include <m64p_frontend.h>
 
 EGLDisplay display = EGL_NO_DISPLAY;
 EGLConfig config;
@@ -26,6 +28,9 @@ int64_t oldTime;
 int vsync = 0;
 int oldVsync = 1;
 bool isPaused = false;
+
+m64p_dynlib_handle CoreHandle = NULL;
+ptr_CoreOverrideVidExt  CoreOverrideVidExt = NULL;
 
 EGLint const defaultAttributeList[] = {
         EGL_BUFFER_SIZE, 0,
@@ -75,6 +80,10 @@ JavaVM* mJavaVM;
 // Library init
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
+	CoreHandle = dlopen("libmupen64plus-core.so", RTLD_NOW);
+	CoreOverrideVidExt = (ptr_CoreOverrideVidExt) dlsym(CoreHandle, "CoreOverrideVidExt");
+	CoreOverrideVidExt(&vidExtFunctions);
+
 	mJavaVM = vm;
 	return JNI_VERSION_1_6;
 }
@@ -398,7 +407,7 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
     return M64ERR_SUCCESS;
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_setNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
+extern "C" DECLSPEC void setNativeWindow(JNIEnv* env, jobject native_surface)
 {
 	std::unique_lock<std::mutex> guard(nativeWindowAccess);
 
@@ -408,7 +417,7 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 	new_surface = true;
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_unsetNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
+extern "C" DECLSPEC void unsetNativeWindow(void)
 {
 	std::unique_lock<std::mutex> guard(nativeWindowAccess);
 
@@ -424,7 +433,7 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 	}
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
+extern "C" DECLSPEC void emuDestroySurface(void)
 {
 	LOGI("emuDestroySurface: Deleting surface");
 
@@ -486,7 +495,7 @@ extern DECLSPEC uint32_t VidExtFuncGLGetDefaultFramebuffer(void)
     return 0;
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)
+extern "C" DECLSPEC void FPSEnabled(int recalc)
 {
     FPSRecalcPeriod = recalc;
 }

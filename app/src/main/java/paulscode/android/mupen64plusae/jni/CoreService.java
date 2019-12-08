@@ -124,6 +124,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private CoreServiceListener mListener = null;
     private RaphnetControllerHandler mRaphnetHandler = null;
 
+    private CoreInterface mCoreInterface = new CoreInterface();
+
     /**
      * Last time we received an FPS changed callback. This is used to determine if the core
      * is locked up since these won't happen if it is.
@@ -350,7 +352,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void addOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        NativeImports.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod );
+        NativeImports.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod, mCoreInterface );
     }
 
     void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY )
@@ -379,17 +381,17 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void setSurface(Surface surface)
     {
-        NativeExports.setNativeWindow(surface);
+        mCoreInterface.setNativeWindow(surface);
     }
 
     void unsetSurface()
     {
-        NativeExports.unsetNativeWindow();
+        mCoreInterface.unsetNativeWindow();
     }
 
     void destroySurface()
     {
-        NativeExports.emuDestroySurface();
+        mCoreInterface.emuDestroySurface();
     }
 
     /**
@@ -638,8 +640,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
-            NativeExports.loadLibrariesIfNotLoaded( Build.VERSION.SDK_INT );
-            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
+            NativeExports.loadLibrariesIfNotLoaded();
+            NativeImports.addOnFpsChangedListener( CoreService.this, 15, mCoreInterface );
 
             mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);
 

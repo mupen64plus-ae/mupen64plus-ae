@@ -90,10 +90,6 @@ class NativeExports
     static native void emuScreenshot();
     
     static native void emuGameShark( boolean pressed );
-
-    static native void emuDestroySurface();
-
-    static native void FPSEnabled(int recalc);
     
     static native int emuGetState();
     
@@ -105,7 +101,8 @@ class NativeExports
 
     static native int emuReset();
 
-    static native void setNativeWindow(Surface surface);
+    static native long loadLibrary(String libName);
 
-    static native void unsetNativeWindow();
+    static native void unloadLibrary(String libName);
+
 }
