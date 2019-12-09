@@ -91,6 +91,144 @@ import paulscode.android.mupen64plusae.util.PixelBuffer;
 @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 public class AppData
 {
+    public enum VideoPlugin {
+        DUMMY("dummy"),
+        GLIDE64MK2("mupen64plus-video-glide64mk2"),
+        GLIDE64MK2_EGL("mupen64plus-video-glide64mk2-egl"),
+        GLIDEN64("mupen64plus-video-GLideN64"),
+        RICE("mupen64plus-video-rice"),
+        GLN64("mupen64plus-video-gln64"),
+        ANGRYLION("mupen64plus-video-angrylion-plus");
+
+        String mPlugingLib;
+
+        VideoPlugin(String plugingLib)
+        {
+            mPlugingLib = plugingLib;
+        }
+
+        public String getPluginLib()
+        {
+            return mPlugingLib;
+        }
+
+        static VideoPlugin getPlugin(String pluginText)
+        {
+            if (pluginText.toLowerCase().contains("gliden64"))
+            {
+                return GLIDEN64;
+            }
+            else if (pluginText.toLowerCase().contains("glide64mk2") && AppData.doesSupportFullGL())
+            {
+                return GLIDE64MK2_EGL;
+            }
+            else if (pluginText.toLowerCase().contains("glide64mk2"))
+            {
+                return GLIDE64MK2;
+            }
+            else if (pluginText.toLowerCase().contains("rice"))
+            {
+                return RICE;
+            }
+            else if (pluginText.toLowerCase().contains("gln64"))
+            {
+                return GLN64;
+            }
+            else if (pluginText.toLowerCase().contains("angrylion"))
+            {
+                return ANGRYLION;
+            }
+            else
+            {
+                return DUMMY;
+            }
+        }
+    }
+
+    public enum AudioPlugin {
+        DUMMY("dummy"),
+        SLES("mupen64plus-audio-sles"),
+        SLES_FP("mupen64plus-audio-sles-fp");
+
+        String mPlugingLib;
+
+        AudioPlugin(String plugingLib)
+        {
+            mPlugingLib = plugingLib;
+        }
+
+        public String getPluginLib()
+        {
+            return mPlugingLib;
+        }
+
+        static AudioPlugin getPlugin(GlobalPrefs prefs)
+        {
+            if (prefs.audioSLESFloatingPoint)
+            {
+                return SLES_FP;
+            }
+            else
+            {
+                return SLES;
+            }
+        }
+    }
+
+    public enum InputPlugin {
+        DUMMY("dummy"),
+        ANDROID("mupen64plus-input-android"),
+        RAPHNET("mupen64plus-input-raphnet");
+
+        String mPlugingLib;
+
+        InputPlugin(String plugingLib)
+        {
+            mPlugingLib = plugingLib;
+        }
+
+        public String getPluginLib()
+        {
+            return mPlugingLib;
+        }
+    }
+
+    public enum RspPlugin {
+        DUMMY("dummy"),
+        HLE("mupen64plus-rsp-hle"),
+        CXD4_HLE("mupen64plus-rsp-cxd4"),
+        CXD4_LLE("mupen64plus-rsp-cxd4");
+
+        String mPlugingLib;
+
+        RspPlugin(String plugingLib)
+        {
+            mPlugingLib = plugingLib;
+        }
+
+        public String getPluginLib()
+        {
+            return mPlugingLib;
+        }
+
+        static RspPlugin getPlugin(String pluginText)
+        {
+            switch (pluginText) {
+                case "rsp-hle":
+                    return RspPlugin.HLE;
+                case "rsp-cxd4-hle":
+                    return RspPlugin.CXD4_HLE;
+                default:
+                    return RspPlugin.CXD4_LLE;
+            }
+        }
+
+        public boolean isHle()
+        {
+            return name().toLowerCase().contains("hle");
+        }
+    }
+
     /** True if device is running Lollipop or later (21 - Android 5.0.x) */
     public static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     
@@ -123,12 +261,6 @@ public class AppData
     
     /** The path of the core library */
     public final String coreLib;
-    
-    /** The path of the input library. */
-    public final String inputLib;
-
-    /** The path of the Raphnet input library. */
-    public final String inputLibRaphnet;
     
     /** The path of the gln64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gln64_conf;
@@ -274,8 +406,6 @@ public class AppData
         }
 
         coreLib = "libmupen64plus-core.so";
-        inputLib = "libmupen64plus-input-android.so";
-        inputLibRaphnet = "libmupen64plus-input-raphnet.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
         glideN64_conf = coreSharedDataDir + "/GLideN64.custom.ini";

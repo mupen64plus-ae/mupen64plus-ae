@@ -134,8 +134,6 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Fast Forward", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Gameshark", EMPTY );
 
-        mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );
-
         mupen64plus_cfg.put( "Transferpak", "GB-rom-1", game.getTransferPakRom(1) );
         mupen64plus_cfg.put( "Transferpak", "GB-ram-1", game.getTransferPakRam(1) );
         mupen64plus_cfg.put( "Transferpak", "GB-rom-2", game.getTransferPakRom(2) );
@@ -144,52 +142,6 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Transferpak", "GB-ram-3", game.getTransferPakRam(3) );
         mupen64plus_cfg.put( "Transferpak", "GB-rom-4", game.getTransferPakRom(4) );
         mupen64plus_cfg.put( "Transferpak", "GB-ram-4", game.getTransferPakRam(4) );
-
-        //Add safety checks to prevent users from manually inputting unsupported plugins for their device
-        String videoPluginString = game.videoPlugin.path;
-
-        if(game.isGliden64Enabled)
-        {
-            // Fix old format GLideN64 library using regular expression, for example, this will replace
-            // libmupen64plus-video-gliden64-gles3.so with libmupen64plus-video-gliden64.so
-            videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-gliden64.*so", "libmupen64plus-video-gliden64.so");
-            videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-gliden64.so", "mupen64plus-video-GLideN64.so");
-        }
-
-        if(game.isGlide64Enabled && supportsFullGl)
-        {
-            //Use the full GL version of Glide64mk2 if it's supported by the device
-            videoPluginString = videoPluginString.replace("libmupen64plus-video-glide64mk2.so", "libmupen64plus-video-glide64mk2-egl.so");
-        }
-
-        // Angrylion was replaced with Angrylion RDP Plus
-        videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-angrylion.so", "libmupen64plus-video-angrylion-rdp-plus.so");
-        // Library was renamed
-        videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-angrylion-rdp-plus.so", "mupen64plus-video-angrylion-plus.so");
-
-        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );
-
-        //Use the FP version of the SLES audio plugin if the API level is high enough
-        String audioPluginString = global.audioPlugin.path;
-
-        if(audioPluginString.endsWith("libmupen64plus-audio-sles.so"))
-        {
-            //If running lollipop, use the floating point version
-            if(AppData.IS_LOLLIPOP && global.audioSLESFloatingPoint)
-            {
-                audioPluginString = audioPluginString.replace("libmupen64plus-audio-sles.so", "libmupen64plus-audio-sles-fp.so");
-            }
-        }
-
-        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );
-
-        if (useRaphnet) {
-            mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLibRaphnet + '"' );
-        } else {
-            mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );
-        }
-
-        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + game.rspPluginPath + '"' );
 
         mupen64plus_cfg.put( "rsp-cxd4", "Version", "1" );
         mupen64plus_cfg.put( "rsp-cxd4", "DisplayListToGraphicsPlugin", boolToNum(game.rspHleVideo) );

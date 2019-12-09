@@ -77,6 +77,7 @@ void* loadLibrary(const char* libName)
     if (!handle)
         LOGE("Failed to load lib%s.so", libName);
     checkLibraryError(libName);
+
     return handle;
 }
 
@@ -334,33 +335,3 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
     if (coreDoCommand) coreDoCommand(M64CMD_RESET, 0, NULL);
 }
 
-extern "C" DECLSPEC jlong SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_loadLibrary(JNIEnv* env, jclass cls, jstring jlibName) {
-    const char *libName = env->GetStringUTFChars(jlibName, 0);
-    char name[256];
-    strcpy(name, libName);
-    env->ReleaseStringUTFChars(jlibName, libName);
-
-    LOGI("Loading native library: %s", name);
-
-    // Clear stale error messages
-    dlerror();
-
-    // Open shared library
-    return reinterpret_cast<jlong>(loadLibrary(libName));
-}
-
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_unloadLibrary(JNIEnv* env, jclass cls, jstring jlibName)
-{
-    const char *libName = env->GetStringUTFChars(jlibName, 0);
-    char name[256];
-    strcpy(name, libName);
-    env->ReleaseStringUTFChars(jlibName, libName);
-
-    // Unload the libraries to ensure that static variables are re-initialized next time
-    LOGI("Unloading native library: %s", name);
-    // Clear stale error messages
-    dlerror();
-
-    // Close shared library
-    unloadLibrary(handleFront, name);
-}

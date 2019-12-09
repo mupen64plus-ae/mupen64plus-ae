@@ -111,7 +111,11 @@ if(WIN32)
 endif(WIN32)
 
 # Mupen64Plus GFX plugin
-set(NAME_PLUGIN_M64P "mupen64plus-video-${CMAKE_PROJECT_NAME}")
+if (ANDROID)
+    set(NAME_PLUGIN_M64P "libmupen64plus-video-${CMAKE_PROJECT_NAME}")
+else()
+    set(NAME_PLUGIN_M64P "mupen64plus-video-${CMAKE_PROJECT_NAME}")
+endif()
 set(PATH_PLUGIN_M64P "${PATH_SRC}/plugin/mupen64plus")
 
 file(GLOB SOURCES_PLUGIN_M64P "${PATH_PLUGIN_M64P}/*.c")

@@ -1125,14 +1125,14 @@
     </string-array>
     <string-array name="videoPlugin_values" translatable="false">
         <item></item>
-        <item>libmupen64plus-video-glide64mk2.so</item>
-        <item>mupen64plus-video-GLideN64.so</item>
-        <item>libmupen64plus-video-gln64.so</item>
-        <item>libmupen64plus-video-rice.so</item>
-        <item>mupen64plus-video-angrylion-plus.so</item>
+        <item>glide64mk2</item>
+        <item>GLideN64</item>
+        <item>gln64</item>
+        <item>rice</item>
+        <item>angrylion-plus</item>
     </string-array>
 
-    <string name="videoPlugin_default" translatable="false">mupen64plus-video-glide64mk2.so</string>
+    <string name="videoPlugin_default" translatable="false">glide64mk2</string>
 
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries" translatable="false">
@@ -1143,10 +1143,10 @@
     <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>nospeedlimit</item>
-        <item>libmupen64plus-audio-sles.so</item>
+        <item>sles</item>
     </string-array>
 
-    <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sles.so</string>
+    <string name="audioPlugin_default" translatable="false">sles</string>
 
     <!-- Audio SLES Sampling Rate -->
     <string-array name="audioSLESRate_entries" translatable="false">

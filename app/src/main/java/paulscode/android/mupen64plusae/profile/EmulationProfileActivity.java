@@ -58,11 +58,11 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String VIDEO_PLUGIN = "videoPlugin";
 
     // These constants must match the entry-values found in arrays.xml
-    private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
-    private static final String LIBGLIDEN64_SO = "mupen64plus-video-GLideN64.so";
-    private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
-    private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
-    private static final String LIBANGRYLION_SO = "mupen64plus-video-angrylion-plus.so";
+    private static final String LIBGLIDE64_SO = "glide64mk2";
+    private static final String LIBGLIDEN64_SO = "GLideN64";
+    private static final String LIBRICE_SO = "rice";
+    private static final String LIBGLN64_SO = "gln64";
+    private static final String LIBANGRYLION_SO = "angrylion-plus";
 
     private String mCurrentVideoPlugin = null;
     
@@ -147,7 +147,7 @@ public class EmulationProfileActivity extends ProfileActivity
                 if(angryLionIndex != -1)
                 {
                     videoEntriesArray.remove(angryLionIndex);
-                    videoValuesArray.remove("mupen64plus-video-angrylion-plus.so");
+                    videoValuesArray.remove("angrylion-plus");
                 }
 
                 preferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[0]));
@@ -306,19 +306,15 @@ public class EmulationProfileActivity extends ProfileActivity
         {
             //Support older string value for video plugin that could support multiple GLideN64 versions
             //There is now only one version
-            if(key.equals("videoPlugin") &&
-                    value.toLowerCase().contains("libmupen64plus-video-gliden64") &&
-                    !value.equals("mupen64plus-video-GLideN64.so"))
+            if(key.equals("videoPlugin") && value.toLowerCase().contains("gliden64"))
             {
-                value = "mupen64plus-video-GLideN64.so";
+                value = "GLideN64";
             }
 
             //Fix old angrylion plugin library
-            if(key.equals("videoPlugin") &&
-                    value.toLowerCase().contains("angrylion") &&
-                    !value.equals("mupen64plus-video-angrylion-plus.so"))
+            if(key.equals("videoPlugin") && value.toLowerCase().contains("angrylion"))
             {
-                value = "mupen64plus-video-angrylion-plus.so";
+                value = "angrylion-plus";
             }
         }
 

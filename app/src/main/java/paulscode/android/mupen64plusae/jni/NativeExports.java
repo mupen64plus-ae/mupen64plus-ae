@@ -101,8 +101,4 @@ class NativeExports
 
     static native int emuReset();
 
-    static native long loadLibrary(String libName);
-
-    static native void unloadLibrary(String libName);
-
 }

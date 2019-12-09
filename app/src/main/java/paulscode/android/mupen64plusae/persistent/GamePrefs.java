@@ -137,22 +137,19 @@ public class GamePrefs
     /** The selected R4300 emulator. */
     public final boolean disableExpansionPak;
 
-    /** The selected RSP Plugin. */
-    public final String rspPluginPath;
-
     /** True if we want the RSP to be in HLE video mode, false if LLE */
     public final boolean rspHleVideo;
+
+    public final AppData.VideoPlugin videoPluginLib;
+
+    public final AppData.AudioPlugin audioPluginLib;
+
+    public final AppData.RspPlugin rspPluginLib;
 
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
 
-    /** True if glide64 video plug-in is enabled. */
-    public final boolean isGlide64Enabled;
-
     public final Glide64mk2Prefs glide64mk2Prefs;
-
-    /** True if gliden64 video plug-in is enabled. */
-    public final boolean isGliden64Enabled;
 
     /** The maximum frameskip in the gln64 library. */
     public final int gln64MaxFrameskip;
@@ -416,22 +413,11 @@ public class GamePrefs
         disableExpansionPak = emulationProfile.get( "DisableExtraMem", "False" ).equals( "True" );
         String rspSetting = emulationProfile.get( "rspSetting", "rsp-hle" );
 
-        switch (rspSetting) {
-            case "rsp-hle":
-                rspPluginPath = "libmupen64plus-rsp-hle.so";
-                rspHleVideo = true;
-                break;
-            case "rsp-cxd4-hle":
-                rspPluginPath = "libmupen64plus-rsp-cxd4.so";
-                rspHleVideo = true;
-                break;
-            default:
-                rspPluginPath = "libmupen64plus-rsp-cxd4.so";
-                rspHleVideo = false;
-        }
-
-
+        rspPluginLib = AppData.RspPlugin.getPlugin(rspSetting);
+        rspHleVideo = rspPluginLib.isHle();
         videoPlugin = new Plugin( emulationProfile, "videoPlugin" );
+        videoPluginLib = AppData.VideoPlugin.getPlugin(videoPlugin.name);
+        audioPluginLib = AppData.AudioPlugin.getPlugin(mGlobalPrefs);
 
         // Video prefs - gln64
         int maxFrameskip = getSafeInt( emulationProfile, "gln64Frameskip", 0 );
@@ -453,19 +439,15 @@ public class GamePrefs
         isRiceFogEnabled = emulationProfile.get( "riceFog", "False" ).equals( "True" );
 
         // Video prefs - glide64
-        isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
         glide64mk2Prefs = new Glide64mk2Prefs(emulationProfile);
 
         // Video prefs - GLideN64, this is a more broad search because there used to be more than one GLideN64 version
-        isGliden64Enabled = videoPlugin.name.contains( "mupen64plus-video-gliden64" );
         glideN64Prefs = new GLideN64Prefs(context, emulationProfile);
 
-
         //Video preferences for angrylion
-        boolean isAngrylionEnabled = videoPlugin.name.equals( "mupen64plus-video-angrylion-plus.so" );
         angrylionPlusPrefs = new AngrylionPlusPrefs(context, emulationProfile);
 
-        boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled;
+        boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && videoPluginLib == AppData.VideoPlugin.GLIDEN64;
 
         final String scaling = mPreferences.getString( "displayScalingGame", "default" );
         GlobalPrefs.DisplayScaling displayScaling = gliden64Widescreenhack ? GlobalPrefs.DisplayScaling.STRETCH :
@@ -479,8 +461,8 @@ public class GamePrefs
         videoSurfaceHeight = globalPrefs.getSurfaceResolutionHeight();
 
         //Angrylion only supports 640x480
-        videoRenderWidth = isAngrylionEnabled ? 640 : globalPrefs.getResolutionWidth(gliden64Widescreenhack, hResolution);
-        videoRenderHeight = isAngrylionEnabled ? 480 : globalPrefs.getResolutionHeight(hResolution);
+        videoRenderWidth = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 640 : globalPrefs.getResolutionWidth(gliden64Widescreenhack, hResolution);
+        videoRenderHeight = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 480 : globalPrefs.getResolutionHeight(hResolution);
 
         Log.i("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);
 

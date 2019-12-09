@@ -44,7 +44,7 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
 
-    private static final String AUDIO_SLES_PLUGIN = "libmupen64plus-audio-sles.so";
+    private static final String AUDIO_SLES_PLUGIN = "sles";
 
     private static final String ROOT = "screenRoot";
 
@@ -114,11 +114,11 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
 
         // Enable audio prefs if audio is enabled
         if (mGlobalPrefs.audioPlugin.name != null) {
-            PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
-            PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
-            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
-            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_TYPE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) && !mGlobalPrefs.enableSLESAudioTimeSretching);
-            PrefUtil.enablePreference(this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
+            PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.toLowerCase().contains(AUDIO_SLES_PLUGIN));
+            PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.toLowerCase().contains(AUDIO_SLES_PLUGIN));
+            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.toLowerCase().contains( AUDIO_SLES_PLUGIN ) );
+            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_TYPE, mGlobalPrefs.audioPlugin.name.toLowerCase().contains( AUDIO_SLES_PLUGIN ) && !mGlobalPrefs.enableSLESAudioTimeSretching);
+            PrefUtil.enablePreference(this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.toLowerCase().contains( AUDIO_SLES_PLUGIN ) );
             PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
             PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);
         }

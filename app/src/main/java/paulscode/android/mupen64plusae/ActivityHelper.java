@@ -105,6 +105,10 @@ public class ActivityHelper
         public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
         public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
         public static final String CORE_LIB             = NAMESPACE + "CORE_LIB";
+        public static final String RSP_LIB              = NAMESPACE + "RSP_LIB";
+        public static final String GFX_LIB              = NAMESPACE + "GFX_LIB";
+        public static final String AUDIO_LIB            = NAMESPACE + "AUDIO_LIB";
+        public static final String INPUT_LIB            = NAMESPACE + "INPUT_LIB";
         public static final String HIGH_PRIORITY_THREAD = NAMESPACE + "HIGH_PRIORITY_THREAD";
         public static final String USE_RAPHNET_DEVICES  = NAMESPACE + "USE_RAPHNET_DEVICES";
         public static final String PAK_TYPE_ARRAY       = NAMESPACE + "PAK_TYPE_ARRAY";
@@ -437,37 +441,36 @@ public class ActivityHelper
         activity.startActivity( intent );
     }
 
-    public static void startCoreService(Context context, ServiceConnection serviceConnection, String romGoodName, String romDisplayName,
-        String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-        String romLegacySave, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
-        boolean useHighPriorityThread, ArrayList<Integer> pakTypes, boolean[] isPlugged, boolean isFrameLimiterEnabled,
-        String coreUserDataDir, String coreUserCacheDir, String coreUserConfigDir, String userSaveDir,
-        boolean useRaphnetDevicesIfAvailable)
+    public static void startCoreService(Context context, ServiceConnection serviceConnection, StartCoreServiceParams params)
     {
         Intent intent = new Intent(context, CoreService.class);
-        intent.putExtra(Keys.ROM_GOOD_NAME, romGoodName);
-        intent.putExtra(Keys.ROM_DISPLAY_NAME, romDisplayName);
-        intent.putExtra(Keys.ROM_PATH, romPath);
-        intent.putExtra(Keys.CHEAT_ARGS, cheatOptions);
-        intent.putExtra(Keys.DO_RESTART, isRestarting);
-        intent.putExtra(Keys.SAVE_TO_LOAD, saveToLoad);
-        intent.putExtra(Keys.CORE_LIB, coreLib);
-        intent.putExtra(Keys.HIGH_PRIORITY_THREAD, useHighPriorityThread);
-        intent.putExtra(Keys.USE_RAPHNET_DEVICES, useRaphnetDevicesIfAvailable);
-        intent.putIntegerArrayListExtra(Keys.PAK_TYPE_ARRAY, pakTypes);
-        intent.putExtra(Keys.IS_PLUGGED_ARRAY, isPlugged);
-        intent.putExtra(Keys.IS_FPS_LIMIT_ENABLED, isFrameLimiterEnabled);
-        intent.putExtra(Keys.CORE_USER_DATA_DIR, coreUserDataDir);
-        intent.putExtra(Keys.CORE_USER_CACHE_DIR, coreUserCacheDir);
-        intent.putExtra(Keys.CORE_USER_CONFIG_DIR, coreUserConfigDir);
-        intent.putExtra(Keys.USER_SAVE_DIR, userSaveDir);
+        intent.putExtra(Keys.ROM_GOOD_NAME, params.getRomGoodName());
+        intent.putExtra(Keys.ROM_DISPLAY_NAME,  params.getRomDisplayName());
+        intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
+        intent.putExtra(Keys.CHEAT_ARGS,  params.getCheatOptions());
+        intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
+        intent.putExtra(Keys.SAVE_TO_LOAD, params.getSaveToLoad());
+        intent.putExtra(Keys.CORE_LIB, params.getCoreLib());
+        intent.putExtra(Keys.RSP_LIB, params.getRspLib());
+        intent.putExtra(Keys.GFX_LIB, params.getGfxLib());
+        intent.putExtra(Keys.AUDIO_LIB, params.getAudioLib());
+        intent.putExtra(Keys.INPUT_LIB, params.getInputLib());
+        intent.putExtra(Keys.HIGH_PRIORITY_THREAD, params.isUseHighPriorityThread());
+        intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
+        intent.putIntegerArrayListExtra(Keys.PAK_TYPE_ARRAY, params.getPakTypes());
+        intent.putExtra(Keys.IS_PLUGGED_ARRAY, params.getIsPlugged());
+        intent.putExtra(Keys.IS_FPS_LIMIT_ENABLED, params.isFrameLimiterEnabled());
+        intent.putExtra(Keys.CORE_USER_DATA_DIR, params.getCoreUserDataDir());
+        intent.putExtra(Keys.CORE_USER_CACHE_DIR, params.getCoreUserCacheDir());
+        intent.putExtra(Keys.CORE_USER_CONFIG_DIR, params.getCoreUserConfigDir());
+        intent.putExtra(Keys.USER_SAVE_DIR, params.getUserSaveDir());
 
-        intent.putExtra(Keys.ROM_MD5, romMd5);
-        intent.putExtra(Keys.ROM_CRC, romCrc);
-        intent.putExtra(Keys.ROM_HEADER_NAME, romHeaderName);
-        intent.putExtra(Keys.ROM_COUNTRY_CODE, romCountryCode);
-        intent.putExtra(Keys.ROM_ART_PATH, romArtPath);
-        intent.putExtra(Keys.ROM_LEGACY_SAVE, romLegacySave);
+        intent.putExtra(Keys.ROM_MD5, params.getRomMd5());
+        intent.putExtra(Keys.ROM_CRC, params.getRomCrc());
+        intent.putExtra(Keys.ROM_HEADER_NAME, params.getRomHeaderName());
+        intent.putExtra(Keys.ROM_COUNTRY_CODE, params.getRomCountryCode());
+        intent.putExtra(Keys.ROM_ART_PATH, params.getRomArtPath());
+        intent.putExtra(Keys.ROM_LEGACY_SAVE, params.getRomLegacySave());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);

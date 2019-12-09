@@ -40,6 +40,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.StartCoreServiceParams;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
@@ -356,14 +357,41 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         pakTypes.add(mGamePrefs.getPakType(3).getNativeValue());
         pakTypes.add(mGamePrefs.getPakType(4).getNativeValue());
 
-
         // Start the core
-        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomDisplayName, mRomPath,
-                mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
-                mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(),
-                mUseRaphnetIfAvailable);
+        StartCoreServiceParams params = new StartCoreServiceParams();
+        params.setRomGoodName(mRomGoodName);
+        params.setRomDisplayName(mRomDisplayName);
+        params.setRomPath(mRomPath);
+        params.setRomMd5(mRomMd5);
+        params.setRomCrc(mRomCrc);
+        params.setRomHeaderName(mRomHeaderName);
+        params.setRomCountryCode(mRomCountryCode);
+        params.setRomArtPath(mRomArtPath);
+        params.setRomLegacySave(mRomLegacySave);
+        params.setCheatOptions(mCheatArgs);
+        params.setRestarting(mIsRestarting);
+        params.setSaveToLoad(mSaveToLoad);
+        params.setCoreLib(mAppData.coreLib);
+        params.setRspLib(mGamePrefs.rspPluginLib.getPluginLib());
+        params.setGfxLib(mGamePrefs.videoPluginLib.getPluginLib());
+        params.setAudioLib(mGamePrefs.audioPluginLib.getPluginLib());
+
+        if (mUseRaphnetIfAvailable) {
+            params.setInputLib(AppData.InputPlugin.RAPHNET.getPluginLib());
+        } else {
+            params.setInputLib(AppData.InputPlugin.ANDROID.getPluginLib());
+        }
+        params.setUseHighPriorityThread(mGlobalPrefs.useHighPriorityThread);
+        params.setPakTypes(pakTypes);
+        params.setIsPlugged(mGamePrefs.isPlugged);
+        params.setFrameLimiterEnabled(mGlobalPrefs.isFramelimiterEnabled);
+        params.setCoreUserDataDir(mGlobalPrefs.coreUserDataDir);
+        params.setCoreUserCacheDir(mGlobalPrefs.coreUserCacheDir);
+        params.setCoreUserConfigDir(mGamePrefs.getCoreUserConfigDir());
+        params.setUserSaveDir(mGamePrefs.getUserSaveDir());
+        params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
+
+        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
 
     private void actuallyStopCore()

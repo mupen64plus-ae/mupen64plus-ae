@@ -31,12 +31,17 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.platform.unix.LibC;
+import com.sun.jna.platform.linux.LibC;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 import java.io.File;
+import org.apache.commons.io.FileUtils;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Call-outs made from Java to the native core library. Any function names changed here should
@@ -225,26 +230,45 @@ class CoreInterface
 
         // Destroy surface
         void emuDestroySurface();
+
+        void overrideAeVidExtFuncs();
+
+        // Load a library using dlopen
+        Pointer loadLibrary(String libName);
+
+        // Unload library using dlopen
+        int unloadLibrary(Pointer handle, String libName);
+    }
+
+    /**
+     * Library used to interface with AE Vid Ext implementation
+     */
+    public interface PluginLibrary extends Library {
+
+        interface DebugCallback extends Callback {
+            void invoke(Pointer Context, int level, String message);
+        }
+
+        int PluginStartup(Pointer CoreLibHandle, Pointer Context, DebugCallback debugCallBack);
+
+        int PluginGetVersion(IntByReference PluginType, IntByReference PluginVersion, IntByReference APIVersion, PointerByReference PluginNamePtr, IntByReference Capabilities);
+
+        int PluginShutdown();
     }
 
     private Mupen64PlusLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", Mupen64PlusLibrary.class);
     private AeVidExtLibrary mAeVidExtLibrary = Native.load("ae-vidext", AeVidExtLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
+    private HashMap<m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
 
-
-    private Mupen64PlusLibrary.DebugCallback debugCallBack = new Mupen64PlusLibrary.DebugCallback() {
+    private Mupen64PlusLibrary.DebugCallback debugCallBackCore = new Mupen64PlusLibrary.DebugCallback() {
         public void invoke(Pointer Context, int level, String message) {
-            if (level == m64p_msg_level.M64MSG_ERROR.ordinal())
-                Log.e(Context.getString(0), message);
-            else if (level == m64p_msg_level.M64MSG_WARNING.ordinal())
-                Log.w(Context.getString(0), message);
-            else if (level == m64p_msg_level.M64MSG_INFO.ordinal())
-                Log.i(Context.getString(0), message);
-            else if (level == m64p_msg_level.M64MSG_STATUS.ordinal())
-                Log.d(Context.getString(0), message);
-            else if (level == m64p_msg_level.M64MSG_VERBOSE.ordinal())
-            {
-                Log.v(Context.getString(0), message);
-            }
+            DebugCallback(Context, level, message);
+        }
+    };
+
+    private PluginLibrary.DebugCallback debugCallBackPlugin = new PluginLibrary.DebugCallback() {
+        public void invoke(Pointer Context, int level, String message) {
+            DebugCallback(Context, level, message);
         }
     };
 
@@ -259,76 +283,125 @@ class CoreInterface
 
     }
 
-    void openRom(File romFile)
+    void DebugCallback(Pointer Context, int level, String message)
     {
-        byte[] romBuffer = new byte[0];
-
+        if (level == m64p_msg_level.M64MSG_ERROR.ordinal())
+            Log.e(Context.getString(0), message);
+        else if (level == m64p_msg_level.M64MSG_WARNING.ordinal())
+            Log.w(Context.getString(0), message);
+        else if (level == m64p_msg_level.M64MSG_INFO.ordinal())
+            Log.i(Context.getString(0), message);
+        else if (level == m64p_msg_level.M64MSG_STATUS.ordinal())
+            Log.d(Context.getString(0), message);
+        else if (level == m64p_msg_level.M64MSG_VERBOSE.ordinal())
+        {
+            Log.v(Context.getString(0), message);
+        }
     }
 
-    /* CoreStartup()
+    boolean openRom(File romFile)
+    {
+        boolean success = false;
+        byte[] romBuffer = null;
+
+        try {
+            romBuffer = FileUtils.readFileToByteArray(romFile);
+            success = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (success)
+        {
+            int romLength = (int)romFile.length();
+
+            Pointer parameter = new Memory(romLength);
+            parameter.write(0, romBuffer, 0, romBuffer.length);
+            mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_ROM_OPEN.ordinal(), romLength, parameter);
+        }
+
+        return success;
+    }
+
+    /* coreStartup()
      *
      * This function initializes libmupen64plus for use by allocating memory,
      * creating data structures, and loading the configuration file.
      */
-    int CoreStartup(String configDirPath, String dataDirPath)
-    {
-        Pointer context = new Memory(Native.POINTER_SIZE);
-        context.setString(0, "Core");
-
-        return mMupen64PlusLibrary.CoreStartup(Mupen64PlusLibrary.coreAPIVersion, configDirPath,
-                dataDirPath, context, debugCallBack, null, stateCallBack);
-    }
-
-    /* CoreAttachPlugin()
-     *
-     * This function attaches the given plugin to the emulator core. There can only
-     * be one plugin of each type attached to the core at any given time.
-     */
-    int CoreAttachPlugin(m64p_plugin_type pluginType, String pluginName)
-    {
-        System.loadLibrary(pluginName);
-        long handle = NativeExports.loadLibrary(pluginName);
-        Pointer libHandle = new Memory(Native.POINTER_SIZE);
-        libHandle.setLong(0, handle);
-
-        return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), libHandle);
-    }
-
-    /* CoreDetachPlugin()
-     *
-     * This function detaches the given plugin from the emulator core, and re-attaches
-     * the 'dummy' plugin functions.
-     */
-    int CoreDetachPlugin(m64p_plugin_type pluginType)
-    {
-        return mMupen64PlusLibrary.CoreDetachPlugin(pluginType.ordinal());
-    }
-
-    /* CoreAddCheat()
-     *
-     * This function will add a Cheat Function to a list of currently active cheats
-     * which are applied to the open ROM.
-     */
-    int CoreAddCheat(String cheatName, ArrayList<m64p_cheat_code> codes)
-    {
-        return mMupen64PlusLibrary.CoreAddCheat(cheatName, (m64p_cheat_code[])codes.toArray(), codes.size());
-    }
-
-    /* CoreCheatEnabled()
-     *
-     * This function will enable or disable a Cheat Function which is in the list of
-     * currently active cheats.
-     */
-    int CoreCheatEnabled(String cheatName, boolean enabled)
-    {
-        return mMupen64PlusLibrary.CoreCheatEnabled(cheatName, enabled ? 1 : 0);
-    }
-
-    void emuStart(String userDataPath, String userCachePath )
+    int coreStartup(String configDirPath, String dataDirPath, String userDataPath, String userCachePath)
     {
         LibC.INSTANCE.setenv("XDG_DATA_HOME", userDataPath, 1);
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
 
+        Pointer context = new Memory(Native.POINTER_SIZE);
+        context.setString(0, "Core");
+
+        int returnValue = mMupen64PlusLibrary.CoreStartup(Mupen64PlusLibrary.coreAPIVersion, configDirPath,
+                dataDirPath, context, debugCallBackCore, null, stateCallBack);
+        mAeVidExtLibrary.overrideAeVidExtFuncs();
+        return returnValue;
+    }
+
+    /* coreAttachPlugin()
+     *
+     * This function attaches the given plugin to the emulator core. There can only
+     * be one plugin of each type attached to the core at any given time.
+     */
+    int coreAttachPlugin(m64p_plugin_type pluginType, String pluginName)
+    {
+        mPlugins.put(pluginType, Native.load(pluginName, PluginLibrary.class));
+
+        IntByReference pluginTypeInt = new IntByReference(0);
+        IntByReference pluginVersion = new IntByReference(0);
+        IntByReference apiVersion = new IntByReference(0);
+        PointerByReference pluginNameReference = new PointerByReference();
+        IntByReference capabilities = new IntByReference(0);
+
+        mPlugins.get(pluginType).PluginGetVersion(pluginTypeInt, pluginVersion, apiVersion, pluginNameReference, capabilities);
+
+        Pointer coreHandle = mAeVidExtLibrary.loadLibrary("mupen64plus-core");
+        Pointer pluginNamePointer = new Memory(pluginName.length() + 1);
+        pluginNamePointer.setString(0, pluginName);
+        mPlugins.get(pluginType).PluginStartup(coreHandle, pluginNamePointer, debugCallBackPlugin);
+
+        Pointer handle = mAeVidExtLibrary.loadLibrary(pluginName);
+        int returnValue = mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
+
+        return returnValue;
+    }
+
+    /* coreDetachPlugin()
+     *
+     * This function detaches the given plugin from the emulator core, and re-attaches
+     * the 'dummy' plugin functions.
+     */
+    int coreDetachPlugin(m64p_plugin_type pluginType)
+    {
+        return mMupen64PlusLibrary.CoreDetachPlugin(pluginType.ordinal());
+    }
+
+    /* coreAddCheat()
+     *
+     * This function will add a Cheat Function to a list of currently active cheats
+     * which are applied to the open ROM.
+     */
+    int coreAddCheat(String cheatName, ArrayList<m64p_cheat_code> codes)
+    {
+        return mMupen64PlusLibrary.CoreAddCheat(cheatName, (m64p_cheat_code[])codes.toArray(), codes.size());
+    }
+
+    /* coreCheatEnabled()
+     *
+     * This function will enable or disable a Cheat Function which is in the list of
+     * currently active cheats.
+     */
+    int coreCheatEnabled(String cheatName, boolean enabled)
+    {
+        return mMupen64PlusLibrary.CoreCheatEnabled(cheatName, enabled ? 1 : 0);
+    }
+
+    void emuStart()
+    {
         IntByReference parameter = new IntByReference(0);
         mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_EXECUTE.ordinal(), 0, parameter.getPointer());
     }
@@ -342,6 +415,12 @@ class CoreInterface
     void emuShutdown()
     {
         mMupen64PlusLibrary.CoreShutdown();
+    }
+
+    void closeRom()
+    {
+        IntByReference parameter = new IntByReference(0);
+        mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_ROM_CLOSE.ordinal(), 0, parameter.getPointer());
     }
 
     void emuResume()

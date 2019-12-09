@@ -97,6 +97,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
     private String mCoreLib = null;
+    private String mRspLib = null;
+    private String mGfxLib = null;
+    private String mAudioLib = null;
+    private String mInputLib = null;
     private boolean mUseHighPriorityThread = false;
     private boolean mUseRaphnetDevicesIfAvailable = false;
     private ArrayList<Integer> mPakType = null;
@@ -431,38 +435,48 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
             Log.i("CoreService", "Pak type=" + mPakType.get(0).toString());
 
-            ArrayList<String> arglist = new ArrayList<>();
-            arglist.add( "mupen64plus" );
-            arglist.add( "--corelib" );
-            arglist.add( mCoreLib );
-            arglist.add( "--configdir" );
-            arglist.add( mCoreUserConfigDir );
+            mCoreInterface.coreStartup(mCoreUserConfigDir, null, mCoreUserDataDir, mCoreUserCacheDir);
 
             if(!mIsRestarting)
             {
-                arglist.add( "--savestate" );
-                arglist.add( mSaveToLoad );
+                mCoreInterface.emuLoadFile(mSaveToLoad);
             }
 
             if( !mIsFrameLimiterEnabled )
             {
-                arglist.add( "--nospeedlimit" );
+                mCoreInterface.emuSetFramelimiter(false);
             }
+            /*
+            TODO: This is hard
             if( mCheatOptions != null )
             {
                 arglist.add( "--cheats" );
                 arglist.add( mCheatOptions );
             }
-            arglist.add( mRomPath );
 
-            Log.i("CoreService", "emuStar args:");
-            for(String arg : arglist)
+             */
+
+            int result = mCoreInterface.openRom(new File(mRomPath)) ? 0 : 7;
+
+            if (result == 0)
             {
-                Log.i("CoreService", arg);
+                // Attach all the plugins
+                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_GFX, mGfxLib);
+                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_AUDIO, mAudioLib);
+                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_INPUT, mInputLib);
+                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP, mRspLib);
+
+                // This call blocks until emulation is stopped
+                mCoreInterface.emuStart();
+
+                // Detach all the plugins
+                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP);
+                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_GFX);
+                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_AUDIO);
+                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_INPUT);
             }
 
-            //This call blocks until emulation is stopped
-            final int result = NativeExports.emuStart( mCoreUserDataDir, mCoreUserCacheDir, arglist.toArray() );
+            mCoreInterface.closeRom();
 
             if(mListener != null)
             {
@@ -609,6 +623,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
             mSaveToLoad = extras.getString( ActivityHelper.Keys.SAVE_TO_LOAD );
             mCoreLib = extras.getString( ActivityHelper.Keys.CORE_LIB );
+            mRspLib = extras.getString( ActivityHelper.Keys.RSP_LIB );
+            mGfxLib = extras.getString( ActivityHelper.Keys.GFX_LIB );
+            mAudioLib = extras.getString( ActivityHelper.Keys.AUDIO_LIB );
+            mInputLib = extras.getString( ActivityHelper.Keys.INPUT_LIB );
             mUseHighPriorityThread = extras.getBoolean( ActivityHelper.Keys.HIGH_PRIORITY_THREAD, false );
             mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
 

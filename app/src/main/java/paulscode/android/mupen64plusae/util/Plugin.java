@@ -47,7 +47,7 @@ public class Plugin
     public Plugin( SharedPreferences prefs, String key )
     {
         name = prefs.getString( key, "" );
-        enabled = name.endsWith( ".so" );
+        enabled = !name.equals("dummy");
         path = enabled ? name : "dummy";
     }
     
@@ -60,7 +60,7 @@ public class Plugin
     public Plugin( Profile profile, String key )
     {
         name = profile.get( key, "" );
-        enabled = name.endsWith( ".so" );
+        enabled = !name.equals("dummy");
         path = enabled ? name : "dummy";
     }
 }

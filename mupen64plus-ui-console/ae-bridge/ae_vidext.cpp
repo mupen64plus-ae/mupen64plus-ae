@@ -80,10 +80,6 @@ JavaVM* mJavaVM;
 // Library init
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
-	CoreHandle = dlopen("libmupen64plus-core.so", RTLD_NOW);
-	CoreOverrideVidExt = (ptr_CoreOverrideVidExt) dlsym(CoreHandle, "CoreOverrideVidExt");
-	CoreOverrideVidExt(&vidExtFunctions);
-
 	mJavaVM = vm;
 	return JNI_VERSION_1_6;
 }
@@ -513,4 +509,42 @@ extern DECLSPEC void pauseEmulator()
 extern DECLSPEC void resumeEmulator()
 {
     isPaused = false;
+}
+
+extern "C" DECLSPEC void overrideAeVidExtFuncs(void)
+{
+	CoreHandle = dlopen("libmupen64plus-core.so", RTLD_NOW);
+	CoreOverrideVidExt = (ptr_CoreOverrideVidExt) dlsym(CoreHandle, "CoreOverrideVidExt");
+	CoreOverrideVidExt(&vidExtFunctions);
+}
+
+void checkLibraryError(const char* message)
+{
+	const char* error = dlerror();
+	if (error)
+		LOGE("%s: %s", message, error);
+}
+
+extern "C" DECLSPEC void* loadLibrary(const char* libName)
+{
+	char path[256];
+	sprintf(path, "lib%s.so", libName);
+	void* handle = dlopen(path, RTLD_NOW);
+	if (!handle)
+		LOGE("Failed to load lib%s.so", libName);
+	checkLibraryError(libName);
+
+	return handle;
+}
+
+extern "C" DECLSPEC int unloadLibrary(void* handle, const char* libName)
+{
+	if (!handle)
+		return 0;
+
+	int code = dlclose(handle);
+	if (code)
+		LOGE("Failed to unload lib%s.so", libName);
+	checkLibraryError(libName);
+	return code;
 }
