@@ -42,6 +42,7 @@ import android.os.Vibrator;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Surface;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -130,6 +131,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private final IBinder mBinder = new LocalBinder();
     private CoreServiceListener mListener = null;
     private RaphnetControllerHandler mRaphnetHandler = null;
+
+    private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
+    private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
+    private String mDdRom = null;
+    private String mDdDisk = null;
 
     private CoreInterface mCoreInterface = new CoreInterface();
 
@@ -467,6 +473,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_INPUT, mInputLib);
                 mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP, mRspLib);
 
+                mCoreInterface.setGbRomPath(mGbRomPaths);
+                mCoreInterface.setGbRamPath(mGbRamPaths);
+                mCoreInterface.setDdRomPath(mDdRom);
+                mCoreInterface.setDdDiskPath(mDdDisk);
+
                 // This call blocks until emulation is stopped
                 mCoreInterface.emuStart();
 
@@ -719,6 +730,18 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
                 mCheats = CheatUtils.populateWithPosition( cheatLocation, mRomCrc, mRomCountryCode, getBaseContext() );
             }
+
+            mGbRomPaths.put(1, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_1));
+            mGbRamPaths.put(1, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_1));
+            mGbRomPaths.put(2, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_2));
+            mGbRamPaths.put(2, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_2));
+            mGbRomPaths.put(3, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_3));
+            mGbRamPaths.put(3, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_3));
+            mGbRomPaths.put(4, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_4));
+            mGbRamPaths.put(4, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_4));
+
+            mDdRom = extras.getString(ActivityHelper.Keys.DD_ROM_PATH);
+            mDdDisk = extras.getString(ActivityHelper.Keys.DD_DISK_PATH);
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made

@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.jni;
 
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Surface;
 
 import com.sun.jna.Callback;
@@ -49,6 +50,7 @@ import java.util.HashMap;
  *
  * @see CoreService
  */
+@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "FieldCanBeLocal", "WeakerAccess"})
 class CoreInterface
 {
     enum m64p_error {
@@ -143,6 +145,65 @@ class CoreInterface
         m64p_cheat_code() {
             address = 0;
             value = 0;
+        }
+    }
+
+
+    @FieldOrder({ "cb_data", "gbCartRomCallback", "gbCartRamCallback", "ddRomCallback", "ddDiskCallback" })
+    public static class m64p_media_loader extends Structure {
+
+        interface get_gb_cart_rom extends Callback {
+            String invoke(Pointer cb_data, int controller_num);
+        }
+
+        interface get_gb_cart_ram extends Callback {
+            String invoke(Pointer cb_data, int controller_num);
+        }
+
+        interface get_dd_rom extends Callback {
+            String invoke(Pointer cb_data);
+        }
+
+        interface get_dd_disk extends Callback {
+            String invoke(Pointer cb_data);
+        }
+
+        /* Frontend-defined callback data. */
+        public Pointer cb_data;
+
+        /* Allow the frontend to specify the GB cart ROM file to load
+         * cb_data: points to frontend-defined callback data.
+         * controller_num: (0-3) tell the frontend which controller is about to load a GB cart
+         * Returns a NULL-terminated string owned by the core specifying the GB cart ROM filename to load.
+         * Empty or NULL string results in no GB cart being loaded (eg. empty transferpak).
+         */
+        public get_gb_cart_rom gbCartRomCallback;
+
+        /* Allow the frontend to specify the GB cart RAM file to load
+         * cb_data: points to frontend-defined callback data.
+         * controller_num: (0-3) tell the frontend which controller is about to load a GB cart
+         * Returns a NULL-terminated string owned by the core specifying the GB cart RAM filename to load
+         * Empty or NULL string results in the core generating a default save file with empty content.
+         */
+        public get_gb_cart_ram gbCartRamCallback;
+
+        /* Allow the frontend to specify the DD IPL ROM file to load
+         * cb_data: points to frontend-defined callback data.
+         * Returns a NULL-terminated string owned by the core specifying the DD IPL ROM filename to load
+         * Empty or NULL string results in disabled 64DD.
+         */
+        public get_dd_rom ddRomCallback;
+
+        /* Allow the frontend to specify the DD disk file to load
+         * cb_data: points to frontend-defined callback data.
+         * Returns a NULL-terminated string owned by the core specifying the DD disk filename to load
+         * Empty or NULL string results in no DD disk being loaded (eg. empty disk drive).
+         */
+        public get_dd_disk ddDiskCallback;
+
+        m64p_media_loader()
+        {
+
         }
     }
 
@@ -241,7 +302,7 @@ class CoreInterface
         // Load a library using dlopen
         Pointer loadLibrary(String libName);
 
-        // Unload library using dlopen
+        // Unload library using dlclose
         int unloadLibrary(Pointer handle, String libName);
     }
 
@@ -265,33 +326,69 @@ class CoreInterface
     private AeVidExtLibrary mAeVidExtLibrary = Native.load("ae-vidext", AeVidExtLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
     private HashMap<m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
 
-    private Pointer coreContext;
+    private Pointer mCoreContext;
+
+    private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
+    private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
+    private String mDdRom = null;
+    private String mDdDisk = null;
+
     private HashMap<m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
-    private Mupen64PlusLibrary.DebugCallback debugCallBackCore = new Mupen64PlusLibrary.DebugCallback() {
+    private Mupen64PlusLibrary.DebugCallback mDebugCallBackCore = new Mupen64PlusLibrary.DebugCallback() {
         public void invoke(Pointer Context, int level, String message) {
             DebugCallback(Context, level, message);
         }
     };
 
-    private PluginLibrary.DebugCallback debugCallBackPlugin = new PluginLibrary.DebugCallback() {
+    private PluginLibrary.DebugCallback mDebugCallBackPlugin = new PluginLibrary.DebugCallback() {
         public void invoke(Pointer Context, int level, String message) {
             DebugCallback(Context, level, message);
         }
     };
 
-    private Mupen64PlusLibrary.StateCallback stateCallBack = new Mupen64PlusLibrary.StateCallback() {
+    private Mupen64PlusLibrary.StateCallback mStateCallBack = new Mupen64PlusLibrary.StateCallback() {
         public void invoke(Pointer Context, int param_type, int new_value) {
             NativeImports.stateCallback(param_type, new_value);
         }
     };
 
-    public CoreInterface()
-    {
+    private m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = new m64p_media_loader.get_gb_cart_rom() {
+        public String invoke(Pointer cb_data, int controller_num) {
+            return mGbRomPaths.get(controller_num);
+        }
+    };
 
+    private m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = new m64p_media_loader.get_gb_cart_ram() {
+        public String invoke(Pointer cb_data, int controller_num) {
+            return mGbRamPaths.get(controller_num);
+        }
+    };
+
+    private m64p_media_loader.get_dd_rom mDdRomCallback = new m64p_media_loader.get_dd_rom() {
+        public String invoke(Pointer cb_data) {
+            return mDdRom;
+        }
+    };
+
+    private m64p_media_loader.get_dd_disk mDdDiskCallback = new m64p_media_loader.get_dd_disk() {
+        public String invoke(Pointer cb_data) {
+            return mDdDisk;
+        }
+    };
+
+    private m64p_media_loader mMediaLoaderCallbacks = new m64p_media_loader();
+
+    CoreInterface()
+    {
+        mMediaLoaderCallbacks.cb_data = null;
+        mMediaLoaderCallbacks.gbCartRomCallback = mGbCartRomCallback;
+        mMediaLoaderCallbacks.gbCartRamCallback = mGbCartRamCallback;
+        mMediaLoaderCallbacks.ddRomCallback = mDdRomCallback;
+        mMediaLoaderCallbacks.ddDiskCallback = mDdDiskCallback;
     }
 
-    void DebugCallback(Pointer Context, int level, String message)
+    private void DebugCallback(Pointer Context, int level, String message)
     {
         if (level == m64p_msg_level.M64MSG_ERROR.ordinal())
             Log.e(Context.getString(0), message);
@@ -331,6 +428,22 @@ class CoreInterface
         return success;
     }
 
+    public void setGbRomPath(SparseArray<String> romPaths) {
+        mGbRomPaths = romPaths;
+    }
+
+    public void setGbRamPath(SparseArray<String> ramPaths) {
+        mGbRamPaths = ramPaths;
+    }
+
+    public void setDdRomPath(String ddRomPath) {
+        this.mDdRom = ddRomPath;
+    }
+
+    public void setDdDiskPath(String ddDiskPath) {
+        this.mDdDisk = ddDiskPath;
+    }
+
     /* coreStartup()
      *
      * This function initializes libmupen64plus for use by allocating memory,
@@ -342,11 +455,11 @@ class CoreInterface
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
 
         String coreContextText = "Core";
-        coreContext = new Memory(coreContextText.length()+1);
-        coreContext.setString(0, coreContextText);
+        mCoreContext = new Memory(coreContextText.length()+1);
+        mCoreContext.setString(0, coreContextText);
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(Mupen64PlusLibrary.coreAPIVersion, configDirPath,
-                dataDirPath, coreContext, debugCallBackCore, null, stateCallBack);
+                dataDirPath, mCoreContext, mDebugCallBackCore, null, mStateCallBack);
         mAeVidExtLibrary.overrideAeVidExtFuncs();
         return returnValue;
     }
@@ -372,7 +485,7 @@ class CoreInterface
         mPluginContext.put(pluginType, new Memory(pluginName.length() + 1));
 
         mPluginContext.get(pluginType).setString(0, pluginName);
-        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), debugCallBackPlugin);
+        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), mDebugCallBackPlugin);
 
         Pointer handle = mAeVidExtLibrary.loadLibrary(pluginName);
         return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
@@ -416,6 +529,11 @@ class CoreInterface
 
     void emuStart()
     {
+        mMediaLoaderCallbacks.write();
+        int returnValue = mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_SET_MEDIA_LOADER.ordinal(), mMediaLoaderCallbacks.size(), mMediaLoaderCallbacks.getPointer());
+
+        Log.e("CoreInterface", "RETURN VALUE=" + returnValue);
+
         IntByReference parameter = new IntByReference(0);
         mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_EXECUTE.ordinal(), 0, parameter.getPointer());
     }
@@ -463,9 +581,7 @@ class CoreInterface
 
     void emuSetSpeed( int percent )
     {
-        int speed_factor = percent;
-
-        IntByReference parameter = new IntByReference(speed_factor);
+        IntByReference parameter = new IntByReference(percent);
         mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_CORE_STATE_SET.ordinal(), m64p_core_param.M64CORE_SPEED_FACTOR.ordinal(), parameter.getPointer());
     }
 

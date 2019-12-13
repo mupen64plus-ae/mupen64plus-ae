@@ -391,6 +391,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         params.setCoreUserConfigDir(mGamePrefs.getCoreUserConfigDir());
         params.setUserSaveDir(mGamePrefs.getUserSaveDir());
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
+        
+        params.setGbRomPath(1, mGamePrefs.getTransferPakRom(1));
+        params.setGbRamPath(1, mGamePrefs.getTransferPakRam(1));
+        params.setGbRomPath(2, mGamePrefs.getTransferPakRom(2));
+        params.setGbRamPath(2, mGamePrefs.getTransferPakRam(2));
+        params.setGbRomPath(3, mGamePrefs.getTransferPakRom(3));
+        params.setGbRamPath(3, mGamePrefs.getTransferPakRam(3));
+        params.setGbRomPath(4, mGamePrefs.getTransferPakRom(4));
+        params.setGbRamPath(4, mGamePrefs.getTransferPakRam(4));
+        params.setDdRomPath(mGlobalPrefs.dd64IdlPath);
+        params.setDdDiskPath(mGamePrefs.dd64DiskPath);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }

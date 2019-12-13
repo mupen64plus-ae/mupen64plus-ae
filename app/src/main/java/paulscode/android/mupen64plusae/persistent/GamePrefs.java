@@ -342,6 +342,8 @@ public class GamePrefs
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
+    public final String dd64DiskPath;
+
     /** This is true if this game uses the D-pad */
     final boolean isDpadGame;
 
@@ -602,6 +604,14 @@ public class GamePrefs
         }
 
         touchscreenAutoHold = tmpTouchscreenAutoHold;
+
+        String tempDd64DiskPath = mPreferences.getString("dd64DiskPath", "");
+
+        if (!TextUtils.isEmpty(tempDd64DiskPath) && new File(tempDd64DiskPath).isDirectory()) {
+            tempDd64DiskPath = "";
+        }
+
+        dd64DiskPath = tempDd64DiskPath;
 
         // Relative touchscreen joystick
         final String tmpTouchscreenAnalogRelative = mPreferences.getString( "touchscreenAnalogRelative_game", "default" );

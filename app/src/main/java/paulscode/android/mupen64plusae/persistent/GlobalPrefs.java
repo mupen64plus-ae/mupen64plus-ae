@@ -28,6 +28,8 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -372,6 +374,9 @@ public class GlobalPrefs
     /** True if we should use Raphnet devices if available */
     public final boolean useRaphnetDevicesIfAvailable;
 
+    /** DD 64 IDL path */
+    public final String dd64IdlPath;
+
     // Shared preferences keys and key templates
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -688,6 +693,14 @@ public class GlobalPrefs
 
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread", false );
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
+
+        String tempDd64IdlPath = mPreferences.getString("dd64IdlPath", "");
+
+        if (!TextUtils.isEmpty(tempDd64IdlPath) && new File(tempDd64IdlPath).isDirectory()) {
+            tempDd64IdlPath = "";
+        }
+
+        dd64IdlPath = tempDd64IdlPath;
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
     }

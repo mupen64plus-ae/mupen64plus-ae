@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,7 @@ import static android.content.Context.ACTIVITY_SERVICE;
 /**
  * Utility class that encapsulates the Core Service parameters
  */
+@SuppressWarnings("WeakerAccess")
 public class StartCoreServiceParams
 {
     private String romGoodName;
@@ -95,6 +97,11 @@ public class StartCoreServiceParams
     private String coreUserConfigDir;
     private String userSaveDir;
     private boolean useRaphnetDevicesIfAvailable;
+
+    private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
+    private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
+    private String mDdRom = null;
+    private String mDdDisk = null;
 
     public String getRomGoodName() {
         return romGoodName;
@@ -302,5 +309,37 @@ public class StartCoreServiceParams
 
     public void setUseRaphnetDevicesIfAvailable(boolean useRaphnetDevicesIfAvailable) {
         this.useRaphnetDevicesIfAvailable = useRaphnetDevicesIfAvailable;
+    }
+
+    public String getGbRomPath(int player) {
+        return mGbRomPaths.get(player);
+    }
+
+    public void setGbRomPath(int player, String path) {
+        mGbRomPaths.put(player, path);
+    }
+
+    public String getGbRamPath(int player) {
+        return mGbRamPaths.get(player);
+    }
+
+    public void setGbRamPath(int player, String path) {
+        mGbRamPaths.put(player, path);
+    }
+
+    public String getDdRomPath() {
+        return mDdRom;
+    }
+
+    public void setDdRomPath(String ddRomPath) {
+        this.mDdRom = ddRomPath;
+    }
+
+    public String getDdDiskPath() {
+        return mDdDisk;
+    }
+
+    public void setDdDiskPath(String ddDiskPath) {
+        this.mDdDisk = ddDiskPath;
     }
 }

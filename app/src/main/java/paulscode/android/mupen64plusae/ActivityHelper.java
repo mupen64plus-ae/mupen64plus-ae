@@ -111,6 +111,16 @@ public class ActivityHelper
         public static final String INPUT_LIB            = NAMESPACE + "INPUT_LIB";
         public static final String HIGH_PRIORITY_THREAD = NAMESPACE + "HIGH_PRIORITY_THREAD";
         public static final String USE_RAPHNET_DEVICES  = NAMESPACE + "USE_RAPHNET_DEVICES";
+        public static final String GB_ROM_PATH_1        = NAMESPACE + "GB_ROM_PATH_1";
+        public static final String GB_RAM_PATH_1        = NAMESPACE + "GB_RAM_PATH_1";
+        public static final String GB_ROM_PATH_2        = NAMESPACE + "GB_ROM_PATH_2";
+        public static final String GB_RAM_PATH_2        = NAMESPACE + "GB_RAM_PATH_2";
+        public static final String GB_ROM_PATH_3        = NAMESPACE + "GB_ROM_PATH_3";
+        public static final String GB_RAM_PATH_3        = NAMESPACE + "GB_RAM_PATH_3";
+        public static final String GB_ROM_PATH_4        = NAMESPACE + "GB_ROM_PATH_4";
+        public static final String GB_RAM_PATH_4        = NAMESPACE + "GB_RAM_PATH_4";
+        public static final String DD_ROM_PATH          = NAMESPACE + "DD_ROM_PATH";
+        public static final String DD_DISK_PATH         = NAMESPACE + "DD_DISK_PATH";
         public static final String PAK_TYPE_ARRAY       = NAMESPACE + "PAK_TYPE_ARRAY";
         public static final String IS_PLUGGED_ARRAY     = NAMESPACE + "IS_PLUGGED_ARRAY";
         public static final String IS_FPS_LIMIT_ENABLED = NAMESPACE + "IS_FPS_LIMIT_ENABLED";
@@ -457,6 +467,18 @@ public class ActivityHelper
         intent.putExtra(Keys.INPUT_LIB, params.getInputLib());
         intent.putExtra(Keys.HIGH_PRIORITY_THREAD, params.isUseHighPriorityThread());
         intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
+
+        intent.putExtra(Keys.GB_ROM_PATH_1, params.getGbRomPath(1));
+        intent.putExtra(Keys.GB_RAM_PATH_1, params.getGbRamPath(1));
+        intent.putExtra(Keys.GB_ROM_PATH_2, params.getGbRomPath(2));
+        intent.putExtra(Keys.GB_RAM_PATH_2, params.getGbRamPath(2));
+        intent.putExtra(Keys.GB_ROM_PATH_3, params.getGbRomPath(3));
+        intent.putExtra(Keys.GB_RAM_PATH_3, params.getGbRamPath(3));
+        intent.putExtra(Keys.GB_ROM_PATH_4, params.getGbRomPath(4));
+        intent.putExtra(Keys.GB_RAM_PATH_4, params.getGbRamPath(4));
+        intent.putExtra(Keys.DD_ROM_PATH, params.getDdRomPath());
+        intent.putExtra(Keys.DD_DISK_PATH, params.getDdDiskPath());
+
         intent.putIntegerArrayListExtra(Keys.PAK_TYPE_ARRAY, params.getPakTypes());
         intent.putExtra(Keys.IS_PLUGGED_ARRAY, params.getIsPlugged());
         intent.putExtra(Keys.IS_FPS_LIMIT_ENABLED, params.isFrameLimiterEnabled());
