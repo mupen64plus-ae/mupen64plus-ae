@@ -259,9 +259,6 @@ public class AppData
     /** The directory containing all touchscreen skin folders.  */
     public final String touchscreenSkinsDir;
     
-    /** The path of the core library */
-    public final String coreLib;
-    
     /** The path of the gln64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gln64_conf;
 
@@ -405,7 +402,6 @@ public class AppData
             }
         }
 
-        coreLib = "libmupen64plus-core.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
         glideN64_conf = coreSharedDataDir + "/GLideN64.custom.ini";

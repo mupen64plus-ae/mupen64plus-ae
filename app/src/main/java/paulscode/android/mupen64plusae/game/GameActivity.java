@@ -61,6 +61,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
@@ -880,7 +881,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 final String latestSave = mGameDataManager.getLatestAutoSave();
                 mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath,
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                        mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
+                        mGamePrefs.getEnabledCheats(), mDoRestart, latestSave);
             }
 
             // Try running now in case the core service has already started

@@ -42,6 +42,7 @@ import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.DataPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.DefaultsPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
@@ -75,10 +76,10 @@ public class StartCoreServiceParams
     private byte romCountryCode;
     private String romArtPath;
     private String romLegacySave;
-    private String cheatOptions;
+    private String cheatPath;
+    private ArrayList<GamePrefs.CheatSelection> cheatOptions;
     private boolean isRestarting;
     private String saveToLoad;
-    private String coreLib;
     private String rspLib;
     private String gfxLib;
     private String audioLib;
@@ -167,11 +168,19 @@ public class StartCoreServiceParams
         this.romLegacySave = romLegacySave;
     }
 
-    public String getCheatOptions() {
+    public String getCheatPath() {
+        return cheatPath;
+    }
+
+    public void setCheatPath(String cheatPath) {
+        this.cheatPath = cheatPath;
+    }
+
+    public ArrayList<GamePrefs.CheatSelection> getCheatOptions() {
         return cheatOptions;
     }
 
-    public void setCheatOptions(String cheatOptions) {
+    public void setCheatOptions(ArrayList<GamePrefs.CheatSelection> cheatOptions) {
         this.cheatOptions = cheatOptions;
     }
 
@@ -189,14 +198,6 @@ public class StartCoreServiceParams
 
     public void setSaveToLoad(String saveToLoad) {
         this.saveToLoad = saveToLoad;
-    }
-
-    public String getCoreLib() {
-        return coreLib;
-    }
-
-    public void setCoreLib(String coreLib) {
-        this.coreLib = coreLib;
     }
 
     public String getRspLib() {

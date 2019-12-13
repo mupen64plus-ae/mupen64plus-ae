@@ -102,9 +102,9 @@ public class ActivityHelper
         public static final String SEARCH_SUBDIR        = NAMESPACE + "GALLERY_SEARCH_SUBDIR";
         public static final String DELETE_PATH          = NAMESPACE + "DELETE_PATH";
         public static final String DELETE_FILTER        = NAMESPACE + "DELETE_FILTER";
-        public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
+        public static final String CHEAT_PATH           = NAMESPACE + "CHEAT_PATH";
+        public static final String CHEAT_OPTIONS        = NAMESPACE + "CHEAT_OPTIONS";
         public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
-        public static final String CORE_LIB             = NAMESPACE + "CORE_LIB";
         public static final String RSP_LIB              = NAMESPACE + "RSP_LIB";
         public static final String GFX_LIB              = NAMESPACE + "GFX_LIB";
         public static final String AUDIO_LIB            = NAMESPACE + "AUDIO_LIB";
@@ -447,10 +447,10 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_GOOD_NAME, params.getRomGoodName());
         intent.putExtra(Keys.ROM_DISPLAY_NAME,  params.getRomDisplayName());
         intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
-        intent.putExtra(Keys.CHEAT_ARGS,  params.getCheatOptions());
+        intent.putExtra(Keys.CHEAT_PATH,  params.getCheatPath());
+        intent.putExtra(Keys.CHEAT_OPTIONS,  params.getCheatOptions());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
         intent.putExtra(Keys.SAVE_TO_LOAD, params.getSaveToLoad());
-        intent.putExtra(Keys.CORE_LIB, params.getCoreLib());
         intent.putExtra(Keys.RSP_LIB, params.getRspLib());
         intent.putExtra(Keys.GFX_LIB, params.getGfxLib());
         intent.putExtra(Keys.AUDIO_LIB, params.getAudioLib());

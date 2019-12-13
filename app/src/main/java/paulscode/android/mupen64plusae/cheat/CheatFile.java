@@ -71,7 +71,7 @@ import android.util.Log;
  * 
  * @author Paul Lamb
  */
-class CheatFile
+public class CheatFile
 {
     /** The name we use for the untitled section (preamble) of the cheat file. */
     static final String NO_KEY = "[<sectionless!>]";
@@ -87,7 +87,7 @@ class CheatFile
      * 
      * @param filename the path of the file to load
      */
-    CheatFile( String filename, boolean loadAll )
+    public CheatFile( String filename, boolean loadAll )
     {
         mFilename = filename;
         mSections = new LinkedHashMap<>();

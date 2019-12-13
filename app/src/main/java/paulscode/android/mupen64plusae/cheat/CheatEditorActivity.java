@@ -25,6 +25,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -86,7 +89,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         }
         
         @Override
-        public View getView( int position, View convertView, ViewGroup parent )
+        public @NonNull View getView(int position, @Nullable View convertView,
+                                     @NonNull ViewGroup parent)
         {
             Context context = getContext();
             LayoutInflater inflater = (LayoutInflater) context
@@ -208,7 +212,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         //We don't extract user cheats in a separate task since there aren't as many
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         userCheats.clear();        
-        userCheats.addAll( CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, false, this ) );
+        userCheats.addAll( CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, this ) );
         
         cheatListAdapter = new CheatListAdapter( this, userCheats );
         setListAdapter( cheatListAdapter );
@@ -298,7 +302,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
                 CheatAddressData addressData = new CheatAddressData();
                 
                 String addressString = address.substring(0, 8);
-                String valueString = address.substring(address.length()-4, address.length());
+                String valueString = address.substring(address.length()-4);
 
                 addressData.address = Long.valueOf(addressString, 16);
                 if(!valueString.contains("?"))
@@ -325,7 +329,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
             for(String option : optionStrings)
             {
                 CheatOptionData cheatData = new CheatOptionData();
-                String valueString = option.substring(option.length()-4, option.length());
+                String valueString = option.substring(option.length()-4);
                 cheatData.value = Integer.valueOf(valueString, 16);
                 cheatData.description = option.substring(0, option.length() - 5);
                 optionsList.add(cheatData);

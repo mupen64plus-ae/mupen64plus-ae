@@ -38,6 +38,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
@@ -112,7 +113,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
     private String mRomLegacySave = null;
-    private String mCheatArgs = null;
+    private ArrayList<GamePrefs.CheatSelection> mCheatOptions = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
     private boolean mUseRaphnetIfAvailable = false;
@@ -269,9 +270,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mCoreEventListener = coreEventListener;
     }
 
-    public void startCore( AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
-        String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-        String romLegacySave, String cheatArgs, boolean isRestarting, String saveToLoad)
+    public void startCore(AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
+                          String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
+                          String romLegacySave, ArrayList<GamePrefs.CheatSelection> cheatSelections, boolean isRestarting, String saveToLoad)
     {
         Log.i("CoreFragment", "startCore");
 
@@ -281,7 +282,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mRomGoodName = romGoodName;
         mRomDisplayName = romDisplayName;
         mRomPath = romPath;
-        mCheatArgs = cheatArgs;
+        mCheatOptions = cheatSelections;
         mIsRestarting = isRestarting;
         mSaveToLoad = saveToLoad;
         mRomMd5 = romMd5;
@@ -368,10 +369,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         params.setRomCountryCode(mRomCountryCode);
         params.setRomArtPath(mRomArtPath);
         params.setRomLegacySave(mRomLegacySave);
-        params.setCheatOptions(mCheatArgs);
+        params.setCheatPath(mAppData.mupencheat_txt);
+        params.setCheatOptions(mCheatOptions);
         params.setRestarting(mIsRestarting);
         params.setSaveToLoad(mSaveToLoad);
-        params.setCoreLib(mAppData.coreLib);
         params.setRspLib(mGamePrefs.rspPluginLib.getPluginLib());
         params.setGfxLib(mGamePrefs.videoPluginLib.getPluginLib());
         params.setAudioLib(mGamePrefs.audioPluginLib.getPluginLib());

@@ -2,14 +2,19 @@ package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -69,6 +74,68 @@ public class GamePrefs
         public int getResourceString()
         {
             return mResourceStringName;
+        }
+    }
+
+    static public class CheatSelection implements Parcelable
+    {
+        public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+            public CheatSelection createFromParcel(Parcel in) {
+                return new CheatSelection(in);
+            }
+
+            public CheatSelection[] newArray(int size) {
+                return new CheatSelection[size];
+            }
+        };
+
+        private int index;
+        private int option;
+
+        // Constructor
+        CheatSelection(int index, int option){
+            this.index = index;
+            this.option = option;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public int getOption() {
+            return option;
+        }
+
+        public void setOption(int option) {
+            this.option = option;
+        }
+        // Parcelling part
+        CheatSelection(Parcel in){
+            this.index = in.readInt();
+            this.option = in.readInt();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.index);
+            dest.writeInt(this.option);
+        }
+
+        @Override
+        public String toString() {
+            return "CheatSelection{" +
+                    "index='" + index + '\'' +
+                    ", option='" + option + '\'' +
+                    '}';
         }
     }
 
@@ -680,10 +747,11 @@ public class GamePrefs
         return mSharedPrefsName;
     }
 
-    public String getCheatArgs()
+    public ArrayList<CheatSelection> getEnabledCheats()
     {
+        ArrayList<CheatSelection> cheatSelection = new ArrayList<>();
         if( !isCheatOptionsShown )
-            return "";
+            return cheatSelection;
 
         final Pattern pattern = Pattern.compile( "^" + gameCrc + " Cheat(\\d+)" );
         StringBuilder builder = null;
@@ -698,17 +766,11 @@ public class GamePrefs
                 {
                     final int index = Integer.parseInt( matcher.group( 1 ) );
 
-                    if (builder == null)
-                        builder = new StringBuilder();
-                    else
-                        builder.append( ',' );
-                    builder.append( index );
-                    builder.append( '-' );
-                    builder.append( value - 1 );
+                    cheatSelection.add(new CheatSelection(index, value-1));
                 }
             }
         }
-        return builder == null ? "" : builder.toString();
+        return cheatSelection;
     }
 
     public static String getGameDataPath( String romMd5, String headerName, String countrySymbol,

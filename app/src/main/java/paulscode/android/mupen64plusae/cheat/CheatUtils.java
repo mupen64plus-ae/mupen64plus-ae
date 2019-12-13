@@ -41,6 +41,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 public class CheatUtils
 {
     public static class Cheat implements Comparable<Cheat>
@@ -58,6 +60,18 @@ public class CheatUtils
             String lowerCaseName = this.name.toLowerCase(Locale.getDefault());
             String lowercaseOtherName = another.name.toLowerCase(Locale.getDefault());
             return lowerCaseName.compareTo(lowercaseOtherName);
+        }
+
+        @Override
+        @NonNull
+        public String toString() {
+            return "Cheat{" +
+                    "name='" + name + '\'' +
+                    ", desc='" + desc + '\'' +
+                    ", code='" + code + '\'' +
+                    ", option='" + option + '\'' +
+                    ", cheatIndex=" + cheatIndex +
+                    '}';
         }
     }
     
@@ -176,8 +190,7 @@ public class CheatUtils
         return populateCommon(cheatSection, crc, con);
     }
     
-    public static ArrayList<Cheat> populate( String crc, byte countryCode, CheatFile mupencheat_txt,
-            boolean isSystemDefault, Context con )
+    public static ArrayList<Cheat> populate( String crc, byte countryCode, CheatFile mupencheat_txt, Context con )
     {
         String countryString = String.format("%02x", countryCode).substring(0, 2);
         CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-') + "-C:" + countryString + ".*");

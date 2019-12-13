@@ -46,12 +46,15 @@ import android.view.Surface;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
@@ -93,10 +96,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private String mRomGoodName = null;
     private String mRomDisplayName = null;
     private String mRomPath = null;
-    private String mCheatOptions = null;
+    private ArrayList<CheatUtils.Cheat> mCheats = null;
+    private ArrayList<GamePrefs.CheatSelection> mCheatOptions = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
-    private String mCoreLib = null;
     private String mRspLib = null;
     private String mGfxLib = null;
     private String mAudioLib = null;
@@ -446,20 +449,18 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             {
                 mCoreInterface.emuSetFramelimiter(false);
             }
-            /*
-            TODO: This is hard
-            if( mCheatOptions != null )
-            {
-                arglist.add( "--cheats" );
-                arglist.add( mCheatOptions );
-            }
-
-             */
 
             int result = mCoreInterface.openRom(new File(mRomPath)) ? 0 : 7;
 
             if (result == 0)
             {
+                for (GamePrefs.CheatSelection selection : mCheatOptions)
+                {
+                    CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
+                    ArrayList<CoreInterface.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
+                    mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                }
+
                 // Attach all the plugins
                 mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_GFX, mGfxLib);
                 mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_AUDIO, mAudioLib);
@@ -470,13 +471,14 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 mCoreInterface.emuStart();
 
                 // Detach all the plugins
-                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP);
                 mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_GFX);
+                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP);
                 mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_AUDIO);
                 mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_INPUT);
             }
 
             mCoreInterface.closeRom();
+            mCoreInterface.emuShutdown();
 
             if(mListener != null)
             {
@@ -499,6 +501,54 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
             forceExit();
         }
+    }
+
+    private ArrayList<CoreInterface.m64p_cheat_code> getCheat(CheatUtils.Cheat cheatText, int selectedOption)
+    {
+        ArrayList<CoreInterface.m64p_cheat_code> codes = new ArrayList<>();
+
+        int indexOfOption = 0;
+        int codeIndex = 0;
+
+        //Convert address string to a list of addresses
+        if( !TextUtils.isEmpty( cheatText.code ) )
+        {
+            String[] addressStrings;
+            addressStrings = cheatText.code.split("\n");
+
+            for(String address : addressStrings)
+            {
+                CoreInterface.m64p_cheat_code code = new CoreInterface.m64p_cheat_code();
+
+                String addressString = address.substring(0, 8);
+                String valueString = address.substring(address.length()-4);
+
+                code.address = Long.valueOf(addressString, 16).intValue();
+                if(!valueString.contains("?"))
+                {
+                    code.value = Integer.valueOf(valueString, 16);
+                }
+                else
+                {
+                    indexOfOption = codeIndex;
+                }
+                ++codeIndex;
+                codes.add(code);
+            }
+        }
+
+        //Convert options into a list of options
+        if( !TextUtils.isEmpty( cheatText.option ) )
+        {
+            String[] optionStrings;
+            optionStrings = cheatText.option.split( "\n" );
+
+            String option = optionStrings[selectedOption];
+
+            String valueString = option.substring(option.length()-4);
+            codes.get(indexOfOption).value = Integer.valueOf(valueString, 16);
+        }
+        return codes;
     }
 
     @Override
@@ -619,10 +669,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
             mRomDisplayName  = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
             mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
-            mCheatOptions = extras.getString( ActivityHelper.Keys.CHEAT_ARGS );
+            String cheatsPath = extras.getString( ActivityHelper.Keys.CHEAT_PATH );
+            mCheatOptions = extras.getParcelableArrayList( ActivityHelper.Keys.CHEAT_OPTIONS );
+
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
             mSaveToLoad = extras.getString( ActivityHelper.Keys.SAVE_TO_LOAD );
-            mCoreLib = extras.getString( ActivityHelper.Keys.CORE_LIB );
             mRspLib = extras.getString( ActivityHelper.Keys.RSP_LIB );
             mGfxLib = extras.getString( ActivityHelper.Keys.GFX_LIB );
             mAudioLib = extras.getString( ActivityHelper.Keys.AUDIO_LIB );
@@ -655,6 +706,19 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
             mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
+
+            if (mCheatOptions != null && mCheatOptions.size() != 0) {
+                String countryString = String.format("%02x", mRomCountryCode).substring(0, 2);
+                String regularExpression = "^" + mRomCrc.replace( ' ', '-') + "-C:" + countryString + ".*";
+
+                BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, cheatsPath);
+                if( cheatLocation == null  )
+                {
+                    Log.w( "CoreService", "No cheat section found for '" + mRomCrc + "'" );
+                }
+
+                mCheats = CheatUtils.populateWithPosition( cheatLocation, mRomCrc, mRomCountryCode, getBaseContext() );
+            }
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made

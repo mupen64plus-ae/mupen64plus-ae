@@ -135,10 +135,15 @@ class CoreInterface
     }
 
     @FieldOrder({ "address", "value" })
-    class m64p_cheat_code extends Structure
+    public static class m64p_cheat_code extends Structure
     {
         public int address;
         public int value;
+
+        m64p_cheat_code() {
+            address = 0;
+            value = 0;
+        }
     }
 
     /**
@@ -260,6 +265,9 @@ class CoreInterface
     private AeVidExtLibrary mAeVidExtLibrary = Native.load("ae-vidext", AeVidExtLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
     private HashMap<m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
 
+    private Pointer coreContext;
+    private HashMap<m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
+
     private Mupen64PlusLibrary.DebugCallback debugCallBackCore = new Mupen64PlusLibrary.DebugCallback() {
         public void invoke(Pointer Context, int level, String message) {
             DebugCallback(Context, level, message);
@@ -333,11 +341,12 @@ class CoreInterface
         LibC.INSTANCE.setenv("XDG_DATA_HOME", userDataPath, 1);
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
 
-        Pointer context = new Memory(Native.POINTER_SIZE);
-        context.setString(0, "Core");
+        String coreContextText = "Core";
+        coreContext = new Memory(coreContextText.length()+1);
+        coreContext.setString(0, coreContextText);
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(Mupen64PlusLibrary.coreAPIVersion, configDirPath,
-                dataDirPath, context, debugCallBackCore, null, stateCallBack);
+                dataDirPath, coreContext, debugCallBackCore, null, stateCallBack);
         mAeVidExtLibrary.overrideAeVidExtFuncs();
         return returnValue;
     }
@@ -360,14 +369,13 @@ class CoreInterface
         mPlugins.get(pluginType).PluginGetVersion(pluginTypeInt, pluginVersion, apiVersion, pluginNameReference, capabilities);
 
         Pointer coreHandle = mAeVidExtLibrary.loadLibrary("mupen64plus-core");
-        Pointer pluginNamePointer = new Memory(pluginName.length() + 1);
-        pluginNamePointer.setString(0, pluginName);
-        mPlugins.get(pluginType).PluginStartup(coreHandle, pluginNamePointer, debugCallBackPlugin);
+        mPluginContext.put(pluginType, new Memory(pluginName.length() + 1));
+
+        mPluginContext.get(pluginType).setString(0, pluginName);
+        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), debugCallBackPlugin);
 
         Pointer handle = mAeVidExtLibrary.loadLibrary(pluginName);
-        int returnValue = mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
-
-        return returnValue;
+        return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
     }
 
     /* coreDetachPlugin()
@@ -387,7 +395,13 @@ class CoreInterface
      */
     int coreAddCheat(String cheatName, ArrayList<m64p_cheat_code> codes)
     {
-        return mMupen64PlusLibrary.CoreAddCheat(cheatName, (m64p_cheat_code[])codes.toArray(), codes.size());
+        m64p_cheat_code[] codesArray = (m64p_cheat_code[])new m64p_cheat_code().toArray(codes.size());
+
+        for(int index = 0; index < codes.size(); ++index) {
+            codesArray[index].address = codes.get(index).address;
+            codesArray[index].value = codes.get(index).value;
+        }
+        return mMupen64PlusLibrary.CoreAddCheat(cheatName, codesArray, codes.size());
     }
 
     /* coreCheatEnabled()
