@@ -330,6 +330,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     : R.string.screenCheats_summaryDisabled );
         }
 
+        // Enable disable 64 preferences as necessary
+        PrefUtil.enablePreference( this, GamePrefs.IDL_PATH_64DD, mGamePrefs.enable64DdSupport );
+        PrefUtil.enablePreference( this, GamePrefs.DISK_PATH_64DD, mGamePrefs.enable64DdSupport );
+
         // Enable/disable player map item as necessary
         PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP,
                 mGamePrefs.playerMap.isEnabled() && !mGamePrefs.useDefaultPlayerMapping );

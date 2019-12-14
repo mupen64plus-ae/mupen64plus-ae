@@ -7,14 +7,10 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -30,6 +26,7 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
+@SuppressWarnings("WeakerAccess")
 public class GamePrefs
 {
     static public class CheatSelection implements Parcelable
@@ -297,7 +294,14 @@ public class GamePrefs
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
-    public final String dd64DiskPath;
+    /** Enable 64DD support */
+    public final boolean enable64DdSupport;
+
+    /** 64DD IDL path */
+    public final String idlPath64Dd;
+
+    /** 64DD Disk path */
+    public final String diskPath64Dd;
 
     /** This is true if this game uses the D-pad */
     final boolean isDpadGame;
@@ -321,6 +325,8 @@ public class GamePrefs
     static final String PLAYER_MAP = "playerMapGame";
     static final String DISPLAY_ZOOM = "displayZoomSeekGame";
     static final String PLAY_SHOW_CHEATS = "playShowCheats";
+    static final String IDL_PATH_64DD = "idlPath64dd";
+    static final String DISK_PATH_64DD = "diskPath64dd";
 
     /**
      * Directories and file names
@@ -560,13 +566,28 @@ public class GamePrefs
 
         touchscreenAutoHold = tmpTouchscreenAutoHold;
 
-        String tempDd64DiskPath = mPreferences.getString("dd64DiskPath", "");
+        enable64DdSupport = mPreferences.getBoolean( "support64dd", false );
 
-        if (!TextUtils.isEmpty(tempDd64DiskPath) && new File(tempDd64DiskPath).isDirectory()) {
-            tempDd64DiskPath = "";
+        if (enable64DdSupport) {
+            String tempIdlPath64dd = mPreferences.getString(IDL_PATH_64DD, "");
+
+            if (!TextUtils.isEmpty(tempIdlPath64dd) && new File(tempIdlPath64dd).isDirectory()) {
+                tempIdlPath64dd = "";
+            }
+
+            idlPath64Dd = tempIdlPath64dd;
+
+            String temp64DdDiskPath = mPreferences.getString(DISK_PATH_64DD, "");
+
+            if (!TextUtils.isEmpty(temp64DdDiskPath) && new File(temp64DdDiskPath).isDirectory()) {
+                temp64DdDiskPath = "";
+            }
+
+            diskPath64Dd = temp64DdDiskPath;
+        } else {
+            idlPath64Dd = "";
+            diskPath64Dd = "";
         }
-
-        dd64DiskPath = tempDd64DiskPath;
 
         // Relative touchscreen joystick
         final String tmpTouchscreenAnalogRelative = mPreferences.getString( "touchscreenAnalogRelative_game", "default" );

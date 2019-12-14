@@ -397,8 +397,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         params.setGbRamPath(3, mGamePrefs.getTransferPakRam(3));
         params.setGbRomPath(4, mGamePrefs.getTransferPakRom(4));
         params.setGbRamPath(4, mGamePrefs.getTransferPakRam(4));
-        params.setDdRomPath(mGlobalPrefs.dd64IdlPath);
-        params.setDdDiskPath(mGamePrefs.dd64DiskPath);
+        params.setDdRomPath(mGamePrefs.idlPath64Dd);
+        params.setDdDiskPath(mGamePrefs.diskPath64Dd);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }

@@ -1015,7 +1015,7 @@ static void load_dd_rom(uint8_t* rom, size_t* rom_size)
         goto no_dd;
     }
 
-    DebugMessage(M64MSG_INFO, "DD IPL ROM: %s", dd_ipl_rom_filename);
+    DebugMessage(M64MSG_ERROR, "DD IPL ROM: %s", dd_ipl_rom_filename);
 
     /* load and swap DD IPL ROM */
     *rom_size = g_ifile_storage_ro.size(&dd_rom);

@@ -90,6 +90,29 @@
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
 
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_save"
+        android:defaultValue="false"
+        android:key="support64dd"
+        android:summary="@string/support64dd_summary"
+        android:title="@string/support64dd_title" />
+
+    <paulscode.android.mupen64plusae.preference.PathPreference
+        android:icon="@drawable/ic_save"
+        android:defaultValue="!"
+        android:key="idlPath64dd"
+        android:title="@string/iplRom64ddPath_title"
+        mupen64:selectionMode="1"
+        mupen64:allowSd="true"/>
+
+    <paulscode.android.mupen64plusae.preference.PathPreference
+        android:icon="@drawable/ic_save"
+        android:defaultValue="!"
+        android:key="diskPath64dd"
+        android:title="@string/disk64ddPath_title"
+        mupen64:selectionMode="1"
+        mupen64:allowSd="true"/>
+
     <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_gamepad"
         android:key="screenController"

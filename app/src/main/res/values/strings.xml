@@ -641,6 +641,10 @@
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Game save folder</string>
     <string name="pathAppData_title">App data folder</string>
+    <string name="support64dd_title">Support 64DD</string>
+    <string name="support64dd_summary">Enables support for 64DD</string>
+    <string name="iplRom64ddPath_title">64DD IPL</string>
+    <string name="disk64ddPath_title">64DD Disk (ndd)</string>
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>

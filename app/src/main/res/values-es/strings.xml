@@ -491,6 +491,8 @@
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Directorio de partidas de juego</string>
     <string name="pathAppData_title">Directorio de datos de la applicación</string>
+    <string name="support64dd_title">Soportar 64DD</string>
+    <string name="support64dd_summary">Habilita soporte para 64DD</string>
     <!--Player Map Preferences-->
     <string name="playerMap_title">Multijugador</string>
     <string name="playerMap_summary">Definir los mandos de cada jugador</string>

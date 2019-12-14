@@ -495,6 +495,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.pauseEmulator();
             }
             mDrawerLayout.openDrawer(GravityCompat.START);
+            mGameSidebar.requestFocus();
             ReloadAllMenus();
         }
     }
