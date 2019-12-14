@@ -57,8 +57,6 @@ import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 
-import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
-
 @SuppressWarnings("unused")
 public class CoreService extends Service implements CoreInterface.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
 
@@ -196,7 +194,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         updateNotification();
 
         // Tell the core to quit
-        NativeExports.emuStop();
+        mCoreInterface.emuStop();
     }
 
     void resumeEmulator()
@@ -204,7 +202,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         if(!mIsShuttingDown)
         {
             mIsPaused = false;
-            NativeExports.emuResume();
+            mCoreInterface.emuResume();
 
             updateNotification();
         }
@@ -230,7 +228,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.addOnStateCallbackListener(new CoreInterface.OnStateCallbackListener() {
             @Override
             public void onStateCallback( int paramChanged, int newValue ) {
-                if (paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE) {
+                if (paramChanged == CoreTypes.m64p_core_param.M64CORE_STATE_SAVECOMPLETE.ordinal()) {
                     mCoreInterface.removeOnStateCallbackListener( this );
 
                     //newValue == 1, then it was successful
@@ -255,33 +253,33 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
         } );
 
-        NativeExports.emuSaveFile( latestSave );
+        mCoreInterface.emuSaveFile( latestSave );
     }
 
     void saveState(String filename)
     {
         File currentSaveStateFile = new File( mUserSaveDir + "/" + filename );
-        NativeExports.emuSaveFile( currentSaveStateFile.getAbsolutePath() );
+        mCoreInterface.emuSaveFile( currentSaveStateFile.getAbsolutePath() );
     }
 
     void pauseEmulator()
     {
         mIsPaused = true;
-        NativeExports.emuPause();
+        mCoreInterface.emuPause();
 
         updateNotification();
     }
 
     void togglePause()
     {
-        int state = NativeExports.emuGetState();
-        if( state == NativeConstants.EMULATOR_STATE_PAUSED ) {
+        CoreTypes.m64p_emu_state state = mCoreInterface.emuGetState();
+        if( state == CoreTypes.m64p_emu_state.M64EMU_PAUSED ) {
             mIsPaused = false;
-            NativeExports.emuResume();
+            mCoreInterface.emuResume();
         }
-        else if( state == NativeConstants.EMULATOR_STATE_RUNNING ){
+        else if( state == CoreTypes.m64p_emu_state.M64EMU_RUNNING ){
             mIsPaused = true;
-            NativeExports.emuPause();
+            mCoreInterface.emuPause();
         }
 
         updateNotification();
@@ -294,67 +292,67 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void toggleFramelimiter()
     {
-        boolean state = emuGetFramelimiter();
-        NativeExports.emuSetFramelimiter( !state );
+        boolean state = mCoreInterface.emuGetFramelimiter();
+        mCoreInterface.emuSetFramelimiter( !state );
     }
 
     boolean getFramelimiter()
     {
-        return NativeExports.emuGetFramelimiter();
+        return mCoreInterface.emuGetFramelimiter();
     }
 
     void setSlot(int value)
     {
         int slot = value % NUM_SLOTS;
-        NativeExports.emuSetSlot( slot );
+        mCoreInterface.emuSetSlot( slot );
     }
 
     int getSlot()
     {
-        return NativeExports.emuGetSlot();
+        return mCoreInterface.emuGetSlot();
     }
 
     void saveSlot()
     {
-        NativeExports.emuSaveSlot();
+        mCoreInterface.emuSaveSlot();
     }
 
     void loadSlot()
     {
-        NativeExports.emuLoadSlot();
+        mCoreInterface.emuLoadSlot();
     }
 
     void loadState(File file)
     {
-        NativeExports.emuLoadFile( file.getAbsolutePath() );
+        mCoreInterface.emuLoadFile( file.getAbsolutePath() );
     }
 
     void screenshot()
     {
-        NativeExports.emuScreenshot();
+        mCoreInterface.emuScreenshot();
     }
 
     void setCustomSpeed(int value)
     {
-        NativeExports.emuSetSpeed( value );
+        mCoreInterface.emuSetSpeed( value );
     }
 
-    void updateControllerConfig(int player, boolean plugged, int value)
+    void updateControllerConfig(int player, boolean plugged, CoreTypes.PakType pakType)
     {
         if (!mUseRaphnetDevicesIfAvailable)
         {
-            NativeInput.setConfig( player, plugged, value );
+            NativeInput.setConfig( player, plugged, pakType.ordinal() );
         }
     }
 
     void advanceFrame()
     {
-        NativeExports.emuAdvanceFrame();
+        mCoreInterface.emuAdvanceFrame();
     }
 
     void emuGameShark(boolean pressed)
     {
-        NativeExports.emuGameShark(pressed);
+        mCoreInterface.emuGameShark(pressed);
     }
 
     void removeOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener )
@@ -383,12 +381,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void restart()
     {
-        NativeExports.emuReset();
+        mCoreInterface.emuReset();
     }
 
-    int getState()
+    CoreTypes.m64p_emu_state getState()
     {
-        return NativeExports.emuGetState();
+        return mCoreInterface.emuGetState();
     }
 
     void setSurface(Surface surface)
@@ -440,8 +438,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 NativeInput.setConfig( 2, mIsPlugged.get(2), mPakType.get(2) );
                 NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
             }
-
-            Log.i("CoreService", "Pak type=" + mPakType.get(0).toString());
 
             mCoreInterface.coreStartup(mCoreUserConfigDir, null, mCoreUserDataDir, mCoreUserCacheDir);
 
@@ -500,10 +496,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mListener.onFinish();
                 mListener = null;
             }
-
-            //This causes a core dump currently, so disable for now, killing the app does the same
-            //thing.
-            //NativeExports.unloadLibrariesIfLoaded();
 
             mIsRunning = false;
 
@@ -744,7 +736,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
-            NativeExports.loadLibrariesIfNotLoaded();
+            System.loadLibrary( "ae-bridge" );
             mCoreInterface.addOnFpsChangedListener( CoreService.this, 15, mCoreInterface );
 
             mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);
@@ -853,7 +845,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         //before it's done starting.
         if(mIsPaused)
         {
-            NativeExports.emuPause();
+            mCoreInterface.emuPause();
         }
     }
 }

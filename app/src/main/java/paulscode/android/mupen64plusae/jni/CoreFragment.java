@@ -38,7 +38,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
@@ -52,8 +51,6 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
-
-import static paulscode.android.mupen64plusae.jni.NativeConstants.EMULATOR_STATE_UNKNOWN;
 
 public class CoreFragment extends Fragment implements CoreServiceListener
 {
@@ -353,10 +350,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         };
 
         ArrayList<Integer> pakTypes = new ArrayList<>();
-        pakTypes.add(mGamePrefs.getPakType(1).getNativeValue());
-        pakTypes.add(mGamePrefs.getPakType(2).getNativeValue());
-        pakTypes.add(mGamePrefs.getPakType(3).getNativeValue());
-        pakTypes.add(mGamePrefs.getPakType(4).getNativeValue());
+        pakTypes.add(mGamePrefs.getPakType(1).ordinal());
+        pakTypes.add(mGamePrefs.getPakType(2).ordinal());
+        pakTypes.add(mGamePrefs.getPakType(3).ordinal());
+        pakTypes.add(mGamePrefs.getPakType(4).ordinal());
 
         // Start the core
         StartCoreServiceParams params = new StartCoreServiceParams();
@@ -572,7 +569,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         Log.i("CoreFragment", "fastForward");
 
         int speed = pressed ? mCustomSpeed : BASELINE_SPEED;
-        NativeExports.emuSetSpeed( speed );
+        mCoreService.setCustomSpeed( speed );
     }
 
 
@@ -653,7 +650,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         {
             final CharSequence title = getActivity().getString(R.string.menuItem_selectSlot);
 
-            Prompt.promptRadioInteger( getActivity(), title, NativeExports.emuGetSlot(), 0, 2, 5,
+            Prompt.promptRadioInteger( getActivity(), title, mCoreService.getSlot(), 0, 2, 5,
                     new Prompt.PromptIntegerListener()
                     {
                         @Override
@@ -885,7 +882,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public int getState()
+    public CoreTypes.m64p_emu_state getState()
     {
         Log.i("CoreFragment", "getState");
 
@@ -895,7 +892,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
         else
         {
-            return EMULATOR_STATE_UNKNOWN;
+            return CoreTypes.m64p_emu_state.M64EMU_UNKNOWN;
         }
     }
 
@@ -926,13 +923,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public void updateControllerConfig(int player, boolean plugged, int value)
+    public void updateControllerConfig(int player, boolean plugged, CoreTypes.PakType pakType)
     {
         Log.i("CoreFragment", "updateControllerConfig");
 
         if(mCoreService != null)
         {
-            mCoreService.updateControllerConfig(player, plugged, value);
+            mCoreService.updateControllerConfig(player, plugged, pakType);
         }
     }
 

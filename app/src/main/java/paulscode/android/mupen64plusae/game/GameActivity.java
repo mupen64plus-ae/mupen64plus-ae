@@ -61,7 +61,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
@@ -86,7 +85,7 @@ import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.persistent.GamePrefs.PakType;
+import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -829,7 +828,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             // Set the pak in the core
                             if(mCoreFragment != null)
                             {
-                                mCoreFragment.updateControllerConfig(player - 1, true, PakType.values()[value].getNativeValue());
+                                mCoreFragment.updateControllerConfig(player - 1, true, PakType.getPakTypeFromNativeValue(value));
                             }
 
                             //Update the menu
@@ -1233,7 +1232,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
 
                         if (!mGlobalPrefs.allEmulatedControllersPlugged) {
-                            mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
+                            mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1));
                         }
                         isControllerPlugged[index] = false;
 
@@ -1284,7 +1283,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if (player > 0 && !isControllerPlugged[player-1] ) {
             if (!mGlobalPrefs.allEmulatedControllersPlugged) {
-                mCoreFragment.updateControllerConfig(player - 1, true, mGamePrefs.getPakType(player).getNativeValue());
+                mCoreFragment.updateControllerConfig(player - 1, true, mGamePrefs.getPakType(player));
             }
             isControllerPlugged[player-1] = true;
         }

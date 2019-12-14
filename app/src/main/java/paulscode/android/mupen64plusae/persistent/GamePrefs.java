@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.CoreTypes;
 import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
@@ -32,51 +32,6 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 
 public class GamePrefs
 {
-    //Pak Type
-    public enum PakType {
-        NONE(NativeConstants.PAK_TYPE_NONE, R.string.menuItem_pak_empty),
-        MEMORY(NativeConstants.PAK_TYPE_MEMORY, R.string.menuItem_pak_mem),
-        RAMBLE(NativeConstants.PAK_TYPE_RUMBLE, R.string.menuItem_pak_rumble),
-        TRANSFER(NativeConstants.PAK_TYPE_TRANSFER, R.string.menuItem_pak_transfer);
-
-        private final int mNativeValue;
-        private final int mResourceStringName;
-
-        PakType(int nativeValue, int resourceStringName)
-        {
-            mNativeValue = nativeValue;
-            mResourceStringName = resourceStringName;
-        }
-
-        public int getNativeValue()
-        {
-            return mNativeValue;
-        }
-
-        public static PakType getPakTypeFromNativeValue(int nativeValue)
-        {
-            switch (nativeValue)
-            {
-                case NativeConstants.PAK_TYPE_NONE:
-                    return NONE;
-                case NativeConstants.PAK_TYPE_MEMORY:
-                    return MEMORY;
-                case NativeConstants.PAK_TYPE_RUMBLE:
-                    return RAMBLE;
-                case NativeConstants.PAK_TYPE_TRANSFER:
-                    return TRANSFER;
-                default:
-                    return NONE;
-
-            }
-        }
-
-        public int getResourceString()
-        {
-            return mResourceStringName;
-        }
-    }
-
     static public class CheatSelection implements Parcelable
     {
         public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -379,7 +334,7 @@ public class GamePrefs
 
 
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType";
-    private static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
+    private static final int DEFAULT_PAK_TYPE = CoreTypes.PakType.MEMORY.ordinal();
 
     public GamePrefs( Context context, String md5, String crc, String headerName, String goodName,
         String countrySymbol, AppData appData, GlobalPrefs globalPrefs, String legacySave)
@@ -586,7 +541,7 @@ public class GamePrefs
 
             isAnalogHiddenWhenSensor = false;
             sensorActivateOnStart = false;
-            sensorAxisX = null;
+            sensorAxisX = "";
             sensorAngleX = 0;
             sensorSensitivityX = 100;
             sensorAxisY = null;
@@ -903,9 +858,9 @@ public class GamePrefs
         return Collections.unmodifiableSet( mutableSet );
     }
 
-    public PakType getPakType(int player )
+    public CoreTypes.PakType getPakType(int player )
     {
-        return PakType.getPakTypeFromNativeValue(
+        return CoreTypes.PakType.getPakTypeFromNativeValue(
                 Integer.parseInt(getString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(DEFAULT_PAK_TYPE) )));
     }
 
@@ -929,9 +884,9 @@ public class GamePrefs
         return ramPath;
     }
 
-    public void putPakType( int player, PakType pakType )
+    public void putPakType( int player, CoreTypes.PakType pakType )
     {
-        putString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(pakType.getNativeValue()) );
+        putString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(pakType.ordinal()) );
     }
 
     public String getString( String key, String defaultValue )

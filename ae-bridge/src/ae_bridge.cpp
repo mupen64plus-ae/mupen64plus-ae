@@ -1,5 +1,5 @@
 #include <GL/EGLLoader.h>
-#include "ae_vidext.h"
+#include "ae_bridge.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <android/native_window.h>

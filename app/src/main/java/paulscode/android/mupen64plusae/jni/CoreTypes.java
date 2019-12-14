@@ -4,8 +4,38 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+import org.mupen64plusae.v3.alpha.R;
+
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class CoreTypes {
+
+    //Pak Type
+    public enum PakType {
+        DUMMY(0),
+        NONE(R.string.menuItem_pak_empty),
+        MEMORY(R.string.menuItem_pak_mem),
+        RAMBLE(R.string.menuItem_pak_rumble),
+        TRANSFER(R.string.menuItem_pak_transfer),
+        RAW(0),
+        BIO(0);
+
+        private final int mResourceStringName;
+
+        PakType(int resourceStringName)
+        {
+            mResourceStringName = resourceStringName;
+        }
+
+        public static PakType getPakTypeFromNativeValue(int nativeValue)
+        {
+            return nativeValue < PakType.values().length ? PakType.values()[nativeValue] : NONE;
+        }
+
+        public int getResourceString()
+        {
+            return mResourceStringName;
+        }
+    }
 
     enum m64p_error {
         M64ERR_SUCCESS,
@@ -84,10 +114,15 @@ public class CoreTypes {
     }
 
     enum m64p_emu_state{
-        M64EMU_DUMMY,
+        M64EMU_UNKNOWN,
         M64EMU_STOPPED,
         M64EMU_RUNNING,
-        M64EMU_PAUSED
+        M64EMU_PAUSED;
+
+        public static m64p_emu_state getState(int ordinal)
+        {
+            return ordinal < m64p_emu_state.values().length ? m64p_emu_state.values()[ordinal] : M64EMU_UNKNOWN;
+        }
     }
 
     @Structure.FieldOrder({ "address", "value" })

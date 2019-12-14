@@ -74,7 +74,7 @@ class CoreInterface
     }
 
     /**
-     * Library used to interface with AE Vid Ext implementation
+     * Generic library functions
      */
     public interface PluginLibrary extends Library {
 
@@ -97,7 +97,7 @@ class CoreInterface
     private final ArrayList<OnFpsChangedListener> mFpsListeners = new ArrayList<>();
 
     private CoreLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", CoreLibrary.class);
-    private AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-vidext", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
+    private AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-bridge", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
     private HashMap<CoreTypes.m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
 
     private Pointer mCoreContext;
@@ -333,14 +333,14 @@ class CoreInterface
         mMediaLoaderCallbacks.write();
         int returnValue = mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_SET_MEDIA_LOADER.ordinal(), mMediaLoaderCallbacks.size(), mMediaLoaderCallbacks.getPointer());
 
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_EXECUTE.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_EXECUTE.ordinal(), 0, parameter);
     }
 
     void emuStop()
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STOP.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STOP.ordinal(), 0, parameter);
     }
 
     void emuShutdown()
@@ -350,32 +350,32 @@ class CoreInterface
 
     void closeRom()
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ROM_CLOSE.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ROM_CLOSE.ordinal(), 0, parameter);
     }
 
     void emuResume()
     {
         mAeBridgeLibrary.resumeEmulator();
 
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_RESUME.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_RESUME.ordinal(), 0, parameter);
     }
 
     void emuPause()
     {
         mAeBridgeLibrary.pauseEmulator();
 
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PAUSE.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PAUSE.ordinal(), 0, parameter);
     }
 
     void emuAdvanceFrame()
     {
         mAeBridgeLibrary.resumeEmulator();
 
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ADVANCE_FRAME.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ADVANCE_FRAME.ordinal(), 0, parameter);
     }
 
     void emuSetSpeed( int percent )
@@ -392,20 +392,20 @@ class CoreInterface
 
     void emuSetSlot( int slotID )
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SET_SLOT.ordinal(), slotID, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SET_SLOT.ordinal(), slotID, parameter);
     }
 
     void emuLoadSlot()
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_LOAD.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_LOAD.ordinal(), 0, parameter);
     }
 
     void emuSaveSlot()
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameter);
     }
 
     void emuLoadFile( String filename )
@@ -419,13 +419,13 @@ class CoreInterface
     {
         Pointer parameterPointer = new Memory(filename.length() + 1);
         parameterPointer.setString(0, filename);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 0, parameterPointer);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameterPointer);
     }
 
     void emuScreenshot()
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_TAKE_NEXT_SCREENSHOT.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_TAKE_NEXT_SCREENSHOT.ordinal(), 0, parameter);
     }
 
     void emuGameShark( boolean pressed )
@@ -434,19 +434,12 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_INPUT_GAMESHARK.ordinal(), parameter.getPointer());
     }
 
-    int emuGetState()
+    CoreTypes.m64p_emu_state emuGetState()
     {
         IntByReference state = new IntByReference();
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_STATE.ordinal(), state.getPointer());
 
-        if (state.getValue() == CoreTypes.m64p_emu_state.M64EMU_STOPPED.ordinal())
-            return 1;
-        else if (state.getValue() == CoreTypes.m64p_emu_state.M64EMU_RUNNING.ordinal())
-            return 2;
-        else if (state.getValue() == CoreTypes.m64p_emu_state.M64EMU_PAUSED.ordinal())
-            return 3;
-        else
-            return 0;
+        return CoreTypes.m64p_emu_state.getState(state.getValue());
     }
 
     int emuGetSpeed()
@@ -472,8 +465,8 @@ class CoreInterface
 
     void emuReset()
     {
-        IntByReference parameter = new IntByReference(0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_RESET.ordinal(), 0, parameter.getPointer());
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_RESET.ordinal(), 0, parameter);
     }
 
     void setNativeWindow(Surface surface)
