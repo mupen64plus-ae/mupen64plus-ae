@@ -49,8 +49,30 @@ import java.util.HashMap;
  * @see CoreService
  */
 @SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "FieldCanBeLocal", "WeakerAccess"})
+public
 class CoreInterface
 {
+    interface OnStateCallbackListener
+    {
+        /**
+         * Called when an emulator state/parameter has changed
+         *
+         * @param paramChanged The parameter ID.
+         * @param newValue The new value of the parameter.
+         */
+        void onStateCallback( int paramChanged, int newValue );
+    }
+
+    public interface OnFpsChangedListener
+    {
+        /**
+         * Called when the frame rate has changed.
+         *
+         * @param newValue The new FPS value.
+         */
+        void onFpsChanged( int newValue );
+    }
+
     /**
      * Library used to interface with AE Vid Ext implementation
      */
@@ -66,6 +88,13 @@ class CoreInterface
 
         int PluginShutdown();
     }
+
+    // Core state callbacks - used by NativeImports
+    private final ArrayList<OnStateCallbackListener> mStateCallbackListeners = new ArrayList<>();
+    private final Object mStateCallbackLock = new Object();
+
+    //Frame rate info - used by ae-vidext
+    private final ArrayList<OnFpsChangedListener> mFpsListeners = new ArrayList<>();
 
     private CoreLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", CoreLibrary.class);
     private AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-vidext", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
@@ -93,8 +122,23 @@ class CoreInterface
     };
 
     private CoreLibrary.StateCallback mStateCallBack = new CoreLibrary.StateCallback() {
+
+        /**
+         * Callback for when an emulator's state/parameter has changed.
+         *
+         * @param param_type The changed parameter's ID.
+         * @param new_value The new value of the changed parameter.
+         * see mupen64plus-ae/app/src/main/jni/ae-bridge/ae_imports.cpp
+         */
         public void invoke(Pointer Context, int param_type, int new_value) {
-            NativeImports.stateCallback(param_type, new_value);
+            synchronized(mStateCallbackLock)
+            {
+                for(int i = mStateCallbackListeners.size(); i > 0; i-- )
+                {
+                    // Traverse the list backwards in case any listeners remove themselves
+                    mStateCallbackListeners.get( i - 1 ).onStateCallback( param_type, new_value );
+                }
+            }
         }
     };
 
@@ -124,7 +168,12 @@ class CoreInterface
 
     private AeBridgeLibrary.FpsCounterCallback mFpsCounterCallback = new AeBridgeLibrary.FpsCounterCallback() {
         public void invoke(int fps) {
-            NativeImports.FPSCounter(fps);
+            synchronized (mFpsListeners)
+            {
+                for (OnFpsChangedListener listener: mFpsListeners) {
+                    listener.onFpsChanged(fps);
+                }
+            }
         }
     };
 
@@ -445,5 +494,43 @@ class CoreInterface
     void FPSEnabled(int recalc)
     {
         mAeBridgeLibrary.FPSEnabled(recalc);
+    }
+
+    void addOnStateCallbackListener( OnStateCallbackListener listener )
+    {
+        synchronized(mStateCallbackLock)
+        {
+            // Do not allow multiple instances, in case listeners want to remove themselves
+            if( !mStateCallbackListeners.contains( listener ) )
+                mStateCallbackListeners.add( listener );
+        }
+    }
+
+    void removeOnStateCallbackListener( OnStateCallbackListener listener )
+    {
+        synchronized(mStateCallbackLock)
+        {
+            mStateCallbackListeners.remove( listener );
+        }
+    }
+
+    void removeOnFpsChangedListener(OnFpsChangedListener fpsListener)
+    {
+        synchronized (mFpsListeners)
+        {
+            mFpsListeners.remove(fpsListener);
+        }
+    }
+
+    void addOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod, CoreInterface coreInterface )
+    {
+        synchronized (mFpsListeners)
+        {
+            if(fpsListener != null && !mFpsListeners.contains(fpsListener))
+            {
+                mFpsListeners.add(fpsListener);
+                coreInterface.FPSEnabled(fpsRecalcPeriod);
+            }
+        }
     }
 }

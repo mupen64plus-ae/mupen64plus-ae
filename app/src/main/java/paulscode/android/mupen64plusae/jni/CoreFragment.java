@@ -51,7 +51,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
 import static paulscode.android.mupen64plusae.jni.NativeConstants.EMULATOR_STATE_UNKNOWN;
 

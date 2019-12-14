@@ -29,10 +29,10 @@ import android.view.View;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 
-public class GameOverlay extends View implements TouchController.OnStateChangedListener, OnFpsChangedListener
+public class GameOverlay extends View implements TouchController.OnStateChangedListener, CoreInterface.OnFpsChangedListener
 {
     private VisibleTouchMap mTouchMap;
     private boolean mDrawingEnabled = true;

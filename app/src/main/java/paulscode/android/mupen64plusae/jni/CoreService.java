@@ -58,10 +58,9 @@ import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
-import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
 
 @SuppressWarnings("unused")
-public class CoreService extends Service implements NativeImports.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
+public class CoreService extends Service implements CoreInterface.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
 
     interface CoreServiceListener
     {
@@ -228,11 +227,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             mIsShuttingDown = true;
         }
 
-        NativeImports.addOnStateCallbackListener(new NativeImports.OnStateCallbackListener() {
+        mCoreInterface.addOnStateCallbackListener(new CoreInterface.OnStateCallbackListener() {
             @Override
             public void onStateCallback( int paramChanged, int newValue ) {
                 if (paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE) {
-                    removeOnStateCallbackListener( this );
+                    mCoreInterface.removeOnStateCallbackListener( this );
 
                     //newValue == 1, then it was successful
                     if (newValue == 1) {
@@ -358,14 +357,14 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         NativeExports.emuGameShark(pressed);
     }
 
-    void removeOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener )
+    void removeOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener )
     {
-        NativeImports.removeOnFpsChangedListener( fpsListener );
+        mCoreInterface.removeOnFpsChangedListener( fpsListener );
     }
 
-    void addOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    void addOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        NativeImports.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod, mCoreInterface );
+        mCoreInterface.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod, mCoreInterface );
     }
 
     void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY )
@@ -746,7 +745,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
             NativeExports.loadLibrariesIfNotLoaded();
-            NativeImports.addOnFpsChangedListener( CoreService.this, 15, mCoreInterface );
+            mCoreInterface.addOnFpsChangedListener( CoreService.this, 15, mCoreInterface );
 
             mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);
 

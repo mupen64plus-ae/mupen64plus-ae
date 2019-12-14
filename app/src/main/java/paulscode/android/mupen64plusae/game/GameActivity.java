@@ -82,7 +82,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
-import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
