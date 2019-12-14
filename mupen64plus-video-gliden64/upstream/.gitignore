@@ -8,6 +8,7 @@ Roms/
 *.sdf
 *.user
 src/Revision.h
+src/revision.txt
 /projects/msvc/.vs
 /projects/msvc/GLideN64.VC.VC.opendb
 /projects/msvc/GLideN64.VC.db
