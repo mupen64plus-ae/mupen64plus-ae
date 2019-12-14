@@ -914,6 +914,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
+                mOverlay.requestFocus();
             }
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && mCoreFragment != null)
