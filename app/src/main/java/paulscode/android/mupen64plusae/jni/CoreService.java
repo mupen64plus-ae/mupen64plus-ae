@@ -463,15 +463,15 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 for (GamePrefs.CheatSelection selection : mCheatOptions)
                 {
                     CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
-                    ArrayList<CoreInterface.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
+                    ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
                     mCoreInterface.coreAddCheat(cheatText.name, cheats);
                 }
 
                 // Attach all the plugins
-                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_GFX, mGfxLib);
-                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_AUDIO, mAudioLib);
-                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_INPUT, mInputLib);
-                mCoreInterface.coreAttachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP, mRspLib);
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGfxLib);
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mAudioLib);
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, mInputLib);
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mRspLib);
 
                 mCoreInterface.setGbRomPath(mGbRomPaths);
                 mCoreInterface.setGbRamPath(mGbRamPaths);
@@ -482,10 +482,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 mCoreInterface.emuStart();
 
                 // Detach all the plugins
-                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_GFX);
-                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_RSP);
-                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_AUDIO);
-                mCoreInterface.coreDetachPlugin(CoreInterface.m64p_plugin_type.M64PLUGIN_INPUT);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
             }
 
             mCoreInterface.closeRom();
@@ -514,9 +514,9 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         }
     }
 
-    private ArrayList<CoreInterface.m64p_cheat_code> getCheat(CheatUtils.Cheat cheatText, int selectedOption)
+    private ArrayList<CoreTypes.m64p_cheat_code> getCheat(CheatUtils.Cheat cheatText, int selectedOption)
     {
-        ArrayList<CoreInterface.m64p_cheat_code> codes = new ArrayList<>();
+        ArrayList<CoreTypes.m64p_cheat_code> codes = new ArrayList<>();
 
         int indexOfOption = 0;
         int codeIndex = 0;
@@ -529,7 +529,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
             for(String address : addressStrings)
             {
-                CoreInterface.m64p_cheat_code code = new CoreInterface.m64p_cheat_code();
+                CoreTypes.m64p_cheat_code code = new CoreTypes.m64p_cheat_code();
 
                 String addressString = address.substring(0, 8);
                 String valueString = address.substring(address.length()-4);
