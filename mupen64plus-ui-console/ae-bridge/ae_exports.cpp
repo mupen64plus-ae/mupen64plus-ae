@@ -45,7 +45,6 @@ static void* mReserved;
 // Library handles
 static void *handleAEI;      // libae-imports.so
 static void *handleCore;     // libmupen64plus-core.so
-static void *handleFront;    // libmupen64plus-ui-console.so
 
 // Function types
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
@@ -53,14 +52,12 @@ typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
 typedef int         (*pAeiDestroy)      (JNIEnv* env);
 typedef m64p_error  (*pCoreShutdown)    (void);
 typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
-typedef int         (*pFrontMain)       (int argc, char* argv[]);
 
 // Function pointers
 static pAeiInit         aeiInit         = NULL;
 static pAeiDestroy      aeiDestroy      = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
 static pCoreShutdown    coreShutdown    = NULL;
-static pFrontMain       frontMain       = NULL;
 
 void checkLibraryError(const char* message)
 {
@@ -129,10 +126,9 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     // Open shared libraries
     handleAEI      = loadLibrary("ae-imports");
     handleCore     = loadLibrary("mupen64plus-core");
-    handleFront    = loadLibrary("mupen64plus-ui-console");
 
     // Make sure we don't have any typos
-    if (!handleAEI || !handleCore || !handleFront )
+    if (!handleAEI || !handleCore )
     {
         LOGE("Could not load libraries: be sure the paths are correct");
     }
@@ -147,10 +143,9 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     aeiDestroy    = (pAeiDestroy)    locateFunction(handleAEI,   "ae-imports",             "Android_JNI_DestroyImports");
     coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  "mupen64plus-core",       "CoreDoCommand");
     coreShutdown  = (pCoreShutdown)  locateFunction(handleCore,  "mupen64plus-core",       "CoreShutdown");
-    frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
 
     // Make sure we don't have any typos
-    if (!aeiInit || !aeiDestroy || !coreDoCommand || !frontMain || !coreShutdown)
+    if (!aeiInit || !aeiDestroy || !coreDoCommand || !coreShutdown)
     {
         LOGE("Could not load library functions: be sure they are named and typedef'd correctly");
     } else {
@@ -173,46 +168,14 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     aeiInit         = NULL;
     aeiDestroy      = NULL;
     coreDoCommand   = NULL;
-    frontMain       = NULL;
 
     // Close shared libraries
-    unloadLibrary(handleFront,    "mupen64plus-ui-console");
     unloadLibrary(handleCore,     "mupen64plus-core");
     unloadLibrary(handleAEI,      "ae-imports");
 
     // Nullify handles so that they can no longer be used
-    handleFront    = NULL;
     handleCore     = NULL;
     handleAEI      = NULL;
-}
-
-extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
-{
-    // Define some environment variables needed by rice video plugin
-    const char *userDataPath = env->GetStringUTFChars(juserDataPath, 0);
-    const char *userCachePath = env->GetStringUTFChars(juserCachePath, 0);
-    setenv( "XDG_DATA_HOME", userDataPath, 1 );
-    setenv( "XDG_CACHE_HOME", userCachePath, 1 );
-    env->ReleaseStringUTFChars(juserDataPath, userDataPath);
-    env->ReleaseStringUTFChars(juserCachePath, userCachePath);
-
-    // Repackage the command-line args
-    int argc = env->GetArrayLength(jargv);
-    char **argv = (char **) malloc(sizeof(char *) * argc);
-    for (int i = 0; i < argc; i++)
-    {
-        jstring jarg = (jstring) env->GetObjectArrayElement(jargv, i);
-        const char *arg = env->GetStringUTFChars(jarg, 0);
-
-        if(arg != NULL)
-        {
-            argv[i] = strdup(arg);
-            env->ReleaseStringUTFChars(jarg, arg);
-        }
-    }
-
-    // Launch main emulator loop (continues until emuStop is called)
-    return frontMain(argc, argv);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStop(JNIEnv* env, jclass cls)

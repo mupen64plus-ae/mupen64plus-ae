@@ -532,8 +532,6 @@ class CoreInterface
         mMediaLoaderCallbacks.write();
         int returnValue = mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_SET_MEDIA_LOADER.ordinal(), mMediaLoaderCallbacks.size(), mMediaLoaderCallbacks.getPointer());
 
-        Log.e("CoreInterface", "RETURN VALUE=" + returnValue);
-
         IntByReference parameter = new IntByReference(0);
         mMupen64PlusLibrary.CoreDoCommand(m64p_command.M64CMD_EXECUTE.ordinal(), 0, parameter.getPointer());
     }

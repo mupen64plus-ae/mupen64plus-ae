@@ -60,13 +60,9 @@ class NativeExports
     static native void loadLibraries();
     
     static native void unloadLibraries();
-    
-    static native int emuStart( String userDataPath, String userCachePath, Object[] args );
-    
+
     static native void emuStop();
 
-    static native void emuShutdown();
-    
     static native void emuResume();
     
     static native void emuPause();
