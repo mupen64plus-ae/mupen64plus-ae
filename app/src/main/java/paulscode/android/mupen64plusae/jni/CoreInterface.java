@@ -52,6 +52,12 @@ import java.util.HashMap;
 public
 class CoreInterface
 {
+    static {
+        // This is needed for JNI_OnLoad on ae-bridge. ae-bridge needs it to call
+        // mJavaVM->AttachCurrentThread(&env, nullptr) and mJavaVM->DetachCurrentThread()
+        System.loadLibrary( "ae-bridge" );
+    }
+
     interface OnStateCallbackListener
     {
         /**

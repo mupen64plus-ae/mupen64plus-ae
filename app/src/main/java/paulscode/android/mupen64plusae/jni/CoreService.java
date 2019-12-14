@@ -736,7 +736,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
-            System.loadLibrary( "ae-bridge" );
             mCoreInterface.addOnFpsChangedListener( CoreService.this, 15, mCoreInterface );
 
             mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);
