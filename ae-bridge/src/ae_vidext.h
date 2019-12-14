@@ -1,6 +1,7 @@
 #ifndef __VIDEXT_H__
 #define __VIDEXT_H__
 #include "m64p_types.h"
+#include <android/log.h>
 
 #ifndef DECLSPEC
 # if defined(__BEOS__) || defined(__HAIKU__)
@@ -27,6 +28,13 @@
 #  endif
 # endif
 #endif
+
+// Generally we should use the core's Debug API, but these can be used in a pinch
+#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, "ae-bridge", __VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,   "ae-bridge", __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,    "ae-bridge", __VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,    "ae-bridge", __VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,   "ae-bridge", __VA_ARGS__)
 
 #ifdef __cplusplus
 extern "C" {

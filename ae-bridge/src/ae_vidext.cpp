@@ -1,6 +1,5 @@
 #include <GL/EGLLoader.h>
 #include "ae_vidext.h"
-#include "ae_imports.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <android/native_window.h>
@@ -28,9 +27,13 @@ int64_t oldTime;
 int vsync = 0;
 int oldVsync = 1;
 bool isPaused = false;
+static bool detachOnQuitCore = false;
 
 m64p_dynlib_handle CoreHandle = NULL;
 ptr_CoreOverrideVidExt  CoreOverrideVidExt = NULL;
+
+void (*fpsCounterCallback)(int);
+
 
 EGLint const defaultAttributeList[] = {
         EGL_BUFFER_SIZE, 0,
@@ -343,6 +346,23 @@ extern DECLSPEC m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue)
     return M64ERR_SUCCESS;
 }
 
+extern "C" DECLSPEC void registerFpsCounterCallback(void (*callback)(int))
+{
+	fpsCounterCallback = callback;
+}
+
+void FPSCounter(int fps)
+{
+	JNIEnv *env;
+	if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+		mJavaVM->AttachCurrentThread(&env, nullptr);
+		detachOnQuitCore = true;
+		return;
+	}
+
+	fpsCounterCallback(fps);
+}
+
 extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 {
 	std::unique_lock<std::mutex> guard(nativeWindowAccess);
@@ -394,7 +414,7 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 			clock_gettime(CLOCK_MONOTONIC, &spec);
 			int64_t currentTime = (int64_t) spec.tv_sec * 1000000000LL + spec.tv_nsec;
 			float fFPS = ((float) frameCount / (float) (currentTime - oldTime)) * 1000000000.0f;
-			Android_JNI_FPSCounter(lround(fFPS));
+			FPSCounter(lround(fFPS));
 			frameCount = 0;
 			oldTime = currentTime;
 		}
@@ -479,7 +499,7 @@ extern DECLSPEC m64p_error VidExtFuncQuit()
 		display = EGL_NO_DISPLAY;
 	}
 
-	if (detachOnQuit()) {
+	if (detachOnQuitCore) {
         mJavaVM->DetachCurrentThread();
 	}
 

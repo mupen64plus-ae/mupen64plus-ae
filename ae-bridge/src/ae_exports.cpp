@@ -22,9 +22,9 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 #include <unistd.h>
+#include <jni.h>
 #include "SDL.h"
 #include "m64p_types.h"
-#include "ae_imports.h"
 #include "ae_vidext.h"
 
 #ifdef M64P_BIG_ENDIAN
@@ -43,7 +43,6 @@ static JavaVM* mVm;
 static void* mReserved;
 
 // Library handles
-static void *handleAEI;      // libae-imports.so
 static void *handleCore;     // libmupen64plus-core.so
 
 // Function types
@@ -124,23 +123,15 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     dlerror();
 
     // Open shared libraries
-    handleAEI      = loadLibrary("ae-imports");
     handleCore     = loadLibrary("mupen64plus-core");
 
     // Make sure we don't have any typos
-    if (!handleAEI || !handleCore )
+    if (!handleCore )
     {
         LOGE("Could not load libraries: be sure the paths are correct");
     }
 
-    // Find and call the JNI_OnLoad functions manually since we aren't loading the libraries from Java
-    pJNI_OnLoad JNI_OnLoad0 = (pJNI_OnLoad) locateFunction(handleAEI, "ae-imports", "JNI_OnLoad");
-    JNI_OnLoad0(mVm, mReserved);
-    JNI_OnLoad0 = NULL;
-
     // Find library functions
-    aeiInit       = (pAeiInit)       locateFunction(handleAEI,   "ae-imports",             "Android_JNI_InitImports");
-    aeiDestroy    = (pAeiDestroy)    locateFunction(handleAEI,   "ae-imports",             "Android_JNI_DestroyImports");
     coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  "mupen64plus-core",       "CoreDoCommand");
     coreShutdown  = (pCoreShutdown)  locateFunction(handleCore,  "mupen64plus-core",       "CoreShutdown");
 
@@ -171,11 +162,9 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Close shared libraries
     unloadLibrary(handleCore,     "mupen64plus-core");
-    unloadLibrary(handleAEI,      "ae-imports");
 
     // Nullify handles so that they can no longer be used
     handleCore     = NULL;
-    handleAEI      = NULL;
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStop(JNIEnv* env, jclass cls)

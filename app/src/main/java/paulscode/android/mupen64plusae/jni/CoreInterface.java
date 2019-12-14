@@ -276,6 +276,10 @@ class CoreInterface
      * Library used to interface with AE Vid Ext implementation
      */
     public interface AeVidExtLibrary extends Library {
+
+        interface FpsCounterCallback extends Callback {
+            void invoke(int fps);
+        }
         // Enable or disble VSYNC
         void vsyncEnabled(int enabled);
 
@@ -298,6 +302,8 @@ class CoreInterface
         void emuDestroySurface();
 
         void overrideAeVidExtFuncs();
+
+        void registerFpsCounterCallback(FpsCounterCallback fpsCounterCallback);
 
         // Load a library using dlopen
         Pointer loadLibrary(String libName);
@@ -374,6 +380,12 @@ class CoreInterface
     private m64p_media_loader.get_dd_disk mDdDiskCallback = new m64p_media_loader.get_dd_disk() {
         public String invoke(Pointer cb_data) {
             return mDdDisk;
+        }
+    };
+
+    private AeVidExtLibrary.FpsCounterCallback mFpsCounterCallback = new AeVidExtLibrary.FpsCounterCallback() {
+        public void invoke(int fps) {
+            NativeImports.FPSCounter(fps);
         }
     };
 
@@ -461,6 +473,7 @@ class CoreInterface
         int returnValue = mMupen64PlusLibrary.CoreStartup(Mupen64PlusLibrary.coreAPIVersion, configDirPath,
                 dataDirPath, mCoreContext, mDebugCallBackCore, null, mStateCallBack);
         mAeVidExtLibrary.overrideAeVidExtFuncs();
+        mAeVidExtLibrary.registerFpsCounterCallback(mFpsCounterCallback);
         return returnValue;
     }
 
