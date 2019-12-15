@@ -282,8 +282,6 @@
     <string name="showRecentlyPlayed_summary">Show games played within the past week</string>
     <string name="showFullNames_title">Full names</string>
     <string name="showFullNames_summary">Show the region and dump information for each game</string>
-    <string name="cacheRecentlyPlayed_title">Cache recent games</string>
-    <string name="cacheRecentlyPlayed_summary">Cache extracted ROM files of recently played games for faster load times</string>
 
     <!-- Gallery sections -->
     <string name="galleryRecentlyPlayed">Recently played</string>

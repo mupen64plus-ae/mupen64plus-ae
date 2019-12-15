@@ -235,8 +235,6 @@
     <string name="showRecentlyPlayed_summary">Mostrar juegos jugados en los últimos 7 días</string>
     <string name="showFullNames_title">Nombres completos</string>
     <string name="showFullNames_summary">Mostrar la región y datos del dump para cada juego</string>
-    <string name="cacheRecentlyPlayed_title">Cache de juegos recientes</string>
-    <string name="cacheRecentlyPlayed_summary">Extraer cache de juegos recientes para cargar mas rápido</string>
 
     <!--Gallery sections-->
     <string name="galleryRecentlyPlayed">Jugado Reciente</string>

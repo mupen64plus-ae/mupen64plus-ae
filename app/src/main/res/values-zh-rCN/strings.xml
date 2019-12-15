@@ -412,8 +412,6 @@
     <string name="audioSLESRate_title">采样率</string>
     <string name="audioSLESTimeStretch_summary">启用时间段音频降低爆裂，但引起音频延迟</string>
     <string name="audioSLESTimeStretch_title">时间段音频</string>
-    <string name="cacheRecentlyPlayed_summary">为更快的加载速度，提取最近玩过的游戏 ROM 文件缓存</string>
-    <string name="cacheRecentlyPlayed_title">最近的游戏缓存</string>
     <string name="categoryGliden64_title">GlideN64 设置</string>
     <string name="categoryLibrary_title">库</string>
     <string name="confirmClearData_message">您确定要清除所有已安装的高分辨率纹理包和高速缓存吗？</string>

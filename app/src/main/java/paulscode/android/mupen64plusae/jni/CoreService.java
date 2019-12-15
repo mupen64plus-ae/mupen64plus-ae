@@ -79,6 +79,19 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         void onCoreServiceDestroyed();
     }
 
+    interface RomExtractionListener
+    {
+        /**
+         * Called on when ROM extraction starts
+         */
+        void romExtractionStarted();
+
+        /**
+         * Called on when ROM extraction finishes
+         */
+        void romExtractionFinished();
+    }
+
     public static final String COMPLETE_EXTENSION = "complete";
     public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT";
     public static final String SERVICE_RESUME = "M64P_SERVICE_RESUME";
@@ -94,6 +107,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private String mRomGoodName = null;
     private String mRomDisplayName = null;
     private String mRomPath = null;
+    private String mZipPath = null;
     private ArrayList<CheatUtils.Cheat> mCheats = null;
     private ArrayList<GamePrefs.CheatSelection> mCheatOptions = null;
     private boolean mIsRestarting = false;
@@ -127,6 +141,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     private final IBinder mBinder = new LocalBinder();
     private CoreServiceListener mListener = null;
+    private RomExtractionListener mRomExtractionListener = null;
     private RaphnetControllerHandler mRaphnetHandler = null;
 
     private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
@@ -156,7 +171,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (!mIsShuttingDown && mIsRunning) {
                 if (resumeMessage) {
-                    ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
+                    ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mZipPath, mRomMd5, mRomCrc,
                             mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mRomDisplayName, mLegacySaveName, mIsRestarting);
                 }
 
@@ -456,9 +471,20 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.emuSetFramelimiter(false);
             }
 
-            int result = mCoreInterface.openRom(new File(mRomPath)) ? 0 : 7;
+            boolean openSuccess;
 
-            if (result == 0)
+            if (TextUtils.isEmpty(mZipPath))
+            {
+                openSuccess = mCoreInterface.openRom(new File(mRomPath));
+            }
+            else
+            {
+                if (mRomExtractionListener != null) mRomExtractionListener.romExtractionStarted();
+                openSuccess = mCoreInterface.openZip(new File(mZipPath), new File(mRomPath));
+                if (mRomExtractionListener != null) mRomExtractionListener.romExtractionFinished();
+            }
+
+            if (openSuccess)
             {
                 for (GamePrefs.CheatSelection selection : mCheatOptions)
                 {
@@ -488,9 +514,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if(mListener != null)
             {
-                if(result != 0)
+                if(!openSuccess)
                 {
-                    mListener.onFailure(result);
+                    mListener.onFailure(1);
                 }
 
                 mListener.onFinish();
@@ -601,6 +627,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         //Intent for resuming game
         Intent notificationIntent = new Intent(this, GameActivity.class);
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
+        notificationIntent.putExtra( ActivityHelper.Keys.ZIP_PATH, mZipPath );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_MD5, mRomMd5 );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
@@ -671,6 +698,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
             mRomDisplayName  = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
             mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+            mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
             String cheatsPath = extras.getString( ActivityHelper.Keys.CHEAT_PATH );
             mCheatOptions = extras.getParcelableArrayList( ActivityHelper.Keys.CHEAT_OPTIONS );
 
@@ -801,6 +829,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mServiceHandler.sendMessage(msg);
             }
         }
+    }
+
+    public void setRomExtractionListener(RomExtractionListener romExtractionListener)
+    {
+        Log.i("CoreService", "setRomExtractionListener");
+        mRomExtractionListener = romExtractionListener;
     }
 
     @Override

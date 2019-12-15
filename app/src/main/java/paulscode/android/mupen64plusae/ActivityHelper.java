@@ -55,7 +55,6 @@ import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.DeleteFilesService;
-import paulscode.android.mupen64plusae.task.ExtractRomService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
 
@@ -222,11 +221,12 @@ public class ActivityHelper
         }
     }
 
-    static void startGameActivity(Activity activity, String romPath, String romMd5, String romCrc,
+    static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
                                   String romLegacySave, boolean doRestart) {
         Intent intent = new Intent(activity, GameActivity.class);
         intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ZIP_PATH, zipPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
@@ -239,12 +239,13 @@ public class ActivityHelper
         activity.startActivityForResult(intent, GAME_ACTIVITY_CODE);
     }
 
-    public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
+    public static void startGameActivity( Context context, String romPath, String zipPath, String romMd5, String romCrc,
          String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
          String romLegacySave, boolean doRestart)
     {
         Intent intent = new Intent( context, GameActivity.class );
         intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ZIP_PATH, zipPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
@@ -457,6 +458,7 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_GOOD_NAME, params.getRomGoodName());
         intent.putExtra(Keys.ROM_DISPLAY_NAME,  params.getRomDisplayName());
         intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
+        intent.putExtra(Keys.ZIP_PATH,  params.getZipPath());
         intent.putExtra(Keys.CHEAT_PATH,  params.getCheatPath());
         intent.putExtra(Keys.CHEAT_OPTIONS,  params.getCheatOptions());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
@@ -523,26 +525,4 @@ public class ActivityHelper
 
         return false;
     }
-
-    static void startExtractRomService(Context context, ServiceConnection serviceConnection,
-       String zipPath, String extractRomPath, String romPath, String romMd5)
-    {
-        Intent intent = new Intent(context, ExtractRomService.class);
-        intent.putExtra(Keys.ZIP_PATH, zipPath);
-        intent.putExtra(Keys.EXTRACT_ZIP_PATH, extractRomPath);
-        intent.putExtra(Keys.ROM_PATH, romPath);
-        intent.putExtra(Keys.ROM_MD5, romMd5);
-
-        context.startService(intent);
-        context.bindService(intent, serviceConnection, 0);
-    }
-
-    static void stopExtractRomService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, ExtractRomService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
-    }
-
 }

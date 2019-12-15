@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
 import paulscode.android.mupen64plusae.jni.CoreService.LocalBinder;
@@ -52,7 +53,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
-public class CoreFragment extends Fragment implements CoreServiceListener
+public class CoreFragment extends Fragment implements CoreServiceListener, CoreService.RomExtractionListener
 {
     public interface CoreEventListener
     {
@@ -95,6 +96,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
 
+    //Progress dialog for extracting ROMs
+    private ProgressDialog mProgress = null;
+
     private boolean mCachedStartCore = false;
     private boolean mCachedStopCore = false;
 
@@ -104,6 +108,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private String mRomGoodName = null;
     private String mRomDisplayName = null;
     private String mRomPath = null;
+    private String mZipPath = null;
     private String mRomMd5 = null;
     private String mRomCrc = null;
     private String mRomHeaderName = null;
@@ -164,11 +169,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             mCachedStopCore = false;
         }
     }
-    
+
     @Override
     public void onDetach()
     {
-        Log.i("CoreFragment", "onDetach");
+        //This can be null if this fragment is never utilized and this will be called on shutdown
+        if(mProgress != null)
+        {
+            mProgress.dismiss();
+        }
 
         super.onDetach();
     }
@@ -178,69 +187,22 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     {
         final Activity activity = getActivity();
         if(activity != null){
-            // Messages match return codes from mupen64plus-ui-console/main.c
-            String message = null;
-
             if( errorCode != 0)
             {
-                switch( errorCode )
+                final String message = activity.getString( R.string.toast_nativeMainFailure07 );
+
+                activity.runOnUiThread( new Runnable()
                 {
-                    case 1:
-                        message = activity.getString( R.string.toast_nativeMainFailure01 );
-                        break;
-                    case 2:
-                        message = activity.getString( R.string.toast_nativeMainFailure02 );
-                        break;
-                    case 3:
-                        message = activity.getString( R.string.toast_nativeMainFailure03 );
-                        break;
-                    case 4:
-                        message = activity.getString( R.string.toast_nativeMainFailure04 );
-                        break;
-                    case 5:
-                        message = activity.getString( R.string.toast_nativeMainFailure05 );
-                        break;
-                    case 6:
-                        message = activity.getString( R.string.toast_nativeMainFailure06 );
-                        break;
-                    case 7:
-                        message = activity.getString( R.string.toast_nativeMainFailure07 );
-                        break;
-                    case 8:
-                        message = activity.getString( R.string.toast_nativeMainFailure08 );
-                        break;
-                    case 9:
-                        message = activity.getString( R.string.toast_nativeMainFailure09 );
-                        break;
-                    case 10:
-                        message = activity.getString( R.string.toast_nativeMainFailure10 );
-                        break;
-                    case 11:
-                        message = activity.getString( R.string.toast_nativeMainFailure11 );
-                        break;
-                    case 12:
-                        message = activity.getString( R.string.toast_nativeMainFailure12 );
-                        break;
-                    case 13:
-                        message = activity.getString( R.string.toast_nativeMainFailure13 );
-                        break;
-                    default:
-                        message = activity.getString( R.string.toast_nativeMainFailureUnknown );
-                        break;
-                }
+                    @Override
+                    public void run()
+                    {
+                        Notifier.showToast( activity, message );
+                    }
+                } );
+
+
                 Log.e( "CoreFragment", "Launch failure: " + message );
             }
-
-            final String finalMessage = message;
-
-            activity.runOnUiThread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    Notifier.showToast( activity, finalMessage );
-                }
-            } );
         }
     }
 
@@ -260,6 +222,32 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mIsRunning = false;
     }
 
+    @Override
+    public void romExtractionStarted()
+    {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CharSequence title = getString( R.string.extractRomTask_title );
+                CharSequence message = getString( R.string.toast_pleaseWait );
+
+                mProgress = new ProgressDialog( mProgress, getActivity(), title, mZipPath, message, true );
+                mProgress.show();
+            }
+        });
+    }
+
+    @Override
+    public void romExtractionFinished()
+    {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgress.dismiss();
+            }
+        });
+    }
+
     public void setCoreEventListener(CoreEventListener coreEventListener)
     {
         Log.i("CoreFragment", "setCoreEventListener");
@@ -268,7 +256,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     }
 
     public void startCore(AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
-                          String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
+                          String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
                           String romLegacySave, ArrayList<GamePrefs.CheatSelection> cheatSelections, boolean isRestarting, String saveToLoad)
     {
         Log.i("CoreFragment", "startCore");
@@ -279,6 +267,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mRomGoodName = romGoodName;
         mRomDisplayName = romDisplayName;
         mRomPath = romPath;
+        mZipPath = zipPath;
         mCheatOptions = cheatSelections;
         mIsRestarting = isRestarting;
         mSaveToLoad = saveToLoad;
@@ -331,6 +320,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 mCoreService.setSurface(mSurface);
                 mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mCoreService.setCoreServiceListener(CoreFragment.this);
+                mCoreService.setRomExtractionListener(CoreFragment.this);
 
                 if(mCoreEventListener != null && getActivity() != null)
                 {
@@ -360,6 +350,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         params.setRomGoodName(mRomGoodName);
         params.setRomDisplayName(mRomDisplayName);
         params.setRomPath(mRomPath);
+        params.setZipPath(mZipPath);
         params.setRomMd5(mRomMd5);
         params.setRomCrc(mRomCrc);
         params.setRomHeaderName(mRomHeaderName);

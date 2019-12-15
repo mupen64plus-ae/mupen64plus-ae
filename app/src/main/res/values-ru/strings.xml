@@ -222,8 +222,6 @@
     <string name="showRecentlyPlayed_summary">Показывает игры, которые игрались за последнюю неделю.</string>
     <string name="showFullNames_title">Полные имена</string>
     <string name="showFullNames_summary">Показать регион и сбросить информацию для каждой игры</string>
-    <string name="cacheRecentlyPlayed_title">Кэшировать недавние игры</string>
-    <string name="cacheRecentlyPlayed_summary">Кэш извлекается из ромов недавних игр для более быстрой загрузки</string>
 
     <!-- Gallery sections -->
     <string name="galleryRecentlyPlayed"> Недавние игры </string>

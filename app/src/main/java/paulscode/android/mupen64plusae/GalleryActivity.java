@@ -88,7 +88,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_SIDEBAR = "STATE_SIDEBAR";
     private static final String STATE_FILE_TO_DELETE = "STATE_FILE_TO_DELETE";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
-    private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
@@ -124,7 +123,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private boolean mDragging = false;
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
-    private ExtractRomFragment mExtractRomFragment = null;
 
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
@@ -395,18 +393,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // find the retained fragment on activity restarts
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
-        mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
         {
             mCacheRomInfoFragment = new ScanRomsFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
-        }
-
-        if(mExtractRomFragment == null)
-        {
-            mExtractRomFragment = new ExtractRomFragment();
-            fm.beginTransaction().add(mExtractRomFragment, STATE_EXTRACT_ROM_FRAGMENT).commit();
         }
 
         // Get the ROM path if it was passed from another activity/app
@@ -932,11 +923,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
         {
-            if(!mGlobalPrefs.cacheRecentlyPlayed)
-            {
-                FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
-            }
-
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
@@ -1104,24 +1090,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mRefreshNeeded = true;
 
         mSelectedItem = null;
-
-        if (romFileName.exists())
-        {
-            // Launch the game activity
-            ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, romDisplayName, romLegacySaveFileName, isRestarting);
-        }
-        else
-        {
-            if ((!TextUtils.isEmpty(zipPath) && !new File(zipPath).exists()) || TextUtils.isEmpty(zipPath)) {
-                Notifier.showToast(this, R.string.toast_nativeMainFailure07);
-                return;
-            }
-
-            mExtractRomFragment.ExtractRom(zipPath, mGlobalPrefs.unzippedRomsDir, romPath, romMd5, romCrc,
-                    romHeaderName, romCountryCode, romArtPath, romGoodName, romDisplayName, romLegacySaveFileName,
-                    isRestarting);
-        }
+        // Launch the game activity
+        ActivityHelper.startGameActivity(this, romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                romArtPath, romGoodName, romDisplayName, romLegacySaveFileName, isRestarting);
     }
 
     @Override

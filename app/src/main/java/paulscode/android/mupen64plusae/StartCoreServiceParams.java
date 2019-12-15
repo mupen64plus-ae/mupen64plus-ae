@@ -19,47 +19,10 @@
  */
 
 package paulscode.android.mupen64plusae;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.net.Uri;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import paulscode.android.mupen64plusae.game.GameActivity;
-import paulscode.android.mupen64plusae.input.DiagnosticActivity;
-import paulscode.android.mupen64plusae.jni.CoreService;
-import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
-import paulscode.android.mupen64plusae.persistent.DataPrefsActivity;
-import paulscode.android.mupen64plusae.persistent.DefaultsPrefsActivity;
-import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
-import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
-import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
-import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
-import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
-import paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen;
-import paulscode.android.mupen64plusae.profile.EmulationProfileActivity;
-import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
-import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
-import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
-import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
-import paulscode.android.mupen64plusae.task.CacheRomInfoService;
-import paulscode.android.mupen64plusae.task.DeleteFilesService;
-import paulscode.android.mupen64plusae.task.ExtractRomService;
-import paulscode.android.mupen64plusae.task.ExtractTexturesService;
-import paulscode.android.mupen64plusae.util.LogcatActivity;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -72,6 +35,7 @@ public class StartCoreServiceParams
     private String romGoodName;
     private String romDisplayName;
     private String romPath;
+    private String zipPath;
     private String romMd5;
     private String romCrc;
     private String romHeaderName;
@@ -125,6 +89,14 @@ public class StartCoreServiceParams
 
     public void setRomPath(String romPath) {
         this.romPath = romPath;
+    }
+
+    public String getZipPath() {
+        return zipPath;
+    }
+
+    public void setZipPath(String zipPath) {
+        this.zipPath = zipPath;
     }
 
     public String getRomMd5() {

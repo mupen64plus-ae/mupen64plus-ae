@@ -92,7 +92,6 @@ import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 
-import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
 
 //@formatter:off
@@ -154,6 +153,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     // args data
     private boolean mShouldExit = false;
     private String mRomPath = null;
+    private String mZipPath = null;
     private String mRomMd5 = null;
     private String mRomCrc = null;
     private String mRomGoodName = null;
@@ -269,7 +269,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mForceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
         Log.i("GameActivity", "forceExit=" + mForceExit);
 
-        mRomPath = extras.getString( ROM_PATH );
+        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
@@ -879,7 +880,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             if (!mCoreFragment.IsInProgress()) {
                 final String latestSave = mGameDataManager.getLatestAutoSave();
-                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath,
+                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                         mGamePrefs.getEnabledCheats(), mDoRestart, latestSave);
             }

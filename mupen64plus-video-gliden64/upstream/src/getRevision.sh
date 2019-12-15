@@ -7,6 +7,7 @@ echo last build revision $lastrev
 
 if [ "$lastrev" != "$rev" ]
 then
+   echo Revisions are not equal
    echo "#define PLUGIN_REVISION $rev" > $SCRIPT_DIRECTORY/Revision.h
    echo "#define PLUGIN_REVISION_W L$rev" >> $SCRIPT_DIRECTORY/Revision.h
 fi

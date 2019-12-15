@@ -277,8 +277,6 @@
     <string name="showRecentlyPlayed_summary">Diskouez ar c\'hoarioù c\'hoariet outo ar sizhun dremenet</string>
     <string name="showFullNames_title">Anvioù klok</string>
     <string name="showFullNames_summary">Diskouez ar rannvro hag an titouroù goullonderiñ evit pep c\'hoari</string>
-    <string name="cacheRecentlyPlayed_title">Krubuilh ar c\'hoarioù fresk</string>
-    <string name="cacheRecentlyPlayed_summary">Kuzhat restroù ROM eztennet ar c\'hoarioù c\'hoariet nevez \'zo outo evit kaout amzerioù kargañ fonnusoc\'h</string>
 
     <!-- Gallery sections -->
     <string name="galleryRecentlyPlayed">C\'hoariet nevez \'zo</string>
