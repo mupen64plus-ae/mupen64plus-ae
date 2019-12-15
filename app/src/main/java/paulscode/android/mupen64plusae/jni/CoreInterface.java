@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Surface;
@@ -264,8 +265,12 @@ class CoreInterface
         mCoreContext = new Memory(coreContextText.length()+1);
         mCoreContext.setString(0, coreContextText);
 
+        CoreLibrary.DebugCallback debugCallback = null;
+        if (TextUtils.isEmpty(mDdRom))
+            debugCallback = mDebugCallBackCore;
+
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
-                dataDirPath, mCoreContext, mDebugCallBackCore, null, mStateCallBack);
+                dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);
         mAeBridgeLibrary.overrideAeVidExtFuncs();
         mAeBridgeLibrary.registerFpsCounterCallback(mFpsCounterCallback);
         return returnValue;

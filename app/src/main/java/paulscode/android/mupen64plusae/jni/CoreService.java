@@ -439,6 +439,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
             }
 
+            mCoreInterface.setGbRomPath(mGbRomPaths);
+            mCoreInterface.setGbRamPath(mGbRamPaths);
+            mCoreInterface.setDdRomPath(mDdRom);
+            mCoreInterface.setDdDiskPath(mDdDisk);
+
             mCoreInterface.coreStartup(mCoreUserConfigDir, null, mCoreUserDataDir, mCoreUserCacheDir);
 
             if(!mIsRestarting)
@@ -467,11 +472,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mAudioLib);
                 mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, mInputLib);
                 mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mRspLib);
-
-                mCoreInterface.setGbRomPath(mGbRomPaths);
-                mCoreInterface.setGbRamPath(mGbRamPaths);
-                mCoreInterface.setDdRomPath(mDdRom);
-                mCoreInterface.setDdDiskPath(mDdDisk);
 
                 // This call blocks until emulation is stopped
                 mCoreInterface.emuStart();
