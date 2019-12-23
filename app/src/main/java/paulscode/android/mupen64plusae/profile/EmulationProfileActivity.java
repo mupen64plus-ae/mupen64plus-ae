@@ -304,17 +304,32 @@ public class EmulationProfileActivity extends ProfileActivity
         String value = currentValue;
         if(value != null)
         {
-            //Support older string value for video plugin that could support multiple GLideN64 versions
-            //There is now only one version
-            if(key.equals("videoPlugin") && value.toLowerCase().contains("gliden64"))
+            if(key.equals("videoPlugin"))
             {
-                value = "GLideN64";
-            }
+                if(value.toLowerCase().contains("glide64"))
+                {
+                    value = LIBGLIDE64_SO;
+                }
 
-            //Fix old angrylion plugin library
-            if(key.equals("videoPlugin") && value.toLowerCase().contains("angrylion"))
-            {
-                value = "angrylion-plus";
+                if(value.toLowerCase().contains("gliden64"))
+                {
+                    value = LIBGLIDEN64_SO;
+                }
+
+                if(value.toLowerCase().contains("rice"))
+                {
+                    value = LIBRICE_SO;
+                }
+
+                if(value.toLowerCase().contains("rice"))
+                {
+                    value = LIBGLN64_SO;
+                }
+
+                if(value.toLowerCase().contains("angrylion"))
+                {
+                    value = LIBANGRYLION_SO;
+                }
             }
         }
 
