@@ -54,8 +54,9 @@ public class DrawerDrawable extends Drawable
         mPaint.setColor( 0xFF555555 );
         canvas.drawRect( width - 1, 0, width, height, mPaint );
     }
-    
+
     @Override
+    @SuppressWarnings("deprecation")
     public int getOpacity()
     {
         return ( mAlpha == 255 ) ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT;
