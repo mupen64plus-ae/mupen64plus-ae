@@ -5,18 +5,18 @@ ifeq ($(NDK_DEBUG), 1)
 endif
 
 
-#SDL2 hidapi
+#hidapi
 include $(CLEAR_VARS)
 LOCAL_MODULE := libhidapi
 LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libhidapi.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 #SDL2
-include $(CLEAR_VARS)
-LOCAL_MODULE := SDL2
-LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libSDL2.so
-LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/SDL2/include/
-include $(PREBUILT_SHARED_LIBRARY)
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := SDL2
+#LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libSDL2.so
+#LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/SDL2/include/
+#include $(PREBUILT_SHARED_LIBRARY)
 
 #PNG
 include $(CLEAR_VARS)

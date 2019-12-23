@@ -6,13 +6,13 @@ LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./upstream/src
 
 LOCAL_MODULE := mupen64plus-video-rice
-LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                     \
     $(LOCAL_PATH)/$(SRCDIR)             \
     $(M64P_API_INCLUDES)                \
+    $(LOCAL_PATH)/../ndkLibs/SDL2_stub  \
 
 LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/Blender.cpp               \

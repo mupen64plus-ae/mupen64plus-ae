@@ -5,12 +5,12 @@
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./upstream/src
 
-MY_LOCAL_SHARED_LIBRARIES := SDL2
 MY_LOCAL_STATIC_LIBRARIES := png
 MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES :=                          \
     $(LOCAL_PATH)/$(SRCDIR)/Glitch64/inc        \
+    $(LOCAL_PATH)/../ndkLibs/SDL2_stub          \
     $(M64P_API_INCLUDES)                        \
 
 MY_LOCAL_SRC_FILES :=                           \
@@ -57,6 +57,7 @@ MY_LOCAL_CFLAGS :=         \
     -DNOSSE             \
     -DNO_ASM            \
     -fsigned-char       \
+    -Wformat
     
 MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11
     

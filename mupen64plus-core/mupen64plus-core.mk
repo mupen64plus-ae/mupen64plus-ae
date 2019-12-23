@@ -8,7 +8,6 @@ SUBLIBS := ./upstream/subprojects
 ASM_DEFINE_PATH := $(LOCAL_PATH)/upstream/src/asm_defines
 
 LOCAL_MODULE := mupen64plus-core
-LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 LOCAL_DISABLE_FATAL_LINKER_WARNINGS := true
@@ -19,6 +18,7 @@ LOCAL_C_INCLUDES :=                       \
     $(LOCAL_PATH)/$(SUBLIBS)/xxhash       \
     $(LOCAL_PATH)/$(SRCDIR)               \
     $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI) \
+    $(LOCAL_PATH)/../ndkLibs/SDL2_stub    \
 
 LOCAL_SRC_FILES :=                                              \
     $(SUBLIBS)/md5/md5.c                                        \
@@ -106,8 +106,7 @@ LOCAL_CFLAGS :=         \
     -DIOAPI_NO_64       \
     -DNOCRYPT           \
     -DNOUNCRYPT         \
-    -DUSE_GLES=1        \
-    -DUSE_SDL
+    -DUSE_GLES=1
 
 LOCAL_LDFLAGS :=                                                    \
     $(COMMON_LDFLAGS)                                               \
