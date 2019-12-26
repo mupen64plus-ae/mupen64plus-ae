@@ -42,12 +42,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
-public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAssetsTask.Failure>>
+@SuppressWarnings("unused")
+public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<ExtractAssetsOrCleanupTask.Failure>>
 {
 
     private static final HashMap<String, Integer> mAssetVersions = new HashMap<>();
+
+    private static final String TAG = "ExtractAssetsOrCleanup";
 
     public interface ExtractAssetsListener
     {
@@ -56,7 +60,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
     }
 
     static {
-        synchronized (ExtractAssetsTask.class) {
+        synchronized (ExtractAssetsOrCleanupTask.class) {
             mAssetVersions.put("mupen64plus_data/GLideN64.custom.ini", 3);
             mAssetVersions.put("mupen64plus_data/Glide64mk2.ini", 2);
             mAssetVersions.put("mupen64plus_data/RiceVideoLinux.ini", 1);
@@ -227,8 +231,9 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
     private final ExtractAssetsListener mListener;
     private final SharedPreferences mPreferences;
     private int mTotalAssets = 0;
+    private GlobalPrefs mGlobalPrefs;
     
-    public ExtractAssetsTask(Context context, AssetManager assetManager, String srcPath, String dstPath, ExtractAssetsListener listener )
+    public ExtractAssetsOrCleanupTask(Context context, AssetManager assetManager, GlobalPrefs globalPrefs, String srcPath, String dstPath, ExtractAssetsListener listener )
     {
 
         if (assetManager == null )
@@ -246,12 +251,17 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
         mListener = listener;
         // Preference object for persisting app data
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        mGlobalPrefs = globalPrefs;
     }
 
     
     @Override
     protected List<Failure> doInBackground( Void... params )
     {
+
+        FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
+        FileUtil.deleteFolder(new File(mGlobalPrefs.legacyCoreConfigDir));
+
         return extractAssets( mSrcPath, mDstPath );
     }
     
@@ -262,7 +272,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
     }
     
     @Override
-    protected void onPostExecute( List<ExtractAssetsTask.Failure> result )
+    protected void onPostExecute( List<ExtractAssetsOrCleanupTask.Failure> result )
     {
         mListener.onExtractAssetsFinished( result );
     }
@@ -367,9 +377,9 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
             // Ensure the parent directories exist
             File directory = new File(destinationPath).getParentFile();
 
-            if(!directory.exists()) {
+            if(directory != null && !directory.exists()) {
                 if(!directory.mkdirs()) {
-                    Log.e( "ExtractAssetsTask", "Unable to create folder" );
+                    Log.e( TAG, "Unable to create folder" );
                 }
             }
 
@@ -409,13 +419,13 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
         catch( FileNotFoundException e )
         {
             Failure failure = new Failure( asset, destination, Failure.Reason.FILE_UNWRITABLE );
-            Log.e( "ExtractAssetsTask", failure.toString() );
+            Log.e( TAG, failure.toString() );
             failures.add( failure );
         }
         catch( IOException e )
         {
             Failure failure = new Failure( asset, destination, Failure.Reason.ASSET_IO_EXCEPTION );
-            Log.e( "ExtractAssetsTask", failure.toString() );
+            Log.e( TAG, failure.toString() );
             failures.add( failure );
         }
         finally
@@ -429,7 +439,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
                 catch( IOException e )
                 {
                     Failure failure = new Failure( asset, destination, Failure.Reason.FILE_UNCLOSABLE );
-                    Log.e( "ExtractAssetsTask", failure.toString() );
+                    Log.e( TAG, failure.toString() );
                     failures.add( failure );
                 }
             }
@@ -442,7 +452,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
                 catch( IOException e )
                 {
                     Failure failure = new Failure( asset, destination, Failure.Reason.ASSET_UNCLOSABLE );
-                    Log.e( "ExtractAssetsTask", failure.toString() );
+                    Log.e( TAG, failure.toString() );
                     failures.add( failure );
                 }
             }
@@ -471,7 +481,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
         }
         catch( IOException e )
         {
-            Log.w( "ExtractAssetsTask", "Failed to get asset file list." );
+            Log.w( TAG, "Failed to get asset file list." );
         }
         
         return srcSubPaths;

@@ -69,7 +69,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
+import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
 import paulscode.android.mupen64plusae.task.UpdateLeanbackProgramsTask;
@@ -1043,7 +1043,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Log.i( "GalleryActivity", "launchGameActivity" );
 
         // Make sure that the storage is accessible
-        if( !ExtractAssetsTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir))
+        if( !ExtractAssetsOrCleanupTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir))
         {
             Log.e( "GalleryActivity", "SD Card not accessible" );
             Notifier.showToast( this, R.string.toast_sdInaccessible );

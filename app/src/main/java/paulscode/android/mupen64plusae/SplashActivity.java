@@ -63,9 +63,9 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
+import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
+import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.ExtractAssetsListener;
+import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -342,7 +342,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
         else
         {
-            checkExtractAssets();
+            checkExtractAssetsOrCleanup();
         }
     }
 
@@ -395,7 +395,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             else
             {
                 //Permissions already granted, continue
-                checkExtractAssets();
+                checkExtractAssetsOrCleanup();
             }
         }
 
@@ -404,12 +404,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
     }
 
-    private void checkExtractAssets()
+    private void checkExtractAssetsOrCleanup()
     {
-        FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
-
         if( mAppData.getAssetCheckNeeded() || mAppData.getAppVersion() != mAppData.appVersionCode ||
-                !ExtractAssetsTask.areAllAssetsValid(PreferenceManager.getDefaultSharedPreferences(this),
+                !ExtractAssetsOrCleanupTask.areAllAssetsValid(PreferenceManager.getDefaultSharedPreferences(this),
                         SOURCE_DIR, mAppData.coreSharedDataDir))
         {
             mAppData.putAppVersion(mAppData.appVersionCode);
@@ -446,7 +444,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     {
         // Extract and merge the assets if they are out of date
         mAssetsExtracted = 0;
-        new ExtractAssetsTask( this, getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+        new ExtractAssetsOrCleanupTask( this, getAssets(), mGlobalPrefs, SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
     }
 
     @Override

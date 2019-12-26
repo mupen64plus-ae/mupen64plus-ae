@@ -150,6 +150,9 @@ public class GlobalPrefs
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
 
+    /** Legacy core config folder */
+    public final String legacyCoreConfigDir;
+
     /** Legacy auto save directory */
     public final String legacyAutoSaves;
 
@@ -443,7 +446,10 @@ public class GlobalPrefs
         screenshotsDir = appData.userDataDir + "/Screenshots";
         String profilesDir = appData.userDataDir + "/Profiles";
         crashLogDir = appData.userDataDir + "/CrashLogs";
-        final String coreConfigDir = appData.userDataDir + "/CoreConfig";
+        legacyCoreConfigDir = appData.userDataDir + "/CoreConfig";
+
+        final String coreConfigDir = context.getCacheDir().getAbsolutePath() + "/CoreConfig";
+
         coreUserDataDir = coreConfigDir + "/UserData";
         coreUserCacheDir = coreConfigDir + "/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
