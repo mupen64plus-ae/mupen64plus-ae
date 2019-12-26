@@ -317,18 +317,28 @@ class NativeConfigFiles
     private static void readHiResSettings( GamePrefs game, GlobalPrefs global)
     {
         final String hiResHtc = global.textureCacheDir + "/" + game.gameHeaderName + "_HIRESTEXTURES.htc";
+        final String hiResHts = global.textureCacheDir + "/" + game.gameHeaderName + "_HIRESTEXTURES.hts";
         final File htcFile = new File(hiResHtc);
+        final File htsFile = new File(hiResHts);
 
-        hiresTexHTCPresent = htcFile.exists();
+        hiresTexHTCPresent = htcFile.exists() || htsFile.exists();
 
         if(hiresTexHTCPresent)
         {
+            File actualFile = null;
+
+            if (htcFile.exists()) {
+                actualFile = htcFile;
+            } else {
+                actualFile = htsFile;
+            }
+
             InputStream stream;
             InputStream gzipStream = null;
 
             try
             {
-                stream = new FileInputStream(htcFile);
+                stream = new FileInputStream(actualFile);
                 gzipStream = new GZIPInputStream(stream);
 
                 final byte[] buffer = new byte[4];
