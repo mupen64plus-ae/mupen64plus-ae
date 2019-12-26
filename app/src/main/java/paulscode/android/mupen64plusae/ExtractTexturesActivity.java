@@ -173,6 +173,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent = Intent.createChooser(intent, getString(R.string.pathHiResTexturesTask_select_zip));
             startActivityForResult(intent, PICK_TEXTURE_REQUEST_CODE);
         }
