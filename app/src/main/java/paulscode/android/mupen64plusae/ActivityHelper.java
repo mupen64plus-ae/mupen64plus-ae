@@ -90,6 +90,7 @@ public class ActivityHelper
         public static final String ROM_LEGACY_SAVE      = NAMESPACE + "ROM_LEGACY_SAVE";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
+        public static final String FILE_URI             = NAMESPACE + "FILE_URI";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
@@ -404,10 +405,10 @@ public class ActivityHelper
     }
 
     static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,
-        String searchPath)
+        Uri fileUri)
     {
         Intent intent = new Intent(context, ExtractTexturesService.class);
-        intent.putExtra(Keys.SEARCH_PATH, searchPath);
+        intent.putExtra(Keys.FILE_URI, fileUri.toString());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);

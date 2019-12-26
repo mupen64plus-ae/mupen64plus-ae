@@ -568,6 +568,8 @@
     <string name="cheatEditor_info">Información del truco</string>
     <string name="cheatEditor_saveConfirm">¿Guardar archivo del truco?</string>
     <!--Hi-Res Texture Unpacking-->
+    <string name="pathHiResTexturesTask_select_zip">Seleccione el archivo ZIP, 7Zip, HTS, o HTC conteniendo el paquete de texturas</string>
+    <string name="pathHiResTexturesTask_start_file_picker">Seleccionar archivo</string>
     <string name="pathHiResTexturesTask_title">Extrayendo texturas</string>
     <string name="pathHiResTexturesTask_errorMessage">¡Error al extraer texturas!</string>
     <string name="pathHiResTexturesTask_message">Sea paciente. Este proceso puede llevar tiempo</string>

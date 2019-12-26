@@ -26,6 +26,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,8 +36,11 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -50,12 +54,14 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.TextureInfo;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class ExtractTexturesService extends Service
 {
-    private String mZipPath;
+    private Uri mFileUri;
     
     private int mStartId;
     private Looper mServiceLooper;
@@ -99,10 +105,10 @@ public class ExtractTexturesService extends Service
         }
         
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
 
             //Check for error conditions
-            if( mZipPath == null )
+            if( mFileUri == null )
             {
                 if (mListener != null)
                 {
@@ -113,28 +119,17 @@ public class ExtractTexturesService extends Service
                 return;
             }
 
-            File searchPathFile = new File(mZipPath);
-
-            if( !searchPathFile.exists() )
-            {
-                if (mListener != null)
-                {
-                    mListener.onExtractTexturesFinished();
-                }
-
-                stopSelf(msg.arg1);
-                return;
-            }
-            
             AppData appData = new AppData( ExtractTexturesService.this );
             GlobalPrefs globalPrefs = new GlobalPrefs( ExtractTexturesService.this, appData );
 
-            RomHeader header = new RomHeader(mZipPath);
-            if(mZipPath.toLowerCase().endsWith("htc"))
+            String name = ProviderUtil.getFileName(getApplicationContext(), mFileUri);
+
+            RomHeader header = new RomHeader(getApplicationContext(), mFileUri);
+            if(name != null && (name.toLowerCase().endsWith("htc") || name.toLowerCase().endsWith("hts")))
             {
-                if(mZipPath.toLowerCase().endsWith("_hirestextures.htc"))
+                if(name.toLowerCase().endsWith("_hirestextures.htc") || name.toLowerCase().endsWith("_hirestextures.hts"))
                 {
-                    FileUtil.copyFile(new File(mZipPath), new File(globalPrefs.textureCacheDir + "/" + new File(mZipPath).getName()));
+                    FileUtil.copyFile( getApplicationContext(), mFileUri, new File(globalPrefs.textureCacheDir + "/" + name) );
                 }
                 else
                 {
@@ -151,22 +146,34 @@ public class ExtractTexturesService extends Service
                     });
                 }
             } else if (header.isZip || header.is7Zip) {
-                String headerName = header.isZip ? TextureInfo.getTexturePackNameFromZip( mZipPath ) :
-                        TextureInfo.getTexturePackNameFromSevenZ( mZipPath );
+                String headerName;
+                if (header.isZip) {
+                    headerName = TextureInfo.getTexturePackNameFromZip(getApplicationContext(), mFileUri);
 
-                if( !TextUtils.isEmpty( headerName ) )
-                {
-                    String outputFolder = globalPrefs.hiResTextureDir + headerName;
-                    FileUtil.deleteFolder( new File( outputFolder ) );
+                    if( !TextUtils.isEmpty( headerName ) ) {
+                        String outputFolder = globalPrefs.hiResTextureDir + headerName;
+                        FileUtil.deleteFolder( new File( outputFolder ) );
+                        FileUtil.unzipAll( getApplicationContext(), mFileUri, outputFolder );
+                    }
+                } else {
+                    File temp7zipFile  = new File(getCacheDir().getPath() + "/" + name);
+                    FileUtil.copyFile( getApplicationContext(), mFileUri, temp7zipFile );
 
-                    if(header.isZip) {
-                        FileUtil.unzipAll( new File( mZipPath ), outputFolder );
-                    } else {
-                        FileUtil.unSevenZAll( new File( mZipPath ), outputFolder );
+                    headerName = TextureInfo.getTexturePackNameFromSevenZ(temp7zipFile.getPath());
+
+                    if( !TextUtils.isEmpty( headerName ) ) {
+                        String outputFolder = globalPrefs.hiResTextureDir + headerName;
+                        FileUtil.deleteFolder( new File( outputFolder ) );
+                        FileUtil.unSevenZAll( temp7zipFile, outputFolder );
+                    }
+
+                    if (!temp7zipFile.delete())
+                    {
+                        Log.w("ExtractTexturesService", "Unable to delete: " + temp7zipFile.getPath());
                     }
                 }
-                else
-                {
+
+                if( TextUtils.isEmpty( headerName ) ) {
                     final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
 
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -242,7 +249,10 @@ public class ExtractTexturesService extends Service
         if(intent != null)
         {
             Bundle extras = intent.getExtras();
-            mZipPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+            if (extras != null) {
+                String uriString = extras.getString( ActivityHelper.Keys.FILE_URI );
+                mFileUri = Uri.parse(uriString);
+            }
         }
 
         mStartId = startId;

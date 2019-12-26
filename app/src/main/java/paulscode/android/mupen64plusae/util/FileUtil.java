@@ -23,12 +23,10 @@ package paulscode.android.mupen64plusae.util;
 import androidx.annotation.NonNull;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
@@ -39,7 +37,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -55,6 +52,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import androidx.core.content.FileProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -64,10 +62,10 @@ import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 /**
  * Utility class that provides methods which simplify file I/O tasks.
  */
-@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused"})
+@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions"})
 public final class FileUtil
 {
-    public static void populate( File startPath, boolean includeParent, boolean includeDirectories,
+    public static void populate( @NonNull File startPath, boolean includeParent, boolean includeDirectories,
             boolean includeFiles, List<CharSequence> outNames, List<String> outPaths )
     {
         if( !startPath.exists() )
@@ -75,7 +73,7 @@ public final class FileUtil
         
         if( startPath.isFile() )
             startPath = startPath.getParentFile();
-        
+
         if( startPath.getParentFile() == null )
             includeParent = false;
         
@@ -201,36 +199,17 @@ public final class FileUtil
             }
         }
     }
-
+    
     /**
      * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
-     * {@link File}
-     * <p>
-     * This method assumes no backups will want to be made.
-     * 
-     * @param src  Source file.
-     * @param dest Desired destination.
+     * {@link File}. The source can be a directory
+     *
+     * @param src         Source file
+     * @param dest        Desired destination
      * 
      * @return True if the copy succeeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest )
-    {
-        return copyFile( src, dest, false );
-    }
-    
-    /**
-     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
-     * {@link File}
-     * <p>
-     * This method supports the making of backups of the src File.
-     * 
-     * @param src         Source file
-     * @param dest        Desired destination
-     * @param makeBackups True if backups are wanted, false otherwise.
-     * 
-     * @return True if the copy succeeded, false otherwise.
-     */
-    private static boolean copyFile( File src, File dest, boolean makeBackups )
     {
         if( src == null )
         {
@@ -253,7 +232,7 @@ public final class FileUtil
             
             for( String file : files )
             {
-                success = success && copyFile( new File( src, file ), new File( dest, file ), makeBackups );
+                success = success && copyFile( new File( src, file ), new File( dest, file ) );
             }
             
             return success;
@@ -269,66 +248,80 @@ public final class FileUtil
 
             FileUtil.makeDirs(f.getPath());
 
-            if( dest.exists() && makeBackups )
-                backupFile( dest );
-            
-            try
-            {
-                final InputStream in = new FileInputStream( src );
-                final OutputStream out = new FileOutputStream( dest );
-                
-                byte[] buf = new byte[1024];
-                int len;
-                while( ( len = in.read( buf ) ) > 0 )
-                {
-                    out.write( buf, 0, len );
-                }
-                
-                in.close();
-                out.close();
+            try (FileChannel in = new FileInputStream(src).getChannel();
+                 FileChannel out = new FileOutputStream(dest).getChannel()) {
+                in.transferTo(0, in.size(), out);
+            } catch (Exception e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
             }
-            catch( FileNotFoundException fnfe )
-            {
-                Log.e("copyFile", "FileNotFoundException: " + fnfe.getMessage());
-                return false;
-            }
-            catch( IOException ioe )
-            {
-                Log.e( "copyFile", "IOException: " + ioe.getMessage() );
-                return false;
-            }
-            
+
             return true;
         }
     }
-    
+
     /**
-     * Backs up a given {@link File}.
-     * <p>
-     * Backups are made in the form: 'filename + [number]', where number can be any number depending
-     * on the amount of backups there are.
-     * <p>
-     * eg. if only the file "thisfile.ext" exists, its backup will be "thisfile.ext.bak1"
-     * <p>
-     * if "thisfile" and "thisfile.ext.bak1" exists, its backup will be "thisfile.ext.bak2" and so
-     * on.
-     * 
-     * @param file The file to back up.
+     * Copies a {@code src} {@link Uri} to a desired destination represented by a {@code dest}
+     * {@link File}. The source can't be a directory.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
      */
-    private static void backupFile( File file )
+    public static boolean copyFile( Context context, Uri src, File dest )
     {
-        if( file.isDirectory() )
-            return;
-        
-        // Get a unique name for the backup
-        String backupName = file.getAbsolutePath() + ".bak";
-        File backup = new File( backupName );
-        for( int i = 1; backup.exists(); i++ )
-            backup = new File( backupName + i );
-        
-        copyFile( file, backup );
+        if( src == null )
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if( dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        File f = dest.getParentFile();
+        if( f == null )
+        {
+            Log.e( "copyFile", "dest parent folder null" );
+            return false;
+        }
+
+        FileUtil.makeDirs(f.getPath());
+
+        ParcelFileDescriptor parcelFileDescriptor;
+
+        try {
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src, "r");
+
+            if (parcelFileDescriptor != null)
+            {
+                try (FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                     FileChannel out = new FileOutputStream(dest).getChannel()) {
+
+                    long bytesTransferred = 0;
+
+                    while (bytesTransferred < in.size()) {
+                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                    }
+
+                } catch (Exception e) {
+                    Log.e("copyFile", "Exception: " + e.getMessage());
+                }
+
+                parcelFileDescriptor.close();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
-    
+
     /**
      * Writes a given string to a specified file.
      * 
@@ -367,38 +360,36 @@ public final class FileUtil
     /**
      * Unzips a ZIP file in its entirety.
      *
-     * @param archive   The archive to extract.
+     * @param context Context use to access URI
+     * @param uri   The archive to extract.
      * @param outputDir Directory to place all of the extracted files.
      */
-    public static void unzipAll( @NonNull File archive, String outputDir )
+    public static void unzipAll( @NonNull Context context, @NonNull Uri uri, String outputDir )
     {
-        if( !archive.exists() )
-        {
-            Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
-            return;
-        }
-        else if( !archive.isFile() )
-        {
-            Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
-            return;
-        }
-        
-        ZipFile zipfile = null;
+        ParcelFileDescriptor parcelFileDescriptor = null;
+        ZipInputStream zipfile = null;
+
         try
         {
-            zipfile = new ZipFile( archive );
-            Enumeration<? extends ZipEntry> e = zipfile.entries();
-            while( e.hasMoreElements() )
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+
+            if (parcelFileDescriptor != null)
             {
-                ZipEntry entry = e.nextElement();
-                if (!entry.isDirectory())
-                {
-                    File f = new File( outputDir + "/" + entry.toString() );
-                    f = f.getParentFile();
-                    if( f != null )
+                zipfile = new ZipInputStream( new FileInputStream(parcelFileDescriptor.getFileDescriptor()) );
+
+                ZipEntry entry = zipfile.getNextEntry();
+
+                while( entry != null ) {
+                    entry = zipfile.getNextEntry();
+                    if (!entry.isDirectory())
                     {
-                        FileUtil.makeDirs(f.getPath());
-                        unzipEntry( zipfile, entry, outputDir );
+                        File f = new File( outputDir + "/" + entry.toString() );
+                        f = f.getParentFile();
+                        if( f != null )
+                        {
+                            FileUtil.makeDirs(f.getPath());
+                            unzipEntry( zipfile, entry, outputDir );
+                        }
                     }
                 }
             }
@@ -409,14 +400,17 @@ public final class FileUtil
         }
         finally
         {
-            if( zipfile != null )
-                try
-                {
+            try
+            {
+                if( zipfile != null )
                     zipfile.close();
-                }
-                catch( IOException ignored )
-                {
-                }
+
+                if (parcelFileDescriptor != null)
+                    parcelFileDescriptor.close();
+            }
+            catch( IOException ignored )
+            {
+            }
         }
     }
 
@@ -424,12 +418,12 @@ public final class FileUtil
     //
     // Returns the absolute path to the outputted entry.
     // Returns null if the entry passed in happens to be a directory.
-    private static void unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
+    private static void unzipEntry( ZipInputStream zipfile, ZipEntry entry, String outputDir )
             throws IOException
     {
         File outputFile = new File( outputDir, entry.getName() );
         
-        BufferedInputStream inputStream = new BufferedInputStream( zipfile.getInputStream( entry ) );
+        BufferedInputStream inputStream = new BufferedInputStream( zipfile );
         BufferedOutputStream outputStream = new BufferedOutputStream( new FileOutputStream(
                 outputFile ) );
         byte[] b = new byte[1024];
@@ -441,7 +435,6 @@ public final class FileUtil
         }
         
         outputStream.close();
-        inputStream.close();
     }
 
     /**

@@ -5,12 +5,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/linearLayout1"
+        android:orientation="vertical" >
+    </ListView>
+
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayoutButtons"
         android:orientation="vertical"
-        android:gravity="center"
         android:padding="16dp" >
 
         <TextView
@@ -18,19 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/pathHiResTexturesTask_select_zip"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-        <Button
-            android:id="@+id/buttonFilePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/pathHiResTexturesTask_start_file_picker" />
-        <TextView
-            android:id="@+id/fileDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
     <RelativeLayout

@@ -160,7 +160,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
 
                 if( !TextUtils.isEmpty( givenRomPath ) ) {
-                    //noinspection ConstantConditions
                     getIntent().replaceExtras((Bundle)null);
 
                     launchGameOnCreation(givenRomPath);
@@ -192,8 +191,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
 
                 launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, true );
-
-                //noinspection ConstantConditions
                 getIntent().replaceExtras((Bundle)null);
             }
         } else {
@@ -712,17 +709,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( item == null || item.romFile == null)
             return;
 
+        String zipfilePath = item.zipFile == null ? null : item.zipFile.getAbsolutePath();
+
         switch( menuItem.getItemId() )
         {
             case R.id.menuItem_resume:
                 launchGameActivity( item.romFile.getAbsolutePath(),
-                        item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+                        zipfilePath,
                         item.md5, item.crc, item.headerName,
                         item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false );
                 break;
             case R.id.menuItem_start:
                 launchGameActivity( item.romFile.getAbsolutePath(),
-                        item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+                        zipfilePath,
                         item.md5, item.crc,
                         item.headerName, item.countryCode.getValue(), item.artPath,
                         item.goodName, item.displayName, true );
@@ -1057,7 +1056,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
-        File romFileName = new File(romPath);
 
         String romLegacySaveFileName;
 

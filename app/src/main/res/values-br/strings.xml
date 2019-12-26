@@ -706,7 +706,7 @@
     <string name="cheatEditor_remove_option">Dilemel an dibarzhioù</string>
 
     <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesTask_select_zip">Diuzit ar restr ZIP, 7Zip pe HTC a endalc\'h ar pakad gwiadezh uhel</string>
+    <string name="pathHiResTexturesTask_select_zip">Diuzit ar restr ZIP, 7Zip, HTS pe HTC a endalc\'h ar pakad gwiadezh uhel</string>
     <string name="pathHiResTexturesTask_title">O tispakañ ar gwiadezhioù…</string>
     <string name="pathHiResTexturesTask_message">Bezit pasiant eta, mar plij.  An argerzh-mañ a c\'hallfe kemer un nebeud amzer.</string>
     <string name="pathHiResTexturesTask_errorMessage">Fazi en ur zispakañ ar gwiadezhioù!</string>

@@ -21,15 +21,18 @@
 package paulscode.android.mupen64plusae.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
+import android.content.Context;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -109,42 +112,49 @@ public class TextureInfo
 
     /**
      * Returns the name embedded in a zipped texture pack.
-     * 
-     * @param filename The path to the zipped texture pack.
+     *
+     * @param fileUri The URI to the zipped texture pack.
      * @return The name, or null if there were any errors.
      */
-    public static String getTexturePackNameFromZip(String filename )
+    public static String getTexturePackNameFromZip(Context context, Uri fileUri)
     {
-        File archive = new File( filename );
-        
-        ZipFile zipfile = null;
         Map<String, Integer> romHeaderCount = new HashMap<>();
-
+        ZipInputStream zipfile = null;
+        ParcelFileDescriptor parcelFileDescriptor = null;
         try
         {
-            zipfile = new ZipFile( archive );
-            Enumeration<? extends ZipEntry> e = zipfile.entries();
-            while( e.hasMoreElements() )
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
+
+            if (parcelFileDescriptor != null)
             {
-                ZipEntry entry = e.nextElement();
-                if( entry != null && !entry.isDirectory() )
+                zipfile = new ZipInputStream( new FileInputStream(parcelFileDescriptor.getFileDescriptor()) );
+                ZipEntry entry = zipfile.getNextEntry();
+
+                while( entry != null )
                 {
-                    TextureInfo info = new TextureInfo( entry.getName() );
+                    if( !entry.isDirectory() )
+                    {
+                        TextureInfo info = new TextureInfo( entry.getName() );
 
-                    if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
-                        if (romHeaderCount.containsKey(info.romName)) {
-                            romHeaderCount.put(info.romName, romHeaderCount.get(info.romName)+1);
-                        } else {
-                            romHeaderCount.put(info.romName, 1);
-                        }
+                        if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
+                            Integer count = romHeaderCount.get(info.romName);
 
-                        //Find the first ROM header that shows 10 times
-                        for (Map.Entry<String, Integer> mapEntry : romHeaderCount.entrySet()) {
-                            if (mapEntry.getValue() == 10) {
-                                return mapEntry.getKey();
+                            if (count != null) {
+                                romHeaderCount.put(info.romName, count+1);
+                            } else {
+                                romHeaderCount.put(info.romName, 1);
+                            }
+
+                            //Find the first ROM header that shows 10 times
+                            for (Map.Entry<String, Integer> mapEntry : romHeaderCount.entrySet()) {
+                                if (mapEntry.getValue() == 10) {
+                                    return mapEntry.getKey();
+                                }
                             }
                         }
                     }
+
+                    entry = zipfile.getNextEntry();
                 }
             }
         }
@@ -155,14 +165,15 @@ public class TextureInfo
         }
         finally
         {
-            if( zipfile != null )
-                try
-                {
+            try {
+                if( zipfile != null ) {
                     zipfile.close();
                 }
-                catch( IOException ignored )
-                {
+                if (parcelFileDescriptor != null) {
+                    parcelFileDescriptor.close();
                 }
+            } catch (IOException ignored) {
+            }
         }
         Log.e( "TextureInfo", "No compatible textures found in .zip archive" );
         return null;
@@ -189,8 +200,9 @@ public class TextureInfo
                 {
                     TextureInfo info = new TextureInfo( zipEntry.getName() );
                     if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
-                        if (romHeaderCount.containsKey(info.romName)) {
-                            romHeaderCount.put(info.romName, romHeaderCount.get(info.romName)+1);
+                        Integer count = romHeaderCount.get(info.romName);
+                        if (count != null) {
+                            romHeaderCount.put(info.romName, count+1);
                         } else {
                             romHeaderCount.put(info.romName, 1);
                         }
@@ -211,7 +223,7 @@ public class TextureInfo
         }
         catch (java.lang.OutOfMemoryError e)
         {
-            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + filename );
+            Log.w( "TextureInfo", "Out of memory while extracting 7zip entry: " + filename );
         }
         finally
         {
@@ -225,8 +237,7 @@ public class TextureInfo
                 }
         }
 
-
-        Log.e( "TextureInfo", "No compatible textures found in .zip archive" );
+        Log.e( "TextureInfo", "No compatible textures found in 7zip archive: " + filename);
         return null;
     }
 }

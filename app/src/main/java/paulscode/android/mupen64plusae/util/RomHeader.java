@@ -20,12 +20,18 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.content.Context;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 /**
  * Utility class for retrieving information
@@ -77,6 +83,17 @@ public final class RomHeader
     public RomHeader( File file )
     {
         this(readFile( file ));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param context Used for retrieving file descriptor of URI
+     * @param file The ROM file to get the header information about.
+     */
+    public RomHeader( Context context, Uri file )
+    {
+        this(readFile( context, file ));
     }
     
     /**
@@ -169,7 +186,10 @@ public final class RomHeader
         try
         {
             in = new DataInputStream( new FileInputStream( file ) );
-            in.read( buffer );
+            if (in.read( buffer ) != 0x40) {
+                buffer = null;
+                Log.w( "RomHeader", "Not enough data for header" );
+            }
         }
         catch( IOException e )
         {
@@ -193,6 +213,54 @@ public final class RomHeader
                 Log.w( "RomHeader", "ROM file could not be closed: " + file );
             }
         }
+        return buffer;
+    }
+
+    private static byte[] readFile(Context context, Uri file )
+    {
+        byte[] buffer = new byte[0x40];
+
+        try {
+            ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r");
+
+            if (parcelFileDescriptor != null)
+            {
+                DataInputStream in = null;
+                try
+                {
+                    in = new DataInputStream( new FileInputStream( parcelFileDescriptor.getFileDescriptor()) );
+                    if (in.read( buffer ) != 0x40) {
+                        buffer = null;
+                        Log.w( "RomHeader", "Not enough data for header" );
+                    }
+                }
+                catch( IOException e )
+                {
+                    Log.w( "RomHeader", "ROM file could not be read: " + file );
+                    buffer = null;
+                }
+                catch( NullPointerException e )
+                {
+                    Log.w( "RomHeader", "File does not exist: " + file );
+                    buffer = null;
+                }
+                finally
+                {
+                    try
+                    {
+                        if( in != null )
+                            in.close();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.w( "RomHeader", "ROM file could not be closed: " + file );
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return buffer;
     }
     

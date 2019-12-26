@@ -24,21 +24,30 @@ package paulscode.android.mupen64plusae;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService.ExtractTexturesListener;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService.LocalBinder;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ExtractTexturesFragment extends Fragment implements ExtractTexturesListener
-{    
+{
+    public interface OnFinishListener
+    {
+        /**
+         * Will be called once extraction finishes
+         */
+        void onFinish();
+    }
+
     //Progress dialog for extracting textures
     private ProgressDialog mProgress = null;
     
@@ -47,7 +56,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     
     private boolean mCachedExtractTextures = false;
     
-    private File mTexturesZipPath = null;
+    private Uri mTexturesFile = null;
     
     private boolean mInProgress = false;
 
@@ -69,11 +78,12 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         {
             CharSequence title = getString( R.string.pathHiResTexturesTask_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, getActivity(), title, mTexturesZipPath.getAbsolutePath(), message, true );
+            String name = ProviderUtil.getFileName(getActivity(), mTexturesFile);
+            mProgress = new ProgressDialog( mProgress, getActivity(), title, name, message, true );
             mProgress.show();
         }
         
-        if(mCachedExtractTextures)
+        if(mCachedExtractTextures && getActivity() != null)
         {
             actuallyExtractTextures(getActivity());
             mCachedExtractTextures = false;
@@ -95,7 +105,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mInProgress)
+        if(mServiceConnection != null && mInProgress && getActivity() != null)
         {
             ActivityHelper.stopExtractTexturesService(getActivity().getApplicationContext(), mServiceConnection);
         }
@@ -106,7 +116,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onExtractTexturesFinished()
     {
-
+        if (getActivity() != null && getActivity() instanceof OnFinishListener) {
+            ((OnFinishListener)getActivity()).onFinish();
+        }
     }
     
     @Override
@@ -126,9 +138,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         return mProgress;
     }
 
-    public void extractTextures( File texturesZipPath )
+    public void extractTextures( Uri textureFile )
     {
-        this.mTexturesZipPath = texturesZipPath;
+        this.mTexturesFile = textureFile;
         
         if(getActivity() != null)
         {
@@ -146,10 +158,11 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         
         CharSequence title = getString( R.string.pathHiResTexturesTask_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, mTexturesZipPath.getAbsolutePath(), message, true );
+        String name = ProviderUtil.getFileName(getActivity(), mTexturesFile);
+        mProgress = new ProgressDialog( mProgress, getActivity(), title, name, message, true );
         mProgress.show();
         
-        /** Defines callbacks for service binding, passed to bindService() */
+        /* Defines callbacks for service binding, passed to bindService() */
         mServiceConnection = new ServiceConnection() {
             
             @Override
@@ -169,7 +182,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
 
         // Asynchronously extract textures
         ActivityHelper.startExtractTexturesService(activity.getApplicationContext(), mServiceConnection,
-            mTexturesZipPath.getAbsolutePath());
+            mTexturesFile);
     }
     
     public boolean IsInProgress()
