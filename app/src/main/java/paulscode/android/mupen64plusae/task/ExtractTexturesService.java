@@ -186,6 +186,18 @@ public class ExtractTexturesService extends Service
                         }
                     });
                 }
+            } else {
+                final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
+
+                Handler handler = new Handler(Looper.getMainLooper());
+
+                handler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
             
             if (mListener != null)
