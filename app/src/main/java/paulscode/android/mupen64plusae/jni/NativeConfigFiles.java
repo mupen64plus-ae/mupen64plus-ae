@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -50,6 +49,7 @@ class NativeConfigFiles
     private static boolean zipTextureCache = false;
     private static boolean force16bpp = false;
     private static boolean fullAlphaChannel = false;
+    private static boolean txHiresTextureFileStorage = false;
 
     //True if this device supports full GL mode
     private static boolean supportsFullGl = false;
@@ -57,7 +57,7 @@ class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    static boolean syncConfigFiles(boolean useRaphnet, GamePrefs game, GlobalPrefs global, AppData appData)
+    static boolean syncConfigFiles(GamePrefs game, GlobalPrefs global, AppData appData)
     {
         //@formatter:off
 
@@ -257,6 +257,8 @@ class NativeConfigFiles
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheCompression", boolToTF( zipTextureCache ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txForce16bpp", boolToTF( force16bpp ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txSaveCache", boolToTF( true ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCachePath", global.textureCacheDir );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresTextureFileStorage", boolToTF( txHiresTextureFileStorage ) );
         }
         else
         {
@@ -325,7 +327,9 @@ class NativeConfigFiles
 
         if(hiresTexHTCPresent)
         {
-            File actualFile = null;
+            File actualFile;
+
+            txHiresTextureFileStorage = htsFile.exists();
 
             if (htcFile.exists()) {
                 actualFile = htcFile;
@@ -333,17 +337,19 @@ class NativeConfigFiles
                 actualFile = htsFile;
             }
 
-            InputStream stream;
-            InputStream gzipStream = null;
+            InputStream stream = null;
 
             try
             {
                 stream = new FileInputStream(actualFile);
-                gzipStream = new GZIPInputStream(stream);
+                if (!txHiresTextureFileStorage)
+                {
+                    stream = new GZIPInputStream(stream);
+                }
 
                 final byte[] buffer = new byte[4];
 
-                gzipStream.read(buffer);
+                stream.read(buffer);
                 final ByteBuffer wrapped = ByteBuffer.wrap(buffer);
                 wrapped.order(ByteOrder.LITTLE_ENDIAN);
                 final int config = wrapped.getInt();
@@ -360,8 +366,8 @@ class NativeConfigFiles
             {
                 try
                 {
-                    if(gzipStream != null)
-                        gzipStream.close();
+                    if(stream != null)
+                        stream.close();
                 }
                 catch (final IOException e)
                 {

@@ -281,7 +281,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if(!mIsRunning)
         {
-            if(!NativeConfigFiles.syncConfigFiles( mUseRaphnetIfAvailable, mGamePrefs, mGlobalPrefs, mAppData ))
+            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData ))
             {
                 if(getActivity() != null)
                 {
