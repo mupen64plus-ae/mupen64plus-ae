@@ -153,12 +153,6 @@ public class GlobalPrefs
     /** Legacy core config folder */
     public final String legacyCoreConfigDir;
 
-    /** Legacy auto save directory */
-    public final String legacyAutoSaves;
-
-    /** Legacy slot save directory */
-    public final String legacySlotSaves;
-
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
 
@@ -461,8 +455,6 @@ public class GlobalPrefs
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
         touchscreenCustomSkinsDir = appData.userDataDir + "/CustomSkins";
-        legacyAutoSaves = appData.userDataDir + "/AutoSaves";
-        legacySlotSaves = appData.userDataDir + "/SlotSaves";
 
         //Generate .nomedia files to prevent android from adding these to gallery apps
         File file = new File(coreConfigDir + "/.nomedia");

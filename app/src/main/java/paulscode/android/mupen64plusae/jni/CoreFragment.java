@@ -114,7 +114,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
-    private String mRomLegacySave = null;
     private ArrayList<GamePrefs.CheatSelection> mCheatOptions = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
@@ -225,27 +224,31 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void romExtractionStarted()
     {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                CharSequence title = getString( R.string.extractRomTask_title );
-                CharSequence message = getString( R.string.toast_pleaseWait );
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    CharSequence title = getString( R.string.extractRomTask_title );
+                    CharSequence message = getString( R.string.toast_pleaseWait );
 
-                mProgress = new ProgressDialog( mProgress, getActivity(), title, mZipPath, message, true );
-                mProgress.show();
-            }
-        });
+                    mProgress = new ProgressDialog( mProgress, getActivity(), title, mZipPath, message, true );
+                    mProgress.show();
+                }
+            });
+        }
     }
 
     @Override
     public void romExtractionFinished()
     {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mProgress.dismiss();
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.dismiss();
+                }
+            });
+        }
     }
 
     public void setCoreEventListener(CoreEventListener coreEventListener)
@@ -257,7 +260,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          String romLegacySave, ArrayList<GamePrefs.CheatSelection> cheatSelections, boolean isRestarting, String saveToLoad)
+                          ArrayList<GamePrefs.CheatSelection> cheatSelections, boolean isRestarting, String saveToLoad)
     {
         Log.i("CoreFragment", "startCore");
 
@@ -276,7 +279,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mRomHeaderName = romHeaderName;
         mRomCountryCode = romCountryCode;
         mRomArtPath = romArtPath;
-        mRomLegacySave = romLegacySave;
         mUseRaphnetIfAvailable = mGlobalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
 
         if(!mIsRunning)
@@ -356,7 +358,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomHeaderName(mRomHeaderName);
         params.setRomCountryCode(mRomCountryCode);
         params.setRomArtPath(mRomArtPath);
-        params.setRomLegacySave(mRomLegacySave);
         params.setCheatPath(mAppData.mupencheat_txt);
         params.setCheatOptions(mCheatOptions);
         params.setRestarting(mIsRestarting);

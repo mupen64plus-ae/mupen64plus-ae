@@ -161,7 +161,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
-    private String mRomLegacySave = null;
     private boolean mDoRestart = false;
     private boolean mForceExit = false;
 
@@ -278,7 +277,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
         mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
-        mRomLegacySave = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             finish();
@@ -297,11 +295,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mRomLegacySave );
+            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
 
         mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
         mGameDataManager.makeDirs();
-        mGameDataManager.moveFromLegacy();
 
         final Window window = this.getWindow();
 
@@ -881,7 +878,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if (!mCoreFragment.IsInProgress()) {
                 final String latestSave = mGameDataManager.getLatestAutoSave();
                 mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath,
                         mGamePrefs.getEnabledCheats(), mDoRestart, latestSave);
             }
 

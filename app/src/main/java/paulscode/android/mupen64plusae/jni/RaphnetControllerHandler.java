@@ -32,6 +32,8 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -159,18 +161,20 @@ class RaphnetControllerHandler
         mContext.unregisterReceiver(mUsbReceiver);
     }
 
-    static boolean raphnetDevicesPresent(Context context)
+    static boolean raphnetDevicesPresent(@Nullable Context context)
     {
-        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         boolean deviceFound = false;
+        if (context != null) {
+            UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
-        if (manager != null) {
-            HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+            if (manager != null) {
+                HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
 
-            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-            while(deviceIterator.hasNext() && !deviceFound){
-                UsbDevice device = deviceIterator.next();
-                deviceFound = device.getVendorId() == RAPHNET_VENDOR_ID;
+                Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+                while(deviceIterator.hasNext() && !deviceFound){
+                    UsbDevice device = deviceIterator.next();
+                    deviceFound = device.getVendorId() == RAPHNET_VENDOR_ID;
+                }
             }
         }
 

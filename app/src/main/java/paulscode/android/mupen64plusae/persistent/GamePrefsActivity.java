@@ -91,7 +91,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private String mRomHeaderName = null;
     private String mRomGoodName = null;
     private String mRomDisplayName = null;
-    private String mLegacySaveName = null;
     private byte mRomCountryCode = 0;
     private RomDetail mRomDetail = null;
 
@@ -141,7 +140,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
         mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
-        mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
 
         if( TextUtils.isEmpty( mRomMd5 ) )
@@ -154,7 +152,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
+            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
         mPrefs = getSharedPreferences( mGamePrefs.getSharedPrefsName(), MODE_PRIVATE );
 
         // Get the detailed info about the ROM
@@ -265,7 +263,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Refresh the preferences objects
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
 
         // Populate the profile preferences
         if(mEmulationProfile != null)
@@ -320,7 +318,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
 
         // Set cheats screen summary text
         mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );

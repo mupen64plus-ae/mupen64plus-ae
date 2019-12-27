@@ -41,7 +41,6 @@ public class StartCoreServiceParams
     private String romHeaderName;
     private byte romCountryCode;
     private String romArtPath;
-    private String romLegacySave;
     private String cheatPath;
     private ArrayList<GamePrefs.CheatSelection> cheatOptions;
     private boolean isRestarting;
@@ -137,14 +136,6 @@ public class StartCoreServiceParams
 
     public void setRomArtPath(String romArtPath) {
         this.romArtPath = romArtPath;
-    }
-
-    public String getRomLegacySave() {
-        return romLegacySave;
-    }
-
-    public void setRomLegacySave(String romLegacySave) {
-        this.romLegacySave = romLegacySave;
     }
 
     public String getCheatPath() {

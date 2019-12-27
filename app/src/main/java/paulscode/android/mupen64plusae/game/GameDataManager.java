@@ -94,7 +94,8 @@ public class GameDataManager
         final List<File> result = new ArrayList<>();
         final File savePath = new File(mAutoSavePath);
 
-        if(savePath.listFiles() != null && savePath.listFiles().length != 0)
+        File[] allFiles = savePath.listFiles();
+        if(allFiles != null && allFiles.length != 0)
         {
             //Only find files that match the matcher string
             final FileFilter fileFilter = new FileFilter(){
@@ -110,10 +111,14 @@ public class GameDataManager
             };
 
             //Add all files found
-            Collections.addAll(result, savePath.listFiles(fileFilter) );
+            File[] filterFiles = savePath.listFiles(fileFilter);
 
-            //Sort by file name
-            Collections.sort(result);
+            if (filterFiles != null) {
+                Collections.addAll(result, filterFiles );
+
+                //Sort by file name
+                Collections.sort(result);
+            }
 
             while(result.size() > mMaxAutoSave)
             {
@@ -175,126 +180,5 @@ public class GameDataManager
         FileUtil.makeDirs(mGlobalPrefs.coreUserCacheDir);
         FileUtil.makeDirs(mGlobalPrefs.screenshotsDir);
         mAutoSavePath = mGamePrefs.getAutoSaveDir() + "/";
-    }
-
-    /**
-     * Move any legacy files to new folder structure
-     */
-    void moveFromLegacy()
-    {
-        final File legacySlotPath = new File(mGlobalPrefs.legacySlotSaves);
-        final File legacyAutoSavePath = new File(mGlobalPrefs.legacyAutoSaves);
-
-        if (legacySlotPath.listFiles() != null)
-        {
-            // Move sra, mpk, fla, and eep files
-            final FileFilter fileSramFilter = new FileFilter()
-            {
-
-                @Override
-                public boolean accept(File pathname)
-                {
-                    final String fileName = pathname.getName();
-
-                    return fileName.contains(mGamePrefs.gameGoodName + ".sra")
-                            || fileName.contains(mGamePrefs.gameGoodName + ".eep")
-                            || fileName.contains(mGamePrefs.gameGoodName + ".mpk")
-                            || fileName.contains(mGamePrefs.gameGoodName + ".fla");
-                }
-            };
-
-            // Move all files found
-            for (final File file : legacySlotPath.listFiles(fileSramFilter))
-            {
-                String targetPath = mGamePrefs.getSramDataDir() + "/" + file.getName();
-                File targetFile = new File(targetPath);
-
-                if (!targetFile.exists())
-                {
-                    Log.i("GameDataManager", "Found legacy SRAM file: " + file + " Moving to " + targetFile.getPath());
-
-                    if( !file.renameTo(targetFile)) {
-                        Log.w("GameDataManager", "Error renaming legacy SRAM file: " + file + " target " + targetFile.getPath());
-                    }
-                }
-                else
-                {
-                    Log.i("GameDataManager", "Found legacy SRAM file: " + file + " but can't move");
-                }
-            }
-
-            // Move all st files
-            final FileFilter fileSlotFilter = new FileFilter()
-            {
-
-                @Override
-                public boolean accept(File pathname)
-                {
-                    final String fileName = pathname.getName();
-                    return fileName.contains(mGamePrefs.gameGoodName)
-                            && fileName.substring(fileName.length() - 3).contains("st");
-                }
-            };
-
-            for (final File file : legacySlotPath.listFiles(fileSlotFilter))
-            {
-                String targetPath = mGamePrefs.getSlotSaveDir() + "/" + file.getName();
-                File targetFile = new File(targetPath);
-
-                if (!targetFile.exists())
-                {
-                    Log.i("GameDataManager", "Found legacy ST file: " + file + " Moving to " + targetFile.getPath());
-
-                    if (!file.renameTo(targetFile)) {
-                        Log.w("GameDataManager", "Error renaming legacy ST file: " + file + " to " + targetFile.getPath());
-                    }
-                }
-                else
-                {
-                    Log.i("GameDataManager", "Found legacy ST file: " + file + " but can't move");
-                }
-            }
-        }
-
-        if(legacyAutoSavePath.listFiles() != null)
-        {
-            //Move auto saves
-            final FileFilter fileAutoSaveFilter = new FileFilter(){
-
-                @Override
-                public boolean accept(File pathname)
-                {
-                    final String fileName = pathname.getName();
-                    return fileName.equals(mGamePrefs.legacySaveFileName + ".sav");
-                }
-            };
-
-            //Move all files found
-            for( final File file : legacyAutoSavePath.listFiles(fileAutoSaveFilter) )
-            {
-                final DateFormat dateFormat = new SimpleDateFormat(GameDataManager.sFormatString, java.util.Locale.getDefault());
-                final String dateAndTime = dateFormat.format(new Date());
-                final String fileName = dateAndTime + ".sav";
-
-                String targetPath = mGamePrefs.getAutoSaveDir() + "/" + fileName;
-                File targetFile= new File(targetPath);
-
-                if(!targetFile.exists())
-                {
-                    Log.i("GameDataManager", "Found legacy SAV file: " + file +
-                            " Moving to " + targetFile.getPath());
-
-                    if (!file.renameTo(targetFile)) {
-                        Log.w("GameDataManager", "Error renaming SAV file: " + file +
-                                " to " + targetFile.getPath());
-                    }
-                }
-                else
-                {
-                    Log.i("GameDataManager", "Found legacy SAV file: " + file +
-                            " but can't move");
-                }
-            }
-        }
     }
 }

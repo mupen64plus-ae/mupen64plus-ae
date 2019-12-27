@@ -39,6 +39,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.Vibrator;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -132,7 +134,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private String mRomCrc = null;
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
-    private String mLegacySaveName = null;
 
     //Service attributes
     private int mStartId;
@@ -172,7 +173,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (!mIsShuttingDown && mIsRunning) {
                 if (resumeMessage) {
                     ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mZipPath, mRomMd5, mRomCrc,
-                            mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mRomDisplayName, mLegacySaveName, mIsRestarting);
+                            mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mRomDisplayName, mIsRestarting);
                 }
 
                 if (quitMessage) {
@@ -437,7 +438,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
 
         @Override
-        public void handleMessage(Message msg)
+        public void handleMessage(@NonNull Message msg)
         {
             // Only increase priority if we have more than one processor. The call to check the number of
             // processors is only available in API level 17
@@ -635,7 +636,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, mArtPath );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
-        notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
@@ -734,7 +734,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
             mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
             mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
-            mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
 
             if (mCheatOptions != null && mCheatOptions.size() != 0) {

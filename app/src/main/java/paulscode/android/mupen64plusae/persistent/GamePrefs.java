@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,6 +84,7 @@ public class GamePrefs
             dest.writeInt(this.option);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "CheatSelection{" +
@@ -123,9 +126,6 @@ public class GamePrefs
 
     /** Game good name */
     public final String gameGoodName;
-    
-    /** Legacy save file name */
-    public final String legacySaveFileName;
 
     /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
     private String coreUserConfigDir;
@@ -343,14 +343,13 @@ public class GamePrefs
     private static final int DEFAULT_PAK_TYPE = CoreTypes.PakType.MEMORY.ordinal();
 
     public GamePrefs( Context context, String md5, String crc, String headerName, String goodName,
-        String countrySymbol, AppData appData, GlobalPrefs globalPrefs, String legacySave)
+        String countrySymbol, AppData appData, GlobalPrefs globalPrefs)
     {
         mAppData = appData;
         mGlobalPrefs = globalPrefs;
         gameHeaderName = headerName;
         gameGoodName = goodName;
         gameCountrySymbol = countrySymbol;
-        legacySaveFileName = legacySave;
         romMd5 = md5;
         gameCrc = crc;
         mSharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
@@ -375,6 +374,11 @@ public class GamePrefs
             tempEmulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
                     globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                     globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
+        }
+        // This should never happen
+        if (tempEmulationProfile == null) {
+            Log.e("GamePrefs", "This should never happen!");
+            tempEmulationProfile = new Profile(true, "None", "Profile not found");
         }
 
         emulationProfile = tempEmulationProfile;
@@ -740,7 +744,6 @@ public class GamePrefs
             return cheatSelection;
 
         final Pattern pattern = Pattern.compile( "^" + gameCrc + " Cheat(\\d+)" );
-        StringBuilder builder = null;
         final Map<String, ?> map = mPreferences.getAll();
         for (final String key : map.keySet())
         {
@@ -750,9 +753,13 @@ public class GamePrefs
                 final int value = mPreferences.getInt( key, 0 );
                 if (value > 0)
                 {
-                    final int index = Integer.parseInt( matcher.group( 1 ) );
+                    String indexString = matcher.group(1);
 
-                    cheatSelection.add(new CheatSelection(index, value-1));
+                    if (!TextUtils.isEmpty(indexString))
+                    {
+                        final int index = Integer.parseInt( indexString );
+                        cheatSelection.add(new CheatSelection(index, value-1));
+                    }
                 }
             }
         }
@@ -848,12 +855,7 @@ public class GamePrefs
         try
         {
             String stringReturn = preferences.getString( key, String.valueOf( defaultValue ));
-
-            if (stringReturn == null) {
-                return defaultValue;
-            } else {
-                return Integer.parseInt(stringReturn);
-            }
+            return Integer.parseInt(stringReturn);
         }
         catch( final NumberFormatException ex )
         {

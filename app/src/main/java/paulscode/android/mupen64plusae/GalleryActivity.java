@@ -729,19 +729,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 break;
             case R.id.menuItem_settings:
             {
-                String romLegacySaveFileName;
-                
-                if(item.zipUri != null)
-                {
-                    romLegacySaveFileName = ProviderUtil.getFileName(this, Uri.parse(item.zipUri));
-                }
-                else
-                {
-                    romLegacySaveFileName = ProviderUtil.getFileName(this, Uri.parse(item.romUri));
-                }
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
-                        item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue(),
-                        romLegacySaveFileName);
+                        item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue());
                 break;
 
             }
@@ -1057,20 +1046,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
 
-        String romLegacySaveFileName;
-
-        //Convoluted way of moving legacy save file names to the new format
-        if(zipPath != null)
-        {
-            File zipFile = new File(zipPath);
-            romLegacySaveFileName = zipFile.getName();
-        }
-        else
-        {
-            File romFile = new File(romPath);
-            romLegacySaveFileName = romFile.getName();
-        }
-
         mConfig.put(romMd5, "lastPlayed", lastPlayed);
         mConfig.save();
 
@@ -1090,7 +1065,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mSelectedItem = null;
         // Launch the game activity
         ActivityHelper.startGameActivity(this, romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                romArtPath, romGoodName, romDisplayName, romLegacySaveFileName, isRestarting);
+                romArtPath, romGoodName, romDisplayName, isRestarting);
     }
 
     @Override
