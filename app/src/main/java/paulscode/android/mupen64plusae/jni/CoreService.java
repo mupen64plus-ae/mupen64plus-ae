@@ -476,12 +476,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (TextUtils.isEmpty(mZipPath))
             {
-                openSuccess = mCoreInterface.openRom(new File(mRomPath));
+                openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
             }
             else
             {
                 if (mRomExtractionListener != null) mRomExtractionListener.romExtractionStarted();
-                openSuccess = mCoreInterface.openZip(new File(mZipPath), new File(mRomPath));
+                openSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
                 if (mRomExtractionListener != null) mRomExtractionListener.romExtractionFinished();
             }
 
@@ -518,6 +518,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 if(!openSuccess)
                 {
                     mListener.onFailure(1);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 mListener.onFinish();

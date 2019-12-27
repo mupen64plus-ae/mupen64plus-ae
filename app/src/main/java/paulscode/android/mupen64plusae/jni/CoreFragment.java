@@ -199,7 +199,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                     }
                 } );
 
-
                 Log.e( "CoreFragment", "Launch failure: " + message );
             }
         }

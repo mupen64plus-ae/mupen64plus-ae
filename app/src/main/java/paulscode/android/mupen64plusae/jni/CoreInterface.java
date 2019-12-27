@@ -20,10 +20,15 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.content.Context;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Surface;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import com.sun.jna.Callback;
 import com.sun.jna.JNIEnv;
@@ -35,23 +40,24 @@ import com.sun.jna.platform.linux.LibC;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.apache.commons.io.FileUtils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.SevenZInputStream;
 
@@ -107,6 +113,8 @@ class CoreInterface
 
         int PluginShutdown();
     }
+
+    final static long MAX_7ZIP_FILE_SIZE = 100*1024*1024;
 
     // Core state callbacks - used by NativeImports
     private final ArrayList<OnStateCallbackListener> mStateCallbackListeners = new ArrayList<>();
@@ -223,13 +231,14 @@ class CoreInterface
         }
     }
 
-    boolean openRom(File romFile)
+    boolean openRom(Context context, String romFileUri)
     {
         boolean success = false;
         byte[] romBuffer = null;
 
-        try {
-            romBuffer = FileUtils.readFileToByteArray(romFile);
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(romFileUri), "r")){
+            InputStream is;
+            romBuffer = IOUtils.toByteArray(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
             success = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -237,7 +246,7 @@ class CoreInterface
 
         if (success)
         {
-            int romLength = (int)romFile.length();
+            int romLength = romBuffer.length;
 
             Pointer parameter = new Memory(romLength);
             parameter.write(0, romBuffer, 0, romBuffer.length);
@@ -247,33 +256,30 @@ class CoreInterface
         return success;
     }
 
-    private byte[] ExtractZip(String romPath, String zipPath) {
-        final File romFile = new File(romPath);
-        String romFileName = romFile.getName();
+    private byte[] ExtractZip(Context context, String romFileName, String zipPathUri) {
+
         byte[] returnData = null;
 
         boolean lbFound = false;
 
-        try {
-            final ZipFile zipFile = new ZipFile(zipPath);
-            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements() && !lbFound) {
-                final ZipEntry zipEntry = entries.nextElement();
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPathUri), "r");
+             ZipInputStream zipfile = new ZipInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))) {
+
+            ZipEntry zipEntry = zipfile.getNextEntry();
+            while (zipEntry != null && !lbFound) {
 
                 try {
-                    final InputStream zipStream = zipFile.getInputStream(zipEntry);
                     final String entryName = new File(zipEntry.getName()).getName();
 
                     lbFound = entryName.equals(romFileName);
 
-                    if(lbFound) {
-                        returnData = new byte[(int)zipEntry.getSize()];
+                    if (lbFound) {
+                        returnData = new byte[(int) zipEntry.getSize()];
 
                         int numBytesRead = 0;
 
-                        while (numBytesRead < returnData.length)
-                        {
-                            numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
+                        while (numBytesRead < returnData.length) {
+                            numBytesRead += zipfile.read(returnData, numBytesRead, returnData.length - numBytesRead);
                         }
 
                         if (numBytesRead != returnData.length) {
@@ -281,13 +287,13 @@ class CoreInterface
                         }
                     }
 
-                    zipStream.close();
                 } catch (final IOException e) {
                     Log.w("CoreInterface", e);
                     returnData = null;
                 }
+
+                zipEntry = zipfile.getNextEntry();
             }
-            zipFile.close();
         } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
             Log.w("CoreInterface", e);
             returnData = null;
@@ -296,75 +302,73 @@ class CoreInterface
         return returnData;
     }
 
-    private byte[] ExtractSevenZ(String romPath, String zipPath) {
-        final File romFile = new File(romPath);
-        String romFileName = romFile.getName();
+    private byte[] ExtractSevenZ(Context context, String romFileName, String zipPath)
+    {
         byte[] returnData = null;
 
         boolean lbFound = false;
 
-        try {
-            SevenZFile zipFile = new SevenZFile(new File(zipPath));
-            SevenZArchiveEntry zipEntry;
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPath), "r")) {
+            if (parcelFileDescriptor != null) {
+                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                if (fileInputStream.getChannel().size() < MAX_7ZIP_FILE_SIZE) {
+                    SeekableInMemoryByteChannel channel = new SeekableInMemoryByteChannel(
+                            IOUtils.toByteArray(fileInputStream));
 
-            while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
-            {
-                try {
-                    final InputStream zipStream = new SevenZInputStream(zipFile);
-                    final String entryName = new File(zipEntry.getName()).getName();
+                    SevenZFile zipFile = new SevenZFile(channel);
+                    SevenZArchiveEntry zipEntry;
+                    Log.e("CoreService", "TEST2.6");
 
-                    lbFound = entryName.equals(romFileName);
+                    while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                    {
+                        try (InputStream zipStream = new SevenZInputStream(zipFile)) {
+                            final String entryName = new File(zipEntry.getName()).getName();
 
-                    if (lbFound) {
-                        returnData = new byte[(int)zipEntry.getSize()];
+                            lbFound = entryName.equals(romFileName);
 
-                        int numBytesRead = 0;
+                            if (lbFound) {
+                                returnData = new byte[(int) zipEntry.getSize()];
 
-                        while (numBytesRead < returnData.length)
-                        {
-                            numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
-                        }
+                                int numBytesRead = 0;
 
-                        if (numBytesRead != returnData.length) {
+                                while (numBytesRead < returnData.length) {
+                                    numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
+                                }
+
+                                if (numBytesRead != returnData.length) {
+                                    returnData = null;
+                                }
+                            }
+
+                        } catch (final IOException e) {
+                            Log.w("CoreInterface", e);
                             returnData = null;
                         }
                     }
-
-                    zipStream.close();
-                } catch (final IOException e) {
-                    Log.w("CoreInterface", e);
-                    returnData = null;
                 }
             }
-
-            zipFile.close();
         } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
             Log.w("CoreInterface", e);
             returnData = null;
         }
         catch (java.lang.OutOfMemoryError e)
         {
-            Log.w( "CoreInterface", "Out of memory while extracting 7zip entry: " + romFile.getPath() );
+            Log.w( "CoreInterface", "Out of memory while extracting 7zip entry: " + romFileName );
             returnData = null;
         }
 
         return returnData;
     }
 
-    boolean openZip(File zipFile, File romPath)
+    boolean openZip(Context context, String zipPathUri, String romName)
     {
         byte[] romBuffer = null;
-
-        if (!zipFile.exists()) {
-            return false;
-        }
-
-        final RomHeader romHeader = new RomHeader(zipFile.getPath());
+        final RomHeader romHeader = new RomHeader(context, Uri.parse(zipPathUri));
 
         if (romHeader.isZip) {
-            romBuffer = ExtractZip(romPath.getPath(), zipFile.getPath());
+            romBuffer = ExtractZip(context, romName, zipPathUri);
         } else if (romHeader.is7Zip) {
-            romBuffer = ExtractSevenZ(romPath.getPath(), zipFile.getPath());
+            romBuffer = ExtractSevenZ(context, romName, zipPathUri);
         }
 
         boolean success = romBuffer != null;

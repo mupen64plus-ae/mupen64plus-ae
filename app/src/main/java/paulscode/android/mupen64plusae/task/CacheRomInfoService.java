@@ -454,7 +454,7 @@ public class CacheRomInfoService extends Service
         config.put( md5, "goodName", detail.goodName );
         if (detail.baseName != null && detail.baseName.length() != 0)
             config.put( md5, "baseName", detail.baseName );
-        config.put( md5, "romPathUri", uri == null ? null : uri.toString() );
+        config.put( md5, "romPathUri", uri == null ? name : uri.toString() );
         config.put( md5, "zipPathUri", zipFileLocation == null ? "":zipFileLocation.toString() );
         config.put( md5, "artPath", artPath );
         config.put( md5, "crc", header.crc );

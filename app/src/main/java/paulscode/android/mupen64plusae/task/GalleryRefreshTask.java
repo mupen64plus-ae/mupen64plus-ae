@@ -25,8 +25,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,6 +133,17 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 
         String romPath = getUriString(config, md5, "romPathUri", "romPath");
         String zipPath = getUriString(config, md5, "zipPathUri", "zipPath");
+
+        // We only want the file name if Zip Path exists
+        if (!TextUtils.isEmpty(zipPath)) {
+            romPath = new File(romPath).getName();
+            try {
+                romPath = java.net.URLDecoder.decode(romPath, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Log.e("GalleryRefreshTask", "Unable to decode string: " + romPath);
+            }
+        }
+
         final String artFullPath = config.get( md5, "artPath" );
         final String goodName = config.get( md5, "goodName" );
 
