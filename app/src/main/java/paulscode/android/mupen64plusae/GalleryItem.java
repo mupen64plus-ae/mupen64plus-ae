@@ -25,6 +25,8 @@ import android.graphics.drawable.BitmapDrawable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -45,6 +47,7 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 
 @SuppressWarnings("WeakerAccess")
 public class GalleryItem
@@ -57,15 +60,15 @@ public class GalleryItem
     public final String displayName;
     public final String artPath;
     public final int lastPlayed;
-    public final File romFile;
-    public final File zipFile;
+    public final String romUri;
+    public final String zipUri;
     public final WeakReference<Context>  context;
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
     public final float scale;
     
     public GalleryItem(Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName,
-                       String displayName, String romPath, String zipPath, String artPath, int lastPlayed, float scale )
+                       String displayName, String romUri, String zipUri, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
         this.crc = crc;
@@ -79,9 +82,8 @@ public class GalleryItem
         this.lastPlayed = lastPlayed;
         this.isHeading = false;
         this.scale = scale;
-        
-        this.romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
-        this.zipFile = TextUtils.isEmpty( zipPath ) ? null : new File( zipPath );
+        this.romUri = romUri;
+        this.zipUri = zipUri;
     }
     
     GalleryItem( Context context, String headingName)
@@ -97,8 +99,8 @@ public class GalleryItem
         this.artPath = "";
         this.artBitmap = null;
         this.lastPlayed = 0;
-        this.romFile = null;
-        this.zipFile = null;
+        this.romUri = null;
+        this.zipUri = null;
         this.scale = 1.0f;
     }
     
@@ -123,9 +125,13 @@ public class GalleryItem
     {
         if( !TextUtils.isEmpty( goodName ) )
             return displayName;
-        else if( romFile != null && !TextUtils.isEmpty( romFile.getName() ) )
-            return romFile.getName();
-        else
+        else if( !TextUtils.isEmpty( romUri ) ) {
+            String romName = ProviderUtil.getFileName(context.get(), Uri.parse(romUri));
+            if (romName == null) {
+                romName = "unknown file";
+            }
+            return romName;
+        }else
             return "unknown file";
     }
     
@@ -143,8 +149,8 @@ public class GalleryItem
         @Override
         public int compare( GalleryItem item1, GalleryItem item2 )
         {
-            String romFileName1 = item1.romFile != null ? item1.romFile.getName() : "";
-            String romFileName2 = item2.romFile != null ? item2.romFile.getName() : "";
+            String romFileName1 = item1.romUri != null ? item1.romUri : "";
+            String romFileName2 = item2.romUri != null ? item2.romUri : "";
 
             return romFileName1.compareToIgnoreCase( romFileName2);
         }

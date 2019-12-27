@@ -248,14 +248,17 @@ public final class RomHeader
                 {
                     try
                     {
-                        if( in != null )
+                        if(in != null)
                             in.close();
+
+                        parcelFileDescriptor.close();
                     }
                     catch( IOException e )
                     {
                         Log.w( "RomHeader", "ROM file could not be closed: " + file );
                     }
                 }
+
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

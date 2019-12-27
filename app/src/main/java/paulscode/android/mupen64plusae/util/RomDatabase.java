@@ -22,7 +22,8 @@ package paulscode.android.mupen64plusae.util;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.File;
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -90,6 +91,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
  * @see RomHeader
  * @see assets/mupen64plus_data/mupen64plus.ini
  */
+@SuppressWarnings({"BooleanMethodIsAlwaysInverted", "ConstantConditions"})
 public class RomDatabase
 {
     private static final String ART_URL_TEMPLATE = "http://www.zurita.me/CoverArt/%s";
@@ -120,9 +122,10 @@ public class RomDatabase
                 String crc = section.get( "CRC" );
                 if( crc != null )
                 {
-                    if( mCrcMap.get( crc ) == null )
-                        mCrcMap.put( crc, new ArrayList<ConfigSection>() );
-                    mCrcMap.get( crc ).add( section );
+                    if( mCrcMap.get(crc) == null )
+                        mCrcMap.put(crc, new ArrayList<ConfigSection>());
+
+                    mCrcMap.get(crc).add(section);
                 }
             }
         }
@@ -133,18 +136,17 @@ public class RomDatabase
         return mConfigFile != null;
     }
 
-    public RomDetail lookupByMd5WithFallback( String md5, String filename, String crc, CountryCode countryCode )
+    public RomDetail lookupByMd5WithFallback(String md5, String fileName, String crc, CountryCode countryCode )
     {
         RomDetail detail = lookupByMd5( md5 );
 
         if( detail == null )
         {
-            File tempFile = new File(filename);
-            ArrayList<RomDetail> details = lookupByCrc(filename, crc, countryCode );
+            ArrayList<RomDetail> details = lookupByCrc(fileName, crc, countryCode );
 
             // Catch if none was found or we could not narrow things to only 1 entry
             if (details.size() != 1) {
-                detail = new RomDetail(crc, generateGoodNameFromFileName(tempFile.getName()));
+                detail = new RomDetail(crc, generateGoodNameFromFileName(fileName));
             } else {
                 detail = details.get(0);
             }
@@ -183,20 +185,22 @@ public class RomDatabase
             Log.w("RomDetail", "CRC: " + crc);
             Log.i("RomDetail", "Constructing a best guess for the meta-info");
 
-            File tempFile = new File(fileName);
-            romDetails.add(new RomDetail(crc, generateGoodNameFromFileName(tempFile.getName())));
+            romDetails.add(new RomDetail(crc, generateGoodNameFromFileName(fileName)));
         }
 
         return romDetails;
     }
 
-    private static String generateGoodNameFromFileName(String fileName)
+    private static String generateGoodNameFromFileName(@Nullable String fileName)
     {
-        int lastIndexOfPeriod = fileName.lastIndexOf('.');
-
-        if(lastIndexOfPeriod != -1)
+        if (fileName != null)
         {
-            fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+            int lastIndexOfPeriod = fileName.lastIndexOf('.');
+
+            if(lastIndexOfPeriod != -1)
+            {
+                fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+            }
         }
 
         return fileName;
@@ -209,6 +213,7 @@ public class RomDatabase
         return section == null ? null : new RomDetail( section );
     }
     
+    @SuppressWarnings("RegExpRedundantEscape")
     public class RomDetail
     {
         public final String crc;

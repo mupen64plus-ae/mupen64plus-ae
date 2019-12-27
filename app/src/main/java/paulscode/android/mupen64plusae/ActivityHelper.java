@@ -372,11 +372,11 @@ public class ActivityHelper
     }
     
     static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
-        String searchPath, String databasePath, String configPath, String artDir, String unzipDir,
+        String searchUri, String databasePath, String configPath, String artDir, String unzipDir,
         boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
-        intent.putExtra(Keys.SEARCH_PATH, searchPath);
+        intent.putExtra(Keys.SEARCH_PATH, searchUri);
         intent.putExtra(Keys.DATABASE_PATH, databasePath);
         intent.putExtra(Keys.CONFIG_PATH, configPath);
         intent.putExtra(Keys.ART_DIR, artDir);

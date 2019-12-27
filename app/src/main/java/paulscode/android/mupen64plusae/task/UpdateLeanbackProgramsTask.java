@@ -95,8 +95,8 @@ public class UpdateLeanbackProgramsTask extends AsyncTask<Void, Void, String>
             Intent gameIntent = new Intent(mContext.get(), SplashActivity.class);
 
             gameIntent.putExtra(GalleryActivity.KEY_IS_LEANBACK, true);
-            gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romFile != null ? item.romFile.getAbsolutePath() : null);
-            gameIntent.putExtra(ActivityHelper.Keys.ZIP_PATH, item.zipFile != null ? item.zipFile.getAbsolutePath() : null);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romUri);
+            gameIntent.putExtra(ActivityHelper.Keys.ZIP_PATH, item.zipUri);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_MD5, item.md5);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_CRC, item.crc);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_HEADER_NAME, item.headerName);

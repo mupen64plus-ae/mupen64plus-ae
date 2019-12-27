@@ -21,10 +21,10 @@
 package paulscode.android.mupen64plusae.task;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -38,7 +38,7 @@ import paulscode.android.mupen64plusae.GalleryItem;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.CountryCode;
-import paulscode.android.mupen64plusae.util.RomHeader;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 
 public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 {
@@ -78,25 +78,8 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         mListener.onGalleryRefreshFinished( mItems, mRecentItems );
     }
 
-
     /**
-     * Returns true if the given file is present in the provided list of items
-     * @param items Item list to search
-     * @param romFile ROM File to search for
-     * @return True if it's present
-     */
-    private boolean isRomPathInItemList(List<GalleryItem> items, File romFile)
-    {
-        for (GalleryItem item : items) {
-            if (item.romFile != null && item.romFile.getName().equals(romFile.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes old items that shouldn't be in the recents list any more and limits the recent list to 8 items
+     * Limits the recent list to 8 items
      * @param recentItems List of recent items to update
      */
     private void deleteOldItems(List<GalleryItem> recentItems) {
@@ -110,24 +93,29 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                 recentItems.subList(recentLimit, recentItems.size()).clear();
             }
         }
+    }
 
-        // Delete extracted zip files not on this list
-        List<File> extractedFiles = new ArrayList<>();
-        File unzipRomsDir = new File(mGlobalPrefs.unzippedRomsDir);
+    /** Tries the key normally in use. If it doesn't exist, try the new and convert the value to a URI
+     *
+     * @param config Config file
+     * @param md5 MD5
+     * @param key Key currently in use
+     * @param alternateKey Aleternate legacy key
+     * @return URI string from key or alternate key if key doesn't exist
+     */
+    private String getUriString(final ConfigFile config, String md5, String key, String alternateKey)
+    {
+        String path = config.get( md5, key);
 
-        File[] files = unzipRomsDir.listFiles();
-
-        if (files != null) {
-            Collections.addAll(extractedFiles, files);
-
-            for(File extractedFile : extractedFiles) {
-                if (!isRomPathInItemList(recentItems, extractedFile)) {
-                    if(!extractedFile.delete()) {
-                        Log.w("GalleryRefreshTask", "Unable to delete " + extractedFile.getPath());
-                    }
-                }
+        // If the above doesn't exist, try the legacy path
+        if (TextUtils.isEmpty(path)) {
+            String pathString = config.get( md5, alternateKey);
+            if (!TextUtils.isEmpty(pathString)) {
+                path = Uri.fromFile(new File(pathString)).toString();
             }
         }
+
+        return path;
     }
 
     /**
@@ -140,8 +128,9 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
     private GalleryItem createGalleryItem(final ConfigFile config, String md5, String displayName)
     {
         GalleryItem item = null;
-        final String romPath = config.get( md5, "romPath" );
-        String zipPath = config.get( md5, "zipPath" );
+
+        String romPath = getUriString(config, md5, "romPathUri", "romPath");
+        String zipPath = getUriString(config, md5, "zipPathUri", "zipPath");
         final String artFullPath = config.get( md5, "artPath" );
         final String goodName = config.get( md5, "goodName" );
 
@@ -183,7 +172,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
      * @param items Items will be populated here
      * @param recentItems Recent items will be populated here.
      */
-    public void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
+    private void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
     {
         final String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;
@@ -196,7 +185,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             if ( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) ) {
                 final ConfigFile.ConfigSection section = mConfig.get( md5 );
 
-                String romPath = section.get("romPath");
+                String romPath = getUriString(mConfig, md5, "romPathUri", "romPath");
 
                 // We can't do much with an invalid Rom path
                 if (romPath != null) {
@@ -208,7 +197,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                         else
                             displayName = section.get( "baseName" );
                     } else {
-                        displayName = new File(section.get("romPath")).getName();
+                        displayName = ProviderUtil.getFileName(mContext.get(), Uri.parse(romPath));
                     }
 
                     boolean matchesSearch = true;

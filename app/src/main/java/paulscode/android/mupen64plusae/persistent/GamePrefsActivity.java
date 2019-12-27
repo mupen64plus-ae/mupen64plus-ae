@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
@@ -58,6 +59,7 @@ import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
@@ -163,7 +165,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
         }
 
-        mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, romPath, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
+        String fileName = ProviderUtil.getFileName(this, Uri.parse(romPath));
+        mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, fileName, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );

@@ -5,12 +5,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/linearLayout1"
+        android:orientation="vertical" >
+    </ListView>
+
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayoutButtons"
         android:orientation="vertical"
-        android:gravity="center"
         android:padding="16dp" >
 
         <TextView
@@ -18,22 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/scanRomsDialog_selectRom"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <Button
-            android:id="@+id/buttonFilePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/scanRomsDialog_start_file_picker" />
-
-        <TextView
-            android:id="@+id/fileDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginBottom="20dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <CheckBox
@@ -69,12 +62,28 @@
         android:padding="10dp" >
 
         <Button
+            android:id="@+id/buttonReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/buttonCancel"
+            android:layout_toStartOf="@+id/buttonCancel"
+            android:text="@string/scanRomsDialog_reset" />
+
+        <Button
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/buttonOk"
             android:layout_toStartOf="@+id/buttonOk"
             android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/buttonOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:text="@android:string/ok" />
     </RelativeLayout>
 
 </RelativeLayout>

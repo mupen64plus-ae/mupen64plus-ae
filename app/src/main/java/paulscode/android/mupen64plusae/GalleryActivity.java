@@ -27,6 +27,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -77,6 +78,7 @@ import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
@@ -568,7 +570,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
 
                 successful = true;
-                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, finalRomPath, header.crc, header.countryCode );
+
+                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File(finalRomPath).getName(), header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
                 launchGameActivity( finalRomPath, null, computedMd5, header.crc, header.name,
                         header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false );
@@ -670,8 +673,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             Intent gameIntent = new Intent(this, SplashActivity.class);
             gameIntent.putExtra(GalleryActivity.KEY_IS_LEANBACK, true);
             gameIntent.putExtra(GalleryActivity.KEY_IS_SHORTCUT, true);
-            gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romFile != null ? item.romFile.getAbsolutePath() : null);
-            gameIntent.putExtra(ActivityHelper.Keys.ZIP_PATH, item.zipFile != null ? item.zipFile.getAbsolutePath() : null);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romUri);
+            gameIntent.putExtra(ActivityHelper.Keys.ZIP_PATH, item.zipUri);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_MD5, item.md5);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_CRC, item.crc);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_HEADER_NAME, item.headerName);
@@ -706,22 +709,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void onGameSidebarAction(MenuItem menuItem)
     {
         final GalleryItem item = mSelectedItem;
-        if( item == null || item.romFile == null)
+        if( item == null || item.romUri == null)
             return;
-
-        String zipfilePath = item.zipFile == null ? null : item.zipFile.getAbsolutePath();
 
         switch( menuItem.getItemId() )
         {
             case R.id.menuItem_resume:
-                launchGameActivity( item.romFile.getAbsolutePath(),
-                        zipfilePath,
+                launchGameActivity( item.romUri,
+                        item.zipUri,
                         item.md5, item.crc, item.headerName,
                         item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false );
                 break;
             case R.id.menuItem_start:
-                launchGameActivity( item.romFile.getAbsolutePath(),
-                        zipfilePath,
+                launchGameActivity( item.romUri,
+                        item.zipUri,
                         item.md5, item.crc,
                         item.headerName, item.countryCode.getValue(), item.artPath,
                         item.goodName, item.displayName, true );
@@ -730,15 +731,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 String romLegacySaveFileName;
                 
-                if(item.zipFile != null)
+                if(item.zipUri != null)
                 {
-                    romLegacySaveFileName = item.zipFile.getName();
+                    romLegacySaveFileName = ProviderUtil.getFileName(this, Uri.parse(item.zipUri));
                 }
                 else
                 {
-                    romLegacySaveFileName = item.romFile.getName();
+                    romLegacySaveFileName = ProviderUtil.getFileName(this, Uri.parse(item.romUri));
                 }
-                ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romFile.getAbsolutePath(),
+                ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
                         item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue(),
                         romLegacySaveFileName);
                 break;
@@ -848,12 +849,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
-        if (item.romFile == null) {
+        if (item.romUri == null) {
             return false;
         }
 
-        launchGameActivity( item.romFile.getAbsolutePath(),
-            item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+        launchGameActivity( item.romUri, item.zipUri,
             item.md5, item.crc, item.headerName, item.countryCode.getValue(),
             item.artPath, item.goodName, item.displayName, false );
         return true;
@@ -907,15 +907,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 final Bundle extras = data.getExtras();
 
                 if (extras != null) {
-                    final String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+                    final String searchUri = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
                     final boolean searchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
                     final boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
                     final boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
                     final boolean searchSubdirectories = extras.getBoolean( ActivityHelper.Keys.SEARCH_SUBDIR );
 
-                    if (searchPath != null)
+                    if (searchUri != null)
                     {
-                        refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery, searchSubdirectories);
+                        refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories);
                     }
                 }
             }
@@ -934,9 +934,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
-    private void refreshRoms(final File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
+    private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
     {
-        mCacheRomInfoFragment.refreshRoms(startDir, searchZips, downloadArt, clearGallery, searchSubdirectories, mAppData, mGlobalPrefs);
+        mCacheRomInfoFragment.refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories, mAppData, mGlobalPrefs);
     }
 
     void refreshGridAsync()

@@ -39,6 +39,7 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.LocalBinder;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 {    
     //Progress dialog for ROM scan
@@ -55,7 +56,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     
     private boolean mCachedRefreshRoms = false;
     
-    private File mStartDir = null;
+    private String mSearchUri = null;
     private boolean mSearchZips = false;
     private boolean mDownloadArt = false;
     private boolean mClearGallery = false;
@@ -81,7 +82,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         {
             CharSequence title = getString( R.string.scanning_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, getActivity(), title, mStartDir.getAbsolutePath(), message, true );
+            mProgress = new ProgressDialog( mProgress, getActivity(), title, mSearchUri, message, true );
             mProgress.show();
         }
         
@@ -154,10 +155,10 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         return mProgress;
     }
 
-    public void refreshRoms( File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery,
+    public void refreshRoms( String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery,
         boolean searchSubdirectories, AppData appData, GlobalPrefs globalPrefs )
     {
-        this.mStartDir = startDir;
+        this.mSearchUri = searchUri;
         this.mSearchZips = searchZips;
         this.mDownloadArt = downloadArt;
         this.mClearGallery = clearGallery;
@@ -181,10 +182,10 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         
         CharSequence title = getString( R.string.scanning_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, mStartDir.getAbsolutePath(), message, true );
+        mProgress = new ProgressDialog( mProgress, getActivity(), title, mSearchUri, message, true );
         mProgress.show();
         
-        /** Defines callbacks for service binding, passed to bindService() */
+        /* Defines callbacks for service binding, passed to bindService() */
         mServiceConnection = new ServiceConnection() {
             
             @Override
@@ -205,7 +206,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 
         // Asynchronously search for ROMs
         ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
-            mStartDir.getAbsolutePath(), mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCache_cfg,
+            mSearchUri, mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCache_cfg,
             mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
             mDownloadArt, mClearGallery, mSearchSubdirectories);
     }

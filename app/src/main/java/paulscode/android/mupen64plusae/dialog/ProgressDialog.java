@@ -16,7 +16,7 @@ public class ProgressDialog implements OnClickListener
     public interface OnCancelListener
     {
         //This is called if the dialog is canceled
-        public void OnCancel();
+        void OnCancel();
     }
     
     private static final float PROGRESS_PRECISION = 1000f;
