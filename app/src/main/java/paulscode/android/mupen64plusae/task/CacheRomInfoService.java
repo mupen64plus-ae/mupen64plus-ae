@@ -320,11 +320,13 @@ public class CacheRomInfoService extends Service
                     }
                     else if(!file.isDirectory())
                     {
-                        result.add(file);
+                        if (file.getName() != null)
+                            result.add(file);
                     }
                 }
             } else {
-                result.add( documentFile );
+                if (documentFile.getName() != null)
+                    result.add( documentFile );
             }
         }
 

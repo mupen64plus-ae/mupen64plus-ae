@@ -28,16 +28,13 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 /**
  * Utility class for retrieving information
  * about the header of a given ROM file.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "SameParameterValue", "PointlessArithmeticExpression"})
 public final class RomHeader
 {
     // @formatter:off
@@ -293,8 +290,7 @@ public final class RomHeader
     {
         // Arrays.copyOfRange( buffer, start, end ) requires API 9, so do it manually
         byte[] newBuffer = new byte[end - start];
-        for( int i = 0; i < newBuffer.length; i++ )
-            newBuffer[i] = buffer[start + i];
+        System.arraycopy(buffer, start, newBuffer, 0, newBuffer.length);
         return new String( newBuffer );
     }
 }
