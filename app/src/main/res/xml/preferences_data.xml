@@ -53,12 +53,6 @@
         android:title="@string/pathGameSaves_title"
         mupen64:selectionMode="0" />
 
-    <paulscode.android.mupen64plusae.preference.PathPreference
-        android:defaultValue="@string/pathGameSaves_default"
-        android:key="pathAppData"
-        android:title="@string/pathAppData_title"
-        mupen64:selectionMode="0" />
-
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="4"
         android:key="gameAutoSaves"
