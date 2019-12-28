@@ -212,7 +212,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 
         // Asynchronously search for ROMs
         ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
-            mSearchUri, mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCache_cfg,
+            mSearchUri, mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCacheCfg,
             mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
             mDownloadArt, mClearGallery, mSearchSubdirectories);
     }

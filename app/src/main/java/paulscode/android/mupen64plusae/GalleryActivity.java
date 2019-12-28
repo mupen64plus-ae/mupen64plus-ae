@@ -27,7 +27,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -78,7 +77,6 @@ import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
@@ -247,7 +245,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
+        mConfig = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
 
         // Lay out the content
         setContentView( R.layout.gallery_activity );
@@ -940,7 +938,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void reloadCacheAndRefreshGrid()
     {
-        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
+        mConfig = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
 
         refreshGridAsync();
     }

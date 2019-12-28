@@ -122,6 +122,15 @@ public class GlobalPrefs
     /** The subdirectory containing cover art files. */
     public final String coverArtDir;
 
+    /** The subdirectory containing legacy cover art files. */
+    public final String legacyCoverArtDir;
+
+    /** Location of user generated configuration data */
+    public final String profilesDir;
+
+    /** Legacy location of user generated configuration data */
+    public final String legacyProfilesDir;
+
     /** The subdirectory containing unzipped 64DD files. */
     public final String unzippedRomsDir;
 
@@ -146,11 +155,17 @@ public class GlobalPrefs
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
 
+    /** The legacy directory containing all custom touchscreen skin folders. */
+    public final String legacyTouchscreenCustomSkinsDir;
+
     /** Legacy core config folder */
     public final String legacyCoreConfigDir;
 
     /** The path of the rom info cache for the gallery. */
-    public final String romInfoCache_cfg;
+    public final String romInfoCacheCfg;
+
+    /** The path of the legacy rom info cache for the gallery. */
+    public final String legacyRomInfoCacheCfg;
 
     /** The path of the custom controller profiles file. */
     public final String controllerProfiles_cfg;
@@ -431,25 +446,28 @@ public class GlobalPrefs
 
         // Files
         String galleryCacheDir = appData.userDataDir + "/GalleryCache";
-        coverArtDir = galleryCacheDir + "/CoverArt";
-        unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
-        screenshotsDir = appData.userDataDir + "/Screenshots";
-        String profilesDir = appData.userDataDir + "/Profiles";
+        legacyRomInfoCacheCfg = galleryCacheDir + "/romInfoCache.cfg";
+        legacyCoverArtDir = galleryCacheDir + "/CoverArt";
+        legacyProfilesDir = appData.userDataDir + "/Profiles";
+        legacyTouchscreenCustomSkinsDir = appData.userDataDir + "/CustomSkins";
         legacyCoreConfigDir = appData.userDataDir + "/CoreConfig";
 
         final String coreConfigDir = context.getCacheDir().getAbsolutePath() + "/CoreConfig";
-
         coreUserDataDir = coreConfigDir + "/UserData";
         coreUserCacheDir = coreConfigDir + "/UserCache";
+        unzippedRomsDir = context.getCacheDir().getAbsolutePath() + "/UnzippedRoms";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
-        romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
+        screenshotsDir = context.getFilesDir() + "/Screenshots";
+        romInfoCacheCfg = context.getFilesDir().getAbsolutePath() + "/romInfoCache.cfg";
+        coverArtDir = context.getFilesDir().getAbsolutePath() + "/CoverArt";
+        profilesDir = context.getFilesDir().getAbsolutePath() + "/Profiles";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
-        touchscreenCustomSkinsDir = appData.userDataDir + "/CustomSkins";
+        touchscreenCustomSkinsDir = context.getFilesDir().getAbsolutePath() + "/CustomSkins";
 
         //Generate .nomedia files to prevent android from adding these to gallery apps
         File file = new File(coreConfigDir + "/.nomedia");

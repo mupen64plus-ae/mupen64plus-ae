@@ -94,9 +94,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     /** The text view that displays extraction progress info. */
     private TextView mTextView;
 
-    /** The running count of assets extracted. */
-    private int mAssetsExtracted;
-
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -435,15 +432,13 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private void extractAssets()
     {
         // Extract and merge the assets if they are out of date
-        mAssetsExtracted = 0;
         new ExtractAssetsOrCleanupTask( this, getAssets(), mGlobalPrefs, SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
     }
 
     @Override
-    public void onExtractAssetsProgress( String nextFileToExtract, int totalAssets )
+    public void onExtractAssetsProgress( String nextFileToExtract, int currentAsset, int totalAssets )
     {
-        mAssetsExtracted++;
-        final float percent = ( 100f * mAssetsExtracted ) / totalAssets;
+        final float percent = ( 100f * currentAsset ) / totalAssets;
         final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
         mTextView.setText( text );
     }
