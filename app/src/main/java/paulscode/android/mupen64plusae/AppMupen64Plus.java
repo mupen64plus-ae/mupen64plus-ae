@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.util.CrashHandler;
 import androidx.multidex.MultiDexApplication;
 
 public class AppMupen64Plus extends MultiDexApplication
@@ -29,8 +28,5 @@ public class AppMupen64Plus extends MultiDexApplication
     public void onCreate()
     {
         super.onCreate();
-        
-        // Initialize local crash log system
-        CrashHandler.init( this );
     }
 }

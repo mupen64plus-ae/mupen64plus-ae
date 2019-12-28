@@ -29,7 +29,6 @@ import android.graphics.Point;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -128,9 +127,6 @@ public class GlobalPrefs
 
     /** The subdirectory containing screenshot files. */
     public final String screenshotsDir;
-
-    /** The subdirectory containing crash logs. */
-    public final String crashLogDir;
 
     /** The subdirectory returned from the core's ConfigGetUserDataPath() method. */
     public final String coreUserDataDir;
@@ -439,7 +435,6 @@ public class GlobalPrefs
         unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
         screenshotsDir = appData.userDataDir + "/Screenshots";
         String profilesDir = appData.userDataDir + "/Profiles";
-        crashLogDir = appData.userDataDir + "/CrashLogs";
         legacyCoreConfigDir = appData.userDataDir + "/CoreConfig";
 
         final String coreConfigDir = context.getCacheDir().getAbsolutePath() + "/CoreConfig";
