@@ -122,11 +122,6 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
             PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
             PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);
         }
-
-        if(!AppData.IS_LOLLIPOP)
-        {
-            PrefUtil.removePreference(this, ROOT, AUDIO_SLES_FLOATING_POINT);
-        }
     }
 
     @Override

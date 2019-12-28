@@ -1,38 +1,25 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.ProviderUtil;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
-public class ExtractTexturesActivity extends AppCompatActivity implements OnItemClickListener,
-        ExtractTexturesFragment.OnFinishListener
+public class ExtractTexturesActivity extends AppCompatActivity implements ExtractTexturesFragment.OnFinishListener
 {
     public static final int PICK_TEXTURE_REQUEST_CODE = 2;
-
-    private List<String> mPaths;
 
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
 
@@ -46,8 +33,6 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
     private static final String CURRENT_PATH = "CURRENT_PATH";
  
     @Override
-    // The following is needed for Environment.getExternalStorageDirectory() This is still needed for Android 4.4
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate(savedInstanceState);
@@ -61,53 +46,30 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
             fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
         }
 
-        if (AppData.IS_LOLLIPOP) {
-            String currentUri = null;
+        String currentUri = null;
 
-            if(savedInstanceState != null)
-            {
-                currentUri = savedInstanceState.getString( URI_TO_IMPORT );
+        if(savedInstanceState != null)
+        {
+            currentUri = savedInstanceState.getString( URI_TO_IMPORT );
+        }
+
+        if (currentUri != null) {
+            mFileUri = Uri.parse(currentUri);
+        }
+
+        setContentView(R.layout.extract_textures_activity);
+
+        Button filePickerButtont = findViewById(R.id.buttonFilePicker);
+        filePickerButtont.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startFilePicker();
             }
+        });
 
-            if (currentUri != null) {
-                mFileUri = Uri.parse(currentUri);
-            }
+        mFileDescriptionTextView = findViewById(R.id.fileDescription);
 
-            setContentView(R.layout.extract_textures_activity);
-
-            Button filePickerButtont = findViewById(R.id.buttonFilePicker);
-            filePickerButtont.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    startFilePicker();
-                }
-            });
-
-            mFileDescriptionTextView = findViewById(R.id.fileDescription);
-
-            if (mFileDescriptionTextView != null && mFileUri != null) {
-                mFileDescriptionTextView.setText(ProviderUtil.getFileName(this, mFileUri));
-            }
-        } else {
-            String currentPath = null;
-
-            if(savedInstanceState != null)
-            {
-                currentPath = savedInstanceState.getString( CURRENT_PATH );
-            }
-
-            if( currentPath != null )
-            {
-                mCurrentPath = new File(currentPath);
-            }
-            else
-            {
-                // Pick the root of the storage directory by default
-                mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
-            }
-
-            setContentView(R.layout.extract_textures_activity_kitkat);
-
-            PopulateFileList();
+        if (mFileDescriptionTextView != null && mFileUri != null) {
+            mFileDescriptionTextView.setText(ProviderUtil.getFileName(this, mFileUri));
         }
 
         Button cancelButton = findViewById(R.id.buttonCancel);
@@ -138,45 +100,15 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
 
         super.onSaveInstanceState( savedInstanceState );
     }
-    
-    private void PopulateFileList()
-    {
-        setTitle( mCurrentPath.getPath() );
-        // Populate the file list
-        // Get the filenames and absolute paths
-        List<CharSequence> mNames = new ArrayList<>();
-        mPaths = new ArrayList<>();
-        FileUtil.populate( mCurrentPath, true, true, true, mNames, mPaths );
-
-        if(mCurrentPath.isDirectory())
-        {
-            ListView listView1 = findViewById( R.id.listView1 );
-            ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, mNames);
-            listView1.setAdapter( adapter );
-            listView1.setOnItemClickListener( this );
-        }
-    }
-
-    @Override
-    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
-    {
-        if (position < mPaths.size()) {
-            mCurrentPath = new File(mPaths.get( position ));
-            mFileUri = Uri.fromFile(mCurrentPath);
-            PopulateFileList();
-        }
-    }
 
     private void startFilePicker()
     {
-        if (AppData.IS_LOLLIPOP) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            intent = Intent.createChooser(intent, getString(R.string.pathHiResTexturesTask_select_zip));
-            startActivityForResult(intent, PICK_TEXTURE_REQUEST_CODE);
-        }
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        intent = Intent.createChooser(intent, getString(R.string.pathHiResTexturesTask_select_zip));
+        startActivityForResult(intent, PICK_TEXTURE_REQUEST_CODE);
     }
 
     @Override

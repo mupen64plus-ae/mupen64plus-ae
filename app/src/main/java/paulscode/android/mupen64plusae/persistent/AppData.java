@@ -228,9 +228,6 @@ public class AppData
             return name().toLowerCase().contains("hle");
         }
     }
-
-    /** True if device is running Lollipop or later (21 - Android 5.0.x) */
-    public static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     
     /** True if device is running marshmallow or later (23 - Android 6.0.x) */
     private static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;

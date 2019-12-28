@@ -55,7 +55,6 @@ import androidx.tvprovider.media.tv.ChannelLogoUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.File;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
@@ -294,9 +293,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     public void requestPermissions()
     {
         //This doesn't work reliably with older Android versions
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-           ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) &&
-                AppData.IS_LOLLIPOP)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+           ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
@@ -356,11 +354,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
-        switch (requestCode)
-        {
-        case PERMISSION_REQUEST:
+        if (requestCode == PERMISSION_REQUEST)
         {
             // If request is cancelled, the result arrays are empty.
             boolean good = true;
@@ -397,10 +393,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 //Permissions already granted, continue
                 checkExtractAssetsOrCleanup();
             }
-        }
-
-        // other 'case' lines to check for other
-        // permissions this app might request
         }
     }
 
@@ -511,10 +503,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         Uri channelUri = context.getContentResolver().insert(
                 TvContractCompat.Channels.CONTENT_URI, builder.build().toContentValues());
 
-        long channelId = ContentUris.parseId(channelUri);
-        mAppData.putChannelId(channelId);
-        Bitmap bitmapIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-        ChannelLogoUtils.storeChannelLogo(context, channelId, bitmapIcon);
-        TvContractCompat.requestChannelBrowsable(context, channelId);
+        if (channelUri != null) {
+            long channelId = ContentUris.parseId(channelUri);
+            mAppData.putChannelId(channelId);
+            Bitmap bitmapIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+            ChannelLogoUtils.storeChannelLogo(context, channelId, bitmapIcon);
+            TvContractCompat.requestChannelBrowsable(context, channelId);
+        }
     }
 }

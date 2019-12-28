@@ -112,27 +112,6 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
         // Enable polygon offset pref if flicker reduction is custom
         PrefUtil.enablePreference(this, VIDEO_POLYGON_OFFSET,
             mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
-
-        if(!AppData.IS_LOLLIPOP)
-        {
-            CompatListPreference orientationPreference = (CompatListPreference) findPreference( DISPLAY_ORIENTATION );
-
-            if(orientationPreference != null)
-            {
-                ArrayList<CharSequence> orientationEntriesArray = new ArrayList<>(Arrays.asList(orientationPreference.getEntries()));
-                ArrayList<CharSequence> orientationValuesArray = new ArrayList<>(Arrays.asList(orientationPreference.getEntryValues()));
-
-                int autoIndexIndex = orientationEntriesArray.indexOf(getText(R.string.displayOrientation_entryAuto));
-                if(autoIndexIndex != -1)
-                {
-                    orientationEntriesArray.remove(autoIndexIndex);
-                    orientationValuesArray.remove(orientationValuesArray.indexOf("-1"));
-                }
-
-                orientationPreference.setEntries(orientationEntriesArray.toArray(new CharSequence[orientationEntriesArray.size()]));
-                orientationPreference.setEntryValues(orientationValuesArray.toArray(new CharSequence[orientationValuesArray.size()]));
-            }
-        }
     }
 
     @Override
