@@ -47,12 +47,6 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae.preference.PathPreference
-        android:defaultValue="@string/pathGameSaves_default"
-        android:key="pathGameSaves"
-        android:title="@string/pathGameSaves_title"
-        mupen64:selectionMode="0" />
-
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="4"
         android:key="gameAutoSaves"

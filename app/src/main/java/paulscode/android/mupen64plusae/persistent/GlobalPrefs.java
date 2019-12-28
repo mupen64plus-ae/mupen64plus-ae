@@ -459,7 +459,7 @@ public class GlobalPrefs
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
-        screenshotsDir = context.getFilesDir() + "/Screenshots";
+        screenshotsDir = context.getFilesDir().getAbsolutePath() + "/Screenshots";
         romInfoCacheCfg = context.getFilesDir().getAbsolutePath() + "/romInfoCache.cfg";
         coverArtDir = context.getFilesDir().getAbsolutePath() + "/CoverArt";
         profilesDir = context.getFilesDir().getAbsolutePath() + "/Profiles";

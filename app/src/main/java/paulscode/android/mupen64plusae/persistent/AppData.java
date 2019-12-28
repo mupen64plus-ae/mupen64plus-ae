@@ -302,7 +302,10 @@ public class AppData
     final String userDataDir;
 
     /** The parent directory containing all user-writable data files. */
-    final String gameDataDir;
+    public final String gameDataDir;
+
+    /** The parent directory containing all user-writable data files. */
+    public final String legacyGameDataDir;
 
     private static String openGlVersion = null;
     
@@ -359,7 +362,8 @@ public class AppData
         {
             tempGameDataDir = userDataDir;
         }
-        gameDataDir = tempGameDataDir + "/GameData";
+        legacyGameDataDir = tempGameDataDir + "/GameData";
+        gameDataDir = context.getFilesDir().getAbsolutePath() + "/GameData";
 
         coreSharedDataDir = context.getFilesDir().getAbsolutePath();
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";

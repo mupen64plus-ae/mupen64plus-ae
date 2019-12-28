@@ -432,7 +432,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private void extractAssets()
     {
         // Extract and merge the assets if they are out of date
-        new ExtractAssetsOrCleanupTask( this, getAssets(), mGlobalPrefs, SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+        new ExtractAssetsOrCleanupTask( this, getAssets(), mAppData, mGlobalPrefs, SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
     }
 
     @Override

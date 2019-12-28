@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
@@ -232,9 +233,10 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
     private final SharedPreferences mPreferences;
     private int mCurrentAsset = 0;
     private int mTotalAssets = 0;
+    private AppData mAppData;
     private GlobalPrefs mGlobalPrefs;
-    
-    public ExtractAssetsOrCleanupTask(Context context, AssetManager assetManager, GlobalPrefs globalPrefs, String srcPath, String dstPath, ExtractAssetsListener listener )
+
+    public ExtractAssetsOrCleanupTask(Context context, AssetManager assetManager, AppData appData, GlobalPrefs globalPrefs, String srcPath, String dstPath, ExtractAssetsListener listener )
     {
 
         if (assetManager == null )
@@ -252,6 +254,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         mListener = listener;
         // Preference object for persisting app data
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        mAppData = appData;
         mGlobalPrefs = globalPrefs;
     }
 
@@ -277,7 +280,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
     @Override
     protected List<Failure> doInBackground( Void... params )
     {
-        mTotalAssets += 4;
+        mTotalAssets += 5;
         FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
         FileUtil.deleteFolder(new File(mGlobalPrefs.legacyCoreConfigDir));
 
@@ -294,6 +297,9 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
         createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir);
+        publishProgress( "Moving: " + mAppData.legacyGameDataDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+        ++mCurrentAsset;
+        createBackupAndMove(mAppData.legacyGameDataDir, mAppData.gameDataDir);
 
         return extractAssets( mSrcPath, mDstPath );
     }
