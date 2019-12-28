@@ -107,6 +107,7 @@ public class CacheRomInfoService extends Service
     final static String NOTIFICATION_CHANNEL_ID_V2 = "CacheRomInfoServiceChannelV2";
 
     final static long MAX_7ZIP_FILE_SIZE = 100*1024*1024;
+    final static int MAX_ROM_FILE_NAME_SIZE = 30;
     
     public interface CacheRomInfoListener
     {
@@ -133,6 +134,7 @@ public class CacheRomInfoService extends Service
 
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
+
         ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -178,7 +180,7 @@ public class CacheRomInfoService extends Service
             for( final DocumentFile file : files )
             {
                 mListener.GetProgressDialog().setSubtext( "" );
-                mListener.GetProgressDialog().setText( file.getName() );
+                mListener.GetProgressDialog().setText( getShortFileName(file.getName()));
                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
                 
                 if( mbStopped ) break;
@@ -210,6 +212,15 @@ public class CacheRomInfoService extends Service
             // the service in the middle of handling another job
             stopSelf(msg.arg1);
         }
+    }
+
+    private static String getShortFileName(@Nullable String fileName)
+    {
+        String shortFileName = fileName != null ? fileName : "";
+        if (shortFileName.length() > MAX_ROM_FILE_NAME_SIZE) {
+            shortFileName = fileName.substring(0, MAX_ROM_FILE_NAME_SIZE-7) + "..." + fileName.substring(fileName.length()-4);
+        }
+        return shortFileName;
     }
 
     public void initChannels(Context context) {
@@ -339,7 +350,7 @@ public class CacheRomInfoService extends Service
                 {
                     try
                     {
-                        mListener.GetProgressDialog().setSubtext( new File(entry.getName()).getName() );
+                        mListener.GetProgressDialog().setSubtext( getShortFileName(new File(entry.getName()).getName()));
                         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
 
                         InputStream zipStream = new BufferedInputStream(zipfile);
@@ -393,7 +404,7 @@ public class CacheRomInfoService extends Service
                     while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
                         InputStream zipStream;
                         try {
-                            mListener.GetProgressDialog().setSubtext(new File(zipEntry.getName()).getName());
+                            mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
                             mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
 
                             zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
@@ -460,8 +471,10 @@ public class CacheRomInfoService extends Service
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
     }
 
-    private void cacheFile( DocumentFile file, RomDatabase database, ConfigFile config )
+    private void cacheFile(DocumentFile file, RomDatabase database, ConfigFile config )
     {
+        mListener.GetProgressDialog().setSubtext(getShortFileName(file.getName()));
+
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file.getUri(), "r")) {
 
             if (parcelFileDescriptor != null) {
