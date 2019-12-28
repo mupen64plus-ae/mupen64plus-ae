@@ -24,13 +24,14 @@ package paulscode.android.mupen64plusae;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
-
-import java.io.File;
 
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -85,17 +86,19 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
             mProgress = new ProgressDialog( mProgress, getActivity(), title, mSearchUri, message, true );
             mProgress.show();
         }
-        
-        if (mCachedResult && mInProgress)
-        {
-            ((GalleryActivity)getActivity()).reloadCacheAndRefreshGrid();
-            mCachedResult = false;
-        }
-        
-        if(mCachedRefreshRoms)
-        {
-            ActuallyRefreshRoms(getActivity());
-            mCachedRefreshRoms = false;
+
+        if ( getActivity() != null) {
+            if (mCachedResult && mInProgress)
+            {
+                ((GalleryActivity)getActivity()).reloadCacheAndRefreshGrid();
+                mCachedResult = false;
+            }
+
+            if(mCachedRefreshRoms)
+            {
+                ActuallyRefreshRoms(getActivity());
+                mCachedRefreshRoms = false;
+            }
         }
     }
     
@@ -114,7 +117,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mInProgress)
+        if(mServiceConnection != null && mInProgress && getActivity() != null)
         {
             ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
         }
@@ -182,7 +185,10 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         
         CharSequence title = getString( R.string.scanning_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, mSearchUri, message, true );
+
+        DocumentFile rootDocumentFile = DocumentFile.fromTreeUri(activity, Uri.parse(mSearchUri));
+        String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
+        mProgress = new ProgressDialog( mProgress, activity, title, text, message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

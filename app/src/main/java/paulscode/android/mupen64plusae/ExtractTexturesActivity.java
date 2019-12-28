@@ -181,6 +181,8 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         // Check which request we're responding to
         if (requestCode == PICK_TEXTURE_REQUEST_CODE)
         {

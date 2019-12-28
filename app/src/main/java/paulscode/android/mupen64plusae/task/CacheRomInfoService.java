@@ -77,7 +77,6 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -158,8 +157,11 @@ public class CacheRomInfoService extends Service
 
             // Create .nomedia file to hide cover art from Android Photo Gallery
             touchFile( mArtDir + "/.nomedia" );
-            
-            final List<DocumentFile> files = getAllFiles( mSearchUri, 0 );
+
+
+            DocumentFile rootDocumentFile = DocumentFile.fromTreeUri(getApplicationContext(), mSearchUri);
+            final List<DocumentFile> files = getAllFiles( rootDocumentFile, 0 );
+
             final RomDatabase database = RomDatabase.getInstance();
             if(!database.hasDatabaseFile())
             {
@@ -287,16 +289,14 @@ public class CacheRomInfoService extends Service
         return START_STICKY;
     }
 
-    List<DocumentFile> getAllFiles(Uri rootUri, int count) {
+    List<DocumentFile> getAllFiles(DocumentFile documentFile, int count) {
 
         List<DocumentFile> result = new ArrayList<>();
 
-        DocumentFile rootDocumentFile = DocumentFile.fromSingleUri(getApplicationContext(), rootUri);
-
-        if (rootDocumentFile != null) {
-            if( rootDocumentFile.isDirectory())
+        if (documentFile != null) {
+            if( documentFile.isDirectory())
             {
-                DocumentFile[] allFiles = rootDocumentFile.listFiles();
+                DocumentFile[] allFiles = documentFile.listFiles();
 
                 for( DocumentFile file : allFiles )
                 {
@@ -305,7 +305,7 @@ public class CacheRomInfoService extends Service
                     //Search subdirectories if option is enabled and we less than 10 levels deep
                     if(mSearchSubdirectories && count < 10)
                     {
-                        result.addAll( getAllFiles( file.getUri(), ++count ) );
+                        result.addAll( getAllFiles( file, ++count ) );
                     }
                     else if(!file.isDirectory())
                     {
@@ -313,7 +313,7 @@ public class CacheRomInfoService extends Service
                     }
                 }
             } else {
-                result.add( rootDocumentFile );
+                result.add( documentFile );
             }
         }
 
@@ -346,8 +346,6 @@ public class CacheRomInfoService extends Service
                         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
 
                         cacheZipFileFromInputStream(database, file, config, new File(entry.getName()).getName(), zipStream);
-
-                        zipStream.close();
 
                         entry = zipfile.getNextEntry();
                     }
@@ -393,7 +391,7 @@ public class CacheRomInfoService extends Service
                     SevenZFile zipFile = new SevenZFile(channel);
                     SevenZArchiveEntry zipEntry;
                     while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
-                        InputStream zipStream = null;
+                        InputStream zipStream;
                         try {
                             mListener.GetProgressDialog().setSubtext(new File(zipEntry.getName()).getName());
                             mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
@@ -406,10 +404,6 @@ public class CacheRomInfoService extends Service
 
                         } catch (IOException | NoSuchAlgorithmException | IllegalArgumentException e) {
                             Log.w("CacheRomInfoService", e);
-                        } finally {
-                            if (zipStream != null) {
-                                zipStream.close();
-                            }
                         }
                     }
                 }
@@ -471,12 +465,11 @@ public class CacheRomInfoService extends Service
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file.getUri(), "r")) {
 
             if (parcelFileDescriptor != null) {
-
-                String md5 = ComputeMd5Task.computeMd5(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
+                InputStream bufferedStream = new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
+                String md5 = ComputeMd5Task.computeMd5(bufferedStream);
                 RomHeader header = new RomHeader(getApplicationContext(), file.getUri());
 
-                String fileName = ProviderUtil.getFileName(getApplicationContext(), file.getUri());
-
+                String fileName = file.getName();
                 if (fileName != null) {
                     cacheFile(file.getUri(), fileName, header, md5, database, config, null);
                 }

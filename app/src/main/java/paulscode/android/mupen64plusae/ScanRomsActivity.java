@@ -126,7 +126,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             okButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent data = new Intent();
-                    data.putExtra(ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getPath());
+                    data.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
                     data.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
                     data.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
                     data.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
@@ -216,6 +216,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
         if (requestCode == PICK_FOLDER_REQUEST_CODE)
         {
@@ -230,7 +231,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
                     getContentResolver().takePersistableUriPermission(mFileUri, takeFlags);
 
                     Intent scanData = new Intent();
-                    scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getPath());
+                    scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
                     scanData.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
                     scanData.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
                     scanData.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());

@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
@@ -50,6 +51,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
@@ -230,7 +232,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                     CharSequence title = getString( R.string.extractRomTask_title );
                     CharSequence message = getString( R.string.toast_pleaseWait );
 
-                    mProgress = new ProgressDialog( mProgress, getActivity(), title, mZipPath, message, true );
+                    String zipName = ProviderUtil.getFileName(getActivity(), Uri.parse(mZipPath));
+                    mProgress = new ProgressDialog( mProgress, getActivity(), title, zipName, message, true );
                     mProgress.show();
                 }
             });

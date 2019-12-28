@@ -219,48 +219,24 @@ public final class RomHeader
     private static byte[] readFile(Context context, Uri file )
     {
         byte[] buffer = new byte[0x40];
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r")) {
 
-        try {
-            ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r");
-
-            if (parcelFileDescriptor != null)
-            {
-                DataInputStream in = null;
-                try
-                {
-                    in = new DataInputStream( new FileInputStream( parcelFileDescriptor.getFileDescriptor()) );
-                    if (in.read( buffer ) != 0x40) {
+            if (parcelFileDescriptor != null) {
+                try (DataInputStream in = new DataInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))){
+                    if (in.read(buffer) != 0x40) {
                         buffer = null;
-                        Log.w( "RomHeader", "Not enough data for header" );
+                        Log.w("RomHeader", "Not enough data for header");
                     }
-                }
-                catch( IOException e )
-                {
-                    Log.w( "RomHeader", "ROM file could not be read: " + file );
+                } catch (IOException e) {
+                    Log.w("RomHeader", "ROM file could not be read: " + file);
                     buffer = null;
-                }
-                catch( NullPointerException e )
-                {
-                    Log.w( "RomHeader", "File does not exist: " + file );
+                } catch (NullPointerException e) {
+                    Log.w("RomHeader", "How did this happen?: " + file);
                     buffer = null;
-                }
-                finally
-                {
-                    try
-                    {
-                        if(in != null)
-                            in.close();
-
-                        parcelFileDescriptor.close();
-                    }
-                    catch( IOException e )
-                    {
-                        Log.w( "RomHeader", "ROM file could not be closed: " + file );
-                    }
                 }
 
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
