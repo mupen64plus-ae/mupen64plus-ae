@@ -481,18 +481,6 @@ public class GlobalPrefs
         customCheats_txt = profilesDir + "/customCheats.txt";
         touchscreenCustomSkinsDir = context.getFilesDir().getAbsolutePath() + "/CustomSkins";
 
-        //Generate .nomedia files to prevent android from adding these to gallery apps
-        File file = new File(coreConfigDir + "/.nomedia");
-        if (!file.exists()) {
-            try {
-                if ( file.createNewFile()) {
-                    Log.e("GlobalPrefs", "Unable to create " + file.getPath());
-                }
-            } catch (IOException e) {
-                Log.e("GlobalPrefs", "Unable to create " + file.getPath());
-            }
-        }
-
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, "audioPlugin" );
 

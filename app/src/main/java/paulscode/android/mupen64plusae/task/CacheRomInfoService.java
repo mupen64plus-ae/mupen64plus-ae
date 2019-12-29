@@ -56,7 +56,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -156,10 +155,6 @@ public class CacheRomInfoService extends Service
             // Ensure destination directories exist
             FileUtil.makeDirs(mArtDir);
             FileUtil.makeDirs(mUnzipDir);
-
-            // Create .nomedia file to hide cover art from Android Photo Gallery
-            touchFile( mArtDir + "/.nomedia" );
-
 
             DocumentFile rootDocumentFile = DocumentFile.fromTreeUri(getApplicationContext(), mSearchUri);
             final List<DocumentFile> files = getAllFiles( rootDocumentFile, 0 );
@@ -492,26 +487,6 @@ public class CacheRomInfoService extends Service
 
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static void touchFile( String destPath )
-    {
-        try
-        {
-            OutputStream outStream = new FileOutputStream( destPath );
-            try
-            {
-                outStream.close();
-            }
-            catch( IOException e )
-            {
-                Log.w( "CacheRomInfoService", e );
-            }
-        }
-        catch( FileNotFoundException e )
-        {
-            Log.w( "CacheRomInfoService", e );
         }
     }
 

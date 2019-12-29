@@ -363,40 +363,6 @@ public class AppData
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
         String profilesDir = coreSharedDataDir + "/profiles";
 
-        //Generate .nomedia files to prevent android from adding these to gallery apps
-        File file = new File(touchscreenSkinsDir + "Outline/.nomedia");
-        if (!file.exists()) {
-            try {
-                if (file.createNewFile()) {
-                   Log.w("AppData", "Unable to create file:" + file.getPath());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        file = new File(touchscreenSkinsDir + "Shaded/.nomedia");
-        if (!file.exists()) {
-            try {
-                if (file.createNewFile()) {
-                    Log.w("AppData", "Unable to create file:" + file.getPath());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        file = new File(touchscreenSkinsDir + "JoshaGibs/.nomedia");
-        if (!file.exists()) {
-            try {
-                if (file.createNewFile()) {
-                    Log.w("AppData", "Unable to create file:" + file.getPath());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
         glideN64_conf = coreSharedDataDir + "/GLideN64.custom.ini";
