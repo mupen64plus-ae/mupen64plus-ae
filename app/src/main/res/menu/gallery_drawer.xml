@@ -62,6 +62,9 @@
                 android:id="@+id/menuItem_clear"
                 android:title="@string/menuItem_Clear"/>
             <item
+                android:id="@+id/menuItem_clearShaderCache"
+                android:title="@string/menuItem_ClearShaderCache"/>
+            <item
                 android:id="@+id/menuItem_logcat"
                 android:title="@string/menuItem_logcat"/>
             <item

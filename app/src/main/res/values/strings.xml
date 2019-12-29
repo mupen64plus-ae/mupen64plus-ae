@@ -95,6 +95,8 @@
     <string name="menuItem_Tools">Tools</string>
     <string name="menuItem_Extract">Add Texture Pack</string>
     <string name="menuItem_Clear">Clear Texture Packs</string>
+    <string name="menuItem_ClearShaderCache">Clear Shader Cache</string>
+    <string name="menuItem_ConfirmationClearShaderCache">Are you sure you would like to clear the shader cache?</string>
     <string name="menuItem_localeOverride">Language</string>
 
     <!-- ManageProfilesActivity -->

@@ -63,6 +63,8 @@
     <string name="menuItem_Tools">Herramientas</string>
     <string name="menuItem_Extract">Agregar paquete de texturas</string>
     <string name="menuItem_Clear">Borrar paquetes de texturas</string>
+    <string name="menuItem_ClearShaderCache">Borrar cache de shaders</string>
+    <string name="menuItem_ConfirmationClearShaderCache">¿Esta seguro que le gustaría borrar el caché de shaders?</string>
     <string name="menuItem_localeOverride">Idioma</string>
     <!--ManageProfilesActivity-->
     <string name="menuItem_new">Nuevo</string>

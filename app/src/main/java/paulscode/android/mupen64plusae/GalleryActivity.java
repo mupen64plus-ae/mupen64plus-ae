@@ -91,10 +91,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
+    private static final String STATE_CLEAR_SHADERCACHE_DIALOG = "STATE_CLEAR_SHADERCACHE_DIALOG";
     public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
     public static final String KEY_IS_SHORTCUT = "KEY_IS_SHORTCUT";
 
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
+    public static final int CLEAR_SHADER_CACHE_DIALOG_ID = 2;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -659,6 +661,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         case R.id.menuItem_clear:
             ActivityHelper.startDeleteTextureActivity(this);
             return true;
+        case R.id.menuItem_clearShaderCache:
+        {
+
+            final CharSequence title = getText( R.string.confirm_title );
+            final CharSequence message = getText( R.string.menuItem_ConfirmationClearShaderCache );
+
+            final ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(CLEAR_SHADER_CACHE_DIALOG_ID, title.toString(), message.toString());
+
+            final FragmentManager fm = getSupportFragmentManager();
+            confirmationDialog.show(fm, STATE_CLEAR_SHADERCACHE_DIALOG);
+        }
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -764,6 +780,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mConfig.save();
                 mDrawerLayout.closeDrawer( GravityCompat.START, false );
                 refreshGridAsync();
+            }
+
+            if (id == CLEAR_SHADER_CACHE_DIALOG_ID) {
+                FileUtil.deleteFolder(new File(mGlobalPrefs.shaderCacheDir));
             }
         }
     }
