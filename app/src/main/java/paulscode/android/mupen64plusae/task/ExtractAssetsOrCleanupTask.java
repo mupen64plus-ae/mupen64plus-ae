@@ -258,7 +258,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         mGlobalPrefs = globalPrefs;
     }
 
-    private void createBackupAndMove(String srcPath, String dstPath)
+    private boolean createBackupAndMove(String srcPath, String dstPath)
     {
         boolean backupSuccess = FileUtil.copyFile(new File(srcPath), new File(srcPath + ".bak"));
         boolean copySuccess = FileUtil.copyFile(new File(srcPath), new File(dstPath));
@@ -274,12 +274,16 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
                 }
             }
         }
+
+        return backupSuccess && copySuccess;
     }
 
     
     @Override
     protected List<Failure> doInBackground( Void... params )
     {
+        final List<Failure> failures = new ArrayList<>();
+        
         mTotalAssets += 5;
         FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
         FileUtil.deleteFolder(new File(mGlobalPrefs.legacyCoreConfigDir));
@@ -287,21 +291,45 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         //Move data to the new location
         publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
-        createBackupAndMove(mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg);
+        if (!createBackupAndMove(mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg)) {
+            Failure failure = new Failure( mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg, Failure.Reason.FILE_IO_EXCEPTION );
+            Log.e( TAG, failure.toString() );
+            failures.add( failure );
+        }
+
         publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
-        createBackupAndMove(mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir);
+        if (!createBackupAndMove(mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir)) {
+            Failure failure = new Failure( mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir, Failure.Reason.FILE_IO_EXCEPTION );
+            Log.e( TAG, failure.toString() );
+            failures.add( failure );
+        }
+
         publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
-        createBackupAndMove(mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir);
+        if (!createBackupAndMove(mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir)) {
+            Failure failure = new Failure( mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir, Failure.Reason.FILE_IO_EXCEPTION );
+            Log.e( TAG, failure.toString() );
+            failures.add( failure );
+        }
+
         publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
-        createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir);
+        if (!createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir)) {
+            Failure failure = new Failure( mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir, Failure.Reason.FILE_IO_EXCEPTION );
+            Log.e( TAG, failure.toString() );
+            failures.add( failure );
+        }
+
         publishProgress( "Moving: " + mAppData.legacyGameDataDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
-        createBackupAndMove(mAppData.legacyGameDataDir, mAppData.gameDataDir);
+        if (!createBackupAndMove(mAppData.legacyGameDataDir, mAppData.gameDataDir)) {
+            Failure failure = new Failure( mAppData.legacyGameDataDir, mAppData.gameDataDir, Failure.Reason.FILE_IO_EXCEPTION );
+            Log.e( TAG, failure.toString() );
+            failures.add( failure );
+        }
 
-        return extractAssets( mSrcPath, mDstPath );
+        return extractAssets(failures, mSrcPath, mDstPath );
     }
     
     @Override
@@ -386,10 +414,8 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         return true;
     }
     
-    private List<Failure> extractAssets( String srcPath, String dstPath )
+    private List<Failure> extractAssets( final List<Failure> failures, String srcPath, String dstPath )
     {
-        final List<Failure> failures = new ArrayList<>();
-        
         if( srcPath.startsWith( "/" ) )
             srcPath = srcPath.substring( 1 );
 
