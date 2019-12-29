@@ -332,7 +332,6 @@ class CoreInterface
 
                     SevenZFile zipFile = new SevenZFile(channel);
                     SevenZArchiveEntry zipEntry;
-                    Log.e("CoreService", "TEST2.6");
 
                     while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
                     {

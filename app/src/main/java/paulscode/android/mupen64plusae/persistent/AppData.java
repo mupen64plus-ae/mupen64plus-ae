@@ -236,6 +236,8 @@ public class AppData
 
     /** True if device is running marshmallow or later (26 - Android 8.0.x) */
     public static final boolean IS_OREO = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+
+    public static final String CORE_WORKING_DIR_NAME = "WorkingPath";
     
     /** The hardware info, refreshed at the beginning of every session. */
     final HardwareInfo hardwareInfo;

@@ -178,7 +178,6 @@ public class GameDataManager
         FileUtil.makeDirs(mGamePrefs.getCoreUserConfigDir());
         FileUtil.makeDirs(mGlobalPrefs.coreUserDataDir);
         FileUtil.makeDirs(mGlobalPrefs.coreUserCacheDir);
-        FileUtil.makeDirs(mGlobalPrefs.screenshotsDir);
         mAutoSavePath = mGamePrefs.getAutoSaveDir() + "/";
     }
 }

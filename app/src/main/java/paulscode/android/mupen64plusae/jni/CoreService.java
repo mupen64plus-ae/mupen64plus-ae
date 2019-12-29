@@ -25,13 +25,19 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -42,6 +48,8 @@ import android.os.Vibrator;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -51,12 +59,15 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
@@ -150,6 +161,21 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
     private String mDdRom = null;
     private String mDdDisk = null;
+    private boolean mScreenshotRequested = false;
+    private String mWorkingDir = null;
+
+    //Only find files that end with .sav
+    final FileFilter screenshotFilter = new FileFilter(){
+
+        @Override
+        public boolean accept(File pathname)
+        {
+            //It must match this format "yyyy-MM-dd-HH-mm-ss"
+            final String fileName = pathname.getName();
+            return fileName.toLowerCase().endsWith("png");
+        }
+
+    };
 
     private CoreInterface mCoreInterface = new CoreInterface();
 
@@ -346,6 +372,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void screenshot()
     {
+        mScreenshotRequested = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
         mCoreInterface.emuScreenshot();
     }
 
@@ -456,8 +483,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
             }
 
-            String workingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/WorkingPath";
-            mCoreInterface.setWorkingPath(workingDir);
+            mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
+            FileUtil.makeDirs(mWorkingDir);
+            mCoreInterface.setWorkingPath(mWorkingDir);
             mCoreInterface.setGbRomPath(getApplicationContext(), mGbRomPaths);
             mCoreInterface.setGbRamPath(getApplicationContext(), mGbRamPaths);
             mCoreInterface.setDdRomPath(getApplicationContext(), mDdRom);
@@ -517,7 +545,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             // Clean up the working directory
-            FileUtil.deleteFolder(new File(workingDir));
+            FileUtil.deleteFolder(new File(mWorkingDir));
 
             mCoreInterface.closeRom();
             mCoreInterface.emuShutdown();
@@ -882,6 +910,28 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     };
 
+    Runnable mExportScreenshotChecker = new Runnable() {
+        @Override
+        public void run() {
+            File workingDirFile = new File (mWorkingDir);
+            File[] workingDirFiles = workingDirFile.listFiles(screenshotFilter);
+
+            if (workingDirFiles != null && workingDirFiles.length != 0) {
+
+                for (File file : workingDirFiles) {
+                    exportScreenshot(file);
+                    if (file.delete()) {
+                        Log.e("CoreService", "Could not delete file " + file.getAbsolutePath());
+                    }
+                }
+
+            } else {
+                // Files are not there yet, try again
+                mScreenshotRequested = true;
+            }
+        }
+    };
+
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
@@ -892,6 +942,41 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         if(mIsPaused)
         {
             mCoreInterface.emuPause();
+        }
+
+        if (mScreenshotRequested && mWorkingDir != null) {
+            mScreenshotRequested = false;
+            mFpsCangedHandler.post(mExportScreenshotChecker);
+        }
+    }
+
+    private void exportScreenshot(File file)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            final String relativeLocation = Environment.DIRECTORY_PICTURES + File.separator + "mupen64plus";
+
+            final ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, file.getName());
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
+
+            final ContentResolver resolver = getApplicationContext().getContentResolver();
+
+            final Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri uri = resolver.insert(contentUri, contentValues);
+
+            if (uri != null) {
+                try (OutputStream stream = resolver.openOutputStream(uri)) {
+                    if (stream != null) {
+                        if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
+                            Log.e("CoreService", "Could not save picture: " + file.getAbsolutePath());
+                        }
+                    }
+                } catch (IOException e) {
+                    resolver.delete(uri, null, null);
+                }
+            }
         }
     }
 }

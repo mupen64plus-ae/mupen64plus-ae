@@ -27,6 +27,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
@@ -271,7 +272,7 @@ public final class FileUtil
      */
     public static boolean copyFile( Context context, Uri src, File dest )
     {
-        if( src == null )
+        if(src == null || TextUtils.isEmpty(src.toString()))
         {
             Log.e( "copyFile", "src null" );
             return false;
@@ -340,7 +341,7 @@ public final class FileUtil
             return false;
         }
 
-        if( dest == null )
+        if(dest == null || TextUtils.isEmpty(dest.toString()) )
         {
             Log.e( "copyFile", "dest null" );
             return false;

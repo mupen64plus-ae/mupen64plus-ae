@@ -29,6 +29,8 @@ import android.graphics.Point;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
 
+import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -53,6 +55,7 @@ import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -459,7 +462,16 @@ public class GlobalPrefs
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
-        screenshotsDir = context.getFilesDir().getAbsolutePath() + "/Screenshots";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            screenshotsDir = context.getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
+        } else {
+            File picturesDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            if (picturesDirectory != null) {
+                screenshotsDir = picturesDirectory.getAbsolutePath() + "/mupen64plus";
+            } else {
+                screenshotsDir = "";
+            }
+        }
         romInfoCacheCfg = context.getFilesDir().getAbsolutePath() + "/romInfoCache.cfg";
         coverArtDir = context.getFilesDir().getAbsolutePath() + "/CoverArt";
         profilesDir = context.getFilesDir().getAbsolutePath() + "/Profiles";

@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.util;
 import android.content.Context;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.DataInputStream;
@@ -216,25 +217,28 @@ public final class RomHeader
     private static byte[] readFile(Context context, Uri file )
     {
         byte[] buffer = new byte[0x40];
-        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r")) {
 
-            if (parcelFileDescriptor != null) {
-                try (DataInputStream in = new DataInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))){
-                    if (in.read(buffer) != 0x40) {
+        if (file != null && !TextUtils.isEmpty(file.toString())) {
+            try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r")) {
+
+                if (parcelFileDescriptor != null) {
+                    try (DataInputStream in = new DataInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))){
+                        if (in.read(buffer) != 0x40) {
+                            buffer = null;
+                            Log.w("RomHeader", "Not enough data for header");
+                        }
+                    } catch (IOException e) {
+                        Log.w("RomHeader", "ROM file could not be read: " + file);
                         buffer = null;
-                        Log.w("RomHeader", "Not enough data for header");
+                    } catch (NullPointerException e) {
+                        Log.w("RomHeader", "How did this happen?: " + file);
+                        buffer = null;
                     }
-                } catch (IOException e) {
-                    Log.w("RomHeader", "ROM file could not be read: " + file);
-                    buffer = null;
-                } catch (NullPointerException e) {
-                    Log.w("RomHeader", "How did this happen?: " + file);
-                    buffer = null;
-                }
 
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return buffer;
