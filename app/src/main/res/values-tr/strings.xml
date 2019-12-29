@@ -39,8 +39,7 @@
   <string name="menuItem_emulationProfiles">Emülasyon profilleri</string>
   <string name="menuItem_touchscreenProfiles">Dokunmatik ekran profilleri</string>
   <string name="menuItem_controllerProfiles">Kontrol profilleri</string>
-  <string name="menuItem_customCheats">Özel hile</string>
-  <string name="menuItem_help">Yardım</string>
+    <string name="menuItem_help">Yardım</string>
   <string name="menuItem_faq">SSS</string>
   <string name="menuItem_helpForum">Yardim forumu</string>
   <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
@@ -64,9 +63,7 @@
   <!--Popup Dialogs-->
   <string name="popup_version">Versiyon: %1$s\nVersiyon kodu: %2$d</string>
   <!--Lists-->
-  <string name="listItem_setDefault">Ön deyer koy</string>
-  <string name="listItem_unsetDefault">Ön deyeri kaldır</string>
-  <string name="listItem_edit">Düzenle</string>
+    <string name="listItem_edit">Düzenle</string>
   <string name="listItem_rename">Adı değiştir</string>
   <string name="listItem_copy">Kopyala</string>
   <string name="listItem_delete">Sil</string>
@@ -79,22 +76,16 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Hile veritabanı tekrar oluşturuluyor…</string>
-  <string name="toast_launchingEmulator">Öykünücü başlatılıyor…</string>
-  <string name="toast_loadingSession">Oyuna otomatik devam ediliyor…</string>
-  <string name="toast_savingSession">Oyun otomatik kaydediliyor…</string>
-  <string name="toast_loadingSlot">%1$d slotu yükleniyor…</string>
+    <string name="toast_loadingSlot">%1$d slotu yükleniyor…</string>
   <string name="toast_savingSlot">%1$d slotu kaydediliyor…</string>
   <string name="toast_loadingFile">%1$s yükleniyor…</string>
   <string name="toast_savingFile">%1$s kaydediliyor…</string>
   <string name="toast_overwritingFile">%1$s üzerine yazılıyor…</string>
-  <string name="toast_loadingGameInfo">Oyun bilgisi yükleniyor...</string>
-  <string name="toast_savingScreenshot">Ekran görüntüsü kaydediliyor...</string>
+    <string name="toast_savingScreenshot">Ekran görüntüsü kaydediliyor...</string>
   <string name="toast_canceling">İptal ediliyor...</string>
   <string name="toast_pleaseWait">Lütfen bekleyiniz...</string>
   <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Şimdi %1$d soltu kullanılıyor</string>
-  <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
+    <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -103,9 +94,7 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Devam Et</string>
   <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
-  <string name="actionRestart_title">Yeniden Başlat</string>
-  <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
-  <string name="actionWiki_title">Wiki</string>
+    <string name="actionWiki_title">Wiki</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <string name="actionResetUserPrefs_title">Ön ayarlar</string>
@@ -113,8 +102,7 @@
   <string name="actionResetGamePrefs_summary">Varsayılan ayarları geri yükle</string>
   <string name="actionShare_title">Paylaş</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">Genel ayarlar</string>
-  <string name="screenCheats_summaryDisabled">Devre dışı</string>
+    <string name="screenCheats_summaryDisabled">Devre dışı</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Hile seçenekleri (notlar için uzun basın)</string>
   <string name="categoryGln64_title">Gln64 Ayarları</string>
@@ -165,11 +153,7 @@
   <string name="displayOrientation_entryReverseLandscape">Ters Manzara</string>
   <string name="displayOrientation_entryPortrait">Portre</string>
   <string name="displayOrientation_entryReversePortrait">Ters portre</string>
-  <string name="displayPosition_title">Dikey ekran konumu</string>
-  <string name="displayPosition_entryBottom">Alt</string>
-  <string name="displayPosition_entryMiddle">Orta</string>
-  <string name="displayPosition_entryTop">Üst</string>
-  <string name="displayResolution_entry960x720">960 x 720</string>
+    <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
   <string name="displayResolution_entry640x480">640 x 480</string>
   <string name="displayResolution_entry480x360">480 x 360</string>
@@ -233,12 +217,7 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Seçilen klasör: %1$s</string>
-  <string name="pathHiResTextures_title">İçe doku paketi aktar</string>
-  <string name="pathHiResTextures_summary">Oyuna özel dokuları (ZIP biçiminde) uygula</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Oyun kayıtları klasörü</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Çoklu Oyuncu</string>
   <string name="playerMap_summary">Her oyuncunun kumandasını tanımla</string>
   <!--Profile Preferences-->
@@ -255,8 +234,7 @@
   <string name="confirmDeleteProfile_message">\"%1$s\" profili silinsin mi?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">UYARI</string>
-  <string name="invalidInstall_message">Mupen64 Plus AE düzgün yüklenmiş olmayabilir. Herhangi bir hata ile karşılaşıyorsanız lütfen uygulamayı tekrardan yükleyiniz.</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE düzgün yüklenmiş olmayabilir. Herhangi bir hata ile karşılaşıyorsanız lütfen uygulamayı tekrardan yükleyiniz.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">dosya adı</string>
   <!--Asset Extractor-->
@@ -271,12 +249,10 @@
   <string name="cheatNotes_title">Notlar</string>
   <string name="cheatNotes_none">(bu hile için notlar mevcut değil)</string>
   <!--Cheat Editor-->
-  <string name="cheatEditor_help">Yardım</string>
-  <string name="cheatEditor_confirm">Emin misiniz?</string>
+    <string name="cheatEditor_confirm">Emin misiniz?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
-  <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <string name="scanning_title">Taranıyor...</string>
@@ -293,8 +269,7 @@
   <string name="playerMap_deviceWithoutName">%1$d Aygıtı</string>
   <string name="playerMapPreference_popupTitle">Oyuncu %1$d</string>
   <string name="playerMapPreference_popupUnmap">Eşlemeyi kaldır</string>
-  <string name="playerMapPreference_reminder">Oyuncular eşlenmediği zaman bana hatırlat</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <string name="touchscreenProfileActivity_buttons">Tuşlar</string>
   <string name="touchscreenProfileActivity_remove">Kaldır</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Yatay: %1$d %%</string>

@@ -9,7 +9,6 @@
     <string name="actionWiki_title">Wiki</string>
     <string name="assetExtractor_finished">Užbaigta</string>
     <string name="audioPlugin_title">Audio plėtinys</string>
-    <string name="cheatEditor_saveConfirm"></string>
     <string name="controller_buttonL">L mygtukas</string>
     <string name="controller_buttonR">R mygtukas</string>
     <string name="controller_buttonS">Pradžios mygtukas</string>
@@ -33,7 +32,6 @@
     <string name="touchscreenProfileActivity_remove">Pašalinti</string>
     <string name="actionResetGamePrefs_title">Numatytieji</string>
     <string name="actionResetUserPrefs_title">Numatytieji</string>
-    <string name="actionRestart_title">Paleisti iš naujo</string>
     <string name="actionResume_title">Tęsti</string>
     <string name="assetExtractor_error">Klaida</string>
     <string name="assetExtractor_initializing">Pradedama</string>
@@ -43,10 +41,7 @@
     <string name="categoryDisplay_title">Ekranas</string>
     <string name="cheatEditor_confirm">Ar esate tuo tikras?</string>
     <string name="cheatEditor_delete">Ištrinti kodą</string>
-    <string name="cheatEditor_edit">Keisti kodus</string>
-    <string name="cheatEditor_help">Pagalba</string>
     <string name="inputMapActivity_pause">Pauzė</string>
-    <string name="invalidInstall_title">Įspėjimas</string>
     <string name="menuItem_credits">Kreditai</string>
     <string name="menuItem_help">Pagalba</string>
 </resources>

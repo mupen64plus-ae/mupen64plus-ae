@@ -93,8 +93,6 @@
     <string name="popup_version">Wersja: %1$s\nKod Wersji: %2$d</string>
 
     <!-- Lists -->
-    <string name="listItem_setDefault">Ustaw domyślne</string>
-    <string name="listItem_unsetDefault">Usuń ustawienie domyślne</string>
     <string name="listItem_edit">Edytuj</string>
     <string name="listItem_rename">Zmień nazwę</string>
     <string name="listItem_copy">Kopiuj</string>
@@ -105,7 +103,6 @@
     <string name="hint_profileName">Nazwa profilu</string>
     <string name="hint_profileComment">Opis (opcjonalnie)</string>
 
-    <string name="toast_launchingEmulator">Uruchamiam emulator…</string>
     <string name="toast_loadingSlot">Ładuję slot %1$d…</string>
     <string name="toast_savingSlot">Zapisuję slot %1$d…</string>
     <string name="toast_loadingFile">Ładuję %1$s…</string>
@@ -115,20 +112,7 @@
     <string name="toast_canceling">Anulowanie...</string>
     <string name="toast_pleaseWait">Proszę czekać…</string>
     <!-- Something happened (use '.') -->
-    <string name="toast_nativeMainFailure01">Nie można przeanalizować wstępnych parametrów wiersza polecenia.</string>
-    <string name="toast_nativeMainFailure02">Nie można złączyć biblioteki rdzeniowej.</string>
-    <string name="toast_nativeMainFailure03">Nie można uruchomić biblioteki rdzeniowej.</string>
-    <string name="toast_nativeMainFailure04">Nie można otworzyć danych konfiguracji.</string>
-    <string name="toast_nativeMainFailure05">Nie można przeanalizować końcowych parametrów wiersza polecenia.</string>
-    <string name="toast_nativeMainFailure06">Nie można używać funkcji --core-compare z tą biblioteką rdzeniową Mupen64Plus.</string>
     <string name="toast_nativeMainFailure07">Nie można otworzyć pliku ROM do odczytu.</string>
-    <string name="toast_nativeMainFailure08">Nie można przydzielić buforu dla pliku obrazu ROM.</string>
-    <string name="toast_nativeMainFailure09">Nie można odczytać bajtów z pliku obrazu ROM.</string>
-    <string name="toast_nativeMainFailure10">Rdzeń nie może otworzyć pliku obrazu ROM.</string>
-    <string name="toast_nativeMainFailure11">Wymienione cheat\'y na żądanie.</string>
-    <string name="toast_nativeMainFailure12">Wczytywanie wtyczek nie powiodło się.</string>
-    <string name="toast_nativeMainFailure13">Rdzeń nie może złączyć wtyczki.</string>
-    <string name="toast_nativeMainFailureUnknown">Nieznany błąd uruchamiania.</string>
     <string name="toast_sdInaccessible">Nie można uzyskać dostępu do karty SD (odłącz kabel USB i spróbuj ponownie).</string>
 
     <!-- ************************************************************************** -->
@@ -142,8 +126,6 @@
     <string name="actionResume_title">Wznów</string>
     <string name="actionResume_summary">Działanie niestabilne przy użyciu cheat\'ów</string>
     <string name="actionStart_title">Startuj</string>
-    <string name="actionRestart_title">Restartuj</string>
-    <string name="actionRestart_summary">Zalecane przy użyciu cheat\'ów</string>
     <string name="actionRemove_title">Usuń</string>
     <string name="actionRemove_summary">Usuń z biblioteki</string>
     <string name="actionWiki_title">Wiki</string>
@@ -333,8 +315,6 @@
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
-    <string name="pathPreference_dialogTitle">Wybrany folder: %1$s</string>
-    <string name="pathGameSaves_title">Folder zapisu gry</string>
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Gra wieloosobowa</string>
     <string name="playerMap_summary">Określ kontrolery dla każdego gracza</string>
@@ -404,7 +384,6 @@
     <string name="scanRomsDialog_downloadArt">Pobierz okładkę</string>
     <string name="scanRomsDialog_clearGallery">Wyczyść galerię przed dodaniem</string>
     <string name="scanRomsDialog_scanSubdirectories">Skanować podkatalogi</string>
-    <string name="scanRomsDialog_reset">Zresetuj</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Skanowanie...</string>
@@ -432,7 +411,6 @@
     <string name="playerMapPreference_popupMessage">Gracz %1$d, proszę wcisnąć przycisk na swoim kontrolerze…\n\nDostępne urządzenia:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Odmapuj</string>
     <string name="playerMapPreference_button">Gracz %1$d\n%2$s</string>
-    <string name="playerMapPreference_reminder">Przypomnij, gdy gracze nie będą zmapowani</string>
 
     <!-- Touchscreen Profile Activity -->
     <string name="touchscreenProfileActivity_menuTitle">Wybierz opcję</string>

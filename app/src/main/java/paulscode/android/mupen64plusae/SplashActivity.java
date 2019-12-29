@@ -60,7 +60,6 @@ import java.util.List;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.ExtractAssetsListener;
@@ -107,8 +106,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String AUDIO_PLUGIN = "audioPlugin";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
-    private static final String GAME_DATA_PATH = "pathGameSaves";
-    private static final String APP_DATA_PATH = "pathAppData";
     private static final String STATE_REQUESTING_PERMISSIONS = "STATE_REQUESTING_PERMISSIONS";
 
     @Override
@@ -160,29 +157,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         final Resources res = getResources();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-
-        //Check for invalid data path
-        String defaultRelPath = res.getString(R.string.pathGameSaves_default);
-
-        String gameDataPathString = prefs.getString( GAME_DATA_PATH, null );
-        if(TextUtils.isEmpty(gameDataPathString) || gameDataPathString.contains(defaultRelPath))
-        {
-            String newDefValue = PathPreference.validate(defaultRelPath);
-            prefs.edit().putString( GAME_DATA_PATH, newDefValue ).apply();
-            gameDataPathString = prefs.getString( GAME_DATA_PATH, null );
-        }
-
-
-        String appDataPathString = prefs.getString( APP_DATA_PATH, null );
-        if(TextUtils.isEmpty(appDataPathString) || appDataPathString.contains(defaultRelPath))
-        {
-            prefs.edit().putString( APP_DATA_PATH, gameDataPathString ).apply();
-        }
-
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
 
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)

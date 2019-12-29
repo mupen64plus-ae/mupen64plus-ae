@@ -126,18 +126,6 @@
     <string name="displayOrientation_default" translatable="false">0</string>
 
     <!-- Screen Position List -->
-    <string-array name="displayPosition_entries" translatable="false">
-        <item>@string/displayPosition_entryTop</item>
-        <item>@string/displayPosition_entryMiddle</item>
-        <item>@string/displayPosition_entryBottom</item>
-    </string-array>
-    <string-array name="displayPosition_values" translatable="false">
-        <item>48</item> <!-- Gravity.TOP -->
-        <item>16</item> <!-- Gravity.CENTER_VERTICAL -->
-        <item>80</item> <!-- Gravity.BOTTOM -->
-    </string-array>
-
-    <string name="displayPosition_default" translatable="false">48</string>
 
     <!-- Screen Resolution List -->
     <string-array name="displayResolution_entries" translatable="false">

@@ -38,8 +38,7 @@
   <string name="menuItem_emulationProfiles">اعدادات التطبيق العامة</string>
   <string name="menuItem_touchscreenProfiles">اعدادات شاشة المس</string>
   <string name="menuItem_controllerProfiles">الادخال الخاص</string>
-  <string name="menuItem_customCheats">الهاك المعدل</string>
-  <string name="menuItem_help">مساعدة</string>
+    <string name="menuItem_help">مساعدة</string>
   <string name="menuItem_faq">الاسئلة</string>
   <string name="menuItem_helpForum">المنتدى للمساعده</string>
   <string name="menuItem_controllerDiagnostics">حالة اداة التحكم</string>
@@ -64,9 +63,7 @@
   <string name="popup_faq">Mupen64Plus تم تتطويره وصيانته من قبل متطوعين.&lt;small&gt; \n\n من اجل اصلاح اخطاء الفيديو,قم بتعديل&lt;i&gt; خصائص الفيديو &lt;/i&gt;.\n\n لتخلص من التهنيق من قائمة الاعدادات او من &lt;i&gt; مدمجات الفيديو &lt;/i&gt;.\n\n واذا واجهتك مشكله في الروم قم بفك الظغط عنه او تجربة اصدار اخر لروم . \n\n ومن اجل شاشة المسل  قم بتعديل &lt;i&gt; امتداد الازرار &lt;i&gt; او من &lt;i&gt; موقع الازرار &lt;/i&gt;.\n\n ومن اجل المساعده يمكنك الظغط على &lt;i&gt;الاسئلة&lt;/i&gt; بالاسفل ومن اجل ابلاغ عن عطل معين وقم باظغط  &lt;i&gt;تبليغ عن عطل&lt;/i&gt; وسيتم الرد عليك خلال 24 ساعه. .\n\n&lt;/small&gt; واخيرا شكرا لك للمساعده في تطوير هاذا التطبيق.</string>
   <string name="popup_version">الاصدار: %1$s\n نسخة الكود: %2$d</string>
   <!--Lists-->
-  <string name="listItem_setDefault">الوضع الافتراضي</string>
-  <string name="listItem_unsetDefault">فصل الوضع الافتراضي</string>
-  <string name="listItem_edit">تعديل</string>
+    <string name="listItem_edit">تعديل</string>
   <string name="listItem_rename">اعادة التسمية</string>
   <string name="listItem_copy">نسخ</string>
   <string name="listItem_delete">حذف</string>
@@ -79,36 +76,17 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">اعادة بناء قاعدة بيانات الهاك</string>
-  <string name="toast_launchingEmulator">تشغيل المحاكي...</string>
-  <string name="toast_loadingSession">تكلمة العبة تلقائيا...</string>
-  <string name="toast_savingSession">الحفظ التلقائي</string>
-  <string name="toast_loadingSlot">التحميل السريع %1$d...</string>
+    <string name="toast_loadingSlot">التحميل السريع %1$d...</string>
   <string name="toast_savingSlot">الحفظ السريع %1$d...</string>
   <string name="toast_loadingFile">تحميل %1$s…</string>
   <string name="toast_savingFile">حفظ %1$s…</string>
   <string name="toast_overwritingFile">اعادة الكتابه على %1$s…</string>
-  <string name="toast_loadingGameInfo">تحميل معلومات الروم...</string>
-  <string name="toast_savingScreenshot">حفظ الصورة...</string>
+    <string name="toast_savingScreenshot">حفظ الصورة...</string>
   <string name="toast_canceling">الغاء العملية...</string>
   <string name="toast_pleaseWait">ارجو الانتضار...</string>
   <!--Something happened (use '.')-->
-  <string name="toast_nativeMainFailure01">فشل في تحليل سطر الاوامر الاولية</string>
-  <string name="toast_nativeMainFailure02">فشل في دمج مكتبة النواة.</string>
-  <string name="toast_nativeMainFailure03">فشل في بدء مكتبة النواة.</string>
-  <string name="toast_nativeMainFailure04">فشل في فتح الاعدادات.</string>
-  <string name="toast_nativeMainFailure05">فشل في تحليل سطر الاوامر النهائيه.</string>
-  <string name="toast_nativeMainFailure06">لا يمكنك استعمال -- النواه مع نواة Mupen64Plus .</string>
-  <string name="toast_nativeMainFailure07">فشل في فتح الروم من اجل التشغيل.</string>
-  <string name="toast_nativeMainFailure08">فشل في تحديد buffer من اجل الروم.</string>
-  <string name="toast_nativeMainFailure09">فشل في قراءة بايت من الروم.</string>
-  <string name="toast_nativeMainFailure10">فشل النواة في تشغيل الروم.</string>
-  <string name="toast_nativeMainFailure11">جلب قائمة الهاك حسب الطلب</string>
-  <string name="toast_nativeMainFailure12">فشل في تحميل الاضافات.</string>
-  <string name="toast_nativeMainFailure13">فشل النواه في الدمج مع الاضافات.</string>
-  <string name="toast_nativeMainFailureUnknown">مشكلة غير معروفه عند التشغيل</string>
-  <string name="toast_usingSlot">الان المدخل %1$d.</string>
-  <string name="toast_sdInaccessible">لا يمكن الوصول لذاكره (قم بفصل كيبل USB واعد المحاوله).</string>
+    <string name="toast_nativeMainFailure07">فشل في فتح الروم من اجل التشغيل.</string>
+    <string name="toast_sdInaccessible">لا يمكن الوصول لذاكره (قم بفصل كيبل USB واعد المحاوله).</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -117,9 +95,7 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">استكمال</string>
   <string name="actionResume_summary">اخطاء غير متوقعة عند استخدام الهاك</string>
-  <string name="actionRestart_title">اعادة التشغيل</string>
-  <string name="actionRestart_summary">مستحسن استخدام الهاك</string>
-  <string name="actionWiki_title">ويكيبيديا</string>
+    <string name="actionWiki_title">ويكيبيديا</string>
   <string name="actionWiki_summary">الحصول على المساعدة لهذه الروم</string>
   <string name="actionReloadAssets_title">اعادة تحميل مصادر التطبيق</string>
   <string name="actionReloadAssets_summary">الاعدادات الخاصه لا توئثر على الروم او على حفظ او على البيانات الخاصه</string>
@@ -133,9 +109,7 @@
   <string name="actionCheatEditor_summary">اضافة,تعديل و الحذف على الهاك المعدل</string>
   <string name="actionShare_title">المشاركة</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">الاعدادات العامه</string>
-  <string name="screenGlobalSettings_summary">الشاشه,الصوت,التخزين,و اعدادات المنقح</string>
-  <string name="screenCheats_title">الهاك</string>
+    <string name="screenCheats_title">الهاك</string>
   <string name="screenCheats_summaryEnabled">تفعيل</string>
   <string name="screenCheats_summaryDisabled">الغاء التفعيل</string>
   <!--Preference Categories-->
@@ -148,9 +122,7 @@
   <string name="categoryTouchscreen_title">شاشة المس</string>
   <string name="categoryInput_title">الادخال</string>
   <string name="categoryData_title">البيانات</string>
-  <string name="categoryGameSettings_title">اعدادات خاصه لروم</string>
-  <string name="categoryGameSettings_titleNamed">اعدادات %1$s</string>
-  <!--Checkbox Preferences-->
+    <!--Checkbox Preferences-->
   <string name="playShowCheats_title">تفعيل الهاك</string>
   <string name="touchscreenFeedback_title">التحريك عند المس</string>
   <string name="touchscreenFeedback_summary">الارتجاج عند ظغط الازار</string>
@@ -195,11 +167,7 @@
   <string name="displayOrientation_entryReverseLandscape">الشاشه بشكل عرضي مقلوب</string>
   <string name="displayOrientation_entryPortrait">الشاشة بشكل طولي</string>
   <string name="displayOrientation_entryReversePortrait">الشاشة بشكل طولي مقلوب</string>
-  <string name="displayPosition_title">موقع الشاشة بشكل عامودي</string>
-  <string name="displayPosition_entryBottom">اسفل</string>
-  <string name="displayPosition_entryMiddle">متوسط</string>
-  <string name="displayPosition_entryTop">الاعلى</string>
-  <string name="displayResolution_title">مقاسات Rendered</string>
+    <string name="displayResolution_title">مقاسات Rendered</string>
   <string name="displayResolution_entryNative">مقاسات الشاشه (الطبيعي)</string>
   <string name="displayResolution_entry960x720">960 في 720</string>
   <string name="displayResolution_entry800x600">800 في 600</string>
@@ -246,14 +214,11 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">مجلد الحفظ</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <!--Profile Preferences-->
   <string name="emulationProfile_title">خيارات المحاكي</string>
   <string name="touchscreenProfile_title">خيارات شاشة المس</string>
-  <string name="controllerProfile_title">خيارات التحكم</string>
-  <string name="controllerProfile1_title">خيارات التحكم 1</string>
+    <string name="controllerProfile1_title">خيارات التحكم 1</string>
   <string name="controllerProfile2_title">خيارات التحكم 2</string>
   <string name="controllerProfile3_title">خيارات التحكم 3</string>
   <string name="controllerProfile4_title">خيارات التحكم 4</string>
@@ -267,8 +232,7 @@
   <string name="confirmResetGame_message">اعدة التشغيل؟ جميع مناطق الحفظ سوف تحذف.</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">تحذير</string>
-  <!--Text Editor Hints (start lower-case)-->
+    <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">اسم الملف</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">تهية...</string>
@@ -281,13 +245,9 @@
   <string name="cheatNotes_none">(لا يوجد ملاحظات على هاذا الهاك)</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">محرر الهاك</string>cheatEditor_empty
-  <string name="cheatEditor_edit">تعديل الهاك</string>
-  <string name="cheatEditor_help">مساعدة</string>
-  <string name="cheatEditor_delete">حذف الهاك</string>
+    <string name="cheatEditor_delete">حذف الهاك</string>
   <string name="cheatEditor_confirm">هل انت متاكد؟</string>
-  <string name="cheatEditor_info">معلومات عن الهاك</string>
-  <string name="cheatEditor_saveConfirm">حفظ الهاك الى ملف؟</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">فك الظغط عن الخامات</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->

@@ -34,8 +34,7 @@
   <string name="menuItem_emulationProfiles">Gebruikersprofiel</string>
   <string name="menuItem_touchscreenProfiles">Touchscreenprofielen</string>
   <string name="menuItem_controllerProfiles">Controllerprofielen</string>
-  <string name="menuItem_customCheats">Eigen cheats</string>
-  <string name="menuItem_help">Help</string>
+    <string name="menuItem_help">Help</string>
   <string name="menuItem_faq">Veelgestelde vragen</string>
   <string name="menuItem_helpForum">Helpforum</string>
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
@@ -70,19 +69,13 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Cheatdatabase opnieuw aan het opbouwen…</string>
-  <string name="toast_launchingEmulator">Emulator starten…</string>
-  <string name="toast_loadingSession">Spel wordt automatisch hervat…</string>
-  <string name="toast_savingSession">Spel automatisch opslaan…</string>
-  <string name="toast_loadingSlot">Slot %1$d laden…</string>
+    <string name="toast_loadingSlot">Slot %1$d laden…</string>
   <string name="toast_savingSlot">Slot %1$d opslaan…</string>
   <string name="toast_loadingFile">%1$s laden…</string>
   <string name="toast_savingFile">%1$s opslaan…</string>
   <string name="toast_overwritingFile">%1$s wordt overschreven…</string>
-  <string name="toast_loadingGameInfo">Game info aan het laden...</string>
-  <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Huidig slot %1$d.</string>
-  <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
+    <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -91,17 +84,13 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Hervat</string>
   <string name="actionResume_summary">Onvoorspelbaar als cheats worden gebruikt</string>
-  <string name="actionRestart_title">Herstart</string>
-  <string name="actionRestart_summary">Aanbevolen als cheats worden gebruikt</string>
-  <string name="actionReloadAssets_title">Applicatiebronnen herladen</string>
+    <string name="actionReloadAssets_title">Applicatiebronnen herladen</string>
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens</string>
   <string name="actionCheatEditor_title">Beheer cheat codes</string>
   <string name="actionCheatEditor_summary">Voeg toe, verander en verwijder cheat codes</string>
   <string name="actionShare_title">Deel</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">Globale instellingen</string>
-  <string name="screenGlobalSettings_summary">Beeld, geluid, opslag en debug instellingen</string>
-  <string name="screenCheats_title">Cheats</string>
+    <string name="screenCheats_title">Cheats</string>
   <string name="screenCheats_summaryEnabled">Ingeschakeld</string>
   <string name="screenCheats_summaryDisabled">Uitgeschakeld</string>
   <!--Preference Categories-->
@@ -114,9 +103,7 @@
   <string name="categoryTouchscreen_title">Aanraakscherm</string>
   <string name="categoryInput_title">Invoer</string>
   <string name="categoryData_title">Gegevens</string>
-  <string name="categoryGameSettings_title">Spelspecifieke instellingen</string>
-  <string name="categoryGameSettings_titleNamed">%1$s instellingen</string>
-  <!--Checkbox Preferences-->
+    <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Cheats inschakelen</string>
   <string name="touchscreenFeedback_title">Haptische feedback</string>
   <string name="touchscreenFeedback_summary">Trillen bij knopaanraking</string>
@@ -160,11 +147,7 @@
   <string name="displayOrientation_entryReverseLandscape">Omgekeerd landschap</string>
   <string name="displayOrientation_entryPortrait">Portet</string>
   <string name="displayOrientation_entryReversePortrait">Omgekeerd portret</string>
-  <string name="displayPosition_title">Vertikale schermpositie</string>
-  <string name="displayPosition_entryBottom">Onderkant</string>
-  <string name="displayPosition_entryMiddle">Midden</string>
-  <string name="displayPosition_entryTop">Bovenkant</string>
-  <string name="displayResolution_title">Gerenderde resolutie</string>
+    <string name="displayResolution_title">Gerenderde resolutie</string>
   <string name="displayResolution_entryNative">Eigen (hoogste kwaliteit)</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
@@ -236,19 +219,13 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Geselecteerde map: %1$s</string>
-  <string name="pathHiResTextures_title">Importeer textuurpakket</string>
-  <string name="pathHiResTextures_summary">Pas eigen texturen toe (ZIP formaat) op een spel</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Map voor opgeslagen spellen</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Meerdere spelers</string>
   <string name="playerMap_summary">Controller voor elke speler instellen</string>
   <!--Profile Preferences-->
   <string name="emulationProfile_title">Emulatie profiel</string>
   <string name="touchscreenProfile_title">Aanraakscherm profiel</string>
-  <string name="controllerProfile_title">Controller profiel</string>
-  <string name="controllerProfile1_title">Profiel van controller 1</string>
+    <string name="controllerProfile1_title">Profiel van controller 1</string>
   <string name="controllerProfile2_title">Profiel van controller 2</string>
   <string name="controllerProfile3_title">Profiel van controller 3</string>
   <string name="controllerProfile4_title">Profiel van controller 4</string>
@@ -265,8 +242,7 @@
   <string name="confirmDeleteProfile_message">Wilt u het profiel \"%1$s\" verwijderen?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">Waarschuwing</string>
-  <string name="invalidInstall_message">Mupen64 Plus AE is mogelijk onjuist geïnstalleerd. Installeer de app opnieuw als u last heeft van crashes.</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE is mogelijk onjuist geïnstalleerd. Installeer de app opnieuw als u last heeft van crashes.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">bestandsnaam</string>
   <!--Asset Extractor-->
@@ -282,16 +258,11 @@
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">Cheat editor</string>cheatEditor_empty
-  <string name="cheatEditor_edit">Verander cheats</string>
-  <string name="cheatEditor_help">Help</string>
-  <string name="cheatEditor_delete">Verwijder cheat</string>
+    <string name="cheatEditor_delete">Verwijder cheat</string>
   <string name="cheatEditor_confirm">Weet u het zeker?</string>
-  <string name="cheatEditor_info">Cheat informatie</string>
-  <string name="cheatEditor_saveConfirm">Wilt u de cheat file opslaan?</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Texturen uitpakken</string>
-  <string name="pathHiResTexturesTask_message">Wees geduldig. Dit proces kan enige tijd duren.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Probleem met het uitpakken van texturen!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Probleem met het uitpakken van texturen!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
@@ -304,8 +275,7 @@
   <string name="playerMap_deviceWithoutName">Apparaat %1$d</string>
   <string name="playerMapPreference_popupTitle">Speler %1$d</string>
   <string name="playerMapPreference_popupUnmap">Toewijzing ongedaan maken</string>
-  <string name="playerMapPreference_reminder">Herinner mij als spelers niet zijn toegewezen</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
   <string name="controller_buttonCr">C-knop →</string>
   <string name="controller_buttonCl">C-knop ←</string>

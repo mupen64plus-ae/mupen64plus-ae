@@ -28,8 +28,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Surface;
 
-import androidx.documentfile.provider.DocumentFile;
-
 import com.sun.jna.Callback;
 import com.sun.jna.JNIEnv;
 import com.sun.jna.Library;
@@ -49,7 +47,6 @@ import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.apache.commons.io.FileUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -58,6 +55,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.SevenZInputStream;
 
@@ -133,6 +131,11 @@ class CoreInterface
     private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
     private String mDdRom = null;
     private String mDdDisk = null;
+    private static final String GB_ROM_NAME = "gb_rom.gb";
+    private static final String GB_RAM_NAME = "gb_ram.gb";
+    private static final String DD_ROM_NAME = "dd_rom.n64";
+    private static final String DD_DISK_NAME = "dd_disk.ndd";
+    private File mWorkingPath = null;
 
     private HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
@@ -215,6 +218,18 @@ class CoreInterface
         mMediaLoaderCallbacks.ddDiskCallback = mDdDiskCallback;
     }
 
+    void setWorkingPath(String path) {
+        mWorkingPath = new File(path);
+
+        mDdRom = mWorkingPath + "/" + DD_ROM_NAME;
+        mDdDisk = mWorkingPath + "/" + DD_DISK_NAME;
+
+        for (int player = 1; player <= 4; ++player) {
+            mGbRomPaths.put(player, mWorkingPath + "/player" + player + "_" + GB_ROM_NAME);
+            mGbRamPaths.put(player, mWorkingPath + "/player" + player + "_" + GB_RAM_NAME);
+        }
+    }
+
     private void DebugCallback(Pointer Context, int level, String message)
     {
         if (level == CoreTypes.m64p_msg_level.M64MSG_ERROR.ordinal())
@@ -256,7 +271,7 @@ class CoreInterface
         return success;
     }
 
-    private byte[] ExtractZip(Context context, String romFileName, String zipPathUri) {
+    private byte[] extractZip(Context context, String romFileName, String zipPathUri) {
 
         byte[] returnData = null;
 
@@ -271,7 +286,7 @@ class CoreInterface
                 try {
                     final String entryName = new File(zipEntry.getName()).getName();
 
-                    lbFound = entryName.equals(romFileName);
+                    lbFound = entryName.equals(romFileName) || romFileName == null;
 
                     if (lbFound) {
                         returnData = new byte[(int) zipEntry.getSize()];
@@ -302,7 +317,7 @@ class CoreInterface
         return returnData;
     }
 
-    private byte[] ExtractSevenZ(Context context, String romFileName, String zipPath)
+    private byte[] extractSevenZ(Context context, String romFileName, String zipPath)
     {
         byte[] returnData = null;
 
@@ -324,7 +339,7 @@ class CoreInterface
                         try (InputStream zipStream = new SevenZInputStream(zipFile)) {
                             final String entryName = new File(zipEntry.getName()).getName();
 
-                            lbFound = entryName.equals(romFileName);
+                            lbFound = entryName.equals(romFileName) || romFileName == null;
 
                             if (lbFound) {
                                 returnData = new byte[(int) zipEntry.getSize()];
@@ -366,9 +381,9 @@ class CoreInterface
         final RomHeader romHeader = new RomHeader(context, Uri.parse(zipPathUri));
 
         if (romHeader.isZip) {
-            romBuffer = ExtractZip(context, romName, zipPathUri);
+            romBuffer = extractZip(context, romName, zipPathUri);
         } else if (romHeader.is7Zip) {
-            romBuffer = ExtractSevenZ(context, romName, zipPathUri);
+            romBuffer = extractSevenZ(context, romName, zipPathUri);
         }
 
         boolean success = romBuffer != null;
@@ -385,20 +400,80 @@ class CoreInterface
         return success;
     }
 
-    public void setGbRomPath(SparseArray<String> romPaths) {
-        mGbRomPaths = romPaths;
+    public void setGbRomPath(Context context, SparseArray<String> romUris)
+    {
+        for (int player = 1; player <= 4; ++player) {
+            byte[] romBuffer;
+            final RomHeader romHeader = new RomHeader(context, Uri.parse(romUris.get(player)));
+
+            if (romHeader.isZip || romHeader.is7Zip) {
+
+                if (romHeader.isZip) {
+                    romBuffer = extractZip(context, null, romUris.get(player));
+                } else {
+                    romBuffer = extractSevenZ(context, null, romUris.get(player));
+                }
+
+                if (romBuffer != null) {
+                    try {
+                        FileUtils.writeByteArrayToFile(new File(mGbRomPaths.get(player)), romBuffer);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                FileUtil.copyFile(context, Uri.parse(romUris.get(player)), new File(mGbRomPaths.get(player)));
+            }
+        }
     }
 
-    public void setGbRamPath(SparseArray<String> ramPaths) {
-        mGbRamPaths = ramPaths;
+    public void setGbRamPath(Context context, SparseArray<String> ramUri)
+    {
+        for (int player = 1; player <= 4; ++player) {
+            FileUtil.copyFile(context, Uri.parse(ramUri.get(player)), new File(mGbRamPaths.get(player)));
+        }
     }
 
-    public void setDdRomPath(String ddRomPath) {
-        this.mDdRom = ddRomPath;
+    public void setDdRomPath(Context context, String ddRomUri)
+    {
+        byte[] romBuffer;
+        final RomHeader romHeader = new RomHeader(context, Uri.parse(ddRomUri));
+
+        if (romHeader.isZip || romHeader.is7Zip) {
+
+            if (romHeader.isZip) {
+                romBuffer = extractZip(context, null, ddRomUri);
+            } else {
+                romBuffer = extractSevenZ(context, null, ddRomUri);
+            }
+
+            if (romBuffer != null) {
+                try {
+                    FileUtils.writeByteArrayToFile(new File(mDdRom), romBuffer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            FileUtil.copyFile(context, Uri.parse(ddRomUri), new File(mDdRom));
+        }
     }
 
-    public void setDdDiskPath(String ddDiskPath) {
-        this.mDdDisk = ddDiskPath;
+    public void setDdDiskPath(Context context, String ddDiskUri)
+    {
+        FileUtil.copyFile(context, Uri.parse(ddDiskUri), new File(mDdDisk));
+    }
+
+    public void writeGbRamData(Context context, SparseArray<String> ramUri)
+    {
+        for (int player = 1; player <= 4; ++player) {
+            FileUtil.copyFile(context, new File(mGbRamPaths.get(player)), Uri.parse(ramUri.get(player)));
+        }
+    }
+
+    public void writeDdDiskData(Context context, String ddDiskUri)
+    {
+        FileUtil.copyFile(context, new File(mDdDisk), Uri.parse(ddDiskUri) );
     }
 
     /* coreStartup()

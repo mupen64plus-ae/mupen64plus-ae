@@ -97,8 +97,6 @@
     <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
 
     <!-- Lists -->
-    <string name="listItem_setDefault">Установить по умолчанию</string>
-    <string name="listItem_unsetDefault">Убрать умолчания</string>
     <string name="listItem_edit">Изменить</string>
     <string name="listItem_rename">Переименовать</string>
     <string name="listItem_copy">Скопировать</string>
@@ -109,7 +107,6 @@
     <string name="hint_profileName">Имя профиля</string>
     <string name="hint_profileComment">Описание (не обязательно)</string>
 
-    <string name="toast_launchingEmulator">Запуск эмулятора…</string>
     <string name="toast_loadingSlot">Слот загрузки %1$d…</string>
     <string name="toast_savingSlot">Слот сохранения %1$d…</string>
     <string name="toast_loadingFile">Загрузка %1$s…</string>
@@ -119,20 +116,7 @@
     <string name="toast_canceling">Отмена…</string>
     <string name="toast_pleaseWait">Пожалуйста подождите…</string>
     <!-- Something happened (use '.') -->
-    <string name="toast_nativeMainFailure01">Ошибка разбора начальной команды параметров строки.</string>
-    <string name="toast_nativeMainFailure02">Ошибка подключения библиотеки ядра.</string>
-    <string name="toast_nativeMainFailure03">Ошибка старта библиотеки ядра.</string>
-    <string name="toast_nativeMainFailure04">Ошибка открытия настроек конфигурации.</string>
-    <string name="toast_nativeMainFailure05"> Ошибка разбора конечной команды параметров строки.</string>
-    <string name="toast_nativeMainFailure06">Невозможно использовать возможность –объединения-ядер при текущей библиотеке ядер Mupen64Plus.</string>
     <string name="toast_nativeMainFailure07">Ошибка открытия рома для чтения.</string>
-    <string name="toast_nativeMainFailure08">Ошибка назначения буфера для файла изображения рома.</string>
-    <string name="toast_nativeMainFailure09">Ошибка чтения байтов файла изображения рома.</string>
-    <string name="toast_nativeMainFailure10">Ядро не смогло открыть файл изображения рома.</string>
-    <string name="toast_nativeMainFailure11">Перечислить читы как запрашиваемые.</string>
-    <string name="toast_nativeMainFailure12">Ошибка загрузки плагинов.</string>
-    <string name="toast_nativeMainFailure13">Ядро не смогло подключить плагины.</string>
-    <string name="toast_nativeMainFailureUnknown">Неизвестная ошибка запуска.</string>
     <string name="toast_sdInaccessible">Данные приложения отсутствуют, попытка перезагрузки.</string>
 
     <!-- ************************************************************************** -->
@@ -146,8 +130,6 @@
     <string name="actionResume_title">Продолжить</string>
     <string name="actionResume_summary">Непредсказуемо при использовании читов</string>
     <string name="actionStart_title">Старт</string>
-    <string name="actionRestart_title">Перезапуск</string>
-    <string name="actionRestart_summary">Рекомендуется при использовании читов</string>
     <string name="actionRemove_title">Убрать</string>
     <string name="actionRemove_summary">Убрать из библиотеки</string>
     <string name="actionWiki_title">Вики</string>
@@ -182,7 +164,6 @@
     <string name="categoryInput_title">Ввод</string>
 
     <string name="categoryData_title">Данные</string>
-    <string name="categoryGameSettings_title">Настройки для этой игры</string>
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Включить читы</string>
     <string name="touchscreenFeedback_title">Тактильная обратная связь</string>
@@ -314,7 +295,6 @@
     <string name="gliden64_enable_noise_title">Включить эмуляцию шума</string>
     <string name="gliden64_enable_lod_title">Включить LOD эмуляцию</string>
     <string name="gliden64_enable_hw_lighting_title">Включить аппаратную подсветку на каждый пиксель</string>
-    <string name="gliden64_enable_shader_storage_title">Использовать кэш шейдера</string>
     <string name="gliden64_correct_texrect_coords_title">сделать координаты texrect непрерывными</string>
     <string name="gliden64_correct_texrect_coords_off">Выключить</string>
     <string name="gliden64_correct_texrect_coords_auto">Авто</string>
@@ -448,9 +428,6 @@
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
-    <string name="pathPreference_dialogTitle">Выбрать папку: %1$s</string>
-    <string name="pathGameSaves_title">Папка сохранений</string>
-    <string name="pathAppData_title">Папка данных приложения</string>
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Мультиплеер</string>
@@ -539,7 +516,6 @@
     <string name="scanRomsDialog_downloadArt">Загрузить обложку</string>
     <string name="scanRomsDialog_clearGallery">Очистить галерею перед добавлением</string>
     <string name="scanRomsDialog_scanSubdirectories">Сканировать подпапки</string>
-    <string name="scanRomsDialog_reset">Сброс</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Сканирование…</string>
@@ -567,7 +543,6 @@
     <string name="playerMapPreference_popupMessage">Игрок %1$d, нажмите кнопку или стик на вашем контроллере …\n\nТекущие устройства:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Сбросить значение клавиш</string>
     <string name="playerMapPreference_button">Игрок %1$d\n%2$s</string>
-    <string name="playerMapPreference_reminder">Напомнить мне, если кнопки игроков не назначены</string>
 
     <!-- Touchscreen Profile Activity -->
     <string name="touchscreenProfileActivity_menuTitle">Выберите вариант</string>

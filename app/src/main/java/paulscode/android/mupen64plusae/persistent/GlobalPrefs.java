@@ -445,12 +445,12 @@ public class GlobalPrefs
         mLocaleCodes = values;
 
         // Files
-        String galleryCacheDir = appData.userDataDir + "/GalleryCache";
+        String galleryCacheDir = appData.legacyUserDataDir + "/GalleryCache";
         legacyRomInfoCacheCfg = galleryCacheDir + "/romInfoCache.cfg";
         legacyCoverArtDir = galleryCacheDir + "/CoverArt";
-        legacyProfilesDir = appData.userDataDir + "/Profiles";
-        legacyTouchscreenCustomSkinsDir = appData.userDataDir + "/CustomSkins";
-        legacyCoreConfigDir = appData.userDataDir + "/CoreConfig";
+        legacyProfilesDir = appData.legacyUserDataDir + "/Profiles";
+        legacyTouchscreenCustomSkinsDir = appData.legacyUserDataDir + "/CustomSkins";
+        legacyCoreConfigDir = appData.legacyUserDataDir + "/CoreConfig";
 
         final String coreConfigDir = context.getCacheDir().getAbsolutePath() + "/CoreConfig";
         coreUserDataDir = coreConfigDir + "/UserData";

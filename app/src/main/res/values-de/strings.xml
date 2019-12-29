@@ -92,8 +92,6 @@
     <string name="popup_version">Version: %1$s\nVersionscode: %2$d</string>
 
     <!-- Lists -->
-    <string name="listItem_setDefault">Als Standard setzen</string>
-    <string name="listItem_unsetDefault">Als Standard entfernen</string>
     <string name="listItem_edit">Bearbeiten</string>
     <string name="listItem_rename">Umbenennen</string>
     <string name="listItem_copy">Kopieren</string>
@@ -111,37 +109,18 @@
 
 
     <!-- Something happening (typically use '-ing' and '…') -->
-    <string name="toast_rebuildingCheats">Cheat-Datenbank wird neu aufgebaut…</string>
-    <string name="toast_launchingEmulator">Emulator wird gestartet…</string>
-    <string name="toast_loadingSession">Spiel wird autom. fortgesetzt…</string>
-    <string name="toast_savingSession">Spiel wird autom. gespeichert…</string>
     <string name="toast_loadingSlot">Slot %1$d wird geladen…</string>
     <string name="toast_savingSlot">Slot %1$d wird gespeichert…</string>
     <string name="toast_loadingFile">%1$s wird geladen…</string>
     <string name="toast_savingFile">%1$s wird gespeichert…</string>
     <string name="toast_overwritingFile">%1$s wird überschrieben…</string>
-    <string name="toast_loadingGameInfo">Spielinformationen werden geladen...</string>
     <string name="toast_savingScreenshot">Screenshot wird gespeichert...</string>
     <string name="toast_canceling">Breche ab...</string>
     <string name="toast_pleaseWait">Bitte warten...</string>
     <string name="toast_paused">Pausiert…</string>
     <string name="toast_running">Läuft…</string>
     <!-- Something happened (use '.') -->
-    <string name="toast_nativeMainFailure01">Der Anfangsbefehlszeilenparameter konnte nicht geparsert werden.</string>
-    <string name="toast_nativeMainFailure02">Kernbibliothek konnte nicht anhängt werden.</string>
-    <string name="toast_nativeMainFailure03">Kernbibliothek konnte nicht gestartet werden.</string>
-    <string name="toast_nativeMainFailure04">Konfigurations-handles konnten nicht geöffnet werden.</string>
-    <string name="toast_nativeMainFailure05">Die abschließenden Kommandozeilen-Parameter konnten nicht geparsert werden</string>
-    <string name="toast_nativeMainFailure06">--core-compare Funktion kann mit dieser Mupen64Plus-Kernbibliothek nicht benutzt werden.</string>
     <string name="toast_nativeMainFailure07">ROM-Datei konnte nicht zum Lesen geöffnet werden.</string>
-    <string name="toast_nativeMainFailure08">Fehler bei der Zuweisung des Puffers für die ROM-Image-Datei .</string>
-    <string name="toast_nativeMainFailure09">Fehler beim Lesen von Bytes der ROM-Image-Datei.</string>
-    <string name="toast_nativeMainFailure10">Der Kern konnte die ROM-Image-Datei nicht öffnen.</string>
-    <string name="toast_nativeMainFailure11">Die gewünschten aufgelisteten Cheats.</string>
-    <string name="toast_nativeMainFailure12">Plugins konnten nicht geladen werden.</string>
-    <string name="toast_nativeMainFailure13">Der Kern konnte das Plugin nicht anhängen.</string>
-    <string name="toast_nativeMainFailureUnknown">Unbekannter Startfehler.</string>
-    <string name="toast_usingSlot">Slot %1$d wird nun genutzt.</string>
     <string name="toast_sdInaccessible">SD-Karte nicht zugänglich (trenne das USB-Kabel und versuche es erneut).</string>
 
     <!-- ************************************************************************** -->
@@ -155,8 +134,6 @@
     <string name="actionResume_title">Fortsetzen</string>
     <string name="actionResume_summary">Unberechenbar, wenn Cheats genutzt werden</string>
     <string name="actionStart_title">Start</string>
-    <string name="actionRestart_title">Neustart</string>
-    <string name="actionRestart_summary">Empfohlen, wenn Cheats genutzt werden</string>
     <string name="actionRemove_title">Entfernen</string>
     <string name="actionRemove_summary">Aus Bibliothek entfernen</string>
     <string name="actionWiki_title">Wiki</string>
@@ -174,8 +151,6 @@
     <string name="actionShare_title">Teilen</string>
 
     <!-- Preference Screens -->
-    <string name="screenGlobalSettings_title">Globale Einstellungen</string>
-    <string name="screenGlobalSettings_summary">Anzeige, Audio, Speicher und Debug Einstellungen</string>
     <string name="screenCheats_title">Cheats</string>
     <string name="screenCheats_summaryEnabled">Aktiviert</string>
     <string name="screenCheats_summaryDisabled">Deaktiviert</string>
@@ -188,7 +163,6 @@
     <string name="categoryRice_title">Rice-Einstellungen</string>
     <string name="categoryGlide64_title">Glide64-Einstellungen</string>
     <string name="categoryGlide64Advanced_title">Erweiterte Glide64-Einstellungen</string>
-    <string name="categoryGliden64_title">GlideN64-Einstellungen</string>
     <string name="categoryLibrary_title">Bibliothek</string>
     <string name="categoryDisplay_title">Anzeige</string>
     <string name="categoryAudio_title">Audio</string>
@@ -196,8 +170,6 @@
     <string name="categoryInput_title">Eingabe</string>
 
     <string name="categoryData_title">Daten</string>
-    <string name="categoryGameSettings_title">Spiel-spezifische Einstellungen</string>
-    <string name="categoryGameSettings_titleNamed">%1$s Einstellungen</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Cheats aktivieren</string>
@@ -244,7 +216,6 @@
     <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
     <string name="touchscreenAutoHold_entryLongPress">Bei langem Drücken</string>
     <string name="touchscreenAutoHold_entrySlideOut">Beim Wegsliden</string>
-    <string name="touchscreenAnimation_title">Visuelle Rückmeldung</string>
     <string name="touchscreenAnimation_summary">Joystick animieren</string>
     <string name="touchscreenInvertTouchXAxis_summary">X-Achse umkehren</string>
     <string name="touchscreenInvertTouchYAxis_summary">Y-Achse umkehren</string>
@@ -260,10 +231,6 @@
     <string name="displayOrientation_entryPortrait">Hochformat</string>
     <string name="displayOrientation_entryReversePortrait">Hochformat, umgekehrt</string>
     <string name="displayOrientation_entryAuto">Automatisch</string>
-    <string name="displayPosition_title">Vertikale Bildschirmposition</string>
-    <string name="displayPosition_entryBottom">Unten</string>
-    <string name="displayPosition_entryMiddle">Mitte</string>
-    <string name="displayPosition_entryTop">Oben</string>
     <string name="displayResolution_title">Gerenderte Auflösung</string>
     <string name="displayResolution_entryNative">Nativ (höchste Qualität)</string>
     <string name="displayResolution_entry960x720">960 x 720</string>
@@ -273,9 +240,6 @@
     <string name="displayResolution_entry320x240">320 x 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (höchste Framerate)</string>
     <string name="displayScaling_title">Bildschirmskalierung</string>
-    <string name="displayScaling_entryNone">Keine\n<small>Exakte oben ausgewählte Auflösung nutzen</small></string>
-    <string name="displayScaling_entryZoom">Zoom\n<small>Bildschirm füllen, keine Verzerrung (fügt schwarze Balken hinzu)</small></string>
-    <string name="displayScaling_entryCrop">Zuschneiden\n<small>Bildschirm füllen, keine Verzerrung (beschneidet die Grafik)</small></string>
     <string name="displayScaling_entryStretch">Strecken\n<small>Bildschirm füllen, keine schwarzen Balken (fügt Verzerrung hinzu)</small></string>
     <string name="displayFps_title">Framerate</string>
     <string name="displayFps_entryOff">Aus</string>
@@ -454,10 +418,6 @@
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
-    <string name="pathPreference_dialogTitle">Ausgewählter Ordner: %1$s</string>
-    <string name="pathHiResTextures_default">~</string>
-    <string name="pathGameSaves_title">Speicherstand-Ordner</string>
-    <string name="pathAppData_title">Appdatenordner</string>
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multiplayer</string>
@@ -467,7 +427,6 @@
     <!-- Profile Preferences -->
     <string name="emulationProfile_title">Emulations-Profil</string>
     <string name="touchscreenProfile_title">Tochscreen-Profil</string>
-    <string name="controllerProfile_title">Controller-Profil</string>
     <string name="controllerProfile1_title">Controller 1 Profil</string>
     <string name="controllerProfile2_title">Controller 2 Profil</string>
     <string name="controllerProfile3_title">Controller 3 Profil</string>
@@ -488,7 +447,6 @@
     <string name="confirmUnmapAll_message">Alle Tastenbelegungen für %1$s entfernen?</string>
     <string name="confirmDeleteProfile_message">\"%1$s\" Profil löschen?</string>
     <!-- Corrupt Installation Warning -->
-    <string name="invalidInstall_title">Warnung</string>
     <string name="invalidInstall_message">Mupen64 Plus AE könnte nicht ordnungsgemäß installiert sein. Bitte versuche die App neu zu installieren, wenn es zu Abstürzen kommt.</string>
 
     <!-- Text Editor Hints (start lower-case) -->
@@ -511,18 +469,13 @@
     
     <!-- Cheat Editor -->
     <string name="menuItem_cheatEditor">Cheat Editor</string>
-    <string name="cheatEditor_edit">Cheats bearbeiten</string>
-    <string name="cheatEditor_help">Hilfe</string>
     <string name="cheatEditor_confirm">Sind Sie sicher?</string>
-    <string name="cheatEditor_info">Cheat-Informationen</string>
-    <string name="cheatEditor_saveConfirm">Cheat-Datei speichern?</string>
     <string name="cheatEditor_edit1">Cheat bearbeiten</string>
     <string name="cheatEditor_edit2">Erweiterten Cheat bearbeiten</string>
     <string name="cheatEditor_invalid_value">N/V</string>
     <string name="cheatEditor_delete">Cheat löschen</string>
     <string name="cheatEditor_add">Cheat hinzufügen</string>
     <string name="cheatEditor_add_advanced">Erweiterten Cheat hinzufügen</string>
-    <string name="cheatEditor_save">Cheat speichern</string>
     <string name="cheatEditor_hint_cheatTitle">Cheat-Titel</string>
     <string name="cheatEditor_hint_cheatNotes">Cheat-Hinweise (optional)</string>
     <string name="cheatEditor_hint_cheatAddress">Adresse</string>
@@ -540,11 +493,9 @@
     <string name="scanRomsDialog_downloadArt">Lade das Cover herunter</string>
     <string name="scanRomsDialog_clearGallery">Lösche die Galerie vor dem Hinzufügen</string>
     <string name="scanRomsDialog_scanSubdirectories">Unterverzeichnisse absuchen</string>
-    <string name="scanRomsDialog_reset">Zurücksetzen</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">ROM wird extrahiert…</string>
-    <string name="extractRomTask_message">ROM-Abbild wird extrahiert</string>
     <!-- ROM Scanning -->
     <string name="scanning_title">Überprüfung...</string>
 
@@ -571,7 +522,6 @@
     <string name="playerMapPreference_popupMessage">Spieler %1$d, drücke einen Knopf oder Stick auf deinem Controller…\n\nDerzeitige Geräte:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Belegung entfernen</string>
     <string name="playerMapPreference_button">Spieler %1$d\n%2$s</string>
-    <string name="playerMapPreference_reminder">Benachrichtigen wenn Spieler nicht belegt sind</string>
 
     <!-- Touchscreen Profile Activity -->
     <string name="touchscreenProfileActivity_menuTitle">Wählen Sie eine Option aus</string>
@@ -606,7 +556,6 @@
     <string name="controller_buttonZ">Z-Knopf</string>
     <string name="controller_buttonS">Start-Knopf</string>
     <string name="controller_buttonSensor">Sensortaste umschalten</string>
-    <string name="controller_fps">FPS-Anzeige</string>
 
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Drücke eine/-n Knopf, Taste oder Joystick zum Belegen…\n\nDerzeitige Belegung:\n%1$s</string>

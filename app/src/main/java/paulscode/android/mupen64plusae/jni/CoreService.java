@@ -58,6 +58,7 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings("unused")
 public class CoreService extends Service implements CoreInterface.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
@@ -455,10 +456,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
             }
 
-            mCoreInterface.setGbRomPath(mGbRomPaths);
-            mCoreInterface.setGbRamPath(mGbRamPaths);
-            mCoreInterface.setDdRomPath(mDdRom);
-            mCoreInterface.setDdDiskPath(mDdDisk);
+            String workingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/WorkingPath";
+            mCoreInterface.setWorkingPath(workingDir);
+            mCoreInterface.setGbRomPath(getApplicationContext(), mGbRomPaths);
+            mCoreInterface.setGbRamPath(getApplicationContext(), mGbRamPaths);
+            mCoreInterface.setDdRomPath(getApplicationContext(), mDdRom);
+            mCoreInterface.setDdDiskPath(getApplicationContext(), mDdDisk);
 
             mCoreInterface.coreStartup(mCoreUserConfigDir, null, mCoreUserDataDir, mCoreUserCacheDir);
 
@@ -508,7 +511,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
+
+                mCoreInterface.writeGbRamData(getApplicationContext(), mGbRamPaths);
+                mCoreInterface.writeDdDiskData(getApplicationContext(), mDdDisk);
             }
+
+            // Clean up the working directory
+            FileUtil.deleteFolder(new File(workingDir));
 
             mCoreInterface.closeRom();
             mCoreInterface.emuShutdown();

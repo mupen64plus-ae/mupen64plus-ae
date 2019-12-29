@@ -5,12 +5,6 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
-    <style name="appTheme.Black">
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:colorBackground">@android:color/black</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-    </style>
-
     <style name="Theme.AppCompat.Black">
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
@@ -77,17 +71,9 @@
         <item name="android:textSize">16sp</item>-->
     </style>
 
-    <style name="darkHeader" parent="Theme.Mupen64plusaeTheme">
-        <!--<item name="android:textAppearance">?android:attr/textAppearanceLarge</item>-->
-    </style>
-
     <style name="darkParentMenuItem" parent="Theme.Mupen64plusaeTheme">
         <!--<item name="android:textAllCaps">true</item>
         <item name="android:textSize">15sp</item>-->
-    </style>
-
-    <style name="darkParentMenuItemSelected" parent="darkParentMenuItem">
-        <!--<item name="android:colorBackground">#ff0a97a9</item>-->
     </style>
 
 </resources>

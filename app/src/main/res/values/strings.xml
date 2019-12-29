@@ -82,7 +82,6 @@
     <string name="menuItem_touchscreenProfiles">Touchscreen</string>
     <string name="menuItem_controllerProfiles">Controller</string>
     <string name="menuItem_select_profiles">Select Profiles</string>
-    <string name="menuItem_customCheats">Custom cheats</string>
     <string name="menuItem_help">Help</string>
     <string name="menuItem_faq">FAQ</string>
     <string name="menuItem_helpForum">Help forum</string>
@@ -114,10 +113,6 @@
     <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
 
     <!-- Lists -->
-    <string name="listItem_setDefault">Set default</string>
-    <string name="listItem_setDpadDefault">Set D-Pad default</string>
-    <string name="listItem_unsetDefault">Unset default</string>
-    <string name="listItem_unsetDpadDefault">Unset D-Pad default</string>
     <string name="listItem_edit">Edit</string>
     <string name="listItem_rename">Rename</string>
     <string name="listItem_copy">Copy</string>
@@ -135,16 +130,11 @@
 
 
     <!-- Something happening (typically use '-ing' and '…') -->
-    <string name="toast_rebuildingCheats">Rebuilding cheats database…</string>
-    <string name="toast_launchingEmulator">Launching emulator…</string>
-    <string name="toast_loadingSession">Auto-resuming game…</string>
-    <string name="toast_savingSession">Auto-saving game…</string>
     <string name="toast_loadingSlot">Loading slot %1$d…</string>
     <string name="toast_savingSlot">Saving slot %1$d…</string>
     <string name="toast_loadingFile">Loading %1$s…</string>
     <string name="toast_savingFile">Saving %1$s…</string>
     <string name="toast_overwritingFile">Overwriting %1$s…</string>
-    <string name="toast_loadingGameInfo">Loading game info…</string>
     <string name="toast_savingScreenshot">Saving screenshot…</string>
     <string name="toast_canceling">Canceling…</string>
     <string name="toast_pleaseWait">Please wait…</string>
@@ -154,21 +144,7 @@
     <string name="toast_not_done_shutting_down">Please wait, saving texture cache</string>
 
     <!-- Something happened (use '.') -->
-    <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>
-    <string name="toast_nativeMainFailure02">Failed to attach core library.</string>
-    <string name="toast_nativeMainFailure03">Failed to start core library.</string>
-    <string name="toast_nativeMainFailure04">Failed to open configuration handles.</string>
-    <string name="toast_nativeMainFailure05">Failed to parse final command line parameters.</string>
-    <string name="toast_nativeMainFailure06">Cannot use --core-compare feature with this Mupen64Plus core library.</string>
     <string name="toast_nativeMainFailure07">Failed to open ROM file for reading.</string>
-    <string name="toast_nativeMainFailure08">Failed to allocate buffer for ROM image file.</string>
-    <string name="toast_nativeMainFailure09">Failed to read bytes from ROM image file.</string>
-    <string name="toast_nativeMainFailure10">Core failed to open ROM image file.</string>
-    <string name="toast_nativeMainFailure11">Listed cheats as requested.</string>
-    <string name="toast_nativeMainFailure12">Failed to load plugins.</string>
-    <string name="toast_nativeMainFailure13">Core failed to attach plugin.</string>
-    <string name="toast_nativeMainFailureUnknown">Unknown launch error.</string>
-    <string name="toast_usingSlot">Now using slot %1$d.</string>
     <string name="toast_sdInaccessible">App data missing, attempting to reload.</string>
 
     <!-- ************************************************************************** -->
@@ -183,8 +159,6 @@
     <string name="actionResume_summary">Start from last automatic save</string>
     <string name="actionStart_title">Start</string>
     <string name="actionStart_summary">Reset the game</string>
-    <string name="actionRestart_title">Restart</string>
-    <string name="actionRestart_summary">Recommended if cheats are used</string>
     <string name="actionRemove_title">Remove</string>
     <string name="actionRemove_summary">Remove from library</string>
     <string name="actionCreateShortcut_title">Create shortcut</string>
@@ -204,8 +178,6 @@
     <string name="actionShare_title">Share</string>
 
     <!-- Preference Screens -->
-    <string name="screenGlobalSettings_title">Global settings</string>
-    <string name="screenGlobalSettings_summary">Display, audio, storage, and debug settings</string>
     <string name="screenCheats_title">Cheats</string>
     <string name="screenCheats_summaryEnabled">Enabled</string>
     <string name="screenCheats_summaryDisabled">Disabled</string>
@@ -218,7 +190,6 @@
     <string name="categoryRice_title">Rice settings</string>
     <string name="categoryGlide64_title">Glide64 settings</string>
     <string name="categoryGlide64Advanced_title">Glide64 advanced settings</string>
-    <string name="categoryGliden64_title">GlideN64 settings</string>
     <string name="categoryAngrylion_title">Angrylion RDP Plus settings</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
@@ -227,8 +198,6 @@
     <string name="categoryInput_title">Input</string>
 
     <string name="categoryData_title">Data</string>
-    <string name="categoryGameSettings_title">Game-specific settings</string>
-    <string name="categoryGameSettings_titleNamed">%1$s settings</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
@@ -295,7 +264,6 @@
     <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
-    <string name="touchscreenAnimation_title">Visual feedback</string>
     <string name="touchscreenAnimation_summary">Animate joystick</string>
     <string name="touchscreenInvertTouchXAxis_summary">Invert X axis</string>
     <string name="touchscreenInvertTouchYAxis_summary">Invert Y axis</string>
@@ -311,10 +279,6 @@
     <string name="displayOrientation_entryPortrait">Portrait</string>
     <string name="displayOrientation_entryReversePortrait">Reverse portrait</string>
     <string name="displayOrientation_entryAuto">Auto</string>
-    <string name="displayPosition_title">Vertical screen position</string>
-    <string name="displayPosition_entryBottom">Bottom</string>
-    <string name="displayPosition_entryMiddle">Middle</string>
-    <string name="displayPosition_entryTop">Top</string>
     <string name="displayResolution_title">Rendered resolution</string>
     <string name="displayResolution_entryNative">Native (highest quality)</string>
     <string name="displayResolution_entry5760x4320">5760 x 4320</string>
@@ -333,9 +297,6 @@
     <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
     <string name="displayScaling_title">Screen scaling</string>
     <string name="displayScaling_entryOriginal">Original\n<small>Fill screen, no distortion (adds black bars)</small></string>
-    <string name="displayScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
-    <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
-    <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
     <string name="displayScaling_entryStretch169">Stretch 16:9\n<small>Changes the aspect ratio of the image to 16:9 (adds distortion)</small></string>
     <string name="displayFps_title">Framerate</string>
@@ -414,7 +375,6 @@
     <string name="gliden64_enable_noise_title">Noise emulation</string>
     <string name="gliden64_enable_lod_title">LOD emulation</string>
     <string name="gliden64_enable_hw_lighting_title">Hardware per-pixel lighting</string>
-    <string name="gliden64_enable_shader_storage_title">Use shader cache</string>
     <string name="gliden64_enable_legacy_blending_title">Legacy blending</string>
     <string name="gliden64_enable_legacy_blending_summary">Disabling this produces more correct lighting and fog, but it is slower on some devices.</string>
     <string name="gliden64_enable_fragment_depth_write_title">Fragment based depth</string>
@@ -550,7 +510,6 @@
     <string name="glide64mk2_stipple_mode_disable">Disable</string>
     <string name="glide64mk2_stipple_mode_pattern">Pattern</string>
     <string name="glide64mk2_stipple_mode_rotate">Rotate</string>
-    <string name="glide64mk2_stipple_pattern_title">3DFX Dithered alpha pattern</string>
     <string name="glide64mk2_clip_zmax_title">Enable far plane clipping</string>
     <string name="glide64mk2_clip_zmin_title">Enable near z clipping</string>
     <string name="glide64mk2_adjust_aspect_title">Adjust screen aspect for wide screen mode</string>
@@ -633,12 +592,6 @@
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
-    <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
-    <string name="pathHiResTextures_title">Import texture pack</string>
-    <string name="pathHiResTextures_summary">Apply custom textures (ZIP/7Zip format) to a game</string>
-    <string name="pathHiResTextures_default">~</string>
-    <string name="pathGameSaves_title">Game save folder</string>
-    <string name="pathAppData_title">App data folder</string>
     <string name="support64dd_title">Support 64DD</string>
     <string name="support64dd_summary">Enables support for 64DD</string>
     <string name="iplRom64ddPath_title">64DD IPL</string>
@@ -661,7 +614,6 @@
     <string name="emulationProfile_title">Emulation profile</string>
     <string name="touchscreenProfile_title">Touchscreen profile</string>
     <string name="touchscreenProfileDpad_title">Touchscreen (D-pad) profile</string>
-    <string name="controllerProfile_title">Controller profile</string>
     <string name="controllerProfile1_title">Controller 1 profile</string>
     <string name="controllerProfile2_title">Controller 2 profile</string>
     <string name="controllerProfile3_title">Controller 3 profile</string>
@@ -687,13 +639,11 @@
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
-    <string name="clearTexturePack_title">Delete texture pack</string>
     <string name="clearTexturePack_message">Select a texture pack to delete</string>
     <string name="confirmClearData_message">Are you sure you want to clear the selected high resolution texture pack?</string>
     <string name="confirmRemoveFromLibrary_message">Are you sure you want to remove this game from the library?</string>
 
     <!-- Corrupt Installation Warning -->
-    <string name="invalidInstall_title">Warning</string>
     <string name="invalidInstall_message">Mupen64 Plus AE is not installed properly. Please try reinstalling the app.</string>
 
     <!-- Text Editor Hints (start lower-case) -->
@@ -719,18 +669,13 @@
     
     <!-- Cheat Editor -->
     <string name="menuItem_cheatEditor">Cheat editor</string>
-    <string name="cheatEditor_edit">Edit cheats</string>
-    <string name="cheatEditor_help">Help</string>
     <string name="cheatEditor_confirm">Are you sure?</string>
-    <string name="cheatEditor_info">Cheat information</string>
-    <string name="cheatEditor_saveConfirm">Save cheat file?</string>
     <string name="cheatEditor_edit1">Edit cheat</string>
     <string name="cheatEditor_edit2">Advanced edit cheat</string>
     <string name="cheatEditor_invalid_value">N/A</string>
     <string name="cheatEditor_delete">Delete cheat</string>
     <string name="cheatEditor_add">Add cheat</string>
     <string name="cheatEditor_add_advanced">Add advanced cheat</string>
-    <string name="cheatEditor_save">Save cheat</string>
     <string name="cheatEditor_hint_cheatTitle">Cheat Title</string>
     <string name="cheatEditor_hint_cheatNotes">Cheat Notes (optional)</string>
     <string name="cheatEditor_hint_cheatAddress">Address</string>
@@ -746,7 +691,6 @@
     <string name="pathHiResTexturesTask_select_zip">Select the ZIP, 7Zip, HTS, or HTC file containing the high resolution texture pack</string>
     <string name="pathHiResTexturesTask_start_file_picker">Select file</string>
     <string name="pathHiResTexturesTask_title">Unpacking textures…</string>
-    <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: HTC file must match this format [GAME_HEADER]__HIRESTEXTURES.htc</string>
 
@@ -757,19 +701,15 @@
     <string name="scanRomsDialog_downloadArt">Download cover art</string>
     <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
     <string name="scanRomsDialog_scanSubdirectories">Scan subdirectories</string>
-    <string name="scanRomsDialog_reset">Reset</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Extracting ROM…</string>
-    <string name="extractRomTask_message">Extracting ROM image</string>
-    <string name="extractRomTask_errorMessage">Problem extracting ROM image</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>
 
     <!-- Deleting Files -->
     <string name="pathDeletingFilesTask_title">Deleting files…</string>
-    <string name="pathDeletingFilesTask_message">Please be patient.  This process may take some time.</string>
 
     <!-- ROM information calculation -->
     <string name="cacheRomInfo_searching">Searching…</string>
@@ -794,7 +734,6 @@
     <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
     <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
-    <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
 
     <!-- Touchscreen Profile Activity -->
     <string name="touchscreenProfileActivity_menuTitle">Choose an option</string>
@@ -833,7 +772,6 @@
     <string name="controller_buttonZ">Z button</string>
     <string name="controller_buttonS">Start button</string>
     <string name="controller_buttonSensor">Toggle sensor button</string>
-    <string name="controller_fps">FPS indicator</string>
 
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>

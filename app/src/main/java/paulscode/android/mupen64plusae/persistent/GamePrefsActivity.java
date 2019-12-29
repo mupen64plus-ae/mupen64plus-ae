@@ -67,6 +67,8 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener, PromptConfirmListener
 {
+    private static final int PICK_FILE_REQUEST_CODE = 2;
+    private static final int EDIT_CHEATS_REQUEST_CODE = 111;
     private static final int RESET_GAME_PREFS_CONFIRM_DIALOG_ID = 0;
     private static final String RESET_GAME_PREFS_CONFIRM_DIALOG_STATE = "RESET_GAME_PREFS_CONFIRM_DIALOG_STATE";
 
@@ -101,11 +103,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private ProfilePreference mControllerProfile2 = null;
     private ProfilePreference mControllerProfile3 = null;
     private ProfilePreference mControllerProfile4 = null;
+
     private PreferenceScreen mScreenCheats = null;
     private PreferenceGroup mCategoryCheats = null;
 
     private boolean mClearCheats = false;
     private boolean mInCheatsScreen = false;
+
+    private String currentFilePickerKey = null;
 
     // MOGA controller interface
     private final Controller mMogaController = Controller.getInstance( this );
@@ -186,6 +191,21 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mMogaController.onResume();
     }
 
+    private void setFilePickerPreferenceSummary(String filePickerPreferenceKey, String value)
+    {
+        Preference currentPreference = findPreference( filePickerPreferenceKey );
+        if (currentPreference != null ) {
+            if (value != null ) {
+                try {
+                    String summary = ProviderUtil.getFileName(this, Uri.parse(value));
+                    currentPreference.setSummary(summary);
+                } catch (java.lang.SecurityException exception) {
+                    Log.e("GamePrefs", "Permission denied, key=" + filePickerPreferenceKey + " value=" + value);
+                }
+            }
+        }
+    }
+
     protected void updateActivity()
     {
         mEmulationProfile = (ProfilePreference) findPreference( GamePrefs.EMULATION_PROFILE );
@@ -201,6 +221,23 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_GAME_PREFS, this );
+        PrefUtil.setOnPreferenceClickListener( this, GamePrefs.IDL_PATH_64DD, this );
+        PrefUtil.setOnPreferenceClickListener( this, GamePrefs.DISK_PATH_64DD, this );
+
+        for (int player = 0; player < GamePrefs.NUM_CONTROLLERS; ++player) {
+            PrefUtil.setOnPreferenceClickListener( this, mGamePrefs.getTransferPakRomKey(player), this );
+            PrefUtil.setOnPreferenceClickListener( this, mGamePrefs.getTransferPakRamKey(player), this );
+        }
+
+        // Update the summary of all the file preferences
+        setFilePickerPreferenceSummary(GamePrefs.IDL_PATH_64DD, mGamePrefs.idlPath64Dd);
+        setFilePickerPreferenceSummary(GamePrefs.DISK_PATH_64DD, mGamePrefs.diskPath64Dd);
+
+
+        for (int player = 0; player < GamePrefs.NUM_CONTROLLERS; ++player) {
+            setFilePickerPreferenceSummary(mGamePrefs.getTransferPakRomKey(player), mGamePrefs.getTransferPakRom(player));
+            setFilePickerPreferenceSummary(mGamePrefs.getTransferPakRomKey(player), mGamePrefs.getTransferPakRom(player));
+        }
 
         // Remove wiki menu item if not applicable
         if( TextUtils.isEmpty( mRomDetail.wikiUrl ) )
@@ -215,6 +252,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
 
         refreshViews();
+
     }
 
     @Override
@@ -245,13 +283,36 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     protected void onActivityResult( int requestCode, int resultCode, Intent data )
     {
-        if( requestCode == 111 )
+        if( requestCode == EDIT_CHEATS_REQUEST_CODE )
         {
             if( resultCode == RESULT_OK)
             {
                 //If the user cheats were saved, reset all selected cheatd
                 mClearCheats = true;
                 refreshCheatsCategory();
+            }
+        }
+        else if (requestCode == PICK_FILE_REQUEST_CODE) {
+
+            if (resultCode == RESULT_OK) {
+
+                // The result data contains a URI for the document or directory that
+                // the user selected.
+                if (data != null) {
+                    Uri fileUri = data.getData();
+
+                    Preference currentPreference = findPreference( currentFilePickerKey );
+                    if (currentPreference != null && fileUri != null) {
+
+                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
+
+                        String summary = ProviderUtil.getFileName(this, fileUri);
+                        currentPreference.setSummary(summary);
+                        mGamePrefs.putString(currentFilePickerKey, fileUri.toString());
+                    }
+                }
             }
         }
     }
@@ -445,24 +506,37 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         final String key = preference.getKey();
 
-        switch(key) {
-            case ACTION_CHEAT_EDITOR:
-                final Intent intent = new Intent( this, CheatEditorActivity.class );
-                intent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
-                intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
-                intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
-                startActivityForResult( intent, 111 );
-                break;
-            case ACTION_WIKI:
-                ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
-                break;
-            case ACTION_RESET_GAME_PREFS:
-                actionResetGamePrefs();
-                break;
+        if (key.equals(ACTION_CHEAT_EDITOR)) {
+            final Intent intent = new Intent( this, CheatEditorActivity.class );
+            intent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
+            intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
+            intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
+            startActivityForResult( intent, EDIT_CHEATS_REQUEST_CODE );
+        } else if (key.equals(ACTION_WIKI)) {
+            ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
+        } else if (key.equals(ACTION_RESET_GAME_PREFS)) {
+            actionResetGamePrefs();
+        } else if (key.equals(GamePrefs.IDL_PATH_64DD) ||
+                key.equals(GamePrefs.DISK_PATH_64DD) || key.contains(GamePrefs.TRANSFER_PAK)){
+            currentFilePickerKey = key;
+            startFilePicker();
         }
 
         return false;
     }
+
+    private void startFilePicker()
+    {
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
+    }
+
 
     private void actionResetGamePrefs()
     {

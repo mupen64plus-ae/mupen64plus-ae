@@ -46,18 +46,13 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Ανακατασκευή βάσης δεδομένων κωδικών</string>
-  <string name="toast_launchingEmulator">Έναρξη εξομοιωτή…</string>
-  <string name="toast_loadingSession">Αυτόμ. επαναφορά παιχνιδιού…</string>
-  <string name="toast_savingSession">Αυτόμ. αποθήκευση παιχνιδού…</string>
-  <string name="toast_loadingSlot">Φόρτωμα θέσης %1$d…</string>
+    <string name="toast_loadingSlot">Φόρτωμα θέσης %1$d…</string>
   <string name="toast_savingSlot">Αποθήκευση θέσης %1$d…</string>
   <string name="toast_loadingFile">Φόρτωμα %1$s…</string>
   <string name="toast_savingFile">Αποθήκευση %1$s…</string>
   <string name="toast_overwritingFile">Αντικατάσταση %1$s…</string>
   <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Χρήση θέσης %1$d.</string>
-  <string name="toast_sdInaccessible">Η κάρτα SD δεν είναι διαθέσιμη (αποσυνδέστε το καλώδιο USB και δοκιμάστε ξανά).</string>
+    <string name="toast_sdInaccessible">Η κάρτα SD δεν είναι διαθέσιμη (αποσυνδέστε το καλώδιο USB και δοκιμάστε ξανά).</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -66,9 +61,7 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Συνέχιση</string>
   <string name="actionResume_summary">Απρόβλεπτο αν έχουν χρησιμοποιηθεί κωδικοί</string>
-  <string name="actionRestart_title">Επανεκκίνηση</string>
-  <string name="actionRestart_summary">Προτείνεται αν έχει γίνει χρήση κωδικών</string>
-  <string name="actionReloadAssets_title">Ανανέωση πόρων εφαρμογής</string>
+    <string name="actionReloadAssets_title">Ανανέωση πόρων εφαρμογής</string>
   <string name="actionReloadAssets_summary">ΔΕΝ επηρεάζει ρυθμίσεις χρήστη, αρχεία ROM, αποθηκευμένα παιχνίδια, ή άλλα προσαρμοσμένα δεδομένα</string>
   <!--Preference Screens-->
   <string name="screenCheats_summaryDisabled">Απενεργοποιημένο</string>
@@ -122,11 +115,7 @@
   <string name="displayOrientation_entryReverseLandscape">Ανεστραμμένο τοπίο</string>
   <string name="displayOrientation_entryPortrait">Πορτραίτο</string>
   <string name="displayOrientation_entryReversePortrait">Ανεστραμμένο Πορτραίτο</string>
-  <string name="displayPosition_title">Κάθετη θέαση</string>
-  <string name="displayPosition_entryBottom">Κάτω μέρος</string>
-  <string name="displayPosition_entryMiddle">Μέση</string>
-  <string name="displayPosition_entryTop">Πάνω μέρος</string>
-  <string name="displayResolution_title">Ανάλυση σχεδίασης</string>
+    <string name="displayResolution_title">Ανάλυση σχεδίασης</string>
   <string name="displayResolution_entryNative">Φυσική (μεγαλύτερη ποιότητα)</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
@@ -192,12 +181,7 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Επιλεγμένος φάκελος: %1$s</string>
-  <string name="pathHiResTextures_title">Προσθήκη πακέτου υφής</string>
-  <string name="pathHiResTextures_summary">Εφαρμογή προσαρμοσμένων υφών (αρχείο ZIP) σε ένα παιχνίδι</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Φάκελος αποθήκευσης παιχνιδιών</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Πολλαπλών παικτών</string>
   <string name="playerMap_summary">Ορισμός χειριστηρίου κάθε παίκτη</string>
   <!--Profile Preferences-->
@@ -213,8 +197,7 @@
   <string name="confirmUnmapAll_message">Διαγρ. αντιστοιχίσεων όλων των εισόδων για %1$s;</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">Προσοχή</string>
-  <string name="invalidInstall_message">Το Mupen64 Plus AE μπορεί να μην εγκαταστάθηκε σωστά. Παρακαλώ δοκιμάστε την επανεγκατάσταση της εφαρμογής αν βιώσετε κρασαρίσματα.</string>
+    <string name="invalidInstall_message">Το Mupen64 Plus AE μπορεί να μην εγκαταστάθηκε σωστά. Παρακαλώ δοκιμάστε την επανεγκατάσταση της εφαρμογής αν βιώσετε κρασαρίσματα.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">διαδρομή αρχείου</string>
   <!--Asset Extractor-->
@@ -229,11 +212,9 @@
   <string name="cheatNotes_title">Σημειώσεις</string>
   <string name="cheatNotes_none">(δεν υπάρχουν σημειώσεις για αυτόν τον κωδικό)</string>
   <!--Cheat Editor-->
-  <string name="cheatEditor_help">Βοήθεια</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Ξεπακετάρισμα υφών</string>
-  <string name="pathHiResTexturesTask_message">Παρακαλώ περιμένετε. Αυτή ενέργεια μπορεί να πάρει λίγη ώρα.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Σφάλμα ξεπακεταρίσματος υφών!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Σφάλμα ξεπακεταρίσματος υφών!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
@@ -246,8 +227,7 @@
   <string name="playerMap_deviceWithoutName">Συσκευή %1$d</string>
   <string name="playerMapPreference_popupTitle">Παίκτης %1$d</string>
   <string name="playerMapPreference_popupUnmap">Διαγρ. αντιστοίχισης</string>
-  <string name="playerMapPreference_reminder">Υπενθύμιση μη αντιστοίχισης παικτών</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>

@@ -323,6 +323,60 @@ public final class FileUtil
     }
 
     /**
+     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
+     * {@link Uri}. The source can't be a directory.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public static boolean copyFile( Context context, File src, Uri dest )
+    {
+        if( src == null )
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if( dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        ParcelFileDescriptor parcelFileDescriptor;
+
+        try {
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(dest, "rw");
+
+            if (parcelFileDescriptor != null)
+            {
+                try (FileChannel in = new FileInputStream(src).getChannel();
+                     FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
+
+                    long bytesTransferred = 0;
+
+                    while (bytesTransferred < in.size()) {
+                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                    }
+
+                } catch (Exception e) {
+                    Log.e("copyFile", "Exception: " + e.getMessage());
+                }
+
+                parcelFileDescriptor.close();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    /**
      * Writes a given string to a specified file.
      * 
      * @param file The file to write the string to.

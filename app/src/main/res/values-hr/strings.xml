@@ -38,8 +38,7 @@
   <string name="menuItem_emulationProfiles">Profili za emulaciju</string>
   <string name="menuItem_touchscreenProfiles">Profili za dodirni ekran</string>
   <string name="menuItem_controllerProfiles">Profili za kontroler</string>
-  <string name="menuItem_customCheats">Korisničke opcije za varanje</string>
-  <string name="menuItem_help">Pomoć</string>
+    <string name="menuItem_help">Pomoć</string>
   <string name="menuItem_faq">FAQ</string>
   <string name="menuItem_helpForum">Forum za podršku</string>
   <string name="menuItem_controllerDiagnostics">Dijagnostika kontrolera</string>
@@ -64,9 +63,7 @@
   <string name="popup_faq">Mupen64Plus je stvoren i razvijan od strane volontera.<small>\n\nKako bi popravili grafičke probleme, probajte primijeniti <i>grafički dodatak</i>.\n\nKako bi uklonili zastajanje, probajte promijeniti <i>video frameskip</i> postavku ili <i>grafički dodatak</i>.\n\nZa ROM-ove koji nisu pokretljivi, prvo probajte odpakirati ROM ili probajte drugu verziju ROM-a.\n\nU slučaju problema s prikazom kontrola na zaslonu, probajte promijeniti <i>razmjer tipki</i> ili <i>raspored tipki</i>.\n\nZa sve ostale probleme, ili ukoliko još niste riješili navedeni, kilknite <i>FAQ</i> gumb dolje. Za probleme nepovezane s igrom, kliknite <i>Prijava greške</i> gumb dolje. Odgovaramo velikom broju objava u roku od 24 sata. Iskreno.\n\n</small>Hvala što ste nam pomogli poboljšati ovu aplikaciju!</string>
   <string name="popup_version">Verzija: %1$s\nKod verzije: %2$d</string>
   <!--Lists-->
-  <string name="listItem_setDefault">Postavi zadano</string>
-  <string name="listItem_unsetDefault">Ukloni zadano</string>
-  <string name="listItem_edit">Uredi</string>
+    <string name="listItem_edit">Uredi</string>
   <string name="listItem_rename">Preimenuj</string>
   <string name="listItem_copy">Kopiraj</string>
   <string name="listItem_delete">Obriši</string>
@@ -79,36 +76,17 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Učitavanje opcija za varanje…</string>
-  <string name="toast_launchingEmulator">Pokretanje emulatora…</string>
-  <string name="toast_loadingSession">Automatsko učitavanje igre…</string>
-  <string name="toast_savingSession">Automatsko spremanje igre…</string>
-  <string name="toast_loadingSlot">Učitavanje iz spremnika #%1$d…</string>
+    <string name="toast_loadingSlot">Učitavanje iz spremnika #%1$d…</string>
   <string name="toast_savingSlot">Spremanje u spremnik #%1$d…</string>
   <string name="toast_loadingFile">Učitavanje %1$s…</string>
   <string name="toast_savingFile">Spremanje %1$s…</string>
   <string name="toast_overwritingFile">Prepisivanje %1$s…</string>
-  <string name="toast_loadingGameInfo">Učitavanje informacija o igri</string>
-  <string name="toast_savingScreenshot">Sprema se snimka zaslona...</string>
+    <string name="toast_savingScreenshot">Sprema se snimka zaslona...</string>
   <string name="toast_canceling">Odustajanje...</string>
   <string name="toast_pleaseWait">Pričekajte...</string>
   <!--Something happened (use '.')-->
-  <string name="toast_nativeMainFailure01">Neuspjelo tumačenje početnih parametara naredbenog retka.</string>
-  <string name="toast_nativeMainFailure02">Neuspjelo spajanje osnovne biblioteke.</string>
-  <string name="toast_nativeMainFailure03">Neuspjelo pokretanje osnovne biblioteke.</string>
-  <string name="toast_nativeMainFailure04">Neuspjelo otvaranje podrške za konfiguraciju.</string>
-  <string name="toast_nativeMainFailure05">Neuspjelo tumačenje završnih parametara naredbenog retka.</string>
-  <string name="toast_nativeMainFailure06">Nemoguće je koristiti --core-compare argument sa sadašnjom Mupen64Plus jezgrenom bibliotekom.</string>
-  <string name="toast_nativeMainFailure07">Neuspjelo otvaranje ROM datoteke za čitanje.</string>
-  <string name="toast_nativeMainFailure08">Neuspjelo alociranje međuspremnika za ROM slikovnu datoteku.</string>
-  <string name="toast_nativeMainFailure09">Neuspjelo čitanje byte-ova iz ROM slikovne datoteke.</string>
-  <string name="toast_nativeMainFailure10">Jezgra nije uspješno otvorila ROM slikovnu datoteku.</string>
-  <string name="toast_nativeMainFailure11">Navedene šifre su tražene.</string>
-  <string name="toast_nativeMainFailure12">Neuspjelo čitanje dodataka.</string>
-  <string name="toast_nativeMainFailure13">Jezgra nije uspiješno prihvatila dodatak.</string>
-  <string name="toast_nativeMainFailureUnknown">Nepoznat problem pri pokretanju.</string>
-  <string name="toast_usingSlot">Koristi se spremnik #%1$d.</string>
-  <string name="toast_sdInaccessible">SD kartica nije dostupna (iskopčajte USB kabel i pokušajte ponovo).</string>
+    <string name="toast_nativeMainFailure07">Neuspjelo otvaranje ROM datoteke za čitanje.</string>
+    <string name="toast_sdInaccessible">SD kartica nije dostupna (iskopčajte USB kabel i pokušajte ponovo).</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -117,9 +95,7 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Nastavi</string>
   <string name="actionResume_summary">Nepredvidivo ako se koriste opcije za varanje, automatsko učitavanje</string>
-  <string name="actionRestart_title">Pokreni</string>
-  <string name="actionRestart_summary">Preporučljivo ako se koriste opcije za varanje, bez automatskog učitavanja</string>
-  <string name="actionWiki_title">Wiki</string>
+    <string name="actionWiki_title">Wiki</string>
   <string name="actionWiki_summary">Podrška društva za ovu igricu</string>
   <string name="actionReloadAssets_title">Ponovno učitaj resurse</string>
   <string name="actionReloadAssets_summary">Nema nikakav utjecaj na korisničke postavke, igre, spremnike ili ostale korisničke podatke</string>
@@ -133,9 +109,7 @@
   <string name="actionCheatEditor_summary">Dodaj, uredi ili obriši opcije za varanje</string>
   <string name="actionShare_title">Podijeli</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">Globalne postavke</string>
-  <string name="screenGlobalSettings_summary">Postavke prikaza, zvuka, spremišta i ispravljanja grešaka</string>
-  <string name="screenCheats_title">Opcije za varanje</string>
+    <string name="screenCheats_title">Opcije za varanje</string>
   <string name="screenCheats_summaryEnabled">Uključeno</string>
   <string name="screenCheats_summaryDisabled">Isključeno</string>
   <!--Preference Categories-->
@@ -148,9 +122,7 @@
   <string name="categoryTouchscreen_title">Dodirni ekran</string>
   <string name="categoryInput_title">Unos</string>
   <string name="categoryData_title">Podaci</string>
-  <string name="categoryGameSettings_title">Postavke specifične za igru</string>
-  <string name="categoryGameSettings_titleNamed">%1$s postavke</string>
-  <!--Checkbox Preferences-->
+    <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Uključi opcije za varanje</string>
   <string name="touchscreenFeedback_title">Vibriranje</string>
   <string name="touchscreenFeedback_summary">Vibra pri pritisku tipke</string>
@@ -190,8 +162,7 @@
   <string name="touchscreenAutoHold_entryDisabled">Isključeno</string>
   <string name="touchscreenAutoHold_entryLongPress">Pri držanju</string>
   <string name="touchscreenAutoHold_entrySlideOut">Pri pomaku izvana</string>
-  <string name="touchscreenAnimation_title">Povratne grafičke informacije</string>
-  <string name="touchscreenAnimation_summary">Animiraj joystick</string>
+    <string name="touchscreenAnimation_summary">Animiraj joystick</string>
   <string name="touchscreenStyle_title">Izgled tipki</string>
   <string name="touchscreenStyle_entryOutline">Obris</string>
   <string name="touchscreenStyle_entryShaded">Osjenčan</string>
@@ -200,11 +171,7 @@
   <string name="displayOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
   <string name="displayOrientation_entryPortrait">Portret</string>
   <string name="displayOrientation_entryReversePortrait">Obrnuti portret</string>
-  <string name="displayPosition_title">Vertikalna pozicija ekrana</string>
-  <string name="displayPosition_entryBottom">Dno</string>
-  <string name="displayPosition_entryMiddle">Sredina</string>
-  <string name="displayPosition_entryTop">Vrh</string>
-  <string name="displayResolution_title">Rezolucija</string>
+    <string name="displayResolution_title">Rezolucija</string>
   <string name="displayResolution_entryNative">Identična uređaju (najviša kvaliteta)</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
@@ -213,10 +180,7 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (najveća brzina)</string>
   <string name="displayScaling_title">Skaliranje ekrana</string>
-  <string name="displayScaling_entryNone">Ništa\n<small>Koristi točnu rezoluciju odabranu gore</small></string>
-  <string name="displayScaling_entryZoom">Povećaj\n<small>Ispuni ekran, nema iskrivljenja prikaza (doda crne trake)</small></string>
-  <string name="displayScaling_entryCrop">Odreži\n<small>Ispuni ekrank, nema iskrivljenja prikaza (odreže sliku)</small></string>
-  <string name="displayScaling_entryStretch">Razvuci\n<small>Ispuni zaslon, bez crnih traka (iskrivljen prikaz)</small></string>
+    <string name="displayScaling_entryStretch">Razvuci\n<small>Ispuni zaslon, bez crnih traka (iskrivljen prikaz)</small></string>
   <string name="displayFps_title">Sličice po sekundi</string>
   <string name="videoPlugin_title">Grafički dodatak</string>
   <string name="videoPlugin_entryNone">Nema (grafika isključena)</string>
@@ -285,19 +249,13 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Odabrana mapa: %1$s</string>
-  <string name="pathHiResTextures_title">Uvoz teksture</string>
-  <string name="pathHiResTextures_summary">Primjeni korisničke teksture (ZIP format)</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Mapa spremnika</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Više igrača</string>
   <string name="playerMap_summary">Definiranje kontrolera svakog igrača</string>
   <!--Profile Preferences-->
   <string name="emulationProfile_title">Profil za emulaciju</string>
   <string name="touchscreenProfile_title">Profil za dodirni ekran</string>
-  <string name="controllerProfile_title">Profil za kontroler</string>
-  <string name="controllerProfile1_title">Profil za 1. kontroler</string>
+    <string name="controllerProfile1_title">Profil za 1. kontroler</string>
   <string name="controllerProfile2_title">Profil za 2. kontroler</string>
   <string name="controllerProfile3_title">Profil za 3. kontroler</string>
   <string name="controllerProfile4_title">Profil za 4. kontroler</string>
@@ -314,8 +272,7 @@
   <string name="confirmDeleteProfile_message">Obrisati profil \"%1$s\"?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">Upozorenje</string>
-  <string name="invalidInstall_message">Mupen64 Plus AE se možda nije ispravno instalirao. Pokušajte ponovno instalirati aplikaciju u slučaju da dođe do grešaka.</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE se možda nije ispravno instalirao. Pokušajte ponovno instalirati aplikaciju u slučaju da dođe do grešaka.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
   <!--Asset Extractor-->
@@ -332,16 +289,11 @@
   <string name="cheatNotes_none">(nema detalja)</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">Uređivanje opcija za varanje</string>cheatEditor_empty
-  <string name="cheatEditor_edit">Uređivanje opcija za varanje</string>
-  <string name="cheatEditor_help">Pomoć</string>
-  <string name="cheatEditor_delete">Obriši</string>
+    <string name="cheatEditor_delete">Obriši</string>
   <string name="cheatEditor_confirm">Jeste li sigurni?</string>
-  <string name="cheatEditor_info">Informacije</string>
-  <string name="cheatEditor_saveConfirm">Spremiti?</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>
-  <string name="pathHiResTexturesTask_message">Molimo pričekajte. Ovaj proces može potrajati.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>
   <!--Scan Roms Dialog-->
   <string name="scanRomsDialog_selectRom">Odaberite ROM datoteku ili cijeli direktorij za proučiti</string>
   <string name="scanRomsDialog_searchZips">Pretraži zip datoteke</string>
@@ -368,8 +320,7 @@
   <string name="playerMapPreference_popupMessage">Igrač %1$d, pritisnite gumb ili držač na svom upravljaču…\n\nTrenutni uređaji:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Odznači</string>
   <string name="playerMapPreference_button">Igrač %1$d\n%2$s</string>
-  <string name="playerMapPreference_reminder">Podsjeti me kad igrači nisu označili sve tipke</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <string name="touchscreenProfileActivity_buttons">Gumbi</string>
   <string name="touchscreenProfileActivity_remove">Ukloni</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontalno: %1$d %%</string>
@@ -390,8 +341,7 @@
   <string name="controller_buttonR">R Gumb</string>
   <string name="controller_buttonZ">Z Gumb</string>
   <string name="controller_buttonS">Gumb start</string>
-  <string name="controller_fps">Indikator sličica po sekundi (FPS)</string>
-  <!--Input Mapping-->
+    <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Pritisnite gumb, tipku, ili joystick kako biste podesili oznake...\n\nTrenutne oznake:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Odznači</string>
   <string name="inputMapActivity_btnA">A</string>

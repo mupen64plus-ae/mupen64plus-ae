@@ -34,8 +34,7 @@
   <string name="menuItem_emulationProfiles">エミュレーションプロファイル</string>
   <string name="menuItem_touchscreenProfiles">タッチスクリーンプロファイル</string>
   <string name="menuItem_controllerProfiles">コントローラープロファイル</string>
-  <string name="menuItem_customCheats">カスタムチート</string>
-  <string name="menuItem_help">ヘルプ</string>
+    <string name="menuItem_help">ヘルプ</string>
   <string name="menuItem_faq">よくある質問</string>
   <string name="menuItem_helpForum">ヘルプフォーラム</string>
   <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
@@ -67,19 +66,13 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">チートデータベースを再構築…</string>
-  <string name="toast_launchingEmulator">エミュレータを起動する…</string>
-  <string name="toast_loadingSession">状態の自動復元中...</string>
-  <string name="toast_savingSession">状態の自動保存中...</string>
-  <string name="toast_loadingSlot">スロット%1$dの読み込み中...</string>
+    <string name="toast_loadingSlot">スロット%1$dの読み込み中...</string>
   <string name="toast_savingSlot">スロット%1$dへ保存中...</string>
   <string name="toast_loadingFile">%1$s 読み込こみ中</string>
   <string name="toast_savingFile">%1$s 保存中…</string>
   <string name="toast_overwritingFile">%1$sへ上書き中...</string>
-  <string name="toast_loadingGameInfo">ゲーム情報の読み込み...</string>
-  <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">スロット%1$dを使用中</string>
-  <string name="toast_sdInaccessible">SDカードににアクセスできません。 （USBケーブルを外してください）</string>
+    <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">SDカードににアクセスできません。 （USBケーブルを外してください）</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -88,17 +81,13 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">再開</string>
   <string name="actionResume_summary">チートを使用している場合は動作しない場合があります。</string>
-  <string name="actionRestart_title">再起動</string>
-  <string name="actionRestart_summary">チートを使用している場合はこちらを推奨</string>
-  <string name="actionReloadAssets_title">アプリデータを再読み込み</string>
+    <string name="actionReloadAssets_title">アプリデータを再読み込み</string>
   <string name="actionReloadAssets_summary">ユーザー設定、ロム、セーブデーターやその他のデータには影響がありません。</string>
   <string name="actionCheatEditor_title">チートコードの管理</string>
   <string name="actionCheatEditor_summary">チートコードの追加、編集、削除</string>
   <string name="actionShare_title">共有</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">標準設定</string>
-  <string name="screenGlobalSettings_summary">表示、オーディオ、ストレージとデバッグ設定</string>
-  <string name="screenCheats_title">チート</string>
+    <string name="screenCheats_title">チート</string>
   <string name="screenCheats_summaryEnabled">有効</string>
   <string name="screenCheats_summaryDisabled">使用禁止</string>
   <!--Preference Categories-->
@@ -111,9 +100,7 @@
   <string name="categoryTouchscreen_title">タッチスクリーン</string>
   <string name="categoryInput_title">入力</string>
   <string name="categoryData_title">データ</string>
-  <string name="categoryGameSettings_title">ゲーム毎の設定</string>
-  <string name="categoryGameSettings_titleNamed">%1$sの設定</string>
-  <!--Checkbox Preferences-->
+    <!--Checkbox Preferences-->
   <string name="playShowCheats_title">チートを有効化</string>
   <string name="touchscreenFeedback_title">触覚フィードバック</string>
   <string name="touchscreenFeedback_summary">ボタンを押した際に振動</string>
@@ -157,11 +144,7 @@
   <string name="displayOrientation_entryReverseLandscape">反転横向き</string>
   <string name="displayOrientation_entryPortrait">縦向き</string>
   <string name="displayOrientation_entryReversePortrait">反転縦向き</string>
-  <string name="displayPosition_title">画面の位置</string>
-  <string name="displayPosition_entryBottom">下部</string>
-  <string name="displayPosition_entryMiddle">中央</string>
-  <string name="displayPosition_entryTop">上部</string>
-  <string name="displayResolution_title">表示する解像度</string>
+    <string name="displayResolution_title">表示する解像度</string>
   <string name="displayResolution_entryNative">ネイティブ (最高画質)</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
@@ -233,19 +216,13 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string>
-  <string name="pathHiResTextures_title">インポートテクスチャパック</string>
-  <string name="pathHiResTextures_summary">ゲームにカスタムテクスチャ(ZIP)を適用</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">セーブデータフォルダ</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">マルチプレイ</string>
   <string name="playerMap_summary">各プレイヤーのコントローラーを定義</string>
   <!--Profile Preferences-->
   <string name="emulationProfile_title">エミュレーションプロファイル</string>
   <string name="touchscreenProfile_title">タッチスクリーンプロファイル</string>
-  <string name="controllerProfile_title">コントローラープロファイル</string>
-  <string name="controllerProfile1_title">コントローラー1のプロファイル</string>
+    <string name="controllerProfile1_title">コントローラー1のプロファイル</string>
   <string name="controllerProfile2_title">コントローラー2のプロファイル</string>
   <string name="controllerProfile3_title">コントローラー3のプロファイル</string>
   <string name="controllerProfile4_title">コントローラー4のプロファイル</string>
@@ -262,8 +239,7 @@
   <string name="confirmDeleteProfile_message">プロファイル \"%1$s\"? を削除しますか?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">警告</string>
-  <string name="invalidInstall_message">Mupen64Plus AEは正しくインストールしていない可能性。 任意のプログラムのクラッシュが発生した場合アプリケーションを再インストールしてください。</string>
+    <string name="invalidInstall_message">Mupen64Plus AEは正しくインストールしていない可能性。 任意のプログラムのクラッシュが発生した場合アプリケーションを再インストールしてください。</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
   <!--Asset Extractor-->
@@ -279,16 +255,11 @@
   <string name="cheatNotes_none">（このチートの詳細情報はありません）</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">チート編集</string>
-  <string name="cheatEditor_edit">チートの編集</string>
-  <string name="cheatEditor_help">ヘルプ</string>
-  <string name="cheatEditor_delete">チートの削除</string>
+    <string name="cheatEditor_delete">チートの削除</string>
   <string name="cheatEditor_confirm">よろしいですか?</string>
-  <string name="cheatEditor_info">チート情報</string>
-  <string name="cheatEditor_saveConfirm">チートファイルを保存しますか?</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">テクスチャの展開中</string>
-  <string name="pathHiResTexturesTask_message">しばらくお待ちください。この処理には多少時間がかかる場合があります。</string>
-  <string name="pathHiResTexturesTask_errorMessage">テクスチャの展開時に問題が発生しました！</string>
+    <string name="pathHiResTexturesTask_errorMessage">テクスチャの展開時に問題が発生しました！</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
@@ -301,8 +272,7 @@
   <string name="playerMap_deviceWithoutName">デバイス %1$d</string>
   <string name="playerMapPreference_popupTitle">プレーヤー %1$d</string>
   <string name="playerMapPreference_popupUnmap">未割り当て</string>
-  <string name="playerMapPreference_reminder">プレイヤーがコントロールにマップされていない時に通知。</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
   <string name="controller_buttonCr">Cパッド →</string>
   <string name="controller_buttonCl">Cパッド ←</string>

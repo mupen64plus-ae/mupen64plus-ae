@@ -44,18 +44,13 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Csalás adatbázis újraépítése…</string>
-  <string name="toast_launchingEmulator">Emulátor indítása…</string>
-  <string name="toast_loadingSession">Játék auto folytatása</string>
-  <string name="toast_savingSession">Auto-mentés</string>
-  <string name="toast_loadingSlot">Mentése  %1$d betöltése</string>
+    <string name="toast_loadingSlot">Mentése  %1$d betöltése</string>
   <string name="toast_savingSlot">%1$d Mentése</string>
   <string name="toast_loadingFile">Betöltés %1$s…</string>
   <string name="toast_savingFile">Mentés %1$s…</string>
   <string name="toast_overwritingFile">%1$s felülírása…</string>
   <!--Something happened (use '.')-->
-  <string name="toast_usingSlot"> %1$d hely használata</string>
-  <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
+    <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -64,9 +59,7 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Folytatás</string>
   <string name="actionResume_summary">Bizonytalan csalások használatánál</string>
-  <string name="actionRestart_title">Újraindítás</string>
-  <string name="actionRestart_summary">Ajánlott csalások használatánál</string>
-  <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
+    <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
   <!--Preference Screens-->
   <string name="screenCheats_summaryDisabled">Kikapcsolva</string>
@@ -116,10 +109,7 @@
   <string name="displayOrientation_entryReverseLandscape">Fordított elforgatott</string>
   <string name="displayOrientation_entryPortrait">Portré</string>
   <string name="displayOrientation_entryReversePortrait">Fordított portré</string>
-  <string name="displayPosition_entryBottom">Alul</string>
-  <string name="displayPosition_entryMiddle">Középen</string>
-  <string name="displayPosition_entryTop">Felül</string>
-  <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
+    <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
   <string name="videoHardwareType_title">Vibrálás csökkentése</string>
   <string name="videoHardwareType_entryAuto">Telefon/tablet alapján auto-felismerés</string>
   <string name="videoHardwareType_entryStandard">Alap profil</string>
@@ -174,12 +164,7 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Kiválasztott mappa: %1$s</string>
-  <string name="pathHiResTextures_title">Textúra csomag importálása</string>
-  <string name="pathHiResTextures_summary">Egyéni textúrák alkalmazása (ZIP) a játékhoz</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Mentési mappa</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Többjátékos</string>
   <string name="playerMap_summary">Minden játékos kontrollerének a definiálása</string>
   <!--Profile Preferences-->
@@ -209,11 +194,9 @@
   <string name="cheatNotes_title">Jegyzetek</string>
   <string name="cheatNotes_none">(nincsenek jegyzetek ehhez a csaláshoz)</string>
   <!--Cheat Editor-->
-  <string name="cheatEditor_help">Segítség</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Textúrák kicsomagolása</string>
-  <string name="pathHiResTexturesTask_message">Légy türelemmel. Ez időbe telik.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Probléma a textúrák kicsomagolásánál!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Probléma a textúrák kicsomagolásánál!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
@@ -226,8 +209,7 @@
   <string name="playerMap_deviceWithoutName">Készülék  %1$d</string>
   <string name="playerMapPreference_popupTitle">Játékos %1$d</string>
   <string name="playerMapPreference_popupUnmap">Kiosztás megszüntése</string>
-  <string name="playerMapPreference_reminder">Emlékeztess amikor a játékosok nincsenek kiosztva</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>

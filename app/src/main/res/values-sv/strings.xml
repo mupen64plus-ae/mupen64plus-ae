@@ -65,19 +65,13 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Ombyggnad fusk databas…</string>
-  <string name="toast_launchingEmulator">Startar emulator…</string>
-  <string name="toast_loadingSession">Auto-återupptar spelet…</string>
-  <string name="toast_savingSession">Auto-spara spel…</string>
-  <string name="toast_loadingSlot">Laddar slot %1$d…</string>
+    <string name="toast_loadingSlot">Laddar slot %1$d…</string>
   <string name="toast_savingSlot">Sparar slot %1$d…</string>
   <string name="toast_loadingFile">Laddar %1$s…</string>
   <string name="toast_savingFile">Sparar %1$s…</string>
   <string name="toast_overwritingFile">Skriver över %1$s…</string>
-  <string name="toast_loadingGameInfo">Ladda spelinformation...</string>
-  <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Använder nu slot %1$d.</string>
-  <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
+    <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -86,15 +80,12 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Återuppta</string>
   <string name="actionResume_summary">Oförutsägbar om fusk används</string>
-  <string name="actionRestart_title">Starta om</string>
-  <string name="actionRestart_summary">Rekommenderad om fusk används</string>
-  <string name="actionReloadAssets_title">Ladda om app resurser</string>
+    <string name="actionReloadAssets_title">Ladda om app resurser</string>
   <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
   <string name="actionCheatEditor_title">Hantera fuskkoder</string>
   <string name="actionShare_title">Dela</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">Globala inställningar</string>
-  <string name="screenCheats_title">Fusk</string>
+    <string name="screenCheats_title">Fusk</string>
   <string name="screenCheats_summaryEnabled">Akriverad</string>
   <string name="screenCheats_summaryDisabled">Inaktiverad</string>
   <!--Preference Categories-->
@@ -149,10 +140,7 @@
   <string name="displayOrientation_entryReverseLandscape">Omvänd landskap</string>
   <string name="displayOrientation_entryPortrait">Porträtt</string>
   <string name="displayOrientation_entryReversePortrait">Omvänd porträtt</string>
-  <string name="displayPosition_entryBottom">Botten</string>
-  <string name="displayPosition_entryMiddle">Mitten</string>
-  <string name="displayPosition_entryTop">Toppen</string>
-  <string name="displayResolution_title">Renderingsupplösning</string>
+    <string name="displayResolution_title">Renderingsupplösning</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
   <string name="displayResolution_entry640x480">640 x 480</string>
@@ -215,12 +203,7 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Vald mapp: %1$s</string>
-  <string name="pathHiResTextures_title">Import textur pack</string>
-  <string name="pathHiResTextures_summary">Tillämpa anpassade texturer (ZIP-format) till ett spel</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Spel spar mapp</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-player</string>
   <string name="playerMap_summary">Definera varje spelares kontroll(er)</string>
   <!--Profile Preferences-->
@@ -236,8 +219,7 @@
   <string name="confirmUnmapAll_message">Avtilldela alla kommandon för %1$s?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">Varning</string>
-  <string name="invalidInstall_message">Mupen64 Plus AE kanske inte har installerats korrekt. Försök att installera om appen om du upplever några krascher.</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE kanske inte har installerats korrekt. Försök att installera om appen om du upplever några krascher.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">filnamn</string>
   <!--Asset Extractor-->
@@ -252,11 +234,9 @@
   <string name="cheatNotes_title">Anteckningar</string>
   <string name="cheatNotes_none">(inga anteckningar tillgängliga för detta fusk)</string>
   <!--Cheat Editor-->
-  <string name="cheatEditor_help">Hjälp</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
-  <string name="pathHiResTexturesTask_message">Var god och vänta. Denna process kan ta lite tid.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Problem med uppackning av texturer!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Problem med uppackning av texturer!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
@@ -269,8 +249,7 @@
   <string name="playerMap_deviceWithoutName">Enhet %1$d</string>
   <string name="playerMapPreference_popupTitle">Spelare %1$d</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
-  <string name="playerMapPreference_reminder">Påminn mig när spelarna inte är mappade</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>

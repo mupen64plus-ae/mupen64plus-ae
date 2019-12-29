@@ -33,18 +33,17 @@ import android.os.Build;
 
 import androidx.core.content.pm.PackageInfoCompat;
 import androidx.preference.PreferenceManager;
+
+import android.os.Environment;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
 
@@ -299,13 +298,17 @@ public class AppData
     private final SharedPreferences mPreferences;
 
     /** The parent directory containing all user-writable data files. */
-    final String userDataDir;
+    final String legacyUserDataDir;
 
     /** The parent directory containing all user-writable data files. */
     public final String gameDataDir;
 
     /** The parent directory containing all user-writable data files. */
     public final String legacyGameDataDir;
+
+    /** Default legacy data path, needed for moving legacy data to internal storage */
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    public final String legacyDefaultDataPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mupen64plus";
 
     private static String openGlVersion = null;
     
@@ -339,29 +342,18 @@ public class AppData
         }
         catch( NameNotFoundException e )
         {
-            Log.e( "AppData", e.getMessage() );
+            Log.e( "AppData", e.toString() );
         }
         appVersion = version;
         appVersionCode = (int)(versionCode & 0xffff);
         
         // Directories
 
-        String defaultRelPath = context.getString(R.string.pathGameSaves_default);
-
         //App data
-        String tempUserDataDir = mPreferences.getString( "pathAppData", "" );
-        if(TextUtils.isEmpty(tempUserDataDir) || tempUserDataDir.contains(defaultRelPath))
-        {
-            tempUserDataDir = PathPreference.validate(defaultRelPath);
-        }
-        userDataDir = tempUserDataDir;
+        legacyUserDataDir = mPreferences.getString( "pathAppData", legacyDefaultDataPath );
 
         //Game data
-        String tempGameDataDir = mPreferences.getString( "pathGameSaves", "" );
-        if(TextUtils.isEmpty(tempGameDataDir) || tempGameDataDir.contains(defaultRelPath))
-        {
-            tempGameDataDir = userDataDir;
-        }
+        String tempGameDataDir = mPreferences.getString( "pathGameSaves", legacyDefaultDataPath );
         legacyGameDataDir = tempGameDataDir + "/GameData";
         gameDataDir = context.getFilesDir().getAbsolutePath() + "/GameData";
 
@@ -708,7 +700,7 @@ public class AppData
         String arch = System.getProperty("os.arch");
 
         // Check for x86, older versions of AndroidX86 report GL support, but it doesn't work
-        boolean itsX86 = arch.equals( "i686" );
+        boolean itsX86 = arch != null && arch.equals( "i686" );
 
         boolean supportsFullGl = (itsX86 && IS_MARSHMELLOW && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API)) ||
                 (!itsX86 && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API));

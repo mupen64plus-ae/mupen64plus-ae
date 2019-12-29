@@ -34,8 +34,7 @@
   <string name="menuItem_emulationProfiles">Perfís de emulación</string>
   <string name="menuItem_touchscreenProfiles">Perfís da pantalla táctil</string>
   <string name="menuItem_controllerProfiles">Perfís do controlador</string>
-  <string name="menuItem_customCheats">Trucos propios</string>
-  <string name="menuItem_help">Axuda</string>
+    <string name="menuItem_help">Axuda</string>
   <string name="menuItem_faq">Preguntas habituais</string>
   <string name="menuItem_helpForum">Foro de axuda</string>
   <string name="menuItem_controllerDiagnostics">Diagnose do mando</string>
@@ -70,19 +69,13 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Reconstruír base de datos de trucos</string>
-  <string name="toast_launchingEmulator">Executando emulador…</string>
-  <string name="toast_loadingSession">Reanudar auto. xogo…</string>
-  <string name="toast_savingSession">Gardar auto. xogo…</string>
-  <string name="toast_loadingSlot">Cargando rañura %1$d…</string>
+    <string name="toast_loadingSlot">Cargando rañura %1$d…</string>
   <string name="toast_savingSlot">Gardando rañura %1$d…</string>
   <string name="toast_loadingFile">Cargando %1$s…</string>
   <string name="toast_savingFile">Gardando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescribindo %1$s…</string>
-  <string name="toast_loadingGameInfo">Cargando información do xogo...</string>
-  <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Usando a rañura %1$d.</string>
-  <string name="toast_sdInaccessible">Non se pode acceder á SD (desconecte o cable USB e probe de novo)</string>
+    <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">Non se pode acceder á SD (desconecte o cable USB e probe de novo)</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -91,17 +84,13 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionResume_title">Continuar</string>
   <string name="actionResume_summary">Imprevisible cos trucos en uso</string>
-  <string name="actionRestart_title">Reiniciar</string>
-  <string name="actionRestart_summary">Recomendado cos trucos en uso</string>
-  <string name="actionReloadAssets_title">Recargar recursos da aplicación</string>
+    <string name="actionReloadAssets_title">Recargar recursos da aplicación</string>
   <string name="actionReloadAssets_summary">NON afecta aos axustes, ROMs, partidas gardadas ou outros datos propios</string>
   <string name="actionCheatEditor_title">Xestionar códigos de trucos</string>
   <string name="actionCheatEditor_summary">Engadir, modificar e eliminar trucos propios</string>
   <string name="actionShare_title">Compartir</string>
   <!--Preference Screens-->
-  <string name="screenGlobalSettings_title">Axustes globais</string>
-  <string name="screenGlobalSettings_summary">Axustes de pantalla, son, almacenamento e depuración</string>
-  <string name="screenCheats_title">Trucos</string>
+    <string name="screenCheats_title">Trucos</string>
   <string name="screenCheats_summaryEnabled">Activado</string>
   <string name="screenCheats_summaryDisabled">Desactivado</string>
   <!--Preference Categories-->
@@ -114,9 +103,7 @@
   <string name="categoryTouchscreen_title">Pantalla táctil</string>
   <string name="categoryInput_title">Entrada</string>
   <string name="categoryData_title">Datos</string>
-  <string name="categoryGameSettings_title">Axustes específicos do xogo</string>
-  <string name="categoryGameSettings_titleNamed">Axustes de %1$s</string>
-  <!--Checkbox Preferences-->
+    <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Activar trucos</string>
   <string name="touchscreenFeedback_title">Resposta táctil</string>
   <string name="touchscreenFeedback_summary">Vibrar ao premer o botón</string>
@@ -160,11 +147,7 @@
   <string name="displayOrientation_entryReverseLandscape">Horizontal inversa</string>
   <string name="displayOrientation_entryPortrait">Vertical</string>
   <string name="displayOrientation_entryReversePortrait">Vertical inversa</string>
-  <string name="displayPosition_title">Posición da pantalla vertical</string>
-  <string name="displayPosition_entryBottom">Abaixo</string>
-  <string name="displayPosition_entryMiddle">Medio</string>
-  <string name="displayPosition_entryTop">Arriba</string>
-  <string name="displayResolution_title">Resolución renderizada</string>
+    <string name="displayResolution_title">Resolución renderizada</string>
   <string name="displayResolution_entryNative">Nativo (mellor calidade)</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
@@ -236,19 +219,13 @@
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
-  <string name="pathPreference_dialogTitle">Cartafol elixido: %1$s</string>
-  <string name="pathHiResTextures_title">Importar paquete de textura</string>
-  <string name="pathHiResTextures_summary">Aplicar texturas propias (formato ZIP) a un xogo</string>
-  <string name="pathHiResTextures_default">~</string>
-  <string name="pathGameSaves_title">Cartafol de gardado</string>
-  <!--Player Map Preferences-->
+    <!--Player Map Preferences-->
   <string name="playerMap_title">Multixogador</string>
   <string name="playerMap_summary">Definir os mandos de cada xogador</string>
   <!--Profile Preferences-->
   <string name="emulationProfile_title">Perfil de emulación</string>
   <string name="touchscreenProfile_title">Perfil da pantalla táctil</string>
-  <string name="controllerProfile_title">Perfil do mando</string>
-  <string name="controllerProfile1_title">Perfil do mando 1</string>
+    <string name="controllerProfile1_title">Perfil do mando 1</string>
   <string name="controllerProfile2_title">Perfil do mando 2</string>
   <string name="controllerProfile3_title">Perfil do mando 3</string>
   <string name="controllerProfile4_title">Perfil do mando 4</string>
@@ -265,8 +242,7 @@
   <string name="confirmDeleteProfile_message">Eliminar perfil \"%1$s\"?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-  <string name="invalidInstall_title">Aviso</string>
-  <string name="invalidInstall_message">Mupen64 Plus AE non se instalou correctamente. Por favor, probe a reinstalar a aplicación se sufre crebas.</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE non se instalou correctamente. Por favor, probe a reinstalar a aplicación se sufre crebas.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <!--Asset Extractor-->
@@ -282,16 +258,11 @@
   <string name="cheatNotes_none">(non hai notas para este truco)</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">Editor de trucos</string>cheatEditor_empty
-  <string name="cheatEditor_edit">Editar trucos</string>
-  <string name="cheatEditor_help">Axuda</string>
-  <string name="cheatEditor_delete">Eliminar truco</string>
+    <string name="cheatEditor_delete">Eliminar truco</string>
   <string name="cheatEditor_confirm">Está seguro?</string>
-  <string name="cheatEditor_info">Información de trucos</string>
-  <string name="cheatEditor_saveConfirm">Gardar arquivo de truco?</string>
-  <!--Hi-Res Texture Unpacking-->
+    <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Desempaquetando texturas</string>
-  <string name="pathHiResTexturesTask_message">Teña paciencia. Este proceso pode levar un tempo.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Problema desempaquetando texturas!</string>
+    <string name="pathHiResTexturesTask_errorMessage">Problema desempaquetando texturas!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
@@ -304,8 +275,7 @@
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
   <string name="playerMapPreference_popupTitle">Xogador %1$d</string>
   <string name="playerMapPreference_popupUnmap">Desasignar</string>
-  <string name="playerMapPreference_reminder">Lembrarme cando os xogadores non foron asignados</string>
-  <!--Touchscreen Profile Activity-->
+    <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
   <string name="controller_buttonCr">Pad-C →</string>
   <string name="controller_buttonCl">Pad-C ←</string>

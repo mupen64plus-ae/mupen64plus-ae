@@ -139,7 +139,7 @@ public class GamePrefs
     /** The touchscreen profile. */
     public final Profile touchscreenProfile;
 
-    private static final int NUM_CONTROLLERS = 4;
+    public static final int NUM_CONTROLLERS = 4;
 
     /** The input profiles for all player. */
     public final ControllerProfile[] controllerProfile = new ControllerProfile[NUM_CONTROLLERS];
@@ -327,6 +327,7 @@ public class GamePrefs
     static final String PLAY_SHOW_CHEATS = "playShowCheats";
     static final String IDL_PATH_64DD = "idlPath64dd";
     static final String DISK_PATH_64DD = "diskPath64dd";
+    static final String TRANSFER_PAK = "transferPak";
 
     /**
      * Directories and file names
@@ -887,9 +888,19 @@ public class GamePrefs
                 Integer.parseInt(getString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(DEFAULT_PAK_TYPE) )));
     }
 
+    public String getTransferPakRomKey(int player)
+    {
+        return TRANSFER_PAK + player + "Rom_v2";
+    }
+
+    public String getTransferPakRamKey(int player)
+    {
+        return TRANSFER_PAK + player + "Ram_v2";
+    }
+
     public String getTransferPakRom(int player)
     {
-        String romPath = getString( "transferPak" + player + "Rom", "" );
+        String romPath = getString( getTransferPakRomKey(player), "" );
 
         if (!TextUtils.isEmpty(romPath) && new File(romPath).isDirectory()) {
             romPath = "";
@@ -899,7 +910,7 @@ public class GamePrefs
 
     public String getTransferPakRam(int player)
     {
-        String ramPath = getString( "transferPak" + player + "Ram", "" );
+        String ramPath = getString( getTransferPakRamKey(player), "" );
 
         if (!TextUtils.isEmpty(ramPath) && new File(ramPath).isDirectory()) {
             ramPath = "";
@@ -917,7 +928,7 @@ public class GamePrefs
         return mPreferences.getString( key, defaultValue );
     }
 
-    private void putString( String key, String value )
+    public void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).apply();
     }
