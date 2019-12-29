@@ -452,7 +452,7 @@ public class GlobalPrefs
         legacyTouchscreenCustomSkinsDir = appData.legacyUserDataDir + "/CustomSkins";
         legacyCoreConfigDir = appData.legacyUserDataDir + "/CoreConfig";
 
-        final String coreConfigDir = context.getCacheDir().getAbsolutePath() + "/CoreConfig";
+        final String coreConfigDir = context.getFilesDir().getAbsolutePath() + "/CoreConfig";
         coreUserDataDir = coreConfigDir + "/UserData";
         coreUserCacheDir = coreConfigDir + "/UserCache";
         unzippedRomsDir = context.getCacheDir().getAbsolutePath() + "/UnzippedRoms";
