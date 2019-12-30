@@ -22,7 +22,7 @@
     <application
         android:name="paulscode.android.mupen64plusae.AppMupen64Plus"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:isGame="true"
         android:hardwareAccelerated="true"
         android:exported="true"
@@ -34,7 +34,8 @@
         android:theme="@style/appTheme"
         android:supportsRtl="true"
         android:requestLegacyExternalStorage="true"
-        tools:ignore="UnusedAttribute" >
+        tools:ignore="UnusedAttribute"
+        android:fullBackupContent="@xml/backup_descriptor">
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
             android:label="@string/SplashActivity_title"
@@ -278,18 +279,28 @@
             android:windowActionBar="false"
             android:theme="@style/Theme.AppCompat.Black"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
+        <activity
+            android:name="paulscode.android.mupen64plusae.ImportExportActivity"
+            android:exported="false"
+            android:label="@string/importExportActivity_title"
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            <intent-filter>
+                <action android:name=".persistent.DataPrefsActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService"
                  android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService"
                  android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.DeleteFilesService"
                  android:exported="false" />
-        <service android:name="paulscode.android.mupen64plusae.task.ExtractRomService"
-                 android:exported="false" />
         <service
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
             android:exported="false"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
+        <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.filesprovider"

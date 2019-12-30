@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="screenRoot" >
+    <androidx.preference.Preference
+        android:key="actionExportGameData"
+        android:title="@string/importExportActivity_exportGameData" />
+    <androidx.preference.Preference
+        android:key="actionExportCheatsAndProfiles"
+        android:title="@string/importExportActivity_exportCheatsAndProfiles" />
+    <androidx.preference.Preference
+        android:key="actionImportGameData"
+        android:title="@string/importExportActivity_importGameData" />
+    <androidx.preference.Preference
+        android:key="actionImportCheatsAndProfiles"
+        android:title="@string/importExportActivity_importCheatsAndProfiles" />
+    <androidx.preference.Preference
+        android:key="actionImportTouchscreenGraphics"
+        android:title="@string/importExportActivity_importTouchscreenGraphics" />
+
+</androidx.preference.PreferenceScreen>

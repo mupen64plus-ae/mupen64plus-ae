@@ -27,6 +27,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -56,6 +57,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import androidx.core.content.FileProvider;
+import androidx.documentfile.provider.DocumentFile;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
 
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
@@ -63,7 +66,7 @@ import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 /**
  * Utility class that provides methods which simplify file I/O tasks.
  */
-@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions"})
+@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "WeakerAccess"})
 public final class FileUtil
 {
     public static void populate( @NonNull File startPath, boolean includeParent, boolean includeDirectories,
@@ -318,6 +321,129 @@ public final class FileUtil
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static DocumentFile createFolderIfNotPresent(Context context, DocumentFile root, String folderName)
+    {
+        if(root == null || TextUtils.isEmpty(root.toString()) )
+        {
+            Log.e( "copyFile", "dest null" );
+            return null;
+        }
+
+        if(folderName == null || TextUtils.isEmpty(folderName) )
+        {
+            Log.e( "copyFile", "dest null" );
+            return null;
+        }
+
+        boolean success = true;
+
+        // Figure out the child URI
+        String childId = DocumentsContract.getTreeDocumentId(root.getUri());
+        childId = childId + "/" + folderName;
+        Uri childUri = DocumentsContract.buildDocumentUriUsingTree(root.getUri(), childId);
+        DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
+
+        if (childFile == null) {
+            return null;
+        }
+
+        if (!childFile.exists()) {
+            childFile = childFile.createDirectory(folderName);
+        } else {
+            childFile = root.findFile(folderName);
+        }
+
+        return childFile;
+    }
+
+    /**
+     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
+     * {@link Uri}. The source can't be a directory.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public static boolean copyFolder( Context context, File src, DocumentFile dest, String startPath )
+    {
+        if( src == null )
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if(dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        boolean success = true;
+
+        // Figure out the child URI
+        String childPath = startPath + "/" + src.getName();
+        String childId = DocumentsContract.getTreeDocumentId(dest.getUri());
+        childId = childId + "/" + childPath;
+        Uri childUri = DocumentsContract.buildDocumentUriUsingTree(dest.getUri(), childId);
+        DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
+
+        if (childFile == null) {
+            return false;
+        }
+
+        if( src.isDirectory() )
+        {
+            if(!childFile.exists()){
+                childFile = dest.createDirectory(src.getName());
+            }
+
+            File[] files = src.listFiles();
+
+            for( File file : files ) {
+                success = success && copyFolder( context, file, childFile, childPath );
+            }
+
+            return success;
+        }
+        else
+        {
+            if(!childFile.exists()){
+                childFile = dest.createFile("", src.getName());
+            }
+
+            ParcelFileDescriptor parcelFileDescriptor;
+
+            try {
+                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(childFile.getUri(), "w");
+
+                if (parcelFileDescriptor != null)
+                {
+                    try (FileChannel in = new FileInputStream(src).getChannel();
+                         FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
+
+                        long bytesTransferred = 0;
+
+                        while (bytesTransferred < in.size()) {
+                            bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                        }
+
+                    } catch (Exception e) {
+                        Log.e("copyFile", "Exception: " + e.getMessage());
+                    }
+
+                    parcelFileDescriptor.close();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return true;

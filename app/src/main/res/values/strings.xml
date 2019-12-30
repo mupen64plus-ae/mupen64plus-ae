@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     ***********************************************************************************
     RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
     
@@ -43,13 +42,13 @@
     <string name="menuItem_player_three">Player 3</string>
     <string name="menuItem_player_four">Player 4</string>
     <string name="menuItem_paks">Controller Paks</string>
- <!-- capitalize since trademark -->
+    <!-- capitalize since trademark -->
     <string name="menuItem_pak_empty">Empty</string>
- <!-- capitalize since trademark -->
+    <!-- capitalize since trademark -->
     <string name="menuItem_pak_mem">Memory Pak</string>
- <!-- capitalize since trademark -->
+    <!-- capitalize since trademark -->
     <string name="menuItem_pak_rumble">Rumble Pak</string>
- <!-- capitalize since trademark -->
+    <!-- capitalize since trademark -->
     <string name="menuItem_pak_transfer">Transfer Pak</string>
     <string name="menuItem_paks_transfer">Transfer Paks</string>
     <string name="menuItem_paks_transfer_player1_rom">Player 1 Gameboy ROM</string>
@@ -557,7 +556,7 @@
     <string name="displayZoom_title">Zoom</string>
     <string name="displayZoomDefault_title">Use default zoom</string>
     <string name="displayZoomDefault_summary">Uncheck this to specify a custom zoom value for this game</string>
-    
+
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
@@ -621,7 +620,7 @@
     <string name="controllerProfile3_title">Controller 3 profile</string>
     <string name="controllerProfile4_title">Controller 4 profile</string>
     <string name="default_profile_title">Global Default</string>
-    
+
     <!-- Other Preferences -->
     <string name="GameAutoSavesMax_title">Max auto saves per game</string>
     <string name="useFlatGameDataPath_title">Use flat game data folder structure</string>
@@ -668,7 +667,7 @@
     <string name="cheatOption_title">Full text</string>
     <string name="cheatNotes_title">Notes</string>
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
-    
+
     <!-- Cheat Editor -->
     <string name="menuItem_cheatEditor">Cheat editor</string>
     <string name="cheatEditor_confirm">Are you sure?</string>
@@ -703,6 +702,16 @@
     <string name="scanRomsDialog_downloadArt">Download cover art</string>
     <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
     <string name="scanRomsDialog_scanSubdirectories">Scan subdirectories</string>
+
+    <!-- Import/Export Activity -->
+    <string name="importExportActivity_title">Import/Export Data</string>
+    <string name="importExportActivity_exportDialogTitle">Exporting Data</string>
+    <string name="importExportActivity_exportGameData">Export Game Data</string>
+    <string name="importExportActivity_exportCheatsAndProfiles">Export Cheats and Profiles</string>
+    <string name="importExportActivity_importDialogTitle">Importing Data</string>
+    <string name="importExportActivity_importGameData">Import Game Data</string>
+    <string name="importExportActivity_importCheatsAndProfiles">Import Cheats and Profiles</string>
+    <string name="importExportActivity_importTouchscreenGraphics">Import Touchscreen Graphics</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Extracting ROM…</string>

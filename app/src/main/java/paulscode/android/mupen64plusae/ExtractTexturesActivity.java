@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -89,7 +90,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
     }
     
     @Override
-    public void onSaveInstanceState( Bundle savedInstanceState )
+    public void onSaveInstanceState( @NonNull Bundle savedInstanceState )
     {
         if (mCurrentPath != null)
             savedInstanceState.putString( CURRENT_PATH, mCurrentPath.getAbsolutePath() );

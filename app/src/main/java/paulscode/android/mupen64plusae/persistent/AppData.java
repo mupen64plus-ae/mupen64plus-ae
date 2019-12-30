@@ -40,8 +40,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
@@ -308,9 +306,11 @@ public class AppData
     /** The parent directory containing all user-writable data files. */
     public final String legacyGameDataDir;
 
+    public static final String applicationPath = "mupen64plus";
+
     /** Default legacy data path, needed for moving legacy data to internal storage */
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    public final String legacyDefaultDataPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mupen64plus";
+    public final String legacyDefaultDataPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + applicationPath;
 
     private static String openGlVersion = null;
     

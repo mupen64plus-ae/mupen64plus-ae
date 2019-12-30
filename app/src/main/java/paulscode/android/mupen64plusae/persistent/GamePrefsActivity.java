@@ -281,18 +281,16 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     }
 
     @Override
-    protected void onActivityResult( int requestCode, int resultCode, Intent data )
-    {
-        if( requestCode == EDIT_CHEATS_REQUEST_CODE )
-        {
-            if( resultCode == RESULT_OK)
-            {
+    protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_CHEATS_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 //If the user cheats were saved, reset all selected cheatd
                 mClearCheats = true;
                 refreshCheatsCategory();
             }
-        }
-        else if (requestCode == PICK_FILE_REQUEST_CODE) {
+        } else if (requestCode == PICK_FILE_REQUEST_CODE) {
 
             if (resultCode == RESULT_OK) {
 
@@ -301,7 +299,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 if (data != null) {
                     Uri fileUri = data.getData();
 
-                    Preference currentPreference = findPreference( currentFilePickerKey );
+                    Preference currentPreference = findPreference(currentFilePickerKey);
                     if (currentPreference != null && fileUri != null) {
 
                         final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
@@ -532,7 +530,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
-                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
     }

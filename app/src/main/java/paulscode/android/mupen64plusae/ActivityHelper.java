@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
+import paulscode.android.mupen64plusae.task.CopyToSdService;
 import paulscode.android.mupen64plusae.task.DeleteFilesService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
@@ -87,6 +89,7 @@ public class ActivityHelper
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
+        public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
@@ -353,6 +356,12 @@ public class ActivityHelper
         intent.putExtra( Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
+
+    public static void startImportExportActivity( Context context )
+    {
+        Intent intent = new Intent( context, ImportExportActivity.class );
+        context.startActivity( intent );
+    }
     
     static void startDiagnosticActivity( Context context )
     {
@@ -429,6 +438,25 @@ public class ActivityHelper
     static void stopDeleteFilesService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, DeleteFilesService.class);
+
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
+    }
+
+    static void startCopyToSdService(Context context, ServiceConnection serviceConnection,
+                                        File source, Uri destination)
+    {
+        Intent intent = new Intent(context, CopyToSdService.class);
+        intent.putExtra(Keys.FILE_PATH, source.getAbsolutePath());
+        intent.putExtra(Keys.FILE_URI, destination.toString());
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, 0);
+    }
+
+    static void stopCopyToSdService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, CopyToSdService.class);
 
         context.unbindService(serviceConnection);
         context.stopService(intent);

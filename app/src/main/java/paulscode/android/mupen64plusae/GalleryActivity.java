@@ -29,6 +29,7 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -427,7 +428,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public void onSaveInstanceState( Bundle savedInstanceState )
+    public void onSaveInstanceState( @NonNull Bundle savedInstanceState )
     {
         Log.i("GalleryActivity", "onSaveInstanceState");
 
@@ -463,7 +464,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public void onConfigurationChanged( Configuration newConfig )
+    public void onConfigurationChanged( @NonNull Configuration newConfig )
     {
         super.onConfigurationChanged( newConfig );
         mDrawerToggle.onConfigurationChanged( newConfig );
@@ -672,7 +673,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             final FragmentManager fm = getSupportFragmentManager();
             confirmationDialog.show(fm, STATE_CLEAR_SHADERCACHE_DIALOG);
+            return true;
         }
+        case R.id.menuItem_importExportData:
+            ActivityHelper.startImportExportActivity( this );
             return true;
 
         default:
@@ -906,6 +910,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         // Check which request we're responding to
         if (requestCode == ActivityHelper.SCAN_ROM_REQUEST_CODE) {
             // Make sure the request was successful
