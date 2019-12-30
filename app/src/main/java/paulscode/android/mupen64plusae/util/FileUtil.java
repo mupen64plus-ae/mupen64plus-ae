@@ -326,7 +326,7 @@ public final class FileUtil
         return true;
     }
 
-    public static DocumentFile createFolderIfNotPresent(Context context, DocumentFile root, String folderName)
+    public static DocumentFile createFolderIfNotPresent(Context context, DocumentFile root, String relativePath)
     {
         if(root == null || TextUtils.isEmpty(root.toString()) )
         {
@@ -334,7 +334,7 @@ public final class FileUtil
             return null;
         }
 
-        if(folderName == null || TextUtils.isEmpty(folderName) )
+        if(relativePath == null || TextUtils.isEmpty(relativePath) )
         {
             Log.e( "copyFile", "dest null" );
             return null;
@@ -344,7 +344,7 @@ public final class FileUtil
 
         // Figure out the child URI
         String childId = DocumentsContract.getTreeDocumentId(root.getUri());
-        childId = childId + "/" + folderName;
+        childId = childId + "/" + relativePath;
         Uri childUri = DocumentsContract.buildDocumentUriUsingTree(root.getUri(), childId);
         DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
 
@@ -353,9 +353,9 @@ public final class FileUtil
         }
 
         if (!childFile.exists()) {
-            childFile = childFile.createDirectory(folderName);
+            childFile = root.createDirectory(new File(relativePath).getName());
         } else {
-            childFile = root.findFile(folderName);
+            childFile = root.findFile(new File(relativePath).getName());
         }
 
         return childFile;
@@ -387,22 +387,13 @@ public final class FileUtil
 
         boolean success = true;
 
+
         // Figure out the child URI
         String childPath = startPath + "/" + src.getName();
-        String childId = DocumentsContract.getTreeDocumentId(dest.getUri());
-        childId = childId + "/" + childPath;
-        Uri childUri = DocumentsContract.buildDocumentUriUsingTree(dest.getUri(), childId);
-        DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
-
-        if (childFile == null) {
-            return false;
-        }
 
         if( src.isDirectory() )
         {
-            if(!childFile.exists()){
-                childFile = dest.createDirectory(src.getName());
-            }
+            DocumentFile childFile = createFolderIfNotPresent(context, dest, childPath);
 
             File[] files = src.listFiles();
 
@@ -414,6 +405,15 @@ public final class FileUtil
         }
         else
         {
+            String childId = DocumentsContract.getTreeDocumentId(dest.getUri());
+            childId = childId + "/" + childPath;
+            Uri childUri = DocumentsContract.buildDocumentUriUsingTree(dest.getUri(), childId);
+            DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
+
+            if (childFile == null) {
+                return false;
+            }
+
             if(!childFile.exists()){
                 childFile = dest.createFile("", src.getName());
             }
