@@ -300,6 +300,7 @@
             android:exported="false"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService" />
+        <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

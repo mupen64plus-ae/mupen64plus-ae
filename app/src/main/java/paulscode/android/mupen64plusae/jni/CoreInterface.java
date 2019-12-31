@@ -421,7 +421,7 @@ class CoreInterface
                     }
                 }
             } else {
-                FileUtil.copyFile(context, Uri.parse(romUris.get(player)), new File(mGbRomPaths.get(player)));
+                FileUtil.copySingleFile(context, Uri.parse(romUris.get(player)), new File(mGbRomPaths.get(player)));
             }
         }
     }
@@ -429,7 +429,7 @@ class CoreInterface
     public void setGbRamPath(Context context, SparseArray<String> ramUri)
     {
         for (int player = 1; player <= 4; ++player) {
-            FileUtil.copyFile(context, Uri.parse(ramUri.get(player)), new File(mGbRamPaths.get(player)));
+            FileUtil.copySingleFile(context, Uri.parse(ramUri.get(player)), new File(mGbRamPaths.get(player)));
         }
     }
 
@@ -454,13 +454,13 @@ class CoreInterface
                 }
             }
         } else {
-            FileUtil.copyFile(context, Uri.parse(ddRomUri), new File(mDdRom));
+            FileUtil.copySingleFile(context, Uri.parse(ddRomUri), new File(mDdRom));
         }
     }
 
     public void setDdDiskPath(Context context, String ddDiskUri)
     {
-        FileUtil.copyFile(context, Uri.parse(ddDiskUri), new File(mDdDisk));
+        FileUtil.copySingleFile(context, Uri.parse(ddDiskUri), new File(mDdDisk));
     }
 
     public void writeGbRamData(Context context, SparseArray<String> ramUri)

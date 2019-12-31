@@ -38,6 +38,7 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class ImportExportActivity extends AppCompatPreferenceActivity implements Preference.OnPreferenceClickListener
@@ -57,8 +58,9 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     private static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
 
     private static final String STATE_COPY_TO_SD_FRAGMENT= "STATE_COPY_TO_SD_FRAGMENT";
-
     private CopyToSdFragment mCopyToSdFragment = null;
+    private static final String STATE_COPY_FROM_SD_FRAGMENT= "STATE_COPY_FROM_SD_FRAGMENT";
+    private CopyFromSdFragment mCopyFromSdFragment = null;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -88,6 +90,14 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         {
             mCopyToSdFragment = new CopyToSdFragment();
             fm.beginTransaction().add(mCopyToSdFragment, STATE_COPY_TO_SD_FRAGMENT).commit();
+        }
+
+        mCopyFromSdFragment = (CopyFromSdFragment) fm.findFragmentByTag(STATE_COPY_FROM_SD_FRAGMENT);
+
+        if(mCopyFromSdFragment == null)
+        {
+            mCopyFromSdFragment = new CopyFromSdFragment();
+            fm.beginTransaction().add(mCopyFromSdFragment, STATE_COPY_FROM_SD_FRAGMENT).commit();
         }
 
         // Get app data and user preferences
@@ -185,13 +195,24 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
                 }
 
             } else if (requestCode == PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE) {
-
+                if (data != null) {
+                    Uri fileUri = data.getData();
+                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
+                }
 
             } else if (requestCode == PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
-
+                if (data != null) {
+                    Uri fileUri = data.getData();
+                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
+                }
 
             } else if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-
+                if (data != null) {
+                    Uri fileUri = data.getData();
+                    File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
+                    FileUtil.deleteFolder(customSkinDir);
+                    mCopyFromSdFragment.copyFromSd(fileUri, customSkinDir);
+                }
 
             }
         }

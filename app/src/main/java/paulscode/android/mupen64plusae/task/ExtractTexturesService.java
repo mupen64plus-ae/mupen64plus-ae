@@ -129,7 +129,7 @@ public class ExtractTexturesService extends Service
             {
                 if(name.toLowerCase().endsWith("_hirestextures.htc") || name.toLowerCase().endsWith("_hirestextures.hts"))
                 {
-                    FileUtil.copyFile( getApplicationContext(), mFileUri, new File(globalPrefs.textureCacheDir + "/" + name) );
+                    FileUtil.copySingleFile( getApplicationContext(), mFileUri, new File(globalPrefs.textureCacheDir + "/" + name) );
                 }
                 else
                 {
@@ -157,7 +157,7 @@ public class ExtractTexturesService extends Service
                     }
                 } else {
                     File temp7zipFile  = new File(getCacheDir().getPath() + "/" + name);
-                    FileUtil.copyFile( getApplicationContext(), mFileUri, temp7zipFile );
+                    FileUtil.copySingleFile( getApplicationContext(), mFileUri, temp7zipFile );
 
                     headerName = TextureInfo.getTexturePackNameFromSevenZ(temp7zipFile.getPath());
 

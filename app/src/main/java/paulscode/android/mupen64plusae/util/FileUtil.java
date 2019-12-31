@@ -264,6 +264,70 @@ public final class FileUtil
     }
 
     /**
+     * Copies a {@code src} {@link DocumentFile} to a desired destination represented by a {@code dest}
+     * {@link File}. The source can't be a directory.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public static boolean copyFolder( Context context, DocumentFile src, File dest )
+    {
+        if(src == null)
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if( dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        if (src.isDirectory()) {
+            FileUtil.makeDirs(dest.getPath());
+
+            DocumentFile[] files = src.listFiles();
+            for (DocumentFile file : files) {
+                File newDest = new File(dest.getAbsolutePath()+ "/" + file.getName());
+                copyFolder(context, file, newDest );
+            }
+        } else {
+            ParcelFileDescriptor parcelFileDescriptor;
+
+            try {
+                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src.getUri(), "r");
+
+                if (parcelFileDescriptor != null)
+                {
+                    try (FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                         FileChannel out = new FileOutputStream(dest).getChannel()) {
+
+                        long bytesTransferred = 0;
+
+                        while (bytesTransferred < in.size()) {
+                            bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                        }
+
+                    } catch (Exception e) {
+                        Log.e("copyFile", "Exception: " + e.getMessage());
+                    }
+
+                    parcelFileDescriptor.close();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Copies a {@code src} {@link Uri} to a desired destination represented by a {@code dest}
      * {@link File}. The source can't be a directory.
      *
@@ -273,7 +337,7 @@ public final class FileUtil
      *
      * @return True if the copy succeeded, false otherwise.
      */
-    public static boolean copyFile( Context context, Uri src, File dest )
+    public static boolean copySingleFile( Context context, Uri src, File dest )
     {
         if(src == null || TextUtils.isEmpty(src.toString()))
         {

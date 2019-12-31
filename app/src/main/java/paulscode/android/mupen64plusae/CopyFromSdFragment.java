@@ -35,12 +35,12 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae.task.CopyToSdService;
-import paulscode.android.mupen64plusae.task.CopyToSdService.CopyFilesListener;
-import paulscode.android.mupen64plusae.task.CopyToSdService.LocalBinder;
+import paulscode.android.mupen64plusae.task.CopyFromSdService;
+import paulscode.android.mupen64plusae.task.CopyFromSdService.CopyFilesListener;
+import paulscode.android.mupen64plusae.task.CopyFromSdService.LocalBinder;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class CopyToSdFragment extends Fragment implements CopyFilesListener
+public class CopyFromSdFragment extends Fragment implements CopyFilesListener
 {
     public interface OnFinishListener
     {
@@ -58,8 +58,8 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     
     private boolean mCachedCopyFiles = false;
 
-    private File mSource = null;
-    private Uri mDestination = null;
+    private Uri mSource = null;
+    private File mDestination = null;
     
     private boolean mInProgress = false;
 
@@ -79,7 +79,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         
         if(mInProgress)
         {
-            CharSequence title = getString( R.string.importExportActivity_exportDialogTitle );
+            CharSequence title = getString( R.string.importExportActivity_importDialogTitle );
             CharSequence message = getString( R.string.toast_pleaseWait );
             mProgress = new ProgressDialog( mProgress, getActivity(), title, "", message, true );
             mProgress.show();
@@ -116,7 +116,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     }
 
     @Override
-    public void onCopyToSdFinished()
+    public void onCopyFromSdFinished()
     {
         if (getActivity() != null && getActivity() instanceof OnFinishListener) {
             ((OnFinishListener)getActivity()).onFinish();
@@ -124,7 +124,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     }
     
     @Override
-    public void onCopyToSdServiceDestroyed()
+    public void onCopyFromSdServiceDestroyed()
     {
         mInProgress = false;
         
@@ -140,7 +140,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         return mProgress;
     }
 
-    public void copyToSd( File source, Uri destination )
+    public void copyFromSd( Uri source, File destination )
     {
         this.mSource = source;
         this.mDestination = destination;
@@ -159,7 +159,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     {
         mInProgress = true;
         
-        CharSequence title = getString( R.string.importExportActivity_exportDialogTitle );
+        CharSequence title = getString( R.string.importExportActivity_importDialogTitle );
         CharSequence message = getString( R.string.toast_pleaseWait );
         mProgress = new ProgressDialog( mProgress, getActivity(), title, "", message, true );
         mProgress.show();
@@ -172,8 +172,8 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
                 LocalBinder binder = (LocalBinder) service;
-                CopyToSdService copyToSdService = binder.getService();
-                copyToSdService.setCopyToSdListener(CopyToSdFragment.this);
+                CopyFromSdService copyFromSdService = binder.getService();
+                copyFromSdService.setCopyFromSdListener(CopyFromSdFragment.this);
             }
 
             @Override
@@ -183,7 +183,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         };
 
         // Asynchronously copy data to SD
-        ActivityHelper.startCopyToSdService(activity.getApplicationContext(), mServiceConnection,
+        ActivityHelper.startCopyFromSdService(activity.getApplicationContext(), mServiceConnection,
                 mSource, mDestination);
     }
     

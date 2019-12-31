@@ -55,6 +55,7 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
+import paulscode.android.mupen64plusae.task.CopyFromSdService;
 import paulscode.android.mupen64plusae.task.CopyToSdService;
 import paulscode.android.mupen64plusae.task.DeleteFilesService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
@@ -461,7 +462,26 @@ public class ActivityHelper
         context.unbindService(serviceConnection);
         context.stopService(intent);
     }
-    
+
+    static void startCopyFromSdService(Context context, ServiceConnection serviceConnection,
+                                     Uri source, File destination)
+    {
+        Intent intent = new Intent(context, CopyFromSdService.class);
+        intent.putExtra(Keys.FILE_URI, source.toString());
+        intent.putExtra(Keys.FILE_PATH, destination.getAbsolutePath());
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, 0);
+    }
+
+    static void stopCopyFromSdService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, CopyFromSdService.class);
+
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
+    }
+
     static void starExtractTextureActivity(Activity activity)
     {
         Intent intent = new Intent(activity, ExtractTexturesActivity.class);

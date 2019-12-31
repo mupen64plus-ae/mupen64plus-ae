@@ -53,10 +53,10 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class CopyToSdService extends Service
+public class CopyFromSdService extends Service
 {
-    private File mSourcePath = null;
-    private Uri mDestinationPath = null;
+    private Uri mSourcePath = null;
+    private File mDestinationPath = null;
     
     private int mStartId;
     private Looper mServiceLooper;
@@ -71,10 +71,10 @@ public class CopyToSdService extends Service
     public interface CopyFilesListener
     {
         //This is called once the task is complete
-        void onCopyToSdFinished();
+        void onCopyFromSdFinished();
         
         //This is called when the service is destroyed
-        void onCopyToSdServiceDestroyed();
+        void onCopyFromSdServiceDestroyed();
         
         //This is called to get a progress dialog object
         ProgressDialog GetProgressDialog();
@@ -85,9 +85,9 @@ public class CopyToSdService extends Service
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
     public class LocalBinder extends Binder {
-        public CopyToSdService getService() {
+        public CopyFromSdService getService() {
             // Return this instance of this class so clients can call public methods
-            return CopyToSdService.this;
+            return CopyFromSdService.this;
         }
     }
 
@@ -106,22 +106,24 @@ public class CopyToSdService extends Service
             {
                 if (mListener != null)
                 {
-                    mListener.onCopyToSdFinished();
+                    mListener.onCopyFromSdFinished();
                 }
 
                 stopSelf(msg.arg1);
                 return;
             }
 
-            DocumentFile destLocation = DocumentFile.fromTreeUri(getApplicationContext(), mDestinationPath);
-            if (destLocation != null) {
-                destLocation = FileUtil.createFolderIfNotPresent(getApplicationContext(), destLocation, AppData.applicationPath);
-                FileUtil.copyFolder(getApplicationContext(), mSourcePath, destLocation, AppData.applicationPath);
+            DocumentFile sourceLocation = DocumentFile.fromTreeUri(getApplicationContext(), mSourcePath);
+            if (sourceLocation != null) {
+                if (!sourceLocation.getName().equals(mDestinationPath.getName())) {
+                    sourceLocation = sourceLocation.findFile(mDestinationPath.getName());
+                }
+                FileUtil.copyFolder(getApplicationContext(), sourceLocation, mDestinationPath );
             }
             
             if (mListener != null)
             {
-                mListener.onCopyToSdFinished();
+                mListener.onCopyFromSdFinished();
             }
 
             // Stop the service using the startId, so that we don't stop
@@ -140,7 +142,7 @@ public class CopyToSdService extends Service
 
         if (notificationManager != null) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.importExportActivity_exportDialogTitle), NotificationManager.IMPORTANCE_LOW);
+                    getString(R.string.importExportActivity_importDialogTitle), NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
             channel.setSound(null,null);
 
@@ -168,7 +170,7 @@ public class CopyToSdService extends Service
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
-          .setContentTitle(getString(R.string.importExportActivity_exportDialogTitle))
+          .setContentTitle(getString(R.string.importExportActivity_importDialogTitle))
           .setContentText(getString(R.string.toast_pleaseWait))
           .setContentIntent(pendingIntent);
       startForeground(ONGOING_NOTIFICATION_ID, builder.build());
@@ -183,11 +185,11 @@ public class CopyToSdService extends Service
                 String filePath = extras.getString(ActivityHelper.Keys.FILE_PATH);
                 String uriString = extras.getString(ActivityHelper.Keys.FILE_URI);
 
-                if (filePath != null) {
-                    mSourcePath = new File(filePath);
-                }
                 if (uriString != null) {
-                    mDestinationPath = Uri.parse(uriString);
+                    mSourcePath = Uri.parse(uriString);
+                }
+                if (filePath != null) {
+                    mDestinationPath = new File(filePath);
                 }
             }
         }
@@ -203,7 +205,7 @@ public class CopyToSdService extends Service
     {        
         if (mListener != null)
         {
-            mListener.onCopyToSdServiceDestroyed();
+            mListener.onCopyFromSdServiceDestroyed();
         }
     }
 
@@ -212,7 +214,7 @@ public class CopyToSdService extends Service
         return mBinder;
     }
     
-    public void setCopyToSdListener(CopyFilesListener copyFilesListener)
+    public void setCopyFromSdListener(CopyFilesListener copyFilesListener)
     {
         mListener = copyFilesListener;
         mListener.GetProgressDialog().setOnCancelListener(new OnCancelListener()

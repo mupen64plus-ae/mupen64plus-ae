@@ -577,7 +577,7 @@ public class TouchMap
         // Load the configuration files
         skinFolder = skinDir;
         ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
-        
+
         mSplitAB = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-AB" ), false);
         
         // Look up the mask colors

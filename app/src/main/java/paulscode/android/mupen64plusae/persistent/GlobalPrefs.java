@@ -503,7 +503,7 @@ public class GlobalPrefs
         // Determine the touchscreen layout
         touchscreenSkin = mPreferences.getString( "touchscreenSkin", "JoshaGibs" );
         if( touchscreenSkin.equals( "Custom" ) )
-            touchscreenSkinPath =  mPreferences.getString( "touchscreenCustomSkin", "" );
+            touchscreenSkinPath = touchscreenCustomSkinsDir;
         else
             touchscreenSkinPath = appData.touchscreenSkinsDir + touchscreenSkin;
 
