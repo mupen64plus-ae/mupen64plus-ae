@@ -73,7 +73,6 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
-import paulscode.android.mupen64plusae.task.UpdateLeanbackProgramsTask;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -1031,12 +1030,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         mGridView.setFocusable(false);
         mGridView.setFocusableInTouchMode(false);
-
-        if (mAppData.isAndroidTv && AppData.IS_OREO) {
-            UpdateLeanbackProgramsTask updateLeanbackPrograms = new UpdateLeanbackProgramsTask(getApplicationContext(), recentItems,
-                    mAppData.getChannelId());
-            updateLeanbackPrograms.execute();
-        }
 
         if (mSelectedItem != null) {
             // Repopulate the game sidebar

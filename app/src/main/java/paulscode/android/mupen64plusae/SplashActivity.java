@@ -64,6 +64,7 @@ import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.ExtractAssetsListener;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.Failure;
+import paulscode.android.mupen64plusae.task.SyncProgramsJobService;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -233,6 +234,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             createChannel();
         }
+
+        SyncProgramsJobService.scheduleSyncingProgramsForChannel(this, mAppData.getChannelId());
 
         if ( savedInstanceState != null )
         {

@@ -298,8 +298,13 @@
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
             android:exported="false"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
-        <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService" />
-        <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService" />
+        <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService"
+            android:exported="false" />
+        <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService"
+            android:exported="false" />
+        <service android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
