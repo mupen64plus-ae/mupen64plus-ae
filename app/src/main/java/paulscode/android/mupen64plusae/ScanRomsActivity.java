@@ -58,14 +58,6 @@ public class ScanRomsActivity extends AppCompatActivity
         mCheckBox2.setChecked( true );
         mCheckBox3.setChecked( false );
         mCheckBox4.setChecked( true );
-
-        Button cancelButton = findViewById(R.id.buttonCancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ScanRomsActivity.this.setResult(RESULT_CANCELED, null);
-                ScanRomsActivity.this.finish();
-            }
-        });
     }
     
     @Override
