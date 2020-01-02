@@ -24,6 +24,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.app.job.JobService;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import java.util.List;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.GalleryItem;
+import paulscode.android.mupen64plusae.SplashActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -61,6 +63,18 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
 
     private static final long CHANNEL_JOB_ID_OFFSET = 1000;
 
+    static public class StartupIntentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() != null) {
+                if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+                    AppData appData = new AppData( context );
+                    syncProgramsForChannel(context, appData.getChannelId());
+                }
+            }
+        }
+    }
+
     private static int getJobIdForChannelId(long channelId) {
         return (int) (CHANNEL_JOB_ID_OFFSET + channelId);
     }
@@ -72,10 +86,12 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
      * @param context for accessing the JobScheduler.
      * @param channelId for the channel to listen for changes.
      */
-    public static void scheduleSyncingProgramsForChannel(Context context, long channelId) {
-        ComponentName componentName = new ComponentName(context, SyncProgramsJobService.class);
+    public static void scheduleSyncingProgramsForChannel(Context context, long channelId)
+    {
+        AppData appData = new AppData(context);
 
-        if (AppData.IS_OREO) {
+        if (AppData.IS_OREO && appData.isAndroidTv) {
+            ComponentName componentName = new ComponentName(context, SyncProgramsJobService.class);
 
             JobInfo.Builder builder = new JobInfo.Builder(getJobIdForChannelId(channelId), componentName);
 
@@ -85,6 +101,36 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
             builder.addTriggerContentUri(triggerContentUri);
             builder.setTriggerContentMaxDelay(0L);
             builder.setTriggerContentUpdateDelay(0L);
+
+            PersistableBundle bundle = new PersistableBundle();
+            bundle.putLong(TvContractCompat.EXTRA_CHANNEL_ID, channelId);
+            builder.setExtras(bundle);
+
+            JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            if (scheduler != null) {
+                scheduler.cancel(getJobIdForChannelId(channelId));
+                scheduler.schedule(builder.build());
+            }
+        }
+    }
+
+    /**
+     * Schedulers syncing programs for a channel. The scheduler will listen to a {@link Uri} for a
+     * particular channel.
+     *
+     * @param context for accessing the JobScheduler.
+     * @param channelId for the channel to listen for changes.
+     */
+    public static void syncProgramsForChannel(Context context, long channelId)
+    {
+        AppData appData = new AppData(context);
+        if (AppData.IS_OREO && appData.isAndroidTv) {
+            ComponentName componentName = new ComponentName(context, SyncProgramsJobService.class);
+
+            JobInfo.Builder builder = new JobInfo.Builder(getJobIdForChannelId(channelId), componentName);
+
+            builder.setMinimumLatency(1);
+            builder.setOverrideDeadline(1);
 
             PersistableBundle bundle = new PersistableBundle();
             bundle.putLong(TvContractCompat.EXTRA_CHANNEL_ID, channelId);
@@ -190,7 +236,7 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
             coverArtUri = FileUtil.resourceToUri(getApplicationContext(), R.drawable.default_coverart);
         }
 
-        Intent gameIntent = new Intent(getApplicationContext(), SyncProgramsJobService.class);
+        Intent gameIntent = new Intent(getApplicationContext(), SplashActivity.class);
 
         gameIntent.putExtra(GalleryActivity.KEY_IS_LEANBACK, true);
         gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romUri);

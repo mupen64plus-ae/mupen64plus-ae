@@ -73,6 +73,7 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
+import paulscode.android.mupen64plusae.task.SyncProgramsJobService;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -959,6 +960,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
         galleryRefreshTask.execute();
+
+        SyncProgramsJobService.syncProgramsForChannel(this, mAppData.getChannelId());
     }
 
     void reloadCacheAndRefreshGrid()

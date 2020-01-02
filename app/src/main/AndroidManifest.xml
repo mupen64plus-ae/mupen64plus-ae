@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
     <uses-sdk tools:overrideLibrary="androidx.tvprovider" />
@@ -305,6 +306,12 @@
         <service android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
+
+        <receiver android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService$StartupIntentReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

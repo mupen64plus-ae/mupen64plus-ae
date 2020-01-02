@@ -90,7 +90,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
 
             //Limit list to 8 items
-            final int recentLimit = 8;
+            final int recentLimit = 12;
             if (recentItems.size() > recentLimit) {
                 recentItems.subList(recentLimit, recentItems.size()).clear();
             }
@@ -231,10 +231,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                         if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
                                 searches != null)) {
                             items.add(item);
-                            boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
-                            if (isNotOld) {
-                                recentItems.add(item);
-                            }
+                            recentItems.add(item);
                         }
                     }
                 }
@@ -244,7 +241,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         Collections.sort( items, mGlobalPrefs.sortByRomName ?
                 new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
 
-        //Don't delete any items when srarching
+        //Don't delete any items when searching
         if (searches == null) {
             deleteOldItems(recentItems);
         }
