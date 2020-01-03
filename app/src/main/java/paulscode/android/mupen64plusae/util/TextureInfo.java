@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,6 +33,7 @@ import java.util.zip.ZipInputStream;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
@@ -185,37 +187,14 @@ public class TextureInfo
      * @param filename The path to the zipped texture pack.
      * @return The name, or null if there were any errors.
      */
-    public static String getTexturePackNameFromSevenZ(String filename )
+    public static String getTexturePackNameFromSevenZ(String filename)
     {
         SevenZFile zipfile = null;
         Map<String, Integer> romHeaderCount = new HashMap<>();
         try
         {
             zipfile = new SevenZFile(new File(filename));
-            SevenZArchiveEntry zipEntry;
-
-            while( (zipEntry = zipfile.getNextEntry()) != null)
-            {
-                if( !zipEntry.isDirectory() )
-                {
-                    TextureInfo info = new TextureInfo( zipEntry.getName() );
-                    if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
-                        Integer count = romHeaderCount.get(info.romName);
-                        if (count != null) {
-                            romHeaderCount.put(info.romName, count+1);
-                        } else {
-                            romHeaderCount.put(info.romName, 1);
-                        }
-
-                        //Find the first ROM header that shows 10 times
-                        for (Map.Entry<String, Integer> entry : romHeaderCount.entrySet()) {
-                            if (entry.getValue() == 10) {
-                                return entry.getKey();
-                            }
-                        }
-                    }
-                }
-            }
+            return getTexturePackNameFromSevenZ(zipfile);
         }
         catch( Exception ze )
         {
@@ -238,6 +217,87 @@ public class TextureInfo
         }
 
         Log.e( "TextureInfo", "No compatible textures found in 7zip archive: " + filename);
+        return null;
+    }
+
+    /**
+     * Returns the name embedded in a 7zipped texture pack.
+     *
+     * @param fileUri The URI to the zipped texture pack.
+     * @return The name, or null if there were any errors.
+     */
+    public static String getTexturePackNameFromSevenZ(Context context, Uri fileUri)
+    {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return null;
+        }
+
+        SevenZFile zipfile = null;
+        ParcelFileDescriptor parcelFileDescriptor;
+        try
+        {
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
+
+            if (parcelFileDescriptor != null)
+            {
+                FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                FileChannel fileChannel = fis.getChannel();
+
+                zipfile = new SevenZFile(fileChannel);
+                return getTexturePackNameFromSevenZ(zipfile);
+            }
+        }
+        catch( Exception ze )
+        {
+            Log.e( "TextureInfo", "Exception: ", ze );
+        }
+        catch (OutOfMemoryError e)
+        {
+            Log.w( "TextureInfo", "Out of memory while extracting 7zip entry: " + fileUri.toString() );
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+
+        Log.e( "TextureInfo", "No compatible textures found in 7zip archive: " + fileUri.toString());
+        return null;
+    }
+
+    private static String getTexturePackNameFromSevenZ(SevenZFile zipfile) throws IOException {
+        SevenZArchiveEntry zipEntry;
+        Map<String, Integer> romHeaderCount = new HashMap<>();
+
+        while( (zipEntry = zipfile.getNextEntry()) != null)
+        {
+            if( !zipEntry.isDirectory() )
+            {
+                TextureInfo info = new TextureInfo( zipEntry.getName() );
+                if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
+                    Integer count = romHeaderCount.get(info.romName);
+                    if (count != null) {
+                        romHeaderCount.put(info.romName, count+1);
+                    } else {
+                        romHeaderCount.put(info.romName, 1);
+                    }
+
+                    //Find the first ROM header that shows 10 times
+                    for (Map.Entry<String, Integer> entry : romHeaderCount.entrySet()) {
+                        if (entry.getValue() == 10) {
+                            return entry.getKey();
+                        }
+                    }
+                }
+            }
+        }
+
         return null;
     }
 }

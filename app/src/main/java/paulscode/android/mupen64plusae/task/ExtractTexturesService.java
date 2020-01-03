@@ -156,21 +156,32 @@ public class ExtractTexturesService extends Service
                         FileUtil.unzipAll( getApplicationContext(), mFileUri, outputFolder );
                     }
                 } else {
-                    File temp7zipFile  = new File(getCacheDir().getPath() + "/" + name);
-                    FileUtil.copySingleFile( getApplicationContext(), mFileUri, temp7zipFile );
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        headerName = TextureInfo.getTexturePackNameFromSevenZ(getApplicationContext(), mFileUri);
 
-                    headerName = TextureInfo.getTexturePackNameFromSevenZ(temp7zipFile.getPath());
+                        if( !TextUtils.isEmpty( headerName ) ) {
+                            String outputFolder = globalPrefs.hiResTextureDir + headerName;
+                            FileUtil.deleteFolder( new File( outputFolder ) );
+                            FileUtil.unSevenZAll( getApplicationContext(), mFileUri, outputFolder );
+                        }
+                    } else {
+                        File temp7zipFile  = new File(getCacheDir().getPath() + "/" + name);
+                        FileUtil.copySingleFile( getApplicationContext(), mFileUri, temp7zipFile );
 
-                    if( !TextUtils.isEmpty( headerName ) ) {
-                        String outputFolder = globalPrefs.hiResTextureDir + headerName;
-                        FileUtil.deleteFolder( new File( outputFolder ) );
-                        FileUtil.unSevenZAll( temp7zipFile, outputFolder );
+                        headerName = TextureInfo.getTexturePackNameFromSevenZ(temp7zipFile.getPath());
+
+                        if( !TextUtils.isEmpty( headerName ) ) {
+                            String outputFolder = globalPrefs.hiResTextureDir + headerName;
+                            FileUtil.deleteFolder( new File( outputFolder ) );
+                            FileUtil.unSevenZAll( temp7zipFile, outputFolder );
+                        }
+
+                        if (!temp7zipFile.delete())
+                        {
+                            Log.w("ExtractTexturesService", "Unable to delete: " + temp7zipFile.getPath());
+                        }
                     }
 
-                    if (!temp7zipFile.delete())
-                    {
-                        Log.w("ExtractTexturesService", "Unable to delete: " + temp7zipFile.getPath());
-                    }
                 }
 
                 if( TextUtils.isEmpty( headerName ) ) {

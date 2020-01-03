@@ -26,6 +26,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
@@ -680,6 +681,64 @@ public final class FileUtil
         }
         
         outputStream.close();
+    }
+
+    /**
+     * Unzips a ZIP file in its entirety.
+     *
+     * @param fileUri   The archive to extract.
+     * @param outputDir Directory to place all of the extracted files.
+     */
+    public static void unSevenZAll(@NonNull Context context, @NonNull Uri fileUri, String outputDir )
+    {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return;
+        }
+
+        SevenZFile zipfile = null;
+        ParcelFileDescriptor parcelFileDescriptor;
+        try {
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
+
+            if (parcelFileDescriptor != null) {
+                FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                FileChannel fileChannel = fis.getChannel();
+
+                zipfile = new SevenZFile(fileChannel);
+                SevenZArchiveEntry zipEntry;
+
+                while( (zipEntry = zipfile.getNextEntry()) != null)
+                {
+                    File f = new File( outputDir + "/" + zipEntry.getName() );
+
+                    f = f.getParentFile();
+                    if( f != null )
+                    {
+                        FileUtil.makeDirs(f.getPath());
+                        unSevenZEntry( zipfile, zipEntry, outputDir );
+                    }
+                }
+            }
+        }
+        catch( Exception ze )
+        {
+            Log.e( "unzipAll", "Exception: ", ze );
+        }
+        catch (java.lang.OutOfMemoryError e)
+        {
+            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + fileUri.toString() );
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
     }
 
     /**
