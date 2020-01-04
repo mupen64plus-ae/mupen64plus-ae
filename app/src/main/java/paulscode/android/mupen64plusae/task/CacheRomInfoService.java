@@ -697,7 +697,7 @@ public class CacheRomInfoService extends Service
             //This was not a zip file, just check the ROM path
             else if(!TextUtils.isEmpty(foundRomPath))
             {
-                DocumentFile romFile = DocumentFile.fromSingleUri(getApplicationContext(), Uri.parse(foundRomPath));
+                DocumentFile romFile = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(foundRomPath));
 
                 //Remove the entry since it doesn't exist
                 if(romFile == null || !romFile.exists())

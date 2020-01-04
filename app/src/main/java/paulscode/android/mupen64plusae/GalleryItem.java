@@ -24,6 +24,7 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 
 import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
@@ -47,7 +48,7 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 import paulscode.android.mupen64plusae.util.CountryCode;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings("WeakerAccess")
 public class GalleryItem
@@ -126,7 +127,8 @@ public class GalleryItem
         if( !TextUtils.isEmpty( goodName ) )
             return displayName;
         else if( !TextUtils.isEmpty( romUri ) ) {
-            String romName = ProviderUtil.getFileName(context.get(), Uri.parse(romUri));
+            DocumentFile file = FileUtil.getDocumentFileSingle(context.get(), Uri.parse(romUri));
+            String romName = file.getName();
             if (romName == null) {
                 romName = "unknown file";
             }

@@ -113,10 +113,12 @@ public class CopyToSdService extends Service
                 return;
             }
 
-            DocumentFile destLocation = DocumentFile.fromTreeUri(getApplicationContext(), mDestinationPath);
+            DocumentFile destLocation = FileUtil.getDocumentFileTree(getApplicationContext(), mDestinationPath);
             if (destLocation != null) {
                 destLocation = FileUtil.createFolderIfNotPresent(getApplicationContext(), destLocation, AppData.applicationPath);
-                FileUtil.copyFolder(getApplicationContext(), mSourcePath, destLocation, AppData.applicationPath);
+                if (destLocation != null) {
+                    FileUtil.copyFolder(getApplicationContext(), mSourcePath, destLocation, AppData.applicationPath);
+                }
             }
             
             if (mListener != null)

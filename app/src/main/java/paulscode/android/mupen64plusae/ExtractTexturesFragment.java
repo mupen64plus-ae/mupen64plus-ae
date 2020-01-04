@@ -27,6 +27,8 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -35,7 +37,7 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService.ExtractTexturesListener;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService.LocalBinder;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ExtractTexturesFragment extends Fragment implements ExtractTexturesListener
@@ -78,8 +80,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         {
             CharSequence title = getString( R.string.pathHiResTexturesTask_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            String name = ProviderUtil.getFileName(getActivity(), mTexturesFile);
-            mProgress = new ProgressDialog( mProgress, getActivity(), title, name, message, true );
+            DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), mTexturesFile);
+            mProgress = new ProgressDialog( mProgress, getActivity(), title, file.getName(), message, true );
             mProgress.show();
         }
         
@@ -158,8 +160,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         
         CharSequence title = getString( R.string.pathHiResTexturesTask_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        String name = ProviderUtil.getFileName(getActivity(), mTexturesFile);
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, name, message, true );
+        DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), mTexturesFile);
+        mProgress = new ProgressDialog( mProgress, getActivity(), title, file.getName(), message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

@@ -77,11 +77,13 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
         Button okButton = findViewById(R.id.buttonOk);
         okButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent data = new Intent();
 
-                data.putExtra(ActivityHelper.Keys.SEARCH_PATH, Uri.fromFile(mCurrentPath).toString());
-                LegacyFilePicker.this.setResult(RESULT_OK, data);
-                LegacyFilePicker.this.finish();
+                if ((mCanSelectFile && mCurrentPath.isFile()) || (!mCanSelectFile && mCurrentPath.isDirectory())) {
+                    Intent data = new Intent();
+                    data.putExtra(ActivityHelper.Keys.SEARCH_PATH, Uri.fromFile(mCurrentPath).toString());
+                    LegacyFilePicker.this.setResult(RESULT_OK, data);
+                    LegacyFilePicker.this.finish();
+                }
             }
         });
 

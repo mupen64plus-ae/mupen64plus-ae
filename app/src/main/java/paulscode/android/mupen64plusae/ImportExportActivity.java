@@ -39,6 +39,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class ImportExportActivity extends AppCompatPreferenceActivity implements Preference.OnPreferenceClickListener
@@ -169,51 +170,57 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
 
     private void startFilePicker(int requestCode, int permissions)
     {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.addFlags(permissions);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        startActivityForResult(intent, requestCode);
+
+        AppData appData = new AppData( this );
+        if (appData.isAndroidTv) {
+            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
+            startActivityForResult( intent, requestCode );
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            intent.addFlags(permissions);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            startActivityForResult(intent, requestCode);
+        }
+    }
+
+    private Uri getUri(Intent data)
+    {
+        AppData appData = new AppData( this );
+        Uri returnValue = null;
+        if (appData.isAndroidTv) {
+            final Bundle extras = data.getExtras();
+
+            if (extras != null) {
+                final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+                returnValue = Uri.parse(searchUri);
+            }
+        } else {
+            returnValue = data.getData();
+        }
+
+        return returnValue;
     }
 
     @Override
     protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && data != null) {
+            Uri fileUri = getUri(data);
 
             if (requestCode == PICK_FILE_EXPORT_GAME_DATA_REQUEST_CODE) {
-
-                if (data != null) {
-                    Uri fileUri = data.getData();
-                    mCopyToSdFragment.copyToSd(new File(mAppData.gameDataDir), fileUri);
-                }
-
+                mCopyToSdFragment.copyToSd(new File(mAppData.gameDataDir), fileUri);
             } else if (requestCode == PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
-                if (data != null) {
-                    Uri fileUri = data.getData();
-                    mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.profilesDir), fileUri);
-                }
-
+                mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.profilesDir), fileUri);
             } else if (requestCode == PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE) {
-                if (data != null) {
-                    Uri fileUri = data.getData();
-                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
-                }
-
+                mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
             } else if (requestCode == PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
-                if (data != null) {
-                    Uri fileUri = data.getData();
-                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
-                }
-
+                mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
             } else if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                if (data != null) {
-                    Uri fileUri = data.getData();
-                    File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
-                    FileUtil.deleteFolder(customSkinDir);
-                    mCopyFromSdFragment.copyFromSd(fileUri, customSkinDir);
-                }
-
+                File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
+                FileUtil.deleteFolder(customSkinDir);
+                mCopyFromSdFragment.copyFromSd(fileUri, customSkinDir);
             }
         }
 

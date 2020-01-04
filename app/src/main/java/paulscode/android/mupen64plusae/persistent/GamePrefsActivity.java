@@ -27,6 +27,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
@@ -58,8 +60,9 @@ import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
@@ -67,6 +70,7 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener, PromptConfirmListener
 {
+    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
     private static final int PICK_FILE_REQUEST_CODE = 2;
     private static final int EDIT_CHEATS_REQUEST_CODE = 111;
     private static final int RESET_GAME_PREFS_CONFIRM_DIALOG_ID = 0;
@@ -168,7 +172,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
         }
 
-        String fileName = ProviderUtil.getFileName(this, Uri.parse(romPath));
+        DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(romPath));
+        String fileName = file.getName();
         mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, fileName, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
 
         // Load user preference menu structure from XML and update view
@@ -197,7 +202,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if (currentPreference != null ) {
             if (value != null ) {
                 try {
-                    String summary = ProviderUtil.getFileName(this, Uri.parse(value));
+                    DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(value));
+                    String summary = file.getName();
                     currentPreference.setSummary(summary);
                 } catch (java.lang.SecurityException exception) {
                     Log.e("GamePrefs", "Permission denied, key=" + filePickerPreferenceKey + " value=" + value);
@@ -284,16 +290,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == EDIT_CHEATS_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == EDIT_CHEATS_REQUEST_CODE) {
                 //If the user cheats were saved, reset all selected cheatd
                 mClearCheats = true;
                 refreshCheatsCategory();
-            }
-        } else if (requestCode == PICK_FILE_REQUEST_CODE) {
-
-            if (resultCode == RESULT_OK) {
-
+            } else if (requestCode == PICK_FILE_REQUEST_CODE) {
                 // The result data contains a URI for the document or directory that
                 // the user selected.
                 if (data != null) {
@@ -306,13 +308,29 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
-                        String summary = ProviderUtil.getFileName(this, fileUri);
+                        DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
+                        String summary = file.getName();
                         currentPreference.setSummary(summary);
+                        mGamePrefs.putString(currentFilePickerKey, fileUri.toString());
+                    }
+                }
+            } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
+                final Bundle extras = data.getExtras();
+
+                if (extras != null) {
+                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+                    Uri fileUri = Uri.parse(searchUri);
+
+                    Preference currentPreference = findPreference(currentFilePickerKey);
+                    if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
+                        File file = new File(fileUri.getPath());
+                        currentPreference.setSummary(file.getName());
                         mGamePrefs.putString(currentFilePickerKey, fileUri.toString());
                     }
                 }
             }
         }
+
     }
 
     private void refreshViews()
@@ -525,14 +543,20 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     private void startFilePicker()
     {
-
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
-                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
+        AppData appData = new AppData( this );
+        if (appData.isAndroidTv) {
+            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
+            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
+        }
     }
 
 

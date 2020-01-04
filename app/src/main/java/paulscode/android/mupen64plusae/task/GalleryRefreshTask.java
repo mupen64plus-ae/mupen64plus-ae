@@ -24,6 +24,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
+
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,7 +34,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,7 +41,7 @@ import paulscode.android.mupen64plusae.GalleryItem;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.CountryCode;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 {
@@ -192,8 +193,6 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         if( query.length() > 0 )
             searches = query.split( " " );
 
-        int currentTime = (int) ( new Date().getTime() / 1000 );
-
         for ( final String md5 : mConfig.keySet() ) {
             if ( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) ) {
                 final ConfigFile.ConfigSection section = mConfig.get( md5 );
@@ -210,7 +209,8 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                         else
                             displayName = section.get( "baseName" );
                     } else {
-                        displayName = ProviderUtil.getFileName(mContext.get(), Uri.parse(romPath));
+                        DocumentFile file = FileUtil.getDocumentFileSingle(mContext.get(), Uri.parse(romPath));
+                        displayName = file.getName();
                     }
 
                     boolean matchesSearch = true;

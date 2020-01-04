@@ -405,13 +405,21 @@ public final class FileUtil
             return null;
         }
 
+        // Do this instead for directly accessible files
+        if(root.getUri().getScheme().equals("file")) {
+            String path = root.getUri().getPath() + "/" + relativePath;
+            FileUtil.makeDirs(path);
+            DocumentFile folder = getDocumentFileTree(context, Uri.fromFile(new File(path)));
+            return folder;
+        }
+
         boolean success = true;
 
         // Figure out the child URI
         String childId = DocumentsContract.getTreeDocumentId(root.getUri());
         childId = childId + "/" + relativePath;
         Uri childUri = DocumentsContract.buildDocumentUriUsingTree(root.getUri(), childId);
-        DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
+        DocumentFile childFile = getDocumentFileSingle(context, childUri);
 
         if (childFile == null) {
             return null;
@@ -438,6 +446,14 @@ public final class FileUtil
      */
     public static boolean copyFolder( Context context, File src, DocumentFile dest, String startPath )
     {
+
+        // Do this instead for directly accessible files
+        if(dest.getUri().getScheme().equals("file")) {
+
+            File destFile = new File(dest.getUri().getPath() + "/" + src.getName());
+            return copyFile( src, destFile );
+        }
+
         if( src == null )
         {
             Log.e( "copyFile", "src null" );
@@ -473,7 +489,7 @@ public final class FileUtil
             String childId = DocumentsContract.getTreeDocumentId(dest.getUri());
             childId = childId + "/" + childPath;
             Uri childUri = DocumentsContract.buildDocumentUriUsingTree(dest.getUri(), childId);
-            DocumentFile childFile = DocumentFile.fromSingleUri(context, childUri);
+            DocumentFile childFile = getDocumentFileSingle(context, childUri);
 
             if (childFile == null) {
                 return false;

@@ -29,6 +29,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
+
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.text.InputType;
@@ -50,8 +52,8 @@ import paulscode.android.mupen64plusae.jni.CoreService.LocalBinder;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
@@ -232,7 +234,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                     CharSequence title = getString( R.string.extractRomTask_title );
                     CharSequence message = getString( R.string.toast_pleaseWait );
 
-                    String zipName = ProviderUtil.getFileName(getActivity(), Uri.parse(mZipPath));
+                    DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), Uri.parse(mZipPath));
+                    String zipName = file.getName();
                     mProgress = new ProgressDialog( mProgress, getActivity(), title, zipName, message, true );
                     mProgress.show();
                 }

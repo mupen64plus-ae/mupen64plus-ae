@@ -39,6 +39,8 @@ import android.os.Process;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.documentfile.provider.DocumentFile;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -54,7 +56,6 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.ProviderUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.TextureInfo;
 
@@ -122,7 +123,8 @@ public class ExtractTexturesService extends Service
             AppData appData = new AppData( ExtractTexturesService.this );
             GlobalPrefs globalPrefs = new GlobalPrefs( ExtractTexturesService.this, appData );
 
-            String name = ProviderUtil.getFileName(getApplicationContext(), mFileUri);
+            DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), mFileUri);
+            String name = file.getName();
 
             RomHeader header = new RomHeader(getApplicationContext(), mFileUri);
             if(name != null && (name.toLowerCase().endsWith("htc") || name.toLowerCase().endsWith("hts")))

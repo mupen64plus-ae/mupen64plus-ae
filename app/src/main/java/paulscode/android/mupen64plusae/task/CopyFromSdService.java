@@ -113,8 +113,8 @@ public class CopyFromSdService extends Service
                 return;
             }
 
-            DocumentFile sourceLocation = DocumentFile.fromTreeUri(getApplicationContext(), mSourcePath);
-            if (sourceLocation != null) {
+            DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), mSourcePath);
+            if (sourceLocation != null && sourceLocation.getName() != null) {
                 if (!sourceLocation.getName().equals(mDestinationPath.getName())) {
                     sourceLocation = sourceLocation.findFile(mDestinationPath.getName());
                 }
