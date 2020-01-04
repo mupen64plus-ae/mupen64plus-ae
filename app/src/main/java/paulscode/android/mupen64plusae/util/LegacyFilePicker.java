@@ -108,13 +108,10 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
             mPaths = new ArrayList<>();
             FileUtil.populate( mCurrentPath, true, true, true, names, mPaths );
 
-            if(mCanSelectFile)
-            {
-                ListView listView1 = findViewById( R.id.listView1 );
-                ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, names);
-                listView1.setAdapter( adapter );
-                listView1.setOnItemClickListener( this );
-            }
+            ListView listView1 = findViewById( R.id.listView1 );
+            ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, names);
+            listView1.setAdapter( adapter );
+            listView1.setOnItemClickListener( this );
         }
     }
 
@@ -123,8 +120,13 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
     {
         if(position < mPaths.size())
         {
-            mCurrentPath = new File(mPaths.get( position ));
-            PopulateFileList();
+            File selectedFile = new File(mPaths.get(position));
+
+            if((selectedFile.isFile() && mCanSelectFile) || selectedFile.isDirectory())
+            {
+                mCurrentPath = new File(mPaths.get( position ));
+                PopulateFileList();
+            }
         }
     }
 }
