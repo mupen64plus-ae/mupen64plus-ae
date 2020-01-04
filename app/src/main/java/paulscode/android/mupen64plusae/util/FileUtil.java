@@ -1056,4 +1056,28 @@ public final class FileUtil
 
         return isImage;
     }
+
+    public static DocumentFile getDocumentFileTree(Context context, Uri uri)
+    {
+        DocumentFile file;
+        if (uri.getScheme() != null && uri.getScheme().equals("file")) {
+            file = uri.getPath() != null ? DocumentFile.fromFile(new File(uri.getPath())) : null;
+        } else {
+            file = DocumentFile.fromTreeUri(context, uri);
+        }
+
+        return file;
+    }
+
+    public static DocumentFile getDocumentFileSingle(Context context, Uri uri)
+    {
+        DocumentFile file;
+        if (uri.getScheme() != null && uri.getScheme().equals("file")) {
+            file = uri.getPath() != null ? DocumentFile.fromFile(new File(uri.getPath())) : null;
+        } else {
+            file = DocumentFile.fromSingleUri(context, uri);
+        }
+
+        return file;
+    }
 }

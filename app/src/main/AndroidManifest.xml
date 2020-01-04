@@ -72,26 +72,26 @@
             android:exported="false"
             android:label="@string/GalleryActivity_title"
             android:launchMode="singleTask"
-            android:theme="@style/MupenTheme_Dark" >
-        </activity>
+            android:theme="@style/MupenTheme_Dark" />
         <activity
             android:name="paulscode.android.mupen64plusae.ScanRomsActivity"
             android:exported="false"
             android:label="@string/ScanRomsActivity_title"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
-        </activity>
+            android:theme="@style/Theme.Mupen64plusaeTheme" />
+        <activity android:name="paulscode.android.mupen64plusae.util.LegacyFilePicker"
+            android:exported="false"
+            android:label="@string/ScanRomsActivity_title"
+            android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
             android:name="paulscode.android.mupen64plusae.ExtractTexturesActivity"
             android:exported="false"
             android:label="@string/ExtractTexturesActivity_title"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
-        </activity>
+            android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
             android:name="paulscode.android.mupen64plusae.DeleteTexturesActivity"
             android:exported="false"
             android:label="@string/DeleteTexturesActivity_title"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
-        </activity>
+            android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
             android:name="paulscode.android.mupen64plusae.persistent.GamePrefsActivity"
             android:exported="false"

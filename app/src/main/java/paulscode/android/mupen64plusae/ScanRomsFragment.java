@@ -33,12 +33,15 @@ import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.LocalBinder;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
@@ -186,7 +189,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         CharSequence title = getString( R.string.scanning_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
 
-        DocumentFile rootDocumentFile = DocumentFile.fromTreeUri(activity, Uri.parse(mSearchUri));
+        DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
+
         String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
         mProgress = new ProgressDialog( mProgress, activity, title, text, message, true );
         mProgress.show();

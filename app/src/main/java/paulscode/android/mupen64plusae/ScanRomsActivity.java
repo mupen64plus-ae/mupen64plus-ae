@@ -5,15 +5,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.LegacyFilePicker;
+
 public class ScanRomsActivity extends AppCompatActivity
 {
-    public static final int PICK_FOLDER_REQUEST_CODE = 2;
+    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
+    private static final int PICK_FOLDER_REQUEST_CODE = 2;
 
     private CheckBox mCheckBox1;
     private CheckBox mCheckBox2;
@@ -71,38 +76,57 @@ public class ScanRomsActivity extends AppCompatActivity
 
     private void startFilePicker()
     {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        intent = Intent.createChooser(intent, getString(R.string.scanRomsDialog_selectRom));
-        startActivityForResult(intent, PICK_FOLDER_REQUEST_CODE);
+        AppData appData = new AppData( this );
+        if (appData.isAndroidTv) {
+            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
+            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent = Intent.createChooser(intent, getString(R.string.scanRomsDialog_selectRom));
+            startActivityForResult(intent, PICK_FOLDER_REQUEST_CODE);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Check which request we're responding to
-        if (requestCode == PICK_FOLDER_REQUEST_CODE)
-        {
-            if (resultCode == RESULT_OK) {
 
+        if (resultCode == RESULT_OK && data != null) {
+
+            Intent scanData = new Intent();
+            scanData.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
+            scanData.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
+            scanData.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
+            scanData.putExtra(ActivityHelper.Keys.SEARCH_SUBDIR, mCheckBox4.isChecked());
+
+            // Check which request we're responding to
+            if (requestCode == PICK_FOLDER_REQUEST_CODE)
+            {
                 // The result data contains a URI for the document or directory that
                 // the user selected.
-                if (data != null) {
-                    mFileUri = data.getData();
+                mFileUri = data.getData();
 
+                if (mFileUri != null) {
+                    scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
                     final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     getContentResolver().takePersistableUriPermission(mFileUri, takeFlags);
 
-                    Intent scanData = new Intent();
-                    scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
-                    scanData.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
-                    scanData.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
-                    scanData.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
-                    scanData.putExtra(ActivityHelper.Keys.SEARCH_SUBDIR, mCheckBox4.isChecked());
                     ScanRomsActivity.this.setResult(RESULT_OK, scanData);
+                    ScanRomsActivity.this.finish();
+                }
+            } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
+                final Bundle extras = data.getExtras();
 
+                if (extras != null) {
+                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+
+                    mFileUri = Uri.parse(searchUri);
+                    scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
+                    ScanRomsActivity.this.setResult(RESULT_OK, scanData);
                     ScanRomsActivity.this.finish();
                 }
             }

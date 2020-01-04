@@ -99,6 +99,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
     public static final int CLEAR_SHADER_CACHE_DIALOG_ID = 2;
 
+    private static final int SCAN_ROM_REQUEST_CODE = 1;
+
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -590,7 +592,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         switch (item.getItemId())
         {
         case R.id.menuItem_refreshRoms:
-            ActivityHelper.startRomScanActivity(this);
+            Intent intent = new Intent(this, ScanRomsActivity.class);
+            startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
             return true;
         case R.id.menuItem_library:
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -913,7 +916,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         super.onActivityResult(requestCode, resultCode, data);
 
         // Check which request we're responding to
-        if (requestCode == ActivityHelper.SCAN_ROM_REQUEST_CODE) {
+        if (requestCode == SCAN_ROM_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK && data != null)
             {

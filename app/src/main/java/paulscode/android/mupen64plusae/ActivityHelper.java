@@ -66,7 +66,7 @@ import static android.content.Context.ACTIVITY_SERVICE;
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
  */
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 public class ActivityHelper
 {
     /**
@@ -93,6 +93,7 @@ public class ActivityHelper
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
+        public static final String CAN_SELECT_FILE      = NAMESPACE + "CAN_SELECT_FILE";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
         public static final String ART_DIR              = NAMESPACE + "GALLERY_ART_PATH";
@@ -134,8 +135,6 @@ public class ActivityHelper
 
         //@formatter:on
     }
-    
-    static final int SCAN_ROM_REQUEST_CODE = 1;
     static final int GAME_ACTIVITY_CODE = 3;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
@@ -399,12 +398,6 @@ public class ActivityHelper
         
         context.unbindService(serviceConnection);
         context.stopService(intent);
-    }
-
-    static void startRomScanActivity(Activity activity)
-    {
-        Intent intent = new Intent(activity, ScanRomsActivity.class);
-        activity.startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
     }
 
     static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,

@@ -156,7 +156,8 @@ public class CacheRomInfoService extends Service
             FileUtil.makeDirs(mArtDir);
             FileUtil.makeDirs(mUnzipDir);
 
-            DocumentFile rootDocumentFile = DocumentFile.fromTreeUri(getApplicationContext(), mSearchUri);
+            DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(getApplicationContext(), mSearchUri);
+
             final List<DocumentFile> files = getAllFiles( rootDocumentFile, 0 );
 
             final RomDatabase database = RomDatabase.getInstance();
@@ -213,7 +214,7 @@ public class CacheRomInfoService extends Service
     {
         String shortFileName = fileName != null ? fileName : "";
         if (shortFileName.length() > MAX_ROM_FILE_NAME_SIZE) {
-            shortFileName = fileName.substring(0, MAX_ROM_FILE_NAME_SIZE-7) + "..." + fileName.substring(fileName.length()-4);
+            shortFileName = fileName.substring(0, MAX_ROM_FILE_NAME_SIZE-7) + "..." + fileName.substring(fileName.length()-5);
         }
         return shortFileName;
     }
@@ -339,7 +340,7 @@ public class CacheRomInfoService extends Service
             parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r");
 
             if (parcelFileDescriptor != null) {
-                zipfile = new ZipInputStream( new FileInputStream(parcelFileDescriptor.getFileDescriptor()) );
+                zipfile = new ZipInputStream( new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()) ));
 
                 ZipEntry entry = zipfile.getNextEntry();
 
@@ -668,14 +669,15 @@ public class CacheRomInfoService extends Service
             //Check if this is a zip file first
             if(!TextUtils.isEmpty(foundZipPath))
             {
-                DocumentFile zipFile = DocumentFile.fromSingleUri(getApplicationContext(), Uri.parse(foundZipPath));
+
+                DocumentFile zipFile = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(foundZipPath));
 
                 //Zip file doesn't exist, check if the ROM path exists
                 if(zipFile == null || !zipFile.exists())
                 {
                     if(!TextUtils.isEmpty(foundRomPath))
                     {
-                        DocumentFile romFile = DocumentFile.fromSingleUri(getApplicationContext(), Uri.parse(foundRomPath));
+                        DocumentFile romFile = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(foundRomPath));
 
                         //Cleanup the ROM file since this is a zip file
                         if(romFile != null && !romFile.exists())

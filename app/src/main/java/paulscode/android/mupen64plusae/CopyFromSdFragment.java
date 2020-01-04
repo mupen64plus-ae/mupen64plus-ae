@@ -109,7 +109,7 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     {        
         if(mServiceConnection != null && mInProgress && getActivity() != null)
         {
-            ActivityHelper.stopCopyToSdService(getActivity().getApplicationContext(), mServiceConnection);
+            ActivityHelper.stopCopyFromSdService(getActivity().getApplicationContext(), mServiceConnection);
         }
         
         super.onDestroy();
