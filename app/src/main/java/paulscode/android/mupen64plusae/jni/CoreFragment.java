@@ -236,7 +236,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
                     DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), Uri.parse(mZipPath));
                     String zipName = file.getName();
-                    mProgress = new ProgressDialog( mProgress, getActivity(), title, zipName, message, true );
+                    mProgress = new ProgressDialog( mProgress, getActivity(), title, zipName, message, false );
                     mProgress.show();
                 }
             });
