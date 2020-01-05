@@ -82,7 +82,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
     }
 
     /**
-     * Limits the recent list to 8 items
+     * Limits the recent list to 12 items
      * @param recentItems List of recent items to update
      */
     private void deleteOldItems(List<GalleryItem> recentItems) {
@@ -90,7 +90,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         if ( recentItems.size() != 0 ) {
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
 
-            //Limit list to 8 items
+            //Limit list to 12 items
             final int recentLimit = 12;
             if (recentItems.size() > recentLimit) {
                 recentItems.subList(recentLimit, recentItems.size()).clear();
@@ -230,8 +230,11 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 
                         if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
                                 searches != null)) {
+
                             items.add(item);
-                            recentItems.add(item);
+                            if (item.lastPlayed != 0) {
+                                recentItems.add(item);
+                            }
                         }
                     }
                 }
