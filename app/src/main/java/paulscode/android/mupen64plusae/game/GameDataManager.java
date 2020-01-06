@@ -16,6 +16,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
+@SuppressWarnings("WeakerAccess")
 public class GameDataManager
 {
     private static final String V2 = "v2";
@@ -28,7 +29,7 @@ public class GameDataManager
     private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\..*sav$";
     private static final String sDefaultString = "yyyy-mm-dd-hh-mm-ss.sav";
 
-    GameDataManager(GlobalPrefs globalPrefs, GamePrefs gamePrefs, int maxAutoSaves)
+    public GameDataManager(GlobalPrefs globalPrefs, GamePrefs gamePrefs, int maxAutoSaves)
     {
         mGlobalPrefs = globalPrefs;
         mGamePrefs = gamePrefs;
@@ -36,7 +37,7 @@ public class GameDataManager
         mMaxAutoSave = maxAutoSaves;
     }
 
-    String getLatestAutoSave()
+    public String getLatestAutoSave()
     {
         final List<String> result = new ArrayList<>();
         final File savePath = new File(mAutoSavePath);
@@ -89,7 +90,7 @@ public class GameDataManager
         return resultValue;
     }
 
-    void clearOldest()
+    public void clearOldest()
     {
         final List<File> result = new ArrayList<>();
         final File savePath = new File(mAutoSavePath);
@@ -143,7 +144,7 @@ public class GameDataManager
         }
     }
 
-    String getAutoSaveFileName()
+    public String getAutoSaveFileName()
     {
         final DateFormat dateFormat = new SimpleDateFormat(sFormatString, java.util.Locale.getDefault());
         final String dateAndTime = dateFormat.format(new Date());

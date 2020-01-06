@@ -822,13 +822,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // If there are no saves for this game, disable the resume option
 
-        final String autoSavePath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-                mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+        final String autoSavePath = mAppData.gameDataDir + "/" + GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+                mSelectedItem.countryCode.toString()) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 
         //Alternate paths in case we have file system problems
-        final String gameAlternate = GamePrefs.getAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-                mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
-        final String game2ndAlternate = GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5, mAppData) +
+        final String gameAlternate = mAppData.gameDataDir + "/" + GamePrefs.getAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+                mSelectedItem.countryCode.toString()) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+        final String game2ndAlternate = mAppData.gameDataDir + "/" + GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5) +
                 "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 
         final File[] allFilesInSavePath = new File(autoSavePath).listFiles();

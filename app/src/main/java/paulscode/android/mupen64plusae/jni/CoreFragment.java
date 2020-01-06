@@ -106,8 +106,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private boolean mCachedStartCore = false;
     private boolean mCachedStopCore = false;
 
-    private AppData mAppData = null;
-    private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
     private String mRomGoodName = null;
     private String mRomDisplayName = null;
@@ -118,9 +116,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
-    private ArrayList<GamePrefs.CheatSelection> mCheatOptions = null;
     private boolean mIsRestarting = false;
-    private String mSaveToLoad = null;
     private boolean mUseRaphnetIfAvailable = false;
 
     private boolean mIsRunning = false;
@@ -265,30 +261,26 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          ArrayList<GamePrefs.CheatSelection> cheatSelections, boolean isRestarting, String saveToLoad)
+                          boolean isRestarting)
     {
         Log.i("CoreFragment", "startCore");
 
-        mAppData = appData;
-        mGlobalPrefs = globalPrefs;
         mGamePrefs = gamePrefs;
         mRomGoodName = romGoodName;
         mRomDisplayName = romDisplayName;
         mRomPath = romPath;
         mZipPath = zipPath;
-        mCheatOptions = cheatSelections;
         mIsRestarting = isRestarting;
-        mSaveToLoad = saveToLoad;
         mRomMd5 = romMd5;
         mRomCrc = romCrc;
         mRomHeaderName = romHeaderName;
         mRomCountryCode = romCountryCode;
         mRomArtPath = romArtPath;
-        mUseRaphnetIfAvailable = mGlobalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
+        mUseRaphnetIfAvailable = globalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
 
         if(!mIsRunning)
         {
-            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData ))
+            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, globalPrefs, appData))
             {
                 if(getActivity() != null)
                 {
@@ -346,12 +338,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             }
         };
 
-        ArrayList<Integer> pakTypes = new ArrayList<>();
-        pakTypes.add(mGamePrefs.getPakType(1).ordinal());
-        pakTypes.add(mGamePrefs.getPakType(2).ordinal());
-        pakTypes.add(mGamePrefs.getPakType(3).ordinal());
-        pakTypes.add(mGamePrefs.getPakType(4).ordinal());
-
         // Start the core
         StartCoreServiceParams params = new StartCoreServiceParams();
         params.setRomGoodName(mRomGoodName);
@@ -363,39 +349,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomHeaderName(mRomHeaderName);
         params.setRomCountryCode(mRomCountryCode);
         params.setRomArtPath(mRomArtPath);
-        params.setCheatPath(mAppData.mupencheat_txt);
-        params.setCheatOptions(mCheatOptions);
         params.setRestarting(mIsRestarting);
-        params.setSaveToLoad(mSaveToLoad);
-        params.setRspLib(mGamePrefs.rspPluginLib.getPluginLib());
-        params.setGfxLib(mGamePrefs.videoPluginLib.getPluginLib());
-        params.setAudioLib(mGamePrefs.audioPluginLib.getPluginLib());
-
-        if (mUseRaphnetIfAvailable) {
-            params.setInputLib(AppData.InputPlugin.RAPHNET.getPluginLib());
-        } else {
-            params.setInputLib(AppData.InputPlugin.ANDROID.getPluginLib());
-        }
-        params.setUseHighPriorityThread(mGlobalPrefs.useHighPriorityThread);
-        params.setPakTypes(pakTypes);
-        params.setIsPlugged(mGamePrefs.isPlugged);
-        params.setFrameLimiterEnabled(mGlobalPrefs.isFramelimiterEnabled);
-        params.setCoreUserDataDir(mGlobalPrefs.coreUserDataDir);
-        params.setCoreUserCacheDir(mGlobalPrefs.coreUserCacheDir);
-        params.setCoreUserConfigDir(mGamePrefs.getCoreUserConfigDir());
-        params.setUserSaveDir(mGamePrefs.getUserSaveDir());
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
-        
-        params.setGbRomPath(1, mGamePrefs.getTransferPakRom(1));
-        params.setGbRamPath(1, mGamePrefs.getTransferPakRam(1));
-        params.setGbRomPath(2, mGamePrefs.getTransferPakRom(2));
-        params.setGbRamPath(2, mGamePrefs.getTransferPakRam(2));
-        params.setGbRomPath(3, mGamePrefs.getTransferPakRom(3));
-        params.setGbRamPath(3, mGamePrefs.getTransferPakRam(3));
-        params.setGbRomPath(4, mGamePrefs.getTransferPakRom(4));
-        params.setGbRamPath(4, mGamePrefs.getTransferPakRam(4));
-        params.setDdRomPath(mGamePrefs.idlPath64Dd);
-        params.setDdDiskPath(mGamePrefs.diskPath64Dd);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
@@ -796,13 +751,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void autoSaveState( final String latestSave, boolean shutdownOnFinish )
+    public void autoSaveState(boolean shutdownOnFinish)
     {
         Log.i("CoreFragment", "autoSaveState");
 
         if (mCoreService != null)
         {
-            mCoreService.autoSaveState(latestSave, shutdownOnFinish);
+            mCoreService.autoSaveState(shutdownOnFinish);
         }
     }
 

@@ -168,7 +168,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
-    private GameDataManager mGameDataManager = null;
 
     private static final String STATE_DRAWER_OPEN = "STATE_DRAWER_OPEN";
     private boolean mDrawerOpenState = false;
@@ -296,9 +295,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
             CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
-
-        mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
-        mGameDataManager.makeDirs();
 
         final Window window = this.getWindow();
 
@@ -519,12 +515,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
-                mCoreFragment.autoSaveState(mGameDataManager.getAutoSaveFileName(), false);
+                mCoreFragment.autoSaveState(false);
             }
 
             mCoreFragment.pauseEmulator();
-
-            mGameDataManager.clearOldest();
         }
         
         if (mSensorController != null) {
@@ -876,10 +870,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.setSurface(holder.getSurface());
 
             if (!mCoreFragment.IsInProgress()) {
-                final String latestSave = mGameDataManager.getLatestAutoSave();
                 mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath,
-                        mGamePrefs.getEnabledCheats(), mDoRestart, latestSave);
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
             }
 
             // Try running now in case the core service has already started
@@ -1197,15 +1189,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
-                final String saveFileName = mGameDataManager.getAutoSaveFileName();
-                mCoreFragment.autoSaveState(saveFileName, true);
+                mCoreFragment.autoSaveState(true);
             }
             else
             {
                 mCoreFragment.shutdownEmulator();
             }
-
-            mGameDataManager.clearOldest();
         }
 
         finishActivity();

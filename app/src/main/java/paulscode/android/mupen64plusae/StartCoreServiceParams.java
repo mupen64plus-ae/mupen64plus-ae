@@ -41,30 +41,8 @@ public class StartCoreServiceParams
     private String romHeaderName;
     private byte romCountryCode;
     private String romArtPath;
-    private String cheatPath;
-    private ArrayList<GamePrefs.CheatSelection> cheatOptions;
     private boolean isRestarting;
-    private String saveToLoad;
-    private String rspLib;
-    private String gfxLib;
-    private String audioLib;
-    private String inputLib;
-
-    private boolean useHighPriorityThread;
-    private ArrayList<Integer> pakTypes;
-    private boolean[] isPlugged;
-    private boolean isFrameLimiterEnabled;
-
-    private String coreUserDataDir;
-    private String coreUserCacheDir;
-    private String coreUserConfigDir;
-    private String userSaveDir;
     private boolean useRaphnetDevicesIfAvailable;
-
-    private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
-    private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
-    private String mDdRom = null;
-    private String mDdDisk = null;
 
     public String getRomGoodName() {
         return romGoodName;
@@ -138,22 +116,6 @@ public class StartCoreServiceParams
         this.romArtPath = romArtPath;
     }
 
-    public String getCheatPath() {
-        return cheatPath;
-    }
-
-    public void setCheatPath(String cheatPath) {
-        this.cheatPath = cheatPath;
-    }
-
-    public ArrayList<GamePrefs.CheatSelection> getCheatOptions() {
-        return cheatOptions;
-    }
-
-    public void setCheatOptions(ArrayList<GamePrefs.CheatSelection> cheatOptions) {
-        this.cheatOptions = cheatOptions;
-    }
-
     public boolean isRestarting() {
         return isRestarting;
     }
@@ -162,147 +124,11 @@ public class StartCoreServiceParams
         isRestarting = restarting;
     }
 
-    public String getSaveToLoad() {
-        return saveToLoad;
-    }
-
-    public void setSaveToLoad(String saveToLoad) {
-        this.saveToLoad = saveToLoad;
-    }
-
-    public String getRspLib() {
-        return rspLib;
-    }
-
-    public void setRspLib(String rspLib) {
-        this.rspLib = rspLib;
-    }
-
-    public String getGfxLib() {
-        return gfxLib;
-    }
-
-    public void setGfxLib(String gfxLib) {
-        this.gfxLib = gfxLib;
-    }
-
-    public String getAudioLib() {
-        return audioLib;
-    }
-
-    public void setAudioLib(String audioLib) {
-        this.audioLib = audioLib;
-    }
-
-    public String getInputLib() {
-        return inputLib;
-    }
-
-    public void setInputLib(String inputLib) {
-        this.inputLib = inputLib;
-    }
-
-    public boolean isUseHighPriorityThread() {
-        return useHighPriorityThread;
-    }
-
-    public void setUseHighPriorityThread(boolean useHighPriorityThread) {
-        this.useHighPriorityThread = useHighPriorityThread;
-    }
-
-    public ArrayList<Integer> getPakTypes() {
-        return pakTypes;
-    }
-
-    public void setPakTypes(ArrayList<Integer> pakTypes) {
-        this.pakTypes = pakTypes;
-    }
-
-    public boolean[] getIsPlugged() {
-        return isPlugged;
-    }
-
-    public void setIsPlugged(boolean[] isPlugged) {
-        this.isPlugged = isPlugged;
-    }
-
-    public boolean isFrameLimiterEnabled() {
-        return isFrameLimiterEnabled;
-    }
-
-    public void setFrameLimiterEnabled(boolean frameLimiterEnabled) {
-        isFrameLimiterEnabled = frameLimiterEnabled;
-    }
-
-    public String getCoreUserDataDir() {
-        return coreUserDataDir;
-    }
-
-    public void setCoreUserDataDir(String coreUserDataDir) {
-        this.coreUserDataDir = coreUserDataDir;
-    }
-
-    public String getCoreUserCacheDir() {
-        return coreUserCacheDir;
-    }
-
-    public void setCoreUserCacheDir(String coreUserCacheDir) {
-        this.coreUserCacheDir = coreUserCacheDir;
-    }
-
-    public String getCoreUserConfigDir() {
-        return coreUserConfigDir;
-    }
-
-    public void setCoreUserConfigDir(String coreUserConfigDir) {
-        this.coreUserConfigDir = coreUserConfigDir;
-    }
-
-    public String getUserSaveDir() {
-        return userSaveDir;
-    }
-
-    public void setUserSaveDir(String userSaveDir) {
-        this.userSaveDir = userSaveDir;
-    }
-
     public boolean isUseRaphnetDevicesIfAvailable() {
         return useRaphnetDevicesIfAvailable;
     }
 
     public void setUseRaphnetDevicesIfAvailable(boolean useRaphnetDevicesIfAvailable) {
         this.useRaphnetDevicesIfAvailable = useRaphnetDevicesIfAvailable;
-    }
-
-    public String getGbRomPath(int player) {
-        return mGbRomPaths.get(player);
-    }
-
-    public void setGbRomPath(int player, String path) {
-        mGbRomPaths.put(player, path);
-    }
-
-    public String getGbRamPath(int player) {
-        return mGbRamPaths.get(player);
-    }
-
-    public void setGbRamPath(int player, String path) {
-        mGbRamPaths.put(player, path);
-    }
-
-    public String getDdRomPath() {
-        return mDdRom;
-    }
-
-    public void setDdRomPath(String ddRomPath) {
-        this.mDdRom = ddRomPath;
-    }
-
-    public String getDdDiskPath() {
-        return mDdDisk;
-    }
-
-    public void setDdDiskPath(String ddDiskPath) {
-        this.mDdDisk = ddDiskPath;
     }
 }

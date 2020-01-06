@@ -104,32 +104,8 @@ public class ActivityHelper
         public static final String SEARCH_SUBDIR        = NAMESPACE + "GALLERY_SEARCH_SUBDIR";
         public static final String DELETE_PATH          = NAMESPACE + "DELETE_PATH";
         public static final String DELETE_FILTER        = NAMESPACE + "DELETE_FILTER";
-        public static final String CHEAT_PATH           = NAMESPACE + "CHEAT_PATH";
-        public static final String CHEAT_OPTIONS        = NAMESPACE + "CHEAT_OPTIONS";
         public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
-        public static final String RSP_LIB              = NAMESPACE + "RSP_LIB";
-        public static final String GFX_LIB              = NAMESPACE + "GFX_LIB";
-        public static final String AUDIO_LIB            = NAMESPACE + "AUDIO_LIB";
-        public static final String INPUT_LIB            = NAMESPACE + "INPUT_LIB";
-        public static final String HIGH_PRIORITY_THREAD = NAMESPACE + "HIGH_PRIORITY_THREAD";
         public static final String USE_RAPHNET_DEVICES  = NAMESPACE + "USE_RAPHNET_DEVICES";
-        public static final String GB_ROM_PATH_1        = NAMESPACE + "GB_ROM_PATH_1";
-        public static final String GB_RAM_PATH_1        = NAMESPACE + "GB_RAM_PATH_1";
-        public static final String GB_ROM_PATH_2        = NAMESPACE + "GB_ROM_PATH_2";
-        public static final String GB_RAM_PATH_2        = NAMESPACE + "GB_RAM_PATH_2";
-        public static final String GB_ROM_PATH_3        = NAMESPACE + "GB_ROM_PATH_3";
-        public static final String GB_RAM_PATH_3        = NAMESPACE + "GB_RAM_PATH_3";
-        public static final String GB_ROM_PATH_4        = NAMESPACE + "GB_ROM_PATH_4";
-        public static final String GB_RAM_PATH_4        = NAMESPACE + "GB_RAM_PATH_4";
-        public static final String DD_ROM_PATH          = NAMESPACE + "DD_ROM_PATH";
-        public static final String DD_DISK_PATH         = NAMESPACE + "DD_DISK_PATH";
-        public static final String PAK_TYPE_ARRAY       = NAMESPACE + "PAK_TYPE_ARRAY";
-        public static final String IS_PLUGGED_ARRAY     = NAMESPACE + "IS_PLUGGED_ARRAY";
-        public static final String IS_FPS_LIMIT_ENABLED = NAMESPACE + "IS_FPS_LIMIT_ENABLED";
-        public static final String CORE_USER_DATA_DIR   = NAMESPACE + "CORE_USER_DATA_DIR";
-        public static final String CORE_USER_CACHE_DIR  = NAMESPACE + "CORE_USER_CACHE_DIR";
-        public static final String CORE_USER_CONFIG_DIR = NAMESPACE + "CORE_USER_CONFIG_DIR";
-        public static final String USER_SAVE_DIR        = NAMESPACE + "USER_SAVE_DIR";
         public static final String EXIT_GAME            = NAMESPACE + "EXIT_GAME";
         public static final String FORCE_EXIT_GAME      = NAMESPACE + "FORCE_EXIT_GAME";
 
@@ -494,35 +470,8 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_DISPLAY_NAME,  params.getRomDisplayName());
         intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
         intent.putExtra(Keys.ZIP_PATH,  params.getZipPath());
-        intent.putExtra(Keys.CHEAT_PATH,  params.getCheatPath());
-        intent.putExtra(Keys.CHEAT_OPTIONS,  params.getCheatOptions());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
-        intent.putExtra(Keys.SAVE_TO_LOAD, params.getSaveToLoad());
-        intent.putExtra(Keys.RSP_LIB, params.getRspLib());
-        intent.putExtra(Keys.GFX_LIB, params.getGfxLib());
-        intent.putExtra(Keys.AUDIO_LIB, params.getAudioLib());
-        intent.putExtra(Keys.INPUT_LIB, params.getInputLib());
-        intent.putExtra(Keys.HIGH_PRIORITY_THREAD, params.isUseHighPriorityThread());
         intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
-
-        intent.putExtra(Keys.GB_ROM_PATH_1, params.getGbRomPath(1));
-        intent.putExtra(Keys.GB_RAM_PATH_1, params.getGbRamPath(1));
-        intent.putExtra(Keys.GB_ROM_PATH_2, params.getGbRomPath(2));
-        intent.putExtra(Keys.GB_RAM_PATH_2, params.getGbRamPath(2));
-        intent.putExtra(Keys.GB_ROM_PATH_3, params.getGbRomPath(3));
-        intent.putExtra(Keys.GB_RAM_PATH_3, params.getGbRamPath(3));
-        intent.putExtra(Keys.GB_ROM_PATH_4, params.getGbRomPath(4));
-        intent.putExtra(Keys.GB_RAM_PATH_4, params.getGbRamPath(4));
-        intent.putExtra(Keys.DD_ROM_PATH, params.getDdRomPath());
-        intent.putExtra(Keys.DD_DISK_PATH, params.getDdDiskPath());
-
-        intent.putIntegerArrayListExtra(Keys.PAK_TYPE_ARRAY, params.getPakTypes());
-        intent.putExtra(Keys.IS_PLUGGED_ARRAY, params.getIsPlugged());
-        intent.putExtra(Keys.IS_FPS_LIMIT_ENABLED, params.isFrameLimiterEnabled());
-        intent.putExtra(Keys.CORE_USER_DATA_DIR, params.getCoreUserDataDir());
-        intent.putExtra(Keys.CORE_USER_CACHE_DIR, params.getCoreUserCacheDir());
-        intent.putExtra(Keys.CORE_USER_CONFIG_DIR, params.getCoreUserConfigDir());
-        intent.putExtra(Keys.USER_SAVE_DIR, params.getUserSaveDir());
 
         intent.putExtra(Keys.ROM_MD5, params.getRomMd5());
         intent.putExtra(Keys.ROM_CRC, params.getRomCrc());

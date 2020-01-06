@@ -67,8 +67,11 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.game.GameDataManager;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings("unused")
@@ -123,22 +126,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private String mRomPath = null;
     private String mZipPath = null;
     private ArrayList<CheatUtils.Cheat> mCheats = null;
-    private ArrayList<GamePrefs.CheatSelection> mCheatOptions = null;
     private boolean mIsRestarting = false;
-    private String mSaveToLoad = null;
-    private String mRspLib = null;
-    private String mGfxLib = null;
-    private String mAudioLib = null;
-    private String mInputLib = null;
-    private boolean mUseHighPriorityThread = false;
     private boolean mUseRaphnetDevicesIfAvailable = false;
-    private ArrayList<Integer> mPakType = null;
-    private ArrayList<Boolean> mIsPlugged = null;
-    private boolean mIsFrameLimiterEnabled = true;
-    private String mCoreUserDataDir = null;
-    private String mCoreUserCacheDir = null;
-    private String mCoreUserConfigDir = null;
-    private String mUserSaveDir = null;
     private boolean mIsRunning = false;
     private boolean mIsPaused = false;
     private String mArtPath = null;
@@ -157,12 +146,14 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private RomExtractionListener mRomExtractionListener = null;
     private RaphnetControllerHandler mRaphnetHandler = null;
 
-    private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
-    private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
-    private String mDdRom = null;
-    private String mDdDisk = null;
     private boolean mScreenshotRequested = false;
     private String mWorkingDir = null;
+
+    private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
+    private GamePrefs mGamePrefs = null;
+
+    private GameDataManager mGameDataManager = null;
 
     //Only find files that end with .sav
     final FileFilter screenshotFilter = new FileFilter(){
@@ -251,8 +242,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
-    void autoSaveState(final String latestSave, final boolean shutdownOnFinish)
+    void autoSaveState(final boolean shutdownOnFinish)
     {
+        final String latestSave = mGameDataManager.getAutoSaveFileName();
+
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
         //Resume to allow save to take place
@@ -301,7 +294,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void saveState(String filename)
     {
-        File currentSaveStateFile = new File( mUserSaveDir + "/" + filename );
+        File currentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" + filename );
         mCoreInterface.emuSaveFile( currentSaveStateFile.getAbsolutePath() );
     }
 
@@ -470,35 +463,46 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         {
             // Only increase priority if we have more than one processor. The call to check the number of
             // processors is only available in API level 17
-            if(Runtime.getRuntime().availableProcessors() > 1 && mUseHighPriorityThread) {
+            if(Runtime.getRuntime().availableProcessors() > 1 && mGlobalPrefs.useHighPriorityThread) {
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
                 Log.i("CoreService", "Using high priority mode");
             }
 
             if (!mUseRaphnetDevicesIfAvailable) {
                 NativeInput.init();
-                NativeInput.setConfig( 0, mIsPlugged.get(0), mPakType.get(0) );
-                NativeInput.setConfig( 1, mIsPlugged.get(1), mPakType.get(1) );
-                NativeInput.setConfig( 2, mIsPlugged.get(2), mPakType.get(2) );
-                NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
+                NativeInput.setConfig( 0, mGamePrefs.isPlugged[0], mGamePrefs.getPakType(1).ordinal() );
+                NativeInput.setConfig( 1, mGamePrefs.isPlugged[1], mGamePrefs.getPakType(2).ordinal() );
+                NativeInput.setConfig( 2, mGamePrefs.isPlugged[2], mGamePrefs.getPakType(3).ordinal() );
+                NativeInput.setConfig( 3, mGamePrefs.isPlugged[3], mGamePrefs.getPakType(4).ordinal() );
             }
 
             mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
             FileUtil.makeDirs(mWorkingDir);
             mCoreInterface.setWorkingPath(mWorkingDir);
-            mCoreInterface.setGbRomPath(getApplicationContext(), mGbRomPaths);
-            mCoreInterface.setGbRamPath(getApplicationContext(), mGbRamPaths);
-            mCoreInterface.setDdRomPath(getApplicationContext(), mDdRom);
-            mCoreInterface.setDdDiskPath(getApplicationContext(), mDdDisk);
 
-            mCoreInterface.coreStartup(mCoreUserConfigDir, null, mCoreUserDataDir, mCoreUserCacheDir);
+            SparseArray<String> gbRomPaths = new SparseArray<>(4);
+            SparseArray<String> gbRamPaths = new SparseArray<>(4);
 
-            if(!mIsRestarting)
-            {
-                mCoreInterface.emuLoadFile(mSaveToLoad);
+            for (int player = 1; player < 5; ++player) {
+                gbRomPaths.put(player, mGamePrefs.getTransferPakRom(player));
+                gbRamPaths.put(player, mGamePrefs.getTransferPakRam(player));
             }
 
-            if( !mIsFrameLimiterEnabled )
+            mCoreInterface.setGbRomPath(getApplicationContext(), gbRomPaths);
+            mCoreInterface.setGbRamPath(getApplicationContext(), gbRamPaths);
+            mCoreInterface.setDdRomPath(getApplicationContext(), mGamePrefs.idlPath64Dd);
+            mCoreInterface.setDdDiskPath(getApplicationContext(), mGamePrefs.diskPath64Dd);
+
+            mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
+                    mGlobalPrefs.coreUserCacheDir);
+
+            if (!mIsRestarting)
+            {
+                final String latestSave = mGameDataManager.getLatestAutoSave();
+                mCoreInterface.emuLoadFile(latestSave);
+            }
+
+            if (!mGlobalPrefs.isFramelimiterEnabled)
             {
                 mCoreInterface.emuSetFramelimiter(false);
             }
@@ -518,7 +522,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (openSuccess)
             {
-                for (GamePrefs.CheatSelection selection : mCheatOptions)
+                for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())
                 {
                     CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
                     ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
@@ -526,10 +530,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
 
                 // Attach all the plugins
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGfxLib);
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mAudioLib);
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, mInputLib);
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mRspLib);
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib());
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib());
+
+                if (mUseRaphnetDevicesIfAvailable) {
+                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib());
+                } else {
+                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib());
+                }
+
+                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib());
 
                 // This call blocks until emulation is stopped
                 mCoreInterface.emuStart();
@@ -540,8 +550,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
 
-                mCoreInterface.writeGbRamData(getApplicationContext(), mGbRamPaths);
-                mCoreInterface.writeDdDiskData(getApplicationContext(), mDdDisk);
+                mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
+                mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
             }
 
             // Clean up the working directory
@@ -568,8 +578,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mIsRunning = false;
 
-            //Stop the service
+            mGameDataManager.clearOldest();
 
+            //Stop the service
             forceExit();
         }
     }
@@ -638,6 +649,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         // Get the HandlerThread's Looper and use it for our Handler
         Looper serviceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(serviceLooper);
+
+        mAppData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
@@ -741,48 +755,27 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mRomDisplayName  = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
             mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
             mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
-            String cheatsPath = extras.getString( ActivityHelper.Keys.CHEAT_PATH );
-            mCheatOptions = extras.getParcelableArrayList( ActivityHelper.Keys.CHEAT_OPTIONS );
 
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
-            mSaveToLoad = extras.getString( ActivityHelper.Keys.SAVE_TO_LOAD );
-            mRspLib = extras.getString( ActivityHelper.Keys.RSP_LIB );
-            mGfxLib = extras.getString( ActivityHelper.Keys.GFX_LIB );
-            mAudioLib = extras.getString( ActivityHelper.Keys.AUDIO_LIB );
-            mInputLib = extras.getString( ActivityHelper.Keys.INPUT_LIB );
-            mUseHighPriorityThread = extras.getBoolean( ActivityHelper.Keys.HIGH_PRIORITY_THREAD, false );
             mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
 
-            mPakType = extras.getIntegerArrayList(ActivityHelper.Keys.PAK_TYPE_ARRAY);
-
-            boolean[] isPluggedArray = extras.getBooleanArray(ActivityHelper.Keys.IS_PLUGGED_ARRAY);
-            mIsPlugged = new ArrayList<>();
-
-            if(isPluggedArray == null) {
-                mIsPlugged.add(true);
-            } else {
-                for (Boolean isPlugged: isPluggedArray )
-                {
-                    mIsPlugged.add(isPlugged);
-                }
-            }
-
-            mIsFrameLimiterEnabled = extras.getBoolean( ActivityHelper.Keys.IS_FPS_LIMIT_ENABLED, true );
-            mCoreUserDataDir = extras.getString( ActivityHelper.Keys.CORE_USER_DATA_DIR );
-            mCoreUserCacheDir = extras.getString( ActivityHelper.Keys.CORE_USER_CACHE_DIR );
-            mCoreUserConfigDir = extras.getString( ActivityHelper.Keys.CORE_USER_CONFIG_DIR );
-            mUserSaveDir = extras.getString( ActivityHelper.Keys.USER_SAVE_DIR );
             mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
             mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
             mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
             mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
 
-            if (mCheatOptions != null && mCheatOptions.size() != 0) {
+            mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+                    CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
+
+            mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
+            mGameDataManager.makeDirs();
+
+            if (mGamePrefs.getEnabledCheats() != null && mGamePrefs.getEnabledCheats().size() != 0) {
                 String countryString = String.format("%02x", mRomCountryCode).substring(0, 2);
                 String regularExpression = "^" + mRomCrc.replace( ' ', '-') + "-C:" + countryString + ".*";
 
-                BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, cheatsPath);
+                BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, mAppData.mupencheat_txt);
                 if( cheatLocation == null  )
                 {
                     Log.w( "CoreService", "No cheat section found for '" + mRomCrc + "'" );
@@ -790,18 +783,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                 mCheats = CheatUtils.populateWithPosition( cheatLocation, mRomCrc, mRomCountryCode, getBaseContext() );
             }
-
-            mGbRomPaths.put(1, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_1));
-            mGbRamPaths.put(1, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_1));
-            mGbRomPaths.put(2, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_2));
-            mGbRamPaths.put(2, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_2));
-            mGbRomPaths.put(3, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_3));
-            mGbRamPaths.put(3, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_3));
-            mGbRomPaths.put(4, extras.getString(ActivityHelper.Keys.GB_ROM_PATH_4));
-            mGbRamPaths.put(4, extras.getString(ActivityHelper.Keys.GB_RAM_PATH_4));
-
-            mDdRom = extras.getString(ActivityHelper.Keys.DD_ROM_PATH);
-            mDdDisk = extras.getString(ActivityHelper.Keys.DD_DISK_PATH);
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made

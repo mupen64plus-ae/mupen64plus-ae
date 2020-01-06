@@ -103,7 +103,7 @@ public class GamePrefs
     /** Global prefs */
     private GlobalPrefs mGlobalPrefs;
 
-    /** The parent directory containing all game-specific data files. */
+    /** The name of the parent directory containing all game-specific data files. */
     private String gameDataDir;
 
     /** The subdirectory containing SRAM/EEPROM data (in-game saves). */
@@ -357,7 +357,7 @@ public class GamePrefs
         mPreferences = context.getSharedPreferences( mSharedPrefsName, Context.MODE_PRIVATE );
 
         // Game-specific data
-        gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, appData);
+        gameDataDir = appData.gameDataDir + "/" + getGameDataPath( romMd5, headerName, countrySymbol);
         setGameDirs(appData, globalPrefs, gameDataDir);
 
         isDpadGame = isDpadGame(headerName, goodName);
@@ -663,7 +663,7 @@ public class GamePrefs
 
     public String getGameDataDir()
     {
-        return gameDataDir;
+        return mAppData.gameDataDir + "/" + gameDataDir;
     }
 
     public String getAutoSaveDir()
@@ -703,14 +703,14 @@ public class GamePrefs
 
     public void useAlternateGameDataDir()
     {
-        gameDataDir = getAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol, mAppData);
-        setGameDirs(mAppData, mGlobalPrefs, gameDataDir);
+        gameDataDir = getAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol);
+        setGameDirs(mAppData, mGlobalPrefs, getGameDataDir());
     }
 
     public void useSecondAlternateGameDataDir()
     {
-        gameDataDir = getSecondAlternateGameDataPath( romMd5, mAppData);
-        setGameDirs(mAppData, mGlobalPrefs, gameDataDir);
+        gameDataDir = getSecondAlternateGameDataPath( romMd5);
+        setGameDirs(mAppData, mGlobalPrefs, getGameDataDir());
     }
 
     private void setGameDirs(AppData appData, GlobalPrefs globalPrefs, String baseDir)
@@ -767,22 +767,20 @@ public class GamePrefs
         return cheatSelection;
     }
 
-    public static String getGameDataPath( String romMd5, String headerName, String countrySymbol,
-        AppData appData)
+    public static String getGameDataPath( String romMd5, String headerName, String countrySymbol)
     {
         headerName = TextUtils.isEmpty(headerName) ? "" : headerName;
-        return String.format( "%s/%s %s %s", appData.gameDataDir, headerName.replace("/", ""), countrySymbol, romMd5 );
+        return String.format( "%s %s %s", headerName.replace("/", ""), countrySymbol, romMd5 );
     }
 
-    public static String getAlternateGameDataPath( String romMd5, String headerName, String countrySymbol,
-                                          AppData appData)
+    public static String getAlternateGameDataPath( String romMd5, String headerName, String countrySymbol)
     {
-        return String.format( "%s/%s %s %s", appData.gameDataDir, headerName, countrySymbol, romMd5 ).replace(":", "");
+        return String.format( "%s %s %s", headerName, countrySymbol, romMd5 ).replace(":", "");
     }
 
-    public static String getSecondAlternateGameDataPath( String romMd5, AppData appData)
+    public static String getSecondAlternateGameDataPath( String romMd5)
     {
-        return String.format( "%s/%s", appData.gameDataDir, romMd5 );
+        return String.format( "%s", romMd5 );
     }
 
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,
