@@ -470,6 +470,10 @@
     <string name="controllerProfile4_title">Perfil de mando 4</string>
     <string name="default_profile_title">Por defecto global</string>
     <!-- Other Preferences -->
+    <string name="gameDataStorageLocation_title">Ubicación de almacenamiento de datos de juegos</string>
+    <string name="gameDataStorageLocation_entryInternal">Interno</string>
+    <string name="gameDataStorageLocation_entryExternal">Externo</string>
+    <string name="gameDataStorageExternalPath_title">External game data location</string>
     <string name="GameAutoSavesMax_title">Maximos autoguardados por juego</string>
     <string name="useFlatGameDataPath_title">Usar la estructura de carpetas de datos de juegos planos</string>
     <string name="useFlatGameDataPath_summary">Mantener todas las guardas de ranura, capturas de pantalla, y guardas dentro del juego en la misma carpeta</string>

@@ -31,6 +31,7 @@ import androidx.preference.PreferenceManager;
 
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -341,6 +342,12 @@ public class GlobalPrefs
     /** True if specific game data should be saved in a flat file structure */
     final boolean useFlatGameDataPath;
 
+    /** True if the app should use external storage to save game data */
+    public final boolean useExternalStorge;
+
+    /** Where to store external game data */
+    public final String externalFileStoragePath;
+
     /** True of volume keys are mappable*/
     public final boolean volKeysMappable;
 
@@ -393,6 +400,8 @@ public class GlobalPrefs
     public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
     public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
     public static final String PLAYER_MAP = "playerMap";
+    public static final String GAME_DATA_STORAGE_TYPE = "gameDataStorageType";
+    public static final String PATH_GAME_SAVES = "gameDataStoragePath";
     // ... add more as needed
 
     // Shared preferences default values
@@ -644,6 +653,10 @@ public class GlobalPrefs
 
         useFlatGameDataPath = mPreferences.getBoolean( "useFlatGameDataPath", false );
 
+        externalFileStoragePath = mPreferences.getString(PATH_GAME_SAVES, "");
+        useExternalStorge = mPreferences.getString(GAME_DATA_STORAGE_TYPE, "internal").equals("external") &&
+                !TextUtils.isEmpty(externalFileStoragePath);
+
         // Determine the key codes that should not be mapped to controls
         volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
         final boolean backKeyMappable = mPreferences.getBoolean( "inputBackMappable", false );
@@ -876,7 +889,7 @@ public class GlobalPrefs
         return mPreferences.getString( key, defaultValue );
     }
 
-    private void putString( String key, String value )
+    public void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).apply();
     }

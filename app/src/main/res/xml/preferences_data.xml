@@ -46,6 +46,17 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/gameDataStorageLocation_default"
+        android:entries="@array/gameDataStorageLocation_entries"
+        android:entryValues="@array/gameDataStorageLocation_values"
+        android:key="gameDataStorageType"
+        android:summary="@string/selectedValue"
+        android:title="@string/gameDataStorageLocation_title" />
+
+    <Preference
+        android:key="gameDataStoragePath"
+        android:title="@string/gameDataStorageExternalPath_title"/>
 
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="4"
@@ -62,10 +73,6 @@
         android:summary="@string/useFlatGameDataPath_summary"
         android:title="@string/useFlatGameDataPath_title" />
 
-    <androidx.preference.Preference
-        android:key="actionReloadAssets"
-        android:summary="@string/actionReloadAssets_summary"
-        android:title="@string/actionReloadAssets_title" />
     <androidx.preference.Preference
         android:icon="@drawable/ic_undo"
         android:key="actionResetUserPrefs"

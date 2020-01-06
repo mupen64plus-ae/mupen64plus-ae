@@ -622,6 +622,10 @@
     <string name="default_profile_title">Global Default</string>
 
     <!-- Other Preferences -->
+    <string name="gameDataStorageLocation_title">Game data storage location</string>
+    <string name="gameDataStorageLocation_entryInternal">Internal</string>
+    <string name="gameDataStorageLocation_entryExternal">External</string>
+    <string name="gameDataStorageExternalPath_title">External game data location</string>
     <string name="GameAutoSavesMax_title">Max auto saves per game</string>
     <string name="useFlatGameDataPath_title">Use flat game data folder structure</string>
     <string name="useFlatGameDataPath_summary">Keep all slot saves, screenshots, and in-game saves in the same folder</string>

@@ -38,7 +38,7 @@
         <item>ar_SA</item>
     </string-array>
 
-    <!-- Screen Orientation List -->
+    <!-- Gallery sorting Methods -->
     <string-array name="gallerySortingMethod_entries" translatable="false">
         <item>@string/gallerySortingMethod_entryRomName</item>
         <item>@string/gallerySortingMethod_entryFileName</item>
@@ -49,6 +49,18 @@
     </string-array>
 
     <string name="gallerySortingMethod_default" translatable="false">romName</string>
+
+    <!-- Storage types -->
+    <string-array name="gameDataStorageLocation_entries" translatable="false">
+        <item>@string/gameDataStorageLocation_entryInternal</item>
+        <item>@string/gameDataStorageLocation_entryExternal</item>
+    </string-array>
+    <string-array name="gameDataStorageLocation_values" translatable="false">
+        <item>internal</item>
+        <item>external</item>
+    </string-array>
+
+    <string name="gameDataStorageLocation_default" translatable="false">internal</string>
 
     <!-- Touchscreen Auto-Hold Methods -->
     <string-array name="touchscreenAutoHold_entries" translatable="false">
