@@ -126,18 +126,15 @@ public class GameDataManager
                 Log.i("GameDataManager", "Deleting old autosave file: " + result.get(0).getName());
                 File theResult = result.get(0);
 
-                if(!theResult.isDirectory())
-                {
-                    boolean deleteResult = theResult.delete();
+                boolean deleteResult = theResult.delete();
 
-                    //Also remove the corresponding ".complete" file
-                    String completeFile = theResult.getAbsolutePath();
-                    completeFile = completeFile + "." + CoreService.COMPLETE_EXTENSION;
-                    deleteResult = deleteResult && new File(completeFile).delete();
+                //Also remove the corresponding ".complete" file
+                String completeFile = theResult.getAbsolutePath();
+                completeFile = completeFile + "." + CoreService.COMPLETE_EXTENSION;
+                deleteResult = deleteResult && new File(completeFile).delete();
 
-                    if (!deleteResult) {
-                        Log.w("GameDataManager", "Unable to delete autosave file: " + result.get(0).getName());
-                    }
+                if (!deleteResult) {
+                    Log.w("GameDataManager", "Unable to delete autosave file: " + result.get(0).getName());
                 }
                 result.remove(0);
             }

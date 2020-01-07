@@ -27,12 +27,14 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -795,6 +797,58 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
+    private boolean isResumeVisible() {
+
+        String alternateFolder1 = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName, mSelectedItem.countryCode.toString());
+        String alternateFolder2 = GamePrefs.getAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName, mSelectedItem.countryCode.toString());
+        String alternateFolder3 = GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5);
+
+        final String autoSavePath = mAppData.gameDataDir + "/" + alternateFolder1 + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+
+        //Alternate paths in case we have file system problems
+        final String gameAlternate = mAppData.gameDataDir + "/" + alternateFolder2 + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+        final String game2ndAlternate = mAppData.gameDataDir + "/" + alternateFolder3 + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+
+        final File[] allFilesInSavePath = new File(autoSavePath).listFiles();
+        final File[] alternateAllFilesInSavePath = new File(gameAlternate).listFiles();
+        final File[] secondAlternateAllFilesInSavePath = new File(game2ndAlternate).listFiles();
+
+        //No saves, go ahead and remove it
+        boolean autoSavesInInternal = ((allFilesInSavePath != null && allFilesInSavePath.length != 0) ||
+                (alternateAllFilesInSavePath != null && alternateAllFilesInSavePath.length != 0) ||
+                (secondAlternateAllFilesInSavePath != null && secondAlternateAllFilesInSavePath.length != 0)) &&
+                mGlobalPrefs.maxAutoSaves > 0;
+
+        boolean autoSavesInExternal = false;
+        if (mGlobalPrefs.useExternalStorge) {
+            DocumentFile[] allFilesInSavePathDocument = null;
+            File gameDataFolder = new File(mAppData.gameDataDir);
+
+            // Make sure all the right folders exists
+            DocumentFile destLocation = FileUtil.getDocumentFileTree(getApplicationContext(), Uri.parse(mGlobalPrefs.externalFileStoragePath));
+            if (destLocation != null) {
+                destLocation = destLocation.findFile(gameDataFolder.getName());
+                if (destLocation != null) {
+
+                    // Delete the autosaves folder before copying, otherwise the autosaves accumulate
+                    DocumentFile gameFolder = null;
+                    if ((gameFolder = destLocation.findFile(alternateFolder1)) != null ||
+                            (gameFolder = destLocation.findFile(alternateFolder2)) != null ||
+                            (gameFolder = destLocation.findFile(alternateFolder3)) != null) {
+                        DocumentFile autoSaveFolder = gameFolder.findFile(GamePrefs.AUTO_SAVES_DIR);
+                        if (autoSaveFolder != null) {
+                            allFilesInSavePathDocument = autoSaveFolder.listFiles();
+                        }
+                    }
+                }
+            }
+
+            autoSavesInExternal = allFilesInSavePathDocument != null && allFilesInSavePathDocument.length != 0;
+        }
+
+        return autoSavesInExternal || autoSavesInInternal;
+    }
+
     public void onGalleryItemClick(GalleryItem item)
     {
         mSelectedItem = item;
@@ -821,27 +875,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGameSidebar.setActionHandler(GalleryActivity.this, R.menu.gallery_game_drawer);
 
         // If there are no saves for this game, disable the resume option
+        boolean resumeVisible = isResumeVisible();
 
-        final String autoSavePath = mAppData.gameDataDir + "/" + GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-                mSelectedItem.countryCode.toString()) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
-
-        //Alternate paths in case we have file system problems
-        final String gameAlternate = mAppData.gameDataDir + "/" + GamePrefs.getAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-                mSelectedItem.countryCode.toString()) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
-        final String game2ndAlternate = mAppData.gameDataDir + "/" + GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5) +
-                "/" + GamePrefs.AUTO_SAVES_DIR + "/";
-
-        final File[] allFilesInSavePath = new File(autoSavePath).listFiles();
-        final File[] alternateAllFilesInSavePath = new File(gameAlternate).listFiles();
-        final File[] secondAlternateAllFilesInSavePath = new File(game2ndAlternate).listFiles();
-
-        //No saves, go ahead and remove it
-        final boolean visible = ((allFilesInSavePath != null && allFilesInSavePath.length != 0) ||
-                (alternateAllFilesInSavePath != null && alternateAllFilesInSavePath.length != 0) ||
-                (secondAlternateAllFilesInSavePath != null && secondAlternateAllFilesInSavePath.length != 0)) &&
-                mGlobalPrefs.maxAutoSaves > 0;
-
-        if (!visible)
+        if (!resumeVisible)
         {
             // Disable the action handler
             mGameSidebar.getMenu().removeItem(R.id.menuItem_resume);

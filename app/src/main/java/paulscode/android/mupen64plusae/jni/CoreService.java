@@ -38,6 +38,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -48,6 +49,7 @@ import android.os.Vibrator;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -477,6 +479,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
+
+            // Copy game data from external storage
+            if (mGlobalPrefs.useExternalStorge) {
+                copyGameContentsFromSdCard();
+            }
+
             FileUtil.makeDirs(mWorkingDir);
             mCoreInterface.setWorkingPath(mWorkingDir);
 
@@ -557,6 +565,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             // Clean up the working directory
             FileUtil.deleteFolder(new File(mWorkingDir));
 
+            mGameDataManager.clearOldest();
+
+            if (mGlobalPrefs.useExternalStorge) {
+                copyGameContentsToSdCard();
+            }
+
             mCoreInterface.closeRom();
             mCoreInterface.emuShutdown();
 
@@ -578,10 +592,53 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mIsRunning = false;
 
-            mGameDataManager.clearOldest();
-
             //Stop the service
             forceExit();
+        }
+    }
+
+    private void copyGameContentsFromSdCard()
+    {
+        File gameDataFolder = new File(mAppData.gameDataDir);
+
+        DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), Uri.parse(mGlobalPrefs.externalFileStoragePath));
+        if (sourceLocation != null) {
+            sourceLocation = sourceLocation.findFile(gameDataFolder.getName());
+
+            if (sourceLocation != null) {
+                sourceLocation = sourceLocation.findFile(mGamePrefs.getGameDataDirName());
+
+                if (sourceLocation != null) {
+                    FileUtil.copyFolder(getApplicationContext(), sourceLocation, new File(mGamePrefs.getGameDataDir()));
+                }
+            }
+        }
+    }
+
+    private void copyGameContentsToSdCard()
+    {
+        File gameDataFolder = new File(mAppData.gameDataDir);
+
+        // Make sure all the right folders exists
+        DocumentFile destLocation = FileUtil.getDocumentFileTree(getApplicationContext(), Uri.parse(mGlobalPrefs.externalFileStoragePath));
+        if (destLocation != null) {
+            destLocation = FileUtil.createFolderIfNotPresent(getApplicationContext(), destLocation, gameDataFolder.getName());
+            if (destLocation != null) {
+
+                // Delete the autosaves folder before copying, otherwise the autosaves accumulate
+                DocumentFile gameFolder = destLocation.findFile(mGamePrefs.getGameDataDirName());
+                if (gameFolder != null) {
+                    DocumentFile autoSaveFolder = gameFolder.findFile(GamePrefs.AUTO_SAVES_DIR);
+                    if (autoSaveFolder != null) {
+                        autoSaveFolder.delete();
+                    }
+                }
+
+                // Delete the old folder if copy was successful
+                if (FileUtil.copyFolder(getApplicationContext(), new File(mGamePrefs.getGameDataDir()), destLocation, gameDataFolder.getName() )) {
+                    FileUtil.deleteFolder(new File(mGamePrefs.getGameDataDir()));
+                }
+            }
         }
     }
 

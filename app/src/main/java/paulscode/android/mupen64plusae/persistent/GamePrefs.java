@@ -357,8 +357,8 @@ public class GamePrefs
         mPreferences = context.getSharedPreferences( mSharedPrefsName, Context.MODE_PRIVATE );
 
         // Game-specific data
-        gameDataDir = appData.gameDataDir + "/" + getGameDataPath( romMd5, headerName, countrySymbol);
-        setGameDirs(appData, globalPrefs, gameDataDir);
+        gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol);
+        setGameDirs(appData, globalPrefs, getGameDataDir());
 
         isDpadGame = isDpadGame(headerName, goodName);
 
@@ -664,6 +664,11 @@ public class GamePrefs
     public String getGameDataDir()
     {
         return mAppData.gameDataDir + "/" + gameDataDir;
+    }
+
+    public String getGameDataDirName()
+    {
+        return gameDataDir;
     }
 
     public String getAutoSaveDir()

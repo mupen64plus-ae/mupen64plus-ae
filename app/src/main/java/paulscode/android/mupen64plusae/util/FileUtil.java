@@ -293,7 +293,7 @@ public final class FileUtil
 
             DocumentFile[] files = src.listFiles();
             for (DocumentFile file : files) {
-                File newDest = new File(dest.getAbsolutePath()+ "/" + file.getName());
+                File newDest = new File(dest.getAbsolutePath() + "/" + file.getName());
                 copyFolder(context, file, newDest );
             }
         } else {
