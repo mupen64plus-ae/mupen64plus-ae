@@ -55,8 +55,6 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
-    
-    private boolean mCachedCopyFiles = false;
 
     private Uri mSource = null;
     private File mDestination = null;
@@ -81,14 +79,8 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
         {
             CharSequence title = getString( R.string.importExportActivity_importDialogTitle );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, getActivity(), title, "", message, true );
+            mProgress = new ProgressDialog( mProgress, requireActivity(), title, "", message, true );
             mProgress.show();
-        }
-        
-        if(mCachedCopyFiles && getActivity() != null)
-        {
-            actuallyCopyFiles(getActivity());
-            mCachedCopyFiles = false;
         }
     }
     
@@ -107,9 +99,9 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mInProgress && getActivity() != null)
+        if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopCopyFromSdService(getActivity().getApplicationContext(), mServiceConnection);
+            ActivityHelper.stopCopyFromSdService(requireActivity().getApplicationContext(), mServiceConnection);
         }
         
         super.onDestroy();
@@ -118,8 +110,8 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     @Override
     public void onCopyFromSdFinished()
     {
-        if (getActivity() != null && getActivity() instanceof OnFinishListener) {
-            ((OnFinishListener)getActivity()).onFinish();
+        if (requireActivity() instanceof OnFinishListener) {
+            ((OnFinishListener)requireActivity()).onFinish();
         }
     }
     
@@ -127,11 +119,7 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     public void onCopyFromSdServiceDestroyed()
     {
         mInProgress = false;
-        
-        if(getActivity() != null)
-        {
-            mProgress.dismiss();
-        }
+        mProgress.dismiss();
     }
 
     @Override
@@ -144,15 +132,7 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     {
         this.mSource = source;
         this.mDestination = destination;
-        
-        if(getActivity() != null)
-        {
-            actuallyCopyFiles(getActivity());
-        }
-        else
-        {
-            mCachedCopyFiles = true;
-        }
+        actuallyCopyFiles(requireActivity());
     }
     
     private void actuallyCopyFiles(Activity activity)
@@ -161,7 +141,7 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
         
         CharSequence title = getString( R.string.importExportActivity_importDialogTitle );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, "", message, true );
+        mProgress = new ProgressDialog( mProgress, requireActivity(), title, "", message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

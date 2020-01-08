@@ -55,11 +55,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     private AppData mAppData = null;
     
     private GlobalPrefs mGlobalPrefs = null;
-    
-    private boolean mCachedResult = false;
-    
-    private boolean mCachedRefreshRoms = false;
-    
+
     private String mSearchUri = null;
     private boolean mSearchZips = false;
     private boolean mDownloadArt = false;
@@ -86,22 +82,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         {
             CharSequence title = getString( R.string.scanning_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, getActivity(), title, mSearchUri, message, true );
+            mProgress = new ProgressDialog( mProgress, requireActivity(), title, mSearchUri, message, true );
             mProgress.show();
-        }
-
-        if ( getActivity() != null) {
-            if (mCachedResult && mInProgress)
-            {
-                ((GalleryActivity)getActivity()).reloadCacheAndRefreshGrid();
-                mCachedResult = false;
-            }
-
-            if(mCachedRefreshRoms)
-            {
-                ActuallyRefreshRoms(getActivity());
-                mCachedRefreshRoms = false;
-            }
         }
     }
     
@@ -120,9 +102,9 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mInProgress && getActivity() != null)
+        if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
+            ActivityHelper.stopCacheRomInfoService(requireActivity().getApplicationContext(), mServiceConnection);
         }
         
         super.onDestroy();
@@ -138,21 +120,14 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     public void onCacheRomInfoServiceDestroyed()
     {
         mInProgress = false;
-
-        final Activity activity = getActivity();
-
-        if (activity != null) {
-            activity.runOnUiThread( new Runnable() {
+        requireActivity().runOnUiThread( new Runnable() {
                 @Override
                 public void run() {
-                    ((GalleryActivity)activity).reloadCacheAndRefreshGrid();
+                    ((GalleryActivity)requireActivity()).reloadCacheAndRefreshGrid();
                 }
             } );
 
-            mProgress.dismiss();
-        } else {
-            mCachedResult = true;
-        }
+        mProgress.dismiss();
     }
 
     @Override
@@ -171,15 +146,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         this.mSearchSubdirectories = searchSubdirectories;
         this.mAppData = appData;
         this.mGlobalPrefs = globalPrefs;
-        
-        if(getActivity() != null)
-        {
-            ActuallyRefreshRoms(getActivity());
-        }
-        else
-        {
-            mCachedRefreshRoms = true;
-        }
+
+        ActuallyRefreshRoms(requireActivity());
     }
     
     private void ActuallyRefreshRoms(Activity activity)

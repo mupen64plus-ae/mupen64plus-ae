@@ -55,9 +55,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
-    
-    private boolean mCachedExtractTextures = false;
-    
+
     private Uri mTexturesFile = null;
     
     private boolean mInProgress = false;
@@ -80,15 +78,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         {
             CharSequence title = getString( R.string.pathHiResTexturesTask_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), mTexturesFile);
-            mProgress = new ProgressDialog( mProgress, getActivity(), title, file.getName(), message, true );
+            DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), mTexturesFile);
+            mProgress = new ProgressDialog( mProgress, requireActivity(), title, file.getName(), message, true );
             mProgress.show();
-        }
-        
-        if(mCachedExtractTextures && getActivity() != null)
-        {
-            actuallyExtractTextures(getActivity());
-            mCachedExtractTextures = false;
         }
     }
     
@@ -107,9 +99,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mInProgress && getActivity() != null)
+        if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopExtractTexturesService(getActivity().getApplicationContext(), mServiceConnection);
+            ActivityHelper.stopExtractTexturesService(requireActivity().getApplicationContext(), mServiceConnection);
         }
         
         super.onDestroy();
@@ -118,8 +110,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onExtractTexturesFinished()
     {
-        if (getActivity() != null && getActivity() instanceof OnFinishListener) {
-            ((OnFinishListener)getActivity()).onFinish();
+        if (requireActivity() instanceof OnFinishListener) {
+            ((OnFinishListener)requireActivity()).onFinish();
         }
     }
     
@@ -127,11 +119,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     public void onExtractTexturesServiceDestroyed()
     {
         mInProgress = false;
-        
-        if(getActivity() != null)
-        {
-            mProgress.dismiss();
-        }
+        mProgress.dismiss();
     }
 
     @Override
@@ -143,15 +131,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     public void extractTextures( Uri textureFile )
     {
         this.mTexturesFile = textureFile;
-        
-        if(getActivity() != null)
-        {
-            actuallyExtractTextures(getActivity());
-        }
-        else
-        {
-            mCachedExtractTextures = true;
-        }
+
+        actuallyExtractTextures(requireActivity());
     }
     
     private void actuallyExtractTextures(Activity activity)
@@ -160,8 +141,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         
         CharSequence title = getString( R.string.pathHiResTexturesTask_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), mTexturesFile);
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, file.getName(), message, true );
+        DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), mTexturesFile);
+        mProgress = new ProgressDialog( mProgress, requireActivity(), title, file.getName(), message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

@@ -40,7 +40,6 @@ import android.view.Surface;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
@@ -103,9 +102,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     //Progress dialog for extracting ROMs
     private ProgressDialog mProgress = null;
 
-    private boolean mCachedStartCore = false;
-    private boolean mCachedStopCore = false;
-
     private GamePrefs mGamePrefs = null;
     private String mRomGoodName = null;
     private String mRomDisplayName = null;
@@ -154,19 +150,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         Log.i("CoreFragment", "onActivityCreated");
 
         super.onActivityCreated(savedInstanceState);
-
-        Activity gameActivity = getActivity();
-        if(mCachedStartCore && gameActivity != null)
-        {
-            actuallyStartCore(gameActivity);
-            mCachedStartCore = false;
-        }
-
-        if(mCachedStopCore)
-        {
-            actuallyStopCore();
-            mCachedStopCore = false;
-        }
     }
 
     @Override
@@ -184,23 +167,20 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void onFailure(final int errorCode)
     {
-        final Activity activity = getActivity();
-        if(activity != null){
-            if( errorCode != 0)
+        if( errorCode != 0)
+        {
+            final String message = requireActivity().getString( R.string.toast_nativeMainFailure07 );
+
+            requireActivity().runOnUiThread( new Runnable()
             {
-                final String message = activity.getString( R.string.toast_nativeMainFailure07 );
-
-                activity.runOnUiThread( new Runnable()
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
-                    {
-                        Notifier.showToast( activity, message );
-                    }
-                } );
+                    Notifier.showToast( requireActivity(), message );
+                }
+            } );
 
-                Log.e( "CoreFragment", "Launch failure: " + message );
-            }
+            Log.e( "CoreFragment", "Launch failure: " + message );
         }
     }
 
@@ -223,33 +203,29 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void romExtractionStarted()
     {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    CharSequence title = getString( R.string.extractRomTask_title );
-                    CharSequence message = getString( R.string.toast_pleaseWait );
+        requireActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CharSequence title = getString( R.string.extractRomTask_title );
+                CharSequence message = getString( R.string.toast_pleaseWait );
 
-                    DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), Uri.parse(mZipPath));
-                    String zipName = file.getName();
-                    mProgress = new ProgressDialog( mProgress, getActivity(), title, zipName, message, false );
-                    mProgress.show();
-                }
-            });
-        }
+                DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), Uri.parse(mZipPath));
+                String zipName = file.getName();
+                mProgress = new ProgressDialog( mProgress, requireActivity(), title, zipName, message, false );
+                mProgress.show();
+            }
+        });
     }
 
     @Override
     public void romExtractionFinished()
     {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
+        requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mProgress.dismiss();
                 }
             });
-        }
     }
 
     public void setCoreEventListener(CoreEventListener coreEventListener)
@@ -282,21 +258,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, globalPrefs, appData))
             {
-                if(getActivity() != null)
-                {
-                    Notifier.showToast(getActivity(), R.string.coreFragment_sdcard_write_error);
-                    getActivity().finish();
-                }
+                Notifier.showToast(requireActivity(), R.string.coreFragment_sdcard_write_error);
+                requireActivity().finish();
             }
 
-            if(getActivity() != null)
-            {
-                actuallyStartCore(getActivity());
-            }
-            else
-            {
-                mCachedStartCore = true;
-            }
+            actuallyStartCore(requireActivity());
 
             mIsRunning = true;
         }
@@ -321,9 +287,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreService.setCoreServiceListener(CoreFragment.this);
                 mCoreService.setRomExtractionListener(CoreFragment.this);
 
-                if(mCoreEventListener != null && getActivity() != null)
+                if(mCoreEventListener != null)
                 {
-                    getActivity().runOnUiThread(new Runnable() {
+                    requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mCoreEventListener.onCoreServiceStarted();
@@ -362,22 +328,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mIsRunning)
         {
             mIsRunning = false;
-
-            if(getActivity() != null)
+            requireActivity().runOnUiThread( new Runnable()
             {
-                getActivity().runOnUiThread( new Runnable()
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
-                    {
-                        mCoreService = null;
-                        if (getActivity() != null) {
-                            ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
-                        }
-
-                    }
-                } );
-            }
+                    mCoreService = null;
+                    ActivityHelper.stopCoreService(requireActivity().getApplicationContext(), mServiceConnection);
+                }
+            } );
         }
     }
 
@@ -491,17 +450,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.pauseEmulator();
         }
 
-        if(getActivity() != null)
-        {
-            String title = getActivity().getString( R.string.confirm_title );
-            String message = getActivity().getString( R.string.confirmExitGame_message );
+        String title = requireActivity().getString( R.string.confirm_title );
+        String message = requireActivity().getString( R.string.confirmExitGame_message );
 
-            ConfirmationDialog confirmationDialog =
-                    ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
+        ConfirmationDialog confirmationDialog =
+                ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
 
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
-        }
+        FragmentManager fm = requireActivity().getSupportFragmentManager();
+        confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
     }
 
     public void toggleSpeed()
@@ -533,10 +489,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             int slot = mCoreService.getSlot();
 
-            if(getActivity() != null)
-            {
-                Notifier.showToast( getActivity(), R.string.toast_savingSlot, slot );
-            }
+            Notifier.showToast( requireActivity(), R.string.toast_savingSlot, slot );
 
             mCoreService.saveSlot();
 
@@ -554,11 +507,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (mCoreService != null)
         {
             int slot = mCoreService.getSlot();
-
-            if(getActivity() != null)
-            {
-                Notifier.showToast( getActivity(), R.string.toast_loadingSlot, slot );
-            }
+            
+            Notifier.showToast( requireActivity(), R.string.toast_loadingSlot, slot );
 
             mCoreService.loadSlot();
 
@@ -598,87 +548,78 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "setSlotFromPrompt");
 
-        if(getActivity() != null)
-        {
-            final CharSequence title = getActivity().getString(R.string.menuItem_selectSlot);
+        final CharSequence title = requireActivity().getString(R.string.menuItem_selectSlot);
 
-            Prompt.promptRadioInteger( getActivity(), title, mCoreService.getSlot(), 0, 2, 5,
-                    new Prompt.PromptIntegerListener()
+        Prompt.promptRadioInteger( requireActivity(), title, mCoreService.getSlot(), 0, 2, 5,
+                new Prompt.PromptIntegerListener()
+                {
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
                     {
-                        @Override
-                        public void onDialogClosed( Integer value, int which )
+                        if( which == DialogInterface.BUTTON_POSITIVE )
                         {
-                            if( which == DialogInterface.BUTTON_POSITIVE )
-                            {
-                                if (mCoreService != null) {
-                                    mCoreService.setSlot(value);
-                                }
+                            if (mCoreService != null) {
+                                mCoreService.setSlot(value);
+                            }
 
-                                if(mCoreEventListener != null)
-                                {
-                                    mCoreEventListener.onPromptFinished();
-                                }
+                            if(mCoreEventListener != null)
+                            {
+                                mCoreEventListener.onPromptFinished();
                             }
                         }
-                    } );
-        }
+                    }
+                } );
     }
 
     public void saveFileFromPrompt()
     {
         Log.i("CoreFragment", "saveFileFromPrompt");
 
-        if(getActivity() != null)
+        CharSequence title = requireActivity().getText( R.string.menuItem_fileSave );
+        CharSequence hint = requireActivity().getText( R.string.hintFileSave );
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( requireActivity(), title, null, null, hint, inputType, new Prompt.PromptTextListener()
         {
-            CharSequence title = getActivity().getText( R.string.menuItem_fileSave );
-            CharSequence hint = getActivity().getText( R.string.hintFileSave );
-            int inputType = InputType.TYPE_CLASS_TEXT;
-            Prompt.promptText( getActivity(), title, null, null, hint, inputType, new Prompt.PromptTextListener()
+            @Override
+            public void onDialogClosed( CharSequence text, int which )
             {
-                @Override
-                public void onDialogClosed( CharSequence text, int which )
+                if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        saveState(text.toString());
-                    }
+                    saveState(text.toString());
                 }
-            } );
-        }
+            }
+        } );
     }
 
     private void saveState( final String filename )
     {
         Log.i("CoreFragment", "saveState");
 
-        if(getActivity() != null)
+        mCurrentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" +
+                filename + "." + mRomGoodName + ".sav");
+
+        if( mCurrentSaveStateFile.exists() )
         {
-            mCurrentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" +
-                    filename + "." + mRomGoodName + ".sav");
 
-            if( mCurrentSaveStateFile.exists() )
-            {
+            String title = requireActivity().getString( R.string.confirm_title );
+            String message = requireActivity().getString( R.string.confirmOverwriteFile_message, filename );
 
-                String title = getActivity().getString( R.string.confirm_title );
-                String message = getActivity().getString( R.string.confirmOverwriteFile_message, filename );
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
 
-                ConfirmationDialog confirmationDialog =
-                        ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
-
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+            FragmentManager fm = requireActivity().getSupportFragmentManager();
+            confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+        }
+        else
+        {
+            if (mCoreService != null) {
+                mCoreService.saveState(mCurrentSaveStateFile.getName());
+                Notifier.showToast( requireActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
             }
-            else
-            {
-                if (mCoreService != null) {
-                    mCoreService.saveState(mCurrentSaveStateFile.getName());
-                    Notifier.showToast( getActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
-                }
 
-                if(mCoreEventListener != null)
-                {
-                    mCoreEventListener.onSaveLoad();
-                }
+            if(mCoreEventListener != null)
+            {
+                mCoreEventListener.onSaveLoad();
             }
         }
     }
@@ -687,64 +628,55 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "loadFileFromPrompt");
 
-        if(getActivity() != null)
+        CharSequence title = requireActivity().getText( R.string.menuItem_fileLoad );
+        File startPath = new File( mGamePrefs.getUserSaveDir() );
+        Prompt.promptFile( requireActivity(), title, null, startPath, "", new Prompt.PromptFileListener()
         {
-            CharSequence title = getActivity().getText( R.string.menuItem_fileLoad );
-            File startPath = new File( mGamePrefs.getUserSaveDir() );
-            Prompt.promptFile( getActivity(), title, null, startPath, "", new Prompt.PromptFileListener()
+            @Override
+            public void onDialogClosed( File file, int which )
             {
-                @Override
-                public void onDialogClosed( File file, int which )
+                if( which >= 0 )
                 {
-                    if( which >= 0 )
-                    {
-                        loadState(file);
+                    loadState(file);
 
-                        if(mCoreEventListener != null)
-                        {
-                            mCoreEventListener.onSaveLoad();
-                        }
+                    if(mCoreEventListener != null)
+                    {
+                        mCoreEventListener.onSaveLoad();
                     }
                 }
-            } );
-        }
+            }
+        } );
     }
 
     public void loadAutoSaveFromPrompt()
     {
         Log.i("CoreFragment", "loadAutoSaveFromPrompt");
 
-        if(getActivity() != null)
+        CharSequence title = requireActivity().getText( R.string.menuItem_fileLoadAutoSave );
+        File startPath = new File( mGamePrefs.getAutoSaveDir() );
+        Prompt.promptFile( requireActivity(), title, null, startPath, "sav", new Prompt.PromptFileListener()
         {
-            CharSequence title = getActivity().getText( R.string.menuItem_fileLoadAutoSave );
-            File startPath = new File( mGamePrefs.getAutoSaveDir() );
-            Prompt.promptFile( getActivity(), title, null, startPath, "sav", new Prompt.PromptFileListener()
+            @Override
+            public void onDialogClosed( File file, int which )
             {
-                @Override
-                public void onDialogClosed( File file, int which )
+                if( which >= 0 )
                 {
-                    if( which >= 0 )
-                    {
-                        loadState(file);
+                    loadState(file);
 
-                        if(mCoreEventListener != null)
-                        {
-                            mCoreEventListener.onSaveLoad();
-                        }
+                    if(mCoreEventListener != null)
+                    {
+                        mCoreEventListener.onSaveLoad();
                     }
                 }
-            } );
-        }
+            }
+        } );
     }
 
     private void loadState( File file )
     {
         Log.i("CoreFragment", "loadState");
 
-        if(getActivity() != null)
-        {
-            Notifier.showToast( getActivity(), R.string.toast_loadingFile, file.getName() );
-        }
+        Notifier.showToast( requireActivity(), R.string.toast_loadingFile, file.getName() );
 
         if (mCoreService != null) {
             mCoreService.loadState(file);
@@ -767,11 +699,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if (mCoreService != null)
         {
-            if(getActivity() != null)
-            {
-                Notifier.showToast( getActivity(), R.string.toast_savingScreenshot );
-            }
-
+            Notifier.showToast( requireActivity(), R.string.toast_savingScreenshot );
             mCoreService.screenshot();
         }
     }
@@ -799,18 +727,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if (mCoreService != null)
         {
-            if(getActivity() != null)
-            {
-                mCoreService.pauseEmulator();
-                String title = getActivity().getString( R.string.confirm_title );
-                String message = getActivity().getString( R.string.confirmResetGame_message );
+            mCoreService.pauseEmulator();
+            String title = requireActivity().getString( R.string.confirm_title );
+            String message = requireActivity().getString( R.string.confirmResetGame_message );
 
-                ConfirmationDialog confirmationDialog =
-                        ConfirmationDialog.newInstance(RESET_CONFIRM_DIALOG_ID, title, message);
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(RESET_CONFIRM_DIALOG_ID, title, message);
 
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
-            }
+            FragmentManager fm = requireActivity().getSupportFragmentManager();
+            confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
         }
     }
 
@@ -896,27 +821,24 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "setCustomSpeedFromPrompt");
 
-        if(getActivity() != null)
-        {
-            final CharSequence title = getActivity().getText( R.string.menuItem_setSpeed );
-            Prompt.promptInteger( getActivity(), title, "%1$d %%", mCustomSpeed, MIN_SPEED, MAX_SPEED,
-                    new Prompt.PromptIntegerListener()
+        final CharSequence title = requireActivity().getText( R.string.menuItem_setSpeed );
+        Prompt.promptInteger( requireActivity(), title, "%1$d %%", mCustomSpeed, MIN_SPEED, MAX_SPEED,
+                new Prompt.PromptIntegerListener()
+                {
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
                     {
-                        @Override
-                        public void onDialogClosed( Integer value, int which )
+                        if( which == DialogInterface.BUTTON_POSITIVE )
                         {
-                            if( which == DialogInterface.BUTTON_POSITIVE )
-                            {
-                                setCustomSpeed( value );
+                            setCustomSpeed( value );
 
-                                if(mCoreEventListener != null)
-                                {
-                                    mCoreEventListener.onPromptFinished();
-                                }
+                            if(mCoreEventListener != null)
+                            {
+                                mCoreEventListener.onPromptFinished();
                             }
                         }
-                    } );
-        }
+                    }
+                } );
     }
 
     public void onPromptDialogClosed(int id, int which)
@@ -929,13 +851,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreService.saveState(mCurrentSaveStateFile.getName());
             }
 
-            if(getActivity() != null)
+            Notifier.showToast(requireActivity(), R.string.toast_overwritingFile, mCurrentSaveStateFile.getName());
+            if(mCoreEventListener != null)
             {
-                Notifier.showToast(getActivity(), R.string.toast_overwritingFile, mCurrentSaveStateFile.getName());
-                if(mCoreEventListener != null)
-                {
-                    mCoreEventListener.onSaveLoad();
-                }
+                mCoreEventListener.onSaveLoad();
             }
         }
         else if (id == RESET_CONFIRM_DIALOG_ID)
