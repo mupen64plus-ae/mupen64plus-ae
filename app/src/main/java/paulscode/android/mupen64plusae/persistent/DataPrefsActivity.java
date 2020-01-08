@@ -119,6 +119,15 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         // actually preferences
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.PATH_GAME_SAVES, this);
 
+        Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
+        if (currentPreference != null) {
+            String uri = mGlobalPrefs.getString(GlobalPrefs.PATH_GAME_SAVES, "");
+
+            if (!TextUtils.isEmpty(uri)) {
+                DocumentFile file = FileUtil.getDocumentFileTree(this, Uri.parse(uri));
+                currentPreference.setSummary(file.getName());
+            }
+        }
     }
 
     @Override
