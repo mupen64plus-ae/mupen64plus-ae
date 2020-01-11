@@ -75,6 +75,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.RomHeader;
 
 @SuppressWarnings("unused")
 public class CoreService extends Service implements CoreInterface.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
@@ -515,11 +516,23 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.emuSetFramelimiter(false);
             }
 
-            boolean openSuccess;
+            boolean openSuccess = false;
 
             if (TextUtils.isEmpty(mZipPath))
             {
-                openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
+                RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mRomPath));
+
+                // Disk only games still require a ROM image, so use a dummy test ROM
+                if (header.isNdd) {
+                    mCoreInterface.setDdRomPath(getApplicationContext(), mGlobalPrefs.japanIplPath);
+                    mCoreInterface.setDdDiskPath(getApplicationContext(), mRomPath);
+
+                    if (!TextUtils.isEmpty(mGlobalPrefs.japanIplPath)) {
+                        openSuccess = mCoreInterface.openRom(getApplicationContext(), Uri.fromFile(new File(mAppData.mupen64plus_test_rom_v64)).toString());
+                    }
+                } else if (header.isValid) {
+                    openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
+                }
             }
             else
             {
@@ -558,8 +571,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
 
-                mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
-                mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
+                // TODO: Re-enable this once the core enables writing again
+                // mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
+                // mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
             }
 
             // Clean up the working directory

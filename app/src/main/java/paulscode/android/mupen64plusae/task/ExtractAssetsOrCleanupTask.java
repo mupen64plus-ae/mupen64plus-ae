@@ -65,6 +65,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
             mAssetVersions.put("mupen64plus_data/GLideN64.custom.ini", 3);
             mAssetVersions.put("mupen64plus_data/Glide64mk2.ini", 2);
             mAssetVersions.put("mupen64plus_data/RiceVideoLinux.ini", 1);
+            mAssetVersions.put("mupen64plus_data/m64p_test_rom.v64", 1);
             mAssetVersions.put("mupen64plus_data/doc/CREDITS", 1);
             mAssetVersions.put("mupen64plus_data/doc/INSTALL", 1);
             mAssetVersions.put("mupen64plus_data/doc/LICENSES", 1);

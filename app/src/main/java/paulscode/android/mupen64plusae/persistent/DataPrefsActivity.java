@@ -34,15 +34,21 @@ import android.text.TextUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.File;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
     SharedPreferences.OnSharedPreferenceChangeListener
 {
-    public static final int FILE_PICKER_REQUEST_CODE = 1;
+    public static final int FOLDER_PICKER_REQUEST_CODE = 1;
+    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 2;
+    public static final int FILE_PICKER_REQUEST_CODE = 3;
 
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -103,6 +109,8 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         final String key = preference.getKey();
 
         if (GlobalPrefs.PATH_GAME_SAVES.equals(key)) {
+            startFolderPicker();
+        } else if (GlobalPrefs.PATH_JAPAN_IPL_ROM.equals(key)) {
             startFilePicker();
         } else {// Let Android handle all other preference clicks
             return false;
@@ -118,6 +126,8 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         // Handle certain menu items that require extra processing or aren't
         // actually preferences
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.PATH_GAME_SAVES, this);
+        PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.PATH_JAPAN_IPL_ROM, this);
+
 
         Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
         if (currentPreference != null) {
@@ -125,6 +135,16 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
             if (!TextUtils.isEmpty(uri)) {
                 DocumentFile file = FileUtil.getDocumentFileTree(this, Uri.parse(uri));
+                currentPreference.setSummary(file.getName());
+            }
+        }
+
+        currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
+        if (currentPreference != null) {
+            String uri = mGlobalPrefs.getString(GlobalPrefs.PATH_JAPAN_IPL_ROM, "");
+
+            if (!TextUtils.isEmpty(uri)) {
+                DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(uri));
                 currentPreference.setSummary(file.getName());
             }
         }
@@ -147,37 +167,88 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         }
     }
 
-    private void startFilePicker()
+    private void startFolderPicker()
     {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                 Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         intent = Intent.createChooser(intent, getString(R.string.gameDataStorageLocation_title));
-        startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
+        startActivityForResult(intent, FOLDER_PICKER_REQUEST_CODE);
+    }
+
+    private void startFilePicker()
+    {
+        if (mAppData.isAndroidTv) {
+            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
+            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && data != null) {
-            // Check which request we're responding to
-            if (requestCode == FILE_PICKER_REQUEST_CODE)
-            {
-                Uri fileUri = data.getData();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == FOLDER_PICKER_REQUEST_CODE) {
+                // The result data contains a URI for the document or directory that
+                // the user selected.
+                if (data != null) {
+                    Uri fileUri = data.getData();
 
-                Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
-                if (currentPreference != null && fileUri != null) {
+                    Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
+                    if (currentPreference != null && fileUri != null) {
 
-                    final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
+                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
-                    DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
-                    String summary = file.getName();
-                    currentPreference.setSummary(summary);
-                    mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
+                        DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
+                        String summary = file.getName();
+                        currentPreference.setSummary(summary);
+                        mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
+                    }
+                }
+            } else if (requestCode == FILE_PICKER_REQUEST_CODE) {
+                // The result data contains a URI for the document or directory that
+                // the user selected.
+                if (data != null) {
+                    Uri fileUri = data.getData();
+
+                    Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
+                    if (currentPreference != null && fileUri != null) {
+
+                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
+
+                        DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
+                        String summary = file.getName();
+                        currentPreference.setSummary(summary);
+                        mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
+                    }
+                }
+            }else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
+                final Bundle extras = data.getExtras();
+
+                if (extras != null) {
+                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+                    Uri fileUri = Uri.parse(searchUri);
+
+                    Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
+                    if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
+                        File file = new File(fileUri.getPath());
+                        currentPreference.setSummary(file.getName());
+                        mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
+                    }
                 }
             }
         }

@@ -969,7 +969,7 @@ public final class FileUtil
     public static byte[] extractRomHeader( InputStream inStream )
     {
         // Read the first 4 bytes of the entry
-        int arraySize = 0x64;
+        int arraySize = 0xe8;
         int initialReadSize = 4;
         byte[] buffer = new byte[arraySize];
         try

@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -29,11 +28,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.documentfile.provider.DocumentFile;
-import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceGroup;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,8 +47,6 @@ import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
@@ -68,13 +63,11 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener, PromptConfirmListener
+        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener
 {
     private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
     private static final int PICK_FILE_REQUEST_CODE = 2;
     private static final int EDIT_CHEATS_REQUEST_CODE = 111;
-    private static final int RESET_GAME_PREFS_CONFIRM_DIALOG_ID = 0;
-    private static final String RESET_GAME_PREFS_CONFIRM_DIALOG_STATE = "RESET_GAME_PREFS_CONFIRM_DIALOG_STATE";
 
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -83,7 +76,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
-    private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -226,7 +218,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_GAME_PREFS, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.IDL_PATH_64DD, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.DISK_PATH_64DD, this );
 
@@ -257,8 +248,13 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.TOUCHSCREEN_PROFILE);
         }
 
-        refreshViews();
+        if (!mGamePrefs.is64DdGame) {
+            PrefUtil.removePreference(this, SCREEN_ROOT, GamePrefs.SUPPORT_64DD);
+            PrefUtil.removePreference(this, SCREEN_ROOT, GamePrefs.IDL_PATH_64DD);
+            PrefUtil.removePreference(this, SCREEN_ROOT, GamePrefs.DISK_PATH_64DD);
+        }
 
+        refreshViews();
     }
 
     @Override
@@ -408,15 +404,17 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     : R.string.screenCheats_summaryDisabled );
         }
 
-        // Enable disable 64 preferences as necessary
-        PrefUtil.enablePreference( this, GamePrefs.IDL_PATH_64DD, mGamePrefs.enable64DdSupport );
-        PrefUtil.enablePreference( this, GamePrefs.DISK_PATH_64DD, mGamePrefs.enable64DdSupport );
-
         // Enable/disable player map item as necessary
         PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP,
                 mGamePrefs.playerMap.isEnabled() && !mGamePrefs.useDefaultPlayerMapping );
 
         PrefUtil.enablePreference( this, GamePrefs.DISPLAY_ZOOM, !mGamePrefs.useDefaultZoom );
+
+        if (mGamePrefs.is64DdGame) {
+            // Enable disable 64 preferences as necessary
+            PrefUtil.enablePreference( this, GamePrefs.IDL_PATH_64DD, mGamePrefs.enable64DdSupport );
+            PrefUtil.enablePreference( this, GamePrefs.DISK_PATH_64DD, mGamePrefs.enable64DdSupport );
+        }
 
         // Define which buttons to show in player map dialog
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
@@ -530,8 +528,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             startActivityForResult( intent, EDIT_CHEATS_REQUEST_CODE );
         } else if (key.equals(ACTION_WIKI)) {
             ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
-        } else if (key.equals(ACTION_RESET_GAME_PREFS)) {
-            actionResetGamePrefs();
         } else if (key.equals(GamePrefs.IDL_PATH_64DD) ||
                 key.equals(GamePrefs.DISK_PATH_64DD) || key.contains(GamePrefs.TRANSFER_PAK)){
             currentFilePickerKey = key;
@@ -556,56 +552,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
-        }
-    }
-
-
-    private void actionResetGamePrefs()
-    {
-        final String title = getString( R.string.confirm_title );
-        final String message = getString( R.string.actionResetGamePrefs_popupMessage );
-
-        final ConfirmationDialog confirmationDialog =
-            ConfirmationDialog.newInstance(RESET_GAME_PREFS_CONFIRM_DIALOG_ID, title, message);
-
-        final FragmentManager fm = getSupportFragmentManager();
-        confirmationDialog.show(fm, RESET_GAME_PREFS_CONFIRM_DIALOG_STATE);
-    }
-
-    @Override
-    public void onPromptDialogClosed(int id, int which)
-    {
-        if( id == RESET_GAME_PREFS_CONFIRM_DIALOG_ID &&
-            which == DialogInterface.BUTTON_POSITIVE )
-        {
-            // Reset the user preferences
-            mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
-            mPrefs.edit().clear().apply();
-
-
-            try {
-                PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
-            } catch (java.lang.ClassCastException e) {
-                Log.w("GamePrefsActivity", "Unable to reset game preferences");
-            }
-
-            // Also reset any manual overrides the user may have made in the config file
-            final File configFile = new File( mGamePrefs.getMupen64plusCfg() );
-            if( configFile.exists() && !configFile.isDirectory()) {
-                if(!configFile.delete()) {
-                    //If we are unable to delete this file, try the alternate
-                    final File configFileAlternate = new File( mGamePrefs.getMupen64plusCfgAlt() );
-                    if( configFileAlternate.exists() && !configFileAlternate.isDirectory()) {
-                        if(configFileAlternate.delete()) {
-                            Log.w("GamePrefsActivity", "Unable to reset config");
-                        }
-                    }
-                }
-            }
-
-
-            // Rebuild the menu system by restarting the activity
-            ActivityHelper.restartActivity( GamePrefsActivity.this );
         }
     }
 

@@ -348,6 +348,9 @@ public class GlobalPrefs
     /** Where to store external game data */
     public final String externalFileStoragePath;
 
+    /** Japanese IPL ROM path */
+    public final String japanIplPath;
+
     /** True of volume keys are mappable*/
     public final boolean volKeysMappable;
 
@@ -402,6 +405,7 @@ public class GlobalPrefs
     public static final String PLAYER_MAP = "playerMap";
     public static final String GAME_DATA_STORAGE_TYPE = "gameDataStorageType";
     public static final String PATH_GAME_SAVES = "gameDataStoragePath";
+    public static final String PATH_JAPAN_IPL_ROM = "japanIdlPath64dd";
     // ... add more as needed
 
     // Shared preferences default values
@@ -656,6 +660,8 @@ public class GlobalPrefs
         externalFileStoragePath = mPreferences.getString(PATH_GAME_SAVES, "");
         useExternalStorge = mPreferences.getString(GAME_DATA_STORAGE_TYPE, "internal").equals("external") &&
                 !TextUtils.isEmpty(externalFileStoragePath);
+
+        japanIplPath = mPreferences.getString(PATH_JAPAN_IPL_ROM, "");
 
         // Determine the key codes that should not be mapped to controls
         volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );

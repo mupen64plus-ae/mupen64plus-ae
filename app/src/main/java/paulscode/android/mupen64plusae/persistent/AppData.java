@@ -260,6 +260,9 @@ public class AppData
 
     /** The path of the glideN64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String glideN64_conf;
+
+    /** Test ROM built from sources: https://github.com/mupen64plus/mupen64plus-rom/ */
+    public final String mupen64plus_test_rom_v64;
     
     /** The path of the glide configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String glide64mk2_ini;
@@ -366,6 +369,7 @@ public class AppData
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
         glideN64_conf = coreSharedDataDir + "/GLideN64.custom.ini";
+        mupen64plus_test_rom_v64 = coreSharedDataDir + "/m64p_test_rom.v64";
         mupencheat_default = coreSharedDataDir + "/mupencheat.default";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";

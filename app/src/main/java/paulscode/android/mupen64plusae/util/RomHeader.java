@@ -62,6 +62,7 @@ public final class RomHeader
     public final boolean isZip;
     public final boolean is7Zip;
     public final boolean isRar;
+    public final boolean isNdd;
     
     /**
      * Constructor.
@@ -80,7 +81,7 @@ public final class RomHeader
      */
     public RomHeader( File file )
     {
-        this(readFile( file ));
+        this(readHeader( file ));
     }
 
     /**
@@ -91,7 +92,7 @@ public final class RomHeader
      */
     public RomHeader( Context context, Uri file )
     {
-        this(readFile( context, file ));
+        this(readHeader( context, file ));
     }
     
     /**
@@ -101,6 +102,8 @@ public final class RomHeader
      */
     public RomHeader( byte[] buffer )
     {
+        CountryCode tempCountryCode;
+        String tempName;
         if( buffer == null ||  buffer.length < 0x40 )
         {
             if (buffer == null || buffer.length < 4 )
@@ -124,11 +127,11 @@ public final class RomHeader
             crc2 = 0;
             unknown1 = 0;
             unknown2 = 0;
-            name = "";
+            tempName = "";
             unknown3 = 0;
             manufacturerId = 0;
             cartridgeId = 0;
-            countryCode = CountryCode.UNKNOWN;
+            tempCountryCode = CountryCode.UNKNOWN;
             crc = "";
         }
         else
@@ -145,46 +148,92 @@ public final class RomHeader
             crc2 = readInt( buffer, 0x14 );
             unknown1 = buffer[0x18];
             unknown2 = buffer[0x19];
-            name = readString( buffer, 0x20, 0x34 ).trim();
+            tempName = readString( buffer, 0x20, 0x34 ).trim();
             unknown3 = readInt( buffer, 0x34 );
             manufacturerId = readInt( buffer, 0x38 );
             cartridgeId = readShort( buffer, 0x3C );
-            countryCode = CountryCode.getCountryCode(buffer[0x3E]);
+            tempCountryCode = CountryCode.getCountryCode(buffer[0x3E]);
             crc = String.format( "%08X %08X", crc1, crc2 );
         }
-        
-        countrySymbol = countryCode.toString();
 
-        
         isValid = init_PI_BSB_DOM1_LAT_REG == (byte) 0x80
                 && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
                 && init_PI_BSB_DOM1_PWD_REG == (byte) 0x12
                 && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x40;
-        
-        isZip = init_PI_BSB_DOM1_LAT_REG == (byte) 0x50
-                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x4b
-                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x03
-                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x04;
 
-        is7Zip = init_PI_BSB_DOM1_LAT_REG == (byte) 0x7a
-                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
-                && init_PI_BSB_DOM1_PWD_REG == (byte) 0xaf
-                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0xbc;
+        if (buffer != null && buffer.length >= 4) {
+            isZip = buffer[0x00] == (byte) 0x50
+                    && buffer[0x01] == (byte) 0x4b
+                    && buffer[0x02] == (byte) 0x03
+                    && buffer[0x03] == (byte) 0x04;
 
-        isRar = init_PI_BSB_DOM1_LAT_REG == (byte) 0x52
-                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x61
-                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x72
-                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x21;
+            is7Zip = buffer[0x00] == (byte) 0x7a
+                    && buffer[0x01] == (byte) 0x37
+                    && buffer[0x02] == (byte) 0xaf
+                    && buffer[0x03] == (byte) 0xbc;
+
+            isRar = buffer[0x00] == (byte) 0x52
+                    && buffer[0x01] == (byte) 0x61
+                    && buffer[0x02] == (byte) 0x72
+                    && buffer[0x03] == (byte) 0x21;
+
+            if (buffer.length >= 0xe8) {
+                isNdd = buffer[0x04] == (byte) 0x10
+                        && buffer[0x18] == (byte) 0xff
+                        && buffer[0x19] == (byte) 0xff
+                        && buffer[0x1a] == (byte) 0xff
+                        && buffer[0x1b] == (byte) 0xff
+                        && buffer[0xe6] == (byte) 0xff
+                        && buffer[0xe7] == (byte) 0xff;
+                if (isNdd) {
+                    boolean isJapan = buffer[0x00] == (byte) 0xe8
+                            && buffer[0x01] == (byte) 0x48
+                            && buffer[0x02] == (byte) 0xd3
+                            && buffer[0x03] == (byte) 0x16;
+                    boolean isUsa = buffer[0x00] == (byte) 0x22
+                            && buffer[0x01] == (byte) 0x63
+                            && buffer[0x02] == (byte) 0xee
+                            && buffer[0x03] == (byte) 0x56;
+                    boolean isDev = buffer[0x00] == (byte) 0x00
+                            && buffer[0x01] == (byte) 0x00
+                            && buffer[0x02] == (byte) 0x00
+                            && buffer[0x03] == (byte) 0x00;
+
+                    if (isJapan) {
+                        tempCountryCode = CountryCode.JAPAN;
+                    } else if (isUsa) {
+                        tempCountryCode = CountryCode.USA;
+                    } else if (isDev) {
+                        tempCountryCode = CountryCode.BETA;
+                    } else {
+                        tempCountryCode = CountryCode.UNKNOWN;
+                    }
+
+                    tempName = "";
+                }
+            } else {
+                isNdd = false;
+            }
+        } else {
+            isZip = false;
+            is7Zip = false;
+            isRar = false;
+            isNdd = false;
+        }
+
+        countryCode = tempCountryCode;
+        name = tempName;
+        countrySymbol = countryCode.toString();
     }
 
-    private static byte[] readFile( File file )
+    private static byte[] readHeader(File file )
     {
-        byte[] buffer = new byte[0x40];
+        byte[] buffer = new byte[0xe8];
         DataInputStream in = null;
         try
         {
             in = new DataInputStream( new FileInputStream( file ) );
-            if (in.read( buffer ) != 0x40) {
+            if (in.read( buffer ) != 0xe8) {
                 buffer = null;
                 Log.w( "RomHeader", "Not enough data for header" );
             }
@@ -214,16 +263,16 @@ public final class RomHeader
         return buffer;
     }
 
-    private static byte[] readFile(Context context, Uri file )
+    private static byte[] readHeader(Context context, Uri file )
     {
-        byte[] buffer = new byte[0x40];
+        byte[] buffer = new byte[0xe8];
 
         if (file != null && !TextUtils.isEmpty(file.toString())) {
             try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r")) {
 
                 if (parcelFileDescriptor != null) {
                     try (DataInputStream in = new DataInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))){
-                        if (in.read(buffer) != 0x40) {
+                        if (in.read(buffer) != 0xe8) {
                             buffer = null;
                             Log.w("RomHeader", "Not enough data for header");
                         }

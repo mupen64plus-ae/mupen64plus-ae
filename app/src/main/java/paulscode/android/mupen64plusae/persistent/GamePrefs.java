@@ -306,6 +306,9 @@ public class GamePrefs
     /** This is true if this game uses the D-pad */
     final boolean isDpadGame;
 
+    /** This is true if this game accepts 64DD expansion disks */
+    final boolean is64DdGame;
+
     /** Game CRC */
     private final String gameCrc;
 
@@ -325,6 +328,7 @@ public class GamePrefs
     static final String PLAYER_MAP = "playerMapGame";
     static final String DISPLAY_ZOOM = "displayZoomSeekGame";
     static final String PLAY_SHOW_CHEATS = "playShowCheats";
+    static final String SUPPORT_64DD = "support64dd";
     static final String IDL_PATH_64DD = "idlPath64dd";
     static final String DISK_PATH_64DD = "diskPath64dd";
     static final String TRANSFER_PAK = "transferPak";
@@ -361,6 +365,7 @@ public class GamePrefs
         setGameDirs(appData, globalPrefs, getGameDataDir());
 
         isDpadGame = isDpadGame(headerName, goodName);
+        is64DdGame = is64ddGame(headerName);
 
         // Emulation profile
         Profile tempEmulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
@@ -571,7 +576,7 @@ public class GamePrefs
 
         touchscreenAutoHold = tmpTouchscreenAutoHold;
 
-        enable64DdSupport = mPreferences.getBoolean( "support64dd", false );
+        enable64DdSupport = mPreferences.getBoolean( SUPPORT_64DD, false );
 
         if (enable64DdSupport) {
             String tempIdlPath64dd = mPreferences.getString(IDL_PATH_64DD, "");
@@ -659,6 +664,17 @@ public class GamePrefs
                 gameGoodNameLowerCase.contains("WRESTL".toLowerCase()) ||
                 gameGoodNameLowerCase.contains("WCW".toLowerCase()) ||
                 headerNameLowerCase.equals("wetrix".toLowerCase());
+    }
+
+    private boolean is64ddGame(String headerName) {
+
+        String headerNameLowerCase = !TextUtils.isEmpty(headerName) ? headerName.toLowerCase() : "";
+
+        return headerNameLowerCase.equals("MarioParty".toLowerCase()) ||
+                headerNameLowerCase.contains("POKEMON STADIUM".toLowerCase()) ||
+                headerNameLowerCase.contains("F-ZERO".toLowerCase()) ||
+                headerNameLowerCase.equals("DEZAEMON3D".toLowerCase()) ||
+                headerNameLowerCase.equals("THE LEGEND OF ZELDA".toLowerCase());
     }
 
     public String getGameDataDir()

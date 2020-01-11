@@ -73,10 +73,8 @@
         android:summary="@string/useFlatGameDataPath_summary"
         android:title="@string/useFlatGameDataPath_title" />
 
-    <androidx.preference.Preference
-        android:icon="@drawable/ic_undo"
-        android:key="actionResetUserPrefs"
-        android:summary="@string/actionResetUserPrefs_summary"
-        android:title="@string/actionResetUserPrefs_title" />
+    <Preference
+        android:key="japanIdlPath64dd"
+        android:title="@string/japanIplRom64ddPath_title"/>
 
 </androidx.preference.PreferenceScreen>

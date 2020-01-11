@@ -181,7 +181,7 @@ public class CacheRomInfoService extends Service
                 
                 if( mbStopped ) break;
                 RomHeader header = new RomHeader( getApplicationContext(), file.getUri() );
-                if( header.isValid ) {
+                if( header.isValid || header.isNdd ) {
                     cacheFile( file, database, config);
                 } else if (mSearchZips && !configHasZip(config, file.getUri())) {
                     if (header.isZip) {
