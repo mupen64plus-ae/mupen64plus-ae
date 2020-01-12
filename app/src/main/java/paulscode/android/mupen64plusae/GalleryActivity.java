@@ -398,7 +398,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         final Toolbar toolbar = findViewById( R.id.toolbar );
-        toolbar.setTitle( R.string.app_name );
+
+        if (mAppData.isPro) {
+            toolbar.setTitle( R.string.app_name_pro );
+        } else {
+            toolbar.setTitle( R.string.app_name );
+        }
+
         final View firstGridChild = mGridView.getChildAt(0);
 
         if(firstGridChild != null)

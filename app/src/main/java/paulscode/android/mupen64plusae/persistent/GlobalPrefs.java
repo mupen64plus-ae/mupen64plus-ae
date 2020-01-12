@@ -340,6 +340,12 @@ public class GlobalPrefs
     /** Japanese IPL ROM path */
     public final String japanIplPath;
 
+    /** True if data should be backed up to Google Drive */
+    public final boolean backupToGoogleDrive;
+
+    /** True if data should be backed up over cell data */
+    public final boolean backupOverCellData;
+
     /** True of volume keys are mappable*/
     public final boolean volKeysMappable;
 
@@ -415,6 +421,12 @@ public class GlobalPrefs
 
     public static final String AUDIO_SAMPLING_TYPE = "audioSamplingType";
     public static final String AUDIO_LOW_PERFORMANCE_MODE = "lowPerformanceMode";
+
+    public static final String BACKUP_TO_GOOGLE_DRIVE = "backupDataToGoogleDrive";
+    public static final String BACKUP_OVER_CELL_DATA = "backupOverCellData";
+    public static final String SIGN_IN_TO_GOOGLE_DRIVE = "signInToGoogleDrive";
+    public static final String DOWNLOAD_GOOGLE_DRIVE_BACKUP = "downloadGoogleDriveBackup";
+
     // ... add more as needed
 
     // Shared preferences default values
@@ -700,6 +712,9 @@ public class GlobalPrefs
                 !TextUtils.isEmpty(externalFileStoragePath);
 
         japanIplPath = mPreferences.getString(PATH_JAPAN_IPL_ROM, "");
+
+        backupToGoogleDrive = mPreferences.getBoolean( BACKUP_TO_GOOGLE_DRIVE, false );
+        backupOverCellData = mPreferences.getBoolean( BACKUP_OVER_CELL_DATA, false );
 
         // Determine the key codes that should not be mapped to controls
         volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );

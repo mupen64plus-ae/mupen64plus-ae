@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Wherever possible, use Android's built-in Preference framework for defining global
+    user settings and the menu interface that supports them:
+        http://developer.android.com/guide/topics/ui/settings.html
+        http://developer.android.com/design/patterns/settings.html
+    
+    Please follow our naming convention (casing and underscores) for all Preferences:
+        <androidx.preference.CheckBoxPreference
+            android:key="myKey"
+            android:title="@string/myKey_title"
+            android:summary="@string/myKey_summary"
+            ...
+            />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            ...
+            android:entries="@array/myKey_entries"
+            android:entryValues="@array/myKey_values"
+            android:defaultValue="@string/myKey_default"
+            ...
+            />
+        <paulscode.android.mupen64plusae.MyCustomPreference
+            ...
+            mupen64:myAttribute="@string/myKey_myAttribute"
+            ...
+            />
+    
+    Strings should never be hard-coded into this file, with the exception perhaps of
+    boolean default values.  Instead, define all strings as resources in:
+        res/values/strings.xml
+    
+    To improve code readability, define all arrays as resources in:
+        res/values/arrays.xml
+    Define default array values below the arrays themselves in arrays.xml, rather than
+    in strings.xml.  This makes it easy to keep arrays and their default values
+    synchronized.
+    
+    To minimize app size, consider using Android's built-in resources when possible.
+    For example, consider icon resources in "@android:drawable/..." instead of custom
+    resources in "@drawable/...".       
+    ***********************************************************************************
+-->
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res-auto"
+    android:key="screenRoot" >
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/gameDataStorageLocation_default"
+        android:entries="@array/gameDataStorageLocation_entries"
+        android:entryValues="@array/gameDataStorageLocation_values"
+        android:key="gameDataStorageType"
+        android:summary="@string/selectedValue"
+        android:title="@string/gameDataStorageLocation_title" />
+
+    <Preference
+        android:key="gameDataStoragePath"
+        android:title="@string/gameDataStorageExternalPath_title"/>
+
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="4"
+        android:key="gameAutoSaves"
+        android:title="@string/GameAutoSavesMax_title"
+        mupen64:maximumValue="10"
+        mupen64:minimumValue="0"
+        mupen64:stepSize="1"
+        mupen64:units="" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="useFlatGameDataPath"
+        android:summary="@string/useFlatGameDataPath_summary"
+        android:title="@string/useFlatGameDataPath_title" />
+
+    <Preference
+        android:key="japanIdlPath64dd"
+        android:title="@string/japanIplRom64ddPath_title"/>
+
+    <androidx.preference.PreferenceCategory
+        android:key="categoryGoogleDrive"
+        android:title="@string/googleDriveSection_title" >
+
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="backupDataToGoogleDrive"
+            android:summary="@string/enableGoogleDriveSupport_summary"
+            android:title="@string/enableGoogleDriveSupport_title" />
+
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="backupOverCellData"
+            android:summary="@string/allowBackupOverData_summary"
+            android:title="@string/allowBackupOverData_title" />
+
+        <Preference
+            android:key="signInToGoogleDrive"
+            android:title="@string/signInToGoogleDrive_title"/>
+
+        <Preference
+            android:key="downloadGoogleDriveBackup"
+            android:summary="@string/downloadGoogleDriveBackup_summary"
+            android:title="@string/downloadGoogleDriveBackup_title"/>
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

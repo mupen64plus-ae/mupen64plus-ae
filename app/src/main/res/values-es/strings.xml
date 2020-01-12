@@ -563,6 +563,15 @@
     <string name="useUpnpToMapPort_summary">Usar UPnP o NAT/PMP para mapear puertos externos automaticamente</string>
     <string name="roomTcpPort_title">Puerto de TCP para el cuerto</string>
     <string name="serverTcpUdpPort_title">Puero de UDP/TCP para el servidor</string>
+    <string name="enableGoogleDriveSupport_title">Soporte para Google Drive</string>
+    <string name="enableGoogleDriveSupport_summary">Datos de los juegos seran respaldados en Google Drive</string>
+    <string name="signInToGoogleDrive_title">Inicie sesión en Google Drive</string>
+    <string name="allowBackupOverData_title">Respalde datos dobre data de celular</string>
+    <string name="allowBackupOverData_summary">Si está deshabilitado, los respaldos solo se realizarán a través de WiFi</string>
+    <string name="downloadGoogleDriveBackup_title">Descargar respaldo de Google Drive</string>
+    <string name="downloadGoogleDriveBackup_summary">Descargue el última respaldo de Google Drive, esto sobrescribirá datos si ya existen</string>
+    <string name="alreadyHaveGoogleDrivePermissions">La sesión a Google Drive ya ha sido iniciada</string>
+
     <!--**************************************************************************-->
     <!--Dialogs and Other Feedback-->
     <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -661,6 +670,10 @@
     <string name="netplay_codeNotFound">¡El código no fue encontrado!</string>
     <string name="netplay_codeRetrieveFailure">¡El código no se pudo conseguir!</string>
     <string name="netplay_advanced">Avanzado</string>
+	
+    <!-- Google Drive Sync -->
+    <string name="exportGoogleDriveService_exportNotificationTitle">Guardando datos en Google Drive</string>
+    <string name="importGoogleDriveService_importNotificationTitle">Descargando datos de Google Drive</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

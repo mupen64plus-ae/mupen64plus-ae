@@ -55,7 +55,7 @@
         android:exported="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/app_name"
+        android:label="${appLabel}"
         android:logo="@drawable/hireslogo"
         android:banner="@drawable/banner"
         android:theme="@style/appTheme"
@@ -67,7 +67,7 @@
 
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
-            android:label="@string/SplashActivity_title"
+            android:label="${appLabel}"
             android:theme="@style/Theme.AppCompat.Black"
             android:exported="true">
             <intent-filter>
@@ -101,7 +101,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.GalleryActivity"
             android:exported="false"
-            android:label="@string/GalleryActivity_title"
+            android:label="${appLabel}"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Mupen64plusaeTheme.NoActionBar" />
         <activity
@@ -124,7 +124,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.DeleteTexturesActivity"
             android:exported="false"
-            android:label="@string/DeleteTexturesActivity_title"
+            android:label="${appLabel}"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
@@ -251,7 +251,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
             android:exported="false"
-            android:label="@string/ControllerProfileActivity_title"
+            android:label="${appLabel}"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme.NoActionBar" >
             <intent-filter>
@@ -262,7 +262,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen"
             android:exported="false"
-            android:label="@string/ControllerProfileActivity_title"
+            android:label="${appLabel}"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme.NoActionBar" >
             <intent-filter>
@@ -284,7 +284,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.EmulationProfileActivity"
             android:exported="false"
-            android:label="@string/EmulationProfileActivity_title"
+            android:label="${appLabel}"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
@@ -306,7 +306,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity"
             android:exported="false"
-            android:label="@string/TouchscreenProfileActivity_title"
+            android:label="${appLabel}"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Black.OverlayActionBar" >
            <intent-filter>
@@ -350,7 +350,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.game.GameActivity"
             android:exported="false"
-            android:label="@string/GameActivity_title"
+            android:label="${appLabel}"
             android:windowActionBar="false"
             android:theme="@style/Theme.Mupen64plusaeTheme.Game"
             android:process=":EmulationProcess"/>
@@ -389,7 +389,13 @@
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.netplay.NetplayService"
             android:foregroundServiceType="connectedDevice"
-            android:process=":EmulationProcess"
+            android:process=":EmulationProcess" />
+        <service android:name="paulscode.android.mupen64plusae.task.SyncToGoogleDriveService"
+            android:foregroundServiceType="connectedDevice"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+        <service android:name="paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService"
+            android:foregroundServiceType="connectedDevice"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService"
             android:foregroundServiceType="shortService"
@@ -414,7 +420,7 @@
         </provider>
         <meta-data
             android:name="game_display_name"
-            android:resource="@string/app_name" />
+            android:resource="@string/app_name_pro" />
         <meta-data
             android:name="game_icon"
             android:resource="@drawable/hireslogo" />

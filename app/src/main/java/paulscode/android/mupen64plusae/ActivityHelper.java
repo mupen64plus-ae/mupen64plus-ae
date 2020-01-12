@@ -24,12 +24,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +60,9 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.CopyFromSdService;
 import paulscode.android.mupen64plusae.task.CopyToSdService;
 import paulscode.android.mupen64plusae.task.DeleteFilesService;
+import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
+import paulscode.android.mupen64plusae.task.SyncToGoogleDriveService;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -381,10 +388,38 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    static void stopCopyFromSdService(Context context, ServiceConnection serviceConnection)
+    public static void stopCopyFromSdService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, CopyFromSdService.class);
 
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
+    }
+
+    /* Defines callbacks for service binding, passed to bindService() */
+    static ServiceConnection syncDriveConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            //Nothing to do here
+        }
+    };
+
+    static void startDownloadFromGoogleDriveService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, DownloadFromGoogleDriveService.class);
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, 0);
+    }
+
+    public static void stopDownloadFromGoogleDriveService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, DownloadFromGoogleDriveService.class);
         context.unbindService(serviceConnection);
         context.stopService(intent);
     }

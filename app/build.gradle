@@ -21,6 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.fzurita"
+        manifestPlaceholders = [appLabel:"@string/app_name"]
     }
     buildTypes {
         release {
@@ -46,6 +47,25 @@ android {
                 def builtType = variant.buildType.name
                 outputFileName = "Mupen64PlusAE-${builtType}.apk"
             }
+        }
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        free {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension "version"
+            applicationIdSuffix ""
+            versionNameSuffix "-free"
+        }
+        pro {
+            dimension "version"
+            applicationIdSuffix ".pro"
+            versionNameSuffix "-pro"
+            manifestPlaceholders = [appLabel:"@string/app_name_pro"]
         }
     }
 
@@ -145,6 +165,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-drive:17.0.0'
     implementation 'com.google.http-client:google-http-client-gson:1.26.0'
     implementation('com.google.api-client:google-api-client-android:1.26.0') {
         exclude group: 'org.apache.httpcomponents'

@@ -2,7 +2,8 @@
 <resources>
 
     <!-- Proper names, trademarks, etc. -->
-    <string name="app_name" translatable="false">Mupen64Plus FZ</string>
+    <string name="app_name" translatable="false">M64Plus FZ</string>
+    <string name="app_name_pro" translatable="false">M64Plus FZ Pro</string>
 
     <!-- Web links, email addresses, etc. -->
     <string name="uri_forum" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
@@ -15,18 +16,11 @@
     <string name="galleryItemAdapter_dummyText" translatable="false">Super Mario 64 (U) [!]</string>
 
     <!-- Activity titles, aliased to other strings -->
-    <string name="SplashActivity_title" translatable="false">@string/app_name</string>
-    <string name="GalleryActivity_title" translatable="false">@string/app_name</string>
-    <string name="DeleteTexturesActivity_title" translatable="false">@string/app_name</string>
     <string name="PlayMenuActivity_title" translatable="false">@string/menuItem_play</string>
     <string name="ManageControllerProfilesActivity_title" translatable="false">@string/menuItem_controllerProfiles</string>
     <string name="ManageEmulationProfilesActivity_title" translatable="false">@string/menuItem_emulationProfiles</string>
     <string name="ManageTouchscreenProfilesActivity_title" translatable="false">@string/menuItem_touchscreenProfiles</string>
-    <string name="ControllerProfileActivity_title" translatable="false">@string/app_name</string>
-    <string name="EmulationProfileActivity_title" translatable="false">@string/app_name</string>
-    <string name="TouchscreenProfileActivity_title" translatable="false">@string/app_name</string>
     <string name="DiagnosticActivity_title" translatable="false">@string/menuItem_controllerDiagnostics</string>
-    <string name="GameActivity_title" translatable="false">@string/app_name</string>
     <string name="CheatEditorActivity_title" translatable="false">@string/menuItem_cheatEditor</string>
     
     <!-- Aliases to other strings -->

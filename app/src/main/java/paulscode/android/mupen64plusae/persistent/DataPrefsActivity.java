@@ -30,27 +30,37 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.Scope;
 
 import paulscode.android.mupen64plusae.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.DownloadFromGoogleDriveFragment;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.task.SyncToGoogleDriveService;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+import paulscode.android.mupen64plusae.util.Notifier;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
     SharedPreferences.OnSharedPreferenceChangeListener
 {
+    public static final int GOOGLE_SIGNIN_REQUEST_CODE = 5;
+
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
-
     private SharedPreferences mPrefs = null;
 
     ActivityResultLauncher<Intent> mLaunchGameDataFolderPicker = registerForActivityResult(
@@ -118,6 +128,9 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         return returnValue;
     }
 
+    private static final String STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT = "STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT";
+    DownloadFromGoogleDriveFragment mDownloadFromGoogleDriveFragment = null;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -135,6 +148,15 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     {
         super.onCreate(savedInstanceState);
 
+        final FragmentManager fm = getSupportFragmentManager();
+        mDownloadFromGoogleDriveFragment = (DownloadFromGoogleDriveFragment) fm.findFragmentByTag(STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT);
+
+        if(mDownloadFromGoogleDriveFragment == null)
+        {
+            mDownloadFromGoogleDriveFragment = new DownloadFromGoogleDriveFragment();
+            fm.beginTransaction().add(mDownloadFromGoogleDriveFragment, STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT).commit();
+        }
+
         // Get app data and user preferences
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
@@ -150,7 +172,12 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     protected int getSharedPrefsId()
     {
-        return R.xml.preferences_data;
+        // Load user preference menu structure from XML and update view
+        if (mAppData.isPro) {
+            return R.xml.preferences_data_pro;
+        } else {
+            return R.xml.preferences_data;
+        }
     }
 
     @Override
@@ -179,7 +206,12 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             startFolderPicker();
         } else if (GlobalPrefs.PATH_JAPAN_IPL_ROM.equals(key)) {
             startFilePicker();
-        } else {// Let Android handle all other preference clicks
+        } else if (GlobalPrefs.SIGN_IN_TO_GOOGLE_DRIVE.equals(key)) {
+            signInToGoogleDrive();
+        } else if (GlobalPrefs.DOWNLOAD_GOOGLE_DRIVE_BACKUP.equals(key)) {
+            downloadFromGoogleDrive();
+        } else {
+            // Let Android handle all other preference clicks
             return false;
         }
 
@@ -194,7 +226,8 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         // actually preferences
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.PATH_GAME_SAVES, this);
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.PATH_JAPAN_IPL_ROM, this);
-
+        PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.SIGN_IN_TO_GOOGLE_DRIVE, this);
+        PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.DOWNLOAD_GOOGLE_DRIVE_BACKUP, this);
 
         Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
         if (currentPreference != null) {
@@ -228,10 +261,12 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.enablePreference(this, GlobalPrefs.PATH_GAME_SAVES,
                 mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
 
-        if (!mAppData.isPro) {
-            PrefUtil.removePreference(this, SCREEN_ROOT, GlobalPrefs.GAME_DATA_STORAGE_TYPE);
-            PrefUtil.removePreference(this, SCREEN_ROOT, GlobalPrefs.PATH_GAME_SAVES);
-        }
+        PrefUtil.enablePreference(this, GlobalPrefs.BACKUP_OVER_CELL_DATA,
+                mPrefs.getBoolean(GlobalPrefs.BACKUP_TO_GOOGLE_DRIVE, false));
+        PrefUtil.enablePreference(this, GlobalPrefs.SIGN_IN_TO_GOOGLE_DRIVE,
+                mPrefs.getBoolean(GlobalPrefs.BACKUP_TO_GOOGLE_DRIVE, false));
+        PrefUtil.enablePreference(this, GlobalPrefs.DOWNLOAD_GOOGLE_DRIVE_BACKUP,
+                mPrefs.getBoolean(GlobalPrefs.BACKUP_TO_GOOGLE_DRIVE, false));
     }
 
     private void startFolderPicker()
@@ -269,5 +304,42 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
         }
         mLaunchIdlFilePicker.launch(intent);
+    }
+
+    private void signInToGoogleDrive()
+    {
+        Scope driveFileScope = new Scope(Scopes.DRIVE_FILE);
+        Scope emailScope = new Scope(Scopes.EMAIL);
+
+        if (!GoogleSignIn.hasPermissions(
+                GoogleSignIn.getLastSignedInAccount(this),
+                driveFileScope, emailScope)) {
+            GoogleSignIn.requestPermissions(
+                    this,
+                    GOOGLE_SIGNIN_REQUEST_CODE,
+                    GoogleSignIn.getLastSignedInAccount(this),
+                    driveFileScope, emailScope);
+        } else {
+            Notifier.showToast( this, R.string.alreadyHaveGoogleDrivePermissions );
+            Log.e("DataPrefs", "Already have permission");
+        }
+    }
+
+    private void downloadFromGoogleDrive()
+    {
+        mDownloadFromGoogleDriveFragment.downloadFromGoogleDrive();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("DataPrefs", "onActivityResult, request_code=" + requestCode + "result=" + resultCode);
+
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == GOOGLE_SIGNIN_REQUEST_CODE) {
+                Log.e("DataPrefs", "Sign in success");
+            }
+        }
     }
 }

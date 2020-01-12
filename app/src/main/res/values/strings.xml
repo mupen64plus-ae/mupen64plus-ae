@@ -755,8 +755,15 @@
     <string name="useUpnpToMapPort_summary">Use UPnP or NAT/PMP to automatically map external ports</string>
     <string name="roomTcpPort_title">Room TCP Port</string>
     <string name="serverTcpUdpPort_title">Server UDP/TCP Port</string>
-
-
+    <string name="googleDriveSection_title">Google Drive</string>
+    <string name="enableGoogleDriveSupport_title">Google Drive support</string>
+    <string name="enableGoogleDriveSupport_summary">Game data will be backed up to Google Drive</string>
+    <string name="signInToGoogleDrive_title">Sign in to Google drive</string>
+    <string name="allowBackupOverData_title">Backup over cell data</string>
+    <string name="allowBackupOverData_summary">If disabled, backups will only happen over WiFi</string>
+    <string name="downloadGoogleDriveBackup_title">Download Google Drive backup</string>
+    <string name="downloadGoogleDriveBackup_summary">Download the latest Google Drive backup, this will overwrite data if it already exists</string>
+    <string name="alreadyHaveGoogleDrivePermissions">Already logged in to Google Drive</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback -->
@@ -857,6 +864,10 @@
     <string name="importExportActivity_invalidCustomSkinFile">Invalid touchscreen graphics skin file</string>
     <string name="importExportActivity_invalidGameDataFolder">Invalid GameData folder, folder must be the exported GameData folder.</string>
     <string name="importExportActivity_invalidProfilesFolder">Invalid Profiles folder, folder must be the exported Profiles folder.</string>
+
+    <!-- Google Drive Sync -->
+    <string name="exportGoogleDriveService_exportNotificationTitle">Copying data to Google Drive</string>
+    <string name="importGoogleDriveService_importNotificationTitle">Copying data from Google Drive</string>
 
     <!-- ROM preparation -->
     <string name="extractRomTask_title">Preparing game data…</string>

@@ -66,6 +66,7 @@ import paulscode.android.mupen64plusae.game.GameDataManager;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.task.SyncToGoogleDriveService;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
@@ -757,6 +758,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                 mCoreInterface.closeRom();
                 mCoreInterface.emuShutdown();
+
+                // Sync to Google Drive
+                SyncToGoogleDriveService.syncToGoogleDrive(getApplicationContext(), mGamePrefs.getGameDataDirName(), mRomGoodName, mRomHeaderName);
             }
 
             if(mListener != null && !mIsShuttingDown)

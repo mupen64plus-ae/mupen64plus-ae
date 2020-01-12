@@ -77,5 +77,11 @@
 -keep class org.eclipse.** { *; }
 -keep class androidx.core.app.CoreComponentFactory { *; }
 
+
 #App specific code
 -keep class paulscode.android.mupen64plusae.** { *; }
+
+# Fix OAuth Drive API failure for release builds
+-keep class * extends com.google.api.client.json.GenericJson { *; }
+-keep class com.google.api.services.drive.** { *; }
+-keepclassmembers class * { @com.google.api.client.util.Key <fields>; }

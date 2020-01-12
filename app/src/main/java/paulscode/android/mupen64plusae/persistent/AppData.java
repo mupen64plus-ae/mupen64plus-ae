@@ -425,7 +425,7 @@ public class AppData
                 intent.resolveActivity(context.getPackageManager()) == null);
 
         manufacturer = android.os.Build.MANUFACTURER;
-        isPro = context.getPackageName().equals("org.mupen64plusae.v3.fzurita.pro");
+        isPro = context.getPackageName().startsWith("org.mupen64plusae.v3.fzurita.pro");
     }
 
     /**
