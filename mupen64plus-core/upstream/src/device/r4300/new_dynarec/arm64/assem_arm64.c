@@ -297,6 +297,9 @@ static void set_jump_target(intptr_t addr,uintptr_t target)
   u_int *ptr=(u_int *)addr;
   intptr_t offset=target-(intptr_t)addr;
 
+  if(!ptr) // Indiana Jones is weird
+    return;
+  
   if((*ptr&0xFC000000)==0x14000000) {
     assert(offset>=-134217728LL&&offset<134217728LL);
     *ptr=(*ptr&0xFC000000)|((offset>>2)&0x3ffffff);
