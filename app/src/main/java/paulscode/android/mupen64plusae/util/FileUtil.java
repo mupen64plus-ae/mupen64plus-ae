@@ -640,11 +640,19 @@ public final class FileUtil
                 zipfile = new ZipInputStream( new FileInputStream(parcelFileDescriptor.getFileDescriptor()) );
 
                 ZipEntry entry = zipfile.getNextEntry();
+                File outputFile = new File(outputDir);
 
                 while( entry != null ) {
                     entry = zipfile.getNextEntry();
                     if (!entry.isDirectory())
                     {
+                        // Check for malformed zip files
+                        File securityTestFile = new File(outputDir, entry.getName());
+                        String canonicalPath = securityTestFile.getCanonicalPath();
+                        if (!canonicalPath.startsWith(outputFile.getCanonicalPath())) {
+                            break;
+                        }
+
                         File f = new File( outputDir + "/" + entry.toString() );
                         f = f.getParentFile();
                         if( f != null )
