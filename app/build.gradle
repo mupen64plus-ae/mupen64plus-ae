@@ -20,7 +20,7 @@ android {
     buildFeatures.viewBinding = true
 
     defaultConfig {
-        applicationId = "org.mupen64plusae.v3.alpha"
+        applicationId = "org.mupen64plusae.v3.fzurita"
     }
     buildTypes {
         release {
