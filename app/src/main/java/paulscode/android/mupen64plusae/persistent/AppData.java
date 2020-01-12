@@ -330,7 +330,7 @@ public class AppData
     /** Contex */
     private final Context mContext;
 
-    public static final String applicationPath = "mupen64plus";
+    public static final String applicationPath = "mupen64plus-fz";
 
     /** Default legacy data path, needed for moving legacy data to internal storage */
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
