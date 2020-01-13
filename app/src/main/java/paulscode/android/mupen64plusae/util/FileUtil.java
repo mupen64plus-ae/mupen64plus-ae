@@ -228,16 +228,19 @@ public final class FileUtil
             return false;
         }
         
-        if( src.isDirectory() )
+        if( src.isDirectory())
         {
             boolean success = true;
-            String[] files = src.list();
 
-            FileUtil.makeDirs(dest.getPath());
-            
-            for( String file : files )
-            {
-                success = success && copyFile( new File( src, file ), new File( dest, file ) );
+            if (src.exists() && src.list() != null) {
+                String[] files = src.list();
+
+                FileUtil.makeDirs(dest.getPath());
+
+                for( String file : files )
+                {
+                    success = success && copyFile( new File( src, file ), new File( dest, file ) );
+                }
             }
             
             return success;

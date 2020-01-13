@@ -46,7 +46,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<ExtractAssetsOrCleanupTask.Failure>>
 {
 
@@ -464,11 +464,6 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
 
         // Call the progress listener before extracting
         publishProgress( "Extracting: " + destination, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // IO objects, initialize null to eliminate lint error
         OutputStream out = null;
