@@ -17,7 +17,6 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -65,11 +64,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
         setContentView(R.layout.extract_textures_activity);
 
         Button filePickerButtont = findViewById(R.id.buttonFilePicker);
-        filePickerButtont.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startFilePicker();
-            }
-        });
+        filePickerButtont.setOnClickListener(v -> startFilePicker());
 
         mFileDescriptionTextView = findViewById(R.id.fileDescription);
 
@@ -79,16 +74,14 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
         }
 
         Button cancelButton = findViewById(R.id.buttonCancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ExtractTexturesActivity.this.setResult(RESULT_CANCELED, null);
-                ExtractTexturesActivity.this.finish();
-            }
+        cancelButton.setOnClickListener(v -> {
+            ExtractTexturesActivity.this.setResult(RESULT_CANCELED, null);
+            ExtractTexturesActivity.this.finish();
         });
 
         Button okButton = findViewById(R.id.buttonOk);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        okButton.setOnClickListener(v -> {
+            if (mFileUri != null) {
                 mExtractTexturesFragment.extractTextures(mFileUri);
             }
         });
