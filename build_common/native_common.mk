@@ -67,7 +67,8 @@ COMMON_FLAGS +=                     \
     -mfpu=neon
 endif
 
-COMMON_LDFLAGS := -fuse-ld=lld
+# This produces broken libraries with NDK r21
+# COMMON_LDFLAGS := -fuse-ld=lld
 
 ifneq ($(BUILD_VARIANT), debug)
 ifneq ($(HOST_OS),windows)
