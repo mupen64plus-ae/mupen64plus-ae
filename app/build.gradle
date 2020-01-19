@@ -29,6 +29,7 @@ android {
         debug {
             minifyEnabled true
             jniDebuggable true
+            applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
