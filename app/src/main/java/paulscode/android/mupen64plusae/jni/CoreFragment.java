@@ -256,12 +256,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if(!mIsRunning)
         {
-            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, globalPrefs, appData))
-            {
-                Notifier.showToast(requireActivity(), R.string.coreFragment_sdcard_write_error);
-                requireActivity().finish();
-            }
-
             actuallyStartCore(requireActivity());
 
             mIsRunning = true;
