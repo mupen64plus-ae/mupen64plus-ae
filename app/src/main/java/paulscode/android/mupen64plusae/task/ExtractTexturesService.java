@@ -50,6 +50,7 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.ExtractTexturesActivity;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
@@ -259,7 +260,7 @@ public class ExtractTexturesService extends Service
 
       //Show the notification
       initChannels(getApplicationContext());
-      Intent notificationIntent = new Intent(this, GalleryActivity.class);
+      Intent notificationIntent = new Intent(this, ExtractTexturesActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2).setSmallIcon(R.drawable.icon)

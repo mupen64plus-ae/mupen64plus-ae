@@ -48,6 +48,7 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
+import paulscode.android.mupen64plusae.ImportExportActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -168,7 +169,7 @@ public class CopyToSdService extends Service
 
       //Show the notification
       initChannels(getApplicationContext());
-      Intent notificationIntent = new Intent(this, GalleryActivity.class);
+      Intent notificationIntent = new Intent(this, ImportExportActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
