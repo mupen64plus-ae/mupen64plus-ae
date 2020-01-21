@@ -36,6 +36,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -114,10 +115,11 @@ public class CopyToSdService extends Service
             }
 
             DocumentFile destLocation = FileUtil.getDocumentFileTree(getApplicationContext(), mDestinationPath);
+
             if (destLocation != null) {
                 destLocation = FileUtil.createFolderIfNotPresent(getApplicationContext(), destLocation, AppData.applicationPath);
                 if (destLocation != null) {
-                    FileUtil.copyFolder(getApplicationContext(), mSourcePath, destLocation, AppData.applicationPath);
+                    FileUtil.copyFolder(getApplicationContext(), mSourcePath, destLocation);
                 }
             }
             

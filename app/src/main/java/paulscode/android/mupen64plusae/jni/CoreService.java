@@ -655,7 +655,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
 
                 // Delete the old folder if copy was successful
-                if (FileUtil.copyFolder(getApplicationContext(), new File(mGamePrefs.getGameDataDir()), destLocation, gameDataFolder.getName() )) {
+                if (FileUtil.copyFolder(getApplicationContext(), new File(mGamePrefs.getGameDataDir()), destLocation)) {
                     FileUtil.deleteFolder(new File(mGamePrefs.getGameDataDir()));
                 }
             }

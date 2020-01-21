@@ -394,7 +394,7 @@ public final class FileUtil
         return true;
     }
 
-    public static DocumentFile createFolderIfNotPresent(Context context, DocumentFile root, String relativePath)
+    public static DocumentFile createFolderIfNotPresent(Context context, DocumentFile root, String folderName)
     {
         if(root == null || TextUtils.isEmpty(root.toString()) )
         {
@@ -402,39 +402,21 @@ public final class FileUtil
             return null;
         }
 
-        if(relativePath == null || TextUtils.isEmpty(relativePath) )
+        if(TextUtils.isEmpty(folderName) )
         {
             Log.e( "copyFile", "dest null" );
             return null;
         }
 
-        // Do this instead for directly accessible files
-        if(root.getUri().getScheme().equals("file")) {
-            String path = root.getUri().getPath() + "/" + relativePath;
-            FileUtil.makeDirs(path);
-            DocumentFile folder = getDocumentFileTree(context, Uri.fromFile(new File(path)));
-            return folder;
-        }
-
         boolean success = true;
 
-        // Figure out the child URI
-        String childId = DocumentsContract.getTreeDocumentId(root.getUri());
-        childId = childId + "/" + relativePath;
-        Uri childUri = DocumentsContract.buildDocumentUriUsingTree(root.getUri(), childId);
-        DocumentFile childFile = getDocumentFileSingle(context, childUri);
+        DocumentFile newFolder = root.findFile(folderName);
 
-        if (childFile == null) {
-            return null;
+        if (newFolder == null) {
+            newFolder = root.createDirectory(folderName);
         }
 
-        if (!childFile.exists()) {
-            childFile = root.createDirectory(new File(relativePath).getName());
-        } else {
-            childFile = root.findFile(new File(relativePath).getName());
-        }
-
-        return childFile;
+        return newFolder;
     }
 
     /**
@@ -447,7 +429,7 @@ public final class FileUtil
      *
      * @return True if the copy succeeded, false otherwise.
      */
-    public static boolean copyFolder( Context context, File src, DocumentFile dest, String startPath )
+    public static boolean copyFolder( Context context, File src, DocumentFile dest )
     {
 
         // Do this instead for directly accessible files
@@ -472,40 +454,30 @@ public final class FileUtil
         boolean success = true;
 
 
-        // Figure out the child URI
-        String childPath = startPath + "/" + src.getName();
-
         if( src.isDirectory() )
         {
-            DocumentFile childFile = createFolderIfNotPresent(context, dest, childPath);
+            DocumentFile childFile = createFolderIfNotPresent(context, dest, src.getName());
 
             File[] files = src.listFiles();
 
             for( File file : files ) {
-                success = success && copyFolder( context, file, childFile, childPath );
+                success = success && copyFolder( context, file, childFile );
             }
 
             return success;
         }
         else
         {
-            String childId = DocumentsContract.getTreeDocumentId(dest.getUri());
-            childId = childId + "/" + childPath;
-            Uri childUri = DocumentsContract.buildDocumentUriUsingTree(dest.getUri(), childId);
-            DocumentFile childFile = getDocumentFileSingle(context, childUri);
+            DocumentFile targetFile = dest.findFile(src.getName());
 
-            if (childFile == null) {
-                return false;
-            }
-
-            if(!childFile.exists()){
-                childFile = dest.createFile("", src.getName());
+            if(targetFile == null){
+                targetFile = dest.createFile("", src.getName());
             }
 
             ParcelFileDescriptor parcelFileDescriptor;
 
             try {
-                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(childFile.getUri(), "w");
+                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(targetFile.getUri(), "w");
 
                 if (parcelFileDescriptor != null)
                 {
