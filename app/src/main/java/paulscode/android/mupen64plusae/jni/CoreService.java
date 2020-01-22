@@ -623,13 +623,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), Uri.parse(mGlobalPrefs.externalFileStoragePath));
         if (sourceLocation != null) {
-            sourceLocation = sourceLocation.findFile(gameDataFolder.getName());
+            DocumentFile gameDataDir = sourceLocation.findFile(gameDataFolder.getName());
 
-            if (sourceLocation != null) {
-                sourceLocation = sourceLocation.findFile(mGamePrefs.getGameDataDirName());
+            if (gameDataDir != null) {
+                DocumentFile gameDataDirSpecific = gameDataDir.findFile(mGamePrefs.getGameDataDirName());
 
-                if (sourceLocation != null) {
-                    FileUtil.copyFolder(getApplicationContext(), sourceLocation, new File(mGamePrefs.getGameDataDir()));
+                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomGoodName);
+                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomHeaderName);
+
+                if (gameDataDirSpecific != null) {
+                    FileUtil.copyFolder(getApplicationContext(), gameDataDirSpecific, new File(mGamePrefs.getGameDataDir()));
                 }
             }
         }
@@ -654,9 +657,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     }
                 }
 
+                boolean copySuccess = FileUtil.copyFolder(getApplicationContext(), new File(mGamePrefs.getGameDataDir()), destLocation);
+
+                copySuccess = copySuccess && FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataFolder, destLocation, mRomGoodName);
+                copySuccess = copySuccess && FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataFolder, destLocation, mRomHeaderName);
+
                 // Delete the old folder if copy was successful
-                if (FileUtil.copyFolder(getApplicationContext(), new File(mGamePrefs.getGameDataDir()), destLocation)) {
+                if (copySuccess) {
                     FileUtil.deleteFolder(new File(mGamePrefs.getGameDataDir()));
+                    FileUtil.deleteFolderFilter(gameDataFolder, mRomGoodName);
+                    FileUtil.deleteFolderFilter(gameDataFolder, mRomHeaderName);
                 }
             }
         }

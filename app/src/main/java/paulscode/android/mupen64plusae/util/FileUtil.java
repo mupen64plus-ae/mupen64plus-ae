@@ -269,7 +269,7 @@ public final class FileUtil
 
     /**
      * Copies a {@code src} {@link DocumentFile} to a desired destination represented by a {@code dest}
-     * {@link File}. The source can't be a directory.
+     * {@link File}.
      *
      * @param context     Context to use to read the URI
      * @param src         Source file
@@ -300,31 +300,69 @@ public final class FileUtil
                 copyFolder(context, file, newDest );
             }
         } else {
-            ParcelFileDescriptor parcelFileDescriptor;
+            try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src.getUri(), "r");
+                 FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                 FileChannel out = new FileOutputStream(dest).getChannel()) {
 
-            try {
-                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src.getUri(), "r");
+                long bytesTransferred = 0;
 
-                if (parcelFileDescriptor != null)
-                {
-                    try (FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
-                         FileChannel out = new FileOutputStream(dest).getChannel()) {
-
-                        long bytesTransferred = 0;
-
-                        while (bytesTransferred < in.size()) {
-                            bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
-                        }
-
-                    } catch (Exception e) {
-                        Log.e("copyFile", "Exception: " + e.getMessage());
-                    }
-
-                    parcelFileDescriptor.close();
+                while (bytesTransferred < in.size()) {
+                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Copies any {@code src} {@link DocumentFile} to a desired destination represented by a {@code dest}
+     * {@link File} that starts with the given string. The source can't be a directory.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source folder
+     * @param dest        Desired destination
+     * @param startsWith What the file must start with for it to be copied
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public static boolean copyFilesThatStartWith( Context context, DocumentFile src, File dest, String startsWith )
+    {
+        if(src == null)
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if( dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        DocumentFile[] files = src.listFiles();
+
+        for (DocumentFile file : files) {
+
+            File destFile = new File(dest.getAbsolutePath() + "/" + file.getName());
+            if (!file.isDirectory() && file.getName().startsWith(startsWith)) {
+
+                try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file.getUri(), "r");
+                     FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                     FileChannel out = new FileOutputStream(destFile).getChannel()){
+
+                    long bytesTransferred = 0;
+
+                    while (bytesTransferred < in.size()) {
+                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -421,7 +459,7 @@ public final class FileUtil
 
     /**
      * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
-     * {@link Uri}. The source can't be a directory.
+     * {@link Uri}.
      *
      * @param context     Context to use to read the URI
      * @param src         Source file
@@ -474,31 +512,78 @@ public final class FileUtil
                 targetFile = dest.createFile("", src.getName());
             }
 
-            ParcelFileDescriptor parcelFileDescriptor;
 
-            try {
-                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(targetFile.getUri(), "w");
+            try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(targetFile.getUri(), "w");
+                 FileChannel in = new FileInputStream(src).getChannel();
+                 FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
 
-                if (parcelFileDescriptor != null)
-                {
-                    try (FileChannel in = new FileInputStream(src).getChannel();
-                         FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
+                long bytesTransferred = 0;
 
-                        long bytesTransferred = 0;
-
-                        while (bytesTransferred < in.size()) {
-                            bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
-                        }
-
-                    } catch (Exception e) {
-                        Log.e("copyFile", "Exception: " + e.getMessage());
-                    }
-
-                    parcelFileDescriptor.close();
+                while (bytesTransferred < in.size()) {
+                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
+     * {@link Uri}.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public static boolean copyFilesThatStartWith( Context context, File src, DocumentFile dest, String startsWith )
+    {
+        if( src == null )
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if(dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        File[] srcFiles = src.listFiles();
+
+        if (srcFiles == null) {
+            return false;
+        }
+
+        boolean success = true;
+
+        for (File file : srcFiles) {
+            if (!file.isDirectory() && file.getName().startsWith(startsWith)) {
+                DocumentFile targetFile = dest.findFile(file.getName());
+
+                if(targetFile == null){
+                    targetFile = dest.createFile("", file.getName());
+                }
+
+                try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(targetFile.getUri(), "w");
+                     FileChannel in = new FileInputStream(file).getChannel();
+                     FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
+
+                    long bytesTransferred = 0;
+
+                    while (bytesTransferred < in.size()) {
+                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                    }
+
+                } catch (Exception e) {
+                    Log.e("copyFile", "Exception: " + e.getMessage());
+                }
             }
         }
 

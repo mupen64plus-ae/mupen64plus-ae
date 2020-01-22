@@ -116,6 +116,7 @@
             android:name="paulscode.android.mupen64plusae.persistent.DataPrefsActivity"
             android:exported="false"
             android:label="@string/categoryData_title"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.DataPrefsActivity" />
@@ -283,6 +284,7 @@
             android:name="paulscode.android.mupen64plusae.ImportExportActivity"
             android:exported="false"
             android:label="@string/importExportActivity_title"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.DataPrefsActivity" />
