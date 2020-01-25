@@ -55,12 +55,15 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.view.MenuItem.OnActionExpandListener;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
@@ -264,6 +267,34 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
         mGridView.setLayoutManager( layoutManager );
 
+        FloatingActionButton floatingActionButton = findViewById(R.id.menuItem_refreshRoms);
+
+        mGridView.addOnScrollListener(
+                new RecyclerView.OnScrollListener()
+                {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState)
+                    {
+                        super.onScrollStateChanged(recyclerView, newState);
+
+                        if(newState == RecyclerView.SCROLL_STATE_IDLE)
+                        {
+                            floatingActionButton.show();
+                        }
+                        else
+                        {
+                            floatingActionButton.hide();
+                        }
+                    }
+
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+                    {
+                        super.onScrolled(recyclerView, dx, dy);
+                    }
+                }
+        );
+
         refreshGridAsync();
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
@@ -336,6 +367,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mDrawerList.setSelection(0);
             }
         };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+
         mDrawerLayout.addDrawerListener( mDrawerToggle );
 
         // Configure the list in the navigation drawer
@@ -403,6 +437,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mCacheRomInfoFragment = new ScanRomsFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
+
+        createSearchMenu();
 
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
@@ -474,30 +510,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerToggle.onConfigurationChanged( newConfig );
     }
 
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu )
+    public void createSearchMenu()
     {
-        getMenuInflater().inflate( R.menu.gallery_activity, menu );
-
-        final MenuItem searchItem = menu.findItem( R.id.menuItem_search );
-        searchItem.setOnActionExpandListener( new OnActionExpandListener()
-        {
-            @Override
-            public boolean onMenuItemActionCollapse( MenuItem item )
-            {
-                mSearchQuery = "";
-                refreshGridAsync();
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionExpand( MenuItem item )
-            {
-                return true;
-            }
-        } );
-
-        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchView = findViewById(R.id.menuItem_search);
         mSearchView.setOnQueryTextListener( new OnQueryTextListener()
         {
             @Override
@@ -521,21 +536,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         if( !"".equals( mSearchQuery ) )
         {
-            final String query = mSearchQuery;
-            searchItem.expandActionView();
-            mSearchView.setIconified(false);
-            mSearchView.setQuery( query, true );
+            mSearchView.setQuery( mSearchQuery, true );
         }
-
-        //On Android 8.0+ this is necessary to be able to type text using a controller
-        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                mSearchView.setIconified(false);
-            }
-        });
-
-        return super.onCreateOptionsMenu( menu );
     }
 
     private void launchGameOnCreation(String givenRomPath)
@@ -593,10 +595,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         switch (item.getItemId())
         {
-        case R.id.menuItem_refreshRoms:
-            Intent intent = new Intent(this, ScanRomsActivity.class);
-            startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
-            return true;
         case R.id.menuItem_library:
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return true;
@@ -1082,6 +1080,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
             }
         }
+
+        if(galleryItems.size() > 0) {
+            findViewById(R.id.gallery_empty_icon).setVisibility(View.INVISIBLE);
+        } else {
+            findViewById(R.id.gallery_empty_icon).setVisibility(View.VISIBLE);
+        }
     }
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
@@ -1130,5 +1134,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         return false;
+    }
+
+    public void onOpenDrawerButtonClicked(View view)
+    {
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public void onFabRefreshRomsClick(View view)
+    {
+        Intent intent = new Intent(this, ScanRomsActivity.class);
+        startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
     }
 }

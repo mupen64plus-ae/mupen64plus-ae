@@ -831,6 +831,8 @@
 
     <!-- Misc -->
     <string name="coreFragment_sdcard_write_error">Unable to write configuration to SD card</string>
+    <string name="actionOpenMenu">Open main menu</string>
+    <string name="actionSearchRoms">Search Roms</string>
 
 
 </resources>
