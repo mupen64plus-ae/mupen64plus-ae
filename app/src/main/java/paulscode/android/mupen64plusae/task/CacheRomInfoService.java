@@ -763,8 +763,7 @@ public class CacheRomInfoService extends Service
                 if(!TextUtils.isEmpty(artPath) && !TextUtils.isEmpty(romGoodName) && !TextUtils.isEmpty(crc))
                 {
                     RomDetail detail = database.lookupByMd5WithFallback( key, romGoodName, crc, countryCode );
-
-                    mListener.GetProgressDialog().setText(romGoodName);
+                    mListener.GetProgressDialog().setText(getShortFileName(romGoodName));
 
                     //Only download art if it's not already present or current art is not a valid image
                     File artPathFile = new File (artPath);
