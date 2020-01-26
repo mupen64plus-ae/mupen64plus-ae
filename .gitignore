@@ -37,6 +37,8 @@ local.properties
 gradle.properties
 app/.directory
 app/release
+app/pro
+app/free
 
 # Intellij project files
 .idea/
