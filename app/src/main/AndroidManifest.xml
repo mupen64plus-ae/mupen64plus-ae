@@ -26,6 +26,7 @@
         android:allowBackup="false"
         android:isGame="true"
         android:hardwareAccelerated="true"
+        android:largeHeap="true"
         android:exported="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
