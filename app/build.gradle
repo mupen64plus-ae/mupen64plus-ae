@@ -21,7 +21,11 @@ android {
 
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.fzurita"
-        manifestPlaceholders = [appLabel:"@string/app_name"]
+        manifestPlaceholders = [appLabel:"@string/app_name",
+                                appBanner:"@drawable/banner",
+                                appLogo:"@drawable/hireslogo",
+                                appIcon:"@mipmap/ic_launcher",
+                                appIconRound:"@mipmap/ic_launcher_round"]
     }
     buildTypes {
         release {
@@ -65,7 +69,11 @@ android {
             dimension "version"
             applicationIdSuffix ".pro"
             versionNameSuffix "-pro"
-            manifestPlaceholders = [appLabel:"@string/app_name_pro"]
+            manifestPlaceholders = [appLabel:"@string/app_name_pro",
+                                    appBanner:"@drawable/banner_pro",
+                                    appLogo:"@drawable/hireslogo_pro",
+                                    appIcon:"@mipmap/ic_launcher_pro",
+                                    appIconRound:"@mipmap/ic_launcher_pro_round"]
         }
     }
 

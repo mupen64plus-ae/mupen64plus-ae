@@ -53,11 +53,11 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:exported="true"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="${appIcon}"
+        android:roundIcon="${appIconRound}"
         android:label="${appLabel}"
-        android:logo="@drawable/hireslogo"
-        android:banner="@drawable/banner"
+        android:logo="${appLogo}"
+        android:banner="${appBanner}"
         android:theme="@style/appTheme"
         android:supportsRtl="true"
         android:requestLegacyExternalStorage="true"
@@ -420,10 +420,10 @@
         </provider>
         <meta-data
             android:name="game_display_name"
-            android:resource="@string/app_name_pro" />
+            android:resource="${appLabel}" />
         <meta-data
             android:name="game_icon"
-            android:resource="@drawable/hireslogo" />
+            android:resource="${appLogo}" />
         <meta-data android:name="android.max_aspect"
                    android:value="2.1"/>
     </application>
