@@ -22,7 +22,10 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.Context;
+
 import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.core.widget.TextViewCompat;
+
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -79,56 +82,28 @@ public class MenuListView extends ExpandableListView
         setGroupIndicator( null );
 
         // Update the expand/collapse group indicators as needed
-        setOnGroupExpandListener( new OnGroupExpandListener()
-        {
-            @Override
-            public void onGroupExpand( int groupPosition )
-            {
-                reload();
-            }
-        } );
+        setOnGroupExpandListener(groupPosition -> reload());
+        setOnGroupCollapseListener(groupPosition -> reload());
+        setOnGroupClickListener((parent, view, groupPosition, itemId) -> {
 
-        setOnGroupCollapseListener( new OnGroupCollapseListener()
-        {
-            @Override
-            public void onGroupCollapse( int groupPosition )
+            MenuItem menuItem = mListData.getItem( groupPosition );
+            SubMenu submenu = menuItem.getSubMenu();
+            if( submenu == null )
             {
-                reload();
-            }
-        } );
-        
-        setOnGroupClickListener( new OnGroupClickListener()
-        {
-            @Override
-            public boolean onGroupClick( ExpandableListView parent, View view, int groupPosition,
-                    long itemId )
-            {
-
-                MenuItem menuItem = mListData.getItem( groupPosition );
-                SubMenu submenu = menuItem.getSubMenu();
-                if( submenu == null )
-                {
-                    if( mListener != null )
-                        mListener.onClick( menuItem );
-                }
-                return false;
-            }
-        } );
-        
-        setOnChildClickListener( new OnChildClickListener()
-        {
-            @Override
-            public boolean onChildClick( ExpandableListView parent, View view, int groupPosition,
-                    int childPosition, long itemId )
-            {
-
-                MenuItem menuItem = mListData.getItem( groupPosition ).getSubMenu()
-                        .getItem( childPosition );
                 if( mListener != null )
                     mListener.onClick( menuItem );
-                return false;
             }
-        } );
+            return false;
+        });
+        
+        setOnChildClickListener((parent, view, groupPosition, childPosition, itemId) -> {
+
+            MenuItem menuItem = mListData.getItem( groupPosition ).getSubMenu()
+                    .getItem( childPosition );
+            if( mListener != null )
+                mListener.onClick( menuItem );
+            return false;
+        });
     }
     
     public Menu getMenu()
@@ -231,7 +206,8 @@ public class MenuListView extends ExpandableListView
                 ImageView indicator = view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
-                text1.setTextAppearance(R.style.Theme_Mupen64plusaeTheme);
+                TextViewCompat.setTextAppearance(text1, R.style.Theme_Mupen64plusaeTheme);
+
                 if(item.getTitleCondensed().equals(item.getTitle()))
                 {
                     text2.setVisibility( View.GONE );
@@ -330,8 +306,8 @@ public class MenuListView extends ExpandableListView
                 }
 
                 icon.setImageDrawable( item.getIcon() );
-                text1.setTextAppearance(R.style.darkParentMenuItem);
-                
+                TextViewCompat.setTextAppearance(text1, R.style.darkParentMenuItem);
+
                 if( item.getSubMenu() == null )
                     indicator.setImageResource( 0x0 );
                 else if( isExpanded ) {
