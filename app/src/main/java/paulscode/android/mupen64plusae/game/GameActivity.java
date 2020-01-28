@@ -868,7 +868,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.setSurface(holder.getSurface());
 
             if (!mCoreFragment.IsInProgress()) {
-                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
+                mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
             }
 
