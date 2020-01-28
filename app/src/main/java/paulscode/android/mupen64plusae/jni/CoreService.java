@@ -481,6 +481,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
 
+            // Clean up the working directory
+            FileUtil.deleteFolder(new File(mWorkingDir));
+
             // Copy game data from external storage
             if (mGlobalPrefs.useExternalStorge) {
                 copyGameContentsFromSdCard();
