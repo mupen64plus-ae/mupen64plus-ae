@@ -49,6 +49,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -524,7 +525,8 @@ class CoreInterface
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
 
         String coreContextText = "Core";
-        mCoreContext = new Memory(coreContextText.length()+1);
+        byte[] bytes = coreContextText.getBytes(Charset.defaultCharset());
+        mCoreContext = new Memory(bytes.length + 1);
         mCoreContext.setString(0, coreContextText);
 
         CoreLibrary.DebugCallback debugCallback = null;
@@ -558,7 +560,8 @@ class CoreInterface
         mPlugins.get(pluginType).PluginGetVersion(pluginTypeInt, pluginVersion, apiVersion, pluginNameReference, capabilities);
 
         Pointer coreHandle = mAeBridgeLibrary.loadLibrary("mupen64plus-core");
-        mPluginContext.put(pluginType, new Memory(pluginName.length() + 1));
+        byte[] bytes = pluginName.getBytes(Charset.defaultCharset());
+        mPluginContext.put(pluginType, new Memory(bytes.length + 1));
 
         mPluginContext.get(pluginType).setString(0, pluginName);
         mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), mDebugCallBackPlugin);
@@ -686,14 +689,16 @@ class CoreInterface
 
     void emuLoadFile( String filename )
     {
-        Pointer parameterPointer = new Memory(filename.length() + 1);
+        byte[] bytes = filename.getBytes(Charset.defaultCharset());
+        Pointer parameterPointer = new Memory(bytes.length + 1);
         parameterPointer.setString(0, filename);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_LOAD.ordinal(), 0, parameterPointer);
     }
 
     void emuSaveFile( String filename )
     {
-        Pointer parameterPointer = new Memory(filename.length() + 1);
+        byte[] bytes = filename.getBytes(Charset.defaultCharset());
+        Pointer parameterPointer = new Memory(bytes.length + 1);
         parameterPointer.setString(0, filename);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameterPointer);
     }
