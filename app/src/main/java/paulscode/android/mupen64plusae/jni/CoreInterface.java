@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.SevenZInputStream;
@@ -338,6 +339,10 @@ class CoreInterface
 
     private byte[] extractSevenZ(Context context, String romFileName, String zipPath)
     {
+        if (!AppData.IS_NOUGAT) {
+            return null;
+        }
+
         byte[] returnData = null;
 
         boolean lbFound = false;
