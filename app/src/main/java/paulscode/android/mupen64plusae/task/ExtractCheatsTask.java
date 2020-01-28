@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.task;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
@@ -83,7 +84,10 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             return;
         }
 
-        mCheats.addAll( CheatUtils.populateWithPosition( cheatLocation, mCrc, mCountryCode, mContext ) );
+
+        ArrayList<Cheat> cheats = CheatUtils.populateWithPosition( cheatLocation, mCrc, mCountryCode, mContext );
+        Collections.sort(cheats);
+        mCheats.addAll(cheats);
     }
     
     @Override
