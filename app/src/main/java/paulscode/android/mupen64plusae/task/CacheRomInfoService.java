@@ -73,6 +73,7 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -186,7 +187,7 @@ public class CacheRomInfoService extends Service
                 } else if (mSearchZips && !configHasZip(config, file.getUri())) {
                     if (header.isZip) {
                         cacheZip(database, file.getUri(), config);
-                    } else if (header.is7Zip) {
+                    } else if (header.is7Zip && AppData.IS_NOUGAT) {
                         cache7Zip(database, file.getUri(), config);
                     }
                 }
