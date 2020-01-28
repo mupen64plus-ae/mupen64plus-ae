@@ -565,7 +565,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 {
                     CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
                     ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
-                    mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                    if (!cheats.isEmpty()) {
+                        mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                    }
                 }
 
                 // Attach all the plugins

@@ -194,7 +194,7 @@ public class CheatUtils
     {
         String countryString = String.format("%02x", countryCode).substring(0, 2);
         CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-') + "-C:" + countryString + ".*");
-        
+
         return populateCommon(cheatSection, crc, con);
     }
     
@@ -305,8 +305,6 @@ public class CheatUtils
                 cheats.add( cheat );
             }
         }
-        
-        Collections.sort(cheats);
         return cheats;
     }
     

@@ -584,7 +584,8 @@ class CoreInterface
      */
     int coreAddCheat(String cheatName, ArrayList<CoreTypes.m64p_cheat_code> codes)
     {
-        CoreTypes.m64p_cheat_code[] codesArray = (CoreTypes.m64p_cheat_code[])new CoreTypes.m64p_cheat_code().toArray(codes.size());
+        CoreTypes.m64p_cheat_code cheatCode = new CoreTypes.m64p_cheat_code();
+        CoreTypes.m64p_cheat_code[] codesArray = (CoreTypes.m64p_cheat_code[])cheatCode.toArray(codes.size());
 
         for(int index = 0; index < codes.size(); ++index) {
             codesArray[index].address = codes.get(index).address;
