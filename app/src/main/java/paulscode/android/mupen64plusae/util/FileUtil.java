@@ -360,7 +360,7 @@ public final class FileUtil
                         bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                     }
 
-                } catch (IOException|java.lang.IllegalArgumentException e) {
+                } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
                     e.printStackTrace();
                 }
             }
@@ -425,7 +425,7 @@ public final class FileUtil
                 parcelFileDescriptor.close();
             }
 
-        } catch (IOException|java.lang.IllegalArgumentException e) {
+        } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             e.printStackTrace();
         }
 
