@@ -304,7 +304,7 @@ class CoreInterface
                 try {
                     final String entryName = new File(zipEntry.getName()).getName();
 
-                    lbFound = entryName.equals(romFileName) || romFileName == null;
+                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
                     if (lbFound) {
                         returnData = new byte[(int) zipEntry.getSize()];
@@ -356,7 +356,7 @@ class CoreInterface
                         try (InputStream zipStream = new SevenZInputStream(zipFile)) {
                             final String entryName = new File(zipEntry.getName()).getName();
 
-                            lbFound = entryName.equals(romFileName) || romFileName == null;
+                            lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
                             if (lbFound) {
                                 returnData = new byte[(int) zipEntry.getSize()];
