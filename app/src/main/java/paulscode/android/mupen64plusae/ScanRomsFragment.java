@@ -120,12 +120,17 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     public void onCacheRomInfoServiceDestroyed()
     {
         mInProgress = false;
-        requireActivity().runOnUiThread( new Runnable() {
+
+        try {
+            requireActivity().runOnUiThread( new Runnable() {
                 @Override
                 public void run() {
                     ((GalleryActivity)requireActivity()).reloadCacheAndRefreshGrid();
                 }
             } );
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();;
+        }
 
         mProgress.dismiss();
     }
