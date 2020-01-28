@@ -166,6 +166,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(romPath));
         String fileName = file.getName();
+
+        // If this is a ROM not in the database inside a zip file, this will happen
+        if (TextUtils.isEmpty(fileName)) {
+            fileName = romPath;
+        }
+
         mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, fileName, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
 
         // Load user preference menu structure from XML and update view
