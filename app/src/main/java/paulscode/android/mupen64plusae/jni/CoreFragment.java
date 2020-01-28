@@ -195,15 +195,19 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void romExtractionStarted()
     {
-        requireActivity().runOnUiThread(() -> {
-            CharSequence title = getString( R.string.extractRomTask_title );
-            CharSequence message = getString( R.string.toast_pleaseWait );
+        try {
+            requireActivity().runOnUiThread(() -> {
+                CharSequence title = getString( R.string.extractRomTask_title );
+                CharSequence message = getString( R.string.toast_pleaseWait );
 
-            DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), Uri.parse(mZipPath));
-            String zipName = file.getName();
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, zipName, message, false );
-            mProgress.show();
-        });
+                DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), Uri.parse(mZipPath));
+                String zipName = file.getName();
+                mProgress = new ProgressDialog( mProgress, requireActivity(), title, zipName, message, false );
+                mProgress.show();
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
