@@ -274,7 +274,7 @@ class CoreInterface
             InputStream is;
             romBuffer = IOUtils.toByteArray(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
             success = true;
-        } catch (IOException|OutOfMemoryError|java.lang.IllegalArgumentException e) {
+        } catch (IOException|OutOfMemoryError|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             e.printStackTrace();
         }
 
@@ -328,7 +328,7 @@ class CoreInterface
 
                 zipEntry = zipfile.getNextEntry();
             }
-        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|java.lang.SecurityException e) {
             Log.w("CoreInterface", e);
             returnData = null;
         }
@@ -380,7 +380,7 @@ class CoreInterface
                     }
                 }
             }
-        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|java.lang.SecurityException e) {
             Log.w("CoreInterface", e);
             returnData = null;
         }

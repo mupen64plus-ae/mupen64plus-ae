@@ -367,7 +367,7 @@ public class CacheRomInfoService extends Service
                 zipfile.close();
             }
         }
-        catch( IOException|ArrayIndexOutOfBoundsException|java.lang.NullPointerException|java.lang.IllegalArgumentException e )
+        catch( IOException|ArrayIndexOutOfBoundsException|java.lang.NullPointerException|java.lang.IllegalArgumentException|java.lang.SecurityException e )
         {
             Log.w( "CacheRomInfoService", e );
         }
@@ -417,7 +417,7 @@ public class CacheRomInfoService extends Service
                     }
                 }
             }
-        } catch (IOException|java.lang.IllegalArgumentException e) {
+        } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
         } catch (OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "Out of memory while extracting 7zip entry: " + file.getPath());
@@ -486,7 +486,7 @@ public class CacheRomInfoService extends Service
                 }
             }
 
-        } catch (IOException | NoSuchAlgorithmException|java.lang.IllegalArgumentException e) {
+        } catch (IOException | NoSuchAlgorithmException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             e.printStackTrace();
         }
     }
