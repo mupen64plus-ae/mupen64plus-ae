@@ -360,7 +360,7 @@ public final class FileUtil
                         bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                     }
 
-                } catch (IOException e) {
+                } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
                     e.printStackTrace();
                 }
             }
@@ -383,20 +383,20 @@ public final class FileUtil
     {
         if(src == null || TextUtils.isEmpty(src.toString()))
         {
-            Log.e( "copyFile", "src null" );
+            Log.e( "copySingleFile", "src null" );
             return false;
         }
 
-        if( dest == null )
+        if( dest == null)
         {
-            Log.e( "copyFile", "dest null" );
+            Log.e( "copySingleFile", "dest null" );
             return false;
         }
 
         File f = dest.getParentFile();
         if( f == null )
         {
-            Log.e( "copyFile", "dest parent folder null" );
+            Log.e( "copySingleFile", "dest parent folder null" );
             return false;
         }
 
@@ -425,7 +425,7 @@ public final class FileUtil
                 parcelFileDescriptor.close();
             }
 
-        } catch (IOException e) {
+        } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             e.printStackTrace();
         }
 
@@ -637,7 +637,7 @@ public final class FileUtil
                 parcelFileDescriptor.close();
             }
 
-        } catch (IOException e) {
+        } catch (IOException|java.lang.IllegalArgumentException e) {
             e.printStackTrace();
         }
 

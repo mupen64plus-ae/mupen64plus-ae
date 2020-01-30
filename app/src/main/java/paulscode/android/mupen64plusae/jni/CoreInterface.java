@@ -49,12 +49,14 @@ import org.apache.commons.io.FileUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.SevenZInputStream;
@@ -174,25 +176,41 @@ class CoreInterface
 
     private CoreTypes.m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = new CoreTypes.m64p_media_loader.get_gb_cart_rom() {
         public String invoke(Pointer cb_data, int controller_num) {
-            return mGbRomPaths.get(controller_num);
+            if (new File(mGbRomPaths.get(controller_num)).exists()) {
+                return mGbRomPaths.get(controller_num);
+            } else {
+                return null;
+            }
         }
     };
 
     private CoreTypes.m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = new CoreTypes.m64p_media_loader.get_gb_cart_ram() {
         public String invoke(Pointer cb_data, int controller_num) {
-            return mGbRamPaths.get(controller_num);
+            if (new File(mGbRamPaths.get(controller_num)).exists()) {
+                return mGbRamPaths.get(controller_num);
+            } else {
+                return null;
+            }
         }
     };
 
     private CoreTypes.m64p_media_loader.get_dd_rom mDdRomCallback = new CoreTypes.m64p_media_loader.get_dd_rom() {
         public String invoke(Pointer cb_data) {
-            return mDdRom;
+            if (new File(mDdRom).exists()) {
+                return mDdRom;
+            } else {
+                return null;
+            }
         }
     };
 
     private CoreTypes.m64p_media_loader.get_dd_disk mDdDiskCallback = new CoreTypes.m64p_media_loader.get_dd_disk() {
         public String invoke(Pointer cb_data) {
-            return mDdDisk;
+            if (new File(mDdDisk).exists()) {
+                return mDdDisk;
+            } else {
+                return null;
+            }
         }
     };
 
@@ -243,6 +261,8 @@ class CoreInterface
         else if (level == CoreTypes.m64p_msg_level.M64MSG_VERBOSE.ordinal())
         {
             Log.v(Context.getString(0), message);
+        } else {
+            Log.v(Context.getString(0), message);
         }
     }
 
@@ -255,7 +275,7 @@ class CoreInterface
             InputStream is;
             romBuffer = IOUtils.toByteArray(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
             success = true;
-        } catch (IOException e) {
+        } catch (IOException|OutOfMemoryError|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             e.printStackTrace();
         }
 
@@ -286,7 +306,7 @@ class CoreInterface
                 try {
                     final String entryName = new File(zipEntry.getName()).getName();
 
-                    lbFound = entryName.equals(romFileName) || romFileName == null;
+                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
                     if (lbFound) {
                         returnData = new byte[(int) zipEntry.getSize()];
@@ -309,7 +329,7 @@ class CoreInterface
 
                 zipEntry = zipfile.getNextEntry();
             }
-        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|java.lang.SecurityException e) {
             Log.w("CoreInterface", e);
             returnData = null;
         }
@@ -319,6 +339,10 @@ class CoreInterface
 
     private byte[] extractSevenZ(Context context, String romFileName, String zipPath)
     {
+        if (!AppData.IS_NOUGAT) {
+            return null;
+        }
+
         byte[] returnData = null;
 
         boolean lbFound = false;
@@ -338,7 +362,7 @@ class CoreInterface
                         try (InputStream zipStream = new SevenZInputStream(zipFile)) {
                             final String entryName = new File(zipEntry.getName()).getName();
 
-                            lbFound = entryName.equals(romFileName) || romFileName == null;
+                            lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
                             if (lbFound) {
                                 returnData = new byte[(int) zipEntry.getSize()];
@@ -361,7 +385,7 @@ class CoreInterface
                     }
                 }
             }
-        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|java.lang.SecurityException e) {
             Log.w("CoreInterface", e);
             returnData = null;
         }
@@ -402,26 +426,30 @@ class CoreInterface
     public void setGbRomPath(Context context, SparseArray<String> romUris)
     {
         for (int player = 1; player <= 4; ++player) {
-            byte[] romBuffer;
-            final RomHeader romHeader = new RomHeader(context, Uri.parse(romUris.get(player)));
 
-            if (romHeader.isZip || romHeader.is7Zip) {
+            if (!TextUtils.isEmpty(romUris.get(player))) {
 
-                if (romHeader.isZip) {
-                    romBuffer = extractZip(context, null, romUris.get(player));
-                } else {
-                    romBuffer = extractSevenZ(context, null, romUris.get(player));
-                }
+                byte[] romBuffer;
+                final RomHeader romHeader = new RomHeader(context, Uri.parse(romUris.get(player)));
 
-                if (romBuffer != null) {
-                    try {
-                        FileUtils.writeByteArrayToFile(new File(mGbRomPaths.get(player)), romBuffer);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if (romHeader.isZip || romHeader.is7Zip) {
+
+                    if (romHeader.isZip) {
+                        romBuffer = extractZip(context, null, romUris.get(player));
+                    } else {
+                        romBuffer = extractSevenZ(context, null, romUris.get(player));
                     }
+
+                    if (romBuffer != null) {
+                        try {
+                            FileUtils.writeByteArrayToFile(new File(mGbRomPaths.get(player)), romBuffer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    FileUtil.copySingleFile(context, Uri.parse(romUris.get(player)), new File(mGbRomPaths.get(player)));
                 }
-            } else {
-                FileUtil.copySingleFile(context, Uri.parse(romUris.get(player)), new File(mGbRomPaths.get(player)));
             }
         }
     }
@@ -429,12 +457,18 @@ class CoreInterface
     public void setGbRamPath(Context context, SparseArray<String> ramUri)
     {
         for (int player = 1; player <= 4; ++player) {
-            FileUtil.copySingleFile(context, Uri.parse(ramUri.get(player)), new File(mGbRamPaths.get(player)));
+            if (!TextUtils.isEmpty(ramUri.get(player))) {
+                FileUtil.copySingleFile(context, Uri.parse(ramUri.get(player)), new File(mGbRamPaths.get(player)));
+            }
         }
     }
 
     public void setDdRomPath(Context context, String ddRomUri)
     {
+        if (TextUtils.isEmpty(ddRomUri)) {
+            return;
+        }
+
         byte[] romBuffer;
         final RomHeader romHeader = new RomHeader(context, Uri.parse(ddRomUri));
 
@@ -454,25 +488,35 @@ class CoreInterface
                 }
             }
         } else {
+            Log.e("CoreInterface", "Copying DD ROM: " + ddRomUri);
             FileUtil.copySingleFile(context, Uri.parse(ddRomUri), new File(mDdRom));
         }
     }
 
     public void setDdDiskPath(Context context, String ddDiskUri)
     {
+        if (TextUtils.isEmpty(ddDiskUri)) {
+            return;
+        }
+
         FileUtil.copySingleFile(context, Uri.parse(ddDiskUri), new File(mDdDisk));
     }
 
     public void writeGbRamData(Context context, SparseArray<String> ramUri)
     {
         for (int player = 1; player <= 4; ++player) {
-            FileUtil.copyFile(context, new File(mGbRamPaths.get(player)), Uri.parse(ramUri.get(player)));
+
+            if (!TextUtils.isEmpty(ramUri.get(player))) {
+                FileUtil.copyFile(context, new File(mGbRamPaths.get(player)), Uri.parse(ramUri.get(player)));
+            }
         }
     }
 
     public void writeDdDiskData(Context context, String ddDiskUri)
     {
-        FileUtil.copyFile(context, new File(mDdDisk), Uri.parse(ddDiskUri) );
+        if (!TextUtils.isEmpty(ddDiskUri)) {
+            FileUtil.copyFile(context, new File(mDdDisk), Uri.parse(ddDiskUri) );
+        }
     }
 
     /* coreStartup()
@@ -486,12 +530,15 @@ class CoreInterface
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
 
         String coreContextText = "Core";
-        mCoreContext = new Memory(coreContextText.length()+1);
+        byte[] bytes = coreContextText.getBytes(Charset.defaultCharset());
+        mCoreContext = new Memory(bytes.length + 1);
         mCoreContext.setString(0, coreContextText);
 
         CoreLibrary.DebugCallback debugCallback = null;
-        if (TextUtils.isEmpty(mDdRom))
+        if (!new File(mDdRom).exists())
             debugCallback = mDebugCallBackCore;
+        else
+            Log.i("CoreInterface", "Disable core debug due to 64DD ROM found");
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
                 dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);
@@ -518,7 +565,8 @@ class CoreInterface
         mPlugins.get(pluginType).PluginGetVersion(pluginTypeInt, pluginVersion, apiVersion, pluginNameReference, capabilities);
 
         Pointer coreHandle = mAeBridgeLibrary.loadLibrary("mupen64plus-core");
-        mPluginContext.put(pluginType, new Memory(pluginName.length() + 1));
+        byte[] bytes = pluginName.getBytes(Charset.defaultCharset());
+        mPluginContext.put(pluginType, new Memory(bytes.length + 1));
 
         mPluginContext.get(pluginType).setString(0, pluginName);
         mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), mDebugCallBackPlugin);
@@ -544,7 +592,8 @@ class CoreInterface
      */
     int coreAddCheat(String cheatName, ArrayList<CoreTypes.m64p_cheat_code> codes)
     {
-        CoreTypes.m64p_cheat_code[] codesArray = (CoreTypes.m64p_cheat_code[])new CoreTypes.m64p_cheat_code().toArray(codes.size());
+        CoreTypes.m64p_cheat_code cheatCode = new CoreTypes.m64p_cheat_code();
+        CoreTypes.m64p_cheat_code[] codesArray = (CoreTypes.m64p_cheat_code[])cheatCode.toArray(codes.size());
 
         for(int index = 0; index < codes.size(); ++index) {
             codesArray[index].address = codes.get(index).address;
@@ -645,14 +694,16 @@ class CoreInterface
 
     void emuLoadFile( String filename )
     {
-        Pointer parameterPointer = new Memory(filename.length() + 1);
+        byte[] bytes = filename.getBytes(Charset.defaultCharset());
+        Pointer parameterPointer = new Memory(bytes.length + 1);
         parameterPointer.setString(0, filename);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_LOAD.ordinal(), 0, parameterPointer);
     }
 
     void emuSaveFile( String filename )
     {
-        Pointer parameterPointer = new Memory(filename.length() + 1);
+        byte[] bytes = filename.getBytes(Charset.defaultCharset());
+        Pointer parameterPointer = new Memory(bytes.length + 1);
         parameterPointer.setString(0, filename);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameterPointer);
     }

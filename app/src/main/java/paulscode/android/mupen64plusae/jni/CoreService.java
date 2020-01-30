@@ -481,6 +481,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
 
+            // Clean up the working directory
+            FileUtil.deleteFolder(new File(mWorkingDir));
+
             // Copy game data from external storage
             if (mGlobalPrefs.useExternalStorge) {
                 copyGameContentsFromSdCard();
@@ -547,13 +550,24 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 if (mRomExtractionListener != null) mRomExtractionListener.romExtractionFinished();
             }
 
+            // Check to make sure that no libraries are dummy
+            if (openSuccess) {
+                openSuccess = !mGamePrefs.videoPluginLib.getPluginLib().equals("dummy") &&
+                        !mGamePrefs.audioPluginLib.getPluginLib().equals("dummy") &&
+                        !AppData.InputPlugin.RAPHNET.getPluginLib().equals("dummy") &&
+                        !AppData.InputPlugin.ANDROID.getPluginLib().equals("dummy") &&
+                        !mGamePrefs.rspPluginLib.getPluginLib().equals("dummy");
+            }
+
             if (openSuccess)
             {
                 for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())
                 {
                     CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
                     ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
-                    mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                    if (!cheats.isEmpty()) {
+                        mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                    }
                 }
 
                 // Attach all the plugins

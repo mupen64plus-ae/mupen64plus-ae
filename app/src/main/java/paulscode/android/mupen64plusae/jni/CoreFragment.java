@@ -48,7 +48,6 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
 import paulscode.android.mupen64plusae.jni.CoreService.LocalBinder;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -171,14 +170,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             final String message = requireActivity().getString( R.string.toast_nativeMainFailure07 );
 
-            requireActivity().runOnUiThread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    Notifier.showToast( requireActivity(), message );
-                }
-            } );
+            requireActivity().runOnUiThread(() -> Notifier.showToast( requireActivity(), message ));
 
             Log.e( "CoreFragment", "Launch failure: " + message );
         }
@@ -203,9 +195,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void romExtractionStarted()
     {
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        try {
+            requireActivity().runOnUiThread(() -> {
                 CharSequence title = getString( R.string.extractRomTask_title );
                 CharSequence message = getString( R.string.toast_pleaseWait );
 
@@ -213,19 +204,20 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 String zipName = file.getName();
                 mProgress = new ProgressDialog( mProgress, requireActivity(), title, zipName, message, false );
                 mProgress.show();
-            }
-        });
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void romExtractionFinished()
     {
-        requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mProgress.dismiss();
-                }
-            });
+        try {
+            requireActivity().runOnUiThread(() -> mProgress.dismiss());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setCoreEventListener(CoreEventListener coreEventListener)
@@ -235,7 +227,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mCoreEventListener = coreEventListener;
     }
 
-    public void startCore(AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
+    public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
                           boolean isRestarting)
     {
@@ -283,12 +275,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
                 if(mCoreEventListener != null)
                 {
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCoreEventListener.onCoreServiceStarted();
-                        }
-                    });
+                    requireActivity().runOnUiThread(() -> mCoreEventListener.onCoreServiceStarted());
                 }
             }
 
@@ -315,6 +302,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
 
+    @SuppressWarnings("unused")
     private void actuallyStopCore()
     {
         Log.i("CoreFragment", "actuallyStopCore");
@@ -322,15 +310,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mIsRunning)
         {
             mIsRunning = false;
-            requireActivity().runOnUiThread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    mCoreService = null;
-                    ActivityHelper.stopCoreService(requireActivity().getApplicationContext(), mServiceConnection);
-                }
-            } );
+            requireActivity().runOnUiThread(() -> {
+                mCoreService = null;
+                ActivityHelper.stopCoreService(requireActivity().getApplicationContext(), mServiceConnection);
+            });
         }
     }
 
@@ -545,24 +528,19 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         final CharSequence title = requireActivity().getString(R.string.menuItem_selectSlot);
 
         Prompt.promptRadioInteger( requireActivity(), title, mCoreService.getSlot(), 0, 2, 5,
-                new Prompt.PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+                (value, which) -> {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
-                        {
-                            if (mCoreService != null) {
-                                mCoreService.setSlot(value);
-                            }
+                        if (mCoreService != null) {
+                            mCoreService.setSlot(value);
+                        }
 
-                            if(mCoreEventListener != null)
-                            {
-                                mCoreEventListener.onPromptFinished();
-                            }
+                        if(mCoreEventListener != null)
+                        {
+                            mCoreEventListener.onPromptFinished();
                         }
                     }
-                } );
+                });
     }
 
     public void saveFileFromPrompt()
@@ -572,17 +550,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         CharSequence title = requireActivity().getText( R.string.menuItem_fileSave );
         CharSequence hint = requireActivity().getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( requireActivity(), title, null, null, hint, inputType, new Prompt.PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
+        Prompt.promptText( requireActivity(), title, null, null, hint, inputType, (text, which) -> {
+            if( which == DialogInterface.BUTTON_POSITIVE )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    saveState(text.toString());
-                }
+                saveState(text.toString());
             }
-        } );
+        });
     }
 
     private void saveState( final String filename )
@@ -624,22 +597,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         CharSequence title = requireActivity().getText( R.string.menuItem_fileLoad );
         File startPath = new File( mGamePrefs.getUserSaveDir() );
-        Prompt.promptFile( requireActivity(), title, null, startPath, "", new Prompt.PromptFileListener()
-        {
-            @Override
-            public void onDialogClosed( File file, int which )
+        Prompt.promptFile( requireActivity(), title, null, startPath, "", (file, which) -> {
+            if( which >= 0 )
             {
-                if( which >= 0 )
-                {
-                    loadState(file);
+                loadState(file);
 
-                    if(mCoreEventListener != null)
-                    {
-                        mCoreEventListener.onSaveLoad();
-                    }
+                if(mCoreEventListener != null)
+                {
+                    mCoreEventListener.onSaveLoad();
                 }
             }
-        } );
+        });
     }
 
     public void loadAutoSaveFromPrompt()
@@ -648,22 +616,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         CharSequence title = requireActivity().getText( R.string.menuItem_fileLoadAutoSave );
         File startPath = new File( mGamePrefs.getAutoSaveDir() );
-        Prompt.promptFile( requireActivity(), title, null, startPath, "sav", new Prompt.PromptFileListener()
-        {
-            @Override
-            public void onDialogClosed( File file, int which )
+        Prompt.promptFile( requireActivity(), title, null, startPath, "sav", (file, which) -> {
+            if( which >= 0 )
             {
-                if( which >= 0 )
-                {
-                    loadState(file);
+                loadState(file);
 
-                    if(mCoreEventListener != null)
-                    {
-                        mCoreEventListener.onSaveLoad();
-                    }
+                if(mCoreEventListener != null)
+                {
+                    mCoreEventListener.onSaveLoad();
                 }
             }
-        } );
+        });
     }
 
     private void loadState( File file )
@@ -817,22 +780,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         final CharSequence title = requireActivity().getText( R.string.menuItem_setSpeed );
         Prompt.promptInteger( requireActivity(), title, "%1$d %%", mCustomSpeed, MIN_SPEED, MAX_SPEED,
-                new Prompt.PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+                (value, which) -> {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
-                        {
-                            setCustomSpeed( value );
+                        setCustomSpeed( value );
 
-                            if(mCoreEventListener != null)
-                            {
-                                mCoreEventListener.onPromptFinished();
-                            }
+                        if(mCoreEventListener != null)
+                        {
+                            mCoreEventListener.onPromptFinished();
                         }
                     }
-                } );
+                });
     }
 
     public void onPromptDialogClosed(int id, int which)

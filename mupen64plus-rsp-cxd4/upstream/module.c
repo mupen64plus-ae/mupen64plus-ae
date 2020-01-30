@@ -556,11 +556,12 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
 
     signal(SIGILL, ISA_op_illegal);
 #ifndef _WIN32
-    signal(SIGSEGV, seg_av_handler);
-    for (SR[ra] = 0; SR[ra] < 0x80000000ul; SR[ra] += 0x200000) {
-        recovered_from_exception = setjmp(CPU_state);
-        if (recovered_from_exception)
-            break;
+
+    // Core always has 16 MB allocated
+    su_max_address = 0xFFFFFF; /* 16 MiB */
+
+    for (SR[ra] = 0; SR[ra] < su_max_address+1; SR[ra] += 0x200000) {
+
         SR[at] += DRAM[SR[ra]];
     }
     for (SR[at] = 0; SR[at] < 31; SR[at]++) {
@@ -568,14 +569,9 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
         if (SR[ra] == 0)
             break;
     }
-    su_max_address = (1 << SR[at]) - 1;
 #endif
 
-    if (su_max_address < 0x1FFFFFul)
-        su_max_address = 0x1FFFFFul; /* 2 MiB */
-    if (su_max_address > 0xFFFFFFul)
-        su_max_address = 0xFFFFFFul; /* 16 MiB */
-    return;
+
 }
 
 EXPORT void CALL RomClosed(void)

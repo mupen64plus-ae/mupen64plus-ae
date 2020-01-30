@@ -140,8 +140,9 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             romPath = new File(romPath).getName();
             try {
                 romPath = java.net.URLDecoder.decode(romPath, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException|java.lang.IllegalArgumentException e) {
                 Log.e("GalleryRefreshTask", "Unable to decode string: " + romPath);
+                return null;
             }
         }
 

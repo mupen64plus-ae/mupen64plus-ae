@@ -321,7 +321,7 @@ public class EmulationProfileActivity extends ProfileActivity
                     value = LIBRICE_SO;
                 }
 
-                if(value.toLowerCase().contains("rice"))
+                if(value.toLowerCase().contains("gln64"))
                 {
                     value = LIBGLN64_SO;
                 }

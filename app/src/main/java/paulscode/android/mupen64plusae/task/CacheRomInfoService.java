@@ -73,6 +73,7 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -186,7 +187,7 @@ public class CacheRomInfoService extends Service
                 } else if (mSearchZips && !configHasZip(config, file.getUri())) {
                     if (header.isZip) {
                         cacheZip(database, file.getUri(), config);
-                    } else if (header.is7Zip) {
+                    } else if (header.is7Zip && AppData.IS_NOUGAT) {
                         cache7Zip(database, file.getUri(), config);
                     }
                 }
@@ -367,7 +368,7 @@ public class CacheRomInfoService extends Service
                 zipfile.close();
             }
         }
-        catch( IOException|ArrayIndexOutOfBoundsException|java.lang.NullPointerException e )
+        catch( IOException|ArrayIndexOutOfBoundsException|java.lang.NullPointerException|java.lang.IllegalArgumentException|java.lang.SecurityException e )
         {
             Log.w( "CacheRomInfoService", e );
         }
@@ -417,7 +418,7 @@ public class CacheRomInfoService extends Service
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
         } catch (OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "Out of memory while extracting 7zip entry: " + file.getPath());
@@ -486,7 +487,7 @@ public class CacheRomInfoService extends Service
                 }
             }
 
-        } catch (IOException | NoSuchAlgorithmException e) {
+        } catch (IOException | NoSuchAlgorithmException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -763,8 +764,7 @@ public class CacheRomInfoService extends Service
                 if(!TextUtils.isEmpty(artPath) && !TextUtils.isEmpty(romGoodName) && !TextUtils.isEmpty(crc))
                 {
                     RomDetail detail = database.lookupByMd5WithFallback( key, romGoodName, crc, countryCode );
-
-                    mListener.GetProgressDialog().setText(romGoodName);
+                    mListener.GetProgressDialog().setText(getShortFileName(romGoodName));
 
                     //Only download art if it's not already present or current art is not a valid image
                     File artPathFile = new File (artPath);

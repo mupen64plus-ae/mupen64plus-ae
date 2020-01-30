@@ -131,7 +131,7 @@ public class CoreTypes {
         public int address;
         public int value;
 
-        m64p_cheat_code() {
+        public m64p_cheat_code() {
             address = 0;
             value = 0;
         }

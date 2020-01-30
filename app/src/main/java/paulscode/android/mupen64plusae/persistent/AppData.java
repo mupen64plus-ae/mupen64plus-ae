@@ -227,10 +227,10 @@ public class AppData
     }
     
     /** True if device is running marshmallow or later (23 - Android 6.0.x) */
-    private static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    public static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
 
     /** True if device is running marshmallow or later (24 - Android 7.0.x) */
-    private static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    public static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
 
     /** True if device is running marshmallow or later (26 - Android 8.0.x) */
     public static final boolean IS_OREO = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;

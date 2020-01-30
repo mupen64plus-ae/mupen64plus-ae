@@ -556,7 +556,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             finalRomPath = FileUtil.ExtractFirstROMFromZip(givenRomPath, mGlobalPrefs.unzippedRomsDir);
         }
-        else if (header.is7Zip) {
+        else if (header.is7Zip && AppData.IS_NOUGAT) {
             finalRomPath = FileUtil.ExtractFirstROMFromSevenZ(givenRomPath, mGlobalPrefs.unzippedRomsDir);
         }
 

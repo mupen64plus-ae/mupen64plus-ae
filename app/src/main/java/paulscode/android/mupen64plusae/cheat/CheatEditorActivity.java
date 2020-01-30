@@ -211,8 +211,12 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         
         //We don't extract user cheats in a separate task since there aren't as many
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
-        userCheats.clear();        
-        userCheats.addAll( CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, this ) );
+        userCheats.clear();
+
+        ArrayList<Cheat> cheats = CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, this );
+        Collections.sort(cheats);
+
+        userCheats.addAll(cheats);
         
         cheatListAdapter = new CheatListAdapter( this, userCheats );
         setListAdapter( cheatListAdapter );

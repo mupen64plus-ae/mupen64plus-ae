@@ -31,18 +31,8 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 @SuppressWarnings("WeakerAccess")
 public class GamePrefs
 {
-    static public class CheatSelection implements Parcelable
+    static public class CheatSelection
     {
-        public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-            public CheatSelection createFromParcel(Parcel in) {
-                return new CheatSelection(in);
-            }
-
-            public CheatSelection[] newArray(int size) {
-                return new CheatSelection[size];
-            }
-        };
-
         private int index;
         private int option;
 
@@ -66,22 +56,6 @@ public class GamePrefs
 
         public void setOption(int option) {
             this.option = option;
-        }
-        // Parcelling part
-        CheatSelection(Parcel in){
-            this.index = in.readInt();
-            this.option = in.readInt();
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(this.index);
-            dest.writeInt(this.option);
         }
 
         @NonNull
@@ -770,6 +744,7 @@ public class GamePrefs
         for (final String key : map.keySet())
         {
             final Matcher matcher = pattern.matcher( key );
+
             if ( matcher.matches() && matcher.groupCount() > 0 )
             {
                 final int value = mPreferences.getInt( key, 0 );

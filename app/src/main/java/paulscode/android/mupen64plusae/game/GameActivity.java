@@ -68,7 +68,6 @@ import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.SensorController;
@@ -803,33 +802,32 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         //Generate possible pak types
         final ArrayList<CharSequence> selections = new ArrayList<>();
+        final ArrayList<PakType> selectionPakTypes = new ArrayList<>();
         for(final PakType pakType:PakType.values())
         {
-            selections.add(this.getString(pakType.getResourceString()));
+            if (pakType.getResourceString() != 0) {
+                selections.add(this.getString(pakType.getResourceString()));
+                selectionPakTypes.add(pakType);
+            }
         }
 
         Prompt.promptListSelection( this, title, selections,
-                new PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+                (value, which) -> {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        mGamePrefs.putPakType(player, selectionPakTypes.get(value));
+
+                        // Set the pak in the core
+                        if(mCoreFragment != null)
                         {
-                            mGamePrefs.putPakType(player, PakType.values()[value]);
-
-                            // Set the pak in the core
-                            if(mCoreFragment != null)
-                            {
-                                mCoreFragment.updateControllerConfig(player - 1, true, PakType.getPakTypeFromNativeValue(value));
-                            }
-
-                            //Update the menu
-                            playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGamePrefs.getPakType(player).getResourceString()));
-                            mGameSidebar.reload();
+                            mCoreFragment.updateControllerConfig(player - 1, true, selectionPakTypes.get(value));
                         }
+
+                        //Update the menu
+                        playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGamePrefs.getPakType(player).getResourceString()));
+                        mGameSidebar.reload();
                     }
-                } );
+                });
     }
 
     @Override
@@ -870,7 +868,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.setSurface(holder.getSurface());
 
             if (!mCoreFragment.IsInProgress()) {
-                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
+                mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
             }
 

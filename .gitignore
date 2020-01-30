@@ -38,6 +38,8 @@ gradle.properties
 app/.directory
 app/release
 app/.cxx
+app/pro
+app/free
 
 # Intellij project files
 .idea/
