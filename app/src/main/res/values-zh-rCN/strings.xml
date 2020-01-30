@@ -539,18 +539,4 @@
     <string name="touchscreenProfileActivity_menuTitle">选择一个选项</string>
     <string name="videoPlugin_entryAngrylion">"angrylion
 "<small>(angrylion 软件渲染器)</small></string>
-    <string name="abc_font_family_body_1_material">sans-serif</string>
-    <string name="abc_font_family_body_2_material">sans-serif-medium</string>
-    <string name="abc_font_family_button_material">sans-serif-medium</string>
-    <string name="abc_font_family_caption_material">sans-serif</string>
-    <string name="abc_font_family_display_1_material">sans-serif</string>
-    <string name="abc_font_family_display_2_material">sans-serif</string>
-    <string name="abc_font_family_display_3_material">sans-serif</string>
-    <string name="abc_font_family_display_4_material">sans-serif-light</string>
-    <string name="abc_font_family_headline_material">sans-serif</string>
-    <string name="abc_font_family_menu_material">sans-serif</string>
-    <string name="abc_font_family_subhead_material">sans-serif</string>
-    <string name="abc_font_family_title_material">sans-serif-medium</string>getView().findViewById
-    <string name="v7_preference_off">关闭</string>
-    <string name="v7_preference_on">开启</string>
 </resources>
