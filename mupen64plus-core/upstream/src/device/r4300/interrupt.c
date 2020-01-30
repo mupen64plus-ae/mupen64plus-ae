@@ -505,6 +505,10 @@ void gen_interrupt(struct r4300_core* r4300)
 {
     uint32_t* cp0_regs = r4300_cp0_regs(&r4300->cp0);
     unsigned int* cp0_next_interrupt = r4300_cp0_next_interrupt(&r4300->cp0);
+    if(r4300->cp0.q.first->data.type == SPECIAL_INT && *cp0_next_interrupt)
+    {
+        *cp0_next_interrupt = 0;
+    }
 
     if (*r4300_stop(r4300) == 1)
     {
