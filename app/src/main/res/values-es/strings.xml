@@ -646,5 +646,7 @@
 
     <!-- Misc -->
     <string name="coreFragment_sdcard_write_error">No se puede escribir la configuración a la tarjeta SD</string>
+    <string name="actionOpenMenu">Abrir menu principal</string>
+    <string name="actionSearchRoms">Buscar ROMs</string>
 </resources>
 
