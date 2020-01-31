@@ -227,7 +227,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.IDL_PATH_64DD, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.DISK_PATH_64DD, this );
 
-        for (int player = 0; player < GamePrefs.NUM_CONTROLLERS; ++player) {
+        for (int player = 1; player <= GamePrefs.NUM_CONTROLLERS; ++player) {
             PrefUtil.setOnPreferenceClickListener( this, mGamePrefs.getTransferPakRomKey(player), this );
             PrefUtil.setOnPreferenceClickListener( this, mGamePrefs.getTransferPakRamKey(player), this );
         }
@@ -236,10 +236,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         setFilePickerPreferenceSummary(GamePrefs.IDL_PATH_64DD, mGamePrefs.idlPath64Dd);
         setFilePickerPreferenceSummary(GamePrefs.DISK_PATH_64DD, mGamePrefs.diskPath64Dd);
 
-
-        for (int player = 0; player < GamePrefs.NUM_CONTROLLERS; ++player) {
+        for (int player = 1; player <= GamePrefs.NUM_CONTROLLERS; ++player) {
             setFilePickerPreferenceSummary(mGamePrefs.getTransferPakRomKey(player), mGamePrefs.getTransferPakRom(player));
-            setFilePickerPreferenceSummary(mGamePrefs.getTransferPakRomKey(player), mGamePrefs.getTransferPakRom(player));
+            setFilePickerPreferenceSummary(mGamePrefs.getTransferPakRamKey(player), mGamePrefs.getTransferPakRam(player));
         }
 
         // Remove wiki menu item if not applicable

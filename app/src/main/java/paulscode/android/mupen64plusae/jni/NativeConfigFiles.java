@@ -134,15 +134,6 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Fast Forward", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Gameshark", EMPTY );
 
-        mupen64plus_cfg.put( "Transferpak", "GB-rom-1", game.getTransferPakRom(1) );
-        mupen64plus_cfg.put( "Transferpak", "GB-ram-1", game.getTransferPakRam(1) );
-        mupen64plus_cfg.put( "Transferpak", "GB-rom-2", game.getTransferPakRom(2) );
-        mupen64plus_cfg.put( "Transferpak", "GB-ram-2", game.getTransferPakRam(2) );
-        mupen64plus_cfg.put( "Transferpak", "GB-rom-3", game.getTransferPakRom(3) );
-        mupen64plus_cfg.put( "Transferpak", "GB-ram-3", game.getTransferPakRam(3) );
-        mupen64plus_cfg.put( "Transferpak", "GB-rom-4", game.getTransferPakRom(4) );
-        mupen64plus_cfg.put( "Transferpak", "GB-ram-4", game.getTransferPakRam(4) );
-
         mupen64plus_cfg.put( "rsp-cxd4", "Version", "1" );
         mupen64plus_cfg.put( "rsp-cxd4", "DisplayListToGraphicsPlugin", boolToNum(game.rspHleVideo) );
         mupen64plus_cfg.put( "rsp-cxd4", "AudioListToAudioPlugin", "0" );
