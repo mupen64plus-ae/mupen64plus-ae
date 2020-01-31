@@ -563,10 +563,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             {
                 for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())
                 {
-                    CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
-                    ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
-                    if (!cheats.isEmpty()) {
-                        mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                    if (selection.getIndex() < mCheats.size()) {
+                        CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
+                        ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
+                        if (!cheats.isEmpty()) {
+                            mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                        }
                     }
                 }
 
