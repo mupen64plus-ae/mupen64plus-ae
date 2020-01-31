@@ -214,7 +214,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void romExtractionFinished()
     {
         try {
-            requireActivity().runOnUiThread(() -> mProgress.dismiss());
+            if (mProgress != null) {
+                requireActivity().runOnUiThread(() -> mProgress.dismiss());
+            }
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
         }
@@ -273,9 +275,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreService.setCoreServiceListener(CoreFragment.this);
                 mCoreService.setRomExtractionListener(CoreFragment.this);
 
-                if(mCoreEventListener != null)
-                {
-                    requireActivity().runOnUiThread(() -> mCoreEventListener.onCoreServiceStarted());
+                if(mCoreEventListener != null) {
+                    try {
+                        requireActivity().runOnUiThread(() -> mCoreEventListener.onCoreServiceStarted());
+                    } catch (java.lang.IllegalStateException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
