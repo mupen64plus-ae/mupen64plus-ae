@@ -1118,10 +1118,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mDrawerLayout.closeDrawer(GravityCompat.START, false);
         }
 
-        if (mSearchView != null) {
-            mSearchView.onActionViewCollapsed();
-        }
         mSearchQuery = "";
+
+        mSearchView.setQuery( mSearchQuery, true );
 
         mRefreshNeeded = true;
 
