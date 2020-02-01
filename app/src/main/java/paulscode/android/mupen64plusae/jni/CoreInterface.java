@@ -45,6 +45,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -288,32 +289,30 @@ class CoreInterface
 
                 try {
                     final String entryName = new File(zipEntry.getName()).getName();
-
-                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
+                    lbFound = entryName.equals(romFileName) || romFileName == null;
 
                     if (lbFound) {
-                        returnData = new byte[(int) zipEntry.getSize()];
 
-                        int numBytesRead = 0;
-
-                        while (numBytesRead < returnData.length) {
-                            numBytesRead += zipfile.read(returnData, numBytesRead, returnData.length - numBytesRead);
+                        ByteArrayOutputStream streamBuilder = new ByteArrayOutputStream();
+                        int numBytesRead;
+                        byte[] tempBuffer = new byte[1024*1024];
+                        
+                        while ( (numBytesRead = zipfile.read(tempBuffer)) != -1 ){
+                            streamBuilder.write(tempBuffer, 0, numBytesRead);
                         }
 
-                        if (numBytesRead != returnData.length) {
-                            returnData = null;
-                        }
+                        returnData = streamBuilder.toByteArray();
                     }
 
                 } catch (final IOException e) {
-                    Log.w("CoreInterface", e);
+                    Log.w(TAG, e);
                     returnData = null;
                 }
 
                 zipEntry = zipfile.getNextEntry();
             }
         } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|java.lang.SecurityException e) {
-            Log.w("CoreInterface", e);
+            Log.w(TAG, e);
             returnData = null;
         }
 
@@ -362,19 +361,19 @@ class CoreInterface
                             }
 
                         } catch (final IOException e) {
-                            Log.w("CoreInterface", e);
+                            Log.w(TAG, e);
                             returnData = null;
                         }
                     }
                 }
             }
         } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|java.lang.SecurityException e) {
-            Log.w("CoreInterface", e);
+            Log.w(TAG, e);
             returnData = null;
         }
         catch (java.lang.OutOfMemoryError e)
         {
-            Log.w( "CoreInterface", "Out of memory while extracting 7zip entry: " + romFileName );
+            Log.w( TAG, "Out of memory while extracting 7zip entry: " + romFileName );
             returnData = null;
         }
 
@@ -471,7 +470,7 @@ class CoreInterface
                 }
             }
         } else {
-            Log.e("CoreInterface", "Copying DD ROM: " + ddRomUri);
+            Log.e(TAG, "Copying DD ROM: " + ddRomUri);
             FileUtil.copySingleFile(context, Uri.parse(ddRomUri), new File(mDdRom));
         }
     }
@@ -521,7 +520,7 @@ class CoreInterface
         if (!new File(mDdRom).exists())
             debugCallback = mDebugCallBackCore;
         else
-            Log.i("CoreInterface", "Disable core debug due to 64DD ROM found");
+            Log.i(TAG, "Disable core debug due to 64DD ROM found");
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
                 dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);
@@ -537,10 +536,10 @@ class CoreInterface
      */
     int coreAttachPlugin(CoreTypes.m64p_plugin_type pluginType, String pluginName)
     {
-        Log.w("CoreInterface", "Using plugin for type: " + pluginType.name() + ":" + pluginName);
+        Log.w(TAG, "Using plugin for type: " + pluginType.name() + ":" + pluginName);
 
         if (pluginName.contains("dummy")) {
-            Log.w("CoreInterface", "Using dummy plugin for type: " + pluginType.name());
+            Log.w(TAG, "Using dummy plugin for type: " + pluginType.name());
             return 0;
         }
 
