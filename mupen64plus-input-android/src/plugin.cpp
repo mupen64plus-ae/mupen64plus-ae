@@ -324,7 +324,7 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
     // Limit the speed of the analog stick under certain circumstances
     static int actualXAxis[4] = {0};
     static int actualYAxis[4] = {0};
-    static const int maxChange = 25;
+    static const int maxChange = 30;
     static const double distanceForInstantChange = 115.0;
 
     double distance = sqrt(pow(actualXAxis[controllerNum] - _androidAnalogX[controllerNum],2) +
