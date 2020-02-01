@@ -441,7 +441,7 @@ public class CacheRomInfoService extends Service
                 //Then extract the ROM file
                 inputStream.reset();
 
-                String md5 = ComputeMd5Task.computeMd5( inputStream );
+                String md5 = FileUtil.computeMd5( inputStream );
 
                 cacheFile(null, name, extractedHeader, md5, database, config, zipFile );
             }
@@ -478,7 +478,7 @@ public class CacheRomInfoService extends Service
 
             if (parcelFileDescriptor != null) {
                 InputStream bufferedStream = new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
-                String md5 = ComputeMd5Task.computeMd5(bufferedStream);
+                String md5 = FileUtil.computeMd5(bufferedStream);
                 RomHeader header = new RomHeader(getApplicationContext(), file.getUri());
 
                 String fileName = file.getName();

@@ -45,6 +45,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.appcompat.widget.Toolbar;
+
+import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -57,7 +59,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +78,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
@@ -551,32 +557,65 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return;
         }
 
+        Log.e("GalleryActivity", "Rom path = " + givenRomPath);
+
+        boolean isUri;
+
+        isUri = !new File(givenRomPath).exists();
+
         mGameStartedExternally = true;
-        String finalRomPath = givenRomPath;
 
-        Uri finalRomPathUri = Uri.fromFile(new File(finalRomPath));
+        Uri romPathUri;
 
-        RomHeader header = new RomHeader(this, finalRomPathUri);
+        if (isUri) {
+
+            Log.e("GalleryActivity", "IS URI = " + givenRomPath);
+
+            romPathUri = Uri.parse(givenRomPath);
+        } else {
+            Log.e("GalleryActivity", "IS NOT URI = " + givenRomPath);
+
+            romPathUri = Uri.fromFile(new File(givenRomPath));
+        }
+
+        RomHeader header = new RomHeader(this, romPathUri);
 
         boolean successful = false;
-        if(header.isZip)
-        {
-            finalRomPath = FileUtil.ExtractFirstROMFromZip(givenRomPath, mGlobalPrefs.unzippedRomsDir);
+        String romPath = null;
+        if(header.isZip) {
+            romPath = FileUtil.ExtractFirstROMFromZip(this, romPathUri, mGlobalPrefs.unzippedRomsDir);
+
+            if (romPath != null) {
+                romPathUri = Uri.fromFile(new File(romPath));
+                header = new RomHeader(this, romPathUri);
+            }
         }
         else if (header.is7Zip && AppData.IS_NOUGAT) {
-            finalRomPath = FileUtil.ExtractFirstROMFromSevenZ(givenRomPath, mGlobalPrefs.unzippedRomsDir);
+            romPath = FileUtil.ExtractFirstROMFromSevenZ(this, romPathUri, mGlobalPrefs.unzippedRomsDir);
+
+            if (romPath != null) {
+                romPathUri = Uri.fromFile(new File(romPath));
+                header = new RomHeader(this, romPathUri);
+            }
         }
 
-        header = new RomHeader(finalRomPath);
-        if(finalRomPath != null && header.isValid)
+        if(header.isValid)
         {
             // Synchronously compute MD5 and launch game when finished
-            final String computedMd5 = ComputeMd5Task.computeMd5( new File( finalRomPath ) );
+            String computedMd5 = null;
+            try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(romPathUri, "r")) {
+
+                if (parcelFileDescriptor != null) {
+                    InputStream bufferedStream = new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
+                    computedMd5 = FileUtil.computeMd5(bufferedStream);
+                }
+
+            } catch (IOException | NoSuchAlgorithmException |java.lang.IllegalArgumentException|java.lang.SecurityException e) {
+                e.printStackTrace();
+            }
 
             if(computedMd5 != null)
             {
-                header = new RomHeader(finalRomPath);
-
                 final RomDatabase database = RomDatabase.getInstance();
 
                 if(!database.hasDatabaseFile())
@@ -585,11 +624,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
 
                 successful = true;
-                String romPathUri = Uri.fromFile(new File(finalRomPath)).toString();
 
-                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File(finalRomPath).getName(), header.crc, header.countryCode );
+                DocumentFile romDocFile = FileUtil.getDocumentFileSingle(this, romPathUri);
+                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, romDocFile.getName(), header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
-                launchGameActivity( romPathUri, null, computedMd5, header.crc, header.name,
+                launchGameActivity( romPathUri.toString(), null, computedMd5, header.crc, header.name,
                         header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false );
             }
         }

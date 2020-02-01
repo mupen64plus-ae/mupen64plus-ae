@@ -48,11 +48,14 @@ import java.io.OutputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -403,27 +406,21 @@ public final class FileUtil
 
         FileUtil.makeDirs(f.getPath());
 
-        ParcelFileDescriptor parcelFileDescriptor;
 
-        try {
-            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src, "r");
 
-            if (parcelFileDescriptor != null)
-            {
-                try (FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
-                     FileChannel out = new FileOutputStream(dest).getChannel()) {
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src, "r")){
 
-                    long bytesTransferred = 0;
+            try (FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                 FileChannel out = new FileOutputStream(dest).getChannel()) {
 
-                    while (bytesTransferred < in.size()) {
-                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
-                    }
+                long bytesTransferred = 0;
 
-                } catch (Exception e) {
-                    Log.e("copyFile", "Exception: " + e.getMessage());
+                while (bytesTransferred < in.size()) {
+                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                 }
 
-                parcelFileDescriptor.close();
+            } catch (Exception e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
         } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
@@ -615,27 +612,20 @@ public final class FileUtil
             return false;
         }
 
-        ParcelFileDescriptor parcelFileDescriptor;
 
-        try {
-            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(dest, "rw");
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(dest, "rw")){
 
-            if (parcelFileDescriptor != null)
-            {
-                try (FileChannel in = new FileInputStream(src).getChannel();
-                     FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
+            try (FileChannel in = new FileInputStream(src).getChannel();
+                 FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
 
-                    long bytesTransferred = 0;
+                long bytesTransferred = 0;
 
-                    while (bytesTransferred < in.size()) {
-                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
-                    }
-
-                } catch (Exception e) {
-                    Log.e("copyFile", "Exception: " + e.getMessage());
+                while (bytesTransferred < in.size()) {
+                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                 }
 
-                parcelFileDescriptor.close();
+            } catch (Exception e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
         } catch (IOException|java.lang.IllegalArgumentException e) {
@@ -689,59 +679,32 @@ public final class FileUtil
      */
     public static void unzipAll( @NonNull Context context, @NonNull Uri uri, String outputDir )
     {
-        ParcelFileDescriptor parcelFileDescriptor = null;
-        ZipInputStream zipfile = null;
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+             ZipInputStream zipfile = new ZipInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))) {
 
-        try
-        {
-            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+            ZipEntry entry = zipfile.getNextEntry();
+            File outputFile = new File(outputDir);
 
-            if (parcelFileDescriptor != null)
-            {
-                zipfile = new ZipInputStream( new FileInputStream(parcelFileDescriptor.getFileDescriptor()) );
+            while (entry != null) {
+                if (!entry.isDirectory()) {
+                    // Check for malformed zip files
+                    File securityTestFile = new File(outputDir, entry.getName());
+                    String canonicalPath = securityTestFile.getCanonicalPath();
+                    if (!canonicalPath.startsWith(outputFile.getCanonicalPath())) {
+                        break;
+                    }
 
-                ZipEntry entry = zipfile.getNextEntry();
-                File outputFile = new File(outputDir);
-
-                while( entry != null ) {
-                    entry = zipfile.getNextEntry();
-                    if (!entry.isDirectory())
-                    {
-                        // Check for malformed zip files
-                        File securityTestFile = new File(outputDir, entry.getName());
-                        String canonicalPath = securityTestFile.getCanonicalPath();
-                        if (!canonicalPath.startsWith(outputFile.getCanonicalPath())) {
-                            break;
-                        }
-
-                        File f = new File( outputDir + "/" + entry.toString() );
-                        f = f.getParentFile();
-                        if( f != null )
-                        {
-                            FileUtil.makeDirs(f.getPath());
-                            unzipEntry( zipfile, entry, outputDir );
-                        }
+                    File f = new File(outputDir + "/" + entry.toString());
+                    f = f.getParentFile();
+                    if (f != null) {
+                        FileUtil.makeDirs(f.getPath());
+                        unzipEntry(zipfile, entry, outputDir);
                     }
                 }
+                entry = zipfile.getNextEntry();
             }
-        }
-        catch( Exception ze )
-        {
-            Log.e( "unzipAll", "Exception: ", ze );
-        }
-        finally
-        {
-            try
-            {
-                if( zipfile != null )
-                    zipfile.close();
-
-                if (parcelFileDescriptor != null)
-                    parcelFileDescriptor.close();
-            }
-            catch( IOException ignored )
-            {
-            }
+        } catch (Exception ze) {
+            Log.e("unzipAll", "Exception: ", ze);
         }
     }
 
@@ -780,28 +743,22 @@ public final class FileUtil
             return;
         }
 
-        SevenZFile zipfile = null;
-        ParcelFileDescriptor parcelFileDescriptor;
-        try {
-            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
+             FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+             FileChannel fileChannel = fis.getChannel();
+             SevenZFile zipfile = new SevenZFile(fileChannel)){
 
-            if (parcelFileDescriptor != null) {
-                FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-                FileChannel fileChannel = fis.getChannel();
+            SevenZArchiveEntry zipEntry;
 
-                zipfile = new SevenZFile(fileChannel);
-                SevenZArchiveEntry zipEntry;
+            while( (zipEntry = zipfile.getNextEntry()) != null)
+            {
+                File f = new File( outputDir + "/" + zipEntry.getName() );
 
-                while( (zipEntry = zipfile.getNextEntry()) != null)
+                f = f.getParentFile();
+                if( f != null )
                 {
-                    File f = new File( outputDir + "/" + zipEntry.getName() );
-
-                    f = f.getParentFile();
-                    if( f != null )
-                    {
-                        FileUtil.makeDirs(f.getPath());
-                        unSevenZEntry( zipfile, zipEntry, outputDir );
-                    }
+                    FileUtil.makeDirs(f.getPath());
+                    unSevenZEntry( zipfile, zipEntry, outputDir );
                 }
             }
         }
@@ -812,17 +769,6 @@ public final class FileUtil
         catch (java.lang.OutOfMemoryError e)
         {
             Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + fileUri.toString() );
-        }
-        finally
-        {
-            if( zipfile != null )
-                try
-                {
-                    zipfile.close();
-                }
-                catch( IOException ignored )
-                {
-                }
         }
     }
 
@@ -922,36 +868,21 @@ public final class FileUtil
         makeDirs(destDir.getPath());
         String entryName = new File( zipEntryName ).getName();
         File extractedFile = new File( destDir, entryName );
-        try
+
+        // Open the output stream (throws exceptions)
+        try (OutputStream outStream = new FileOutputStream( extractedFile );
+             BufferedOutputStream bufferedOutStream = new BufferedOutputStream( outStream ))
         {
-            // Open the output stream (throws exceptions)
-            OutputStream outStream = new FileOutputStream( extractedFile );
-            try
+            // Write the first four bytes we already peeked at (throws exceptions)
+            bufferedOutStream.write( buffer, 0, 4 );
+
+            // Read/write the remainder of the zip entry (throws exceptions)
+            int n;
+            while( ( n = inStream.read( buffer ) ) >= 0 )
             {
-                // Buffer the stream
-                outStream = new BufferedOutputStream( outStream );
-                
-                // Write the first four bytes we already peeked at (throws exceptions)
-                outStream.write( buffer, 0, 4 );
-                
-                // Read/write the remainder of the zip entry (throws exceptions)
-                int n;
-                while( ( n = inStream.read( buffer ) ) >= 0 )
-                {
-                    outStream.write( buffer, 0, n );
-                }
-                return extractedFile;
+                bufferedOutStream.write( buffer, 0, n );
             }
-            catch( IOException e )
-            {
-                Log.w( "extractRomFile", e );
-                return null;
-            }
-            finally
-            {
-                // Flush output stream and guarantee no memory leaks
-                outStream.close();
-            }
+            return extractedFile;
         }
         catch( IOException e )
         {
@@ -960,76 +891,75 @@ public final class FileUtil
         }
     }
 
-    public static String ExtractFirstROMFromZip(String zipPath, String unzippedRomDir)
+    public static String ExtractFirstROMFromZip(Context context, Uri zipPath, String unzippedRomDir)
     {
-        try
-        {
-            ZipFile zipFile = new ZipFile( zipPath );
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while ( entries.hasMoreElements() ) {
-                ZipEntry zipEntry = entries.nextElement();
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(zipPath, "r");
+             ZipInputStream zipfile = new ZipInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))) {
 
-                try
-                {
-                    InputStream zipStream = zipFile.getInputStream( zipEntry );
-                    File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
+            ZipEntry entry = zipfile.getNextEntry();
+            File outputFile = new File(unzippedRomDir);
+
+            while (entry != null) {
+                if (!entry.isDirectory()) {
+                    // Check for malformed zip files
+                    File securityTestFile = new File(unzippedRomDir, entry.getName());
+                    String canonicalPath = securityTestFile.getCanonicalPath();
+                    if (!canonicalPath.startsWith(outputFile.getCanonicalPath())) {
+                        break;
+                    }
+
+                    File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), entry.getName(), zipfile );
                     RomHeader header = new RomHeader(extractedFile);
 
                     if( extractedFile != null && header.isValid)
                     {
-                        zipStream.close();
+                        zipfile.close();
                         return extractedFile.getPath();
                     }
                 }
-                catch( IOException|java.lang.IllegalArgumentException e )
-                {
-                    Log.w( "ExtractFirstROMFrom", e );
-                }
+
+                entry = zipfile.getNextEntry();
             }
-            zipFile.close();
-        }
-        catch( IOException|ArrayIndexOutOfBoundsException e )
-        {
-            Log.w( "ExtractFirstROMFrom", e );
+        } catch (Exception ze) {
+            Log.e("ExtractFirst", "Exception: ", ze);
         }
 
         return null;
     }
 
-    public static String ExtractFirstROMFromSevenZ(String zipPath, String unzippedRomDir)
+    public static String ExtractFirstROMFromSevenZ(Context context, Uri zipPath, String unzippedRomDir)
     {
-        try
-        {
-            SevenZFile zipFile = new SevenZFile(new File(zipPath));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return null;
+        }
+
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(zipPath, "r");
+             FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+             FileChannel fileChannel = fis.getChannel();
+             SevenZFile zipfile = new SevenZFile(fileChannel)){
+
             SevenZArchiveEntry zipEntry;
 
-            while ( (zipEntry = zipFile.getNextEntry()) != null ) {
+            while( (zipEntry = zipfile.getNextEntry()) != null)
+            {
+                final InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipfile));
+                File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
+                RomHeader header = new RomHeader(extractedFile);
 
-                try
+                if( extractedFile != null && header.isValid)
                 {
-                    final InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
-                    File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
-                    RomHeader header = new RomHeader(extractedFile);
-
-                    if( extractedFile != null && header.isValid)
-                    {
-                        zipFile.close();
-                        return extractedFile.getPath();
-                    }
-                }
-                catch( IOException e )
-                {
-                    Log.w( "ExtractFirstROM", e );
+                    zipfile.close();
+                    return extractedFile.getPath();
                 }
             }
         }
-        catch( IOException|ArrayIndexOutOfBoundsException e )
+        catch( Exception ze )
         {
-            Log.w( "ExtractFirstROM", e );
+            Log.e( "unzipAll", "Exception: ", ze );
         }
         catch (java.lang.OutOfMemoryError e)
         {
-            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + zipPath );
+            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + zipPath.toString() );
         }
 
         return null;
@@ -1164,5 +1094,59 @@ public final class FileUtil
         }
 
         return file;
+    }
+
+    public static String computeMd5( InputStream inputStream  ) throws java.io.IOException, NoSuchAlgorithmException
+    {
+        // From http://stackoverflow.com/a/16938703
+        inputStream.mark( 1 );
+        int firstByte = inputStream.read();
+        inputStream.reset();
+
+        MessageDigest digester = MessageDigest.getInstance( "MD5" );
+        byte[] bytes = new byte[8192];
+        int byteCount;
+        while( ( byteCount = inputStream.read( bytes ) ) > 0 )
+        {
+            switch( firstByte )
+            {
+                case 0x37:
+                    // Byteswap if .v64 image
+                    for( int i = 0; i < byteCount; i += 2 )
+                    {
+                        byte temp = bytes[i];
+                        bytes[i] = bytes[i + 1];
+                        bytes[i + 1] = temp;
+                    }
+                    break;
+                case 0x40:
+                    // Wordswap if .n64 image
+                    for( int i = 0; i < byteCount; i += 4 )
+                    {
+                        byte temp = bytes[i];
+                        bytes[i] = bytes[i + 3];
+                        bytes[i + 3] = temp;
+                        temp = bytes[i + 1];
+                        bytes[i + 1] = bytes[i + 2];
+                        bytes[i + 2] = temp;
+                    }
+                    break;
+                default:
+                    // No swap otherwise
+                    break;
+            }
+            digester.update( bytes, 0, byteCount );
+        }
+        return convertHashToString( digester.digest() );
+    }
+
+    private static String convertHashToString( byte[] md5Bytes )
+    {
+        StringBuilder stringBuilder = new StringBuilder(100);
+        for( int aByte : md5Bytes )
+        {
+            stringBuilder.append(Integer.toString( ( aByte & 0xff ) + 0x100, 16 ).substring( 1 ));
+        }
+        return stringBuilder.toString().toUpperCase( Locale.US );
     }
 }
