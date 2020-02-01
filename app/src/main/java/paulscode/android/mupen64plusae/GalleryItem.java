@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -276,11 +277,14 @@ public class GalleryItem
 
                     if( item.isHeading )
                     {
+                        tv1.setText( item.toString().toUpperCase() );
+                        tv1.setGravity(Gravity.BOTTOM);
                         view.setClickable( false );
                         view.setLongClickable( false );
                         linearLayout.setPadding( 0, 0, 0, 0 );
-                        tv1.setPadding( 5, 10, 0, 0 );
-                        tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 18.0f );
+                        tv1.setPadding( 25, 10, 0, 0 );
+                        tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 14.5f );
+                        tv1.setLetterSpacing(0.1f);
                         artView.setVisibility( View.GONE );
                     }
                     else

@@ -24,9 +24,9 @@
             android:nextFocusLeft="@id/menuItem_openDrawer"
             android:nextFocusRight="@id/menuItem_refreshRoms"
             android:paddingBottom="72dip"
-            android:paddingLeft="@dimen/galleryHalfSpacing"
-            android:paddingRight="@dimen/galleryHalfSpacing"
-            android:paddingTop="72dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="76dp"
             android:scrollbars="vertical" />
 
         <ImageView
@@ -41,8 +41,9 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/mupen_black"
-            app:elevation="0dp">
+            app:elevation="0dp"
+            android:background="@drawable/bg_black_gradient">
+<!--            android:background="@color/mupen_black">-->
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -104,6 +105,8 @@
             android:nextFocusUp="@id/gridview"
             android:nextFocusLeft="@id/gridview"
             android:background="@color/blue1"
+            app:elevation="5dp"
+            android:elevation="5dp"
             app:srcCompat="@drawable/ic_fab_refresh_roms"
             android:onClick="onFabRefreshRomsClick"
             />
