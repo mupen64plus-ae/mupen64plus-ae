@@ -530,6 +530,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "setSlotFromPrompt");
 
+        if (mCoreService == null) {
+            return;
+        }
+
         final CharSequence title = requireActivity().getString(R.string.menuItem_selectSlot);
 
         Prompt.promptRadioInteger( requireActivity(), title, mCoreService.getSlot(), 0, 2, 5,
