@@ -115,6 +115,7 @@ class CoreInterface
     }
 
     final static long MAX_7ZIP_FILE_SIZE = 100*1024*1024;
+    private static final String TAG = "CoreInterface";
 
     // Core state callbacks - used by NativeImports
     private final ArrayList<OnStateCallbackListener> mStateCallbackListeners = new ArrayList<>();
@@ -141,17 +142,9 @@ class CoreInterface
 
     private HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
-    private CoreLibrary.DebugCallback mDebugCallBackCore = new CoreLibrary.DebugCallback() {
-        public void invoke(Pointer Context, int level, String message) {
-            DebugCallback(Context, level, message);
-        }
-    };
+    private CoreLibrary.DebugCallback mDebugCallBackCore = this::DebugCallback;
 
-    private PluginLibrary.DebugCallback mDebugCallBackPlugin = new PluginLibrary.DebugCallback() {
-        public void invoke(Pointer Context, int level, String message) {
-            DebugCallback(Context, level, message);
-        }
-    };
+    private PluginLibrary.DebugCallback mDebugCallBackPlugin = this::DebugCallback;
 
     private CoreLibrary.StateCallback mStateCallBack = new CoreLibrary.StateCallback() {
 
@@ -174,53 +167,43 @@ class CoreInterface
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = new CoreTypes.m64p_media_loader.get_gb_cart_rom() {
-        public String invoke(Pointer cb_data, int controller_num) {
-            if (new File(mGbRomPaths.get(controller_num)).exists()) {
-                return mGbRomPaths.get(controller_num);
-            } else {
-                return null;
-            }
+    private CoreTypes.m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = (cb_data, controller_num) -> {
+        if (new File(mGbRomPaths.get(controller_num)).exists()) {
+            return mGbRomPaths.get(controller_num);
+        } else {
+            return null;
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = new CoreTypes.m64p_media_loader.get_gb_cart_ram() {
-        public String invoke(Pointer cb_data, int controller_num) {
-            if (new File(mGbRamPaths.get(controller_num)).exists()) {
-                return mGbRamPaths.get(controller_num);
-            } else {
-                return null;
-            }
+    private CoreTypes.m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = (cb_data, controller_num) -> {
+        if (new File(mGbRamPaths.get(controller_num)).exists()) {
+            return mGbRamPaths.get(controller_num);
+        } else {
+            return null;
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_dd_rom mDdRomCallback = new CoreTypes.m64p_media_loader.get_dd_rom() {
-        public String invoke(Pointer cb_data) {
-            if (new File(mDdRom).exists()) {
-                return mDdRom;
-            } else {
-                return null;
-            }
+    private CoreTypes.m64p_media_loader.get_dd_rom mDdRomCallback = cb_data -> {
+        if (new File(mDdRom).exists()) {
+            return mDdRom;
+        } else {
+            return null;
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_dd_disk mDdDiskCallback = new CoreTypes.m64p_media_loader.get_dd_disk() {
-        public String invoke(Pointer cb_data) {
-            if (new File(mDdDisk).exists()) {
-                return mDdDisk;
-            } else {
-                return null;
-            }
+    private CoreTypes.m64p_media_loader.get_dd_disk mDdDiskCallback = cb_data -> {
+        if (new File(mDdDisk).exists()) {
+            return mDdDisk;
+        } else {
+            return null;
         }
     };
 
-    private AeBridgeLibrary.FpsCounterCallback mFpsCounterCallback = new AeBridgeLibrary.FpsCounterCallback() {
-        public void invoke(int fps) {
-            synchronized (mFpsListeners)
-            {
-                for (OnFpsChangedListener listener: mFpsListeners) {
-                    listener.onFpsChanged(fps);
-                }
+    private AeBridgeLibrary.FpsCounterCallback mFpsCounterCallback = fps -> {
+        synchronized (mFpsListeners)
+        {
+            for (OnFpsChangedListener listener: mFpsListeners) {
+                listener.onFpsChanged(fps);
             }
         }
     };
