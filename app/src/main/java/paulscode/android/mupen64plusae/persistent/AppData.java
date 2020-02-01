@@ -135,9 +135,13 @@ public class AppData
             {
                 return ANGRYLION;
             }
-            else
+            else if (TextUtils.isEmpty(pluginText) || pluginText.toLowerCase().contains("dummy"))
             {
                 return DUMMY;
+            }
+            else
+            {
+                return GLIDE64MK2;
             }
         }
     }
