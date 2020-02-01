@@ -35,6 +35,7 @@
         android:banner="@drawable/banner"
         android:theme="@style/appTheme"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         tools:ignore="UnusedAttribute"
         android:fullBackupContent="@xml/backup_descriptor">
         <activity

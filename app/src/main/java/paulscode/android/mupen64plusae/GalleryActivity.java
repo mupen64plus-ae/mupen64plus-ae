@@ -554,7 +554,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGameStartedExternally = true;
         String finalRomPath = givenRomPath;
 
-        RomHeader header = new RomHeader(finalRomPath);
+        Uri finalRomPathUri = Uri.fromFile(new File(finalRomPath));
+
+        RomHeader header = new RomHeader(this, finalRomPathUri);
 
         boolean successful = false;
         if(header.isZip)
@@ -565,9 +567,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             finalRomPath = FileUtil.ExtractFirstROMFromSevenZ(givenRomPath, mGlobalPrefs.unzippedRomsDir);
         }
 
-        if(finalRomPath != null)
+        header = new RomHeader(finalRomPath);
+        if(finalRomPath != null && header.isValid)
         {
-            // Asynchronously compute MD5 and launch game when finished
+            // Synchronously compute MD5 and launch game when finished
             final String computedMd5 = ComputeMd5Task.computeMd5( new File( finalRomPath ) );
 
             if(computedMd5 != null)
@@ -582,10 +585,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
 
                 successful = true;
+                String romPathUri = Uri.fromFile(new File(finalRomPath)).toString();
 
                 final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File(finalRomPath).getName(), header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
-                launchGameActivity( finalRomPath, null, computedMd5, header.crc, header.name,
+                launchGameActivity( romPathUri, null, computedMd5, header.crc, header.name,
                         header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false );
             }
         }
