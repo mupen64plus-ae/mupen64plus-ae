@@ -51,6 +51,7 @@
     <!-- Dark (default) Theme Styles -->
     <style name="MupenTheme_Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:navigationBarColor">@color/mupen_black</item>
     </style>
 
     <style name="MupenTheme_Dark_Sidebar" parent="MupenTheme_Dark">
