@@ -261,6 +261,10 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
 
     private boolean createBackupAndMove(String srcPath, String dstPath)
     {
+        if (!new File(srcPath).exists()) {
+            return true;
+        }
+        
         boolean backupSuccess = FileUtil.copyFile(new File(srcPath), new File(srcPath + ".bak"));
         boolean copySuccess = FileUtil.copyFile(new File(srcPath), new File(dstPath));
 
