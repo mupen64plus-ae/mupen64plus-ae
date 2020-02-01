@@ -3,9 +3,9 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/menuItem_library"
+        android:id="@+id/menuItem_refreshRoms"
         android:icon="@drawable/ic_controller"
-        android:title="@string/categoryLibrary_title"/>
+        android:title="@string/menuItem_refreshRoms"/>
     <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"

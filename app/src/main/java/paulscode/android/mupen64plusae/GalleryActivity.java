@@ -49,11 +49,9 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.view.MenuItem.OnActionExpandListener;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -63,7 +61,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
@@ -269,31 +266,33 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         FloatingActionButton floatingActionButton = findViewById(R.id.menuItem_refreshRoms);
 
-        mGridView.addOnScrollListener(
-                new RecyclerView.OnScrollListener()
-                {
-                    @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState)
+        if (floatingActionButton != null) {
+            mGridView.addOnScrollListener(
+                    new RecyclerView.OnScrollListener()
                     {
-                        super.onScrollStateChanged(recyclerView, newState);
+                        @Override
+                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState)
+                        {
+                            super.onScrollStateChanged(recyclerView, newState);
 
-                        if(newState == RecyclerView.SCROLL_STATE_IDLE)
-                        {
-                            floatingActionButton.show();
+                            if(newState == RecyclerView.SCROLL_STATE_IDLE)
+                            {
+                                floatingActionButton.show();
+                            }
+                            else
+                            {
+                                floatingActionButton.hide();
+                            }
                         }
-                        else
+
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
                         {
-                            floatingActionButton.hide();
+                            super.onScrolled(recyclerView, dx, dy);
                         }
                     }
-
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
-                    {
-                        super.onScrolled(recyclerView, dx, dy);
-                    }
-                }
-        );
+            );
+        }
 
         refreshGridAsync();
 
@@ -394,14 +393,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerList.getMenu().getItem( 0 ).setChecked( true );
 
         // Handle menu item selections
-        mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
-        {
-            @Override
-            public void onClick( MenuItem menuItem )
-            {
-                GalleryActivity.this.onOptionsItemSelected( menuItem );
-            }
-        } );
+        mDrawerList.setOnClickListener(GalleryActivity.this::onOptionsItemSelected);
 
         // Configure the game information drawer
         mGameSidebar = findViewById( R.id.gameSidebar );
@@ -538,6 +530,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mSearchView.setQuery( mSearchQuery, true );
         }
+
+        mSearchView.setOnQueryTextFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                showInputMethod(view.findFocus());
+            }
+        });
+    }
+
+    private void showInputMethod(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(view, 0);
+        }
     }
 
     private void launchGameOnCreation(String givenRomPath)
@@ -595,8 +600,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         switch (item.getItemId())
         {
-        case R.id.menuItem_library:
-            mDrawerLayout.closeDrawer(GravityCompat.START);
+        case R.id.menuItem_refreshRoms:
+            Intent intent = new Intent(this, ScanRomsActivity.class);
+            startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
             return true;
         case R.id.menuItem_categoryLibrary:
             mRefreshNeeded = true;
@@ -829,7 +835,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 if (destLocation != null) {
 
                     // Delete the autosaves folder before copying, otherwise the autosaves accumulate
-                    DocumentFile gameFolder = null;
+                    DocumentFile gameFolder;
                     if ((gameFolder = destLocation.findFile(alternateFolder1)) != null ||
                             (gameFolder = destLocation.findFile(alternateFolder2)) != null ||
                             (gameFolder = destLocation.findFile(alternateFolder3)) != null) {
@@ -935,9 +941,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mDrawerLayout.closeDrawer( GravityCompat.START );
         }
-        else if(mSearchView != null && !mSearchView.isIconified()) {
-            mSearchView.onActionViewCollapsed();
+        else if(mSearchView != null && !TextUtils.isEmpty(mSearchQuery)) {
             mSearchQuery = "";
+            mSearchView.setQuery( mSearchQuery, true );
         }
         else
         {
