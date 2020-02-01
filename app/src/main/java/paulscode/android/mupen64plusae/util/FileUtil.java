@@ -255,15 +255,16 @@ public final class FileUtil
             }
 
             FileUtil.makeDirs(f.getPath());
-
+            boolean success = false;
             try (FileChannel in = new FileInputStream(src).getChannel();
                  FileChannel out = new FileOutputStream(dest).getChannel()) {
                 in.transferTo(0, in.size(), out);
+                success = true;
             } catch (Exception e) {
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
-            return true;
+            return success;
         }
     }
 
