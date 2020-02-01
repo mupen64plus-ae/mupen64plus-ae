@@ -550,15 +550,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 if (mRomExtractionListener != null) mRomExtractionListener.romExtractionFinished();
             }
 
-            // Check to make sure that no libraries are dummy
-            if (openSuccess) {
-                openSuccess = !mGamePrefs.videoPluginLib.getPluginLib().equals("dummy") &&
-                        !mGamePrefs.audioPluginLib.getPluginLib().equals("dummy") &&
-                        !AppData.InputPlugin.RAPHNET.getPluginLib().equals("dummy") &&
-                        !AppData.InputPlugin.ANDROID.getPluginLib().equals("dummy") &&
-                        !mGamePrefs.rspPluginLib.getPluginLib().equals("dummy");
-            }
-
             if (openSuccess)
             {
                 for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())

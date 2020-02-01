@@ -161,13 +161,17 @@ public class AppData
 
         static AudioPlugin getPlugin(GlobalPrefs prefs)
         {
-            if (prefs.audioSLESFloatingPoint)
-            {
-                return SLES_FP;
-            }
-            else
-            {
-                return SLES;
+            if (prefs.audioPlugin.name.contains("sles")) {
+                if (prefs.audioSLESFloatingPoint)
+                {
+                    return SLES_FP;
+                }
+                else
+                {
+                    return SLES;
+                }
+            } else {
+                return DUMMY;
             }
         }
     }

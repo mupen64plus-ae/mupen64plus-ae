@@ -1124,7 +1124,7 @@
         <item>@string/videoPlugin_entryAngrylion</item>
     </string-array>
     <string-array name="videoPlugin_values" translatable="false">
-        <item></item>
+        <item>dummy</item>
         <item>glide64mk2</item>
         <item>GLideN64</item>
         <item>gln64</item>
@@ -1137,12 +1137,10 @@
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries" translatable="false">
         <item>@string/audioPlugin_entryNone</item>
-        <item>@string/audioPlugin_entryNoneNoSpeedLimit</item>
         <item>@string/audioPlugin_entrySles</item>
     </string-array>
     <string-array name="audioPlugin_values" translatable="false">
-        <item></item>
-        <item>nospeedlimit</item>
+        <item>dummy</item>
         <item>sles</item>
     </string-array>
 

@@ -554,6 +554,13 @@ class CoreInterface
      */
     int coreAttachPlugin(CoreTypes.m64p_plugin_type pluginType, String pluginName)
     {
+        Log.w("CoreInterface", "Using plugin for type: " + pluginType.name() + ":" + pluginName);
+
+        if (pluginName.contains("dummy")) {
+            Log.w("CoreInterface", "Using dummy plugin for type: " + pluginType.name());
+            return 0;
+        }
+
         mPlugins.put(pluginType, Native.load(pluginName, PluginLibrary.class));
 
         IntByReference pluginTypeInt = new IntByReference(0);

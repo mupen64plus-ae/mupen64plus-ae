@@ -636,7 +636,7 @@ public class GlobalPrefs
         if( audioPlugin.enabled )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );
         else
-            isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
+            isFramelimiterEnabled = true;
 
         // User interface modes
         final String navMode = mPreferences.getString( "navigationMode", "auto" );
