@@ -456,7 +456,7 @@
     <string name="assetExtractor_initializing">Wird initialisiert</string>
     <string name="assetExtractor_progress">%1$.0f%% fertig: %2$s</string>
     <string name="assetExtractor_finished">Abgeschlossen</string>
-    <string name="assetExtractor_failed">Fehler beim Extrahieren der App Daten.\nBitte entferne das USB-Kabel, starte das Gerät neu und starte dann die App erneut.\nBesuche %1$s für Hilfe.</string>
+    <string name="assetExtractor_failed">Fehler beim Extrahieren der App Daten.</string>
     <string name="assetExtractor_error">Fehler</string>
     <string name="assetExtractor_permissions_title">Berechtigungen</string>
     <!-- Cheats Configuration -->

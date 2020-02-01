@@ -618,7 +618,7 @@
     <string name="assetExtractor_finished">Echuet</string>
     <string name="assetExtractor_failed">Fazi da vare eztennadur roadennoù an arload.\nDilugit ar fun USB, mar plij, adloc\'hit an drobarzhell, hag adloc\'hit an arload.\NEvit kaout sikour, sellit ouzh ar bajenn %1$s.</string>
     <string name="assetExtractor_error">Fazi</string>
-    <string name="assetExtractor_failed_permissions">An arload-mañ n\'hall ket kenderc\'hel hep an aotreadurioù-se</string>
+    <string name="assetExtractor_failed_permissions">An arload-mañ</string>
     <string name="assetExtractor_permissions_title">Aotreadurioù</string>
     <string name="assetExtractor_permissions_rationale">Mupen64Plus AE a rank bezañ gouest da: \nLenn ar stokadur evit lenn ar restroù ROM, enrollit ar stadoù, hag ar c\'hefluniadurioù.\nSkrivit ho stokadur evit skrivañ ar c\'hefluniadur hag enrollañ ar roadennoù.</string>
 

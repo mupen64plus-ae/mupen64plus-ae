@@ -279,7 +279,7 @@
   <string name="assetExtractor_initializing">Alustaa</string>
   <string name="assetExtractor_progress">%1$.0f%% tehty: %2$s</string>
   <string name="assetExtractor_finished">Valmistunut</string>
-  <string name="assetExtractor_failed">Virhe app datan purkamisessa.\nOle hyvä ja irroita USB-kaapeli, uudelleenkäynnistä laite, ja avaa app uudelleen.\nSaadaksesi apua, vieraile %1$s.</string>
+  <string name="assetExtractor_failed">Virhe app datan purkamisessa.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Huijaus %1$d</string>
   <string name="cheats_longPress">(pitkään paina täydelle tekstille)</string>

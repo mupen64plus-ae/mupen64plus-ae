@@ -282,7 +282,7 @@
   <string name="assetExtractor_initializing">Initialisation</string>
   <string name="assetExtractor_progress">%1$.0f%% effectué : %2$s</string>
   <string name="assetExtractor_finished">Terminé</string>
-  <string name="assetExtractor_failed">Erreur lors de l\'extraction des données de l\'application.\nVeuillez débrancher puis rebrancher le câble USB, redémarrer l\'appareil puis relancer l\'application.\nPour un complément d\'aide, merci de visiter %1$s.</string>
+  <string name="assetExtractor_failed">Erreur lors de l\'extraction des données de l\'application.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(appui long pour obtenir le texte complet)</string>

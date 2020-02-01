@@ -297,9 +297,7 @@
     <string name="videoHardwareType_entryStandard">标准配置</string>
     <string name="videoPolygonOffset_summary">自定义闪烁减少偏差</string>
     <string name="videoPolygonOffset_title">多边形位移</string>
-    <string name="assetExtractor_failed">"提取应用数据时出错。
-请拔掉USB连接线，重新启动设备，并重新启动应用程序。
-有关帮助，请访问 %1$s。"</string>
+    <string name="assetExtractor_failed">"提取应用数据时出错。"</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">无-调试 （音频被禁用，没有速度限制）</string>
     <string name="cacheRomInfo_computingMD5">计算 MD5...</string>
     <string name="cacheRomInfo_downloadingArt">正在下载封面...</string>

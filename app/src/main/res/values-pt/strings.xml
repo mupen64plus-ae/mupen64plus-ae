@@ -279,7 +279,7 @@
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% concluído: %2$s</string>
   <string name="assetExtractor_finished">Finalizado</string>
-  <string name="assetExtractor_failed">Erro extraindo dados do aplicativo.\nPor favor, desconecte o USB, reinicie o aparelho, e abra novamente o aplicativo.\nPara obter ajuda, por favor visite %1$s.</string>
+  <string name="assetExtractor_failed">Erro extraindo dados do aplicativo.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(toque longo para ver texto completo)</string>

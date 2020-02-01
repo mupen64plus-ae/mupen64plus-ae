@@ -279,7 +279,7 @@
   <string name="assetExtractor_initializing">Pokretanje</string>
   <string name="assetExtractor_progress">%1$.0f%% : %2$s</string>
   <string name="assetExtractor_finished">Završeno</string>
-  <string name="assetExtractor_failed">Problem pri odpakiravanju podataka aplikacije.\nMolim vas, odspojite USB kabel, ponovo učitajte uređaj (reboot), i ponovo pokrenite aplikaciju.\nZa pomoć posjetite %1$s.</string>
+  <string name="assetExtractor_failed">Problem pri odpakiravanju podataka aplikacije.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Opcija varanja %1$d</string>
   <string name="cheats_longPress">(držati za više detalja)</string>
