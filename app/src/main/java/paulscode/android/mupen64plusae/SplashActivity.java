@@ -462,6 +462,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             }
             builder.append("</small>");
             mTextView.setText( AppData.fromHtml( builder.toString() ) );
+            mAppData.putAppVersion(0);
         }
     }
 
