@@ -38,7 +38,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.FileUtils;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -111,6 +110,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
          */
         void romExtractionFinished();
     }
+    
+    private static final String TAG = "CoreService";
 
     public static final String COMPLETE_EXTENSION = "complete";
     public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT";
@@ -159,16 +160,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private GameDataManager mGameDataManager = null;
 
     //Only find files that end with .sav
-    final FileFilter screenshotFilter = new FileFilter(){
-
-        @Override
-        public boolean accept(File pathname)
-        {
-            //It must match this format "yyyy-MM-dd-HH-mm-ss"
-            final String fileName = pathname.getName();
-            return fileName.toLowerCase().endsWith("png");
-        }
-
+    final FileFilter screenshotFilter = pathname -> {
+        //It must match this format "yyyy-MM-dd-HH-mm-ss"
+        final String fileName = pathname.getName();
+        return fileName.toLowerCase().endsWith("png");
     };
 
     private CoreInterface mCoreInterface = new CoreInterface();
@@ -253,7 +248,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         //Resume to allow save to take place
         resumeEmulator();
-        Log.i("CoreService", "Saving file: " + latestSave);
+        Log.i(TAG, "Saving file: " + latestSave);
 
         if (shutdownOnFinish)
         {
@@ -274,20 +269,20 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     if (newValue == 1) {
                         try {
                             if (!new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
-                                Log.e("CoreService", "Unable to save file due to file write failure: " + latestSave);
+                                Log.e(TAG, "Unable to save file due to file write failure: " + latestSave);
                             }
                         } catch (IOException e) {
-                            Log.e("CoreService", "Unable to save file due to file write failure: " + latestSave);
+                            Log.e(TAG, "Unable to save file due to file write failure: " + latestSave);
                         }
                     } else {
-                        Log.e("CoreService", "Unable to save file due to bad return: " + latestSave);
+                        Log.e(TAG, "Unable to save file due to bad return: " + latestSave);
                     }
 
                     if (shutdownOnFinish) {
                         shutdownEmulator();
                     }
                 } else {
-                    Log.i("CoreService", "Param changed = " + paramChanged + " value = " + newValue);
+                    Log.i(TAG, "Param changed = " + paramChanged + " value = " + newValue);
                 }
             }
         } );
@@ -468,7 +463,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             // processors is only available in API level 17
             if(Runtime.getRuntime().availableProcessors() > 1 && mGlobalPrefs.useHighPriorityThread) {
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-                Log.i("CoreService", "Using high priority mode");
+                Log.i(TAG, "Using high priority mode");
             }
 
             if (!mUseRaphnetDevicesIfAvailable) {
@@ -730,7 +725,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onCreate() {
 
-        Log.i("CoreService", "OnCreate");
+        Log.i(TAG, "OnCreate");
 
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
@@ -835,7 +830,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.i("CoreService", "onStartCommand");
+        Log.i(TAG, "onStartCommand");
 
         if(intent != null)
         {
@@ -872,7 +867,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, mAppData.mupencheat_txt);
                 if( cheatLocation == null  )
                 {
-                    Log.w( "CoreService", "No cheat section found for '" + mRomCrc + "'" );
+                    Log.w( TAG, "No cheat section found for '" + mRomCrc + "'" );
                 }
 
                 mCheats = CheatUtils.populateWithPosition( cheatLocation, mRomCrc, mRomCountryCode, getBaseContext() );
@@ -900,7 +895,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onDestroy()
     {
-        Log.i("CoreService", "onDestroy");
+        Log.i(TAG, "onDestroy");
 
         // Unregister since the activity is about to be closed.
         unregisterReceiver(mMessageReceiver);
@@ -928,7 +923,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     public void setCoreServiceListener(CoreServiceListener coreServiceListener)
     {
-        Log.i("CoreService", "setCoreServiceListener");
+        Log.i(TAG, "setCoreServiceListener");
         mListener = coreServiceListener;
 
         if(!mIsRunning)
@@ -949,7 +944,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     public void setRomExtractionListener(RomExtractionListener romExtractionListener)
     {
-        Log.i("CoreService", "setRomExtractionListener");
+        Log.i(TAG, "setRomExtractionListener");
         mRomExtractionListener = romExtractionListener;
     }
 
@@ -973,7 +968,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             //Use a 5 second timeout to save before killing the core process
             if(seconds - mLastFpsChangedTime > 5)
             {
-                Log.e("CoreService", "Killing Core due to no response");
+                Log.e(TAG, "Killing Core due to no response");
                 forceExit();
             }
 
@@ -985,25 +980,22 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     };
 
-    Runnable mExportScreenshotChecker = new Runnable() {
-        @Override
-        public void run() {
-            File workingDirFile = new File (mWorkingDir);
-            File[] workingDirFiles = workingDirFile.listFiles(screenshotFilter);
+    Runnable mExportScreenshotChecker = () -> {
+        File workingDirFile = new File (mWorkingDir);
+        File[] workingDirFiles = workingDirFile.listFiles(screenshotFilter);
 
-            if (workingDirFiles != null && workingDirFiles.length != 0) {
+        if (workingDirFiles != null && workingDirFiles.length != 0) {
 
-                for (File file : workingDirFiles) {
-                    exportScreenshot(file);
-                    if (file.delete()) {
-                        Log.e("CoreService", "Could not delete file " + file.getAbsolutePath());
-                    }
+            for (File file : workingDirFiles) {
+                exportScreenshot(file);
+                if (file.delete()) {
+                    Log.e(TAG, "Could not delete file " + file.getAbsolutePath());
                 }
-
-            } else {
-                // Files are not there yet, try again
-                mScreenshotRequested = true;
             }
+
+        } else {
+            // Files are not there yet, try again
+            mScreenshotRequested = true;
         }
     };
 
@@ -1045,7 +1037,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 try (OutputStream stream = resolver.openOutputStream(uri)) {
                     if (stream != null) {
                         if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
-                            Log.e("CoreService", "Could not save picture: " + file.getAbsolutePath());
+                            Log.e(TAG, "Could not save picture: " + file.getAbsolutePath());
                         }
                     }
                 } catch (IOException e) {
