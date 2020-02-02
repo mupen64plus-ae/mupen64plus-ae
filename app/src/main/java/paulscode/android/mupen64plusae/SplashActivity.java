@@ -24,8 +24,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -49,6 +47,7 @@ import android.util.Log;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.tvprovider.media.tv.Channel;
 import androidx.tvprovider.media.tv.TvContractCompat;
 import androidx.tvprovider.media.tv.ChannelLogoUtils;
@@ -280,36 +279,13 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
             {
                 //Show dialog asking for permissions
+                //Show dialog stating that the app can't continue without proper permissions
                 mPermissionsNeeded = new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.assetExtractor_permissions_title))
                     .setMessage(getString(R.string.assetExtractor_permissions_rationale))
-                    .setPositiveButton(getString(android.R.string.ok), new OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            actuallyRequestPermissions();
-                        }
-
-                    }).setNegativeButton(getString(android.R.string.cancel), new OnClickListener()
-                    {
-                        //Show dialog stating that the app can't continue without proper permissions
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            mPermissionsNeeded = new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
-                                .setMessage(getString(R.string.assetExtractor_failed_permissions))
-                                .setPositiveButton(getString( android.R.string.ok ), new OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which)
-                                    {
-                                        SplashActivity.this.finish();
-                                    }
-
-                                }).setCancelable(false).show();
-                        }
-                    }).setCancelable(false).show();
+                    .setPositiveButton(getString(android.R.string.ok), (dialog, which) -> actuallyRequestPermissions()).setNegativeButton(getString(android.R.string.cancel), (dialog, which) -> mPermissionsNeeded = new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
+                        .setMessage(getString(R.string.assetExtractor_failed_permissions))
+                        .setPositiveButton(getString( android.R.string.ok ), (dialog1, which1) -> SplashActivity.this.finish()).setCancelable(false).show()).setCancelable(false).show();
             }
             else
             {
@@ -357,15 +333,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 // permission denied, boo! Disable the app.
                 mPermissionsNeeded = new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
                     .setMessage(getString(R.string.assetExtractor_failed_permissions))
-                    .setPositiveButton(getString( android.R.string.ok ), new OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            SplashActivity.this.finish();
-                        }
-
-                    }).setCancelable(false).show();
+                    .setPositiveButton(getString( android.R.string.ok ), (dialog, which) -> SplashActivity.this.finish()).setCancelable(false).show();
             }
             else
             {
@@ -399,14 +367,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     }
 
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
-    private final Runnable extractAssetsTaskLauncher = new Runnable()
-    {
-        @Override
-        public void run()
-        {
-            extractAssets();
-        }
-    };
+    private final Runnable extractAssetsTaskLauncher = this::extractAssets;
 
     /**
      * Extract assets
@@ -429,29 +390,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onExtractAssetsFinished( List<Failure> failures )
     {
-        if( failures.size() == 0 )
-        {
-            // Extraction succeeded, record new asset version and merge cheats
-            mTextView.setText( R.string.assetExtractor_finished );
-            mAppData.putAssetCheckNeeded( false );
-            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
-
-            if(!RomDatabase.getInstance().hasDatabaseFile())
-            {
-                RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
-            }
-
-            // Launch gallery activity, passing ROM path if it was provided externally
-            ActivityHelper.startGalleryActivity( this, getIntent() );
-
-            // We never want to come back to this activity, so finish it
-            finish();
-        }
-        else
+        if (failures.size() != 0)
         {
             // Extraction failed, update the on-screen text and don't start next activity
-            final String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
-            final String message = getString( R.string.assetExtractor_failed, weblink );
+            final String message = getString( R.string.assetExtractor_failed );
 
             StringBuilder builder = new StringBuilder();
             builder.append(message.replace( "\n", "<br/>" )).append("<p><small>");
@@ -461,9 +403,32 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 builder.append("<br/>");
             }
             builder.append("</small>");
+
             mTextView.setText( AppData.fromHtml( builder.toString() ) );
-            mAppData.putAppVersion(0);
+            Log.e("SplashActivity", "Setting text: " +  AppData.fromHtml( builder.toString() ));
+
+            mAppData.putAssetCheckNeeded( true );
+
+        } else {
+            mAppData.putAssetCheckNeeded( false );
+            mTextView.setText( R.string.assetExtractor_finished );
         }
+
+        CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
+
+        if(!RomDatabase.getInstance().hasDatabaseFile())
+        {
+            RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+        }
+
+        // We never want to come back to this activity, so finish it
+        final Handler handler = new Handler();
+        long delay = failures.size() != 0 ? 5000 : 0;
+        handler.postDelayed(() -> {
+            // Launch gallery activity, passing ROM path if it was provided externally
+            ActivityHelper.startGalleryActivity( this, getIntent() );
+            SplashActivity.this.finish();
+        }, delay);
     }
 
     private void createChannel()

@@ -215,7 +215,7 @@ public final class FileUtil
      * @param src         Source file
      * @param dest        Desired destination
      * 
-     * @return True if the copy succeeded, false otherwise.
+     * @return True if the copy dsucceeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest )
     {
@@ -233,7 +233,7 @@ public final class FileUtil
         
         if( src.isDirectory())
         {
-            boolean success = true;
+            boolean failure = false;
 
             if (src.exists() && src.list() != null) {
                 String[] files = src.list();
@@ -242,11 +242,11 @@ public final class FileUtil
 
                 for( String file : files )
                 {
-                    success = success && copyFile( new File( src, file ), new File( dest, file ) );
+                    failure = !copyFile( new File( src, file ), new File( dest, file ) ) || failure;
                 }
             }
             
-            return success;
+            return !failure;
         }
         else
         {
@@ -258,16 +258,16 @@ public final class FileUtil
             }
 
             FileUtil.makeDirs(f.getPath());
-            boolean success = false;
+            boolean failure = false;
             try (FileChannel in = new FileInputStream(src).getChannel();
                  FileChannel out = new FileOutputStream(dest).getChannel()) {
                 in.transferTo(0, in.size(), out);
-                success = true;
             } catch (Exception e) {
+                failure = true;
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
-            return success;
+            return !failure;
         }
     }
 
