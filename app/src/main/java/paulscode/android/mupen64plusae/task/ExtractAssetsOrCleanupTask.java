@@ -302,7 +302,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
             failures.add( failure );
         }
 
-        publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+        publishProgress( "Moving: " + mGlobalPrefs.legacyCoverArtDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
         if (!createBackupAndMove(mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir)) {
             Failure failure = new Failure( mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir, Failure.Reason.FILE_IO_EXCEPTION );
@@ -310,7 +310,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
             failures.add( failure );
         }
 
-        publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+        publishProgress( "Moving: " + mGlobalPrefs.legacyProfilesDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
         if (!createBackupAndMove(mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir)) {
             Failure failure = new Failure( mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir, Failure.Reason.FILE_IO_EXCEPTION );
@@ -318,7 +318,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
             failures.add( failure );
         }
 
-        publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+        publishProgress( "Moving: " + mGlobalPrefs.legacyTouchscreenCustomSkinsDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
         ++mCurrentAsset;
         if (!createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir)) {
             Failure failure = new Failure( mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir, Failure.Reason.FILE_IO_EXCEPTION );
