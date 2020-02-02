@@ -23,11 +23,15 @@
             android:gravity="center"
             android:nextFocusLeft="@id/menuItem_openDrawer"
             android:nextFocusRight="@id/menuItem_refreshRoms"
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
             android:paddingBottom="72dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="76dp"
-            android:scrollbars="vertical" />
+            android:paddingTop="76dp"/>
 
         <ImageView
             android:id="@+id/gallery_empty_icon"
@@ -43,7 +47,6 @@
             android:layout_height="wrap_content"
             app:elevation="0dp"
             android:background="@drawable/bg_black_gradient">
-<!--            android:background="@color/mupen_black">-->
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
