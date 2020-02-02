@@ -316,6 +316,10 @@ class CoreInterface
             returnData = null;
         }
 
+        if (returnData.length == 0) {
+            return null;
+        }
+
         return returnData;
     }
 
