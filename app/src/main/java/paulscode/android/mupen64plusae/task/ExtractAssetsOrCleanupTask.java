@@ -265,20 +265,8 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
             return true;
         }
         
-        boolean backupSuccess = FileUtil.copyFile(new File(srcPath), new File(srcPath + ".bak"));
-        boolean copySuccess = FileUtil.copyFile(new File(srcPath), new File(dstPath));
-
-        if (backupSuccess && copySuccess) {
-            File srcFile = new File(srcPath);
-
-            if (srcFile.isDirectory()) {
-                FileUtil.deleteFolder(srcFile);
-            } else {
-                if (!srcFile.delete()) {
-                    Log.e(TAG, "Unable to delete " + srcFile.getPath());
-                }
-            }
-        }
+        boolean backupSuccess = FileUtil.copyFile(new File(srcPath), new File(srcPath + ".bak"), false);
+        boolean copySuccess = FileUtil.copyFile(new File(srcPath), new File(dstPath), true);
 
         return backupSuccess && copySuccess;
     }

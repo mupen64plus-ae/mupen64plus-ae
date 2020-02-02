@@ -217,9 +217,9 @@ public final class FileUtil
      * 
      * @return True if the copy dsucceeded, false otherwise.
      */
-    public static boolean copyFile( File src, File dest )
+    public static boolean copyFile( File src, File dest, boolean move )
     {
-        if( src == null )
+        if( src == null)
         {
             Log.e( "copyFile", "src null" );
             return false;
@@ -242,7 +242,13 @@ public final class FileUtil
 
                 for( String file : files )
                 {
-                    failure = !copyFile( new File( src, file ), new File( dest, file ) ) || failure;
+                    failure = !copyFile( new File( src, file ), new File( dest, file ), move ) || failure;
+                }
+
+                if (move && src.listFiles() != null && src.listFiles().length == 0) {
+                    if (!src.delete()) {
+                        Log.w("deleteFolder", "Couldn't delete " + src.getAbsolutePath());
+                    }
                 }
             }
             
@@ -262,6 +268,13 @@ public final class FileUtil
             try (FileChannel in = new FileInputStream(src).getChannel();
                  FileChannel out = new FileOutputStream(dest).getChannel()) {
                 in.transferTo(0, in.size(), out);
+
+
+                if (move) {
+                    if (!src.delete()) {
+                        Log.w("deleteFile", "Couldn't delete " + src.getAbsolutePath());
+                    }
+                }
             } catch (Exception e) {
                 failure = true;
                 Log.e("copyFile", "Exception: " + e.getMessage());
@@ -467,15 +480,14 @@ public final class FileUtil
      */
     public static boolean copyFolder( Context context, File src, DocumentFile dest )
     {
-
         // Do this instead for directly accessible files
         if(dest.getUri().getScheme().equals("file")) {
 
             File destFile = new File(dest.getUri().getPath() + "/" + src.getName());
-            return copyFile( src, destFile );
+            return copyFile( src, destFile, false );
         }
 
-        if( src == null )
+        if( src == null)
         {
             Log.e( "copyFile", "src null" );
             return false;
@@ -488,7 +500,6 @@ public final class FileUtil
         }
 
         boolean success = true;
-
 
         if( src.isDirectory() )
         {

@@ -80,7 +80,7 @@ public class CheatUtils
         // Reset the volatile cheatfile to the default data
         File cheat_volatile = new File( volatilepath );
         File cheat_default = new File( defaultpath );
-        FileUtil.copyFile( cheat_default, cheat_volatile );
+        FileUtil.copyFile( cheat_default, cheat_volatile, false );
         
         // Merge user cheats if they exist
         File cheat_user = new File( userpath );
