@@ -28,10 +28,11 @@
             app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
             app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
             app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:paddingBottom="72dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="76dp"/>
+            />
 
         <ImageView
             android:id="@+id/gallery_empty_icon"
@@ -40,7 +41,6 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_n64_controller"
             tools:ignore="ContentDescription" />
-
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -52,6 +52,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 android:minHeight="?attr/actionBarSize">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -91,6 +93,8 @@
                         android:textColorHint="@color/gray3"
                         app:queryBackground="@drawable/bg_transparent"
                         app:iconifiedByDefault="false"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         app:searchIcon="@null" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -98,7 +102,7 @@
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
-        
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/menuItem_refreshRoms"
             android:layout_width="wrap_content"
