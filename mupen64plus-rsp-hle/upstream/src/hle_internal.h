@@ -57,8 +57,12 @@ struct hle_t
     /* for user convenience, this will be passed to "external" functions */
     void* user_defined;
 
+    int once_per_rom;
+
     int hle_gfx;
     int hle_aud;
+
+    uint32_t product_code;
 
     /* alist.c */
     uint8_t alist_buffer[0x1000];

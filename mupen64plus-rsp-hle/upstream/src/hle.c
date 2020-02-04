@@ -271,6 +271,12 @@ static bool try_fast_task_dispatching(struct hle_t* hle)
             return try_re2_task_dispatching(hle);
         }
 
+        /* Yakouchuu II - Satsujin Kouro */
+        if ((hle->product_code == 0x4e594b4a) && sum_bytes((void*)dram_u32(hle, *dmem_u32(hle, TASK_UCODE)), 1488) == 0x19495) {
+            hvqm2_decode_sp1_task(hle);
+            return true;
+        }
+
         if (hle->hle_gfx) {
             send_dlist_to_gfx_plugin(hle);
             return true;
@@ -286,8 +292,8 @@ static bool try_fast_task_dispatching(struct hle_t* hle)
         break;
 
     case 7:
-        HleShowCFB(hle->user_defined);
-        break;
+        hvqm2_decode_sp1_task(hle);
+        return true;
     }
 
     return false;

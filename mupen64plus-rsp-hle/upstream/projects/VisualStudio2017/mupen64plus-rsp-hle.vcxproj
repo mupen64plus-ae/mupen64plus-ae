@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\src\audio.c" />
     <ClCompile Include="..\..\src\cicx105.c" />
     <ClCompile Include="..\..\src\hle.c" />
+    <ClCompile Include="..\..\src\hvqm.c" />
     <ClCompile Include="..\..\src\jpeg.c" />
     <ClCompile Include="..\..\src\memory.c" />
     <ClCompile Include="..\..\src\mp3.c" />
