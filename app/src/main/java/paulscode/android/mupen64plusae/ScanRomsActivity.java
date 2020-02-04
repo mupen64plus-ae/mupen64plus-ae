@@ -77,7 +77,7 @@ public class ScanRomsActivity extends AppCompatActivity
     private void startFilePicker()
     {
         AppData appData = new AppData( this );
-        if (appData.isAndroidTv) {
+        if (appData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
             startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );

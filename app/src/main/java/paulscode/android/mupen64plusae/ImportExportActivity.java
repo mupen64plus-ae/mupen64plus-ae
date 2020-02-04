@@ -172,7 +172,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     {
 
         AppData appData = new AppData( this );
-        if (appData.isAndroidTv) {
+        if (appData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
             startActivityForResult( intent, requestCode );
@@ -188,7 +188,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     {
         AppData appData = new AppData( this );
         Uri returnValue = null;
-        if (appData.isAndroidTv) {
+        if (appData.useLegacyFileBrowser) {
             final Bundle extras = data.getExtras();
 
             if (extras != null) {

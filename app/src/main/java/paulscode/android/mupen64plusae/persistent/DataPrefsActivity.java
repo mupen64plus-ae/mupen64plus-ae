@@ -179,7 +179,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
     private void startFilePicker()
     {
-        if (mAppData.isAndroidTv) {
+        if (mAppData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );

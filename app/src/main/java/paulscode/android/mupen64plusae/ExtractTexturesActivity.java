@@ -103,7 +103,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
     private void startFilePicker()
     {
         AppData appData = new AppData( this );
-        if (appData.isAndroidTv) {
+        if (appData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );

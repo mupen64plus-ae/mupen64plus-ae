@@ -304,6 +304,9 @@ public class AppData
     
     /** True if this is android TV hardware */
     public final boolean isAndroidTv;
+
+    /** True if the legacy file browser should be used */
+    public final boolean useLegacyFileBrowser;
     
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
@@ -388,6 +391,8 @@ public class AppData
         UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
 
         isAndroidTv = uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+
+        useLegacyFileBrowser = isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O;
     }
 
     /**
