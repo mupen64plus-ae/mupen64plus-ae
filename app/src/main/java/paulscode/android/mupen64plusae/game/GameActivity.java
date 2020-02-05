@@ -940,7 +940,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             Log.i("GameActivity", "Shutting down because previous instance hasn't finished");
 
-            Notifier.showToast( this, R.string.toast_not_done_shutting_down );
+            runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_not_done_shutting_down ));
 
             finishActivity();
         }

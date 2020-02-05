@@ -78,7 +78,7 @@ public final class Notifier
      * @param resId      The resource identifier of the message string
      * @param formatArgs The format arguments that will be used for substitution.
      */
-    public static void showToast( Activity activity, int resId, Object... formatArgs )
+    public static void showToast( Context activity, int resId, Object... formatArgs )
     {
         showToast( activity, activity.getString( resId, formatArgs ) );
     }
@@ -89,7 +89,7 @@ public final class Notifier
      * @param activity The activity to display from
      * @param message  The message string to display.
      */
-    public static void showToast( Activity activity, String message )
+    public static void showToast( Context activity, String message )
     {
         if( activity == null )
             return;
@@ -104,24 +104,7 @@ public final class Notifier
             // Message short in duration, and at the bottom of the screen
             sToast = Toast.makeText( activity, message, Toast.LENGTH_SHORT );
             sToast.setGravity( Gravity.BOTTOM, 0, 0 );
+            sToast.show();
         }
-        
-        // Create a messaging task if it doesn't already exist
-        if( sToastMessager == null )
-        {
-            sToastMessager = new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    // Just show the toast message
-                    if( sToast != null )
-                        sToast.show();
-                }
-            };
-        }
-        
-        // Toast messages must be run on the UiThread, which looks ugly as hell, but works
-        activity.runOnUiThread( sToastMessager );
     }
 }

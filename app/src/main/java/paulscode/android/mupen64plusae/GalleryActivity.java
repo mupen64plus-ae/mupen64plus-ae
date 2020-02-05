@@ -634,7 +634,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         if (!successful) {
-            Notifier.showToast(this, R.string.toast_nativeMainFailure07);
+            Notifier.showToast(getApplicationContext(), R.string.toast_nativeMainFailure07);
         }
     }
 
