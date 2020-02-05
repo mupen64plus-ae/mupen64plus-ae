@@ -3,8 +3,9 @@ package paulscode.android.mupen64plusae.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
@@ -56,13 +57,13 @@ public class PromptInputCodeDialog extends DialogFragment
          * @param which
          *            The DialogInterface button pressed by the user.
          */
-        public void onDialogClosed(int inputCode, int hardwareId, int which);
+        void onDialogClosed(int inputCode, int hardwareId, int which);
         
         /**
          * Returns an instance of the Moga controller
          * @return instance of the Moga controller
          */
-        public Controller getMogaController();
+        Controller getMogaController();
     }
 
     public static PromptInputCodeDialog newInstance(String title, String message,
@@ -87,6 +88,7 @@ public class PromptInputCodeDialog extends DialogFragment
     }
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         setRetainInstance(true);
@@ -136,14 +138,7 @@ public class PromptInputCodeDialog extends DialogFragment
         providers.add(new AxisProvider(view));
 
         // Notify the client when the user clicks the dialog's positive button
-        DialogInterface.OnClickListener clickListener = new OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                onInputCommon(providers, getActivity(), 0, 0, which);
-            }
-        };
+        DialogInterface.OnClickListener clickListener = (dialog, which) -> onInputCommon(providers, getActivity(), 0, 0, which);
 
         Builder builder = new Builder(getActivity());
         builder.setTitle(title);
@@ -222,16 +217,14 @@ public class PromptInputCodeDialog extends DialogFragment
 
     /**
      * Returns true if the two float arrays are about the same
-     * @param strengths1
-     * @param strengths2
+     * @param strengths1 Strength 1 to compare
+     * @param strengths2 Strength 2 to compare
      * @return true if the two float arrays are about the same
      */
+    @SuppressWarnings("SameParameterValue")
     private boolean compareStrengths(float strengths1, float strengths2, float delta)
     {
-        boolean areTheyAboutSame = true;
-        areTheyAboutSame = Math.abs(strengths1 - strengths2) < delta;
-
-        return areTheyAboutSame;
+        return Math.abs(strengths1 - strengths2) < delta;
     }
 
     @Override
@@ -245,7 +238,7 @@ public class PromptInputCodeDialog extends DialogFragment
         super.onDestroyView();
     }
 
-    void onInputCommon(final ArrayList<AbstractProvider> providers, Activity activity, int inputCode, int hardwareId,
+    private void onInputCommon(final ArrayList<AbstractProvider> providers, Activity activity, int inputCode, int hardwareId,
             int which) {
         for (AbstractProvider provider : providers)
             provider.unregisterAllListeners();

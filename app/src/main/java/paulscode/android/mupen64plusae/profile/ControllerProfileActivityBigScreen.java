@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -25,16 +25,13 @@ import java.util.Arrays;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 
 public class ControllerProfileActivityBigScreen extends ControllerProfileActivityBase implements OnItemClickListener, OnItemLongClickListener
@@ -47,7 +44,7 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
     {
         mExitMenuItemVisible = false;
         setContentView( R.layout.controller_profile_activity_bigscreen );
-        mListView = (ListView) findViewById( R.id.input_map_activity_bigscreen );
+        mListView = findViewById( R.id.input_map_activity_bigscreen );
         mListView.setOnItemClickListener( this );
         mListView.setOnItemLongClickListener(this);
     }
@@ -87,16 +84,11 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
         if(mListAdapter == null)
         {
             mListAdapter = Prompt.createAdapter(this, Arrays.asList(mCommandNames),
-                new ListItemTwoTextIconPopulator<String>()
-                {
-                    @Override
-                    public void onPopulateListItem(String item, int position, TextView text1, TextView text2, ImageView icon)
-                    {
+                    (item, position, text1, text2, icon) -> {
                         text1.setText(item);
                         text2.setText(getMap().getMappedCodeInfo(mCommandIndices[position]));
                         icon.setVisibility(View.GONE);
-                    }
-                });
+                    });
             mListView.setAdapter(mListAdapter);
         }
         

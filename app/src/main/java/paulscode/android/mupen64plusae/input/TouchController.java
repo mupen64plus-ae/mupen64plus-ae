@@ -25,7 +25,6 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;

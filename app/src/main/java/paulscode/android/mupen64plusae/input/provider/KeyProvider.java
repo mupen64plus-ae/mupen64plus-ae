@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae.input.provider;
 
 import java.util.List;
 
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -84,21 +83,6 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         
         // Request focus for proper listening
         view.requestFocus();
-    }
-    
-    /**
-     * Instantiates a new key provider.
-     * 
-     * @param builder      The builder for the dialog receiving KeyEvent data.
-     * @param formula      The decoding formula to be used.
-     * @param ignoredCodes List of key codes that should be ignored.
-     */
-    public KeyProvider( Builder builder, ImeFormula formula, List<Integer> ignoredCodes )
-    {
-        this( formula, ignoredCodes );
-        
-        // Connect the input source
-        builder.setOnKeyListener( this );
     }
     
     /*

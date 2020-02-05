@@ -43,7 +43,6 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
@@ -77,8 +76,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     
     // Visual settings
     protected static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
-    protected static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
-    protected static final int MIN_LAYOUT_WIDTH_DP = 480;
     
     // Controller profile objects
     protected ConfigFile mConfigFile;
@@ -90,7 +87,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     // Command information
     protected String[] mCommandNames;
     protected int[] mCommandIndices;
-    private SparseArray<InputEntry> mEntryMap = new SparseArray<InputEntry>();
+    private SparseArray<InputEntry> mEntryMap = new SparseArray<>();
     private InputStrengthCalculator mStrengthCalculator;
     
     // Input listening
@@ -125,8 +122,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         super.onCreate( savedInstanceState );
         
         // Initialize MOGA controller API
-        // TODO: Remove hack after MOGA SDK is fixed
-        // mMogaController.init();
         MogaHack.init( mMogaController, this );
         
         // Get the user preferences wrapper
@@ -167,7 +162,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         initLayout();
         
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
-        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        Toolbar toolbar = findViewById( R.id.toolbar );
         
         // Set the title of the activity
         if( TextUtils.isEmpty( mProfile.comment ) )
@@ -277,17 +272,12 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         final CharSequence title = getText( R.string.menuItem_deadzone );
         
         Prompt.promptInteger( this, title, "%1$d %%", mProfile.getDeadzone(), MIN_DEADZONE,
-                MAX_DEADZONE, new PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+                MAX_DEADZONE, (value, which) -> {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
-                        {
-                            mProfile.putDeadzone( value );
-                        }
+                        mProfile.putDeadzone( value );
                     }
-                } );
+                });
     }
     
     private void setSensitivityX()
@@ -295,17 +285,12 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         final CharSequence title = getText( R.string.menuItem_sensitivity_x );
         
         Prompt.promptInteger( this, title, "%1$d %%", mProfile.getSensitivityX(), MIN_SENSITIVITY,
-                MAX_SENSITIVITY, new PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+                MAX_SENSITIVITY, (value, which) -> {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
-                        {
-                            mProfile.putSensitivityX( value );
-                        }
+                        mProfile.putSensitivityX( value );
                     }
-                } );
+                });
     }
 
     private void setSensitivityY()
@@ -313,17 +298,12 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         final CharSequence title = getText( R.string.menuItem_sensitivity_y );
 
         Prompt.promptInteger( this, title, "%1$d %%", mProfile.getSensitivityY(), MIN_SENSITIVITY,
-                MAX_SENSITIVITY, new PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+                MAX_SENSITIVITY, (value, which) -> {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
-                        {
-                            mProfile.putSensitivityY( value );
-                        }
+                        mProfile.putSensitivityY( value );
                     }
-                } );
+                });
     }
 
     protected void popupListener( CharSequence title, final int index )

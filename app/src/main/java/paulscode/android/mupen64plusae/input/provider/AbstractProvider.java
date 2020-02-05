@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.util.SubscriptionManager;
  * @see AxisProvider
  * @see InputMap
  */
+@SuppressWarnings("unused")
 public abstract class AbstractProvider
 {
     /** The offset used to construct the hardware ID for a MOGA controller. */
@@ -55,7 +56,7 @@ public abstract class AbstractProvider
          * @param hardwareId The identifier of the source device.
          * @param isKeyboard True if the input comes from a keyboard
          */
-        public void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard );
+        void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard );
         
         /**
          * Called when multiple inputs have been dispatched simultaneously.
@@ -65,7 +66,7 @@ public abstract class AbstractProvider
          * @param hardwareId The identifier of the source device.
          * @param isKeyboard True if the input comes from a keyboard
          */
-        public void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard );
+        void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard );
     }
     
     /** The strength threshold above which an input is said to be "on". */
@@ -82,7 +83,7 @@ public abstract class AbstractProvider
      */
     protected AbstractProvider()
     {
-        mPublisher = new SubscriptionManager<AbstractProvider.OnInputListener>();
+        mPublisher = new SubscriptionManager<>();
     }
     
     /**
@@ -94,10 +95,10 @@ public abstract class AbstractProvider
     {
         mPublisher.subscribe( listener );
     }
-    
+
     /**
      * Unregisters a listener to stop receiving input notifications.
-     * 
+     *
      * @param listener The listener to unregister. Null values are safe.
      */
     public void unregisterListener( AbstractProvider.OnInputListener listener )
@@ -188,13 +189,11 @@ public abstract class AbstractProvider
         
         // Check all the connected devices
         int[] deviceIds = InputDevice.getDeviceIds();
-        
-        for( int i = 0; i < deviceIds.length; i++ )
-        {
-            if( uniqueName.equals( getUniqueName( deviceIds[i] ) ) ||
-                    uniqueName.equals( Integer.toString( deviceIds[i] ) ) )
-            {
-                return deviceIds[i];
+
+        for (int deviceId : deviceIds) {
+            if (uniqueName.equals(getUniqueName(deviceId)) ||
+                    uniqueName.equals(Integer.toString(deviceId))) {
+                return deviceId;
             }
         }
         
@@ -277,7 +276,7 @@ public abstract class AbstractProvider
      * 
      * @return The name of the input.
      */
-    @SuppressWarnings( "deprecation" )
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public static String getInputName( int inputCode )
     {
         if( inputCode > 0 )
@@ -317,7 +316,7 @@ public abstract class AbstractProvider
      * 
      * @return The corresponding universal input code.
      */
-    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
+    static int axisToInputCode( int axisCode, boolean positiveDirection )
     {
         // Axis codes are encoded to negative values (versus buttons which are positive). Axis codes
         // are bit shifted by one so that the lowest bit can encode axis direction.
@@ -331,7 +330,7 @@ public abstract class AbstractProvider
      * 
      * @return The corresponding Android axis code.
      */
-    protected static int inputToAxisCode( int inputCode )
+    static int inputToAxisCode( int inputCode )
     {
         return ( -inputCode - 1 ) / 2;
     }
@@ -343,7 +342,7 @@ public abstract class AbstractProvider
      * 
      * @return True if the input code represents positive Android axis direction, false otherwise.
      */
-    protected static boolean inputToAxisDirection( int inputCode )
+    static boolean inputToAxisDirection( int inputCode )
     {
         return ( ( -inputCode ) % 2 ) == 1;
     }
@@ -357,7 +356,7 @@ public abstract class AbstractProvider
      * @param hardwareId The identifier of the source device.
      * @param isKeyboard True if the input comes from a keyboard
      */
-    protected void notifyListeners( int inputCode, float strength, int hardwareId, boolean isKeyboard )
+    void notifyListeners( int inputCode, float strength, int hardwareId, boolean isKeyboard )
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCode, strength, hardwareId, isKeyboard );
@@ -372,7 +371,7 @@ public abstract class AbstractProvider
      * @param hardwareId The identifier of the source device.
      * @param isKeyboard True if the input comes from a keyboard
      */
-    protected void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
+    void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId, isKeyboard );
