@@ -27,6 +27,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
@@ -77,6 +78,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
 
+    private static final String STATE_FILE_PICKER_KEY = "STATE_FILE_PICKER_KEY";
+
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -106,7 +109,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private boolean mClearCheats = false;
     private boolean mInCheatsScreen = false;
 
-    private String currentFilePickerKey = null;
+    private String mCurrentFilePickerKey = null;
 
     // MOGA controller interface
     private final Controller mMogaController = Controller.getInstance( this );
@@ -176,6 +179,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );
+
+        if( savedInstanceState != null )
+        {
+            mCurrentFilePickerKey = savedInstanceState.getString( STATE_FILE_PICKER_KEY );
+        }
     }
 
     @Override
@@ -278,6 +286,15 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     }
 
     @Override
+    public void onSaveInstanceState( @NonNull Bundle savedInstanceState )
+    {
+        Log.i("GalleryActivity", "onSaveInstanceState");
+        savedInstanceState.putString(STATE_FILE_PICKER_KEY, mCurrentFilePickerKey);
+
+        super.onSaveInstanceState( savedInstanceState );
+    }
+
+    @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         refreshViews();
@@ -302,7 +319,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 if (data != null) {
                     Uri fileUri = data.getData();
 
-                    Preference currentPreference = findPreference(currentFilePickerKey);
+                    Preference currentPreference = findPreference(mCurrentFilePickerKey);
                     if (currentPreference != null && fileUri != null) {
 
                         final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
@@ -312,7 +329,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                         DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
                         String summary = file.getName();
                         currentPreference.setSummary(summary);
-                        mGamePrefs.putString(currentFilePickerKey, fileUri.toString());
+                        mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
                     }
                 }
             } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
@@ -322,11 +339,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
                     Uri fileUri = Uri.parse(searchUri);
 
-                    Preference currentPreference = findPreference(currentFilePickerKey);
+                    Preference currentPreference = findPreference(mCurrentFilePickerKey);
                     if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
                         File file = new File(fileUri.getPath());
                         currentPreference.setSummary(file.getName());
-                        mGamePrefs.putString(currentFilePickerKey, fileUri.toString());
+                        mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
                     }
                 }
             }
@@ -535,7 +552,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
         } else if (key.equals(GamePrefs.IDL_PATH_64DD) ||
                 key.equals(GamePrefs.DISK_PATH_64DD) || key.contains(GamePrefs.TRANSFER_PAK)){
-            currentFilePickerKey = key;
+            mCurrentFilePickerKey = key;
             startFilePicker();
         }
 
