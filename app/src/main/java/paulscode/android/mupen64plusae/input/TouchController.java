@@ -290,7 +290,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         }
         
         // Call the super method to send the input to the core
-        notifyChanged();
+        notifyChanged(false);
 
         float invertXAxis = mInvertXAxis ? -1.0f:1.0f;
         float invertYAxis = mInvertYAxis ? -1.0f:1.0f;
@@ -309,7 +309,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param pid       The identifier of the touch pointer.
      * @param actionCode The the action code
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private void processButtonTouch( boolean touched, int xLocation, int yLocation,
             long timeElapsed, int pid, int actionCode )
     {

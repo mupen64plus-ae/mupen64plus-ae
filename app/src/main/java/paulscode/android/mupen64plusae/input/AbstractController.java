@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -113,18 +113,12 @@ public abstract class AbstractController
     
     /** N64 button: shoulder-l. */
     public static final int BTN_L = 13;
-    
-    /** N64 button: reserved-1. */
-    public static final int BTN_RESERVED1 = 14;
-
-    /** N64 button: reserved-2. */
-    public static final int BTN_RESERVED2 = 15;
 
     /** Total number of N64 buttons. */
     public static final int NUM_N64_BUTTONS = 16;
     
     /** The state of all four player controllers. */
-    private static final ArrayList<State> sStates = new ArrayList<State>();
+    private static final ArrayList<State> sStates = new ArrayList<>();
     
     /** The state of this controller. */
     State mState;
@@ -157,21 +151,11 @@ public abstract class AbstractController
     /**
      * Notifies the core that the N64 controller state has changed.
      */
-    void notifyChanged()
+    void notifyChanged(boolean isKeyboard)
     {
         int axisX = Math.round( AXIS_SCALE * mState.axisFractionX );
         int axisY = Math.round( AXIS_SCALE * mState.axisFractionY );
-        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
-    }
-    
-    /**
-     * Gets the player number.
-     * 
-     * @return The player number, between 1 and 4, inclusive.
-     */
-    public int getPlayerNumber()
-    {
-        return mPlayerNumber;
+        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY, isKeyboard );
     }
     
     /**

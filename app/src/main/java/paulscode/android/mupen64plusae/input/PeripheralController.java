@@ -139,7 +139,7 @@ public class PeripheralController extends AbstractController implements
      * float, int)
      */
     @Override
-    public void onInput( int inputCode, float strength, int hardwareId )
+    public void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
@@ -153,7 +153,7 @@ public class PeripheralController extends AbstractController implements
             apply( inputCode, strength );
             
             // Notify the core that controller state has changed
-            notifyChanged();
+            notifyChanged(isKeyboard);
         }
     }
     
@@ -164,7 +164,7 @@ public class PeripheralController extends AbstractController implements
      * float[], int)
      */
     @Override
-    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
     {
         // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
@@ -174,7 +174,7 @@ public class PeripheralController extends AbstractController implements
                 apply( inputCodes[i], strengths[i] );
             
             // Notify the core that controller state has changed
-            notifyChanged();
+            notifyChanged(isKeyboard);
         }
     }
     

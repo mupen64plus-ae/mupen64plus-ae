@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -25,7 +25,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -59,7 +58,7 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
     private void initWidgets()
     {
         // Get the text view object
-        mFeedbackText = (TextView) findViewById( R.id.textFeedback );
+        mFeedbackText = findViewById( R.id.textFeedback );
         mFeedbackText.setText( "" );
         
         // Create a button list to simplify highlighting and mapping
@@ -102,7 +101,7 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
     
     private void setupButton( int resId, int index )
     {
-        mN64Buttons[index] = (Button) findViewById( resId );
+        mN64Buttons[index] = findViewById( resId );
         if( mN64Buttons[index] != null )
             mN64Buttons[index].setOnClickListener( this );
     }

@@ -400,10 +400,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod, mCoreInterface );
     }
 
-    void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY )
+    void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY, boolean isKeyboard )
     {
         if (!mUseRaphnetDevicesIfAvailable) {
-            NativeInput.setState( controllerNum, buttons, axisX, axisY );
+            NativeInput.setState( controllerNum, buttons, axisX, axisY, isKeyboard );
         }
     }
 

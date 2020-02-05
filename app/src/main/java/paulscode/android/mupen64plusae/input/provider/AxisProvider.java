@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -68,16 +68,6 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         view.setOnGenericMotionListener(this);
         // Request focus for proper listening
         view.requestFocus();
-    }
-    
-    /**
-     * Restricts listening to a set of universal input codes.
-     * 
-     * @param inputCodeFilter The new input codes to listen for.
-     */
-    public void setInputCodeFilter( int[] inputCodeFilter )
-    {
-        mInputCodes = inputCodeFilter.clone();
     }
 
     private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis)
@@ -157,7 +147,8 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         }
 
         // Notify listeners about new input data
-        notifyListeners( mInputCodes, strengths, getHardwareId( event ) );
+        boolean isKeyboard = (event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD;
+        notifyListeners( mInputCodes, strengths, getHardwareId(event), isKeyboard );
 
         return true;
     }
@@ -168,7 +159,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         if( axisInfo != null )
         {
             int axisClass = axisInfo.getClass( axisCode );
-            float tempStrengh = 0;
+            float tempStrengh;
 
             if( axisClass == AxisMap.AXIS_CLASS_IGNORED )
             {

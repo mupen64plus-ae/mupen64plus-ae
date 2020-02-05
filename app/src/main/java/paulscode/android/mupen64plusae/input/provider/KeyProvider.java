@@ -24,6 +24,7 @@ import java.util.List;
 
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -174,7 +175,8 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
             strength = 0;
         
         // Notify listeners about new input data
-        notifyListeners( inputCode, strength, getHardwareId( event ) );
+        boolean isKeyboard = (event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD;
+        notifyListeners( inputCode, strength, getHardwareId( event ), isKeyboard );
         
         return true;
     }

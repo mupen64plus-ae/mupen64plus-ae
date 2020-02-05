@@ -367,14 +367,14 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     }
     
     @Override
-    public void onInput( int inputCode, float strength, int hardwareId )
+    public void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard )
     {
         refreshButton( inputCode, strength );
         refreshFeedbackText( inputCode, strength );
     }
     
     @Override
-    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
     {
         float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
         int strongestInputCode = 0;

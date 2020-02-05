@@ -103,6 +103,7 @@ static int _androidPakType[4];
 static unsigned char _androidButtonState[4][16];
 static signed char _androidAnalogX[4];
 static signed char _androidAnalogY[4];
+static bool _isKeyboard[4];
 static int _pluginInitialized = 0;
 static CONTROL* _controllerInfos = NULL;
 
@@ -186,7 +187,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
 }
 
 extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
-        jint mp64pXAxis, jint mp64pYAxis)
+        jint mp64pXAxis, jint mp64pYAxis, jboolean isKeyboard)
 {
     jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, NULL);
     int b;
@@ -198,6 +199,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
 
     _androidAnalogX[controllerNum] = (signed char) ((int) mp64pXAxis);
     _androidAnalogY[controllerNum] = (signed char) ((int) mp64pYAxis);
+    _isKeyboard[controllerNum] = isKeyboard;
 }
 
 //*****************************************************************************
@@ -322,27 +324,33 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
     }
 
     // Limit the speed of the analog stick under certain circumstances
-    static int actualXAxis[4] = {0};
-    static int actualYAxis[4] = {0};
-    static const int maxChange = 30;
-    static const double distanceForInstantChange = 115.0;
+    if (_isKeyboard[controllerNum]) {
+        static int actualXAxis[4] = {0};
+        static int actualYAxis[4] = {0};
+        static const int maxChange = 30;
+        static const double distanceForInstantChange = 115.0;
 
-    double distance = sqrt(pow(actualXAxis[controllerNum] - _androidAnalogX[controllerNum],2) +
-                           pow(actualYAxis[controllerNum] - _androidAnalogY[controllerNum],2));
-    bool instantChange = distance > distanceForInstantChange || distance < maxChange ||
-            (_androidAnalogX[controllerNum] == 0 && _androidAnalogY[controllerNum] == 0);
+        double distance = sqrt(pow(actualXAxis[controllerNum] - _androidAnalogX[controllerNum],2) +
+                               pow(actualYAxis[controllerNum] - _androidAnalogY[controllerNum],2));
+        bool instantChange = distance > distanceForInstantChange || distance < maxChange ||
+                             (_androidAnalogX[controllerNum] == 0 && _androidAnalogY[controllerNum] == 0);
 
-    double xDiff = _androidAnalogX[controllerNum] - actualXAxis[controllerNum];
-    double yDiff = _androidAnalogY[controllerNum] - actualYAxis[controllerNum];
+        double xDiff = _androidAnalogX[controllerNum] - actualXAxis[controllerNum];
+        double yDiff = _androidAnalogY[controllerNum] - actualYAxis[controllerNum];
 
-    actualXAxis[controllerNum] = instantChange ? _androidAnalogX[controllerNum] :
-        actualXAxis[controllerNum] + static_cast<int>(copysign(1.0, xDiff)*std::min(static_cast<double>(maxChange), abs(xDiff)));
-    actualYAxis[controllerNum] = instantChange ? _androidAnalogY[controllerNum] :
-        actualYAxis[controllerNum] + static_cast<int>(copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff)));
+        actualXAxis[controllerNum] = instantChange ? _androidAnalogX[controllerNum] :
+                                     actualXAxis[controllerNum] + static_cast<int>(copysign(1.0, xDiff)*std::min(static_cast<double>(maxChange), abs(xDiff)));
+        actualYAxis[controllerNum] = instantChange ? _androidAnalogY[controllerNum] :
+                                     actualYAxis[controllerNum] + static_cast<int>(copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff)));
 
-    // Set the analog bytes
-    keys->X_AXIS = actualXAxis[controllerNum];
-    keys->Y_AXIS = actualYAxis[controllerNum];
+        // Set the analog bytes
+        keys->X_AXIS = actualXAxis[controllerNum];
+        keys->Y_AXIS = actualYAxis[controllerNum];
+    } else {
+        // Set the analog bytes
+        keys->X_AXIS = _androidAnalogX[controllerNum];
+        keys->Y_AXIS = _androidAnalogY[controllerNum];
+    }
 }
 
 extern "C" EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)

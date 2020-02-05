@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -33,7 +33,6 @@ import com.bda.controller.StateEvent;
  */
 public class MogaProvider extends AbstractProvider implements ControllerListener
 {
-    private final Controller mController;
     private final int[] mInputCodes;
     
     /**
@@ -41,8 +40,7 @@ public class MogaProvider extends AbstractProvider implements ControllerListener
      */
     public MogaProvider( Controller controller )
     {
-        mController = controller;
-        mController.setListener( this, new Handler() );
+        controller.setListener( this, new Handler() );
 
         mInputCodes = new int[10];
         //@formatter:off
@@ -67,7 +65,7 @@ public class MogaProvider extends AbstractProvider implements ControllerListener
         int hardwareId = getHardwareId( event );
         
         // Notify listeners about new input data
-        notifyListeners( inputCode, strength, hardwareId );
+        notifyListeners( inputCode, strength, hardwareId, false );
     }
     
     @Override
@@ -96,7 +94,7 @@ public class MogaProvider extends AbstractProvider implements ControllerListener
         int hardwareId = getHardwareId( event );
         
         // Notify listeners about new input data
-        notifyListeners( mInputCodes, strengths, hardwareId );
+        notifyListeners( mInputCodes, strengths, hardwareId, false );
     }
     
     @Override

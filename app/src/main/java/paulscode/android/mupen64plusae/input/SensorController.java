@@ -139,7 +139,7 @@ public class SensorController extends AbstractController implements SensorEventL
         float factor = magnitude > 1 ? magnitude : 1;
         mState.axisFractionX = rawX / factor;
         mState.axisFractionY = rawY / factor;
-        notifyChanged();
+        notifyChanged(false);
         mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
     }
 

@@ -53,8 +53,9 @@ public abstract class AbstractProvider
          * @param inputCode  The universal input code that was dispatched.
          * @param strength   The input strength, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
+         * @param isKeyboard True if the input comes from a keyboard
          */
-        public void onInput( int inputCode, float strength, int hardwareId );
+        public void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard );
         
         /**
          * Called when multiple inputs have been dispatched simultaneously.
@@ -62,8 +63,9 @@ public abstract class AbstractProvider
          * @param inputCodes The universal input codes that were dispatched.
          * @param strengths  The input strengths, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
+         * @param isKeyboard True if the input comes from a keyboard
          */
-        public void onInput( int[] inputCodes, float[] strengths, int hardwareId );
+        public void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard );
     }
     
     /** The strength threshold above which an input is said to be "on". */
@@ -353,11 +355,12 @@ public abstract class AbstractProvider
      * @param inputCode  The universal input code that was dispatched.
      * @param strength   The input strength, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
+     * @param isKeyboard True if the input comes from a keyboard
      */
-    protected void notifyListeners( int inputCode, float strength, int hardwareId )
+    protected void notifyListeners( int inputCode, float strength, int hardwareId, boolean isKeyboard )
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCode, strength, hardwareId );
+            listener.onInput( inputCode, strength, hardwareId, isKeyboard );
     }
     
     /**
@@ -367,10 +370,11 @@ public abstract class AbstractProvider
      * @param inputCodes The universal input codes that were dispatched.
      * @param strengths  The input strengths, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
+     * @param isKeyboard True if the input comes from a keyboard
      */
-    protected void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId )
+    protected void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId );
+            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId, isKeyboard );
     }
 }
