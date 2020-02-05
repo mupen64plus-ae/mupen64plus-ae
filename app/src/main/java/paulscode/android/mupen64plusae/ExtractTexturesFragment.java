@@ -110,8 +110,12 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onExtractTexturesFinished()
     {
-        if (requireActivity() instanceof OnFinishListener) {
-            ((OnFinishListener)requireActivity()).onFinish();
+        try {
+            if (requireActivity() instanceof OnFinishListener) {
+                ((OnFinishListener)requireActivity()).onFinish();
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
     }
     
