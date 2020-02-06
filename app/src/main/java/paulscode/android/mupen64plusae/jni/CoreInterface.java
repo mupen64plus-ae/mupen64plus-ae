@@ -169,16 +169,16 @@ class CoreInterface
     };
 
     private CoreTypes.m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = (cb_data, controller_num) -> {
-        if (new File(mGbRomPaths.get(controller_num)).exists()) {
-            return mGbRomPaths.get(controller_num);
+        if (new File(mGbRomPaths.get(controller_num + 1)).exists()) {
+            return mGbRomPaths.get(controller_num + 1);
         } else {
             return null;
         }
     };
 
     private CoreTypes.m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = (cb_data, controller_num) -> {
-        if (new File(mGbRamPaths.get(controller_num)).exists()) {
-            return mGbRamPaths.get(controller_num);
+        if (new File(mGbRamPaths.get(controller_num + 1)).exists()) {
+            return mGbRamPaths.get(controller_num + 1);
         } else {
             return null;
         }
@@ -409,7 +409,6 @@ class CoreInterface
         for (int player = 1; player <= 4; ++player) {
 
             if (!TextUtils.isEmpty(romUris.get(player))) {
-
                 byte[] romBuffer;
                 final RomHeader romHeader = new RomHeader(context, Uri.parse(romUris.get(player)));
 
