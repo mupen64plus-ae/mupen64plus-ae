@@ -2,8 +2,6 @@ package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -277,6 +275,9 @@ public class GamePrefs
     /** 64DD Disk path */
     public final String diskPath64Dd;
 
+    /** Current state slot */
+    public final int currentStateSlot;
+
     /** This is true if this game uses the D-pad */
     final boolean isDpadGame;
 
@@ -306,6 +307,7 @@ public class GamePrefs
     static final String IDL_PATH_64DD = "idlPath64dd";
     static final String DISK_PATH_64DD = "diskPath64dd";
     static final String TRANSFER_PAK = "transferPak";
+    static final String CURRENT_SLOT = "currentSlot";
 
     /**
      * Directories and file names
@@ -572,6 +574,8 @@ public class GamePrefs
             idlPath64Dd = "";
             diskPath64Dd = "";
         }
+
+        currentStateSlot = mPreferences.getInt(CURRENT_SLOT, 0);
 
         // Relative touchscreen joystick
         final String tmpTouchscreenAnalogRelative = mPreferences.getString( "touchscreenAnalogRelative_game", "default" );
@@ -925,5 +929,9 @@ public class GamePrefs
     public void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).apply();
+    }
+
+    public void putCurrentSlot(int slot) {
+        mPreferences.edit().putInt( CURRENT_SLOT, slot ).apply();
     }
 }

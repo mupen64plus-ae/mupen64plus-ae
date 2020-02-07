@@ -103,6 +103,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );
         mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );
+        mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf(game.currentStateSlot));
 
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", EMPTY );

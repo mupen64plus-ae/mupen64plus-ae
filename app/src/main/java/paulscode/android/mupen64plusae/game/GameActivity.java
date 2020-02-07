@@ -649,6 +649,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
 
         mGameSidebar.reload();
+
+        mGamePrefs.putCurrentSlot(mCoreFragment.getSlot());
     }
 
     @Override
