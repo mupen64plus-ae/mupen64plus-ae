@@ -252,11 +252,6 @@
         android:key="actionWiki"
         android:summary="@string/actionWiki_summary"
         android:title="@string/actionWiki_title" />
-    <androidx.preference.Preference
-        android:icon="@drawable/ic_undo"
-        android:key="actionResetGamePrefs"
-        android:summary="@string/actionResetGamePrefs_summary"
-        android:title="@string/actionResetGamePrefs_title" />
 
     <androidx.preference.PreferenceCategory>
     </androidx.preference.PreferenceCategory>
