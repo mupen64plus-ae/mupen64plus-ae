@@ -316,8 +316,8 @@ class CoreInterface
             returnData = null;
         }
 
-        if (returnData.length == 0) {
-            return null;
+        if (returnData != null && returnData.length == 0) {
+            returnData = null;
         }
 
         return returnData;
