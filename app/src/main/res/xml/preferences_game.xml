@@ -232,6 +232,24 @@
 
     </androidx.preference.PreferenceScreen>
 
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_picture"
+        android:key="changeCoverArt"
+        android:summary="@string/actionSetGameCoverArt_summary"
+        android:title="@string/actionSetGameCoverArt_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_picture"
+        android:key="clearCoverArt"
+        android:summary="@string/actionClearGameCoverArt_summary"
+        android:title="@string/actionClearGameCoverArt_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_help"
+        android:key="actionWiki"
+        android:summary="@string/actionWiki_summary"
+        android:title="@string/actionWiki_title" />
+
     <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_settings"
         android:key="screenAdvanced"

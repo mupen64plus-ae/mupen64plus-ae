@@ -35,8 +35,6 @@ public final class Notifier
     private static final int NOTIFICATION_ID = 10001;
     
     private static NotificationManager mManager = null;
-    private static Toast sToast = null;
-    private static Runnable sToastMessager = null;
     
     /**
      * Initialize service and clear any notifications from a previous session.
@@ -93,18 +91,9 @@ public final class Notifier
     {
         if( activity == null )
             return;
-        
-        if( sToast != null )
-        {
-            // Toast exists, just change the text
-            Notifier.sToast.setText( message );
-        }
-        else
-        {
-            // Message short in duration, and at the bottom of the screen
-            sToast = Toast.makeText( activity, message, Toast.LENGTH_SHORT );
-            sToast.setGravity( Gravity.BOTTOM, 0, 0 );
-            sToast.show();
-        }
+
+        Toast toast = Toast.makeText( activity, message, Toast.LENGTH_SHORT );
+        toast.setGravity( Gravity.BOTTOM, 0, 0 );
+        toast.show();
     }
 }

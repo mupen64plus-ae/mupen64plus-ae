@@ -308,6 +308,8 @@ public class GamePrefs
     static final String DISK_PATH_64DD = "diskPath64dd";
     static final String TRANSFER_PAK = "transferPak";
     static final String CURRENT_SLOT = "currentSlot";
+    static final String CHANGE_COVERT_ART = "changeCoverArt";
+    static final String CLEAR_COVERT_ART = "clearCoverArt";
 
     /**
      * Directories and file names

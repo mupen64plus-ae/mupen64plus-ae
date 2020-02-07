@@ -458,7 +458,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if(mRefreshNeeded)
         {
             mRefreshNeeded = false;
-            refreshGridAsync();
+            reloadCacheAndRefreshGrid();
 
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
@@ -799,6 +799,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 break;
             case R.id.menuItem_settings:
             {
+                mRefreshNeeded = true;
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
                         item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue());
                 break;

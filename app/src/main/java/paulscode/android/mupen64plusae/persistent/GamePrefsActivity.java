@@ -39,6 +39,7 @@ import android.util.Log;
 import com.bda.controller.Controller;
 
 import org.mupen64plusae.v3.alpha.R;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
@@ -234,6 +236,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.IDL_PATH_64DD, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.DISK_PATH_64DD, this );
+        PrefUtil.setOnPreferenceClickListener( this, GamePrefs.CHANGE_COVERT_ART, this );
+        PrefUtil.setOnPreferenceClickListener( this, GamePrefs.CLEAR_COVERT_ART, this );
 
         for (int player = 1; player <= GamePrefs.NUM_CONTROLLERS; ++player) {
             PrefUtil.setOnPreferenceClickListener( this, mGamePrefs.getTransferPakRomKey(player), this );
@@ -321,15 +325,18 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
                     Preference currentPreference = findPreference(mCurrentFilePickerKey);
                     if (currentPreference != null && fileUri != null) {
-
                         final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
-                        DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
-                        String summary = file.getName();
-                        currentPreference.setSummary(summary);
-                        mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
+                        if (mCurrentFilePickerKey.equals(GamePrefs.CHANGE_COVERT_ART)) {
+                            copyGalleryImageAndUpdateConfig(fileUri);
+                        } else {
+                            DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
+                            String summary = file.getName();
+                            currentPreference.setSummary(summary);
+                            mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
+                        }
                     }
                 }
             } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
@@ -341,14 +348,42 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
                     Preference currentPreference = findPreference(mCurrentFilePickerKey);
                     if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
-                        File file = new File(fileUri.getPath());
-                        currentPreference.setSummary(file.getName());
-                        mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
+
+                        if (mCurrentFilePickerKey.equals(GamePrefs.CHANGE_COVERT_ART)) {
+                            copyGalleryImageAndUpdateConfig(fileUri);
+                        } else {
+                            File file = new File(fileUri.getPath());
+                            currentPreference.setSummary(file.getName());
+                            mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
+                        }
                     }
                 }
             }
         }
+    }
 
+    private void copyGalleryImageAndUpdateConfig(Uri uri)
+    {
+        if (FileUtil.isFileImage(getApplicationContext(), uri)) {
+            DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), uri);
+            if (FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ) )) {
+
+                ConfigFile configFile = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
+                configFile.put(mRomMd5, "artPath", mGlobalPrefs.coverArtDir + "/" + file.getName());
+                configFile.save();
+            }
+        }
+    }
+
+    private void clearCoverArt()
+    {
+        RomDatabase romDatabase = RomDatabase.getInstance();
+        RomDetail detail = romDatabase.lookupByMd5WithFallback( mRomMd5, mRomDisplayName, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
+        ConfigFile configFile = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
+        configFile.put(mRomMd5, "artPath", mGlobalPrefs.coverArtDir + "/" + detail.artName);
+        configFile.save();
+
+        Notifier.showToast(getApplicationContext(), R.string.actionClearGameCoverArt_toast);
     }
 
     private void refreshViews()
@@ -553,13 +588,18 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         } else if (key.equals(GamePrefs.IDL_PATH_64DD) ||
                 key.equals(GamePrefs.DISK_PATH_64DD) || key.contains(GamePrefs.TRANSFER_PAK)){
             mCurrentFilePickerKey = key;
-            startFilePicker();
+            startFilePicker(false);
+        } else if (key.equals(GamePrefs.CHANGE_COVERT_ART)) {
+            mCurrentFilePickerKey = key;
+            startFilePicker(true);
+        } else if (key.equals(GamePrefs.CLEAR_COVERT_ART)) {
+            clearCoverArt();
         }
 
         return false;
     }
 
-    private void startFilePicker()
+    private void startFilePicker(boolean selectImage)
     {
         AppData appData = new AppData( this );
         if (appData.useLegacyFileBrowser) {
@@ -569,7 +609,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         } else {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
+
+            if (selectImage) {
+                intent.setType("image/*");
+            } else {
+                intent.setType("*/*");
+            }
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);

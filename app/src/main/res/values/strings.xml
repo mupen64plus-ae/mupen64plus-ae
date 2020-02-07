@@ -177,6 +177,11 @@
     <string name="actionCheatEditor_title">Manage cheat codes</string>
     <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
     <string name="actionShare_title">Share</string>
+    <string name="actionSetGameCoverArt_title">Change cover art</string>
+    <string name="actionSetGameCoverArt_summary">Change covert art to a custom image</string>
+    <string name="actionClearGameCoverArt_title">Clear cover art</string>
+    <string name="actionClearGameCoverArt_summary">Clear previously set custom cover art</string>
+    <string name="actionClearGameCoverArt_toast">Covert art has been cleared</string>
 
     <!-- Preference Screens -->
     <string name="screenCheats_title">Cheats</string>

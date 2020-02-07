@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
@@ -40,6 +41,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -1081,6 +1083,21 @@ public final class FileUtil
         }
 
         return isImage;
+    }
+
+    public static boolean isFileImage(Context context, Uri file) {
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file, "r")){
+
+            FileInputStream in = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            Bitmap bitmap = BitmapFactory.decodeStream(in, null, options);
+            return options.outWidth != -1 && options.outHeight != -1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static DocumentFile getDocumentFileTree(Context context, Uri uri)

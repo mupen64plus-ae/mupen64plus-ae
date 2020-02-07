@@ -447,20 +447,23 @@ public class CacheRomInfoService extends Service
 
     private void cacheFile(@Nullable Uri uri, @NonNull String name, RomHeader header, String md5, RomDatabase database, ConfigFile config, Uri zipFileLocation )
     {
-        mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
-        RomDetail detail = database.lookupByMd5WithFallback( md5, name, header.crc, header.countryCode );
-        String artPath = mArtDir + "/" + detail.artName;
-        config.put( md5, "goodName", detail.goodName );
-        if (detail.baseName != null && detail.baseName.length() != 0)
-            config.put( md5, "baseName", detail.baseName );
-        config.put( md5, "romPathUri", uri == null ? name : uri.toString() );
-        config.put( md5, "zipPathUri", zipFileLocation == null ? "":zipFileLocation.toString() );
-        config.put( md5, "artPath", artPath );
-        config.put( md5, "crc", header.crc );
-        config.put( md5, "headerName", header.name );
+        // Only add the file if it doesn't already exist
+        if (config.get(md5) == null) {
+            mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
+            RomDetail detail = database.lookupByMd5WithFallback( md5, name, header.crc, header.countryCode );
+            String artPath = mArtDir + "/" + detail.artName;
+            config.put( md5, "goodName", detail.goodName );
+            if (detail.baseName != null && detail.baseName.length() != 0)
+                config.put( md5, "baseName", detail.baseName );
+            config.put( md5, "romPathUri", uri == null ? name : uri.toString() );
+            config.put( md5, "zipPathUri", zipFileLocation == null ? "":zipFileLocation.toString() );
+            config.put( md5, "artPath", artPath );
+            config.put( md5, "crc", header.crc );
+            config.put( md5, "headerName", header.name );
 
-        String countryCodeString = Byte.toString(header.countryCode.getValue());
-        config.put( md5, "countryCode",  countryCodeString);
+            String countryCodeString = Byte.toString(header.countryCode.getValue());
+            config.put( md5, "countryCode",  countryCodeString);
+        }
     }
 
     private void cacheFile(DocumentFile file, RomDatabase database, ConfigFile config )

@@ -136,6 +136,12 @@
     <string name="actionCheatEditor_title">Gestionar trucos</string>
     <string name="actionCheatEditor_summary">Añadir, modificar y borrar trucos personalizados</string>
     <string name="actionShare_title">Compartir</string>
+    <string name="actionSetGameCoverArt_title">Cambiar portada</string>
+    <string name="actionSetGameCoverArt_summary">Cambiar portada del juego an una imagen personalizada</string>
+    <string name="actionClearGameCoverArt_title">Eliminar portada</string>
+    <string name="actionClearGameCoverArt_summary">Eliminar portada del juego personalizada</string>
+    <string name="actionClearGameCoverArt_toast">Portada del juego ha sido eliminada</string>
+
     <!--Preference Screens-->
     <string name="screenCheats_title">Trucos</string>
     <string name="screenCheats_summaryEnabled">Habilitado</string>
@@ -429,7 +435,7 @@
     <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>
     <string name="touchscreenScale_title">Escala del boton</string>
     <string name="touchscreenAutoHide_title">Número de segundos antes de ocultar los botones de la pantalla táctil</string>
-    <string name="libraryScale_title">Escala de las carátulas</string>
+    <string name="libraryScale_title">Escala de las portadas</string>
     <string name="libraryCountryFilter_title">Filtre de país para los juegos</string>
     <string name="libraryCountryFilterUnknown_title">Desconocido</string>
     <string name="libraryCountryFilterJapan_title">Japón</string>
