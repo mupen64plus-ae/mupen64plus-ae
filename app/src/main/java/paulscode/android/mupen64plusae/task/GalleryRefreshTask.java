@@ -212,10 +212,14 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                     } else {
                         DocumentFile file = FileUtil.getDocumentFileSingle(mContext.get(), Uri.parse(romPath));
                         displayName = file.getName();
+
+                        if (TextUtils.isEmpty(displayName)) {
+                            displayName = romPath;
+                        }
                     }
 
                     boolean matchesSearch = true;
-                    if ( searches != null && searches.length > 0 && displayName != null) {
+                    if ( searches != null && searches.length > 0 && !TextUtils.isEmpty(displayName)) {
                         // Make sure the ROM name contains every token in the query
                         final String lowerName = displayName.toLowerCase( Locale.US );
                         for ( final String search : searches ) {
