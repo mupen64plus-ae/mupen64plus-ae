@@ -72,7 +72,6 @@ import java.util.zip.ZipInputStream;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.CountryCode;
@@ -103,7 +102,6 @@ public class CacheRomInfoService extends Service
 
     final static int ONGOING_NOTIFICATION_ID = 1;
 
-    final static String NOTIFICATION_CHANNEL_ID = "CacheRomInfoServiceChannel";
     final static String NOTIFICATION_CHANNEL_ID_V2 = "CacheRomInfoServiceChannelV2";
 
     final static long MAX_7ZIP_FILE_SIZE = 100*1024*1024;
@@ -233,7 +231,6 @@ public class CacheRomInfoService extends Service
         channel.setSound(null,null);
 
         if(notificationManager != null) {
-            notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -345,9 +342,9 @@ public class CacheRomInfoService extends Service
 
                 ZipEntry entry = zipfile.getNextEntry();
 
-                while( entry != null && !mbStopped)
+                try
                 {
-                    try
+                    while( entry != null && !mbStopped)
                     {
                         mListener.GetProgressDialog().setSubtext( getShortFileName(new File(entry.getName()).getName()));
                         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
@@ -359,10 +356,10 @@ public class CacheRomInfoService extends Service
 
                         entry = zipfile.getNextEntry();
                     }
-                    catch( IOException|NoSuchAlgorithmException|IllegalArgumentException e  )
-                    {
-                        Log.w( "CacheRomInfoService", e );
-                    }
+                }
+                catch( IOException|NoSuchAlgorithmException|IllegalArgumentException e  )
+                {
+                    Log.w( "CacheRomInfoService", e );
                 }
 
                 zipfile.close();
@@ -440,7 +437,7 @@ public class CacheRomInfoService extends Service
 
                 //Then extract the ROM file
                 inputStream.reset();
-
+                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_computingMD5 );
                 String md5 = FileUtil.computeMd5( inputStream );
 
                 cacheFile(null, name, extractedHeader, md5, database, config, zipFile );
@@ -450,8 +447,6 @@ public class CacheRomInfoService extends Service
 
     private void cacheFile(@Nullable Uri uri, @NonNull String name, RomHeader header, String md5, RomDatabase database, ConfigFile config, Uri zipFileLocation )
     {
-        mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_computingMD5 );
-
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
         RomDetail detail = database.lookupByMd5WithFallback( md5, name, header.crc, header.countryCode );
         String artPath = mArtDir + "/" + detail.artName;
@@ -466,8 +461,6 @@ public class CacheRomInfoService extends Service
 
         String countryCodeString = Byte.toString(header.countryCode.getValue());
         config.put( md5, "countryCode",  countryCodeString);
-
-        mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
     }
 
     private void cacheFile(DocumentFile file, RomDatabase database, ConfigFile config )
@@ -601,14 +594,7 @@ public class CacheRomInfoService extends Service
     public void SetCacheRomInfoListener(CacheRomInfoListener cacheRomInfoListener)
     {
         mListener = cacheRomInfoListener;
-        mListener.GetProgressDialog().setOnCancelListener(new OnCancelListener()
-        {
-            @Override
-            public void OnCancel()
-            {
-                stop();
-            }
-        });
+        mListener.GetProgressDialog().setOnCancelListener(this::stop);
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job

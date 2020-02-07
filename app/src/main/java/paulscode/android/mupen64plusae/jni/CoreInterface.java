@@ -287,26 +287,20 @@ class CoreInterface
             ZipEntry zipEntry = zipfile.getNextEntry();
             while (zipEntry != null && !lbFound) {
 
-                try {
-                    final String entryName = new File(zipEntry.getName()).getName();
-                    lbFound = entryName.equals(romFileName) || romFileName == null;
+                final String entryName = new File(zipEntry.getName()).getName();
+                lbFound = entryName.equals(romFileName) || romFileName == null;
 
-                    if (lbFound) {
+                if (lbFound) {
 
-                        ByteArrayOutputStream streamBuilder = new ByteArrayOutputStream();
-                        int numBytesRead;
-                        byte[] tempBuffer = new byte[1024*1024];
-                        
-                        while ( (numBytesRead = zipfile.read(tempBuffer)) != -1 ){
-                            streamBuilder.write(tempBuffer, 0, numBytesRead);
-                        }
+                    ByteArrayOutputStream streamBuilder = new ByteArrayOutputStream();
+                    int numBytesRead;
+                    byte[] tempBuffer = new byte[1024*1024];
 
-                        returnData = streamBuilder.toByteArray();
+                    while ( (numBytesRead = zipfile.read(tempBuffer)) != -1 ){
+                        streamBuilder.write(tempBuffer, 0, numBytesRead);
                     }
 
-                } catch (final IOException e) {
-                    Log.w(TAG, e);
-                    returnData = null;
+                    returnData = streamBuilder.toByteArray();
                 }
 
                 zipEntry = zipfile.getNextEntry();
@@ -345,28 +339,23 @@ class CoreInterface
 
                     while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
                     {
-                        try (InputStream zipStream = new SevenZInputStream(zipFile)) {
-                            final String entryName = new File(zipEntry.getName()).getName();
+                        InputStream zipStream = new SevenZInputStream(zipFile);
+                        final String entryName = new File(zipEntry.getName()).getName();
 
-                            lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
+                        lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
-                            if (lbFound) {
-                                returnData = new byte[(int) zipEntry.getSize()];
+                        if (lbFound) {
+                            returnData = new byte[(int) zipEntry.getSize()];
 
-                                int numBytesRead = 0;
+                            int numBytesRead = 0;
 
-                                while (numBytesRead < returnData.length) {
-                                    numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
-                                }
-
-                                if (numBytesRead != returnData.length) {
-                                    returnData = null;
-                                }
+                            while (numBytesRead < returnData.length) {
+                                numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
                             }
 
-                        } catch (final IOException e) {
-                            Log.w(TAG, e);
-                            returnData = null;
+                            if (numBytesRead != returnData.length) {
+                                returnData = null;
+                            }
                         }
                     }
                 }
