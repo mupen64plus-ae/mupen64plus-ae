@@ -998,7 +998,10 @@ typedef union SDL_Event
  *
  *  This should only be run in the thread that sets the video mode.
  */
-inline void SDLCALL SDL_PumpEvents(void);
+inline void SDLCALL SDL_PumpEvents(void)
+{
+
+}
 
 /* @{ */
 typedef enum
