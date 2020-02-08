@@ -722,6 +722,7 @@
     <string name="importExportActivity_importGameData">Import Game Data</string>
     <string name="importExportActivity_importCheatsAndProfiles">Import Cheats and Profiles</string>
     <string name="importExportActivity_importTouchscreenGraphics">Import Touchscreen Graphics</string>
+    <string name="importExportActivity_invalidCustomSkinFile">Invalid touchscreen graphics skin file</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Extracting ROM…</string>

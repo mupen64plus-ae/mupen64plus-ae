@@ -24,7 +24,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
@@ -32,7 +34,13 @@ import androidx.preference.PreferenceManager;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -41,9 +49,13 @@ import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomHeader;
 
 public class ImportExportActivity extends AppCompatPreferenceActivity implements Preference.OnPreferenceClickListener
 {
+    private static final String TAG = "ImportExportActivity";
+
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String ACTION_EXPORT_GAME_DATA = "actionExportGameData";
     private static final String ACTION_EXPORT_CHEATS_AND_PROFILES = "actionExportCheatsAndProfiles";
@@ -66,6 +78,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
+    private ArrayList<String> mValidSkinFiles = new ArrayList<>();
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -112,6 +125,49 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
 
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
+
+        mValidSkinFiles.add("analog-back.png");
+        mValidSkinFiles.add("analog-fore.png");
+        mValidSkinFiles.add("analog.png");
+        mValidSkinFiles.add("buttonL-holdL.png");
+        mValidSkinFiles.add("buttonL-mask.png");
+        mValidSkinFiles.add("buttonL.png");
+        mValidSkinFiles.add("buttonR-holdR.png");
+        mValidSkinFiles.add("buttonR-mask.png");
+        mValidSkinFiles.add("buttonR.png");
+        mValidSkinFiles.add("buttonS-holdS.png");
+        mValidSkinFiles.add("buttonS-mask.png");
+        mValidSkinFiles.add("buttonS.png");
+        mValidSkinFiles.add("buttonSen-holdSen.png");
+        mValidSkinFiles.add("buttonSen-mask.png");
+        mValidSkinFiles.add("buttonSen.png");
+        mValidSkinFiles.add("buttonZ-holdZ.png");
+        mValidSkinFiles.add("buttonZ-mask.png");
+        mValidSkinFiles.add("buttonZ.png");
+        mValidSkinFiles.add("dpad-mask.png");
+        mValidSkinFiles.add("dpad.png");
+        mValidSkinFiles.add("fps-0.png");
+        mValidSkinFiles.add("fps-1.png");
+        mValidSkinFiles.add("fps-2.png");
+        mValidSkinFiles.add("fps-3.png");
+        mValidSkinFiles.add("fps-4.png");
+        mValidSkinFiles.add("fps-5.png");
+        mValidSkinFiles.add("fps-6.png");
+        mValidSkinFiles.add("fps-7.png");
+        mValidSkinFiles.add("fps-8.png");
+        mValidSkinFiles.add("fps-9.png");
+        mValidSkinFiles.add("fps.png");
+        mValidSkinFiles.add("groupAB-holdA.png");
+        mValidSkinFiles.add("groupAB-holdB.png");
+        mValidSkinFiles.add("groupAB-mask.png");
+        mValidSkinFiles.add("groupAB.png");
+        mValidSkinFiles.add("groupC-holdCd.png");
+        mValidSkinFiles.add("groupC-holdCl.png");
+        mValidSkinFiles.add("groupC-holdCr.png");
+        mValidSkinFiles.add("groupC-holdCu.png");
+        mValidSkinFiles.add("groupC-mask.png");
+        mValidSkinFiles.add("groupC.png");
+        mValidSkinFiles.add("skin.ini");
     }
 
     @Override
@@ -157,7 +213,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
                 startFilePicker(PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 break;
             case ACTION_IMPORT_TOUCHSCREEN_GRAPHICS:
-                startFilePicker(PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startFilePickerForSingle(PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 break;
             default:
                 // Let Android handle all other preference clicks
@@ -184,6 +240,23 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         }
     }
 
+    private void startFilePickerForSingle(int requestCode, int permissions)
+    {
+        AppData appData = new AppData( this );
+        if (appData.useLegacyFileBrowser) {
+            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
+            startActivityForResult( intent, requestCode );
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.addFlags(permissions);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            startActivityForResult(intent, requestCode);
+        }
+    }
+
     private Uri getUri(Intent data)
     {
         AppData appData = new AppData( this );
@@ -202,6 +275,65 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         return returnValue;
     }
 
+    private void importCustomSkin(Uri uri) {
+
+        RomHeader header = new RomHeader( getApplicationContext(), uri );
+
+        if (!header.isZip) {
+            Log.e(TAG, "Invalid custom skin file");
+            Notifier.showToast(getApplicationContext(), R.string.importExportActivity_invalidCustomSkinFile);
+            return;
+        }
+
+        boolean validZip = true;
+
+        ZipInputStream zipfile = null;
+
+        try(ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(uri, "r"))
+        {
+            if (parcelFileDescriptor != null) {
+                zipfile = new ZipInputStream( new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()) ));
+
+                ZipEntry entry = zipfile.getNextEntry();
+
+                while( entry != null && validZip)
+                {
+                    validZip = mValidSkinFiles.contains(entry.getName());
+
+                    if (!validZip) {
+                        Log.e(TAG, entry.getName());
+                    }
+                    entry = zipfile.getNextEntry();
+                }
+                zipfile.close();
+            }
+        }
+        catch( Exception e )
+        {
+            Log.w(TAG, e);
+        }
+        finally
+        {
+            try {
+                if( zipfile != null ) {
+                    zipfile.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+
+        if (!validZip) {
+            Notifier.showToast(getApplicationContext(), R.string.importExportActivity_invalidCustomSkinFile);
+            Log.e(TAG, "Invalid custom skin zip");
+            return;
+        }
+
+        File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
+        FileUtil.deleteFolder(customSkinDir);
+        FileUtil.makeDirs(mGlobalPrefs.touchscreenCustomSkinsDir);
+        FileUtil.unzipAll(getApplicationContext(), uri, mGlobalPrefs.touchscreenCustomSkinsDir);
+    }
+
     @Override
     protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -218,9 +350,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
             } else if (requestCode == PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
                 mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
             } else if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
-                FileUtil.deleteFolder(customSkinDir);
-                mCopyFromSdFragment.copyFromSd(fileUri, customSkinDir);
+                importCustomSkin(fileUri);
             }
         }
 

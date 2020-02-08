@@ -550,7 +550,7 @@
     <string name="importExportActivity_importGameData">Importar datos de los juegos</string>
     <string name="importExportActivity_importCheatsAndProfiles">Importar trucos y perfiles</string>
     <string name="importExportActivity_importTouchscreenGraphics">Importar graficos de pantalla tactil</string>
-
+    <string name="importExportActivity_invalidCustomSkinFile">Archivo de graficos de pantalla tactil no es válido</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Extracción de ROM…</string>
