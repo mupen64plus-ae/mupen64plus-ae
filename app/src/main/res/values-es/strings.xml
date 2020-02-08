@@ -509,7 +509,7 @@
     <string name="assetExtractor_initializing">Inicializando</string>
     <string name="assetExtractor_progress">%1$.0f%% completado: %2$s</string>
     <string name="assetExtractor_finished">Completado</string>
-    <string name="assetExtractor_failed">Error al extraer datos de la aplicación.\nPor favor desconecte el cable USB, reinicie el dispositivo, y vuelva a iniciar la aplicación.\nSi requiere ayuda, por favor visite %1$s.</string>
+    <string name="assetExtractor_failed">Error al extraer datos de la aplicación.</string>
     <string name="assetExtractor_error">Error</string>
     <string name="assetExtractor_failed_permissions">Esta aplicación no puede proceder sin estos permisos</string>
     <string name="assetExtractor_permissions_title">Permisos</string>
