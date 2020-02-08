@@ -123,7 +123,7 @@ public class RomDatabase
                 if( crc != null )
                 {
                     if( mCrcMap.get(crc) == null )
-                        mCrcMap.put(crc, new ArrayList<ConfigSection>());
+                        mCrcMap.put(crc, new ArrayList<>());
 
                     mCrcMap.get(crc).add(section);
                 }
@@ -146,7 +146,7 @@ public class RomDatabase
 
             // Catch if none was found or we could not narrow things to only 1 entry
             if (details.size() != 1) {
-                detail = new RomDetail(crc, generateGoodNameFromFileName(fileName));
+                detail = new RomDetail(crc, generateGoodNameFromFileName(fileName), details.get(0).artName);
             } else {
                 detail = details.get(0);
             }
@@ -185,7 +185,7 @@ public class RomDatabase
             Log.w("RomDetail", "CRC: " + crc);
             Log.i("RomDetail", "Constructing a best guess for the meta-info");
 
-            romDetails.add(new RomDetail(crc, generateGoodNameFromFileName(fileName)));
+            romDetails.add(new RomDetail(crc, generateGoodNameFromFileName(fileName), "dummy"));
         }
 
         return romDetails;
@@ -292,15 +292,15 @@ public class RomDatabase
             }
         }
         
-        private RomDetail( String assumedCrc, String assumedGoodName )
+        private RomDetail( String assumedCrc, String assumedGoodName, String artName )
         {
             crc = assumedCrc;
             md5 = "";
             goodName = assumedGoodName;
             baseName = goodName.split( " \\(" )[0].trim();
             // Generate the cover art URL string
-            artName = baseName.replaceAll( "['\\.!]", "" ).replaceAll( "\\W+", "_" ) + ".png";
             artUrl = String.format( ART_URL_TEMPLATE, artName );
+            this.artName = artName;
 
             // Generate wiki page URL string
             String _wikiUrl;
