@@ -330,42 +330,31 @@ public class CacheRomInfoService extends Service
     private void cacheZip(RomDatabase database, Uri file, ConfigFile config)
     {
         Log.i( "CacheRomInfoService", "Found zip file " + file.toString() );
-        ParcelFileDescriptor parcelFileDescriptor = null;
         ZipInputStream zipfile = null;
 
-        try
+        try(ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r"))
         {
-            parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r");
-
             if (parcelFileDescriptor != null) {
                 zipfile = new ZipInputStream( new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()) ));
 
                 ZipEntry entry = zipfile.getNextEntry();
 
-                try
+                while( entry != null && !mbStopped)
                 {
-                    while( entry != null && !mbStopped)
-                    {
-                        mListener.GetProgressDialog().setSubtext( getShortFileName(new File(entry.getName()).getName()));
-                        mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
+                    mListener.GetProgressDialog().setSubtext( getShortFileName(new File(entry.getName()).getName()));
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
 
-                        InputStream zipStream = new BufferedInputStream(zipfile);
-                        mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
+                    InputStream zipStream = new BufferedInputStream(zipfile);
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
 
-                        cacheZipFileFromInputStream(database, file, config, new File(entry.getName()).getName(), zipStream);
+                    cacheZipFileFromInputStream(database, file, config, new File(entry.getName()).getName(), zipStream);
 
-                        entry = zipfile.getNextEntry();
-                    }
+                    entry = zipfile.getNextEntry();
                 }
-                catch( IOException|NoSuchAlgorithmException|IllegalArgumentException e  )
-                {
-                    Log.w( "CacheRomInfoService", e );
-                }
-
                 zipfile.close();
             }
         }
-        catch( IOException|ArrayIndexOutOfBoundsException|java.lang.NullPointerException|java.lang.IllegalArgumentException|java.lang.SecurityException e )
+        catch( Exception e )
         {
             Log.w( "CacheRomInfoService", e );
         }
@@ -374,9 +363,6 @@ public class CacheRomInfoService extends Service
             try {
                 if( zipfile != null ) {
                     zipfile.close();
-                }
-                if (parcelFileDescriptor != null) {
-                    parcelFileDescriptor.close();
                 }
             } catch (IOException ignored) {
             }
@@ -399,23 +385,17 @@ public class CacheRomInfoService extends Service
                     SevenZArchiveEntry zipEntry;
                     while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
                         InputStream zipStream;
-                        try {
-                            mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
-                            mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
+                        mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
+                        mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
 
-                            zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
-                            mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
+                        zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+                        mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
 
-                            cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(),
-                                    zipStream);
-
-                        } catch (IOException | NoSuchAlgorithmException | IllegalArgumentException e) {
-                            Log.w("CacheRomInfoService", e);
-                        }
+                        cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
                     }
                 }
             }
-        } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
+        } catch (IOException|IllegalArgumentException|NoSuchAlgorithmException|SecurityException e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
         } catch (OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "Out of memory while extracting 7zip entry: " + file.getPath());
