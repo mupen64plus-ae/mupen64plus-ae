@@ -288,7 +288,7 @@ class CoreInterface
             while (zipEntry != null && !lbFound) {
 
                 final String entryName = new File(zipEntry.getName()).getName();
-                lbFound = entryName.equals(romFileName) || romFileName == null;
+                lbFound = (entryName.equals(romFileName) || romFileName == null) && !zipEntry.isDirectory();
 
                 if (lbFound) {
 
