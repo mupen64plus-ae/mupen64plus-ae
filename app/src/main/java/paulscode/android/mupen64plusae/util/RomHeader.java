@@ -177,15 +177,16 @@ public final class RomHeader
                     && buffer[0x02] == (byte) 0x72
                     && buffer[0x03] == (byte) 0x21;
 
+            boolean isNddTemp = false;
             if (buffer.length >= 0xe8) {
-                isNdd = buffer[0x04] == (byte) 0x10
+                isNddTemp = buffer[0x04] == (byte) 0x10
                         && buffer[0x18] == (byte) 0xff
                         && buffer[0x19] == (byte) 0xff
                         && buffer[0x1a] == (byte) 0xff
                         && buffer[0x1b] == (byte) 0xff
                         && buffer[0xe6] == (byte) 0xff
                         && buffer[0xe7] == (byte) 0xff;
-                if (isNdd) {
+                if (isNddTemp) {
                     boolean isJapan = buffer[0x00] == (byte) 0xe8
                             && buffer[0x01] == (byte) 0x48
                             && buffer[0x02] == (byte) 0xd3
@@ -207,13 +208,16 @@ public final class RomHeader
                         tempCountryCode = CountryCode.BETA;
                     } else {
                         tempCountryCode = CountryCode.UNKNOWN;
+                        isNddTemp = false;
                     }
 
                     tempName = "";
                 }
             } else {
-                isNdd = false;
+                isNddTemp = false;
             }
+
+            isNdd = isNddTemp;
         } else {
             isZip = false;
             is7Zip = false;
