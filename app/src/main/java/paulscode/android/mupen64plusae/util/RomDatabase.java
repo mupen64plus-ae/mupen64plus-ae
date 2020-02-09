@@ -145,7 +145,9 @@ public class RomDatabase
             ArrayList<RomDetail> details = lookupByCrc(fileName, crc, countryCode );
 
             // Catch if none was found or we could not narrow things to only 1 entry
-            if (details.size() != 1) {
+            if (details.size() == 0) {
+                detail = new RomDetail(crc, generateGoodNameFromFileName(fileName), "dummy");
+            } else if (details.size() > 1) {
                 detail = new RomDetail(crc, generateGoodNameFromFileName(fileName), details.get(0).artName);
             } else {
                 detail = details.get(0);
