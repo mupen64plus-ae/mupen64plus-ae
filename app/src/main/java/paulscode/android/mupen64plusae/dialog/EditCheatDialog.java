@@ -12,6 +12,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
@@ -55,7 +57,6 @@ public class EditCheatDialog extends DialogFragment
     private Button mAddAddressButton = null;
     private LinearLayout mOptionsLayoutHolder = null;
 
-    private View mDialogView = null;
     private ArrayList<EditText> mOptionValueFields = null;
     private ArrayList<EditText> mCheatAddressFields = null;
     private ArrayList<EditText> mCheatValueFields = null;
@@ -70,7 +71,7 @@ public class EditCheatDialog extends DialogFragment
          * @param address cheat address
          * @param options cheat options
          */
-        public void onEditComplete(int selectedButton, String name, String comment,
+        void onEditComplete(int selectedButton, String name, String comment,
             List<CheatAddressData> address, List<CheatOptionData> options);
     }
     
@@ -82,7 +83,7 @@ public class EditCheatDialog extends DialogFragment
      * @param address Cheat memory address
      * @param options Cheat options
      * @param cheatNames All cheat titles to prevent duplicate names
-     * @return
+     * @return A cheat dialog
      */
     public static EditCheatDialog newInstance(String title, String name, String comment,
         List<CheatAddressData> address, List<CheatOptionData> options, List<String> cheatNames)
@@ -129,11 +130,15 @@ public class EditCheatDialog extends DialogFragment
     
     private void unpackFields()
     {
+        if (getArguments() == null) {
+            return;
+        }
+
         mName = getArguments().getString(STATE_NAME);
         mComment = getArguments().getString(STATE_COMMENT);
         
         final int numAddressItems = getArguments().getInt(STATE_NUM_ADDRESS);
-        mAddresses = new ArrayList<CheatAddressData>();
+        mAddresses = new ArrayList<>();
 
         //Fill the values
         for (int index = 0; index < numAddressItems; ++index)
@@ -148,7 +153,7 @@ public class EditCheatDialog extends DialogFragment
         }
         
         final int numOptionItems = getArguments().getInt(STATE_NUM_OPTION_ITEMS);
-        mOptionItems = new ArrayList<CheatOptionData>();
+        mOptionItems = new ArrayList<>();
 
         //Fill the values
         for (int index = 0; index < numOptionItems; ++index)
@@ -163,7 +168,7 @@ public class EditCheatDialog extends DialogFragment
         }
         
         final int numCheatItems = getArguments().getInt(STATE_NUM_CHEAT_ITEMS);
-        mCheatNameItems = new ArrayList<String>();
+        mCheatNameItems = new ArrayList<>();
 
         //Fill the values
         for (int index = 0; index < numCheatItems; ++index)
@@ -175,26 +180,34 @@ public class EditCheatDialog extends DialogFragment
     }
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         setRetainInstance(true);
-		
-        final String title = getArguments().getString(STATE_TITLE);
+
+        String title;
+
+        if (getArguments() == null)  {
+            title = "";
+        } else {
+            title = getArguments().getString(STATE_TITLE);
+        }
+
         unpackFields();
 
-        mDialogView = View.inflate(getActivity(), R.layout.cheat_edit_dialog, null);
+        View dialogView = View.inflate(getActivity(), R.layout.cheat_edit_dialog, null);
         
-        mEditName = (EditText) mDialogView.findViewById(R.id.textCheatTitle);
-        mEditComment = (EditText) mDialogView.findViewById(R.id.textCheatNotes);
-        mEditAddress = (EditText) mDialogView.findViewById(R.id.textCheatAddress);
-        mEditValue = (EditText) mDialogView.findViewById(R.id.textCheatMainValue);
-        mAddOptionButton = (Button) mDialogView.findViewById(R.id.addMoreCheatOptionsButton);
-        mAddAddressButton = (Button) mDialogView.findViewById(R.id.addMoreCheatsButton);
-        mOptionsLayoutHolder = (LinearLayout) mDialogView.findViewById(R.id.linearLayoutCheatOptionsHolder);
+        mEditName = dialogView.findViewById(R.id.textCheatTitle);
+        mEditComment = dialogView.findViewById(R.id.textCheatNotes);
+        mEditAddress = dialogView.findViewById(R.id.textCheatAddress);
+        mEditValue = dialogView.findViewById(R.id.textCheatMainValue);
+        mAddOptionButton = dialogView.findViewById(R.id.addMoreCheatOptionsButton);
+        mAddAddressButton = dialogView.findViewById(R.id.addMoreCheatsButton);
+        mOptionsLayoutHolder = dialogView.findViewById(R.id.linearLayoutCheatOptionsHolder);
         
-        mOptionValueFields = new ArrayList<EditText>();
-        mCheatAddressFields = new ArrayList<EditText>();
-        mCheatValueFields = new ArrayList<EditText>();
+        mOptionValueFields = new ArrayList<>();
+        mCheatAddressFields = new ArrayList<>();
+        mCheatValueFields = new ArrayList<>();
         
         TextWatcher fieldValidator = new TextWatcher()
         {
@@ -218,7 +231,7 @@ public class EditCheatDialog extends DialogFragment
                     Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     boolean isValid = validateFields();
                     okButton.setEnabled(isValid);
-                    okButton.setTextColor(ContextCompat.getColor(getActivity(), isValid ? R.color.accent_material_dark : R.color.dim_foreground_disabled_material_dark));
+                    okButton.setTextColor(ContextCompat.getColor(requireActivity(), isValid ? R.color.accent_material_dark : R.color.dim_foreground_disabled_material_dark));
                 }
 
             }
@@ -236,41 +249,39 @@ public class EditCheatDialog extends DialogFragment
         }
 
         //Time to create the dialog
-        Builder builder = new Builder(getActivity());
+        Builder builder = new Builder(requireActivity());
         builder.setTitle(title);
 
         // Create listener for OK/cancel button clicks
-        OnClickListener clickListener = new OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
+        OnClickListener clickListener = (dialog, which) -> {
+            //Populate the options and submit to activity
+            if (getActivity() instanceof OnEditCompleteListener)
             {
-                //Populate the options and submit to activity
-                if (getActivity() instanceof OnEditCompleteListener)
-                {
-                    List<CheatAddressData> address = getAddressesFromView();
-                    List<CheatOptionData> options = getOptionsFromView();
+                List<CheatAddressData> address = getAddressesFromView();
+                List<CheatOptionData> options = getOptionsFromView();
 
-                    ((OnEditCompleteListener) getActivity()).onEditComplete( which,
-                        mEditName.getText().toString(), mEditComment.getText().toString(),
-                        address, options);
-                }
-                else
-                {
-                    Log.e("EditCheatDialog", "Activity doesn't implement OnEditCompleteListener");
-                }
+                ((OnEditCompleteListener) getActivity()).onEditComplete( which,
+                    mEditName.getText().toString(), mEditComment.getText().toString(),
+                    address, options);
+            }
+            else
+            {
+                Log.e("EditCheatDialog", "Activity doesn't implement OnEditCompleteListener");
             }
         };
 
-        builder.setView(mDialogView);
+        builder.setView(dialogView);
         builder.setPositiveButton(android.R.string.ok, clickListener);
         builder.setNegativeButton(android.R.string.cancel, null);
 
         AlertDialog dialog = builder.create();
 
-        /* Make the dialog resize to the keyboard */ 
-        dialog.getWindow().setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        /* Make the dialog resize to the keyboard */
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
+
         return dialog;
     }
     
@@ -348,51 +359,41 @@ public class EditCheatDialog extends DialogFragment
         final String invalidValue = getString(R.string.cheatEditor_invalid_value);
         
         //Add an option
-        mAddOptionButton.setOnClickListener(new View.OnClickListener ()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                final View optionLayout = View.inflate( getActivity(), R.layout.cheat_edit_dialog_options, null );
-                mOptionsLayoutHolder.addView(optionLayout);
-                
-                //Disable this field
-                mEditValue.setEnabled(false);
-                mEditValue.setText(invalidValue);
-                
-                ImageButton cheatOptionDelete = (ImageButton) optionLayout.findViewById(R.id.removeCheatOptionButton);
-                cheatOptionDelete.setOnClickListener(getDeleteOptionOnClickListener(optionLayout));
-                
-                EditText cheatValueText = (EditText) optionLayout.findViewById(R.id.textCheatValue);
-                cheatValueText.addTextChangedListener(fieldValidator);
-                
-                mOptionValueFields.add(cheatValueText);
-                
-                validateFields();
-            }
+        mAddOptionButton.setOnClickListener(v -> {
+            final View optionLayout = View.inflate( getActivity(), R.layout.cheat_edit_dialog_options, null );
+            mOptionsLayoutHolder.addView(optionLayout);
+
+            //Disable this field
+            mEditValue.setEnabled(false);
+            mEditValue.setText(invalidValue);
+
+            ImageButton cheatOptionDelete = optionLayout.findViewById(R.id.removeCheatOptionButton);
+            cheatOptionDelete.setOnClickListener(getDeleteOptionOnClickListener(optionLayout));
+
+            EditText cheatValueText = optionLayout.findViewById(R.id.textCheatValue);
+            cheatValueText.addTextChangedListener(fieldValidator);
+
+            mOptionValueFields.add(cheatValueText);
+
+            validateFields();
         });
         
-        mAddAddressButton.setOnClickListener(new View.OnClickListener ()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                final View moreCheatsLayout = View.inflate( getActivity(), R.layout.cheat_edit_dialog_cheats, null );
-                mOptionsLayoutHolder.addView(moreCheatsLayout);
-                
-                ImageButton cheatDelete = (ImageButton) moreCheatsLayout.findViewById(R.id.removeCheatOptionButton);
-                cheatDelete.setOnClickListener(getDeleteCheatOnClickListener(moreCheatsLayout));
-                
-                EditText cheatAddressText = (EditText) moreCheatsLayout.findViewById(R.id.textCheatExtraAddress);
-                cheatAddressText.addTextChangedListener(fieldValidator);
-                EditText cheatValueText = (EditText) moreCheatsLayout.findViewById(R.id.textCheatExtraValue);
-                cheatValueText.addTextChangedListener(fieldValidator);
+        mAddAddressButton.setOnClickListener(v -> {
+            final View moreCheatsLayout = View.inflate( getActivity(), R.layout.cheat_edit_dialog_cheats, null );
+            mOptionsLayoutHolder.addView(moreCheatsLayout);
 
-                mCheatAddressFields.add(cheatAddressText);
-                mCheatValueFields.add(cheatValueText);
-                
-                validateFields();
-            }
+            ImageButton cheatDelete = moreCheatsLayout.findViewById(R.id.removeCheatOptionButton);
+            cheatDelete.setOnClickListener(getDeleteCheatOnClickListener(moreCheatsLayout));
+
+            EditText cheatAddressText = moreCheatsLayout.findViewById(R.id.textCheatExtraAddress);
+            cheatAddressText.addTextChangedListener(fieldValidator);
+            EditText cheatValueText = moreCheatsLayout.findViewById(R.id.textCheatExtraValue);
+            cheatValueText.addTextChangedListener(fieldValidator);
+
+            mCheatAddressFields.add(cheatAddressText);
+            mCheatValueFields.add(cheatValueText);
+
+            validateFields();
         });
     }
     
@@ -418,9 +419,9 @@ public class EditCheatDialog extends DialogFragment
             for (int index = 1; index < mAddresses.size(); ++index)
             {
                 final View optionLayout = View.inflate(getActivity(), R.layout.cheat_edit_dialog_cheats, null);
-                EditText cheatAddressText = (EditText) optionLayout.findViewById(R.id.textCheatExtraAddress);
-                EditText cheatValueText = (EditText) optionLayout.findViewById(R.id.textCheatExtraValue);
-                ImageButton cheatOptionDelete = (ImageButton) optionLayout.findViewById(R.id.removeCheatOptionButton);
+                EditText cheatAddressText = optionLayout.findViewById(R.id.textCheatExtraAddress);
+                EditText cheatValueText = optionLayout.findViewById(R.id.textCheatExtraValue);
+                ImageButton cheatOptionDelete = optionLayout.findViewById(R.id.removeCheatOptionButton);
 
                 String cheatAddressString = String.format("%08X", mAddresses.get(index).address);
                 String cheatValueString = String.format("%04X", mAddresses.get(index).value);
@@ -449,9 +450,9 @@ public class EditCheatDialog extends DialogFragment
             for (CheatOptionData data : mOptionItems)
             {
                 final View optionLayout = View.inflate(getActivity(), R.layout.cheat_edit_dialog_options, null);
-                EditText cheatValueText = (EditText) optionLayout.findViewById(R.id.textCheatValue);
-                EditText cheatValueDescription = (EditText) optionLayout.findViewById(R.id.textCheatValueDescription);
-                ImageButton cheatOptionDelete = (ImageButton) optionLayout.findViewById(R.id.removeCheatOptionButton);
+                EditText cheatValueText = optionLayout.findViewById(R.id.textCheatValue);
+                EditText cheatValueDescription = optionLayout.findViewById(R.id.textCheatValueDescription);
+                ImageButton cheatOptionDelete = optionLayout.findViewById(R.id.removeCheatOptionButton);
 
                 String optionValueString = String.format("%04X", data.value);
 
@@ -472,30 +473,24 @@ public class EditCheatDialog extends DialogFragment
      * @param viewToRemove view to remove when an option is being deleted
      * @return OnClickListener that takes the correct action
      */
-    View.OnClickListener getDeleteOptionOnClickListener(final View viewToRemove)
+    private View.OnClickListener getDeleteOptionOnClickListener(final View viewToRemove)
     {
-        View.OnClickListener listener = new View.OnClickListener ()
-        {
-            //Remove an option
-            @Override
-            public void onClick(View v)
+        //Remove an option
+
+        return v -> {
+            mOptionsLayoutHolder.removeView(viewToRemove);
+
+            EditText cheatValueText = viewToRemove.findViewById(R.id.textCheatValue);
+            mOptionValueFields.remove(cheatValueText);
+
+            if(mOptionValueFields.size() == 0)
             {
-                mOptionsLayoutHolder.removeView(viewToRemove);
-                
-                EditText cheatValueText = (EditText) viewToRemove.findViewById(R.id.textCheatValue);
-                mOptionValueFields.remove(cheatValueText);
-                
-                if(mOptionValueFields.size() == 0)
-                {
-                    mEditValue.setEnabled(true);
-                    mEditValue.setText("");
-                }
-                
-                validateFields();
+                mEditValue.setEnabled(true);
+                mEditValue.setText("");
             }
+
+            validateFields();
         };
-        
-        return listener;
     }
     
     /**
@@ -503,38 +498,32 @@ public class EditCheatDialog extends DialogFragment
      * @param viewToRemove view to remove when an option is being deleted
      * @return OnClickListener that takes the correct action
      */
-    View.OnClickListener getDeleteCheatOnClickListener(final View viewToRemove)
+    private View.OnClickListener getDeleteCheatOnClickListener(final View viewToRemove)
     {
-        View.OnClickListener listener = new View.OnClickListener ()
-        {
-            //Remove an option
-            @Override
-            public void onClick(View v)
-            {
-                mOptionsLayoutHolder.removeView(viewToRemove);
-                
-                EditText cheatValueText = (EditText) viewToRemove.findViewById(R.id.textCheatExtraValue);
-                EditText cheatAddressText = (EditText) viewToRemove.findViewById(R.id.textCheatExtraAddress);
+        //Remove an option
 
-                mCheatAddressFields.remove(cheatAddressText);
-                mCheatValueFields.remove(cheatValueText);
-                
-                validateFields();
-            }
+        return v -> {
+            mOptionsLayoutHolder.removeView(viewToRemove);
+
+            EditText cheatValueText = viewToRemove.findViewById(R.id.textCheatExtraValue);
+            EditText cheatAddressText = viewToRemove.findViewById(R.id.textCheatExtraAddress);
+
+            mCheatAddressFields.remove(cheatAddressText);
+            mCheatValueFields.remove(cheatValueText);
+
+            validateFields();
         };
-        
-        return listener;
     }
     
-    List<CheatOptionData> getOptionsFromView()
+    private List<CheatOptionData> getOptionsFromView()
     {
-        List<CheatOptionData> options = new ArrayList<CheatOptionData>();
+        List<CheatOptionData> options = new ArrayList<>();
 
         for (int index = 0; index < mOptionsLayoutHolder.getChildCount(); ++index)
         {
             View child = mOptionsLayoutHolder.getChildAt(index);
-            EditText cheatValueText = (EditText) child.findViewById(R.id.textCheatValue);
-            EditText cheatValueDescription = (EditText) child.findViewById(R.id.textCheatValueDescription);
+            EditText cheatValueText = child.findViewById(R.id.textCheatValue);
+            EditText cheatValueDescription = child.findViewById(R.id.textCheatValueDescription);
 
             //If these are nulls then that means that this layout must be an option instead of an address
             if(cheatValueText != null && cheatValueDescription != null)
@@ -553,10 +542,10 @@ public class EditCheatDialog extends DialogFragment
         return options;
     }
     
-    List<CheatAddressData> getAddressesFromView()
+    private List<CheatAddressData> getAddressesFromView()
     {
         final String invalidValue = getString(R.string.cheatEditor_invalid_value);
-        List<CheatAddressData> allAddressData = new ArrayList<CheatAddressData>();
+        List<CheatAddressData> allAddressData = new ArrayList<>();
         
         String addressString = mEditAddress.getText().toString();
         String valueString = mEditValue.getText().toString();
@@ -580,8 +569,8 @@ public class EditCheatDialog extends DialogFragment
         for(int index = 0; index < mOptionsLayoutHolder.getChildCount(); ++index)
         {
             View child = mOptionsLayoutHolder.getChildAt(index);
-            EditText cheatAddressText = (EditText) child.findViewById(R.id.textCheatExtraAddress);
-            EditText cheatValueText = (EditText) child.findViewById(R.id.textCheatExtraValue);
+            EditText cheatAddressText = child.findViewById(R.id.textCheatExtraAddress);
+            EditText cheatValueText = child.findViewById(R.id.textCheatExtraValue);
 
             //If these are null, then this must be an address layout
             if(cheatAddressText != null && cheatValueText != null)
@@ -606,8 +595,8 @@ public class EditCheatDialog extends DialogFragment
      * Checks whether a candidate name is unique, non-empty, and contains only
      * safe characters. Unsafe characters are: '[', ']'.
      * 
-     * @param profileNames
-     *            list of profile names to compare against
+     * @param cheatNames
+     *            list of cheat names to compare against
      * @param oldName
      *            the old name
      * @param newName

@@ -13,6 +13,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
@@ -53,8 +55,6 @@ public class EditCheatAdvancedDialog extends DialogFragment
     private List<CheatOptionData> mOptionItems = null;
     private List<String> mCheatNameItems = null;
 
-    private View mDialogView = null;
-
     public interface OnAdvancedEditCompleteListener
     {
         /**
@@ -65,7 +65,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
          * @param address cheat address
          * @param options cheat options
          */
-        public void onAdvancedEditComplete(int selectedButton, String name, String comment,
+        void onAdvancedEditComplete(int selectedButton, String name, String comment,
             List<CheatAddressData> address, List<CheatOptionData> options);
     }
     
@@ -77,7 +77,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
      * @param address Cheat memory address
      * @param options Cheat options
      * @param cheatNames All cheat titles to prevent duplicate names
-     * @return
+     * @return Dialog for editing advanced cheats
      */
     public static EditCheatAdvancedDialog newInstance(String title, String name, String comment,
         List<CheatAddressData> address, List<CheatOptionData> options, List<String> cheatNames)
@@ -124,11 +124,15 @@ public class EditCheatAdvancedDialog extends DialogFragment
     
     private void unpackFields()
     {
+        if (getArguments() == null) {
+            return;
+        }
+
         mName = getArguments().getString(STATE_NAME);
         mComment = getArguments().getString(STATE_COMMENT);
         
         final int numAddressItems = getArguments().getInt(STATE_NUM_ADDRESS);
-        mAddresses = new ArrayList<CheatAddressData>();
+        mAddresses = new ArrayList<>();
 
         //Fill the values
         for (int index = 0; index < numAddressItems; ++index)
@@ -143,7 +147,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
         }
         
         final int numOptionItems = getArguments().getInt(STATE_NUM_OPTION_ITEMS);
-        mOptionItems = new ArrayList<CheatOptionData>();
+        mOptionItems = new ArrayList<>();
 
         //Fill the values
         for (int index = 0; index < numOptionItems; ++index)
@@ -158,7 +162,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
         }
         
         final int numCheatItems = getArguments().getInt(STATE_NUM_CHEAT_ITEMS);
-        mCheatNameItems = new ArrayList<String>();
+        mCheatNameItems = new ArrayList<>();
 
         //Fill the values
         for (int index = 0; index < numCheatItems; ++index)
@@ -170,19 +174,27 @@ public class EditCheatAdvancedDialog extends DialogFragment
     }
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         setRetainInstance(true);
 
-        final String title = getArguments().getString(STATE_TITLE);
+        String title;
+
+        if (getArguments() == null)  {
+            title = "";
+        } else {
+            title = getArguments().getString(STATE_TITLE);
+        }
+
         unpackFields();
 
-        mDialogView = View.inflate(getActivity(), R.layout.cheat_edit_advanced_dialog, null);
+        View dialogView = View.inflate(getActivity(), R.layout.cheat_edit_advanced_dialog, null);
         
-        mEditName = (EditText) mDialogView.findViewById(R.id.textCheatTitle);
-        mEditComment = (EditText) mDialogView.findViewById(R.id.textCheatNotes);
-        mEditCheat = (EditText) mDialogView.findViewById(R.id.textCheat);
-        mEditOption = (EditText) mDialogView.findViewById(R.id.textOptions);
+        mEditName = dialogView.findViewById(R.id.textCheatTitle);
+        mEditComment = dialogView.findViewById(R.id.textCheatNotes);
+        mEditCheat = dialogView.findViewById(R.id.textCheat);
+        mEditOption = dialogView.findViewById(R.id.textOptions);
         
         TextWatcher fieldValidator = new TextWatcher()
         {
@@ -206,7 +218,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
                     Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     boolean isValid = validateFields();
                     okButton.setEnabled(isValid);
-                    okButton.setTextColor(ContextCompat.getColor(getActivity(), isValid ? R.color.accent_material_dark :
+                    okButton.setTextColor(ContextCompat.getColor(requireActivity(), isValid ? R.color.accent_material_dark :
                         R.color.dim_foreground_disabled_material_dark));
 					
                 }
@@ -219,43 +231,39 @@ public class EditCheatAdvancedDialog extends DialogFragment
                 
         if(mName != null)
         {
-            setValues(fieldValidator);
+            setValues();
         }
 
         //Time to create the dialog
-        Builder builder = new Builder(getActivity());
+        Builder builder = new Builder(requireActivity());
         builder.setTitle(title);
 
         // Create listener for OK/cancel button clicks
-        OnClickListener clickListener = new OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
+        OnClickListener clickListener = (dialog, which) -> {
+            //Populate the options and submit to activity
+            if (getActivity() instanceof OnAdvancedEditCompleteListener)
             {
-                //Populate the options and submit to activity
-                if (getActivity() instanceof OnAdvancedEditCompleteListener)
-                {
-                    populateCheatsFromText();
-                    ((OnAdvancedEditCompleteListener) getActivity()).onAdvancedEditComplete( which,
-                        mEditName.getText().toString(), mEditComment.getText().toString(),
-                        mAddresses, mOptionItems);
-                }
-                else
-                {
-                    Log.e("EditCheatDialog", "Activity doesn't implement OnEditCompleteListener");
-                }
+                populateCheatsFromText();
+                ((OnAdvancedEditCompleteListener) getActivity()).onAdvancedEditComplete( which,
+                    mEditName.getText().toString(), mEditComment.getText().toString(),
+                    mAddresses, mOptionItems);
+            }
+            else
+            {
+                Log.e("EditCheatDialog", "Activity doesn't implement OnEditCompleteListener");
             }
         };
 
-        builder.setView(mDialogView);
+        builder.setView(dialogView);
         builder.setPositiveButton(android.R.string.ok, clickListener);
         builder.setNegativeButton(android.R.string.cancel, null);
 
         AlertDialog dialog = builder.create();
 
         /* Make the dialog resize to the keyboard */
-        dialog.getWindow().setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
         return dialog;
     }
     
@@ -268,7 +276,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
         //Convert address string to a list of addresses
         if( !TextUtils.isEmpty( mEditCheat.getText().toString() ) )
         {
-            String[] addressStrings = null;
+            String[] addressStrings;
             addressStrings = mEditCheat.getText().toString().split("\n");
             
             for(String address : addressStrings)
@@ -279,7 +287,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
                         CheatAddressData addressData = new CheatAddressData();
 
                         String addressString = address.substring(0, 8);
-                        String valueString = address.substring(address.length() - 4, address.length());
+                        String valueString = address.substring(address.length() - 4);
 
                         addressData.address = Long.valueOf(addressString, 16);
                         if (!valueString.contains("?")) {
@@ -300,7 +308,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
         //Convert options into a list of options
         if( !TextUtils.isEmpty( mEditOption.getText().toString() ) )
         {
-            String[] optionStrings = null;
+            String[] optionStrings;
             optionStrings = mEditOption.getText().toString().split( "\n" );
             
             for(String option : optionStrings)
@@ -308,7 +316,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
                 if(!TextUtils.isEmpty(option))
                 {
                     CheatOptionData cheatData = new CheatOptionData();
-                    String valueString = option.substring(option.length()-4, option.length());
+                    String valueString = option.substring(option.length()-4);
                     cheatData.value = Integer.valueOf(valueString, 16);
                     cheatData.description = option.substring(0, option.length() - 5);
                     mOptionItems.add(cheatData);
@@ -317,7 +325,8 @@ public class EditCheatAdvancedDialog extends DialogFragment
         }
     }
     
-    private boolean isHexNumber( String num )
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean isHexNumber(String num )
     {
         try
         {
@@ -338,44 +347,37 @@ public class EditCheatAdvancedDialog extends DialogFragment
         boolean hasOption = false;
         
         //Verify cheats
-        String verify = mEditCheat.getText().toString();
-        String[] split = verify.split("\n");
-        for (int o = 0; o < split.length; o++)
-        {
-            if (split[o].length() != 13)
-            {
+        StringBuilder verify = new StringBuilder(mEditCheat.getText().toString());
+        String[] split = verify.toString().split("\n");
+        for (String s : split) {
+            if (s.length() != 13) {
                 cheatValid = false;
                 break;
             }
-            if (split[o].indexOf(' ') != -1)
-            {
-                hasOption = split[o].substring(split[o].indexOf(' ') + 1).equals("????");
-                
-                if (!isHexNumber(split[o].substring(0, split[o].indexOf(' '))))
-                {
+            if (s.indexOf(' ') != -1) {
+                hasOption = s.substring(s.indexOf(' ') + 1).equals("????");
+
+                if (!isHexNumber(s.substring(0, s.indexOf(' ')))) {
                     cheatValid = false;
                     break;
                 }
-                if (!isHexNumber(split[o].substring(split[o].indexOf(' ') + 1)) && !hasOption)
-                {
+                if (!isHexNumber(s.substring(s.indexOf(' ') + 1)) && !hasOption) {
                     cheatValid = false;
                     break;
                 }
-            }
-            else
-            {
+            } else {
                 cheatValid = false;
                 break;
             }
         }
         
         //Verify options
-        verify = mEditOption.getText().toString();
+        verify = new StringBuilder(mEditOption.getText().toString());
         
-        if(!verify.isEmpty() || hasOption)
+        if((verify.length() > 0) || hasOption)
         {
-            split = verify.split( "\n" );
-            verify = "";
+            split = verify.toString().split( "\n" );
+            verify = new StringBuilder();
             for( int o = 0; o < split.length; o++ )
             {
                 if( split[o].length() <= 5 )
@@ -399,7 +401,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
                 {
                     y = "\n";
                 }
-                verify += split[o] + y;
+                verify.append(split[o]).append(y);
             }
         }
         
@@ -424,7 +426,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
     /**
      * Sets current values
      */
-    private void setValues(final TextWatcher fieldValidator)
+    private void setValues()
     {
         mEditName.setText(mName);
         mEditComment.setText(mComment);
@@ -434,7 +436,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
             StringBuilder builder = new StringBuilder();
             
             //Fill in addresses
-            String optionAddressString = new String();
+            String optionAddressString = "";
             for(CheatAddressData data : mAddresses)
             {
                 if(data.value != -1)
