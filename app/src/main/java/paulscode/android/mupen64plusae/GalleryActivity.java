@@ -401,6 +401,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Handle menu item selections
         mDrawerList.setOnClickListener(GalleryActivity.this::onOptionsItemSelected);
 
+        mDrawerList.requestFocus();
+
         // Configure the game information drawer
         mGameSidebar = findViewById( R.id.gameSidebar );
 
@@ -568,20 +570,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Uri romPathUri;
 
         if (isUri) {
-
-            Log.e("GalleryActivity", "IS URI = " + givenRomPath);
-
             romPathUri = Uri.parse(givenRomPath);
         } else {
-            Log.e("GalleryActivity", "IS NOT URI = " + givenRomPath);
-
             romPathUri = Uri.fromFile(new File(givenRomPath));
         }
 
         RomHeader header = new RomHeader(this, romPathUri);
 
         boolean successful = false;
-        String romPath = null;
+        String romPath;
         if(header.isZip) {
             romPath = FileUtil.ExtractFirstROMFromZip(this, romPathUri, mGlobalPrefs.unzippedRomsDir);
 
