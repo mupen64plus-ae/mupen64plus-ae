@@ -33,8 +33,6 @@ import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -122,12 +120,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         mInProgress = false;
 
         try {
-            requireActivity().runOnUiThread( new Runnable() {
-                @Override
-                public void run() {
-                    ((GalleryActivity)requireActivity()).reloadCacheAndRefreshGrid();
-                }
-            } );
+            requireActivity().runOnUiThread(() -> ((GalleryActivity)requireActivity()).reloadCacheAndRefreshGrid());
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
         }

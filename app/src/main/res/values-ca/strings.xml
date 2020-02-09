@@ -208,7 +208,7 @@ Perfil T</string>
   <string name="confirm_title">Confirmació</string>
   <string name="confirmResetGame_message">Vols reinicialitzar el joc? Tots els progressos fets des l\'última vegada que vas guardar la partida es perdran.</string>
   <string name="confirmOverwriteFile_message">Sobreescriu %1$s?</string>
-  <string name="confirmUnmapAll_message">Desassigna tots el controls per a %$1s?</string>
+  <string name="confirmUnmapAll_message">Desassigna tots el controls per a %1$s?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
     <string name="invalidInstall_message">Probalbement el Mupen64 Plus AE no s\'ha instal·lat correctament. Si experimentes aquest errors reinstal·la la aplicació si us plau.</string>

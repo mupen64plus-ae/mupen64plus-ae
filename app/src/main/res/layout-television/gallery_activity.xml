@@ -66,7 +66,6 @@
                         app:layout_constraintHorizontal_bias="0"
                         android:nextFocusRight="@id/menuItem_search"
                         android:nextFocusDown="@id/gridview"
-                        android:layout_marginHorizontal="6dp"
                         style="?attr/actionButtonStyle"
                         android:backgroundTint="#00ffffff"
                         android:src="@drawable/ic_drawer_open"
