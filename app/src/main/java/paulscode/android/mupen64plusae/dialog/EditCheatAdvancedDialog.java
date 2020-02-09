@@ -275,22 +275,23 @@ public class EditCheatAdvancedDialog extends DialogFragment
             {
                 if(!TextUtils.isEmpty(address))
                 {
-                    CheatAddressData addressData = new CheatAddressData();
+                    try {
+                        CheatAddressData addressData = new CheatAddressData();
 
-                    String addressString = address.substring(0, 8);
-                    String valueString = address.substring(address.length()-4, address.length());
+                        String addressString = address.substring(0, 8);
+                        String valueString = address.substring(address.length() - 4, address.length());
 
-                    addressData.address = Long.valueOf(addressString, 16);
-                    if(!valueString.contains("?"))
-                    {
-                        addressData.value = Integer.valueOf(valueString, 16);
-                        mAddresses.add(addressData);
-                    }
-                    else
-                    {
-                        //The cheat with the option goes at the front
-                        addressData.value = -1;
-                        mAddresses.add(0, addressData);
+                        addressData.address = Long.valueOf(addressString, 16);
+                        if (!valueString.contains("?")) {
+                            addressData.value = Integer.valueOf(valueString, 16);
+                            mAddresses.add(addressData);
+                        } else {
+                            //The cheat with the option goes at the front
+                            addressData.value = -1;
+                            mAddresses.add(0, addressData);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
                     }
                 }
             }
