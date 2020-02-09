@@ -8,6 +8,13 @@
     android:fitsSystemWindows="true"
     style="@style/MupenTheme_Dark_Sidebar"> <!-- Setting this as a theme makes MenuListView throw exception -->
 
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        tools:ignore="UselessLeaf" />
+
     <!-- activity view -->
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
