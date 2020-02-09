@@ -479,7 +479,7 @@ public class GamePrefs
         videoSurfaceHeight = globalPrefs.getSurfaceResolutionHeight();
 
         //Angrylion only supports 640x480
-        videoRenderWidth = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 640 : globalPrefs.getResolutionWidth(gliden64Widescreenhack, hResolution);
+        videoRenderWidth = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 640 : globalPrefs.getResolutionWidth(hResolution);
         videoRenderHeight = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 480 : globalPrefs.getResolutionHeight(hResolution);
 
         Log.i("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);

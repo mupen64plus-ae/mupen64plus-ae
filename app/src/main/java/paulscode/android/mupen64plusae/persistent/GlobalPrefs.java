@@ -1044,7 +1044,7 @@ public class GlobalPrefs
         Log.i("GlobalPrefs", "render_width=" + videoRenderWidthNative + " render_height=" + videoRenderHeightNative);
     }
 
-    int getResolutionWidth(boolean stretch, int hResolution)
+    int getResolutionWidth(int hResolution)
     {
         if( hResolution == -1)
         {
@@ -1056,9 +1056,7 @@ public class GlobalPrefs
             hResolution = videoRenderHeightNative;
         }
 
-        float aspect = stretch ? (float)videoSurfaceWidthStretch/videoSurfaceHeightStretch : 4f/3f;
-
-        return Math.round((float)hResolution*aspect);
+        return Math.round((float)hResolution/aspect);
     }
 
     int getResolutionHeight(int hResolution)
