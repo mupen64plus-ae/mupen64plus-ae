@@ -69,10 +69,11 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:preference-v7:28.0.0'
-    implementation 'com.android.support:support-tv-provider:28.0.0'
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:design:28.0.0'
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.tvprovider:tvprovider:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
     implementation 'org.apache.commons:commons-lang3:3.9'
     implementation 'org.apache.commons:commons-text:1.8'
