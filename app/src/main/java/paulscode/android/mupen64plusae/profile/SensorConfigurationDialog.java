@@ -44,18 +44,18 @@ class SensorConfigurationDialog implements OnClickListener {
         mProfile = profile;
         view = View.inflate(context, R.layout.sensor_configuration, null);
         axes = context.getResources().getStringArray(R.array.sensorConfig_axis_values);
-        activateOnStart = (CheckBox) view.findViewById(R.id.sensorConfig_activateOnStart);
+        activateOnStart = view.findViewById(R.id.sensorConfig_activateOnStart);
 
-        xAxisSpinner = (Spinner) view.findViewById(R.id.sensorConfig_sensorX);
-        xAxisEditText = (EditText) view.findViewById(R.id.sensorConfig_customX);
-        xAngleEditText = (EditText) view.findViewById(R.id.sensorConfig_angleX);
-        xSensitivityButton = (Button) view.findViewById(R.id.sensorConfig_sensitivityX);
-        xInvertCheckbox = (CheckBox) view.findViewById(R.id.sensorConfig_invertX);
-        yAxisSpinner = (Spinner) view.findViewById(R.id.sensorConfig_sensorY);
-        yAxisEditText = (EditText) view.findViewById(R.id.sensorConfig_customY);
-        yAngleEditText = (EditText) view.findViewById(R.id.sensorConfig_angleY);
-        ySensitivityButton = (Button) view.findViewById(R.id.sensorConfig_sensitivityY);
-        yInvertCheckbox = (CheckBox) view.findViewById(R.id.sensorConfig_invertY);
+        xAxisSpinner = view.findViewById(R.id.sensorConfig_sensorX);
+        xAxisEditText = view.findViewById(R.id.sensorConfig_customX);
+        xAngleEditText = view.findViewById(R.id.sensorConfig_angleX);
+        xSensitivityButton = view.findViewById(R.id.sensorConfig_sensitivityX);
+        xInvertCheckbox = view.findViewById(R.id.sensorConfig_invertX);
+        yAxisSpinner = view.findViewById(R.id.sensorConfig_sensorY);
+        yAxisEditText = view.findViewById(R.id.sensorConfig_customY);
+        yAngleEditText = view.findViewById(R.id.sensorConfig_angleY);
+        ySensitivityButton = view.findViewById(R.id.sensorConfig_sensitivityY);
+        yInvertCheckbox = view.findViewById(R.id.sensorConfig_invertY);
 
         // Updating values from profile
         activateOnStart.setChecked(Boolean.valueOf(mProfile.get("sensorActivateOnStart")));
@@ -243,7 +243,7 @@ class SensorConfigurationDialog implements OnClickListener {
                     @Override
                     public void onDialogClosed(Integer value, int which) {
                         if (which == DialogInterface.BUTTON_POSITIVE) {
-                            sensitivityButton.setText(String.valueOf(value) + "%");
+                            sensitivityButton.setText(value + "%");
                         }
                     }
                 });

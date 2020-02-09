@@ -48,7 +48,7 @@ public class ProfileNameEditDialog extends DialogFragment
          * @param name chosen name
          * @param comment chosen comment
          */
-        public void onProfileNameDialogButton(int dialogId, int selectedButton, String name, String comment);
+        void onProfileNameDialogButton(int dialogId, int selectedButton, String name, String comment);
     }
 
     public static ProfileNameEditDialog newInstance(int dialogId, String title, String name, String comment,
@@ -94,9 +94,9 @@ public class ProfileNameEditDialog extends DialogFragment
         }
 
         mDialogView = View.inflate(getActivity(), R.layout.profile_edit_dialog, null);
-        final TextView textWarning = (TextView) mDialogView.findViewById(R.id.textProfileWarning);
-        final EditText editName = (EditText) mDialogView.findViewById(R.id.textProfileName);
-        final EditText editComment = (EditText) mDialogView.findViewById(R.id.textProfileComment);
+        final TextView textWarning = mDialogView.findViewById(R.id.textProfileWarning);
+        final EditText editName = mDialogView.findViewById(R.id.textProfileName);
+        final EditText editComment = mDialogView.findViewById(R.id.textProfileComment);
 
         editName.setText(mName);
         editComment.setText(mComment);
@@ -158,8 +158,8 @@ public class ProfileNameEditDialog extends DialogFragment
     {
         super.onStart();
         
-        final TextView textWarning = (TextView) mDialogView.findViewById(R.id.textProfileWarning);
-        final EditText editName = (EditText) mDialogView.findViewById(R.id.textProfileName);
+        final TextView textWarning = mDialogView.findViewById(R.id.textProfileWarning);
+        final EditText editName = mDialogView.findViewById(R.id.textProfileName);
 
         // Dynamically disable the OK button if the name is not unique
         final Button okButton = ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);

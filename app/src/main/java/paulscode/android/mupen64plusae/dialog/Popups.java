@@ -64,7 +64,7 @@ public class Popups
             }
         };
         
-        new Builder( context ).setTitle( title ).setMessage( message.toString() )
+        new Builder( context ).setTitle( title ).setMessage(message)
                 .setNeutralButton( R.string.actionShare_title, shareHandler ).create().show();
     }
     

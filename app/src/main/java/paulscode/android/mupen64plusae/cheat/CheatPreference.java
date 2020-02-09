@@ -92,7 +92,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     {
         String result = Integer.toString( index );
         if( mOptions != null || mValue != 0 )
-            result += "-" + Integer.toString( mValue - 1 );
+            result += "-" + (mValue - 1);
         return result;
     }
     

@@ -36,7 +36,7 @@ public class SeekBarGroup implements OnSeekBarChangeListener, View.OnClickListen
 {
     public interface Listener
     {
-        public void onValueChanged( int value );
+        void onValueChanged(int value);
     }
     
     private final int initialValue;
@@ -63,10 +63,10 @@ public class SeekBarGroup implements OnSeekBarChangeListener, View.OnClickListen
     {
         // Assign the final fields
         initialValue = value;
-        seekbar = (SeekBar) parent.findViewById( seekId );
-        buttonDn = (Button) parent.findViewById( downId );
-        buttonUp = (Button) parent.findViewById( upId );
-        textView = (TextView) parent.findViewById( textviewId );
+        seekbar = parent.findViewById( seekId );
+        buttonDn = parent.findViewById( downId );
+        buttonUp = parent.findViewById( upId );
+        textView = parent.findViewById( textviewId );
         template = textTemplate;
         minorStep = minor;
         majorStep = major;

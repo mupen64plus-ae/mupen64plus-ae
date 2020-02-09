@@ -164,7 +164,7 @@ public class GLideN64Prefs {
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
-        backgroundMode = getSafeInt( emulationProfile, "BackgroundsMode", 0);;
+        backgroundMode = getSafeInt( emulationProfile, "BackgroundsMode", 0);
 
         enableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         enableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );

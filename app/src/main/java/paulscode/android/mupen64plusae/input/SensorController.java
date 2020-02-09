@@ -168,7 +168,7 @@ public class SensorController extends AbstractController implements SensorEventL
         }
         float value = calculateAcceleration(sensorEventValues, valuesRef);
         float adjacentValue = calculateAcceleration(sensorEventValues, adjacentValuesRef);
-        float angle = (float) calculateAngle(value, adjacentValue) - idleAngleDegree / 180 * (float) Math.PI;
+        float angle = calculateAngle(value, adjacentValue) - idleAngleDegree / 180 * (float) Math.PI;
         // Fixing angle to have range in [-Pi,Pi]
         while (Math.abs(angle) > Math.PI) {
             angle -= Math.signum(angle) * 2 * Math.PI;

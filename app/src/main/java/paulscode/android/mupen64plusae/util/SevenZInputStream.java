@@ -43,7 +43,7 @@ public final class SevenZInputStream extends InputStream {
         return mZipFile.read();
     }
 
-    public int read(@NonNull byte b[], int off, int len) throws IOException
+    public int read(@NonNull byte[] b, int off, int len) throws IOException
     {
         return mZipFile.read(b, off, len);
     }

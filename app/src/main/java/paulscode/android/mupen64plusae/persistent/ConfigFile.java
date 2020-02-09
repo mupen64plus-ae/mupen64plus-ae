@@ -350,7 +350,7 @@ public class ConfigFile
                             if( p.length() < 1 )
                                 return; // This shouldn't happen (bad syntax). Quit.
                                 
-                            v = strLine.substring( x + 1, strLine.length() ).trim();
+                            v = strLine.substring( x + 1).trim();
                             // v = v.replace( "\"", "" ); // I'm doing this later, so I can save
                             // back without losing them
                             

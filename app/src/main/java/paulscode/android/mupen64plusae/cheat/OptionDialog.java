@@ -33,9 +33,9 @@ public class OptionDialog
 {
     public interface Listener
     {
-        public void onOptionChoice( int choice );
+        void onOptionChoice(int choice);
         
-        public void onOptionLongPress( int item );
+        void onOptionLongPress(int item);
     }
     
     private final Listener mListener;

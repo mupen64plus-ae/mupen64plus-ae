@@ -42,7 +42,7 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
     public interface ExtractCheatListener
     {
         //This is called once we are done retrieving the cheats
-        public void onExtractFinished(ArrayList<Cheat> cheats);
+        void onExtractFinished(ArrayList<Cheat> cheats);
     }
 
     

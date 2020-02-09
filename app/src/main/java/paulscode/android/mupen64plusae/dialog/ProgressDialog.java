@@ -39,10 +39,10 @@ public class ProgressDialog implements OnClickListener
         mActivity = activity;
         View layout = View.inflate(activity, R.layout.progress_dialog, null );
         
-        mTextProgress = (TextView) layout.findViewById( R.id.textProgress );
-        mTextSubprogress = (TextView) layout.findViewById( R.id.textSubprogress );
-        mTextMessage = (TextView) layout.findViewById( R.id.textMessage );
-        mProgressTotal = (ProgressBar) layout.findViewById( R.id.progressTotal );
+        mTextProgress = layout.findViewById( R.id.textProgress );
+        mTextSubprogress = layout.findViewById( R.id.textSubprogress );
+        mTextMessage = layout.findViewById( R.id.textMessage );
+        mProgressTotal = layout.findViewById( R.id.progressTotal );
         
         // Create main dialog
         Builder builder = getBuilder( activity, title, subtitle, message, cancelable, layout );
@@ -107,8 +107,8 @@ public class ProgressDialog implements OnClickListener
     private Builder getBuilder( Activity activity, CharSequence title, CharSequence subtitle,
             CharSequence message, boolean cancelable, View layout )
     {
-        TextView textSubtitle = (TextView) layout.findViewById( R.id.textSubtitle );
-        TextView textMessage = (TextView) layout.findViewById( R.id.textMessage );
+        TextView textSubtitle = layout.findViewById( R.id.textSubtitle );
+        TextView textMessage = layout.findViewById( R.id.textMessage );
         textSubtitle.setText( subtitle );
         textMessage.setText( message );
         

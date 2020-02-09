@@ -39,7 +39,7 @@ public abstract class AppCompatListActivity extends AppCompatActivity
     {
         super.setContentView(layoutResID);
         
-        mListView = (ListView) findViewById(android.R.id.list);
+        mListView = findViewById(android.R.id.list);
         
         mListView.setOnItemClickListener(new ListView.OnItemClickListener() {
 

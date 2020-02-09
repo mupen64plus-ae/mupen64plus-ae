@@ -47,17 +47,17 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
          * @param context
          * @param builder
          */
-        public void onPrepareDialogBuilder(Context context, Builder builder);
+        void onPrepareDialogBuilder(Context context, Builder builder);
 
         /**
          * Called when the dialog view is binded
          */
-        public void onBindDialogView(View view, FragmentActivity associatedActivity);
+        void onBindDialogView(View view, FragmentActivity associatedActivity);
 
         /**
          * Called when the dialog is closed
          */
-        public void onDialogClosed(boolean result);
+        void onDialogClosed(boolean result);
     }
 
     //Generic preference dialog to be used for all preference dialog fragments

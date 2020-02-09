@@ -228,7 +228,7 @@ public final class DeviceUtil
             case MotionEvent.ACTION_HOVER_EXIT:
                 return "HOVER_EXIT";
             default:
-                return "ACTION_" + Integer.toString( action );
+                return "ACTION_" + action;
         }
     }
     

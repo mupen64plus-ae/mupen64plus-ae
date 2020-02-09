@@ -129,7 +129,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
                 }
             } );
         } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();;
+            e.printStackTrace();
         }
 
         mProgress.dismiss();

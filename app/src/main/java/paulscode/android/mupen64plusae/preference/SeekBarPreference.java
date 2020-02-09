@@ -276,8 +276,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         // Setup the dialog that is shown when the menu item is clicked
 
         // Grab the widget references
-        mTextView = (TextView) view.findViewById( R.id.textFeedback );
-        mSeekBar = (SeekBar) view.findViewById( R.id.seekbar );
+        mTextView = view.findViewById( R.id.textFeedback );
+        mSeekBar = view.findViewById( R.id.seekbar );
 
         // Initialize and refresh the widgets
         mSeekBar.setMax( mMaxValue - mMinValue);

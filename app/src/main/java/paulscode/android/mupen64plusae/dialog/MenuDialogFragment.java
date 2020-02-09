@@ -19,7 +19,7 @@ public class MenuDialogFragment extends DialogFragment
         /*
          * Called when creating the menu
          */
-        public void onPrepareMenuList(MenuListView listView);
+        void onPrepareMenuList(MenuListView listView);
 
         /**
          * Called when a dialog menu item is selected
@@ -29,7 +29,7 @@ public class MenuDialogFragment extends DialogFragment
          * @param item
          *            Selected menu item.
          */
-        public void onDialogMenuItemSelected(int dialogId, MenuItem item);
+        void onDialogMenuItemSelected(int dialogId, MenuItem item);
     }
 
     public static MenuDialogFragment newInstance(int dialogId, String title, int menuResourceId)

@@ -201,6 +201,6 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
     private static String getHardwareSummary( int hardwareId )
     {
         String name = AbstractProvider.getHardwareName( hardwareId );
-        return Integer.toString( hardwareId ) + ( name == null ? "" : " (" + name + ")" );
+        return hardwareId + ( name == null ? "" : " (" + name + ")" );
     }
 }

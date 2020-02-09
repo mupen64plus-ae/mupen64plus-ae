@@ -27,7 +27,7 @@ public class ConfirmationDialog extends DialogFragment
         /**
          * Handle the user's confirmation.
          */
-        public void onPromptDialogClosed( int id, int which );
+        void onPromptDialogClosed(int id, int which);
     }
 
     public static ConfirmationDialog newInstance(int id, String title, String message)
