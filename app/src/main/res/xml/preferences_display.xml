@@ -112,6 +112,12 @@
         android:summary="@string/gliden64_threaded_video_summary"
         android:title="@string/gliden64_threaded_video_title" />
 
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="hybridTextureFilter"
+        android:summary="@string/gliden64_hybrid_filter_summary"
+        android:title="@string/gliden64_hybrid_filter_title" />
+
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/videoHardwareType_default"
         android:entries="@array/videoHardwareType_entries"

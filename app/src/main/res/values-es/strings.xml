@@ -259,6 +259,8 @@
     <string name="displayFps_entryBottomRight">Abajo a la derecha</string>
     <string name="fix_GLideN64_title">Corregir la pantalla invertida</string>
     <string name="fix_GLideN64_summary">Soluciona problemas con algunos dispositivos que muestran una pantalla invertida con GLideN64</string>
+    <string name="gliden64_hybrid_filter_title">GLideN64 filtro Híbrido</string>
+    <string name="gliden64_hybrid_filter_summary">Habilita el filtro híbrido de texturas en GLideN64 de "integer scaling." Esto puede empeorar el rendimiento.</string>
     <string name="gliden64_threaded_video_title">Video multi-hilo para GLideN64</string>
     <string name="gliden64_threaded_video_summary">Habilita backend de OpenGL con multi-hilo</string>
     <string name="videoPlugin_title">Plugin de video</string>
