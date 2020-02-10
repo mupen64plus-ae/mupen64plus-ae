@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.task;
 
 import java.io.BufferedReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -32,7 +33,7 @@ import android.util.Log;
 
 public class ExtractCheatsTask extends AsyncTask<String, String, String>
 {
-    private final Context mContext;
+    private final WeakReference<Context> mContext;
     private final ExtractCheatListener mExtractCheatListener;
     private final String mCheatPath;
     private final String mCrc;
@@ -49,7 +50,7 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
     public ExtractCheatsTask( Context context, ExtractCheatListener extractCheatListener,
         String cheatPath, String crc, byte romCountryCode)
     {
-        mContext = context;
+        mContext = new WeakReference<>(context);
         mExtractCheatListener = extractCheatListener;
         mCheatPath = cheatPath;
         mCrc = crc;
@@ -84,10 +85,11 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             return;
         }
 
-
-        ArrayList<Cheat> cheats = CheatUtils.populateWithPosition( cheatLocation, mCrc, mCountryCode, mContext );
-        Collections.sort(cheats);
-        mCheats.addAll(cheats);
+        if (mContext.get() != null) {
+            ArrayList<Cheat> cheats = CheatUtils.populateWithPosition( cheatLocation, mCrc, mCountryCode, mContext.get() );
+            Collections.sort(cheats);
+            mCheats.addAll(cheats);
+        }
     }
     
     @Override

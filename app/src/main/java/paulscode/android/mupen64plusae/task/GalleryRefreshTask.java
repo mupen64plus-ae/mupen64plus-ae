@@ -203,15 +203,18 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                 // We can't do much with an invalid Rom path
                 if (romPath != null) {
 
-                    String displayName;
+                    String displayName = "";
                     if (mGlobalPrefs.sortByRomName) {
                         if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
                             displayName = section.get( "goodName" );
                         else
                             displayName = section.get( "baseName" );
                     } else {
-                        DocumentFile file = FileUtil.getDocumentFileSingle(mContext.get(), Uri.parse(romPath));
-                        displayName = file.getName();
+
+                        if (mContext.get() != null) {
+                            DocumentFile file = FileUtil.getDocumentFileSingle(mContext.get(), Uri.parse(romPath));
+                            displayName = file.getName();
+                        }
 
                         if (TextUtils.isEmpty(displayName)) {
                             displayName = romPath;
