@@ -87,6 +87,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
@@ -334,7 +335,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipGesture);
         mDrawerLayout.setBackgroundColor(0xFF000000);
 
-        if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists())
+        if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists() && FileUtil.isFileImage(new File(mRomArtPath)))
             mGameSidebar.setImage(new BitmapDrawable(this.getResources(), mRomArtPath));
 
         mGameSidebar.setTitle(mRomDisplayName);
