@@ -226,7 +226,6 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
 
     private void startFilePicker(int requestCode, int permissions)
     {
-
         AppData appData = new AppData( this );
         if (appData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
@@ -236,6 +235,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(permissions);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             startActivityForResult(intent, requestCode);
         }
     }
@@ -253,6 +253,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
             intent.setType("*/*");
             intent.addFlags(permissions);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             startActivityForResult(intent, requestCode);
         }
     }

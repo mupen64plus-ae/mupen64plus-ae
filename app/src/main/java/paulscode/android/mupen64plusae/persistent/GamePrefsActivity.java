@@ -617,6 +617,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
         }
     }

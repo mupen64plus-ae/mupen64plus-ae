@@ -112,6 +112,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             intent = Intent.createChooser(intent, getString(R.string.pathHiResTexturesTask_select_zip));
             startActivityForResult(intent, PICK_TEXTURE_REQUEST_CODE);
         }

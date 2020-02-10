@@ -173,6 +173,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                 Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
         intent = Intent.createChooser(intent, getString(R.string.gameDataStorageLocation_title));
         startActivityForResult(intent, FOLDER_PICKER_REQUEST_CODE);
     }
@@ -190,6 +191,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
         }
     }
