@@ -23,7 +23,6 @@ package paulscode.android.mupen64plusae.persistent;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.media.AudioManager;
@@ -55,6 +54,7 @@ import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -262,12 +262,6 @@ public class GlobalPrefs
     /** The rendering heigh in pixels with the correct aspect ratio. */
     private int videoRenderHeightNative;
 
-    /** The width of the viewing surface, in pixels with the stretched aspect ratio. */
-    private int videoSurfaceWidthStretch;
-
-    /** The height of the viewing surface, in pixels with the stretched aspect ratio. */
-    private int videoSurfaceHeightStretch;
-
     /** Screen aspect ratio */
     private float aspect;
 
@@ -430,6 +424,7 @@ public class GlobalPrefs
      * @param context
      *            The application context.
      */
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public GlobalPrefs( Context context, AppData appData )
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
@@ -479,12 +474,9 @@ public class GlobalPrefs
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             screenshotsDir = context.getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
         } else {
-            File picturesDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            if (picturesDirectory != null) {
-                screenshotsDir = picturesDirectory.getAbsolutePath() + "/mupen64plus";
-            } else {
-                screenshotsDir = "";
-            }
+            screenshotsDir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
+                    Environment.DIRECTORY_PICTURES + File.separator + "mupen64plus";
+            FileUtil.makeDirs(screenshotsDir);
         }
         romInfoCacheCfg = context.getFilesDir().getAbsolutePath() + "/romInfoCache.cfg";
         coverArtDir = context.getFilesDir().getAbsolutePath() + "/CoverArt";
@@ -1001,9 +993,6 @@ public class GlobalPrefs
                 display.getSize(dimensions);
             }
         }
-
-        videoSurfaceWidthStretch = dimensions.x;
-        videoSurfaceHeightStretch = dimensions.y;
 
         switch (scaling) {
             case ORIGINAL:
