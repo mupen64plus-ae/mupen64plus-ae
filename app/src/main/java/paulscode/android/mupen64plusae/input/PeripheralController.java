@@ -51,7 +51,7 @@ public class PeripheralController extends AbstractController implements
     private final PlayerMap mPlayerMap;
     
     /** The map from input codes to entries w/ the N64 command index. */
-    private final SparseArray<InputEntry> mEntryMap = new SparseArray<InputEntry>();
+    private final SparseArray<InputEntry> mEntryMap = new SparseArray<>();
     
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
@@ -121,7 +121,7 @@ public class PeripheralController extends AbstractController implements
         mStrengthCalculator = new InputStrengthCalculator( inputMap, mEntryMap );
         
         // Assign the non-null input providers
-        mProviders = new ArrayList<AbstractProvider>();
+        mProviders = new ArrayList<>();
         for( AbstractProvider provider : providers )
         {
             if( provider != null )

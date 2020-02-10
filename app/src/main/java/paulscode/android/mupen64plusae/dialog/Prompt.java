@@ -187,57 +187,46 @@ public final class Prompt
             final ListItemTwoTextIconPopulator<T> populator )
     {
         return createAdapter( context, items, R.layout.list_item_two_text_icon, R.id.text1,
-                new ListItemPopulator<T>()
-                {
-                    @Override
-                    public void onPopulateListItem( T item, int position, View view )
-                    {
-                        TextView text1 = view.findViewById( R.id.text1 );
-                        TextView text2 = view.findViewById( R.id.text2 );
-                        ImageView icon = view.findViewById( R.id.icon );
-                        populator.onPopulateListItem( item, position, text1, text2, icon );
-                    }
-                } );
+                (item, position, view) -> {
+                    TextView text1 = view.findViewById( R.id.text1 );
+                    TextView text2 = view.findViewById( R.id.text2 );
+                    ImageView icon = view.findViewById( R.id.icon );
+                    populator.onPopulateListItem( item, position, text1, text2, icon );
+                });
     }
     
     public static ArrayAdapter<String> createFilenameAdapter( Context context, List<String> paths,
             final List<CharSequence> names )
     {
-        return createAdapter( context, paths, new ListItemTwoTextIconPopulator<String>()
-        {
-            @Override
-            public void onPopulateListItem( String path, int position, TextView text1,
-                    TextView text2, ImageView icon )
+        return createAdapter( context, paths, (path, position, text1, text2, icon) -> {
+            if( !TextUtils.isEmpty( path ) )
             {
-                if( !TextUtils.isEmpty( path ) )
+                String name = names.get( position ).toString();
+                if( name.equals( ".." ) )
                 {
-                    String name = names.get( position ).toString();
-                    if( name.equals( ".." ) )
+                    text1.setText( R.string.pathPreference_parentFolder );
+                    icon.setVisibility( View.VISIBLE );
+                    icon.setImageResource( R.drawable.ic_arrow_u );
+                }
+                else
+                {
+                    File file = new File( path );
+                    text1.setText( name );
+                    if( file.isDirectory() )
                     {
-                        text1.setText( R.string.pathPreference_parentFolder );
                         icon.setVisibility( View.VISIBLE );
-                        icon.setImageResource( R.drawable.ic_arrow_u );
+                        icon.setImageResource( R.drawable.ic_folder );
                     }
                     else
                     {
-                        File file = new File( path );
-                        text1.setText( name );
-                        if( file.isDirectory() )
-                        {
-                            icon.setVisibility( View.VISIBLE );
-                            icon.setImageResource( R.drawable.ic_folder );
-                        }
-                        else
-                        {
-                            icon.setVisibility( View.GONE );
-                            icon.setImageResource( 0 );
-                        }
+                        icon.setVisibility( View.GONE );
+                        icon.setImageResource( 0 );
                     }
-                    text2.setVisibility( View.GONE );
-                    text2.setText( null );
                 }
+                text2.setVisibility( View.GONE );
+                text2.setText( null );
             }
-        } );
+        });
     }
     
     /**
@@ -290,18 +279,13 @@ public final class Prompt
         }
         
         // When the user clicks a file, notify the downstream listener
-        OnClickListener internalListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                if( which >= 0 && which < names.size() )
-                    listener.onDialogClosed( new File( paths.get( which ) ), which );
-                else if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.onDialogClosed( startPath, which );
-                else
-                    listener.onDialogClosed( null, which );
-            }
+        OnClickListener internalListener = (dialog, which) -> {
+            if( which >= 0 && which < names.size() )
+                listener.onDialogClosed( new File( paths.get( which ) ), which );
+            else if( which == DialogInterface.BUTTON_POSITIVE )
+                listener.onDialogClosed( startPath, which );
+            else
+                listener.onDialogClosed( null, which );
         };
         
         // Create the dialog builder, removing Ok button and populating list in the process
@@ -371,16 +355,11 @@ public final class Prompt
         editText.setRawInputType( inputType );
         
         // When the user clicks Ok, notify the downstream listener
-        OnClickListener internalListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.onDialogClosed( editText.getText().toString(), which );
-                else
-                    listener.onDialogClosed( null, which );
-            }
+        OnClickListener internalListener = (dialog, which) -> {
+            if( which == DialogInterface.BUTTON_POSITIVE )
+                listener.onDialogClosed( editText.getText().toString(), which );
+            else
+                listener.onDialogClosed( null, which );
         };
         
         // Create and launch the dialog, adding the edit-text widget in the process
@@ -426,14 +405,7 @@ public final class Prompt
             }
         } );
         
-        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                listener.onDialogClosed( seek.getProgress() + min, which );
-            }
-        } ).setView( layout ).create().show();
+        prefillBuilder( context, title, null, (dialog, which) -> listener.onDialogClosed( seek.getProgress() + min, which )).setView( layout ).create().show();
     }
     
     /**
@@ -484,25 +456,19 @@ public final class Prompt
                 //In here we are trying to mimic RadioGroup behavior across multiple columns/rows
                 //We have to do this because RadioGroup doesn't allow that behavior
                 //So, if one radio button is selected, we have to uncheck all others
-                radioSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                radioSelection.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    //only do this on the button that is checked
+                    if(isChecked)
                     {
-                        //only do this on the button that is checked
-                        if(isChecked)
+                        for(AppCompatRadioButton button:radioButtons)
                         {
-                            for(AppCompatRadioButton button:radioButtons)
+                            //uncheck all other radio buttons
+                            if(button != buttonView)
                             {
-                                //uncheck all other radio buttons
-                                if(button != buttonView)
-                                {
-                                    button.setChecked(false);
-                                }
+                                button.setChecked(false);
                             }
                         }
                     }
-                    
                 });
                 
                 ++radioNumber;
@@ -514,35 +480,30 @@ public final class Prompt
             mainLayout.addView(linearLayout);
         }
         
-        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
+        prefillBuilder( context, title, null, (dialog, which) -> {
+            //We have to look for the one check radio button
+            boolean found = false;
+            int index = 0;
+            for(; index < radioButtons.size() && !found; ++index)
             {
-                //We have to look for the one check radio button
-                boolean found = false;
-                int index = 0;
-                for(; index < radioButtons.size() && !found; ++index)
+                //uncheck all other radio buttons
+                if(radioButtons.get(index).isChecked())
                 {
-                    //uncheck all other radio buttons
-                    if(radioButtons.get(index).isChecked())
-                    {
-                        found = true;
-                    }
+                    found = true;
                 }
-                
-                //decrement once to get the right index
-                --index;
-                
-                //default to zero if nothing is checked
-                if(!found)
-                {
-                    index = 0;
-                }
-                
-                listener.onDialogClosed( index, which );
             }
-        } ).setView( layout ).create().show();
+
+            //decrement once to get the right index
+            --index;
+
+            //default to zero if nothing is checked
+            if(!found)
+            {
+                index = 0;
+            }
+
+            listener.onDialogClosed( index, which );
+        }).setView( layout ).create().show();
     }
     
     /**
@@ -557,22 +518,17 @@ public final class Prompt
             final ArrayList<CharSequence> selections, final PromptIntegerListener listener )
     {        
         // When the user clicks a file, notify the downstream listener
-        OnClickListener internalListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
+        OnClickListener internalListener = (dialog, which) -> {
+            if( which != DialogInterface.BUTTON_NEGATIVE)
             {
-                if( which != DialogInterface.BUTTON_NEGATIVE)
-                {
-                    listener.onDialogClosed( which, DialogInterface.BUTTON_POSITIVE );
-                }
+                listener.onDialogClosed( which, DialogInterface.BUTTON_POSITIVE );
             }
         };
         
         // Create the dialog builder, removing Ok button and populating list in the process
         Builder builder = prefillBuilder( context, title, null, internalListener );
         builder.setPositiveButton( null, null );
-        CharSequence[] items = selections.toArray( new CharSequence[selections.size()] );
+        CharSequence[] items = selections.toArray(new CharSequence[0]);
         builder.setItems( items, internalListener );
         
         // Create and launch the dialog

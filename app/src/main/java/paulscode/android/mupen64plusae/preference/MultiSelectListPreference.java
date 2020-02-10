@@ -88,7 +88,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      */
     public List<String> getSelectedValues()
     {
-        List<String> selectedValues = new ArrayList<String>();
+        List<String> selectedValues = new ArrayList<>();
         CharSequence[] allValues = getEntryValues();
         for( int i = 0; i < allValues.length; i++ )
         {
@@ -105,7 +105,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      */
     public List<CharSequence> getSelectedEntries()
     {
-        List<CharSequence> selectedEntries = new ArrayList<CharSequence>();
+        List<CharSequence> selectedEntries = new ArrayList<>();
         CharSequence[] allEntries = getEntries();
         for( int i = 0; i < allEntries.length; i++ )
         {

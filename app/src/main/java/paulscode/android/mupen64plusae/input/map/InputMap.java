@@ -211,15 +211,15 @@ public class InputMap extends SerializableMap
      */
     public String getMappedCodeInfo( int command )
     {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for( int i = 0; i < mMap.size(); i++ )
         {
             if( mMap.valueAt( i ) == command )
             {
-                result += AbstractProvider.getInputName( mMap.keyAt( i ) ) + "\n";
+                result.append(AbstractProvider.getInputName(mMap.keyAt(i))).append("\n");
             }
         }
-        return result.trim();
+        return result.toString().trim();
     }
     
     /**

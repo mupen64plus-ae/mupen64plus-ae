@@ -47,19 +47,14 @@ public class CompatListPreference extends ListPreference implements OnPreference
     @Override
     public void onPrepareDialogBuilder(Context context, Builder builder)
     {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, R.layout.list_preference,
-            getEntries());
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context, R.layout.list_preference,
+                getEntries());
 
         int currentIndex = findIndexOfValue(getCurrentValue());
         builder.setTitle(getTitle());
-        builder.setSingleChoiceItems(adapter, currentIndex, new OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int item)
-            {
-                setValue(getEntryValues()[item].toString());
-                dialog.dismiss();
-            }
+        builder.setSingleChoiceItems(adapter, currentIndex, (dialog, item) -> {
+            setValue(getEntryValues()[item].toString());
+            dialog.dismiss();
         });
         builder.setPositiveButton(null, null);
     }

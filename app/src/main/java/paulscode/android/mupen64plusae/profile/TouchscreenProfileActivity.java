@@ -575,41 +575,26 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         final SeekBarGroup posX = new SeekBarGroup( initialX, view, R.id.seekbarX,
                 R.id.buttonXdown, R.id.buttonXup, R.id.textX,
                 getString( R.string.touchscreenProfileActivity_horizontalSlider ),
-                new SeekBarGroup.Listener()
-                {
-                    @Override
-                    public void onValueChanged( int value )
-                    {
-                        mProfile.put( assetName + TAG_X, String.valueOf( value ) );
-                        refresh();
-                    }
-                } );
+                value -> {
+                    mProfile.put( assetName + TAG_X, String.valueOf( value ) );
+                    refresh();
+                });
         
         final SeekBarGroup posY = new SeekBarGroup( initialY, view, R.id.seekbarY,
                 R.id.buttonYdown, R.id.buttonYup, R.id.textY,
                 getString( R.string.touchscreenProfileActivity_verticalSlider ),
-                new SeekBarGroup.Listener()
-                {
-                    @Override
-                    public void onValueChanged( int value )
-                    {
-                        mProfile.put( assetName + TAG_Y, String.valueOf( value ) );
-                        refresh();
-                    }
-                } );
+                value -> {
+                    mProfile.put( assetName + TAG_Y, String.valueOf( value ) );
+                    refresh();
+                });
         
         final SeekBarGroup scale = new SeekBarGroup( initialScale, view, R.id.seekbarScale,
                 R.id.buttonScaleDown, R.id.buttonScaleUp, R.id.textScale,
                 getString( R.string.touchscreenProfileActivity_ScaleSlider ), 5, 1, 0, 200,
-                new SeekBarGroup.Listener()
-                {
-                    @Override
-                    public void onValueChanged( int value )
-                    {
-                        mProfile.put( assetName + SCALE, String.valueOf( value ) );
-                        refresh();
-                    }
-                } );
+                value -> {
+                    mProfile.put( assetName + SCALE, String.valueOf( value ) );
+                    refresh();
+                });
         
         // Setup the visual feedback checkbox
         CheckBox hide = view.findViewById( R.id.checkBox_hideJoystick );
@@ -623,24 +608,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             invertTouchXAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_X_AXIS, "False")));
             invertTouchYAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_Y_AXIS, "False")));
 
-            hide.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mProfile.put("touchscreenHideAnalogWhenSensor", ( isChecked ? "True" : "False" ));
-                }
-            } );
-            invertTouchXAxis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mProfile.put(INVERT_TOUCH_X_AXIS, isChecked ? "True" : "False");
-                }
-            } );
-            invertTouchYAxis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mProfile.put(INVERT_TOUCH_Y_AXIS, isChecked ? "True" : "False");
-                }
-            } );
+            hide.setOnCheckedChangeListener((buttonView, isChecked) -> mProfile.put("touchscreenHideAnalogWhenSensor", ( isChecked ? "True" : "False" )));
+            invertTouchXAxis.setOnCheckedChangeListener((buttonView, isChecked) -> mProfile.put(INVERT_TOUCH_X_AXIS, isChecked ? "True" : "False"));
+            invertTouchYAxis.setOnCheckedChangeListener((buttonView, isChecked) -> mProfile.put(INVERT_TOUCH_Y_AXIS, isChecked ? "True" : "False"));
         }
         else
         {
@@ -659,37 +629,25 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         else
         {
             holdable.setChecked( !getNotHoldable( holdableIndex ) );
-            holdable.setOnCheckedChangeListener( new OnCheckedChangeListener()
-            {
-                @Override
-                public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
-                {
-                    setNotHoldable( holdableIndex, isChecked );
-                }
-            } );
+            holdable.setOnCheckedChangeListener((buttonView, isChecked) -> setNotHoldable( holdableIndex, isChecked ));
         }
         
         // Setup the listener for the dialog's bottom buttons (ok, cancel, etc.)
-        OnClickListener listener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
+        OnClickListener listener = (dialog, which) -> {
+            if( which == DialogInterface.BUTTON_NEGATIVE )
             {
-                if( which == DialogInterface.BUTTON_NEGATIVE )
-                {
-                    // Revert asset to original position if user cancels
-                    posX.revertValue();
-                    posY.revertValue();
-                    scale.revertValue();
-                }
-                else if( which == DialogInterface.BUTTON_NEUTRAL )
-                {
-                    // Remove the asset from this profile
-                    toggleAsset( assetName );
-                }
-                
-                mPopupBeingShown = false;
+                // Revert asset to original position if user cancels
+                posX.revertValue();
+                posY.revertValue();
+                scale.revertValue();
             }
+            else if( which == DialogInterface.BUTTON_NEUTRAL )
+            {
+                // Remove the asset from this profile
+                toggleAsset( assetName );
+            }
+
+            mPopupBeingShown = false;
         };
         
         // Create and show the popup dialog

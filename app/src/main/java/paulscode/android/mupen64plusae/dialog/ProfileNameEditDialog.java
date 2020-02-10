@@ -85,7 +85,7 @@ public class ProfileNameEditDialog extends DialogFragment
         final int numItems = getArguments().getInt(STATE_NUM_ITEMS);
         mAllowSameName = getArguments().getBoolean(STATE_ALLOW_SAME_NAME);
 
-        mItems = new ArrayList<String>();
+        mItems = new ArrayList<>();
 
         for (int index = 0; index < numItems; ++index)
         {
@@ -105,20 +105,15 @@ public class ProfileNameEditDialog extends DialogFragment
         builder.setTitle(title);
 
         // Create listener for OK/cancel button clicks
-        OnClickListener clickListener = new OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
+        OnClickListener clickListener = (dialog, which) -> {
+            if (getActivity() instanceof OnProfileNameDialogButtonListener)
             {
-                if (getActivity() instanceof OnProfileNameDialogButtonListener)
-                {
-                    ((OnProfileNameDialogButtonListener) getActivity()).onProfileNameDialogButton(dialogId, which,
-                        editName.getText().toString().trim(), editComment.getText().toString());
-                }
-                else
-                {
-                    Log.e("ProfileNameEditDialog", "Activity doesn't implement OnProfileNameDialogButtonListener");
-                }
+                ((OnProfileNameDialogButtonListener) getActivity()).onProfileNameDialogButton(dialogId, which,
+                    editName.getText().toString().trim(), editComment.getText().toString());
+            }
+            else
+            {
+                Log.e("ProfileNameEditDialog", "Activity doesn't implement OnProfileNameDialogButtonListener");
             }
         };
 

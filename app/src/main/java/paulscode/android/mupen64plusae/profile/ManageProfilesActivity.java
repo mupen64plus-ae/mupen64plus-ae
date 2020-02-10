@@ -439,13 +439,11 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
                 addProfile(name, comment);
                 break;
             case R.id.menuItem_copyCustomProfile:
+            case R.id.menuItem_copyBuiltinProfile:
                 copyProfile(name, comment);
                 break;
             case R.id.menuItem_renameCustomProfile:
                 renameProfile(name, comment);
-                break;
-            case R.id.menuItem_copyBuiltinProfile:
-                copyProfile(name, comment);
                 break;
             }
         }

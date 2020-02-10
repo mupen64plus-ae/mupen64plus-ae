@@ -196,11 +196,8 @@ public class DeleteFilesService extends Service {
 
     public void setDeleteFilesListener(DeleteFilesListener deleteFilesListener) {
         mListener = deleteFilesListener;
-        mListener.GetProgressDialog().setOnCancelListener(new OnCancelListener() {
-            @Override
-            public void OnCancel() {
+        mListener.GetProgressDialog().setOnCancelListener(() -> {
 
-            }
         });
 
         // For each start request, send a message to start a job and deliver the

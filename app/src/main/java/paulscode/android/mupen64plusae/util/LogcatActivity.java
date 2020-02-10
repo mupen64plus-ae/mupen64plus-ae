@@ -37,11 +37,7 @@ public class LogcatActivity extends AppCompatActivity
 
             final int[] position = savedInstanceState.getIntArray(TEXT_SCROLL);
             if(position != null)
-                mTextScroll.post(new Runnable() {
-                    public void run() {
-                        mTextScroll.scrollTo(position[0], position[1]);
-                    }
-                });
+                mTextScroll.post(() -> mTextScroll.scrollTo(position[0], position[1]));
         }
 
         if(mLogTextString == null)
@@ -55,19 +51,11 @@ public class LogcatActivity extends AppCompatActivity
         mLogText.setText(mLogTextString);
 
         mCancelButton = findViewById( R.id.logcatCancel );
-        mCancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                LogcatActivity.this.finish();
-            }
-        });
+        mCancelButton.setOnClickListener(v -> LogcatActivity.this.finish());
 
         mShareButton = findViewById( R.id.logcatShare );
-        mShareButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ActivityHelper.launchPlainText( getBaseContext(), mLogTextString,
-                        getText( R.string.actionShare_title ));
-            }
-        });
+        mShareButton.setOnClickListener(v -> ActivityHelper.launchPlainText( getBaseContext(), mLogTextString,
+                getText( R.string.actionShare_title )));
     }
     
     @Override

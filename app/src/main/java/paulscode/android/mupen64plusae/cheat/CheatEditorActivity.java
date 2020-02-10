@@ -161,38 +161,26 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         
         setContentView( R.layout.cheat_editor );
         reload( mRomCrc, mRomCountryCode );
-        findViewById( R.id.imgBtnChtAdd ).setOnClickListener( new View.OnClickListener()
-        {
-            
-            @Override
-            public void onClick(View v)
-            {
-                //Add a cheat
-                mSelectedCheat = -1;
-                int stringId = R.string.cheatEditor_edit1;
-                EditCheatDialog editCheatDialogFragment = EditCheatDialog.newInstance(getString(stringId), null, null,
-                    null, null, getCheatTitles());
+        findViewById( R.id.imgBtnChtAdd ).setOnClickListener(v -> {
+            //Add a cheat
+            mSelectedCheat = -1;
+            int stringId = R.string.cheatEditor_edit1;
+            EditCheatDialog editCheatDialogFragment = EditCheatDialog.newInstance(getString(stringId), null, null,
+                null, null, getCheatTitles());
 
-                FragmentManager fm = getSupportFragmentManager();
-                editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);                
-            }
-        } );
-        findViewById( R.id.imgBtnChtAddAvanced ).setOnClickListener( new View.OnClickListener()
-        {
-            
-            @Override
-            public void onClick(View v)
-            {
-                //Add a cheat
-                mSelectedCheat = -1;
-                int stringId = R.string.cheatEditor_edit2;
-                EditCheatAdvancedDialog editCheatDialogFragment = EditCheatAdvancedDialog.newInstance(getString(stringId), null, null,
-                    null, null, getCheatTitles());
+            FragmentManager fm = getSupportFragmentManager();
+            editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+        });
+        findViewById( R.id.imgBtnChtAddAvanced ).setOnClickListener(v -> {
+            //Add a cheat
+            mSelectedCheat = -1;
+            int stringId = R.string.cheatEditor_edit2;
+            EditCheatAdvancedDialog editCheatDialogFragment = EditCheatAdvancedDialog.newInstance(getString(stringId), null, null,
+                null, null, getCheatTitles());
 
-                FragmentManager fm = getSupportFragmentManager();
-                editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);                
-            }
-        } );
+            FragmentManager fm = getSupportFragmentManager();
+            editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+        });
         
         //default state is cancelled unless we save
         setResult(RESULT_CANCELED, null);
@@ -373,20 +361,15 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
 
     private void promptDelete( final int pos )
     {
-        final OnClickListener listener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
+        final OnClickListener listener = (dialog, which) -> {
+            if( which == DialogInterface.BUTTON_POSITIVE )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    userCheats.remove( pos );
-                    cheatListAdapter.notifyDataSetChanged();
-                    
-                    save( mRomCrc );
-                }
+                userCheats.remove( pos );
+                cheatListAdapter.notifyDataSetChanged();
+
+                save( mRomCrc );
             }
-        };            
+        };
         Builder builder = new Builder( this );
         builder.setTitle( R.string.cheatEditor_delete );
         builder.setMessage( R.string.cheatEditor_confirm );

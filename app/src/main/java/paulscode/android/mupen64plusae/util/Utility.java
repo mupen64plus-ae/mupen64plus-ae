@@ -81,7 +81,7 @@ public final class Utility
             String line;
             while( ( line = reader.readLine() ) != null )
             {
-                result.append( line + "\n" );
+                result.append(line).append("\n");
             }
             return result.toString();
         }

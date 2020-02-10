@@ -83,26 +83,22 @@ public final class DeviceUtil
         StringBuilder builder = new StringBuilder();
 
         int[] ids = InputDevice.getDeviceIds();
-        for (int i = 0; i < ids.length; i++)
-        {
-            InputDevice device = InputDevice.getDevice(ids[i]);
+        for (int id : ids) {
+            InputDevice device = InputDevice.getDevice(id);
             AxisMap axisMap = AxisMap.getMap(device);
-            if (!TextUtils.isEmpty(axisMap.getSignature()))
-            {
-                builder.append("Device: " + device.getName() + "\n");
-                builder.append("Type: " + axisMap.getSignatureName() + "\n");
-                builder.append("Signature: " + axisMap.getSignature() + "\n");
-                builder.append("Hash: " + axisMap.getSignature().hashCode() + "\n");
+            if (!TextUtils.isEmpty(axisMap.getSignature())) {
+                builder.append("Device: ").append(device.getName()).append("\n");
+                builder.append("Type: ").append(axisMap.getSignatureName()).append("\n");
+                builder.append("Signature: ").append(axisMap.getSignature()).append("\n");
+                builder.append("Hash: ").append(axisMap.getSignature().hashCode()).append("\n");
 
                 List<MotionRange> ranges = getPeripheralMotionRanges(device);
-                for (MotionRange range : ranges)
-                {
-                    if (range.getSource() == InputDevice.SOURCE_JOYSTICK)
-                    {
+                for (MotionRange range : ranges) {
+                    if (range.getSource() == InputDevice.SOURCE_JOYSTICK) {
                         int axisCode = range.getAxis();
                         String axisName = MotionEvent.axisToString(axisCode);
                         String className = getAxisClassName(axisMap.getClass(axisCode));
-                        builder.append("  " + axisName + ": " + className + "\n");
+                        builder.append("  ").append(axisName).append(": ").append(className).append("\n");
                     }
                 }
                 builder.append("\n");
@@ -122,32 +118,27 @@ public final class DeviceUtil
         StringBuilder builder = new StringBuilder();
 
         int[] ids = InputDevice.getDeviceIds();
-        for (int i = 0; i < ids.length; i++)
-        {
-            InputDevice device = InputDevice.getDevice(ids[i]);
-            if (device != null)
-            {
-                if (0 < (device.getSources() & (InputDevice.SOURCE_CLASS_BUTTON | InputDevice.SOURCE_CLASS_JOYSTICK)))
-                {
-                    builder.append("Device: " + device.getName() + "\n");
-                    builder.append("Id: " + device.getId() + "\n");
+        for (int id : ids) {
+            InputDevice device = InputDevice.getDevice(id);
+            if (device != null) {
+                if (0 < (device.getSources() & (InputDevice.SOURCE_CLASS_BUTTON | InputDevice.SOURCE_CLASS_JOYSTICK))) {
+                    builder.append("Device: ").append(device.getName()).append("\n");
+                    builder.append("Id: ").append(device.getId()).append("\n");
 
-                    builder.append("Descriptor: " + device.getDescriptor() + "\n");
+                    builder.append("Descriptor: ").append(device.getDescriptor()).append("\n");
                     if (device.getVibrator().hasVibrator())
                         builder.append("Vibrator: true\n");
 
-                    builder.append("Class: " + getSourceClassesString(device.getSources()) + "\n");
+                    builder.append("Class: ").append(getSourceClassesString(device.getSources())).append("\n");
 
                     List<MotionRange> ranges = getPeripheralMotionRanges(device);
-                    if (ranges.size() > 0)
-                    {
-                        builder.append("Axes: " + ranges.size() + "\n");
-                        for (MotionRange range : ranges)
-                        {
+                    if (ranges.size() > 0) {
+                        builder.append("Axes: ").append(ranges.size()).append("\n");
+                        for (MotionRange range : ranges) {
                             String axisName = MotionEvent.axisToString(range.getAxis());
                             String source = getSourceName(range.getSource());
-                            builder.append("  " + axisName + " (" + source + ")");
-                            builder.append(": ( " + range.getMin() + " , " + range.getMax() + " )\n");
+                            builder.append("  ").append(axisName).append(" (").append(source).append(")");
+                            builder.append(": ( ").append(range.getMin()).append(" , ").append(range.getMax()).append(" )\n");
                         }
                     }
                     builder.append("\n");
@@ -279,7 +270,7 @@ public final class DeviceUtil
     @SuppressLint( "InlinedApi" )
     public static String getSourcesString( int sources )
     {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         addString( sources, InputDevice.SOURCE_KEYBOARD, names );
         addString( sources, InputDevice.SOURCE_DPAD, names );
         addString( sources, InputDevice.SOURCE_GAMEPAD, names );
@@ -293,7 +284,7 @@ public final class DeviceUtil
     @SuppressLint( "InlinedApi" )
     public static String getSourceClassesString( int sources )
     {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         addString( sources, InputDevice.SOURCE_CLASS_BUTTON, names );
         addString( sources, InputDevice.SOURCE_CLASS_POINTER, names );
         addString( sources, InputDevice.SOURCE_CLASS_TRACKBALL, names );

@@ -52,27 +52,17 @@ public class OptionDialog
     public final void show( int checkedItem )
     {
         // Setup click handling for items in the dialog's list
-        OnClickListener clickListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                dialog.dismiss();
-                if( mListener != null )
-                    mListener.onOptionChoice( which );
-            }
+        OnClickListener clickListener = (dialog, which) -> {
+            dialog.dismiss();
+            if( mListener != null )
+                mListener.onOptionChoice( which );
         };
         
         // Setup long-click handling for items in the dialog's list
-        OnItemLongClickListener longClickListener = new OnItemLongClickListener()
-        {
-            @Override
-            public boolean onItemLongClick( AdapterView<?> av, View view, int position, long id )
-            {
-                if( mListener != null )
-                    mListener.onOptionLongPress( position );
-                return true;
-            }
+        OnItemLongClickListener longClickListener = (av, view, position, id) -> {
+            if( mListener != null )
+                mListener.onOptionLongPress( position );
+            return true;
         };
         
         // Create and show the dialog

@@ -41,13 +41,13 @@ public class SerializableMap
     public String serialize()
     {
         // Serialize the map data to a multi-delimited string
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for( int i = 0; i < mMap.size(); i++ )
         {
             // Putting the value first makes the string a bit more human readable IMO
-            result += mMap.valueAt( i ) + ":" + mMap.keyAt( i ) + ",";
+            result.append(mMap.valueAt(i)).append(":").append(mMap.keyAt(i)).append(",");
         }
-        return result;
+        return result.toString();
     }
     
     /**

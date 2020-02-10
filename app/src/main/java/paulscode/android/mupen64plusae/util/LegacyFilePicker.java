@@ -66,23 +66,19 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
         setContentView(R.layout.legacy_file_picker);
 
         Button cancelButton = findViewById(R.id.buttonCancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                LegacyFilePicker.this.setResult(RESULT_CANCELED, null);
-                LegacyFilePicker.this.finish();
-            }
+        cancelButton.setOnClickListener(v -> {
+            LegacyFilePicker.this.setResult(RESULT_CANCELED, null);
+            LegacyFilePicker.this.finish();
         });
 
         Button okButton = findViewById(R.id.buttonOk);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        okButton.setOnClickListener(v -> {
 
-                if ((mCanSelectFile && mCurrentPath.isFile()) || (!mCanSelectFile && mCurrentPath.isDirectory())) {
-                    Intent data = new Intent();
-                    data.putExtra(ActivityHelper.Keys.SEARCH_PATH, Uri.fromFile(mCurrentPath).toString());
-                    LegacyFilePicker.this.setResult(RESULT_OK, data);
-                    LegacyFilePicker.this.finish();
-                }
+            if ((mCanSelectFile && mCurrentPath.isFile()) || (!mCanSelectFile && mCurrentPath.isDirectory())) {
+                Intent data = new Intent();
+                data.putExtra(ActivityHelper.Keys.SEARCH_PATH, Uri.fromFile(mCurrentPath).toString());
+                LegacyFilePicker.this.setResult(RESULT_OK, data);
+                LegacyFilePicker.this.finish();
             }
         });
 

@@ -62,14 +62,7 @@ public class GameSidebar extends MenuListView
         setNextFocusUpId(getId());
         
         // Handle menu item selections
-        setOnClickListener( new MenuListView.OnClickListener()
-        {
-            @Override
-            public void onClick( MenuItem menuItem )
-            {
-                mActionHandler.onGameSidebarAction( menuItem );
-            }
-        } );
+        setOnClickListener((OnClickListener) menuItem -> mActionHandler.onGameSidebarAction( menuItem ));
 
         setOnKeyListener(actionHandler);
     }

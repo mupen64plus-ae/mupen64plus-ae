@@ -98,7 +98,7 @@ public class PromptInputCodeDialog extends DialogFragment
         final String neutralButtonText = getArguments().getString(STATE_NEUTRAL_BUTTON_TEXT);
         final int numItems = getArguments().getInt(STATE_NUM_ITEMS);
 
-        List<Integer> ignoredKeyCodes = new ArrayList<Integer>();
+        List<Integer> ignoredKeyCodes = new ArrayList<>();
 
         for (int index = 0; index < numItems; ++index)
         {
@@ -106,7 +106,7 @@ public class PromptInputCodeDialog extends DialogFragment
             ignoredKeyCodes.add(seq);
         }
 
-        final ArrayList<AbstractProvider> providers = new ArrayList<AbstractProvider>();
+        final ArrayList<AbstractProvider> providers = new ArrayList<>();
 
         // Create a widget to dispatch key/motion event data
         FrameLayout view = new FrameLayout(getActivity());

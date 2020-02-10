@@ -116,11 +116,13 @@ class SensorConfigurationDialog implements OnClickListener {
         }
         if (sensorAxis.endsWith("/")) {
             String begin = sensorAxis.substring(0, sensorAxis.indexOf('/')).toLowerCase(Locale.getDefault());
+            StringBuilder sensorAxisBuilder = new StringBuilder(sensorAxis);
             for (char c : "xyz".toCharArray()) {
                 if (begin.indexOf(c) == -1) {
-                    sensorAxis = sensorAxis + c;
+                    sensorAxisBuilder.append(c);
                 }
             }
+            sensorAxis = sensorAxisBuilder.toString();
         }
         return sensorAxis;
     }
@@ -195,35 +197,31 @@ class SensorConfigurationDialog implements OnClickListener {
      *         twice, and allowing the input text to be incomplete
      */
     private static InputFilter[] newAxisEditTextFilters() {
-        InputFilter filter = new InputFilter() {
-
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                StringBuilder modified = new StringBuilder();
-                for (int i = start; i < end; i++) {
-                    char c = source.charAt(i);
-                    // Allowing these characters only
-                    if ("XxYyZz/".indexOf(c) != -1) {
-                        // Allowing each character only once
-                        String writtenCharsUnordered = dest.toString().substring(dend) + dest.subSequence(0, dstart)
-                                + modified;
-                        if (writtenCharsUnordered.toLowerCase(Locale.getDefault()).indexOf(Character.toLowerCase(c)) == -1) {
-                            // Disallowing '/' in the beginning
-                            if (c != '/' || modified.length() > 0 || dstart > 0) {
-                                // '/' is required and should not be in the end
-                                // => depending on beginning and end, '/' may be
-                                // required now
-                                if (c == '/' || writtenCharsUnordered.indexOf("/") != -1
-                                        || (dstart + modified.length() <= 1
-                                                && dstart + modified.length() + dest.length() - dend <= 2)) {
-                                    modified.append(c);
-                                }
+        InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+            StringBuilder modified = new StringBuilder();
+            for (int i = start; i < end; i++) {
+                char c = source.charAt(i);
+                // Allowing these characters only
+                if ("XxYyZz/".indexOf(c) != -1) {
+                    // Allowing each character only once
+                    String writtenCharsUnordered = dest.toString().substring(dend) + dest.subSequence(0, dstart)
+                            + modified;
+                    if (writtenCharsUnordered.toLowerCase(Locale.getDefault()).indexOf(Character.toLowerCase(c)) == -1) {
+                        // Disallowing '/' in the beginning
+                        if (c != '/' || modified.length() > 0 || dstart > 0) {
+                            // '/' is required and should not be in the end
+                            // => depending on beginning and end, '/' may be
+                            // required now
+                            if (c == '/' || writtenCharsUnordered.contains("/")
+                                    || (dstart + modified.length() <= 1
+                                            && dstart + modified.length() + dest.length() - dend <= 2)) {
+                                modified.append(c);
                             }
                         }
                     }
                 }
-                return modified;
             }
+            return modified;
         };
         return new InputFilter[] { filter };
     }
@@ -234,21 +232,12 @@ class SensorConfigurationDialog implements OnClickListener {
      */
     private void openSeekBarOnClick(final Button sensitivityButton) {
         final CharSequence title = mContext.getText(R.string.menuItem_sensitivity);
-        sensitivityButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Prompt.promptInteger(mContext, title, "%1$d %%", getSensitivity(sensitivityButton), MIN_SENSITIVITY,
-                        MAX_SENSITIVITY, new PromptIntegerListener() {
-                    @Override
-                    public void onDialogClosed(Integer value, int which) {
-                        if (which == DialogInterface.BUTTON_POSITIVE) {
-                            sensitivityButton.setText(value + "%");
-                        }
+        sensitivityButton.setOnClickListener(v -> Prompt.promptInteger(mContext, title, "%1$d %%", getSensitivity(sensitivityButton), MIN_SENSITIVITY,
+                MAX_SENSITIVITY, (value, which) -> {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        sensitivityButton.setText(value + "%");
                     }
-                });
-            }
-        });
+                }));
     }
 
     /**

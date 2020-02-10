@@ -99,9 +99,8 @@ public class InputStrengthCalculator
             MutableFloat[] inputStrengths = mLastInputStrengths[n64Index];
             
             // Determine the maximum strength from all possible inputs that map to the control.
-            for( int i = 0; i < inputStrengths.length; i++ )
-            {
-                strength = Math.max( strength, inputStrengths[i].get() );
+            for (MutableFloat inputStrength : inputStrengths) {
+                strength = Math.max(strength, inputStrength.get());
             }
         }
         

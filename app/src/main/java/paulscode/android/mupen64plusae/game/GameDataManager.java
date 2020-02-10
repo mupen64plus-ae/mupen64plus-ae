@@ -43,16 +43,10 @@ public class GameDataManager
         final File savePath = new File(mAutoSavePath);
 
         //Only find files that end with .sav
-        final FileFilter fileFilter = new FileFilter(){
-
-            @Override
-            public boolean accept(File pathname)
-            {
-                //It must match this format "yyyy-MM-dd-HH-mm-ss"
-                final String fileName = pathname.getName();
-                return fileName.matches(sMatcherString);
-            }
-
+        final FileFilter fileFilter = pathname -> {
+            //It must match this format "yyyy-MM-dd-HH-mm-ss"
+            final String fileName = pathname.getName();
+            return fileName.matches(sMatcherString);
         };
 
         final File[] fileList = savePath.listFiles(fileFilter);
@@ -99,16 +93,10 @@ public class GameDataManager
         if(allFiles != null && allFiles.length != 0)
         {
             //Only find files that match the matcher string
-            final FileFilter fileFilter = new FileFilter(){
-
-                @Override
-                public boolean accept(File pathname)
-                {
-                    //It must match this format "yyyy-MM-dd-HH-mm-ss"
-                    final String fileName = pathname.getName();
-                    return fileName.matches(sMatcherString);
-                }
-
+            final FileFilter fileFilter = pathname -> {
+                //It must match this format "yyyy-MM-dd-HH-mm-ss"
+                final String fileName = pathname.getName();
+                return fileName.matches(sMatcherString);
             };
 
             //Add all files found

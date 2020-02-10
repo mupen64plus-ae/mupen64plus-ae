@@ -216,13 +216,8 @@ public class CopyFromSdService extends Service
     public void setCopyFromSdListener(CopyFilesListener copyFilesListener)
     {
         mListener = copyFilesListener;
-        mListener.GetProgressDialog().setOnCancelListener(new OnCancelListener()
-        {
-            @Override
-            public void OnCancel()
-            {
+        mListener.GetProgressDialog().setOnCancelListener(() -> {
 
-            }
         });
         
         // For each start request, send a message to start a job and deliver the

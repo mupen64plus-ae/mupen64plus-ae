@@ -115,47 +115,26 @@ public class CheatFile
         
         // Free any previously loaded data
         clear();
-        
-        BufferedReader reader = null;
-        try
-        {
-            reader = new BufferedReader( new FileReader( mFilename ) );
-            
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(mFilename))) {
+
             // Read the 'sectionless' preamble section from disk
             String key = NO_KEY;
-            CheatSection section = new CheatSection( key, reader );
-            mSections.put( key, section );
-            
+            CheatSection section = new CheatSection(key, reader);
+            mSections.put(key, section);
+
             // Read the remaining sections from disk
-            while( !TextUtils.isEmpty( section.nextKey ) )
-            {
+            while (!TextUtils.isEmpty(section.nextKey)) {
                 key = section.nextKey;
-                section = new CheatSection( key, reader );
-                mSections.put( key, section );
+                section = new CheatSection(key, reader);
+                mSections.put(key, section);
             }
-        }
-        catch( FileNotFoundException e )
-        {
-            Log.e( "CheatFile", "Could not open " + mFilename );
+        } catch (FileNotFoundException e) {
+            Log.e("CheatFile", "Could not open " + mFilename);
             return false;
-        }
-        catch( IOException e )
-        {
-            Log.e( "CheatFile", "Could not read " + mFilename );
+        } catch (IOException e) {
+            Log.e("CheatFile", "Could not read " + mFilename);
             return false;
-        }
-        finally
-        {
-            if( reader != null )
-            {
-                try
-                {
-                    reader.close();
-                }
-                catch( IOException ignored )
-                {
-                }
-            }
         }
         return true;
     }
@@ -174,35 +153,16 @@ public class CheatFile
             Log.e( "CheatFile", "Filename not specified in method save()" );
             return false;
         }
-        
-        Writer writer = null;
-        try
-        {
-            writer = new BufferedWriter( new FileWriter( mFilename ) );
-            
+
+        try (Writer writer = new BufferedWriter(new FileWriter(mFilename))) {
+
             // Write each section to disk
-            for( CheatSection section : mSections.values() )
-            {
-                section.save( writer );
+            for (CheatSection section : mSections.values()) {
+                section.save(writer);
             }
-        }
-        catch( IOException e )
-        {
-            Log.e( "CheatFile", "Error saving to " + mFilename + ": " + e.getMessage() );
+        } catch (IOException e) {
+            Log.e("CheatFile", "Error saving to " + mFilename + ": " + e.getMessage());
             return false;
-        }
-        finally
-        {
-            if( writer != null )
-            {
-                try
-                {
-                    writer.close();
-                }
-                catch( IOException ignored )
-                {
-                }
-            }
         }
         return true;
     }

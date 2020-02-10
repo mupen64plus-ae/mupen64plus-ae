@@ -53,16 +53,8 @@ public class Popups
     public static void showShareableText( final Context context, String title, final String message )
     {
         // Set up click handler to share text with a user-selected app (email, clipboard, etc.)
-        DialogInterface.OnClickListener shareHandler = new DialogInterface.OnClickListener()
-        {
-            @SuppressLint( "InlinedApi" )
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                ActivityHelper.launchPlainText( context, message,
-                        context.getText( R.string.actionShare_title ) );
-            }
-        };
+        DialogInterface.OnClickListener shareHandler = (dialog, which) -> ActivityHelper.launchPlainText( context, message,
+                context.getText( R.string.actionShare_title ) );
         
         new Builder( context ).setTitle( title ).setMessage(message)
                 .setNeutralButton( R.string.actionShare_title, shareHandler ).create().show();

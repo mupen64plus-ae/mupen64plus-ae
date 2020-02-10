@@ -41,14 +41,7 @@ public abstract class AppCompatListActivity extends AppCompatActivity
         
         mListView = findViewById(android.R.id.list);
         
-        mListView.setOnItemClickListener(new ListView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                AppCompatListActivity.this.onListItemClick( mListView, view, position, id );
-            }
-        });
+        mListView.setOnItemClickListener((parent, view, position, id) -> AppCompatListActivity.this.onListItemClick( mListView, view, position, id ));
         
         mListView.setEmptyView(findViewById(android.R.id.empty));
     }

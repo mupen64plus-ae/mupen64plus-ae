@@ -70,26 +70,22 @@ public class DeleteTexturesActivity extends AppCompatActivity implements OnItemC
         mGlobalPrefs = new GlobalPrefs( this, appData );
         
         Button cancelButton = findViewById( R.id.buttonCancel );
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                DeleteTexturesActivity.this.setResult(RESULT_CANCELED, null);
-                DeleteTexturesActivity.this.finish();
-            }
+        cancelButton.setOnClickListener(v -> {
+            DeleteTexturesActivity.this.setResult(RESULT_CANCELED, null);
+            DeleteTexturesActivity.this.finish();
         });
         
         Button deleteButton = findViewById( R.id.buttonDelete );
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        deleteButton.setOnClickListener(v -> {
 
-                String title = getString( R.string.confirm_title );
-                String message = getString( R.string.confirmClearData_message );
+            String title = getString( R.string.confirm_title );
+            String message = getString( R.string.confirmClearData_message );
 
-                ConfirmationDialog confirmationDialog =
-                        ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
 
-                FragmentManager fm = getSupportFragmentManager();
-                confirmationDialog.show(fm, STATE_CLEAR_CONFIRM_DIALOG);
-            }
+            FragmentManager fm1 = getSupportFragmentManager();
+            confirmationDialog.show(fm1, STATE_CLEAR_CONFIRM_DIALOG);
         });
 
         PopulateFileList();
@@ -155,12 +151,9 @@ public class DeleteTexturesActivity extends AppCompatActivity implements OnItemC
     @Override
     public void onDeleteFilesFinished()
     {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mCurrentPath = "";
-                PopulateFileList();
-            }
+        runOnUiThread(() -> {
+            mCurrentPath = "";
+            PopulateFileList();
         });
     }
 }

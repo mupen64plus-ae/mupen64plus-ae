@@ -80,29 +80,19 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
             int currentIndex = findIndexOfValue(getCurrentValue(null));
             builder.setTitle(getTitle());
             builder.setPositiveButton(null, null);
-            builder.setSingleChoiceItems(adapter, currentIndex, new OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int item)
-                {
-                    setValue(getEntryValues()[item].toString());
-                    dialog.dismiss();
-                }
-            } );
-            builder.setNeutralButton( R.string.profile_manage_profiles, new OnClickListener()
-            {
-                @Override
-                public void onClick( DialogInterface dialog, int which )
-                {
-                    Context context = ProfilePreference.this.getContext();
+            builder.setSingleChoiceItems(adapter, currentIndex, (dialog, item) -> {
+                setValue(getEntryValues()[item].toString());
+                dialog.dismiss();
+            });
+            builder.setNeutralButton( R.string.profile_manage_profiles, (dialog, which) -> {
+                Context context1 = ProfilePreference.this.getContext();
 
-                    Intent activityIntent = new Intent();
-                    activityIntent.setAction(mManagerAction);
-                    activityIntent.setPackage(context.getPackageName());
+                Intent activityIntent = new Intent();
+                activityIntent.setAction(mManagerAction);
+                activityIntent.setPackage(context1.getPackageName());
 
-                    context.startActivity( activityIntent );
-                }
-            } );
+                context1.startActivity( activityIntent );
+            });
         }
     }
 

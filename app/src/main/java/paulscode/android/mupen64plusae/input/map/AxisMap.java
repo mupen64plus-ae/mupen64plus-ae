@@ -24,7 +24,7 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
     private static final int SIGNATURE_HASH_AMAZON_FIRE = 2050752785;
     
-    private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
+    private static final SparseArray<AxisMap> sAllMaps = new SparseArray<>();
     private final String mSignature;
     private final String mSignatureName;
     
@@ -48,7 +48,7 @@ public class AxisMap extends SerializableMap
     {
         // Auto-classify the axes
         List<MotionRange> motionRanges = device.getMotionRanges();
-        List<Integer> axisCodes = new ArrayList<Integer>();
+        List<Integer> axisCodes = new ArrayList<>();
         for( MotionRange motionRange : motionRanges )
         {
             boolean isJoystick = ((motionRange.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) ||

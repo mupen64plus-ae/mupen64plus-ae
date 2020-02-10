@@ -159,7 +159,7 @@ public final class SafeMethods
             if( wait )
             {
                 process.waitFor();
-                LinkedList<String> output = new LinkedList<String>();
+                LinkedList<String> output = new LinkedList<>();
                 BufferedReader buffer = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
                 String line;
                 while( ( line = buffer.readLine() ) != null )
@@ -172,15 +172,13 @@ public final class SafeMethods
 
                 if( output.size() > 0 )
                 {
-                    return output.toArray( new String[ output.size() ] );
+                    return output.toArray(new String[0]);
                 }
             }
         }
-        catch( IOException ioe )
+        catch( IOException | InterruptedException ioe )
         {}
-        catch( InterruptedException ie )
-        {}
-        
+
         return null;
     }
 }

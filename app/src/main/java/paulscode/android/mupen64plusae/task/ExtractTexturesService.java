@@ -139,13 +139,7 @@ public class ExtractTexturesService extends Service
 
                     Handler handler = new Handler(Looper.getMainLooper());
 
-                    handler.post(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    handler.post(() -> Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show());
                 }
             } else if (header.isZip || header.is7Zip) {
                 String headerName;
@@ -191,26 +185,14 @@ public class ExtractTexturesService extends Service
 
                     Handler handler = new Handler(Looper.getMainLooper());
 
-                    handler.post(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    handler.post(() -> Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show());
                 }
             } else {
                 final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
 
                 Handler handler = new Handler(Looper.getMainLooper());
 
-                handler.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
-                    }
-                });
+                handler.post(() -> Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show());
             }
             
             if (mListener != null)
@@ -303,13 +285,8 @@ public class ExtractTexturesService extends Service
     public void setExtractTexturesListener(ExtractTexturesListener extractTexturesListener)
     {
         mListener = extractTexturesListener;
-        mListener.GetProgressDialog().setOnCancelListener(new OnCancelListener()
-        {
-            @Override
-            public void OnCancel()
-            {
+        mListener.GetProgressDialog().setOnCancelListener(() -> {
 
-            }
         });
         
         // For each start request, send a message to start a job and deliver the

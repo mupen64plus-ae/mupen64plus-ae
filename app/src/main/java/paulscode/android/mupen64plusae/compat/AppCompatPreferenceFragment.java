@@ -156,27 +156,22 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
                 final LinearLayoutManager layoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
 
                 //Prevent scrolling past the top
-                childView.setOnKeyListener(new OnKeyListener() {
+                childView.setOnKeyListener((v, keyCode, event) -> {
+                    View focusedChild = layoutManager.getFocusedChild();
+                    int selectedPos = recyclerView.getChildAdapterPosition(focusedChild);
 
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event)
-                    {
-                        View focusedChild = layoutManager.getFocusedChild();
-                        int selectedPos = recyclerView.getChildAdapterPosition(focusedChild);
-                        
-                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                            switch(keyCode) {
-                                case KeyEvent.KEYCODE_DPAD_DOWN:
-                                    return !(selectedPos < adapter.getItemCount() - 1);
-                                case KeyEvent.KEYCODE_DPAD_UP:
-                                    return selectedPos == 0;
-                                case KeyEvent.KEYCODE_DPAD_RIGHT:
-                                    return true;
-                            }
-                            return false;
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        switch(keyCode) {
+                            case KeyEvent.KEYCODE_DPAD_DOWN:
+                                return !(selectedPos < adapter.getItemCount() - 1);
+                            case KeyEvent.KEYCODE_DPAD_UP:
+                                return selectedPos == 0;
+                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                return true;
                         }
                         return false;
                     }
+                    return false;
                 });
                 
                 //Make sure all views are focusable

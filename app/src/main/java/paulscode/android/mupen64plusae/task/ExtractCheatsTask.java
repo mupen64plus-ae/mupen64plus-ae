@@ -54,7 +54,7 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
         mCheatPath = cheatPath;
         mCrc = crc;
         mCountryCode = romCountryCode;
-        mCheats = new ArrayList<Cheat>();
+        mCheats = new ArrayList<>();
     }
 
     @Override

@@ -123,82 +123,44 @@ public class ProgressDialog implements OnClickListener
     
     public void setText( final CharSequence text )
     {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mTextProgress.setText( text );
-            }
-        } );
+        mActivity.runOnUiThread(() -> mTextProgress.setText( text ));
     }
     
     public void setSubtext( final CharSequence text )
     {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mTextSubprogress.setText( text );
-            }
-        } );
+        mActivity.runOnUiThread(() -> mTextSubprogress.setText( text ));
     }
     
     public void setMessage( final CharSequence text )
     {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mTextMessage.setText( text );
-            }
-        } );
+        mActivity.runOnUiThread(() -> mTextMessage.setText( text ));
     }
     
     public void setMessage( final int resid )
     {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mTextMessage.setText( resid );
-            }
-        } );
+        mActivity.runOnUiThread(() -> mTextMessage.setText( resid ));
     }
     
     public void setMaxProgress( final long size )
     {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mMaxProgress = size;
-                mProgress = 0;
-                mProgressTotal.setProgress( 0 );
-                mProgressTotal.setVisibility( mMaxProgress > 0 ? View.VISIBLE : View.GONE );
-            }
-        } );
+        mActivity.runOnUiThread(() -> {
+            mMaxProgress = size;
+            mProgress = 0;
+            mProgressTotal.setProgress( 0 );
+            mProgressTotal.setVisibility( mMaxProgress > 0 ? View.VISIBLE : View.GONE );
+        });
     }
     
     public void incrementProgress( final long inc )
     {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
+        mActivity.runOnUiThread(() -> {
+            if( mMaxProgress > 0 )
             {
-                if( mMaxProgress > 0 )
-                {
-                    mProgress += inc;
-                    int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
-                            / mMaxProgress );
-                    mProgressTotal.setProgress( pctProgress );
-                }
+                mProgress += inc;
+                int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
+                        / mMaxProgress );
+                mProgressTotal.setProgress( pctProgress );
             }
-        } );
+        });
     }
 }

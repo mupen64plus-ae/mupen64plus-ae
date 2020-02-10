@@ -199,7 +199,7 @@ public class CheatUtils
     
     private static ArrayList<Cheat> populateCommon(CheatSection cheatSection, String crc, Context con)
     {
-        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
+        ArrayList<Cheat> cheats = new ArrayList<>();
         
         if( cheatSection == null )
         {
@@ -239,8 +239,8 @@ public class CheatUtils
                 }
                 
                 // Get the options for this cheat
-                LinkedList<CheatCode> codes = new LinkedList<CheatCode>();
-                LinkedList<CheatOption> options = new LinkedList<CheatOption>();
+                LinkedList<CheatCode> codes = new LinkedList<>();
+                LinkedList<CheatOption> options = new LinkedList<>();
                 for( int o = 0; o < cheatBlock.size(); o++ )
                 {
                     codes.add( cheatBlock.get( o ) );
@@ -252,8 +252,8 @@ public class CheatUtils
                         options = codes.get( o ).options;
                     }
                 }
-                String codesAsString = "";
-                if( codes != null && !codes.isEmpty() )
+                StringBuilder codesAsString = new StringBuilder();
+                if( !codes.isEmpty() )
                 {
                     for( int o = 0; o < codes.size(); o++ )
                     {
@@ -262,11 +262,11 @@ public class CheatUtils
                         {
                             y = "\n";
                         }
-                        codesAsString += codes.get( o ).address + " " + codes.get( o ).code + y;
+                        codesAsString.append(codes.get(o).address).append(" ").append(codes.get(o).code).append(y);
                     }
                 }
-                cheat.code = codesAsString;
-                String optionsAsString = "";
+                cheat.code = codesAsString.toString();
+                StringBuilder optionsAsString = new StringBuilder();
                 if( options != null && !options.isEmpty() )
                 {
                     for( int o = 0; o < options.size(); o++ )
@@ -276,10 +276,10 @@ public class CheatUtils
                         {
                             y = "\n";
                         }
-                        optionsAsString += options.get( o ).name + " " + options.get( o ).code + y;
+                        optionsAsString.append(options.get(o).name).append(" ").append(options.get(o).code).append(y);
                     }
                 }
-                cheat.option = optionsAsString;
+                cheat.option = optionsAsString.toString();
                 String[] optionStrings = null;
                 if( options != null )
                 {
@@ -333,35 +333,29 @@ public class CheatUtils
             {
                 b = new CheatBlock(cheat.name, cheat.desc);
             }
-            LinkedList<CheatOption> ops = new LinkedList<CheatOption>();
+            LinkedList<CheatOption> ops = new LinkedList<>();
             if (cheat.option != null)
             {
                 if (!TextUtils.isEmpty(cheat.option))
                 {
                     String[] tmp_ops = cheat.option.split("\n");
-                    for (int o = 0; o < tmp_ops.length; o++)
-                    {
-                        ops.add(new CheatOption(tmp_ops[o].substring(tmp_ops[o].lastIndexOf(' ') + 1), tmp_ops[o]
-                            .substring(0, tmp_ops[o].lastIndexOf(' '))));
+                    for (String tmp_op : tmp_ops) {
+                        ops.add(new CheatOption(tmp_op.substring(tmp_op.lastIndexOf(' ') + 1), tmp_op
+                                .substring(0, tmp_op.lastIndexOf(' '))));
                     }
                 }
             }
             String[] tmp_lines = cheat.code.split("\n");
             if (tmp_lines.length > 0)
             {
-                for (int o = 0; o < tmp_lines.length; o++)
-                {
-                    if (tmp_lines[o].indexOf(' ') != -1)
-                    {
-                        if (tmp_lines[o].contains("?"))
-                        {
-                            b.add(new CheatCode(tmp_lines[o].substring(0, tmp_lines[o].lastIndexOf(' ')), tmp_lines[o]
-                                .substring(tmp_lines[o].lastIndexOf(' ') + 1), ops));
-                        }
-                        else
-                        {
-                            b.add(new CheatCode(tmp_lines[o].substring(0, tmp_lines[o].lastIndexOf(' ')), tmp_lines[o]
-                                .substring(tmp_lines[o].lastIndexOf(' ') + 1), null));
+                for (String tmp_line : tmp_lines) {
+                    if (tmp_line.indexOf(' ') != -1) {
+                        if (tmp_line.contains("?")) {
+                            b.add(new CheatCode(tmp_line.substring(0, tmp_line.lastIndexOf(' ')), tmp_line
+                                    .substring(tmp_line.lastIndexOf(' ') + 1), ops));
+                        } else {
+                            b.add(new CheatCode(tmp_line.substring(0, tmp_line.lastIndexOf(' ')), tmp_line
+                                    .substring(tmp_line.lastIndexOf(' ') + 1), null));
                         }
                     }
                 }

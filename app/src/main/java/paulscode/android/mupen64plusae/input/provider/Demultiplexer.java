@@ -40,7 +40,7 @@ public class Demultiplexer
     {
         /** Listener management. */
         private final SubscriptionManager<View.OnKeyListener> mManager
-                = new SubscriptionManager<View.OnKeyListener>();
+                = new SubscriptionManager<>();
         
         /**
          * Adds a listener.
@@ -94,7 +94,7 @@ public class Demultiplexer
     {
         /** Listener management. */
         private final SubscriptionManager<View.OnTouchListener> mManager
-                = new SubscriptionManager<View.OnTouchListener>();
+                = new SubscriptionManager<>();
         
         /**
          * Adds a listener.

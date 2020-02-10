@@ -52,19 +52,14 @@ public class ConfirmationDialog extends DialogFragment
         mId = getArguments().getInt(STATE_ID);
 
         // When the user clicks Ok, notify the downstream listener
-        OnClickListener internalListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
+        OnClickListener internalListener = (dialog, which) -> {
+            if (getActivity() instanceof PromptConfirmListener)
             {
-                if (getActivity() instanceof PromptConfirmListener)
-                {
-                    ((PromptConfirmListener) getActivity()).onPromptDialogClosed(mId, which);
-                }
-                else
-                {
-                    Log.e("ConfirmationDialog", "Activity doesn't implement PromptConfirmListener");
-                }
+                ((PromptConfirmListener) getActivity()).onPromptDialogClosed(mId, which);
+            }
+            else
+            {
+                Log.e("ConfirmationDialog", "Activity doesn't implement PromptConfirmListener");
             }
         };
 

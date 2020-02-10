@@ -47,11 +47,7 @@ public class ScanRomsActivity extends AppCompatActivity
         setContentView(R.layout.scan_roms_activity);
 
         Button filePickerButtont = findViewById(R.id.buttonFilePicker);
-        filePickerButtont.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startFilePicker();
-            }
-        });
+        filePickerButtont.setOnClickListener(v -> startFilePicker());
                 
         // Set checkbox state
         mCheckBox1 = findViewById( R.id.checkBox1 );

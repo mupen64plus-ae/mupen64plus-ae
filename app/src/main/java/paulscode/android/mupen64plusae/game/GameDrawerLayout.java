@@ -44,7 +44,7 @@ import paulscode.android.mupen64plusae.input.map.TouchMap;
 public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
 {
     private TouchMap mTouchMap;
-    private List<MotionEvent> ignore = new ArrayList<MotionEvent>();
+    private List<MotionEvent> ignore = new ArrayList<>();
     private long mLastEdgeTime = 0;
     private boolean mForceDrawer = false;
     

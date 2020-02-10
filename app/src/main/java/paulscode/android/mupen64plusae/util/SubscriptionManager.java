@@ -37,7 +37,7 @@ public final class SubscriptionManager<Subscriber>
      */
     public SubscriptionManager()
     {
-        mSubscribers = new ArrayList<Subscriber>();
+        mSubscribers = new ArrayList<>();
     }
 
     /**

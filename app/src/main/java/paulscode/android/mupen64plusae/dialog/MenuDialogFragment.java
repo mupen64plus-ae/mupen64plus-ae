@@ -60,15 +60,10 @@ public class MenuDialogFragment extends DialogFragment
 
             ((OnDialogMenuItemSelectedListener) getActivity()).onPrepareMenuList(menuList);
             // Handle menu item selections
-            menuList.setOnClickListener(new MenuListView.OnClickListener()
-            {
-                @Override
-                public void onClick(MenuItem menuItem)
-                {
-                    ((OnDialogMenuItemSelectedListener) getActivity()).onDialogMenuItemSelected(dialogId, menuItem);
+            menuList.setOnClickListener((MenuListView.OnClickListener) menuItem -> {
+                ((OnDialogMenuItemSelectedListener) getActivity()).onDialogMenuItemSelected(dialogId, menuItem);
 
-                    dismiss();
-                }
+                dismiss();
             });
 
         }

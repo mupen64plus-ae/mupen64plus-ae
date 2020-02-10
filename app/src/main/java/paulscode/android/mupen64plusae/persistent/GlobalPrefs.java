@@ -730,20 +730,15 @@ public class GlobalPrefs
         // Populate and show the language menu
         final Builder builder = new Builder( activity );
         builder.setTitle( R.string.menuItem_localeOverride );
-        builder.setSingleChoiceItems( mLocaleNames, currentIndex, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
+        builder.setSingleChoiceItems( mLocaleNames, currentIndex, (dialog, which) -> {
+            dialog.dismiss();
+            if( which >= 0 && which != currentIndex )
             {
-                dialog.dismiss();
-                if( which >= 0 && which != currentIndex )
-                {
-                    mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).apply();
-                    activity.finishAffinity();
-                    ActivityHelper.startSplashActivity(activity);
-                }
+                mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).apply();
+                activity.finishAffinity();
+                ActivityHelper.startSplashActivity(activity);
             }
-        } );
+        });
         builder.create().show();
     }
 
