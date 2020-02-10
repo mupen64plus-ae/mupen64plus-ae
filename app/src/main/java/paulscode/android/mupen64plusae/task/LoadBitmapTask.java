@@ -26,8 +26,6 @@ import java.lang.ref.WeakReference;
 import org.mupen64plusae.v3.alpha.R;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.text.TextUtils;

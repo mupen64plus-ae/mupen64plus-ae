@@ -12,6 +12,7 @@ import android.os.Build;
 
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public class LocaleContextWrapper extends ContextWrapper {
 
     private static String mLocaleCode = null;
@@ -20,7 +21,6 @@ public class LocaleContextWrapper extends ContextWrapper {
         super(base);
     }
 
-    @SuppressWarnings("deprecation")
     public static ContextWrapper wrap(Context context, String language) {
         Configuration config = context.getResources().getConfiguration();
 
@@ -31,16 +31,13 @@ public class LocaleContextWrapper extends ContextWrapper {
         } else {
             setSystemLocaleLegacy(config, locale);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            context = context.createConfigurationContext(config);
-        } else {
-            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
-        }
+
+        context = context.createConfigurationContext(config);
 
         return new LocaleContextWrapper(context);
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public static Locale getSystemLocaleLegacy(Configuration config){
         return config.locale;
     }
@@ -50,7 +47,7 @@ public class LocaleContextWrapper extends ContextWrapper {
         return config.getLocales().get(0);
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public static void setSystemLocaleLegacy(Configuration config, Locale locale){
         config.locale = locale;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -29,7 +29,7 @@ import android.graphics.drawable.Drawable;
 public class DrawerDrawable extends Drawable
 {
     private Paint mPaint;
-    int mAlpha = 100;
+    private int mAlpha;
     
     public DrawerDrawable( int alpha )
     {
@@ -48,7 +48,7 @@ public class DrawerDrawable extends Drawable
         int height = getBounds().height();
         int alpha = mAlpha << 24;
         
-        mPaint.setColor( alpha + 0x000000 );
+        mPaint.setColor(alpha);
         canvas.drawRect( 0, 0, width, height, mPaint );
         
         mPaint.setColor( 0xFF555555 );
@@ -56,7 +56,7 @@ public class DrawerDrawable extends Drawable
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public int getOpacity()
     {
         return ( mAlpha == 255 ) ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT;

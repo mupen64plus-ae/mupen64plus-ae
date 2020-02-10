@@ -19,12 +19,6 @@
  */
 
 package paulscode.android.mupen64plusae;
-import android.util.SparseArray;
-
-import java.util.ArrayList;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Utility class that encapsulates the Core Service parameters

@@ -29,11 +29,7 @@ import android.text.TextUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.preference.CompatListPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 

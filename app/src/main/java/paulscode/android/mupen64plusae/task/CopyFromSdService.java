@@ -46,11 +46,9 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.ImportExportActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings("FieldCanBeLocal")

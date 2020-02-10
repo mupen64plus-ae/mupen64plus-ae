@@ -39,7 +39,6 @@ import android.util.Log;
 import com.bda.controller.Controller;
 
 import org.mupen64plusae.v3.alpha.R;
-import org.w3c.dom.Document;
 
 import java.io.File;
 import java.util.ArrayList;
