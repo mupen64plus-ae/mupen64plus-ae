@@ -10,6 +10,7 @@
 #ifdef EGL
 #include <GL/gl.h>
 #undef GL_VERSION_1_1
+#undef GL_GLES_PROTOTYPES
 #include <GL/glcorearb.h>
 #elif defined(OS_MAC_OS_X)
 #include <OpenGL/OpenGL.h>
@@ -24,13 +25,13 @@
 #include <android/log.h>
 #include <cstdlib>
 
-#ifdef GL_ERROR_DEBUG
+//#ifdef GL_ERROR_DEBUG
 #define CHECKED_GL_FUNCTION(proc_name, ...) checked([&]() { proc_name(__VA_ARGS__);}, #proc_name)
 #define CHECKED_GL_FUNCTION_WITH_RETURN(proc_name, ReturnType, ...) checkedWithReturn<ReturnType>([&]() { return proc_name(__VA_ARGS__);}, #proc_name)
-#else
-#define CHECKED_GL_FUNCTION(proc_name, ...) proc_name(__VA_ARGS__)
-#define CHECKED_GL_FUNCTION_WITH_RETURN(proc_name, ReturnType, ...) proc_name(__VA_ARGS__)
-#endif
+//#else
+//#define CHECKED_GL_FUNCTION(proc_name, ...) proc_name(__VA_ARGS__)
+//#define CHECKED_GL_FUNCTION_WITH_RETURN(proc_name, ReturnType, ...) proc_name(__VA_ARGS__)
+//#endif
 
 #define IS_GL_FUNCTION_VALID(proc_name) g_##proc_name != NULL
 #define GET_GL_FUNCTION(proc_name) g_##proc_name
@@ -130,6 +131,12 @@
 #define glClearDepth(...) CHECKED_GL_FUNCTION(g_glClearDepth, __VA_ARGS__)
 #define glGetHandleARB(...) CHECKED_GL_FUNCTION_WITH_RETURN(g_glGetHandleARB, GLhandleARB, __VA_ARGS__)
 #define glDrawPixels(...) CHECKED_GL_FUNCTION(g_glDrawPixels, __VA_ARGS__)
+#define glBlendEquation(...) CHECKED_GL_FUNCTION(g_glBlendEquation, __VA_ARGS__)
+#define glBlendEquationSeparate(...) CHECKED_GL_FUNCTION(g_glBlendEquationSeparate, __VA_ARGS__)
+#define glBlendFuncSeparate(...) CHECKED_GL_FUNCTION(g_glBlendFuncSeparate, __VA_ARGS__)
+#define glFrontFace(...) CHECKED_GL_FUNCTION(g_glFrontFace, __VA_ARGS__)
+#define glUniformMatrix4fv(...) CHECKED_GL_FUNCTION(g_glUniformMatrix4fv, __VA_ARGS__)
+#define glUniform3f(...) CHECKED_GL_FUNCTION(g_glUniform3f, __VA_ARGS__)
 
 typedef void (APIENTRYP PFNGLTEXENVIPROC) ( GLenum target, GLenum pname, GLint param );
 typedef void (APIENTRYP PFNGLACTIVATETEXTUREARBPROC) ( GLenum texture );
@@ -244,6 +251,12 @@ extern PFNGLLOADMATRIXFPROC g_glLoadMatrixf;
 extern PFNGLCLEARDEPTHPROC g_glClearDepth;
 extern PFNGLGETHANDLEARBPROC g_glGetHandleARB;
 extern PFNGLDRAWPIXELSPROC g_glDrawPixels;
+extern PFNGLBLENDEQUATIONPROC g_glBlendEquation;
+extern PFNGLBLENDEQUATIONSEPARATEPROC g_glBlendEquationSeparate;
+extern PFNGLBLENDFUNCSEPARATEPROC g_glBlendFuncSeparate;
+extern PFNGLFRONTFACEPROC g_glFrontFace;
+extern PFNGLUNIFORMMATRIX4FVPROC g_glUniformMatrix4fv;
+extern PFNGLUNIFORM3FPROC g_glUniform3f;
 
 #endif
 
@@ -443,6 +456,9 @@ extern PFNGLNAMEDFRAMEBUFFERTEXTUREPROC g_glNamedFramebufferTexture;
 extern PFNGLDRAWELEMENTSBASEVERTEXPROC g_glDrawElementsBaseVertex;
 extern PFNGLFLUSHMAPPEDBUFFERRANGEPROC g_glFlushMappedBufferRange;
 
+
+#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS 0x8CD9
+
 namespace  EGLLoader {
 
 	void loadEGLFunctions();
@@ -454,7 +470,7 @@ template<typename F> void checked(F fn, const char* _functionName)
 	int error = glGetError();
 	if (error != GL_NO_ERROR) {
 		__android_log_print(ANDROID_LOG_ERROR, "EGLLoader", "GL error, function = %s, error = 0x%02x", _functionName, error);
-		abort();
+		//abort();
 	}
 }
 
@@ -464,7 +480,7 @@ template<typename R, typename F> R checkedWithReturn(F fn, const char* _function
 	int error = glGetError();
 	if (error != GL_NO_ERROR) {
 		__android_log_print(ANDROID_LOG_ERROR, "EGLLoader", "GL error, function = %s, error = 0x%02x", _functionName, error);
-		abort();
+		//abort();
 	}
 
 	return returnValue;

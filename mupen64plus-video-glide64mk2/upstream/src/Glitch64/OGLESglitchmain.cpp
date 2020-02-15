@@ -34,12 +34,10 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#include "glide.h"
-#include "g3ext.h"
+#include <glide.h>
+#include <g3ext.h>
 #include "glitchmain.h"
 #include "m64p.h"
-
-#define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 
 #ifdef VPDEBUG
 #include <IL/il.h>
@@ -552,6 +550,8 @@ grSstWinOpen(
   sprintf(caption, "Glide64mk2");
 # endif // _DEBUG
   CoreVideo_SetCaption(caption);
+
+    EGLLoader::loadEGLFunctions();
 
   glViewport(0, viewport_offset, width, height);
   lfb_color_fmt = color_format;

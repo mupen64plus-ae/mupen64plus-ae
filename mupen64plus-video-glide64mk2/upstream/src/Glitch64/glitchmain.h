@@ -120,7 +120,7 @@ extern "C" {
 #ifndef SDL_VIDEO_OPENGL_ES2
 #error SDL is not build with OpenGL ES2 support. Try USE_GLES=0
 #endif
-#include <SDL_opengles2.h>
+//#include <SDL_opengles2.h>
 #include "OGLESwrappers.h"
 #else
 #ifndef SDL_VIDEO_OPENGL

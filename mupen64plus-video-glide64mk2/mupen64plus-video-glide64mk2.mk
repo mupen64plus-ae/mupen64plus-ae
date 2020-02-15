@@ -5,7 +5,7 @@
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./upstream/src
 
-MY_LOCAL_STATIC_LIBRARIES := png
+MY_LOCAL_STATIC_LIBRARIES := png EGLLoader
 MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES :=                          \
@@ -57,9 +57,9 @@ MY_LOCAL_CFLAGS :=         \
     -DNOSSE             \
     -DNO_ASM            \
     -fsigned-char       \
-    -Wformat
+    -Wformat -Wno-unused-value -Wmacro-redefined -w
     
-MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11
+MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -Wmacro-redefined -w -std=c++11 -include $(SRCDIR)/../../../ndkLibs/GL/GL/EGLLoader.h
     
 MY_LOCAL_CPP_FEATURES := exceptions
 
@@ -76,25 +76,26 @@ LOCAL_STATIC_LIBRARIES := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES)
 LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/Glitch64/OGLEScombiner.cpp \
-    $(SRCDIR)/Glitch64/OGLESgeometry.cpp $(SRCDIR)/Glitch64/OGLESglitchmain.cpp $(SRCDIR)/Glitch64/OGLEStextures.cpp
-LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -DUSE_GLES
+    $(SRCDIR)/Glitch64/OGLESgeometry.cpp $(SRCDIR)/Glitch64/OGLESglitchmain.cpp $(SRCDIR)/Glitch64/OGLEStextures.cpp \
+    ../ndkLibs/GL/GL/EGLLoader.cpp
+LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -DUSE_GLES -DEGL
 LOCAL_CPPFLAGS := $(MY_LOCAL_CPPFLAGS)
 LOCAL_CPP_FEATURES := $(MY_LOCAL_CPP_FEATURES)
 LOCAL_LDFLAGS := $(MY_LOCAL_LDFLAGS)
-LOCAL_LDLIBS :=  $(MY_LOCAL_LDLIBS) -lGLESv2
+LOCAL_LDLIBS :=  $(MY_LOCAL_LDLIBS) -lEGL
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := mupen64plus-video-glide64mk2-egl
 LOCAL_SHARED_LIBRARIES := $(MY_LOCAL_SHARED_LIBRARIES)
-LOCAL_STATIC_LIBRARIES := $(MY_LOCAL_STATIC_LIBRARIES) EGLLoader
+LOCAL_STATIC_LIBRARIES := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES) $(GL_INCLUDES) $(LOCAL_PATH)/$(SRCDIR)/Glitch64
 LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/Glitch64/OGLcombiner.cpp \
     $(SRCDIR)/Glitch64/OGLgeometry.cpp $(SRCDIR)/../../OGLglitchmainEGL.cpp \
     $(SRCDIR)/Glitch64/OGLtextures.cpp
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -DEGL -DSDL_VIDEO_OPENGL -D_SDL_opengl_h
-LOCAL_CPPFLAGS := $(MY_LOCAL_CPPFLAGS) -include $(SRCDIR)/../../../ndkLibs/GL/GL/EGLLoader.h
+LOCAL_CPPFLAGS := $(MY_LOCAL_CPPFLAGS)
 LOCAL_CPP_FEATURES := $(MY_LOCAL_CPP_FEATURES)
 LOCAL_LDFLAGS := $(MY_LOCAL_LDFLAGS)
 LOCAL_LDLIBS :=  $(MY_LOCAL_LDLIBS) -lEGL
