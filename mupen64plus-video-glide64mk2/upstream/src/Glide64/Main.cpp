@@ -349,7 +349,7 @@ void WriteLog(m64p_msg_level level, const char *msg, ...)
   vsnprintf(buf, 1023, msg, args);
   buf[1023]='\0';
   va_end(args);
-  if (l_DebugCallback)
+  if (l_DebugCallback && level != M64MSG_VERBOSE)
   {
     l_DebugCallback(l_DebugCallContext, level, buf);
   }
