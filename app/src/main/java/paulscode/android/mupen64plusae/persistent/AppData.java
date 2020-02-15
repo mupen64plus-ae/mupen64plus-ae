@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.persistent;
 import android.app.ActivityManager;
 import android.app.UiModeManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
@@ -392,7 +393,9 @@ public class AppData
 
         isAndroidTv = uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
 
-        useLegacyFileBrowser = isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O;
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        useLegacyFileBrowser = isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O ||
+                intent.resolveActivity(context.getPackageManager()) == null;
     }
 
     /**
