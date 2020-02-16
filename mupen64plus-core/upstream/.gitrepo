@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/mupen64plus-ae/mupen64plus-core.git
 	branch = master
-	commit = 7e094367f2a55abe5ee6de6094091811e38a2200
-	parent = 6d881ee25249333c99b51bbcec4872194396329c
+	commit = 678979ee735a23143352a8f237dc118c83714d51
+	parent = 0e634893b0648f071330476a62847d8ff455a46a
 	method = merge
 	cmdver = 0.4.0
