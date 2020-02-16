@@ -579,8 +579,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
 
+                mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
                 // TODO: Re-enable this once the core enables writing again
-                // mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
                 // mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
             }
 
