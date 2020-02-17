@@ -503,8 +503,23 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mCoreInterface.setGbRomPath(getApplicationContext(), gbRomPaths);
             mCoreInterface.setGbRamPath(getApplicationContext(), gbRamPaths);
-            mCoreInterface.setDdRomPath(getApplicationContext(), mGamePrefs.idlPath64Dd);
-            mCoreInterface.setDdDiskPath(getApplicationContext(), mGamePrefs.diskPath64Dd);
+
+            boolean isNdd = false;
+            boolean isRom = false;
+            // First check for ROM type
+            if (TextUtils.isEmpty(mZipPath)) {
+                RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mRomPath));
+                isNdd = header.isNdd;
+                isRom = header.isValid;
+                if (isNdd) {
+                    mCoreInterface.setDdRomPath(getApplicationContext(), mGlobalPrefs.japanIplPath);
+                    mCoreInterface.setDdDiskPath(getApplicationContext(), mRomPath);
+                }
+            }
+            else {
+                mCoreInterface.setDdRomPath(getApplicationContext(), mGamePrefs.idlPath64Dd);
+                mCoreInterface.setDdDiskPath(getApplicationContext(), mGamePrefs.diskPath64Dd);
+            }
 
             mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir);
@@ -522,19 +537,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             boolean openSuccess = false;
 
+            if (isNdd) {
+                openSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
+            }
+
             if (TextUtils.isEmpty(mZipPath))
             {
-                RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mRomPath));
-
                 // Disk only games still require a ROM image, so use a dummy test ROM
-                if (header.isNdd) {
-                    mCoreInterface.setDdRomPath(getApplicationContext(), mGlobalPrefs.japanIplPath);
-                    mCoreInterface.setDdDiskPath(getApplicationContext(), mRomPath);
-
-                    if (!TextUtils.isEmpty(mGlobalPrefs.japanIplPath)) {
-                        openSuccess = mCoreInterface.openRom(getApplicationContext(), Uri.fromFile(new File(mAppData.mupen64plus_test_rom_v64)).toString());
-                    }
-                } else if (header.isValid) {
+                if (isNdd) {
+                    openSuccess = mCoreInterface.openRom(getApplicationContext(), Uri.fromFile(new File(mAppData.mupen64plus_test_rom_v64)).toString());
+                } else if (isRom) {
                     openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
                 }
             }
@@ -580,8 +592,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
 
                 mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
-                // TODO: Re-enable this once the core enables writing again
-                // mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
+                mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
             }
 
             // Clean up the working directory

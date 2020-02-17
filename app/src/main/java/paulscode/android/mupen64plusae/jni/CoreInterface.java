@@ -452,12 +452,13 @@ class CoreInterface
             if (romBuffer != null) {
                 try {
                     FileUtils.writeByteArrayToFile(new File(mDdRom), romBuffer);
+                    Log.i(TAG, "Copied DD ROM: " + mDdRom);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         } else {
-            Log.e(TAG, "Copying DD ROM: " + ddRomUri);
+            Log.i(TAG, "Copying DD ROM: " + ddRomUri);
             FileUtil.copySingleFile(context, Uri.parse(ddRomUri), new File(mDdRom));
         }
     }
@@ -504,10 +505,12 @@ class CoreInterface
         mCoreContext.setString(0, coreContextText);
 
         CoreLibrary.DebugCallback debugCallback = null;
-        if (!new File(mDdRom).exists())
+        if (!new File(mDdRom).exists()) {
+            Log.i(TAG, "DDROM file does not exists:" + mDdRom);
             debugCallback = mDebugCallBackCore;
-        else
+        } else {
             Log.i(TAG, "Disable core debug due to 64DD ROM found");
+        }
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
                 dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);
