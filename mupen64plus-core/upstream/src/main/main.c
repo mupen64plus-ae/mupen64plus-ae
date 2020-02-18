@@ -1017,7 +1017,7 @@ static void load_dd_rom(uint8_t* rom, size_t* rom_size)
     struct file_storage dd_rom;
     memset(&dd_rom, 0, sizeof(dd_rom));
 
-    if (open_rom_file_storage(&dd_rom, dd_ipl_rom_filename, dd_ipl_rom_filename) != file_ok) {
+    if (open_rom_file_storage(&dd_rom, dd_ipl_rom_filename, NULL) != file_ok) {
         DebugMessage(M64MSG_ERROR, "Failed to load DD IPL ROM: %s. Disabling 64DD", dd_ipl_rom_filename);
         goto no_dd;
     }
@@ -1077,14 +1077,10 @@ static void load_dd_disk(struct file_storage* dd_disk, const struct storage_back
         goto no_disk;
     }
 
-    int ret = open_rom_file_storage(dd_disk, get_dd_disk_path(dd_disk_filename), get_dd_disk_path(dd_disk_filename));
+    int ret = open_rom_file_storage(dd_disk, dd_disk_filename, get_dd_disk_path(dd_disk_filename));
 
     if (ret == (int)file_open_error) {
-        /* if file doesn't exists open the original disk */
-        if (open_rom_file_storage(dd_disk, dd_disk_filename, get_dd_disk_path(dd_disk_filename)) != file_ok) {
-            DebugMessage(M64MSG_ERROR, "Failed to load DD Disk: %s.", dd_disk_filename);
-            goto no_disk;
-        }
+        goto no_disk;
     }
 
     /* FIXME: handle byte swapping */
@@ -1163,7 +1159,7 @@ static void init_gb_rom(void* opaque, void** storage, const struct storage_backe
     }
 
     /* Open ROM file */
-    if (open_rom_file_storage(&data->rom_fstorage, rom_filename, rom_filename) != file_ok) {
+    if (open_rom_file_storage(&data->rom_fstorage, rom_filename, NULL) != file_ok) {
         DebugMessage(M64MSG_ERROR, "Failed to load ROM file: %s", rom_filename);
         goto no_cart;
     }

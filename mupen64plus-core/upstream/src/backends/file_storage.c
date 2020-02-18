@@ -50,12 +50,19 @@ int open_rom_file_storage(struct file_storage* fstorage, const char* filename, c
     fstorage->data = NULL;
     fstorage->size = 0;
     fstorage->filename = NULL;
+    file_status_t err = file_ok;
 
-    file_status_t err = load_file(filename, (void**)&fstorage->data, &fstorage->size);
+    if (save_filename != NULL) {
+        err = load_file(save_filename, (void**)&fstorage->data, &fstorage->size);
+    }
+
+    if (save_filename == NULL || err != file_ok) {
+        err = load_file(filename, (void**)&fstorage->data, &fstorage->size);
+    }
 
     if (err == file_ok) {
         /* ! take ownsership of filename ! */
-        fstorage->filename = save_filename;
+        fstorage->filename = save_filename != NULL ? save_filename : filename;
     }
 
     return err;
