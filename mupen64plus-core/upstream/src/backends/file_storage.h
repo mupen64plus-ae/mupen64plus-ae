@@ -34,7 +34,7 @@ struct file_storage
 
 
 int open_file_storage(struct file_storage* storage, size_t size, const char* filename);
-int open_rom_file_storage(struct file_storage* storage, const char* filename);
+int open_rom_file_storage(struct file_storage* storage, const char* filename, const char* save_filename);
 void close_file_storage(struct file_storage* storage);
 
 extern const struct storage_backend_interface g_ifile_storage;

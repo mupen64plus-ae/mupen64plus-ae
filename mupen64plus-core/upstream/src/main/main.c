@@ -178,6 +178,12 @@ static char *get_gb_ram_path(const char* gbrom, unsigned int control_id)
     return formatstr("%s%s.%u.sav", get_savesrampath(), gbrom, control_id);
 }
 
+static char *get_dd_disk_path(const char* diskName)
+{
+    const char * simpleFileName = get_filename_from_path(diskName);
+    return formatstr("%s%s.sav", get_savesrampath(), simpleFileName);
+}
+
 static m64p_error init_video_capture_backend(const struct video_capture_backend_interface** ivcap, void** vcap, m64p_handle config, const char* key)
 {
     m64p_error err;
@@ -1011,7 +1017,7 @@ static void load_dd_rom(uint8_t* rom, size_t* rom_size)
     struct file_storage dd_rom;
     memset(&dd_rom, 0, sizeof(dd_rom));
 
-    if (open_rom_file_storage(&dd_rom, dd_ipl_rom_filename) != file_ok) {
+    if (open_rom_file_storage(&dd_rom, dd_ipl_rom_filename, dd_ipl_rom_filename) != file_ok) {
         DebugMessage(M64MSG_ERROR, "Failed to load DD IPL ROM: %s. Disabling 64DD", dd_ipl_rom_filename);
         goto no_dd;
     }
@@ -1071,15 +1077,17 @@ static void load_dd_disk(struct file_storage* dd_disk, const struct storage_back
         goto no_disk;
     }
 
-    /* open file */
-    if (open_rom_file_storage(dd_disk, dd_disk_filename) != file_ok) {
-        DebugMessage(M64MSG_ERROR, "Failed to load DD Disk: %s.", dd_disk_filename);
-        goto no_disk;
+    int ret = open_rom_file_storage(dd_disk, get_dd_disk_path(dd_disk_filename), get_dd_disk_path(dd_disk_filename));
+
+    if (ret == (int)file_open_error) {
+        /* if file doesn't exists open the original disk */
+        if (open_rom_file_storage(dd_disk, dd_disk_filename, get_dd_disk_path(dd_disk_filename)) != file_ok) {
+            DebugMessage(M64MSG_ERROR, "Failed to load DD Disk: %s.", dd_disk_filename);
+            goto no_disk;
+        }
     }
 
     /* FIXME: handle byte swapping */
-
-
     switch (dd_disk->size)
     {
     case MAME_FORMAT_DUMP_SIZE:
@@ -1155,7 +1163,7 @@ static void init_gb_rom(void* opaque, void** storage, const struct storage_backe
     }
 
     /* Open ROM file */
-    if (open_rom_file_storage(&data->rom_fstorage, rom_filename) != file_ok) {
+    if (open_rom_file_storage(&data->rom_fstorage, rom_filename, rom_filename) != file_ok) {
         DebugMessage(M64MSG_ERROR, "Failed to load ROM file: %s", rom_filename);
         goto no_cart;
     }
@@ -1618,6 +1626,12 @@ m64p_error main_run(void)
 
     igbcam_backend->close(gbcam_backend);
     igbcam_backend->release(gbcam_backend);
+
+    if (dd_rom_size > 0) {
+        DebugMessage(M64MSG_ERROR, "Saving disk.");
+        g_dev.dd.idisk->save(g_dev.dd.disk);
+        DebugMessage(M64MSG_ERROR, "Done Saving disk.");
+    }
 
     close_file_storage(&sra);
     close_file_storage(&fla);

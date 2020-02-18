@@ -62,7 +62,7 @@ enum { GAME_CONTROLLERS_COUNT = 4 };
 #define MM_RSP_REGS2        UINT32_C(0x04080000)
 #define MM_DPC_REGS         UINT32_C(0x04100000)
 #define MM_DPS_REGS         UINT32_C(0x04200000)
-#define MM_MI_REGS          UINT32_C(0x04300000)
+#define MM_MI_REGS          UINT32_C(0x4300000)
 #define MM_VI_REGS          UINT32_C(0x04400000)
 #define MM_AI_REGS          UINT32_C(0x04500000)
 #define MM_PI_REGS          UINT32_C(0x04600000)
