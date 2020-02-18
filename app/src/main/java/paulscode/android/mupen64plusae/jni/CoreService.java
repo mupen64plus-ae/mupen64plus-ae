@@ -593,13 +593,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                 mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
 
-
+/*
                 if (isNdd) {
                     mCoreInterface.writeDdDiskData(getApplicationContext(), mRomPath);
                 }
                 else {
                     mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
                 }
+
+ */
             }
 
             // Clean up the working directory
