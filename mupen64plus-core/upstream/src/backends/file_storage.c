@@ -45,7 +45,7 @@ int open_file_storage(struct file_storage* fstorage, size_t size, const char* fi
     return read_from_file(fstorage->filename, fstorage->data, fstorage->size);
 }
 
-int open_rom_file_storage(struct file_storage* fstorage, const char* filename, const char* save_filename)
+int open_rom_file_storage(struct file_storage_rom* fstorage, const char* filename, const char* save_filename)
 {
     fstorage->data = NULL;
     fstorage->size = 0;
@@ -62,7 +62,8 @@ int open_rom_file_storage(struct file_storage* fstorage, const char* filename, c
 
     if (err == file_ok) {
         /* ! take ownsership of filename ! */
-        fstorage->filename = save_filename != NULL ? save_filename : filename;
+        fstorage->filename = filename;
+        fstorage->saveto_filename = save_filename;
     }
 
     return err;
@@ -74,6 +75,12 @@ void close_file_storage(struct file_storage* fstorage)
     free((void*)fstorage->filename);
 }
 
+void close_rom_file_storage(struct file_storage_rom* fstorage)
+{
+    free((void*)fstorage->data);
+    free((void*)fstorage->filename);
+    free((void*)fstorage->saveto_filename);
+}
 
 static uint8_t* file_storage_data(const void* storage)
 {
@@ -84,6 +91,18 @@ static uint8_t* file_storage_data(const void* storage)
 static size_t file_storage_size(const void* storage)
 {
     struct file_storage* fstorage = (struct file_storage*)storage;
+    return fstorage->size;
+}
+
+static uint8_t* file_storage_rom_data(const void* storage)
+{
+    struct file_storage_rom* fstorage = (struct file_storage_rom*)storage;
+    return fstorage->data;
+}
+
+static size_t file_storage_rom_size(const void* storage)
+{
+    struct file_storage_rom* fstorage = (struct file_storage_rom*)storage;
     return fstorage->size;
 }
 
@@ -114,18 +133,18 @@ static void file_storage_parent_save(void* storage)
 static void file_storage_dd_sdk_dump_save(void* storage)
 {
     static uint8_t sdk_buffer[SDK_FORMAT_DUMP_SIZE];
-    struct file_storage* fstorage = (struct file_storage*)storage;
+    struct file_storage_rom* fstorage = (struct file_storage_rom*)storage;
 
     dd_convert_to_sdk(fstorage->data, sdk_buffer);
     DebugMessage(M64MSG_ERROR, "Opening file '%s' for writing", fstorage->filename);
 
-    switch(write_to_file(fstorage->filename, sdk_buffer, SDK_FORMAT_DUMP_SIZE))
+    switch(write_to_file(fstorage->saveto_filename, sdk_buffer, SDK_FORMAT_DUMP_SIZE))
     {
     case file_open_error:
-        DebugMessage(M64MSG_WARNING, "couldn't open storage file '%s' for writing", fstorage->filename);
+        DebugMessage(M64MSG_WARNING, "couldn't open storage file '%s' for writing", fstorage->saveto_filename);
         break;
     case file_write_error:
-        DebugMessage(M64MSG_WARNING, "failed to write storage file '%s'", fstorage->filename);
+        DebugMessage(M64MSG_WARNING, "failed to write storage file '%s'", fstorage->saveto_filename);
         break;
     default:
         break;
@@ -144,8 +163,8 @@ const struct storage_backend_interface g_ifile_storage =
 
 const struct storage_backend_interface g_ifile_storage_ro =
 {
-    file_storage_data,
-    file_storage_size,
+    file_storage_rom_data,
+    file_storage_rom_size,
     NULL
 };
 
@@ -158,7 +177,7 @@ const struct storage_backend_interface g_isubfile_storage =
 
 const struct storage_backend_interface g_ifile_storage_dd_sdk_dump =
 {
-    file_storage_data,
-    file_storage_size,
+    file_storage_rom_data,
+    file_storage_rom_size,
     file_storage_dd_sdk_dump_save
 };

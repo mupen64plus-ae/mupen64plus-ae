@@ -1014,7 +1014,7 @@ static void load_dd_rom(uint8_t* rom, size_t* rom_size)
         goto no_dd;
     }
 
-    struct file_storage dd_rom;
+    struct file_storage_rom dd_rom;
     memset(&dd_rom, 0, sizeof(dd_rom));
 
     if (open_rom_file_storage(&dd_rom, dd_ipl_rom_filename, NULL) != file_ok) {
@@ -1027,7 +1027,7 @@ static void load_dd_rom(uint8_t* rom, size_t* rom_size)
     /* load and swap DD IPL ROM */
     *rom_size = g_ifile_storage_ro.size(&dd_rom);
     memcpy(rom, g_ifile_storage_ro.data(&dd_rom), *rom_size);
-    close_file_storage(&dd_rom);
+    close_rom_file_storage(&dd_rom);
 
     /* fetch 1st word to identify IPL ROM format */
     /* FIXME: use more robust ROM detection heuristic - do the same for regular ROMs */
@@ -1064,7 +1064,7 @@ no_dd:
     *rom_size = 0;
 }
 
-static void load_dd_disk(struct file_storage* dd_disk, const struct storage_backend_interface** dd_idisk)
+static void load_dd_disk(struct file_storage_rom* dd_disk, const struct storage_backend_interface** dd_idisk)
 {
     const char* format_desc;
     /* ask the core loader for DD disk filename */
@@ -1097,7 +1097,7 @@ static void load_dd_disk(struct file_storage* dd_disk, const struct storage_back
         uint8_t* buffer = malloc(MAME_FORMAT_DUMP_SIZE);
         if (buffer == NULL) {
             DebugMessage(M64MSG_ERROR, "Failed to allocate memory for MAME disk dump");
-            close_file_storage(dd_disk);
+            close_rom_file_storage(dd_disk);
             goto no_disk;
         }
 
@@ -1111,7 +1111,7 @@ static void load_dd_disk(struct file_storage* dd_disk, const struct storage_back
 
     default:
         DebugMessage(M64MSG_ERROR, "Invalid DD Disk size %u.", (uint32_t) dd_disk->size);
-        close_file_storage(dd_disk);
+        close_rom_file_storage(dd_disk);
         goto no_disk;
     }
 
@@ -1136,7 +1136,7 @@ no_disk:
 struct gb_cart_data
 {
     int control_id;
-    struct file_storage rom_fstorage;
+    struct file_storage_rom rom_fstorage;
     struct file_storage ram_fstorage;
     void* gbcam_backend;
     const struct video_capture_backend_interface* igbcam_backend;
@@ -1183,7 +1183,7 @@ static void release_gb_rom(void* opaque)
 {
     struct gb_cart_data* data = (struct gb_cart_data*)opaque;
 
-    close_file_storage(&data->rom_fstorage);
+    close_rom_file_storage(&data->rom_fstorage);
 
     memset(&data->rom_fstorage, 0, sizeof(data->rom_fstorage));
 }
@@ -1287,7 +1287,7 @@ m64p_error main_run(void)
     struct file_storage fla;
     struct file_storage sra;
     size_t dd_rom_size;
-    struct file_storage dd_disk;
+    struct file_storage_rom dd_disk;
 
     int control_ids[GAME_CONTROLLERS_COUNT];
     struct controller_input_compat cin_compats[GAME_CONTROLLERS_COUNT];
@@ -1633,7 +1633,7 @@ m64p_error main_run(void)
     close_file_storage(&fla);
     close_file_storage(&eep);
     close_file_storage(&mpk);
-    close_file_storage(&dd_disk);
+    close_rom_file_storage(&dd_disk);
 
     if (ConfigGetParamBool(g_CoreConfig, "OnScreenDisplay"))
     {
@@ -1672,7 +1672,7 @@ on_gfx_open_failure:
     close_file_storage(&fla);
     close_file_storage(&eep);
     close_file_storage(&mpk);
-    close_file_storage(&dd_disk);
+    close_rom_file_storage(&dd_disk);
 
     return M64ERR_PLUGIN_FAIL;
 }
