@@ -202,6 +202,7 @@ public class AppData
     public enum RspPlugin {
         DUMMY("dummy"),
         HLE("mupen64plus-rsp-hle"),
+        PARALLEL("mupen64plus-rsp-parallel"),
         CXD4_HLE("mupen64plus-rsp-cxd4"),
         CXD4_LLE("mupen64plus-rsp-cxd4");
 
@@ -222,6 +223,8 @@ public class AppData
             switch (pluginText) {
                 case "rsp-hle":
                     return RspPlugin.HLE;
+                case "rsp-parallel":
+                    return RspPlugin.PARALLEL;
                 case "rsp-cxd4-hle":
                     return RspPlugin.CXD4_HLE;
                 default:

@@ -1189,11 +1189,13 @@
         <item>@string/rsp_hle</item>
         <item>@string/rsp_cxd4_hle</item>
         <item>@string/rsp_cxd4_lle</item>
+        <item>@string/rsp_parallel</item>
     </string-array>
     <string-array name="rsp_values" translatable="false">
         <item>rsp-hle</item>
         <item>rsp-cxd4-hle</item>
         <item>rsp-cxd4-lle</item>
+        <item>rsp-parallel</item>
     </string-array>
 
     <string name="rsp_default" translatable="false">rsp-hle</string>

@@ -255,7 +255,9 @@ public class EmulationProfileActivity extends ProfileActivity
             {
                 //Don't allow HLE
                 entries.add(getString(R.string.rsp_cxd4_lle));
+                entries.add(getString(R.string.rsp_parallel));
                 values.add("rsp-cxd4-lle");
+                values.add("rsp-parallel");
             }
             else
             {
@@ -263,9 +265,11 @@ public class EmulationProfileActivity extends ProfileActivity
                 entries.add(getString(R.string.rsp_hle));
                 entries.add(getString(R.string.rsp_cxd4_hle));
                 entries.add(getString(R.string.rsp_cxd4_lle));
+                entries.add(getString(R.string.rsp_parallel));
                 values.add("rsp-hle");
                 values.add("rsp-cxd4-hle");
                 values.add("rsp-cxd4-lle");
+                values.add("rsp-parallel");
             }
 
             String[] entriesArray = entries.toArray(new String[0]);
