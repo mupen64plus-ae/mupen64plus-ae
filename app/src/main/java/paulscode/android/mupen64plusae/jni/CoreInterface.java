@@ -505,12 +505,12 @@ class CoreInterface
         mCoreContext.setString(0, coreContextText);
 
         CoreLibrary.DebugCallback debugCallback = null;
-        //if (!new File(mDdRom).exists()) {
+        if (!new File(mDdRom).exists()) {
             Log.i(TAG, "DDROM file does not exists:" + mDdRom);
             debugCallback = mDebugCallBackCore;
-        //} else {
-        //    Log.i(TAG, "Disable core debug due to 64DD ROM found");
-        //}
+        } else {
+            Log.i(TAG, "Disable core debug due to 64DD ROM found");
+        }
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
                 dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);

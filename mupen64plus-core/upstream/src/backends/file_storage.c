@@ -48,17 +48,12 @@ int open_file_storage(struct file_storage* fstorage, size_t size, const char* fi
 
 int open_rom_file_storage(struct file_storage_rom* fstorage, const char* filename, const char* save_filename, unsigned int max_size_bytes)
 {
-    DebugMessage(M64MSG_ERROR, "Opening ROM file '%s' for reading, save to: %s", filename, save_filename);
-
     fstorage->data = NULL;
     fstorage->size = 0;
     fstorage->filename = NULL;
     int gz_read_sucess = 0;
 
     if (save_filename != NULL) {
-
-        DebugMessage(M64MSG_ERROR, "Save to is not null: %s", save_filename);
-
         gzFile gz_file;
         gz_file = gzopen(save_filename, "rb");
 
@@ -73,17 +68,10 @@ int open_rom_file_storage(struct file_storage_rom* fstorage, const char* filenam
     file_status_t err = file_ok;
 
     if (save_filename == NULL || gz_read_sucess <= 0) {
-        DebugMessage(M64MSG_ERROR, "Reading: %s", filename);
-
         err = load_file(filename, (void**)&fstorage->data, &fstorage->size);
-
-        DebugMessage(M64MSG_ERROR, "size=%d", (int)fstorage->size);
-
     }
 
     if (err == file_ok) {
-        DebugMessage(M64MSG_ERROR, "SUCCESS");
-
         /* ! take ownsership of filename ! */
         fstorage->filename = filename;
         fstorage->saveto_filename = save_filename;
@@ -132,7 +120,6 @@ static size_t file_storage_rom_size(const void* storage)
 static void file_storage_save(void* storage)
 {
     struct file_storage* fstorage = (struct file_storage*)storage;
-    DebugMessage(M64MSG_ERROR, "Opening file '%s' for writing", fstorage->filename);
 
     switch(write_to_file(fstorage->filename, fstorage->data, fstorage->size))
     {
@@ -159,11 +146,8 @@ static void file_storage_dd_sdk_dump_save(void* storage)
     struct file_storage_rom* fstorage = (struct file_storage_rom*)storage;
 
     dd_convert_to_sdk(fstorage->data, sdk_buffer);
-    DebugMessage(M64MSG_ERROR, "Opening file '%s' for writing", fstorage->saveto_filename);
 
     file_status_t err;
-
-    DebugMessage(M64MSG_ERROR, "open storage file '%s' for reading is OK", fstorage->filename);
 
     gzFile gz_file;
     gz_file = gzopen(fstorage->saveto_filename, "wb");

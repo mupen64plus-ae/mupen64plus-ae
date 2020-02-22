@@ -1022,8 +1022,6 @@ static void load_dd_rom(uint8_t* rom, size_t* rom_size)
         goto no_dd;
     }
 
-    DebugMessage(M64MSG_INFO, "DD IPL ROM: %s", dd_ipl_rom_filename);
-
     /* load and swap DD IPL ROM */
     *rom_size = g_ifile_storage_ro.size(&dd_rom);
     memcpy(rom, g_ifile_storage_ro.data(&dd_rom), *rom_size);
@@ -1624,9 +1622,7 @@ m64p_error main_run(void)
     igbcam_backend->release(gbcam_backend);
 
     if (dd_rom_size > 0) {
-        DebugMessage(M64MSG_ERROR, "Saving disk.");
         g_dev.dd.idisk->save(g_dev.dd.disk);
-        DebugMessage(M64MSG_ERROR, "Done Saving disk.");
     }
 
     close_file_storage(&sra);
