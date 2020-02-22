@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/mupen64plus-ae/parallel-rsp.git
+	branch = master
+	commit = 743f4d8e1a9c48187e930d28ffde463349225940
+	parent = ec858d6f0777f71373aacafad95dd250d1fa728b
+	method = merge
+	cmdver = 0.4.0
