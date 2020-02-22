@@ -16,6 +16,7 @@ LOCAL_C_INCLUDES :=                       \
     $(LOCAL_PATH)/$(SUBLIBS)/md5          \
     $(LOCAL_PATH)/$(SUBLIBS)/minizip      \
     $(LOCAL_PATH)/$(SUBLIBS)/xxhash       \
+    $(LOCAL_PATH)/$(SUBLIBS)/bsdiff       \
     $(LOCAL_PATH)/$(SRCDIR)               \
     $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI) \
     $(LOCAL_PATH)/../ndkLibs/SDL2_stub    \

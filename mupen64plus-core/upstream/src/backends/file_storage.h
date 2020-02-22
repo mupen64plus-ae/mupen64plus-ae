@@ -42,7 +42,7 @@ struct file_storage_rom
 
 
 int open_file_storage(struct file_storage* storage, size_t size, const char* filename);
-int open_rom_file_storage(struct file_storage_rom* storage, const char* filename, const char* save_filename);
+int open_rom_file_storage(struct file_storage_rom* storage, const char* filename, const char* save_filename, unsigned int max_size_bytes);
 void close_file_storage(struct file_storage* storage);
 void close_rom_file_storage(struct file_storage_rom* storage);
 
