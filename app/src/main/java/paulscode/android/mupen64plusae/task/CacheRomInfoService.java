@@ -463,7 +463,7 @@ public class CacheRomInfoService extends Service
                 }
             }
 
-        } catch (IOException | NoSuchAlgorithmException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
+        } catch (IOException | NoSuchAlgorithmException|IllegalArgumentException|SecurityException e) {
             e.printStackTrace();
         }
     }

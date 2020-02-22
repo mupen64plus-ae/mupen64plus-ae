@@ -375,7 +375,7 @@ public final class FileUtil
                         bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                     }
 
-                } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
+                } catch (IOException|IllegalArgumentException|SecurityException e) {
                     e.printStackTrace();
                 }
             }
@@ -434,7 +434,7 @@ public final class FileUtil
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
-        } catch (IOException|java.lang.IllegalArgumentException|java.lang.SecurityException e) {
+        } catch (IOException|IllegalArgumentException|SecurityException e) {
             e.printStackTrace();
         }
 
@@ -637,7 +637,7 @@ public final class FileUtil
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
-        } catch (IOException|java.lang.IllegalArgumentException e) {
+        } catch (IOException|IllegalArgumentException|SecurityException e) {
             e.printStackTrace();
         }
 
