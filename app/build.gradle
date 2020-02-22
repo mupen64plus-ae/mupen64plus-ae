@@ -91,6 +91,7 @@ dependencies {
     implementation project(':mupen64plus-video-glide64mk2')
     implementation project(':ae-bridge')
     implementation project(':mupen64plus-video-gln64')
+    implementation project(':mupen64plus-rsp-parallel')
     implementation project(':mupen64plus-rsp-cxd4')
     implementation project(':mupen64plus-rsp-hle')
     implementation project(':mupen64plus-input-android')
