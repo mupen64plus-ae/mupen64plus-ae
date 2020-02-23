@@ -1041,6 +1041,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
         {
+            mSearchQuery = "";
+            mSearchView.setQuery( mSearchQuery, true );
+
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
@@ -1214,10 +1217,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             //Close drawer without animation
             mDrawerLayout.closeDrawer(GravityCompat.START, false);
         }
-
-        mSearchQuery = "";
-
-        mSearchView.setQuery( mSearchQuery, true );
 
         tagForRefreshNeeded();
 
