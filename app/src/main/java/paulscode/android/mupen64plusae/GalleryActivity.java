@@ -264,12 +264,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         setContentView( R.layout.gallery_activity );
         mGridView = findViewById( R.id.gridview );
 
-        // Do empty initialization of the GridView
-        List<GalleryItem> items = new ArrayList<>();
-        mGridView.setAdapter( new GalleryItem.Adapter(this, items));
-        final GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
-        mGridView.setLayoutManager( layoutManager );
-
         FloatingActionButton floatingActionButton = findViewById(R.id.menuItem_refreshRoms);
 
         if (floatingActionButton != null) {
@@ -300,7 +294,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             );
         }
 
-        // Don't call tge async version otherwise the scroll position is lost
+        // Don't call the async version otherwise the scroll position is lost
         refreshGrid();
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
@@ -1092,12 +1086,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             items = combinedItems;
         }
 
-        List<GalleryItem> galleryItems = items;
-        mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
-
         // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
-        final GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
+        final GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
         {
             @Override
@@ -1129,11 +1120,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
 
         layoutManager.setSpanCount( galleryColumns );
-        if (mGridView.getAdapter() != null) {
-            mGridView.getAdapter().notifyDataSetChanged();
-        }
+
         mGridView.setFocusable(false);
         mGridView.setFocusableInTouchMode(false);
+
+        List<GalleryItem> galleryItems = items;
+        mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
 
         if (mSelectedItem != null) {
             // Repopulate the game sidebar
@@ -1143,6 +1135,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     break;
                 }
             }
+        }
+
+        if (mGridView.getAdapter() != null) {
+            mGridView.getAdapter().notifyDataSetChanged();
         }
 
         if(galleryItems.size() > 0) {
