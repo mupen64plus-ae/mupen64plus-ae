@@ -1042,7 +1042,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
         {
             mSearchQuery = "";
-            mSearchView.setQuery( mSearchQuery, true );
+
+            if (mSearchView != null) {
+                mSearchView.setQuery( mSearchQuery, true );
+            }
 
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
