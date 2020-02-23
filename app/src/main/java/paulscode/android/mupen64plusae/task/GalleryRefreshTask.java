@@ -187,7 +187,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
      * @param items Items will be populated here
      * @param recentItems Recent items will be populated here.
      */
-    private void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
+    public void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
     {
         final String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;

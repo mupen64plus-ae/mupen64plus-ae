@@ -300,7 +300,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             );
         }
 
-        refreshGridAsync();
+        // Don't call tge async version otherwise the scroll position is lost
+        refreshGrid();
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         final Toolbar toolbar = findViewById( R.id.toolbar );
@@ -1034,6 +1035,22 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
     {
         mCacheRomInfoFragment.refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories, mAppData, mGlobalPrefs);
+    }
+
+    void refreshGrid()
+    {
+        //Reload global prefs
+        mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
+        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
+
+        List<GalleryItem> items = new ArrayList<>();
+        List<GalleryItem> recentItems = new ArrayList<>();
+        galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
+        refreshGrid(items, recentItems);
+
+        SyncProgramsJobService.syncProgramsForChannel(this, mAppData.getChannelId());
     }
 
     void refreshGridAsync()
