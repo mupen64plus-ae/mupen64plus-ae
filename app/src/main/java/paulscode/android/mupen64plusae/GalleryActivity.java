@@ -46,6 +46,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -96,8 +97,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_QUERY = "STATE_QUERY";
     private static final String STATE_SIDEBAR = "STATE_SIDEBAR";
     private static final String STATE_FILE_TO_DELETE = "STATE_FILE_TO_DELETE";
-    private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
-    private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
+    private static final String STATE_CACHE_ROM_INFO_FRAGMENT = "STATE_CACHE_ROM_INFO_FRAGMENT";
+    private static final String STATE_GALLERY_REFRESH_NEEDED = "STATE_GALLERY_REFRESH_NEEDED";
+    private static final String STATE_SCROLL_TO_POSITION = "STATE_SCROLL_TO_POSITION";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     private static final String STATE_CLEAR_SHADERCACHE_DIALOG = "STATE_CLEAR_SHADERCACHE_DIALOG";
@@ -143,6 +145,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     boolean mGameStartedExternally = false;
 
     String mPathToDelete = null;
+
+    private int mCurrentVisiblePosition = 0;
 
     private ConfigFile mConfig;
 
@@ -421,6 +425,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mPathToDelete = savedInstanceState.getString( STATE_FILE_TO_DELETE );
             mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
             mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
+            mCurrentVisiblePosition = savedInstanceState.getInt( STATE_SCROLL_TO_POSITION);
         }
 
         // find the retained fragment on activity restarts
@@ -433,14 +438,24 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
 
-        createSearchMenu();
-
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
         loadGameFromExtras(extras);
 
         if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName)) {
             Log.i("GalleryActivity", "CoreService is running");
+        }
+    }
+
+    @Override
+    public void onPause() {
+        Log.i("GalleryActivity", "onPause");
+
+        super.onPause();
+
+        GridLayoutManager layoutManager = (GridLayoutManager)mGridView.getLayoutManager();
+        if (layoutManager != null) {
+            mCurrentVisiblePosition = ((GridLayoutManager)mGridView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
         }
     }
 
@@ -460,6 +475,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
         }
+
+        // This is called here rather than onCreate otherwise onQueryTextChange is called on creation
+        createSearchMenu();
     }
 
     @Override
@@ -474,8 +492,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
         savedInstanceState.putBoolean(STATE_GAME_STARTED_EXTERNALLY, mGameStartedExternally);
         savedInstanceState.putString( STATE_FILE_TO_DELETE, mPathToDelete);
+        savedInstanceState.putInt( STATE_SCROLL_TO_POSITION, mCurrentVisiblePosition);
 
         super.onSaveInstanceState( savedInstanceState );
+    }
+
+    private void tagForRefreshNeeded()
+    {
+        mRefreshNeeded = true;
+        GridLayoutManager layoutManager = (GridLayoutManager)mGridView.getLayoutManager();
+        if (layoutManager != null) {
+            mCurrentVisiblePosition = ((GridLayoutManager)mGridView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        }
     }
 
     public void hideSoftKeyboard()
@@ -513,7 +541,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             @Override
             public boolean onQueryTextSubmit( String query )
             {
-
                 return false;
             }
 
@@ -554,7 +581,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return;
         }
 
-        Log.e("GalleryActivity", "Rom path = " + givenRomPath);
+        Log.i("GalleryActivity", "Rom path = " + givenRomPath);
 
         boolean isUri;
 
@@ -640,25 +667,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
             return true;
         case R.id.menuItem_categoryLibrary:
-            mRefreshNeeded = true;
+            tagForRefreshNeeded();
             ActivityHelper.startLibraryPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryDisplay:
-            mRefreshNeeded = true;
+            tagForRefreshNeeded();
             ActivityHelper.startDisplayPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryAudio:
             ActivityHelper.startAudioPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryTouchscreen:
-            mRefreshNeeded = true;
+            tagForRefreshNeeded();
             ActivityHelper.startTouchscreenPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryInput:
             ActivityHelper.startInputPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryData:
-            mRefreshNeeded = true;
+            tagForRefreshNeeded();
             ActivityHelper.startDataPrefsActivity( this );
             return true;
          case R.id.menuItem_categoryDefaults:
@@ -791,7 +818,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 break;
             case R.id.menuItem_settings:
             {
-                mRefreshNeeded = true;
+                tagForRefreshNeeded();
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
                         item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue());
                 break;
@@ -1033,6 +1060,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void refreshGrid()
     {
+        Log.i("GalleryActivity", "refreshGrid");
+
         //Reload global prefs
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -1049,6 +1078,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void refreshGridAsync()
     {
+        Log.i("GalleryActivity", "refreshGridAsync");
+
         //Reload global prefs
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -1067,12 +1098,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems) {
+    public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems)
+    {
         refreshGrid(items, recentItems);
     }
 
-    synchronized void refreshGrid(List<GalleryItem> items, List<GalleryItem> recentItems){
-
+    synchronized void refreshGrid(List<GalleryItem> items, List<GalleryItem> recentItems)
+    {
         if( mGlobalPrefs.isRecentShown && TextUtils.isEmpty(mSearchQuery) && recentItems.size() > 0 )
         {
             List<GalleryItem> combinedItems = new ArrayList<>();
@@ -1146,6 +1178,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         } else {
             findViewById(R.id.gallery_empty_icon).setVisibility(View.VISIBLE);
         }
+
+        if (mGridView.getLayoutManager() != null) {
+            mGridView.getLayoutManager().scrollToPosition(mCurrentVisiblePosition);
+        }
+        mCurrentVisiblePosition = 0;
     }
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
@@ -1182,7 +1219,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         mSearchView.setQuery( mSearchQuery, true );
 
-        mRefreshNeeded = true;
+        tagForRefreshNeeded();
 
         mSelectedItem = null;
         // Launch the game activity

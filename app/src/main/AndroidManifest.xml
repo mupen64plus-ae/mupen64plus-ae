@@ -38,7 +38,7 @@
         android:requestLegacyExternalStorage="true"
         tools:ignore="UnusedAttribute"
         android:fullBackupContent="@xml/backup_descriptor"
-        android:extractNativeLibs="false">
+        android:extractNativeLibs="true">
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
             android:label="@string/SplashActivity_title"
