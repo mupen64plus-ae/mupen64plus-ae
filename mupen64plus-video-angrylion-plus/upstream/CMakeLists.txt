@@ -92,6 +92,7 @@ endif(MINGW)
 # set IPO option, if supported
 if(ENABLE_IPO AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3")
 endif()
 
 include_directories(${PATH_SRC})
