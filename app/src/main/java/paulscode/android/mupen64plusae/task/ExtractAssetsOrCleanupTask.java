@@ -93,7 +93,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
             mAssetVersions.put("mupen64plus_data/font.ttf", 1);
             mAssetVersions.put("mupen64plus_data/gln64.conf", 1);
             mAssetVersions.put("mupen64plus_data/gln64rom.conf", 1);
-            mAssetVersions.put("mupen64plus_data/mupen64plus.ini", 5);
+            mAssetVersions.put("mupen64plus_data/mupen64plus.ini", 6);
             mAssetVersions.put("mupen64plus_data/mupencheat.default", 1);
             mAssetVersions.put("mupen64plus_data/profiles/controller.cfg", 2);
             mAssetVersions.put("mupen64plus_data/profiles/emulation.cfg", 5);
