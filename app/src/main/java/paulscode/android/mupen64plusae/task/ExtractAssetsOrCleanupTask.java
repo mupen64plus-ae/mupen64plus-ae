@@ -62,34 +62,10 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
 
     static {
         synchronized (ExtractAssetsOrCleanupTask.class) {
-            mAssetVersions.put("mupen64plus_data/GLideN64.custom.ini", 3);
+            mAssetVersions.put("mupen64plus_data/GLideN64.custom.ini", 4);
             mAssetVersions.put("mupen64plus_data/Glide64mk2.ini", 2);
             mAssetVersions.put("mupen64plus_data/RiceVideoLinux.ini", 1);
             mAssetVersions.put("mupen64plus_data/m64p_test_rom.v64", 1);
-            mAssetVersions.put("mupen64plus_data/doc/CREDITS", 1);
-            mAssetVersions.put("mupen64plus_data/doc/INSTALL", 1);
-            mAssetVersions.put("mupen64plus_data/doc/LICENSES", 1);
-            mAssetVersions.put("mupen64plus_data/doc/README", 1);
-            mAssetVersions.put("mupen64plus_data/doc/RELEASE", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/apache-license", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Home.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-Core-Parameters.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-Plugin-Parameters.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-API-Versioning.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Core-API-v1.0.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Core-Basic.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Core-Config.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Core-Debugger.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Core-Front-End.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Core-Video-Extension.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Design-Proposal-3.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-Plugin-API.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/emuwiki-api-doc/Mupen64Plus-v2.0-headers.mediawiki", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/font-license", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/gpl-license", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/gpl-license-3", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/lgpl-license", 1);
-            mAssetVersions.put("mupen64plus_data/doc/doc/new_dynarec.txt", 1);
             mAssetVersions.put("mupen64plus_data/font.ttf", 1);
             mAssetVersions.put("mupen64plus_data/gln64.conf", 1);
             mAssetVersions.put("mupen64plus_data/gln64rom.conf", 1);
