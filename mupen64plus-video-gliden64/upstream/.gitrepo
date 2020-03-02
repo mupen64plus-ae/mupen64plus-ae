@@ -5,8 +5,8 @@
 ;
 [subrepo]
 	remote = https://github.com/fzurita/GLideN64.git
-	branch = optional_hybrid_texture_filter
-	commit = 2f558b005df115778a059b9559603dcf4258c9a3
-	parent = 23b3dd7586c2a8dbff9f99625ef357684a3021ff
+	branch = master
+	commit = d053f16bb0bbbf0c10f94a2b22cfc7141d9fd375
+	parent = f7efcde70c97b1147690dea2e1f94e842892f82e
 	method = merge
 	cmdver = 0.4.0
