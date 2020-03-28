@@ -64,7 +64,8 @@ const char *ColorInput[] = {
 	"vec3(uK4)",
 	"vec3(uK5)",
 	"vec3(1.0)",
-	"vec3(0.0)"
+	"vec3(0.0)",
+	"vec3(0.5)"
 };
 
 static
@@ -89,7 +90,8 @@ const char *AlphaInput[] = {
 	"uK4",
 	"uK5",
 	"1.0",
-	"0.0"
+	"0.0",
+	"0.5"
 };
 
 inline
@@ -111,6 +113,26 @@ void _correctFirstStageParams(CombinerStage & _stage)
 		_stage.op[i].param1 = correctFirstStageParam(_stage.op[i].param1);
 		_stage.op[i].param2 = correctFirstStageParam(_stage.op[i].param2);
 		_stage.op[i].param3 = correctFirstStageParam(_stage.op[i].param3);
+	}
+}
+
+inline
+int correctFirstStageParam2Cyc(int _param)
+{
+	switch (_param) {
+	case G_GCI_COMBINED:
+		return G_GCI_HALF;
+	}
+	return _param;
+}
+
+static
+void _correctFirstStageParams2Cyc(CombinerStage & _stage)
+{
+	for (int i = 0; i < _stage.numOps; ++i) {
+		_stage.op[i].param1 = correctFirstStageParam2Cyc(_stage.op[i].param1);
+		_stage.op[i].param2 = correctFirstStageParam2Cyc(_stage.op[i].param2);
+		_stage.op[i].param3 = correctFirstStageParam2Cyc(_stage.op[i].param3);
 	}
 }
 
@@ -1627,17 +1649,19 @@ public:
 				if ((config.generalEmulation.hacks & hack_RE2) != 0) {
 					m_part =
 						"uniform lowp usampler2D uZlutImage;\n"
-						"highp float writeDepth()						        													\n"
-						"{																									\n"
+						"highp float writeDepth()																		\n"
+						"{																								\n"
 						;
 					if (_glinfo.isGLESX && _glinfo.noPerspective) {
 						m_part +=
 							"  if (uClampMode == 1 && (vZCoord > 1.0)) discard;	\n"
-							"  highp float FragDepth = clamp((vZCoord - uPolygonOffset) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);	\n"
+							"  highp float FragDepth = (uDepthSource != 0) ? uPrimDepth :								\n"
+							"           clamp((vZCoord - uPolygonOffset) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);	\n"
 							;
 					} else {
 						m_part +=
-							"  highp float FragDepth = clamp((gl_FragCoord.z * 2.0 - 1.0) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);	\n"
+							"  highp float FragDepth = (uDepthSource != 0) ? uPrimDepth :								\n"
+							"            clamp((gl_FragCoord.z * 2.0 - 1.0) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);	\n"
 						;
 					}
 					m_part +=
@@ -2291,6 +2315,9 @@ CombinerInputs CombinerProgramBuilder::compileCombiner(const CombinerKey & _key,
 	if (g_cycleType != G_CYC_2CYCLE) {
 		_correctFirstStageParams(_alpha.stage[0]);
 		_correctFirstStageParams(_color.stage[0]);
+	} else {
+		_correctFirstStageParams2Cyc(_alpha.stage[0]);
+		_correctFirstStageParams2Cyc(_color.stage[0]);
 	}
 	ssShader << "  alpha1 = ";
 	CombinerInputs inputs = _compileCombiner(_alpha.stage[0], AlphaInput, ssShader);

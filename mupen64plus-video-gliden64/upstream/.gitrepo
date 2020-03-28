@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/fzurita/GLideN64.git
 	branch = master
-	commit = d053f16bb0bbbf0c10f94a2b22cfc7141d9fd375
-	parent = f7efcde70c97b1147690dea2e1f94e842892f82e
+	commit = 225f1414dc8ac0403cfcc3accb275ad9f5b42fdb
+	parent = f43e214d9465b4318f3a13ab1b62907619814a0f
 	method = merge
 	cmdver = 0.4.0
