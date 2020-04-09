@@ -305,9 +305,6 @@
     <ClCompile Include="..\..\src\CRC_OPT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\xxHash\xxhash.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\DebugDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -421,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Graphics\OpenGLContext\ThreadedOpenGl\RingBufferPool.cpp">
       <Filter>Source Files\Graphics\OpenGL\ThreadedOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BufferCopy\BlueNoiseTexture.cpp">
+      <Filter>Source Files\BufferCopy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -780,6 +780,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Graphics\OpenGLContext\ThreadedOpenGl\readerwriterqueue.h">
       <Filter>Header Files\Graphics\OpenGL\ThreadedOpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BufferCopy\BlueNoiseTexture.h">
+      <Filter>Header Files\BufferCopy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
