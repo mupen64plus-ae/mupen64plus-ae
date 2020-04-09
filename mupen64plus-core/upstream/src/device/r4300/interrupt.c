@@ -479,6 +479,20 @@ void reset_hard_handler(void* opaque)
     struct device* dev = (struct device*)opaque;
     struct r4300_core* r4300 = &dev->r4300;
 
+#ifndef NEW_DYNAREC
+#if defined(__x86_64__)
+    long long save_rsp = r4300->recomp.save_rsp;
+    long long save_rip = r4300->recomp.save_rip;
+#else
+    long save_ebp = r4300->recomp.save_ebp;
+    long save_ebx = r4300->recomp.save_ebx;
+    long save_esi = r4300->recomp.save_esi;
+    long save_edi = r4300->recomp.save_edi;
+    long save_esp = r4300->recomp.save_esp;
+    long save_eip = r4300->recomp.save_eip;
+#endif
+#endif
+
     poweron_device(dev);
 
     pif_bootrom_hle_execute(r4300);
@@ -487,6 +501,26 @@ void reset_hard_handler(void* opaque)
     *r4300_cp0_cycle_count(&r4300->cp0) = 0;
     init_interrupt(&r4300->cp0);
     invalidate_r4300_cached_code(r4300, 0, 0);
+    *r4300_pc_struct(r4300) = &r4300->interp_PC;
+    if (r4300->emumode >= 2)
+    {
+#ifdef NEW_DYNAREC
+        new_dynarec_cleanup();
+        new_dynarec_init();
+#else
+#if defined(__x86_64__)
+        r4300->recomp.save_rsp = save_rsp;
+        r4300->recomp.save_rip = save_rip;
+#else
+        r4300->recomp.save_ebp = save_ebp;
+        r4300->recomp.save_ebx = save_ebx;
+        r4300->recomp.save_esi = save_esi;
+        r4300->recomp.save_edi = save_edi;
+        r4300->recomp.save_esp = save_esp;
+        r4300->recomp.save_eip = save_eip;
+#endif
+#endif
+    }
     generic_jump_to(r4300, r4300->cp0.last_addr);
 }
 
