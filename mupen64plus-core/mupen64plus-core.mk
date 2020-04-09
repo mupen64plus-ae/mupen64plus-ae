@@ -25,7 +25,6 @@ LOCAL_SRC_FILES :=                                              \
     $(SUBLIBS)/minizip/ioapi.c                                  \
     $(SUBLIBS)/minizip/unzip.c                                  \
     $(SUBLIBS)/minizip/zip.c                                    \
-    $(SUBLIBS)/xxhash/xxhash.c                                  \
     $(SRCDIR)/device/rcp/ai/ai_controller.c                     \
     $(SRCDIR)/api/callbacks.c                                   \
     $(SRCDIR)/api/common.c                                      \
