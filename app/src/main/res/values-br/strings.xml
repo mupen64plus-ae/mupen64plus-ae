@@ -352,7 +352,6 @@
     <string name="gliden64_max_anisotropic_filtering_title">Live maksimom silañ anisotropiezh</string>
     <string name="gliden64_category_general_title">Hollek</string>
     <string name="gliden64_widescreen_hack_title">Skramm ledan morlaeret</string>
-    <string name="gliden64_enable_noise_title">Enaouiñ emaladur an trouz</string>
     <string name="gliden64_enable_lod_title">Enaouiñ an emuladur LOD</string>
     <string name="gliden64_enable_hw_lighting_title">Enaouiñ ar sklaerijennañ periantel dre biksel</string>
     <string name="gliden64_correct_texrect_coords_title">Ober diouzh an daveennoù texrect dalc\'hus</string>

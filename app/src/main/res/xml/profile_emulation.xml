@@ -431,9 +431,27 @@
             android:key="WidescreenHack"
             android:title="@string/gliden64_widescreen_hack_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="EnableDitheringPattern"
+            android:summary="@string/gliden64_dithering_pattern_summary"
+            android:title="@string/gliden64_dithering_pattern_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="EnableHiresNoiseDithering"
+            android:summary="@string/gliden64_hires_noise_dithering_summary"
+            android:title="@string/gliden64_hires_noise_dithering_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
-            android:key="EnableNoise"
-            android:title="@string/gliden64_enable_noise_title" />
+            android:key="EnableDitheringQuantization"
+            android:summary="@string/gliden64_dithering_quantization_summary"
+            android:title="@string/gliden64_dithering_quantization_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_dithering_mode_rdram_default"
+            android:entries="@array/gliden64_dithering_mode_rdram_entries"
+            android:entryValues="@array/gliden64_dithering_mode_rdram_values"
+            android:key="RdramImageDitheringMode"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_dithering_mode_rdram_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableLOD"

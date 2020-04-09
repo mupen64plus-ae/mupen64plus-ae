@@ -406,7 +406,6 @@
     <string name="gliden64_enable_n64_depth_compare_title">启用 N64 深度比较 （实验）</string>
     <string name="gliden64_enable_native_res_texrects_summary">更准确的 2D 图形，但速度更慢，并禁用纹理增强。</string>
     <string name="gliden64_enable_native_res_texrects_title">修复 texrect 图像错位</string>
-    <string name="gliden64_enable_noise_title">启用噪声模拟</string>
     <string name="gliden64_force_gamma_correction_title">强制伽玛校正</string>
     <string name="gliden64_gamma_correction_level">伽玛校正值</string>
     <string name="gliden64_max_anisotropic_filtering_title">各向异性过滤最高水平</string>

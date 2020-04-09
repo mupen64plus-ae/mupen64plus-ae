@@ -292,7 +292,6 @@
     <string name="gliden64_max_anisotropic_filtering_title">Максимальный уровень анизотропической фильтрации</string>
     <string name="gliden64_category_general_title">Главные</string>
     <string name="gliden64_widescreen_hack_title">Хак широкого экрана</string>
-    <string name="gliden64_enable_noise_title">Включить эмуляцию шума</string>
     <string name="gliden64_enable_lod_title">Включить LOD эмуляцию</string>
     <string name="gliden64_enable_hw_lighting_title">Включить аппаратную подсветку на каждый пиксель</string>
     <string name="gliden64_correct_texrect_coords_title">сделать координаты texrect непрерывными</string>

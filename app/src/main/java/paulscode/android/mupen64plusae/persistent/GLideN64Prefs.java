@@ -8,7 +8,7 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 27;
+    public static final int VERSION = 29;
 
     /** Enable/Disable Fast Approximate Anti-Aliasing FXAA */
     public final boolean fxaa;
@@ -24,8 +24,21 @@ public class GLideN64Prefs {
     /** Max level of Anisotropic Filtering, 0 for off */
     public final int maxAnisotropy;
 
-    /** Enable color noise emulation. */
-    public final boolean enableNoise;
+    /** Enable dithering pattern on output image. */
+    public final boolean enableDitheringPattern;
+
+    /** Enable hi-res noise dithering. */
+    public final boolean enableHiresNoiseDithering;
+
+    /** Dither with color quantization. */
+    public final boolean enableDitheringQuantization;
+
+    /** Dithering mode for image in RDRAM.
+     * (0=disable
+     * 1=bayer
+     * 2=magic square
+     * 3=blue noise) */
+    public final int rdramImageDitheringMode;
 
     /** Enable LOD emulation. */
     public final boolean enableLOD;
@@ -156,11 +169,13 @@ public class GLideN64Prefs {
 
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
-        String glesVersion = AppData.getOpenGlEsVersion(context);
         bilinearMode = emulationProfile.get( "bilinearMode", "True" ).equals( "True" );
         enableHalosRemoval = emulationProfile.get( "enableHalosRemoval", "False" ).equals( "True" );
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
-        enableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
+        enableDitheringPattern = emulationProfile.get( "EnableDitheringPattern", "False" ).equals( "True" );
+        enableHiresNoiseDithering = emulationProfile.get( "EnableHiresNoiseDithering", "False" ).equals( "True" );
+        enableDitheringQuantization = emulationProfile.get( "EnableDitheringQuantization", "True" ).equals( "True" );
+        rdramImageDitheringMode = getSafeInt( emulationProfile, "RdramImageDitheringMode", 3);
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
