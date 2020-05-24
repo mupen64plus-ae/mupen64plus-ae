@@ -302,6 +302,10 @@ void GraphicsDrawer::_updateScreenCoordsViewport(const FrameBuffer * _pBuffer) c
 		viewportScaleX = viewportScaleY = pCurrentBuffer->m_scale;
 		X = roundup(f32(pCurrentBuffer->m_originX), viewportScaleX);
 		Y = roundup(f32(pCurrentBuffer->m_originY), viewportScaleY);
+		if (RSP.LLE) {
+			gSP.viewport.width = f32(bufferWidth);
+			gSP.viewport.height = f32(bufferHeight);
+		}
 	}
 	s32 WIDTH = roundup(f32(bufferWidth), viewportScaleX);
 	s32 HEIGHT = roundup(f32(bufferHeight), viewportScaleY);
@@ -723,17 +727,17 @@ void GraphicsDrawer::_updateStates(DrawingState _drawingState) const
 	}
 }
 
-void GraphicsDrawer::_prepareDrawTriangle()
+void GraphicsDrawer::_prepareDrawTriangle(DrawingState _drawingState)
 {
 	m_texrectDrawer.draw();
 
 	if ((m_modifyVertices & MODIFY_XY) != 0)
 		gSP.changed &= ~CHANGED_VIEWPORT;
 
-	if (gSP.changed || gDP.changed)
-		_updateStates(DrawingState::Triangle);
+	m_drawingState = _drawingState;
 
-	m_drawingState = DrawingState::Triangle;
+	if (gSP.changed || gDP.changed)
+		_updateStates(_drawingState);
 
 	bool bFlatColors = false;
 	if (!RSP.LLE && (gSP.geometryMode & G_LIGHTING) == 0) {
@@ -760,7 +764,7 @@ void GraphicsDrawer::drawTriangles()
 		return;
 	}
 
-	_prepareDrawTriangle();
+	_prepareDrawTriangle(DrawingState::Triangle);
 
 	Context::DrawTriangleParameters triParams;
 	triParams.mode = drawmode::TRIANGLES;
@@ -801,11 +805,17 @@ void GraphicsDrawer::drawScreenSpaceTriangle(u32 _numVtx, graphics::DrawModePara
 		SPVertex & vtx = m_dmaVertices[i];
 		vtx.modify = MODIFY_ALL;
 		maxY = std::max(maxY, vtx.y);
+
+		vtx.clip = 0;
+		if (vtx.x > gSP.viewport.width) vtx.clip |= CLIP_POSX;
+		if (vtx.x < 0) vtx.clip |= CLIP_NEGX;
+		if (vtx.y > gSP.viewport.height) vtx.clip |= CLIP_POSY;
+		if (vtx.y < 0) vtx.clip |= CLIP_NEGY;
 	}
 	m_modifyVertices = MODIFY_ALL;
 
 	gSP.changed &= ~CHANGED_GEOMETRYMODE; // Don't update cull mode
-	_prepareDrawTriangle();
+	_prepareDrawTriangle(DrawingState::ScreenSpaceTriangle);
 	gfxContext.enable(enable::CULL_FACE, false);
 
 	Context::DrawTriangleParameters triParams;
@@ -818,7 +828,18 @@ void GraphicsDrawer::drawScreenSpaceTriangle(u32 _numVtx, graphics::DrawModePara
 	g_debugger.addTriangles(triParams);
 	m_dmaVerticesNum = 0;
 
-	frameBufferList().setBufferChanged(maxY);
+#ifndef OLD_LLE
+	if (config.frameBufferEmulation.enable != 0) {
+		const f32 maxY = renderTriangles(m_dmaVertices.data(), nullptr, _numVtx);
+		frameBufferList().setBufferChanged(maxY);
+		if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdSoftwareRender &&
+			gDP.otherMode.depthUpdate != 0) {
+			FrameBuffer * pCurrentDepthBuffer = frameBufferList().findBuffer(gDP.depthImageAddress);
+			if (pCurrentDepthBuffer != nullptr)
+				pCurrentDepthBuffer->setDirty();
+		}
+	}
+#endif
 	gSP.changed |= CHANGED_GEOMETRYMODE;
 }
 
@@ -826,7 +847,7 @@ void GraphicsDrawer::drawDMATriangles(u32 _numVtx)
 {
 	if (_numVtx == 0 || !_canDraw())
 		return;
-	_prepareDrawTriangle();
+	_prepareDrawTriangle(DrawingState::Triangle);
 
 
 	Context::DrawTriangleParameters triParams;
@@ -1321,10 +1342,19 @@ void GraphicsDrawer::drawTexturedRect(const TexturedRectParams & _params)
 				}
 			}
 
-			texST[t].s0 *= cache.current[t]->scaleS;
-			texST[t].t0 *= cache.current[t]->scaleT;
-			texST[t].s1 *= cache.current[t]->scaleS;
-			texST[t].t1 *= cache.current[t]->scaleT;
+			if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
+				texST[t].s0 -= 0.5f;
+				texST[t].t0 -= 0.5f;
+				texST[t].s1 -= 0.5f;
+				texST[t].t1 -= 0.5f;
+			}
+
+			texST[t].s0 *= cache.current[t]->hdRatioS;
+			texST[t].t0 *= cache.current[t]->hdRatioT;
+			texST[t].s1 *= cache.current[t]->hdRatioS;
+			texST[t].t1 *= cache.current[t]->hdRatioT;
+
+
 		}
 	}
 
