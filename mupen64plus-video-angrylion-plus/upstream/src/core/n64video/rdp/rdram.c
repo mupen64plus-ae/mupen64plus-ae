@@ -6,6 +6,8 @@
 
 #define RDRAM_MASK 0x00ffffff
 
+#define HB_CLEAN 4
+
 // macros used to interface with AL's code
 #define RREADADDR8(rdst, in) {(rdst) = rdram_read_idx8((in));}
 #define RREADIDX16(rdst, in) {(rdst) = rdram_read_idx16((in));}
@@ -21,7 +23,7 @@
 
 #define PAIRWRITE32(in, rval, hval0, hval1) rdram_write_pair32((in), (rval), (hval0), (hval1))
 
-#define PAIRWRITE8(in, rval, hval) rdram_write_pair8((in), (rval), (hval))
+#define PAIRWRITE8(in, rval) rdram_write_pair8((in), (rval))
 
 // pointer indexing limits for aliasing RDRAM reads and writes
 static uint32_t idxlim8;
@@ -43,7 +45,7 @@ static void rdram_init(void)
     rdram16 = (uint16_t*)config.gfx.rdram;
     rdram8 = config.gfx.rdram;
 
-    memset(rdram_hidden, 3, sizeof(rdram_hidden));
+    memset(rdram_hidden, HB_CLEAN, sizeof(rdram_hidden));
 }
 
 static STRICTINLINE bool rdram_valid_idx8(uint32_t in)
@@ -124,19 +126,22 @@ static STRICTINLINE void rdram_read_pair16(uint16_t* rdst, uint8_t* hdst, uint32
     if (rdram_valid_idx16(in)) {
         *rdst = rdram16[in ^ WORD_ADDR_XOR];
         *hdst = rdram_hidden[in];
+        if (*hdst & HB_CLEAN) {
+            *hdst = (*rdst & 1) ? 3 : 0;
+        }
     } else {
         *rdst = *hdst = 0;
     }
 }
 
-static STRICTINLINE void rdram_write_pair8(uint32_t in, uint8_t rval, uint8_t hval)
+static STRICTINLINE void rdram_write_pair8(uint32_t in, uint8_t rval)
 {
     in &= RDRAM_MASK;
     if (rdram_valid_idx8(in)) {
-        rdram8[in ^ BYTE_ADDR_XOR] = rval;
         if (in & 1) {
-            rdram_hidden[in >> 1] = hval;
+            rdram_hidden[in >> 1] = (rval & 1) ? 3 : 0;
         }
+        rdram8[in ^ BYTE_ADDR_XOR] = rval;
     }
 }
 

@@ -1,11 +1,10 @@
 #ifndef GLES
 
 #include "gl_core_3_3.h"
+#include "gl_proc.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-
-void* IntGetProcAddress(const char *name);
 
 void (CODEGEN_FUNCPTR *_ptrc_glBlendFunc)(GLenum sfactor, GLenum dfactor) = NULL;
 void (CODEGEN_FUNCPTR *_ptrc_glClear)(GLbitfield mask) = NULL;

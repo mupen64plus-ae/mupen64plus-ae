@@ -1,6 +1,6 @@
 #pragma once
 
-#include "n64video.h"
+#include "core/n64video.h"
 
 #include <stdint.h>
 #include <stdbool.h>

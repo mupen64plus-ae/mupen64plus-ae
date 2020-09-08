@@ -4,17 +4,18 @@
 
 #include "core/common.h"
 #include "core/n64video.h"
-#include "core/screen.h"
-#include "core/vdac.h"
 #include "core/version.h"
 #include "core/msg.h"
+
+#include "output/screen.h"
+#include "output/vdac.h"
 
 #include <stdio.h>
 #include <ctype.h>
 
 GFX_INFO gfx;
-static bool warn_hle;
-static char screenshot_path[MAX_PATH];
+static bool m_warn_hle;
+static char m_screenshot_path[MAX_PATH];
 
 static bool is_valid_ptr(void *ptr, uint32_t bytes)
 {
@@ -104,7 +105,7 @@ static void mi_intr(void)
 
 static void write_screenshot(char* path)
 {
-    struct frame_buffer fb = { 0 };
+    struct n64video_frame_buffer fb = { 0 };
     vdac_read(&fb, true);
 
     // prepare bitmap headers
@@ -140,7 +141,7 @@ static void write_screenshot(char* path)
 
     // convert RGBA to BGRA
     for (uint32_t i = 0; i < fb.width * fb.height; i++) {
-        struct rgba* pixel = &fb.pixels[i];
+        struct n64video_pixel* pixel = &fb.pixels[i];
         uint8_t tmp = pixel->r;
         pixel->r = pixel->b;
         pixel->b = tmp;
@@ -154,6 +155,7 @@ static void write_screenshot(char* path)
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
+    UNUSED(lpvReserved);
     switch (fdwReason) {
         case DLL_PROCESS_ATTACH:
             config_init(hinstDLL);
@@ -167,8 +169,8 @@ EXPORT void CALL CaptureScreen(char* directory)
     char* rom_name = get_rom_name();
 
     for (int32_t i = 0; i < 10000; i++) {
-        sprintf(screenshot_path, "%s\\%s_%04d.bmp", directory, rom_name, i);
-        DWORD dwAttrib = GetFileAttributes(screenshot_path);
+        sprintf(m_screenshot_path, "%s\\%s_%04d.bmp", directory, rom_name, i);
+        DWORD dwAttrib = GetFileAttributes(m_screenshot_path);
         if (dwAttrib == INVALID_FILE_ATTRIBUTES || (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
             break;
         }
@@ -186,6 +188,8 @@ EXPORT void CALL CloseDLL(void)
 
 EXPORT void CALL DllAbout(HWND hParent)
 {
+    UNUSED(hParent);
+
     msg_warning(
         CORE_NAME "\n\n"
         "Branch: " GIT_BRANCH "\n"
@@ -203,6 +207,9 @@ EXPORT void CALL DllConfig(HWND hParent)
 
 EXPORT void CALL ReadScreen(void **dest, long *width, long *height)
 {
+    UNUSED(dest);
+    UNUSED(width);
+    UNUSED(height);
 }
 
 EXPORT void CALL DrawScreen(void)
@@ -228,13 +235,15 @@ EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
 
 EXPORT void CALL MoveScreen(int xpos, int ypos)
 {
+    UNUSED(xpos);
+    UNUSED(ypos);
 }
 
 EXPORT void CALL ProcessDList(void)
 {
-    if (!warn_hle) {
+    if (!m_warn_hle) {
         msg_warning("Please disable 'Graphic HLE' in the plugin settings.");
-        warn_hle = true;
+        m_warn_hle = true;
     }
 }
 
@@ -245,6 +254,8 @@ EXPORT void CALL ProcessRDPList(void)
 
 EXPORT void CALL RomClosed(void)
 {
+    vdac_close();
+    screen_close();
     n64video_close();
 }
 
@@ -271,6 +282,8 @@ EXPORT void CALL RomOpen(void)
     config->gfx.dp_reg = (uint32_t**)&gfx.DPC_START_REG;
 
     n64video_init(config);
+    screen_init(config);
+    vdac_init(config);
 }
 
 EXPORT void CALL ShowCFB(void)
@@ -279,12 +292,19 @@ EXPORT void CALL ShowCFB(void)
 
 EXPORT void CALL UpdateScreen(void)
 {
-    n64video_update_screen();
+    struct n64video_frame_buffer fb;
+    n64video_update_screen(&fb);
+
+    if (fb.valid) {
+        vdac_write(&fb);
+    }
+
+    vdac_sync(fb.valid);
 
     // write screenshot file if requested
-    if (screenshot_path[0]) {
-        write_screenshot(screenshot_path);
-        screenshot_path[0] = 0;
+    if (m_screenshot_path[0]) {
+        write_screenshot(m_screenshot_path);
+        m_screenshot_path[0] = 0;
     }
 }
 
@@ -298,16 +318,22 @@ EXPORT void CALL ViWidthChanged(void)
 
 EXPORT void CALL FBWrite(DWORD addr, DWORD val)
 {
+    UNUSED(addr);
+    UNUSED(val);
 }
 
 EXPORT void CALL FBWList(FrameBufferModifyEntry *plist, DWORD size)
 {
+    UNUSED(plist);
+    UNUSED(size);
 }
 
 EXPORT void CALL FBRead(DWORD addr)
 {
+    UNUSED(addr);
 }
 
 EXPORT void CALL FBGetFrameBufferInfo(void *pinfo)
 {
+    UNUSED(pinfo);
 }

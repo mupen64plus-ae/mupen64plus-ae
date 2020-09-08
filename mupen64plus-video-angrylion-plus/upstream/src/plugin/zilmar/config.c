@@ -1,7 +1,11 @@
 #include "config.h"
 #include "resource.h"
 
+#include "core/common.h"
 #include "core/version.h"
+#include "core/n64video.h"
+#include "output/screen.h"
+#include "output/vdac.h"
 
 #include <Commctrl.h>
 #include <Shlwapi.h>
@@ -74,6 +78,8 @@ static void config_dialog_fill_combo(HWND dialog, char** entries, size_t num_ent
 
 INT_PTR CALLBACK config_dialog_proc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
+    UNUSED(lParam);
+
     switch (iMessage) {
         case WM_INITDIALOG: {
             SetWindowText(hwnd, CORE_BASE_NAME " Config");
@@ -318,8 +324,14 @@ bool config_save(void)
 void config_update(void)
 {
     if (config_stale) {
+        vdac_close();
+        screen_close();
         n64video_close();
+
         n64video_init(&config);
+        screen_init(&config);
+        vdac_init(&config);
+
         config_stale = false;
     }
 }

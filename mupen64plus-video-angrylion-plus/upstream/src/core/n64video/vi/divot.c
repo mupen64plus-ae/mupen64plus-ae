@@ -1,6 +1,6 @@
 #ifdef N64VIDEO_C
 
-static STRICTINLINE void divot_filter(struct rgba* final, struct rgba center, struct rgba left, struct rgba right)
+static STRICTINLINE void divot_filter(struct n64video_pixel* final, struct n64video_pixel center, struct n64video_pixel left, struct n64video_pixel right)
 {
     *final = center;
 

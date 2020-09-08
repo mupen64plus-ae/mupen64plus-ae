@@ -45,10 +45,12 @@
 #include "api/m64p_types.h"
 #include "api/m64p_config.h"
 
-#include "core/screen.h"
-#include "core/vdac.h"
+#include "core/common.h"
 #include "core/version.h"
 #include "core/msg.h"
+
+#include "output/screen.h"
+#include "output/vdac.h"
 
 static ptr_ConfigOpenSection      ConfigOpenSection = NULL;
 static ptr_ConfigSaveSection      ConfigSaveSection = NULL;
@@ -108,6 +110,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
     CoreGetVersion = (ptr_PluginGetVersion)DLSYM(CoreLibHandle, "PluginGetVersion");
 
     n64video_config_init(&config);
+    vdac_init(&config);
+    screen_init(&config);
 
     ConfigSetDefaultBool(configVideoAngrylionPlus, KEY_PARALLEL, config.parallel, "Distribute rendering between multiple processors if True");
     ConfigSetDefaultInt(configVideoAngrylionPlus, KEY_NUM_WORKERS, config.num_workers, "Rendering Workers (0=Use all logical processors)");
@@ -173,6 +177,8 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
 
 EXPORT void CALL MoveScreen (int xpos, int ypos)
 {
+    UNUSED(xpos);
+    UNUSED(ypos);
 }
 
 EXPORT void CALL ProcessDList(void)
@@ -227,6 +233,8 @@ EXPORT int CALL RomOpen (void)
 
 EXPORT void CALL RomClosed (void)
 {
+    vdac_close();
+    screen_close();
     n64video_close();
 }
 
@@ -236,7 +244,14 @@ EXPORT void CALL ShowCFB (void)
 
 EXPORT void CALL UpdateScreen (void)
 {
-    n64video_update_screen();
+    struct n64video_frame_buffer fb;
+    n64video_update_screen(&fb);
+
+    if (fb.valid) {
+        vdac_write(&fb);
+    }
+
+    vdac_sync(fb.valid);
 }
 
 EXPORT void CALL ViStatusChanged (void)
@@ -254,7 +269,9 @@ EXPORT void CALL ChangeWindow(void)
 
 EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 {
-    struct frame_buffer fb = { 0 };
+    UNUSED(front);
+
+    struct n64video_frame_buffer fb = { 0 };
     fb.pixels = dest;
     vdac_read(&fb, false);
 
@@ -275,12 +292,16 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)
 {
+    UNUSED(addr);
+    UNUSED(size);
 }
 
 EXPORT void CALL FBRead(unsigned int addr)
 {
+    UNUSED(addr);
 }
 
 EXPORT void CALL FBGetFrameBufferInfo(void *pinfo)
 {
+    UNUSED(pinfo);
 }

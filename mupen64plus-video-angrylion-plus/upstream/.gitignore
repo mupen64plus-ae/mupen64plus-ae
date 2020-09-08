@@ -6,3 +6,4 @@
 
 src/core/version.h
 private/
+build/
