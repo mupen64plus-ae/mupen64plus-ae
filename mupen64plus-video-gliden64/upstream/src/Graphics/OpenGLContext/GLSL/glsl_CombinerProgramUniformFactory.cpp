@@ -7,6 +7,7 @@
 #include <NoiseTexture.h>
 #include <FrameBuffer.h>
 #include <DisplayWindow.h>
+#include <Debugger.h>
 #include <GBI.h>
 #include <RSP.h>
 #include <gSP.h>
@@ -198,6 +199,23 @@ private:
 	iUniform uMSAASamples;
 };
 
+class UScreenSpaceTriangleInfo : public UniformGroup
+{
+public:
+	UScreenSpaceTriangleInfo(GLuint _program) {
+		LocateUniform(uScreenSpaceTriangle);
+	}
+
+	void update(bool _force) override
+	{
+		uScreenSpaceTriangle.set(
+			(dwnd().getDrawer().getDrawingState() == DrawingState::ScreenSpaceTriangle) ? 1 : 0, _force);
+	}
+
+private:
+	iUniform uScreenSpaceTriangle;
+};
+
 class UFrameBufferInfo : public UniformGroup
 {
 public:
@@ -296,11 +314,6 @@ public:
 
 	void update(bool _force) override
 	{
-		if (config.generalEmulation.enableLegacyBlending == 1) {
-			uForceBlendCycle1.set(0, _force);
-			return;
-		}
-
 		uBlendMux1.set(gDP.otherMode.c1_m1a,
 			gDP.otherMode.c1_m1b,
 			gDP.otherMode.c1_m2a,
@@ -328,12 +341,6 @@ public:
 
 	void update(bool _force) override
 	{
-		if (config.generalEmulation.enableLegacyBlending == 1) {
-			uForceBlendCycle1.set(0, _force);
-			uForceBlendCycle2.set(0, _force);
-			return;
-		}
-
 		uBlendMux1.set(gDP.otherMode.c1_m1a,
 			gDP.otherMode.c1_m1b,
 			gDP.otherMode.c1_m2a,
@@ -351,30 +358,33 @@ public:
 		const int forceBlend2 = gDP.otherMode.forceBlender;
 		uForceBlendCycle2.set(forceBlend2, _force);
 
-		// Modes, which shader blender can't emulate
-		const u32 mode = _SHIFTR(gDP.otherMode.l, 16, 16);
-		switch (mode) {
-		case 0x0040:
-			// Mia Hamm Soccer
-			// clr_in * a_in + clr_mem * (1-a)
-			// clr_in * a_in + clr_in * (1-a)
-		case 0x0050:
-			// A Bug's Life
-			// clr_in * a_in + clr_mem * (1-a)
-			// clr_in * a_in + clr_mem * (1-a)
-			uForceBlendCycle1.set(0, _force);
-			uForceBlendCycle2.set(0, _force);
-			break;
-		case 0x0150:
-			// Tony Hawk
-			// clr_in * a_in + clr_mem * (1-a)
-			// clr_in * a_fog + clr_mem * (1-a_fog)
-			if ((config.generalEmulation.hacks & hack_TonyHawk) != 0) {
+		if (!graphics::Context::DualSourceBlending || dwnd().getDrawer().isTexrectDrawerMode()) {
+			// Modes, which shader blender can't emulate
+			const u32 mode = _SHIFTR(gDP.otherMode.l, 16, 16);
+			switch (mode) {
+			case 0x0040:
+				// Mia Hamm Soccer
+				// clr_in * a_in + clr_mem * (1-a)
+				// clr_in * a_in + clr_in * (1-a)
+			case 0x0050:
+				// A Bug's Life
+				// clr_in * a_in + clr_mem * (1-a)
+				// clr_in * a_in + clr_mem * (1-a)
 				uForceBlendCycle1.set(0, _force);
 				uForceBlendCycle2.set(0, _force);
+				break;
+			case 0x0150:
+				// Tony Hawk
+				// clr_in * a_in + clr_mem * (1-a)
+				// clr_in * a_fog + clr_mem * (1-a_fog)
+				if ((config.generalEmulation.hacks & hack_TonyHawk) != 0) {
+					uForceBlendCycle1.set(0, _force);
+					uForceBlendCycle2.set(0, _force);
+				}
+				break;
 			}
-			break;
 		}
+
 	}
 
 private:
@@ -382,6 +392,27 @@ private:
 	i4Uniform uBlendMux2;
 	iUniform uForceBlendCycle1;
 	iUniform uForceBlendCycle2;
+};
+
+class UBlendCvg : public UniformGroup
+{
+public:
+	UBlendCvg(GLuint _program) {
+		LocateUniform(uCvgDest);
+		LocateUniform(uBlendAlphaMode);
+	}
+
+	void update(bool _force) override
+	{
+		uCvgDest.set(gDP.otherMode.cvgDest, _force);
+		if (dwnd().getDrawer().isTexrectDrawerMode())
+			uBlendAlphaMode.set(2, _force); // No alpha blend in texrect drawing mode
+		else
+			uBlendAlphaMode.set(gDP.otherMode.forceBlender, _force);
+	}
+private:
+	iUniform uCvgDest;
+	iUniform uBlendAlphaMode;
 };
 
 class UDitherMode : public UniformGroup
@@ -858,6 +889,8 @@ public:
 		LocateUniform(uCacheOffset[0]);
 		LocateUniform(uCacheOffset[1]);
 		LocateUniform(uTexScale);
+		LocateUniform(uTexSize[0]);
+		LocateUniform(uTexSize[1]);
 		LocateUniform(uCacheFrameBuffer);
 	}
 
@@ -897,7 +930,7 @@ public:
 				f32 shiftScaleT = 1.0f;
 				getTextureShiftScale(t, cache, shiftScaleS, shiftScaleT);
 				uCacheShiftScale[t].set(shiftScaleS, shiftScaleT, _force);
-				uCacheScale[t].set(_pTexture->scaleS, _pTexture->scaleT, _force);
+				uCacheScale[t].set(_pTexture->hdRatioS, _pTexture->hdRatioT, _force);
 				uCacheOffset[t].set(_pTexture->offsetS, _pTexture->offsetT, _force);
 				nFB[t] = _pTexture->frameBufferTexture;
 			}
@@ -914,33 +947,40 @@ private:
 	fv2Uniform uCacheScale[2];
 	fv2Uniform uCacheOffset[2];
 	fv2Uniform uTexScale;
+	fv2Uniform uTexSize[2];
 	iv2Uniform uCacheFrameBuffer;
 };
 
-class UClampWrapMirrorTex : public UniformGroup
+class UTextureEngine : public UniformGroup
 {
 public:
-	UClampWrapMirrorTex(GLuint _program, bool _useT0, bool _useT1)
+	UTextureEngine(GLuint _program, bool _useT0, bool _useT1)
 	{
 		m_useTile[0] = _useT0;
 		m_useTile[1] = _useT1;
-		LocateUniform(uTexClamp0);
-		LocateUniform(uTexClamp1);
 		LocateUniform(uTexWrap0);
 		LocateUniform(uTexWrap1);
-		LocateUniform(uTexMirror0);
-		LocateUniform(uTexMirror1);
-		LocateUniform(uTexScale0);
-		LocateUniform(uTexScale1);
+		LocateUniform(uTexClamp0);
+		LocateUniform(uTexClamp1);
+		LocateUniform(uTexWrapEn0);
+		LocateUniform(uTexWrapEn1);
+		LocateUniform(uTexClampEn0);
+		LocateUniform(uTexClampEn1);
+		LocateUniform(uTexMirrorEn0);
+		LocateUniform(uTexMirrorEn1);
+		LocateUniform(uTexSize0);
+		LocateUniform(uTexSize1);
 	}
 
 	void update(bool _force) override
 	{
-		std::array<f32, 4> aTexClamp[2] = { { -10000.0f, -10000.0f, 10000.0f, 10000.0f },
-											{ -10000.0f, -10000.0f, 10000.0f, 10000.0f } };
-		std::array<f32, 2> aTexWrap[2] = { { 10000.0f, 10000.0f }, { 10000.0f, 10000.0f } };
-		std::array<f32, 2> aTexMirror[2] = { { 0.0f, 0.0f}, { 0.0f, 0.0f } };
-		std::array<f32, 2> aTexScale[2] = { { 1.0f, 1.0f },{ 1.0f, 1.0f } };
+		std::array<f32, 2> aTexWrap[2] = { {0.0f,0.0f}, {0.0f,0.0f} };
+		std::array<f32, 2> aTexClamp[2] = { { 0.0f,0.0f },{ 0.0f,0.0f } };
+		std::array<f32, 2> aTexWrapEn[2] = { { 0.0f,0.0f },{ 0.0f,0.0f } };
+		std::array<f32, 2> aTexClampEn[2] = { { 0.0f,0.0f },{ 0.0f,0.0f } };
+		std::array<f32, 2> aTexMirrorEn[2] = { { 0.0f,0.0f },{ 0.0f,0.0f } };
+		std::array<f32, 2> aTexSize[2] = { { 0.0f,0.0f },{ 0.0f,0.0f } };
+
 		TextureCache & cache = textureCache();
 		const bool replaceTex1ByTex0 = needReplaceTex1ByTex0();
 		for (u32 t = 0; t < 2; ++t) {
@@ -953,74 +993,67 @@ public:
 			if (pTile == nullptr || pTexture == nullptr)
 				continue;
 
-			if (gDP.otherMode.cycleType != G_CYC_COPY) {
-				if (pTexture->clampS) {
-					aTexClamp[t][0] = 0.0f; // S lower bound
-					if (pTexture->frameBufferTexture != CachedTexture::fbNone ||
-						pTile->textureMode == TEXTUREMODE_BGIMAGE)
-						aTexClamp[t][2] = 1.0f;
-					else {
-						u32 tileWidth = ((pTile->lrs - pTile->uls) & 0x03FF) + 1;
-						if (pTile->size > pTexture->size)
-							tileWidth <<= pTile->size - pTexture->size;
-						//	aTexClamp[t][2] = f32(tileWidth) / (pTexture->mirrorS ? f32(pTexture->width) : f32(pTexture->clampWidth)); // S upper bound
-						aTexClamp[t][2] = f32(tileWidth) / f32(pTexture->width); // S upper bound
-					}
-				}
-				if (pTexture->clampT) {
-					aTexClamp[t][1] = 0.0f; // T lower bound
-					if (pTexture->frameBufferTexture != CachedTexture::fbNone ||
-						pTile->textureMode == TEXTUREMODE_BGIMAGE)
-						aTexClamp[t][3] = 1.0f;
-					else {
-						const u32 tileHeight = ((pTile->lrt - pTile->ult) & 0x03FF) + 1;
-						//	aTexClamp[t][3] = f32(tileHeight) / (pTexture->mirrorT ? f32(pTexture->height) : f32(pTexture->clampHeight)); // T upper bound
-						aTexClamp[t][3] = f32(tileHeight) / f32(pTexture->height); // T upper bound
-					}
-				}
-			}
-			if (pTexture->maskS) {
-				const f32 wrapWidth = static_cast<f32>(1 << pTile->originalMaskS);
-				const f32 pow2Width = static_cast<f32>(pow2(pTexture->width));
-				aTexWrap[t][0] = wrapWidth / pow2Width;
-				aTexScale[t][0] = pow2Width / f32(pTexture->width);
-			}
-			if (pTexture->maskT) {
-				const f32 wrapHeight = static_cast<f32>(1 << pTile->originalMaskT);
-				const f32 pow2Height = static_cast<f32>(pow2(pTexture->height));
-				aTexWrap[t][1] = wrapHeight / pow2Height;
-				aTexScale[t][1] = pow2Height / f32(pTexture->height);
-			}
-			if (pTexture->mirrorS) {
-				aTexMirror[t][0] = 1.0f;
-				aTexWrap[t][0] *= 2.0f;
-			}
-			if (pTexture->mirrorT) {
-				aTexMirror[t][1] = 1.0f;
-				aTexWrap[t][1] *= 2.0f;
+			aTexSize[t][0] = pTexture->width * pTexture->hdRatioS;
+			aTexSize[t][1] = pTexture->height * pTexture->hdRatioT;
+
+			/* Not sure if special treatment of framebuffer textures is correct */
+			if (pTexture->frameBufferTexture != CachedTexture::fbNone ||
+				pTile->textureMode != TEXTUREMODE_NORMAL ||
+				g_debugger.isDebugMode())
+			{
+				aTexWrap[t][0] = pTexture->hdRatioS;
+				aTexWrap[t][1] = pTexture->hdRatioT;
+				aTexClamp[t][0] = f32(pTexture->width) * pTexture->hdRatioS - 1.0f;
+				aTexClamp[t][1] = f32(pTexture->height) * pTexture->hdRatioT - 1.0f;
+				aTexWrapEn[t][0] = 0.0;
+				aTexWrapEn[t][1] = 0.0;
+				aTexClampEn[t][0] = 1.0;
+				aTexClampEn[t][1] = 1.0;
+				aTexMirrorEn[t][0] = 0.0;
+				aTexMirrorEn[t][1] = 0.0;
+			} else {
+				aTexWrap[t][0] = f32(1 << pTile->masks) * pTexture->hdRatioS;
+				aTexWrap[t][1] = f32(1 << pTile->maskt) * pTexture->hdRatioT;
+				aTexClamp[t][0] = (pTile->flrs - pTile->fuls + 1.0f) * pTexture->hdRatioS - 1.0f;
+				aTexClamp[t][1] = (pTile->flrt - pTile->fult + 1.0f) * pTexture->hdRatioT - 1.0f;
+				aTexWrapEn[t][0] = f32(pTile->masks == 0 ? 0 : 1);
+				aTexWrapEn[t][1] = f32(pTile->maskt == 0 ? 0 : 1);
+				aTexClampEn[t][0] = f32(gDP.otherMode.cycleType == G_CYC_COPY ? 0 : (pTile->masks == 0 ? 1 : pTile->clamps));
+				aTexClampEn[t][1] = f32(gDP.otherMode.cycleType == G_CYC_COPY ? 0 : (pTile->maskt == 0 ? 1 : pTile->clampt));
+				aTexMirrorEn[t][0] = f32(pTile->masks == 0 ? 0 : pTile->mirrors);
+				aTexMirrorEn[t][1] = f32(pTile->maskt == 0 ? 0 : pTile->mirrort);
 			}
 		}
-		
-		uTexClamp0.set(aTexClamp[0].data(), _force);
-		uTexClamp1.set(aTexClamp[1].data(), _force);
+
 		uTexWrap0.set(aTexWrap[0][0], aTexWrap[0][1], _force);
 		uTexWrap1.set(aTexWrap[1][0], aTexWrap[1][1], _force);
-		uTexMirror0.set(aTexMirror[0][0], aTexMirror[0][1], _force);
-		uTexMirror1.set(aTexMirror[1][0], aTexMirror[1][1], _force);
-		uTexScale0.set(aTexScale[0][0], aTexScale[0][1], _force);
-		uTexScale1.set(aTexScale[1][0], aTexScale[1][1], _force);
+		uTexClamp0.set(aTexClamp[0][0], aTexClamp[0][1], _force);
+		uTexClamp1.set(aTexClamp[1][0], aTexClamp[1][1], _force);
+		uTexWrapEn0.set(aTexWrapEn[0][0], aTexWrapEn[0][1], _force);
+		uTexWrapEn1.set(aTexWrapEn[1][0], aTexWrapEn[1][1], _force);
+		uTexClampEn0.set(aTexClampEn[0][0], aTexClampEn[0][1], _force);
+		uTexClampEn1.set(aTexClampEn[1][0], aTexClampEn[1][1], _force);
+		uTexMirrorEn0.set(aTexMirrorEn[0][0], aTexMirrorEn[0][1], _force);
+		uTexMirrorEn1.set(aTexMirrorEn[1][0], aTexMirrorEn[1][1], _force);
+		uTexSize0.set(aTexSize[0][0], aTexSize[0][1], _force);
+		uTexSize1.set(aTexSize[1][0], aTexSize[1][1], _force);
+
 	}
 
 private:
 	bool m_useTile[2];
-	fv4Uniform uTexClamp0;
-	fv4Uniform uTexClamp1;
 	fv2Uniform uTexWrap0;
 	fv2Uniform uTexWrap1;
-	fv2Uniform uTexMirror0;
-	fv2Uniform uTexMirror1;
-	fv2Uniform uTexScale0;
-	fv2Uniform uTexScale1;
+	fv2Uniform uTexClamp0;
+	fv2Uniform uTexClamp1;
+	fv2Uniform uTexWrapEn0;
+	fv2Uniform uTexWrapEn1;
+	fv2Uniform uTexClampEn0;
+	fv2Uniform uTexClampEn1;
+	fv2Uniform uTexMirrorEn0;
+	fv2Uniform uTexMirrorEn1;
+	fv2Uniform uTexSize0;
+	fv2Uniform uTexSize1;
 };
 
 class ULights : public UniformGroup
@@ -1059,6 +1092,7 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 												  UniformGroups & _uniforms)
 {
 	_uniforms.emplace_back(new UNoiseTex(_program));
+	_uniforms.emplace_back(new UScreenSpaceTriangleInfo(_program));
 
 	if (!m_glInfo.isGLES2) {
 		_uniforms.emplace_back(new UDepthTex(_program));
@@ -1089,7 +1123,7 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 		if (!_key.isRectKey())
 			_uniforms.emplace_back(new UTextureParams(_program, _inputs.usesTile(0), _inputs.usesTile(1)));
 
-		_uniforms.emplace_back(new UClampWrapMirrorTex(_program, _inputs.usesTile(0), _inputs.usesTile(1)));
+		_uniforms.emplace_back(new UTextureEngine(_program, _inputs.usesTile(0), _inputs.usesTile(1)));
 	}
 
 	_uniforms.emplace_back(new UFog(_program));
@@ -1104,6 +1138,8 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 			break;
 		}
 	}
+
+	_uniforms.emplace_back(new UBlendCvg(_program));
 
 	_uniforms.emplace_back(new UDitherMode(_program, _inputs.usesNoise()));
 

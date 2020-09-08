@@ -3,6 +3,7 @@ Debug*/
 Release*/
 build*/
 Roms/
+*.aps
 *.ncb
 *.suo
 *.sdf
@@ -13,3 +14,4 @@ src/Revision.h
 /projects/msvc/GLideN64.VC.db
 /projects/msvc/GeneratedFiles
 .vs
+/translations/wtl

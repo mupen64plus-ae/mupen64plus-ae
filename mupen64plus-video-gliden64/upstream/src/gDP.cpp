@@ -27,6 +27,9 @@ using namespace std;
 
 gDPInfo gDP;
 
+// angrylion's macro
+#define SIGN(x, numb)	(((x) & ((1 << numb) - 1)) | -((x) & (1 << (numb - 1))))
+
 bool isCurrentColorImageDepthImage()
 {
 	return (gDP.colorImage.address == gDP.depthImageAddress) ||
@@ -811,9 +814,6 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 
 void gDPSetConvert( s32 k0, s32 k1, s32 k2, s32 k3, s32 k4, s32 k5 )
 {
-// angrylion's macro
-#define SIGN(x, numb)	(((x) & ((1 << numb) - 1)) | -((x) & (1 << (numb - 1))))
-
 	gDP.convert.k0 = (SIGN(k0, 9) << 1) + 1;
 	gDP.convert.k1 = (SIGN(k1, 9) << 1) + 1;
 	gDP.convert.k2 = (SIGN(k2, 9) << 1) + 1;
@@ -851,7 +851,7 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, s16 s, s1
 		lrx += 1.0f;
 		lry += 1.0f;
 	}
-	lry = max(lry, uly + 1.0f);
+	lry = ceil(lry);
 
 	gDPTile *textureTileOrg[2];
 	textureTileOrg[0] = gSP.textureTile[0];
@@ -949,6 +949,8 @@ void gDPNoOp()
  *    based on sources of ziggy's z64      *
  *******************************************/
 
+#ifdef OLD_LLE
+
 void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u32 * _pRdpCmd)
 {
 	gSP.texture.level = _SHIFTR(_w1, 19, 3);
@@ -992,7 +994,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 
 	yl = (_w1 & 0x3fff);
 	ym = ((_w2 >> 16) & 0x3fff);
-	yh = ((_w2 >>  0) & 0x3fff);
+	yh = ((_w2 >> 0) & 0x3fff);
 	xl = (s32)(w3);
 	xh = (s32)(w5);
 	xm = (s32)(w7);
@@ -1000,42 +1002,42 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	dxhdy = (s32)(w6);
 	dxmdy = (s32)(w8);
 
-	if (yl & (0x800<<2)) yl |= 0xfffff000<<2;
-	if (ym & (0x800<<2)) ym |= 0xfffff000<<2;
-	if (yh & (0x800<<2)) yh |= 0xfffff000<<2;
+	if (yl & (0x800 << 2)) yl |= 0xfffff000 << 2;
+	if (ym & (0x800 << 2)) ym |= 0xfffff000 << 2;
+	if (yh & (0x800 << 2)) yh |= 0xfffff000 << 2;
 
 	yh &= ~3;
 
 	r = 0xff; g = 0xff; b = 0xff; a = 0xff; z = 0xffff0000; s = 0;  t = 0;  w = 0x30000;
 
 	if (_shade != 0) {
-		r    = (shade_base[0] & 0xffff0000) | ((shade_base[+4 ] >> 16) & 0x0000ffff);
-		g    = ((shade_base[0 ] << 16) & 0xffff0000) | (shade_base[4 ] & 0x0000ffff);
-		b    = (shade_base[1 ] & 0xffff0000) | ((shade_base[5 ] >> 16) & 0x0000ffff);
-		a    = ((shade_base[1 ] << 16) & 0xffff0000) | (shade_base[5 ] & 0x0000ffff);
-		drdx = (shade_base[2 ] & 0xffff0000) | ((shade_base[6 ] >> 16) & 0x0000ffff);
-		dgdx = ((shade_base[2 ] << 16) & 0xffff0000) | (shade_base[6 ] & 0x0000ffff);
-		dbdx = (shade_base[3 ] & 0xffff0000) | ((shade_base[7 ] >> 16) & 0x0000ffff);
-		dadx = ((shade_base[3 ] << 16) & 0xffff0000) | (shade_base[7 ] & 0x0000ffff);
-		drde = (shade_base[8 ] & 0xffff0000) | ((shade_base[12] >> 16) & 0x0000ffff);
-		dgde = ((shade_base[8 ] << 16) & 0xffff0000) | (shade_base[12] & 0x0000ffff);
-		dbde = (shade_base[9 ] & 0xffff0000) | ((shade_base[13] >> 16) & 0x0000ffff);
-		dade = ((shade_base[9 ] << 16) & 0xffff0000) | (shade_base[13] & 0x0000ffff);
+		r = (shade_base[0] & 0xffff0000) | ((shade_base[+4] >> 16) & 0x0000ffff);
+		g = ((shade_base[0] << 16) & 0xffff0000) | (shade_base[4] & 0x0000ffff);
+		b = (shade_base[1] & 0xffff0000) | ((shade_base[5] >> 16) & 0x0000ffff);
+		a = ((shade_base[1] << 16) & 0xffff0000) | (shade_base[5] & 0x0000ffff);
+		drdx = (shade_base[2] & 0xffff0000) | ((shade_base[6] >> 16) & 0x0000ffff);
+		dgdx = ((shade_base[2] << 16) & 0xffff0000) | (shade_base[6] & 0x0000ffff);
+		dbdx = (shade_base[3] & 0xffff0000) | ((shade_base[7] >> 16) & 0x0000ffff);
+		dadx = ((shade_base[3] << 16) & 0xffff0000) | (shade_base[7] & 0x0000ffff);
+		drde = (shade_base[8] & 0xffff0000) | ((shade_base[12] >> 16) & 0x0000ffff);
+		dgde = ((shade_base[8] << 16) & 0xffff0000) | (shade_base[12] & 0x0000ffff);
+		dbde = (shade_base[9] & 0xffff0000) | ((shade_base[13] >> 16) & 0x0000ffff);
+		dade = ((shade_base[9] << 16) & 0xffff0000) | (shade_base[13] & 0x0000ffff);
 	}
 	if (_texture != 0) {
-		s    = (texture_base[0 ] & 0xffff0000) | ((texture_base[4 ] >> 16) & 0x0000ffff);
-		t    = ((texture_base[0 ] << 16) & 0xffff0000)      | (texture_base[4 ] & 0x0000ffff);
-		w    = (texture_base[1 ] & 0xffff0000) | ((texture_base[5 ] >> 16) & 0x0000ffff);
+		s = (texture_base[0] & 0xffff0000) | ((texture_base[4] >> 16) & 0x0000ffff);
+		t = ((texture_base[0] << 16) & 0xffff0000) | (texture_base[4] & 0x0000ffff);
+		w = (texture_base[1] & 0xffff0000) | ((texture_base[5] >> 16) & 0x0000ffff);
 		//    w = abs(w);
-		dsdx = (texture_base[2 ] & 0xffff0000) | ((texture_base[6 ] >> 16) & 0x0000ffff);
-		dtdx = ((texture_base[2 ] << 16) & 0xffff0000)      | (texture_base[6 ] & 0x0000ffff);
-		dwdx = (texture_base[3 ] & 0xffff0000) | ((texture_base[7 ] >> 16) & 0x0000ffff);
-		dsde = (texture_base[8 ] & 0xffff0000) | ((texture_base[12] >> 16) & 0x0000ffff);
-		dtde = ((texture_base[8 ] << 16) & 0xffff0000)      | (texture_base[12] & 0x0000ffff);
-		dwde = (texture_base[9 ] & 0xffff0000) | ((texture_base[13] >> 16) & 0x0000ffff);
+		dsdx = (texture_base[2] & 0xffff0000) | ((texture_base[6] >> 16) & 0x0000ffff);
+		dtdx = ((texture_base[2] << 16) & 0xffff0000) | (texture_base[6] & 0x0000ffff);
+		dwdx = (texture_base[3] & 0xffff0000) | ((texture_base[7] >> 16) & 0x0000ffff);
+		dsde = (texture_base[8] & 0xffff0000) | ((texture_base[12] >> 16) & 0x0000ffff);
+		dtde = ((texture_base[8] << 16) & 0xffff0000) | (texture_base[12] & 0x0000ffff);
+		dwde = (texture_base[9] & 0xffff0000) | ((texture_base[13] >> 16) & 0x0000ffff);
 	}
 	if (_zbuffer != 0) {
-		z    = zbuffer_base[0];
+		z = zbuffer_base[0];
 		dzdx = zbuffer_base[1];
 		dzde = zbuffer_base[2];
 	}
@@ -1068,8 +1070,8 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	xright_inc = dxhdy;
 
 	while (yh<ym &&
-		!((!flip && xleft < xright+0x10000) ||
-		 (flip && xleft > xright-0x10000))) {
+		!((!flip && xleft < xright + 0x10000) ||
+		(flip && xleft > xright - 0x10000))) {
 		xleft += xleft_inc;
 		xright += xright_inc;
 		s += dsde;    t += dtde;    w += dwde;
@@ -1078,25 +1080,25 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 		yh++;
 	}
 
-	j = ym-yh;
+	j = ym - yh;
 	if (j > 0) {
-		int dx = (xleft-xright)>>16;
+		int dx = (xleft - xright) >> 16;
 		if ((!flip && xleft < xright) || (flip/* && xleft > xright*/))
 		{
 			if (_shade != 0) {
-				vtx->r = CSCALE(r+drdx*dx);
-				vtx->g = CSCALE(g+dgdx*dx);
-				vtx->b = CSCALE(b+dbdx*dx);
-				vtx->a = CSCALE(a+dadx*dx);
+				vtx->r = CSCALE(r + drdx*dx);
+				vtx->g = CSCALE(g + dgdx*dx);
+				vtx->b = CSCALE(b + dbdx*dx);
+				vtx->a = CSCALE(a + dadx*dx);
 			}
 			if (_texture != 0) {
-				vtx->s = SSCALE(s+dsdx*dx, w+dwdx*dx);
-				vtx->t = TSCALE(t+dtdx*dx, w+dwdx*dx);
+				vtx->s = SSCALE(s + dsdx*dx, w + dwdx*dx);
+				vtx->t = TSCALE(t + dtdx*dx, w + dwdx*dx);
 			}
 			vtx->x = XSCALE(xleft);
 			vtx->y = YSCALE(yh);
-			vtx->z = ZSCALE(z+dzdx*dx);
-			vtx->w = WSCALE(w+dwdx*dx);
+			vtx->z = ZSCALE(z + dzdx*dx);
+			vtx->w = WSCALE(w + dwdx*dx);
 			++vtx;
 		}
 		if ((!flip/* && xleft < xright*/) || (/*flip &&*/ xleft > xright))
@@ -1120,7 +1122,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 		xleft += xleft_inc*j;  xright += xright_inc*j;
 		s += dsde*j;  t += dtde*j;
 		if (w + dwde*j != 0) w += dwde*j;
-		else w += dwde*(j-1);
+		else w += dwde*(j - 1);
 		r += drde*j;  g += dgde*j;  b += dbde*j;  a += dade*j;
 		z += dzde*j;
 		// render ...
@@ -1131,28 +1133,28 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 
 	//if (yl-ym > 0)
 	{
-		int dx = (xleft-xright)>>16;
+		int dx = (xleft - xright) >> 16;
 		if ((!flip && xleft <= xright) ||
-				(flip/* && xleft >= xright*/))
+			(flip/* && xleft >= xright*/))
 		{
 			if (_shade != 0) {
-				vtx->r = CSCALE(r+drdx*dx);
-				vtx->g = CSCALE(g+dgdx*dx);
-				vtx->b = CSCALE(b+dbdx*dx);
-				vtx->a = CSCALE(a+dadx*dx);
+				vtx->r = CSCALE(r + drdx*dx);
+				vtx->g = CSCALE(g + dgdx*dx);
+				vtx->b = CSCALE(b + dbdx*dx);
+				vtx->a = CSCALE(a + dadx*dx);
 			}
 			if (_texture != 0) {
-				vtx->s = SSCALE(s+dsdx*dx, w+dwdx*dx);
-				vtx->t = TSCALE(t+dtdx*dx, w+dwdx*dx);
+				vtx->s = SSCALE(s + dsdx*dx, w + dwdx*dx);
+				vtx->t = TSCALE(t + dtdx*dx, w + dwdx*dx);
 			}
 			vtx->x = XSCALE(xleft);
 			vtx->y = YSCALE(ym);
-			vtx->z = ZSCALE(z+dzdx*dx);
-			vtx->w = WSCALE(w+dwdx*dx);
+			vtx->z = ZSCALE(z + dzdx*dx);
+			vtx->w = WSCALE(w + dwdx*dx);
 			++vtx;
 		}
 		if ((!flip/* && xleft <= xright*/) ||
-				(/*flip && */xleft >= xright))
+			(/*flip && */xleft >= xright))
 		{
 			if (_shade != 0) {
 				vtx->r = CSCALE(r);
@@ -1174,7 +1176,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	xleft_inc = dxldy;
 	xright_inc = dxhdy;
 
-	j = yl-ym;
+	j = yl - ym;
 	//j--; // ?
 	xleft += xleft_inc*j;  xright += xright_inc*j;
 	s += dsde*j;  t += dtde*j;  w += dwde*j;
@@ -1182,8 +1184,8 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	z += dzde*j;
 
 	while (yl>ym &&
-		   !((!flip && xleft < xright+0x10000) ||
-			 (flip && xleft > xright-0x10000))) {
+		!((!flip && xleft < xright + 0x10000) ||
+		(flip && xleft > xright - 0x10000))) {
 		xleft -= xleft_inc;    xright -= xright_inc;
 		s -= dsde;    t -= dtde;    w -= dwde;
 		r -= drde;    g -= dgde;    b -= dbde;    a -= dade;
@@ -1194,28 +1196,28 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 
 	// render ...
 	if (j >= 0) {
-		int dx = (xleft-xright)>>16;
+		int dx = (xleft - xright) >> 16;
 		if ((!flip && xleft <= xright) ||
-				(flip/* && xleft >= xright*/))
+			(flip/* && xleft >= xright*/))
 		{
 			if (_shade != 0) {
-				vtx->r = CSCALE(r+drdx*dx);
-				vtx->g = CSCALE(g+dgdx*dx);
-				vtx->b = CSCALE(b+dbdx*dx);
-				vtx->a = CSCALE(a+dadx*dx);
+				vtx->r = CSCALE(r + drdx*dx);
+				vtx->g = CSCALE(g + dgdx*dx);
+				vtx->b = CSCALE(b + dbdx*dx);
+				vtx->a = CSCALE(a + dadx*dx);
 			}
 			if (_texture != 0) {
-				vtx->s = SSCALE(s+dsdx*dx, w+dwdx*dx);
-				vtx->t = TSCALE(t+dtdx*dx, w+dwdx*dx);
+				vtx->s = SSCALE(s + dsdx*dx, w + dwdx*dx);
+				vtx->t = TSCALE(t + dtdx*dx, w + dwdx*dx);
 			}
 			vtx->x = XSCALE(xleft);
 			vtx->y = YSCALE(yl);
-			vtx->z = ZSCALE(z+dzdx*dx);
-			vtx->w = WSCALE(w+dwdx*dx);
+			vtx->z = ZSCALE(z + dzdx*dx);
+			vtx->w = WSCALE(w + dwdx*dx);
 			++vtx;
 		}
 		if ((!flip/* && xleft <= xright*/) ||
-				(/*flip &&*/ xleft >= xright))
+			(/*flip &&*/ xleft >= xright))
 		{
 			if (_shade != 0) {
 				vtx->r = CSCALE(r);
@@ -1244,59 +1246,537 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	gSP.textureTile[0] = textureTileOrg[0];
 	gSP.textureTile[1] = textureTileOrg[1];
 
-	DebugMsg( DEBUG_NORMAL, "gDPLLETriangle(%08x, %08x) shade: %d, texture: %d, zbuffer: %d\n",
-			  _w1, _w2, _shade, _texture, _zbuffer);
+	DebugMsg(DEBUG_NORMAL, "gDPLLETriangle(%08x, %08x) shade: %d, texture: %d, zbuffer: %d\n",
+		_w1, _w2, _shade, _texture, _zbuffer);
 }
 
+#endif // OLD_LLE
+
+LLETriangle::LLETriangle()
+{
+	m_textureTileOrg[0] = gSP.textureTile[0];
+	m_textureTileOrg[1] = gSP.textureTile[1];
+	m_textureScaleOrg[0] = m_textureScaleOrg[1] = 1.0f;
+}
+
+LLETriangle& LLETriangle::get()
+{
+	static LLETriangle lleTriangle;
+	return lleTriangle;
+}
+
+void LLETriangle::start(u32 _tile)
+{
+	if (!m_flushed)
+		return;
+	m_textureTileOrg[0] = gSP.textureTile[0];
+	m_textureTileOrg[1] = gSP.textureTile[1];
+	m_textureScaleOrg[0] = gSP.texture.scales;
+	m_textureScaleOrg[1] = gSP.texture.scalet;
+	gSP.texture.tile = _tile;
+	gSP.textureTile[0] = &gDP.tiles[_tile];
+	gSP.textureTile[1] = needReplaceTex1ByTex0() ? &gDP.tiles[_tile] : &gDP.tiles[(_tile + 1) & 7];
+	gSP.texture.scales = 1.0f;
+	gSP.texture.scalet = 1.0f;
+	m_flushed = false;
+}
+
+void LLETriangle::flush(u32 _cmd)
+{
+#ifndef OLD_LLE
+	if (_cmd >= 0x08 && _cmd <= 0x0f)
+		return;
+	
+	GraphicsDrawer & drawer = dwnd().getDrawer();
+	if (drawer.getDMAVerticesCount() > 0) {
+		drawer.drawScreenSpaceTriangle(drawer.getDMAVerticesCount(), graphics::drawmode::TRIANGLES);
+	}
+	gSP.textureTile[0] = m_textureTileOrg[0];
+	gSP.textureTile[1] = m_textureTileOrg[1];
+	gSP.texture.scales = m_textureScaleOrg[0];
+	gSP.texture.scalet = m_textureScaleOrg[1];
+	m_flushed = true;
+#endif
+}
+
+void LLETriangle::draw(bool _shade, bool _texture, bool _zbuffer, s32 * _pData) 
+{
+	DebugMsg(DEBUG_NORMAL, "gDPLLETriangle shade: %d, texture: %d, zbuffer: %d\n",
+		int(_shade), int(_texture), int(_zbuffer));
+
+	gSP.texture.level = _SHIFTR(_pData[0], 19, 3);
+	const u32 tile = _SHIFTR(_pData[0], 16, 3);
+	if (tile != m_tile)
+		flush(0);
+	m_tile = tile;
+	const int flip = (_pData[0] & 0x800000) >> 23;
+	start(tile);
+
+	int yl = SIGN(_pData[0], 14);
+	int ym = _pData[1] >> 16;
+	ym = SIGN(ym, 14);
+	int yh = SIGN(_pData[1], 14);
+
+	int xl = SIGN(_pData[2], 28);
+	int xh = SIGN(_pData[4], 28);
+	int xm = SIGN(_pData[6], 28);
+
+	const int dxldy = SIGN(_pData[3], 30);
+	const int dxhdy = SIGN(_pData[5], 30);
+	const int dxmdy = SIGN(_pData[7], 30);
+
+	yh &= ~3;
+
+	int r = 0xff, g = 0xff, b = 0xff, a = 0xff;
+	int drdx = 0, dgdx = 0, dbdx = 0, dadx = 0;
+	int drde = 0, dgde = 0, dbde = 0, dade = 0;
+
+	if (_shade) {
+		r = (_pData[8] & 0xffff0000) | ((_pData[12] >> 16) & 0x0000ffff);
+		g = ((_pData[8] << 16) & 0xffff0000) | (_pData[12] & 0x0000ffff);
+		b = (_pData[9] & 0xffff0000) | ((_pData[13] >> 16) & 0x0000ffff);
+		a = ((_pData[9] << 16) & 0xffff0000) | (_pData[13] & 0x0000ffff);
+		drdx = (_pData[10] & 0xffff0000) | ((_pData[14] >> 16) & 0x0000ffff);
+		dgdx = ((_pData[10] << 16) & 0xffff0000) | (_pData[14] & 0x0000ffff);
+		dbdx = (_pData[11] & 0xffff0000) | ((_pData[15] >> 16) & 0x0000ffff);
+		dadx = ((_pData[11] << 16) & 0xffff0000) | (_pData[15] & 0x0000ffff);
+		drde = (_pData[16] & 0xffff0000) | ((_pData[20] >> 16) & 0x0000ffff);
+		dgde = ((_pData[16] << 16) & 0xffff0000) | (_pData[20] & 0x0000ffff);
+		dbde = (_pData[17] & 0xffff0000) | ((_pData[21] >> 16) & 0x0000ffff);
+		dade = ((_pData[17] << 16) & 0xffff0000) | (_pData[21] & 0x0000ffff);
+	}
+
+	int s = 0, t = 0, w = 0x30000;
+	int dsdx = 0, dtdx = 0, dwdx = 0;
+	int dsde = 0, dtde = 0, dwde = 0;
+	if (_texture) {
+		s = (_pData[24] & 0xffff0000) | ((_pData[28] >> 16) & 0x0000ffff);
+		t = ((_pData[24] << 16) & 0xffff0000) | (_pData[28] & 0x0000ffff);
+		w = (_pData[25] & 0xffff0000) | ((_pData[29] >> 16) & 0x0000ffff);
+		dsdx = (_pData[26] & 0xffff0000) | ((_pData[30] >> 16) & 0x0000ffff);
+		dtdx = ((_pData[26] << 16) & 0xffff0000) | (_pData[30] & 0x0000ffff);
+		dwdx = (_pData[27] & 0xffff0000) | ((_pData[31] >> 16) & 0x0000ffff);
+		dsde = (_pData[32] & 0xffff0000) | ((_pData[36] >> 16) & 0x0000ffff);
+		dtde = ((_pData[32] << 16) & 0xffff0000) | (_pData[36] & 0x0000ffff);
+		dwde = (_pData[33] & 0xffff0000) | ((_pData[37] >> 16) & 0x0000ffff);
+	}
+
+	int z = 0xffff0000;
+	int dzdx = 0, dzde = 0;
+	if (_zbuffer) {
+		z = _pData[40];
+		dzdx = _pData[41];
+		dzde = _pData[42];
+	}
+
+	std::array<SPVertex, 8> vertices;
+
+	auto cscale = [](int c) {
+		return _FIXED2FLOATCOLOR((((c) > 0x3ff0000 ? 0x3ff0000 : ((c) < 0 ? 0 : (c))) >> 18), 8);
+	};
+
+	f32 rf = cscale(r << 2);
+	f32 gf = cscale(g << 2);
+	f32 bf = cscale(b << 2);
+	f32 af = cscale(a << 2);
+	f32 wf = f32(w) / f32(0xffff0000);
+	f32 zf = f32(z) / f32(0xffff0000);
+	f32 sf = f32(s) / f32(1 << 18);
+	f32 tf = f32(t) / f32(1 << 18);
+
+	f32 drdef = _FIXED2FLOAT(((drde >> 2) & ~1), 16) / 255.0f;
+	f32 dgdef = _FIXED2FLOAT(((dgde >> 2) & ~1), 16) / 255.0f;
+	f32 dbdef = _FIXED2FLOAT(((dbde >> 2) & ~1), 16) / 255.0f;
+	f32 dadef = _FIXED2FLOAT(((dade >> 2) & ~1), 16) / 255.0f;
+	f32 dwdef = f32(dwde >> 2) / f32(0xffff0000);
+	f32 dzdef = f32(dzde >> 2) / f32(0xffff0000);
+
+	f32 dsdef = f32(dsde >> 2) / f32(1 << 18);
+	f32 dtdef = f32(dtde >> 2) / f32(1 << 18);
+
+	f32 drdxf = _FIXED2FLOAT(drdx, 16) / 255.0f;
+	f32 dgdxf = _FIXED2FLOAT(dgdx, 16) / 255.0f;
+	f32 dbdxf = _FIXED2FLOAT(dbdx, 16) / 255.0f;
+	f32 dadxf = _FIXED2FLOAT(dadx, 16) / 255.0f;
+
+	f32 dwdxf = f32(dwdx >> 2) / f32(0xffff0000);
+	f32 dzdxf = f32(dzdx >> 2) / f32(0xffff0000);
+
+	f32 dsdxf = _FIXED2FLOAT(((dsdx >> 2) & ~1), 16);
+	f32 dtdxf = _FIXED2FLOAT(((dtdx >> 2) & ~1), 16);
+
+	f32 xhf = _FIXED2FLOAT((xh & ~0x1), 16);
+	f32 xmf = _FIXED2FLOAT((xm & ~0x1), 16);
+
+	f32 yhf = f32(yh);
+	f32 ymf = f32(ym);
+	f32 ylf = f32(yl);
+	f32 hk = _FIXED2FLOAT(((dxhdy >> 2) & ~0x1), 16);
+	f32 mk = _FIXED2FLOAT(((dxmdy >> 2) & ~0x1), 16);
+	f32 hc = xhf - hk * yhf;
+	f32 mc = xmf - mk * yhf;
+
+	auto updateVtx = [&](SPVertex * vtx, f32 diffY, f32 diffx)
+	{
+		if (_shade) {
+			auto colorClamp = [](f32 c) -> f32
+			{
+				f32 res;
+				if (c < 0.0f)
+					res = 0.0f;
+				else if (c > 1.0f)
+					res = 1.0f;
+				else
+					res = static_cast<f32>(c);
+				return res;
+			};
+
+			vtx->r = colorClamp(rf + drdef * diffY + drdxf * diffx);
+			vtx->g = colorClamp(gf + dgdef * diffY + dgdxf * diffx);
+			vtx->b = colorClamp(bf + dbdef * diffY + dbdxf * diffx);
+			vtx->a = colorClamp(af + dadef * diffY + dadxf * diffx);
+		}
+
+		if (_zbuffer) {
+			//((gDP.otherMode.depthSource == G_ZS_PRIM) ? gDP.primDepth.z : f32(u32(z)) / 0xffff0000)
+			vtx->z = (gDP.otherMode.depthSource == G_ZS_PRIM) ?
+				gDP.primDepth.z :
+				static_cast<f32>((zf + dzdef * diffY + dzdxf * diffx * 4.0f)*2.0f);
+			//if (vtx->z < 0.0f)
+			//	vtx->z = 1.0f + vtx->z - ceil(vtx->z);
+		} else
+			vtx->z = 0.0f;
+
+		if (_texture) {
+			if (gDP.otherMode.texturePersp != 0) {
+				f32 vw = wf + dwdef * diffY + dwdxf * diffx * 4.0f;
+				if (vw == 0)
+					int t = 0;
+				vtx->w = static_cast<f32>(1.0f / (vw > 0.0f ? vw : (1.0f + vw - ceil(vw))));
+				//vtx->w = static_cast<f32>(1.0f / vw);
+				if (vw <= 0.0f) {
+					// TODO fix with proper coords
+					vtx->s = static_cast<f32>(1 << gSP.textureTile[0]->masks);
+					vtx->t = static_cast<f32>(1 << gSP.textureTile[0]->maskt);
+				} else {
+					vtx->s = static_cast<f32>((sf + dsdef * diffY + dsdxf*diffx) / vw * 0.0625f);
+					vtx->t = static_cast<f32>((tf + dtdef * diffY + dtdxf*diffx) / vw * 0.0625f);
+				}
+			} else {
+				vtx->w = 1.0f;
+				vtx->s = static_cast<f32>((sf + dsdef * diffY + dsdxf*diffx) * 0.125f);
+				vtx->t = static_cast<f32>((tf + dtdef * diffY + dtdxf*diffx) * 0.125f);
+			}
+		} else
+			vtx->w = 1.0f;
+		//assert(!isnan(vtx->x));
+	};
+
+	u32 vtxCount = 0;
+	if (fabs(hk - mk) < 0.00000001f) {
+		SPVertex * vtx = &vertices[vtxCount++];
+		vtx->x = static_cast<f32>(hk * yhf + hc);
+		vtx->y = static_cast<f32>(yhf * 0.25f);
+		updateVtx(vtx, 0.0f, 0.0f);
+
+		if (mc != hc) {
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(mk * yhf + mc);
+			vtx->y = static_cast<f32>(yhf * 0.25f);
+			updateVtx(vtx, 0.0f, (mc - hc));
+		}
+
+		f32 diffym = (ymf - yhf);
+		f32 xhym = (hk * ymf + hc);
+		f32 xmym = (mk * ymf + mc);
+		f32 diffxm = (xmym - xhym);
+
+#if 1
+		f32 vw = wf + dwdef * diffym + dwdxf * diffxm * 4.0f;
+		if (vw <= 0.0f) {
+			f32 xhyf, xmyf, diffyf, diffxf;
+			f32 yf = ymf;
+			do {
+				yf -= 1.0f;
+				diffyf = (yf - yhf);
+				xhyf = hk * yf + hc;
+				xmyf = mk * yf + mc;
+				diffxf = xmyf - xhyf;
+				vw = wf + dwdef * diffyf + dwdxf * diffxf * 4.0f;
+			} while (vw <= 0.0f && yf > yhf);
+
+			SPVertex * vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(xhyf);
+			vtx->y = static_cast<f32>(yf * 0.25);
+			updateVtx(vtx, diffyf, 0.0f);
+
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(xmyf);
+			vtx->y = static_cast<f32>(yf * 0.25);
+			updateVtx(vtx, diffyf, diffxf);
+		}
+#endif
+
+		vtx = &vertices[vtxCount++];
+		vtx->x = static_cast<f32>(xhym);
+		vtx->y = static_cast<f32>(ymf * 0.25);
+		updateVtx(vtx, diffym, 0.0f);
+
+		vtx = &vertices[vtxCount++];
+		vtx->x = static_cast<f32>(xmym);
+		vtx->y = static_cast<f32>(ymf * 0.25);
+		updateVtx(vtx, diffym, diffxm);
+
+		if (dxldy != dxmdy && ym < yl) {
+			f32 xlf = _FIXED2FLOAT((xl & ~1), 16);
+			f32 lk = _FIXED2FLOAT(((dxldy >> 2) & ~1), 16);
+			f32 lc = xlf - lk * ym;
+			f32 y4f = (lc - hc) / (hk - lk);
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(hk * y4f + hc);
+			vtx->y = static_cast<f32>(y4f * 0.25);
+			updateVtx(vtx, (y4f - yhf), 0.0f);
+		}
+	} else {
+		f32 y0f = (mc - hc) / (hk - mk);
+
+		SPVertex * vtx = &vertices[vtxCount++];
+		vtx->x = static_cast<f32>(hk * y0f + hc);
+		vtx->y = static_cast<f32>(y0f * 0.25f);
+		updateVtx(vtx, (y0f - yhf), 0.0f);
+
+		f32 y1f = ymf;
+		f32 xlf = _FIXED2FLOAT((xl & ~1), 16);
+		f32 lk = _FIXED2FLOAT(((dxldy >> 2) & ~1), 16);
+		f32 lc = xlf - lk * y1f;
+
+		//f32 lc = xt - lk * yf;
+		//if ((dxldy >> 2) == (dxmdy >> 2))
+		//	y1f = (lc - hc) / (hk - lk);
+		//else
+		//	y1f = (lc - mc) / (mk - lk);
+
+		//if (y1f < ymf)
+		//	y1f = ymf;
+
+		vtx = &vertices[vtxCount++];
+		vtx->x = static_cast<f32>(xlf);
+		vtx->y = static_cast<f32>(y1f * 0.25);
+
+		f32 x1f = hk * y1f + hc;
+		f32 diffx1 = xlf - x1f;
+
+#if 0
+		if ((dxldy >> 2) == (dxmdy >> 2))
+			y1f = (lc - hc) / (hk - lk);
+		else
+			y1f = (lc - mc) / (mk - lk);
+#endif
+
+		f32 diffy1 = (y1f - yhf);
+		updateVtx(vtx, diffy1, diffx1);
+
+#if 1
+		f32 vw1 = wf + dwdef * diffy1 + dwdxf * diffx1 * 4.0f;
+		if (vw1 <= 0.0f) {
+			f32 y1_1f = y1f;
+			f32 vw1_1 = vw1;
+			f32 x1_1f = x1f;
+			f32 x1_2f = xlf;
+			f32 diffy1_1 = diffy1;
+			f32 diffx1_1 = diffx1;
+			do {
+				y1_1f += 1.0f;
+				diffy1_1 = (y1_1f - yhf);
+				x1_1f = hk * y1_1f + hc;
+				x1_2f = lk * y1_1f + lc;
+				diffx1_1 = x1_2f - x1_1f;
+				vw1_1 = wf + dwdef * diffy1_1 + dwdxf * diffx1_1 * 4.0f;
+			} while (vw1_1 <= 0.0f && y1_1f < ylf);
+
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(x1_1f);
+			vtx->y = static_cast<f32>(y1_1f * 0.25f);
+			updateVtx(vtx, diffy1_1, 0.0f);
+
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(x1_2f);
+			vtx->y = static_cast<f32>(y1_1f * 0.25f);
+			updateVtx(vtx, diffy1_1, diffx1_1);
+
+		}
+#endif
+
+		if (hk == lk) {
+			f32 lrx = lk * ylf + lc;
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(lrx);
+			vtx->y = static_cast<f32>(ylf * 0.25f - (vertices[1].y - vertices[0].y));
+			f32 ydiff = (vtx->y*4.0f - yhf);
+			updateVtx(vtx, ydiff, diffx1);
+
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(lrx);
+			vtx->y = static_cast<f32>(ylf*0.25f);
+			ydiff = (ylf - yhf);
+
+			f32 x2f = hk * ylf + hc;
+			f32 diffx2 = vtx->x - x2f;
+			updateVtx(vtx, ydiff, diffx2);
+		}
+		else if (mk == lk) {
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(hk * ylf + hc);
+			vtx->y = static_cast<f32>(ylf * 0.25f);
+			updateVtx(vtx, (ylf - yhf), 0.0f);
+		}
+		else {
+			f32 y2f = ylf;
+
+			if (yl == ym) {
+				y2f = (lc - mc) / (mk - lk);
+			}
+			else {
+				y2f = (lc - hc) / (hk - lk);
+			}
+
+			vtx = &vertices[vtxCount++];
+			vtx->x = static_cast<f32>(hk * y2f + hc);
+			vtx->y = static_cast<f32>(y2f * 0.25f);
+			updateVtx(vtx, (y2f - yhf), 0.0f);
+		}
+	}
+
+	if (_texture)
+		gDP.changed |= CHANGED_TILE;
+	if (_zbuffer)
+		gSP.geometryMode |= G_ZBUFFER;
+
+	if (vtxCount < 3)
+		return;
+
+	GraphicsDrawer & drawer = dwnd().getDrawer();
+
+	for (u32 i = 0; i < vtxCount - 2; ++i) {
+		for (u32 j = 0; j < 3; ++j) {
+			SPVertex & v = drawer.getCurrentDMAVertex();
+			v = vertices[i + j];
+		}
+	}
+}
+
+#ifdef OLD_LLE
 static void gDPTriangle(u32 _w1, u32 _w2, int shade, int texture, int zbuffer)
 {
 	gDPLLETriangle(_w1, _w2, shade, texture, zbuffer, RDP.cmd_data + RDP.cmd_cur);
 }
+#endif
 
 void gDPTriFill(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 8 * sizeof(s32));
+	memset(&ewdata[8], 0, 36 * sizeof(s32));
+	LLETriangle::get().draw(0, 0, 0, ewdata);
+#else
 	gDPTriangle(w0, w1, 0, 0, 0);
+#endif
 	DebugMsg( DEBUG_NORMAL, "trifill\n");
 }
 
 void gDPTriShade(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 24 * sizeof(s32));
+	memset(&ewdata[24], 0, 20 * sizeof(s32));
+	LLETriangle::get().draw(1, 0, 0, ewdata);
+#else
 	gDPTriangle(w0, w1, 1, 0, 0);
+#endif
 	DebugMsg( DEBUG_NORMAL, "trishade\n");
 }
 
 void gDPTriTxtr(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 8 * sizeof(s32));
+	memset(&ewdata[8], 0, 16 * sizeof(s32));
+	memcpy(&ewdata[24], RDP.cmd_data + RDP.cmd_cur + 8, 16 * sizeof(s32));
+	memset(&ewdata[40], 0, 4 * sizeof(s32));
+	LLETriangle::get().draw(0, 1, 0, ewdata);
+#else
 	gDPTriangle(w0, w1, 0, 1, 0);
-	DebugMsg( DEBUG_NORMAL, "tritxtr\n");
+#endif
+	DebugMsg(DEBUG_NORMAL, "tritxtr\n");
 }
 
 void gDPTriShadeTxtr(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 40 * sizeof(s32));
+	memset(&ewdata[40], 0, 4 * sizeof(s32));
+	LLETriangle::get().draw(1, 1, 0, ewdata);
+#else
 	gDPTriangle(w0, w1, 1, 1, 0);
+#endif
 	DebugMsg( DEBUG_NORMAL, "trishadetxtr\n");
 }
 
 void gDPTriFillZ(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 8 * sizeof(s32));
+	memset(&ewdata[8], 0, 32 * sizeof(s32));
+	memcpy(&ewdata[40], RDP.cmd_data + RDP.cmd_cur + 8, 4 * sizeof(s32));
+	LLETriangle::get().draw(0, 0, 1, ewdata);
+#else
 	gDPTriangle(w0, w1, 0, 0, 1);
+#endif
 	DebugMsg( DEBUG_NORMAL, "trifillz\n");
 }
 
 void gDPTriShadeZ(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 24 * sizeof(s32));
+	memset(&ewdata[24], 0, 16 * sizeof(s32));
+	memcpy(&ewdata[40], RDP.cmd_data + RDP.cmd_cur + 24, 4 * sizeof(s32));
+	LLETriangle::get().draw(1, 0, 1, ewdata);
+#else
 	gDPTriangle(w0, w1, 1, 0, 1);
+#endif
 	DebugMsg( DEBUG_NORMAL, "trishadez\n");
 }
 
 void gDPTriTxtrZ(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 8 * sizeof(s32));
+	memset(&ewdata[8], 0, 16 * sizeof(s32));
+	memcpy(&ewdata[24], RDP.cmd_data + RDP.cmd_cur + 8, 16 * sizeof(s32));
+	memcpy(&ewdata[40], RDP.cmd_data + RDP.cmd_cur + 24, 4 * sizeof(s32));
+	LLETriangle::get().draw(0, 1, 1, ewdata);
+#else
 	gDPTriangle(w0, w1, 0, 1, 1);
+#endif
 	DebugMsg( DEBUG_NORMAL, "tritxtrz\n");
 }
 
 void gDPTriShadeTxtrZ(u32 w0, u32 w1)
 {
+#ifndef OLD_LLE
+	s32 ewdata[44];
+	memcpy(&ewdata[0], RDP.cmd_data + RDP.cmd_cur, 44 * sizeof(s32));
+	LLETriangle::get().draw(1, 1, 1, ewdata);
+#else
 	gDPTriangle(w0, w1, 1, 1, 1);
+#endif
 	DebugMsg( DEBUG_NORMAL, "trishadetxtrz\n");
 }

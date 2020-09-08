@@ -22,11 +22,12 @@ struct FrameBuffer;
 
 enum class DrawingState
 {
-	Non = 0,
-	Line = 1,
-	Triangle = 2,
-	Rect = 3,
-	TexRect = 4,
+	Non,
+	Line,
+	Triangle,
+	ScreenSpaceTriangle,
+	Rect,
+	TexRect
 };
 
 struct RectVertex
@@ -157,6 +158,8 @@ public:
 
 	void setBackgroundDrawingMode(bool _mode) { m_bBGMode = _mode; }
 
+	void setBlendMode(bool _forceLegacyBlending = false) const;
+
 private:
 	friend class DisplayWindow;
 	friend TexrectDrawer;
@@ -172,8 +175,9 @@ private:
 
 	void _setSpecialTexrect() const;
 
-	void _setBlendMode() const;
-	bool _setUnsupportedBlendMode() const;
+	void _legacyBlending() const;
+	void _ordinaryBlending() const;
+	void _dualSourceBlending() const;
 	void _updateCullFace() const;
 	void _updateViewport() const;
 	void _updateScreenCoordsViewport(const FrameBuffer * _pBuffer = nullptr) const;
@@ -181,7 +185,7 @@ private:
 	void _updateDepthCompare() const;
 	void _updateTextures() const;
 	void _updateStates(DrawingState _drawingState) const;
-	void _prepareDrawTriangle();
+	void _prepareDrawTriangle(DrawingState _drawingState);
 	bool _canDraw() const;
 	void _drawThickLine(int _v0, int _v1, float _width);
 

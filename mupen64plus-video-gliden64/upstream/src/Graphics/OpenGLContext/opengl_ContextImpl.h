@@ -44,6 +44,8 @@ namespace opengl {
 
 		void setBlending(graphics::BlendParam _sfactor, graphics::BlendParam _dfactor) override;
 
+		void setBlendingSeparate(graphics::BlendParam _sfactorcolor, graphics::BlendParam _dfactorcolor, graphics::BlendParam _sfactoralpha, graphics::BlendParam _dfactoralpha) override;
+
 		void setBlendColor(f32 _red, f32 _green, f32 _blue, f32 _alpha) override;
 
 		void clearColorBuffer(f32 _red, f32 _green, f32 _blue, f32 _alpha) override;
@@ -122,9 +124,13 @@ namespace opengl {
 
 		graphics::ShaderProgram * createTexrectDrawerClearShader() override;
 
-		graphics::ShaderProgram * createTexrectCopyShader() override;
+		graphics::ShaderProgram * createTexrectUpscaleCopyShader() override;
 
-		graphics::ShaderProgram * createTexrectColorAndDepthCopyShader() override;
+		graphics::ShaderProgram * createTexrectColorAndDepthUpscaleCopyShader() override;
+
+		graphics::ShaderProgram * createTexrectDownscaleCopyShader() override;
+
+		graphics::ShaderProgram * createTexrectColorAndDepthDownscaleCopyShader() override;
 
 		graphics::ShaderProgram * createGammaCorrectionShader() override;
 
