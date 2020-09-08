@@ -318,6 +318,9 @@ void gSPLight( u32 l, s32 n )
 		gSP.lights.rgb[n][R] = _FIXED2FLOATCOLOR(light->r,8);
 		gSP.lights.rgb[n][G] = _FIXED2FLOATCOLOR(light->g,8);
 		gSP.lights.rgb[n][B] = _FIXED2FLOATCOLOR(light->b,8);
+		gSP.lights.rgb2[n][R] = _FIXED2FLOATCOLOR(light->r2, 8);
+		gSP.lights.rgb2[n][G] = _FIXED2FLOATCOLOR(light->g2, 8);
+		gSP.lights.rgb2[n][B] = _FIXED2FLOATCOLOR(light->b2, 8);
 
 		gSP.lights.xyz[n][X] = light->x;
 		gSP.lights.xyz[n][Y] = light->y;
@@ -359,6 +362,9 @@ void gSPLightCBFD( u32 l, s32 n )
 		gSP.lights.rgb[n][R] = _FIXED2FLOATCOLOR(light->r, 8);
 		gSP.lights.rgb[n][G] = _FIXED2FLOATCOLOR(light->g, 8);
 		gSP.lights.rgb[n][B] = _FIXED2FLOATCOLOR(light->b, 8);
+		gSP.lights.rgb2[n][R] = _FIXED2FLOATCOLOR(light->r2, 8);
+		gSP.lights.rgb2[n][G] = _FIXED2FLOATCOLOR(light->g2, 8);
+		gSP.lights.rgb2[n][B] = _FIXED2FLOATCOLOR(light->b2, 8);
 
 		gSP.lights.xyz[n][X] = light->x;
 		gSP.lights.xyz[n][Y] = light->y;
@@ -397,6 +403,9 @@ void gSPLightAcclaim(u32 l, s32 n)
 		gSP.lights.rgb[n][R] = _FIXED2FLOATCOLOR((RDRAM[(addrByte + 6) ^ 3]), 8);
 		gSP.lights.rgb[n][G] = _FIXED2FLOATCOLOR((RDRAM[(addrByte + 7) ^ 3]), 8);
 		gSP.lights.rgb[n][B] = _FIXED2FLOATCOLOR((RDRAM[(addrByte + 8) ^ 3]), 8);
+		gSP.lights.rgb2[n][R] = gSP.lights.rgb[n][R];
+		gSP.lights.rgb2[n][G] = gSP.lights.rgb[n][G];
+		gSP.lights.rgb2[n][B] = gSP.lights.rgb[n][B];
 	}
 
 	gSP.changed |= CHANGED_LIGHT;
@@ -481,17 +490,20 @@ void gSPLightVertexStandard(u32 v, SPVertex * spVtx)
 	if (!isHWLightingAllowed()) {
 		for(int j = 0; j < VNUM; ++j) {
 			SPVertex & vtx = spVtx[v+j];
-			vtx.r = gSP.lights.rgb[gSP.numLights][R];
-			vtx.g = gSP.lights.rgb[gSP.numLights][G];
-			vtx.b = gSP.lights.rgb[gSP.numLights][B];
+			const bool useFirstColor = ((v + j) & 1) == 0;
+			const float* pColor = useFirstColor ? gSP.lights.rgb[gSP.numLights] : gSP.lights.rgb2[gSP.numLights];
+			vtx.r = pColor[R];
+			vtx.g = pColor[G];
+			vtx.b = pColor[B];
 			vtx.HWLight = 0;
 
 			for (u32 i = 0; i < gSP.numLights; ++i) {
 				const f32 intensity = DotProduct( &vtx.nx, gSP.lights.i_xyz[i] );
 				if (intensity > 0.0f) {
-					vtx.r += gSP.lights.rgb[i][R] * intensity;
-					vtx.g += gSP.lights.rgb[i][G] * intensity;
-					vtx.b += gSP.lights.rgb[i][B] * intensity;
+					pColor = useFirstColor ? gSP.lights.rgb[i] : gSP.lights.rgb2[i];
+					vtx.r += pColor[R] * intensity;
+					vtx.g += pColor[G] * intensity;
+					vtx.b += pColor[B] * intensity;
 				}
 			}
 			vtx.r = min(1.0f, vtx.r);
@@ -845,18 +857,18 @@ void gSPProcessVertex(u32 v, SPVertex * spVtx)
 			if (GBI.getMicrocodeType() != F3DFLX2) {
 				for(int i = 0; i < VNUM; ++i) {
 					SPVertex & vtx = spVtx[v+i];
-					f32 fLightDir[3] = {vtx.nx, vtx.ny, vtx.nz};
+					f32 vNormale[3] = {vtx.nx, vtx.ny, vtx.nz};
 					f32 x, y;
 					if (gSP.lookatEnable) {
-						x = DotProduct(gSP.lookat.i_xyz[0], fLightDir);
-						y = DotProduct(gSP.lookat.i_xyz[1], fLightDir);
+						x = DotProduct(gSP.lookat.i_xyz[0], vNormale);
+						y = DotProduct(gSP.lookat.i_xyz[1], vNormale);
 					} else {
-						fLightDir[0] *= 128.0f;
-						fLightDir[1] *= 128.0f;
-						fLightDir[2] *= 128.0f;
-						TransformVectorNormalize(fLightDir, gSP.matrix.modelView[gSP.matrix.modelViewi]);
-						x = fLightDir[0];
-						y = fLightDir[1];
+						vNormale[0] *= 128.0f;
+						vNormale[1] *= 128.0f;
+						vNormale[2] *= 128.0f;
+						TransformVectorNormalize(vNormale, gSP.matrix.modelView[gSP.matrix.modelViewi]);
+						x = vNormale[0];
+						y = vNormale[1];
 					}
 					if (gSP.geometryMode & G_TEXTURE_GEN_LINEAR) {
 						if (x < -1.0f) x = -1.0f;
@@ -865,7 +877,7 @@ void gSPProcessVertex(u32 v, SPVertex * spVtx)
 						if (y > 1.0f) y = 1.0f;
 						vtx.s = acosf(-x) * 325.94931f;
 						vtx.t = acosf(-y) * 325.94931f;
-					} else { // G_TEXTURE_GEN
+					} else {
 						vtx.s = (x + 1.0f) * 512.0f;
 						vtx.t = (y + 1.0f) * 512.0f;
 					}
@@ -1719,6 +1731,9 @@ void gSPLightColor( u32 lightNum, u32 packedColor )
 		gSP.lights.rgb[lightNum][R] = _FIXED2FLOATCOLOR(_SHIFTR( packedColor, 24, 8 ),8);
 		gSP.lights.rgb[lightNum][G] = _FIXED2FLOATCOLOR(_SHIFTR( packedColor, 16, 8 ),8);
 		gSP.lights.rgb[lightNum][B] = _FIXED2FLOATCOLOR(_SHIFTR( packedColor, 8, 8 ),8);
+		gSP.lights.rgb2[lightNum][R] = gSP.lights.rgb[lightNum][R];
+		gSP.lights.rgb2[lightNum][G] = gSP.lights.rgb[lightNum][G];
+		gSP.lights.rgb2[lightNum][B] = gSP.lights.rgb[lightNum][B];
 		gSP.changed |= CHANGED_HW_LIGHT;
 	}
 	DebugMsg(DEBUG_NORMAL, "gSPLightColor( %i, 0x%08X );\n", lightNum, packedColor );

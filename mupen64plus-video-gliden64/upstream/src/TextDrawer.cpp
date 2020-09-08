@@ -257,7 +257,9 @@ void TextDrawer::destroy()
 	m_atlas.reset();
 	m_program.reset();
 	FT_Done_Face(g_face);
+	g_face = NULL;
 	FT_Done_FreeType(g_ft);
+	g_ft = NULL;
 }
 
 /**
@@ -343,6 +345,10 @@ void TextDrawer::drawText(const char *_pText, float _x, float _y) const
 	gfxContext.enableDepthWrite(false);
 	gfxContext.setBlending(blend::SRC_ALPHA, blend::ONE_MINUS_SRC_ALPHA);
 	m_program->activate();
+
+	gfxContext.setViewport((wnd.getScreenWidth() - wnd.getWidth()) / 2, (wnd.getScreenHeight() - wnd.getHeight()) / 2 + wnd.getHeightOffset(),
+		wnd.getWidth(), wnd.getHeight());
+	gSP.changed |= CHANGED_VIEWPORT;
 
 	Context::TexParameters setParams;
 	setParams.handle = m_atlas->m_pTexture->name;

@@ -45,6 +45,9 @@ void RDRAMtoColorBuffer::init()
 	m_pTexture->height = 580;
 	m_pTexture->textureBytes = m_pTexture->width * m_pTexture->height * fbTexFormats.colorFormatBytes;
 
+	m_pTexture->hdRatioS = 1.0f;
+	m_pTexture->hdRatioT = 1.0f;
+
 	Context::InitTextureParams initParams;
 	initParams.handle = m_pTexture->name;
 	initParams.width = m_pTexture->width;
@@ -72,6 +75,7 @@ void RDRAMtoColorBuffer::destroy()
 		m_pTexture = nullptr;
 	}
 	free(m_pbuf);
+	m_pbuf = nullptr;
 }
 
 void RDRAMtoColorBuffer::addAddress(u32 _address, u32 _size)
@@ -173,6 +177,7 @@ u32 RGBA32ToABGR32(u32 col, bool _fullAlpha)
 void RDRAMtoColorBuffer::_copyFromRDRAM(u32 _height, bool _fullAlpha)
 {
 	Cleaner cleaner(this);
+	ValueKeeper<u32> otherMode(gSP.clipRatio, 1U);
 	const u32 address = m_pCurBuffer->m_startAddress;
 	const u32 width = m_pCurBuffer->m_width;
 	const u32 height = _height;
@@ -300,9 +305,6 @@ void RDRAMtoColorBuffer::copyFromRDRAM(u32 _address, bool _bCFB)
 	}
 
 	if (m_pCurBuffer == nullptr || m_pCurBuffer->m_size < G_IM_SIZ_16b)
-		return;
-
-	if (m_pCurBuffer->m_startAddress == _address && gDP.colorImage.changed != 0)
 		return;
 
 	const u32 height = cutHeight(m_pCurBuffer->m_startAddress,
