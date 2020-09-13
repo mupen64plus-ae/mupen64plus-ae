@@ -404,3 +404,8 @@ extern "C" EXPORT void CALL SDL_KeyDown(int keymod, int keysym)
 extern "C" EXPORT void CALL SDL_KeyUp(int keymod, int keysym)
 {
 }
+
+extern "C" EXPORT void CALL RenderCallback(void)
+{
+
+}
