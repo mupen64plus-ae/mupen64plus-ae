@@ -116,6 +116,12 @@ extern DECLSPEC m64p_error VidExtFuncListModes(m64p_2d_size *SizeArray, int *Num
     return M64ERR_SUCCESS;
 }
 
+
+extern DECLSPEC m64p_error VidExtFuncListRates(m64p_2d_size, int *, int *)
+{
+	return M64ERR_SUCCESS;
+}
+
 extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerPixel, int ScreenMode, int Flags)
 {
 	{
@@ -182,6 +188,11 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
 	}
 
     return M64ERR_SUCCESS;
+}
+
+extern DECLSPEC m64p_error VidExtFuncSetModeWithRate(int, int, int, int, int, int)
+{
+	return M64ERR_SUCCESS;
 }
 
 extern DECLSPEC m64p_error VidExtFuncSetCaption(const char *Title)

@@ -42,7 +42,9 @@ extern "C" {
 extern m64p_error VidExtFuncInit(void);
 extern m64p_error VidExtFuncQuit(void);
 extern m64p_error VidExtFuncListModes(m64p_2d_size *SizeArray, int *NumSizes);
+extern m64p_error VidExtFuncListRates(m64p_2d_size, int *, int *);
 extern m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerPixel, int ScreenMode, int Flags);
+extern m64p_error VidExtFuncSetModeWithRate(int, int, int, int, int, int);
 extern m64p_error VidExtFuncSetCaption(const char *Title);
 extern m64p_error VidExtFuncToggleFS(void);
 extern m64p_error VidExtFuncResizeWindow(int Width, int Height);
@@ -55,11 +57,13 @@ extern void vsyncEnabled(int enabled);
 extern void pauseEmulator();
 extern void resumeEmulator();
 
-m64p_video_extension_functions vidExtFunctions = {12,
+m64p_video_extension_functions vidExtFunctions = {14,
                                                   VidExtFuncInit,
                                                   VidExtFuncQuit,
                                                   VidExtFuncListModes,
+                                                  VidExtFuncListRates,
                                                   VidExtFuncSetMode,
+                                                  VidExtFuncSetModeWithRate,
                                                   VidExtFuncGLGetProc,
                                                   VidExtFuncGLSetAttr,
                                                   VidExtFuncGLGetAttr,
