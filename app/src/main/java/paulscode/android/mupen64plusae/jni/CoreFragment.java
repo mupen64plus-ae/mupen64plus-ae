@@ -457,9 +457,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void fastForward( boolean pressed )
     {
         Log.i("CoreFragment", "fastForward");
-
-        int speed = pressed ? mCustomSpeed : BASELINE_SPEED;
-        mCoreService.setCustomSpeed( speed );
+        if (mCoreService != null)
+        {
+            int speed = pressed ? mCustomSpeed : BASELINE_SPEED;
+            mCoreService.setCustomSpeed( speed );
+        }
     }
 
 
