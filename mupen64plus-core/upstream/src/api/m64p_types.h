@@ -162,7 +162,11 @@ typedef enum {
   M64CMD_READ_SCREEN,
   M64CMD_RESET,
   M64CMD_ADVANCE_FRAME,
-  M64CMD_SET_MEDIA_LOADER
+  M64CMD_SET_MEDIA_LOADER,
+  M64CMD_NETPLAY_INIT,
+  M64CMD_NETPLAY_CONTROL_PLAYER,
+  M64CMD_NETPLAY_GET_VERSION,
+  M64CMD_NETPLAY_CLOSE
 } m64p_command;
 
 typedef struct {
@@ -396,7 +400,9 @@ typedef struct {
   m64p_error    (*VidExtFuncInit)(void);
   m64p_error    (*VidExtFuncQuit)(void);
   m64p_error    (*VidExtFuncListModes)(m64p_2d_size *, int *);
+  m64p_error    (*VidExtFuncListRates)(m64p_2d_size, int *, int *);
   m64p_error    (*VidExtFuncSetMode)(int, int, int, int, int);
+  m64p_error    (*VidExtFuncSetModeWithRate)(int, int, int, int, int, int);
   m64p_function (*VidExtFuncGLGetProc)(const char*);
   m64p_error    (*VidExtFuncGLSetAttr)(m64p_GLattr, int);
   m64p_error    (*VidExtFuncGLGetAttr)(m64p_GLattr, int *);

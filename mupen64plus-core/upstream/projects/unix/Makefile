@@ -1,4 +1,3 @@
-
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 # *   Mupen64plus - Makefile                                                *
 # *   Mupen64Plus homepage: https://mupen64plus.org/                        *
@@ -121,7 +120,6 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
         CFLAGS += -mfpu=vfp -mfloat-abi=softfp
       endif
     endif
-    $(warning Architecture "$(HOST_CPU)" not officially supported.)
   endif
 endif
 ifneq ("$(filter mips,$(HOST_CPU))","")
@@ -144,7 +142,7 @@ endif
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
-CFLAGS += -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/asm_defines -DM64P_PARALLEL
+CFLAGS += -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/asm_defines -DM64P_PARALLEL
 CXXFLAGS += -fvisibility-inlines-hidden
 LDLIBS +=  -lm
 
@@ -327,7 +325,14 @@ ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
     ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
       $(error No SDL development libraries found!)
     else
+      ifeq ($(NETPLAY), 1)
+        SDL_LDLIBS += -lSDL_net
+      endif
       $(warning Using SDL 1.2 libraries)
+    endif
+  else
+    ifeq ($(NETPLAY), 1)
+      SDL_LDLIBS += -lSDL2_net
     endif
   endif
   SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
@@ -397,9 +402,9 @@ ifeq ($(OSD), 1)
 endif
 
 # set base program pointers and flags
-CC        = $(CROSS_COMPILE)gcc
-CXX       = $(CROSS_COMPILE)g++
-STRINGS   = $(CROSS_COMPILE)strings
+CC       ?= $(CROSS_COMPILE)gcc
+CXX      ?= $(CROSS_COMPILE)g++
+STRINGS  ?= $(CROSS_COMPILE)strings
 AS        = nasm
 TR       ?= tr
 RM       ?= rm -f
@@ -582,6 +587,12 @@ SOURCE += $(SUBDIR)/oglft/OGLFT.cpp
 CXXFLAGS += -I$(SUBDIR)/oglft
 endif
 
+# netplay
+ifeq ($(NETPLAY), 1)
+CFLAGS += -DM64P_NETPLAY
+SOURCE += $(SRCDIR)/main/netplay.c
+endif
+
 # source files for optional features
 ifeq ($(DBG_COUNT), 1)
   CFLAGS += -DCOUNT_INSTR
@@ -711,6 +722,7 @@ targets:
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)      == Force enable/disable of position independent code"
 	@echo "    OSD=(1|0)      == Enable/disable build of OpenGL On-screen display"
+	@echo "    NETPLAY=1      == Enable netplay functionality, requires SDL2_net"
 	@echo "    NEW_DYNAREC=1  == Replace dynamic recompiler with Ari64's experimental dynarec"
 	@echo "    OPENCV=1       == Enable OpenCV support"
 	@echo "    POSTFIX=name   == String added to the name of the the build (default: '')"
@@ -752,7 +764,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(SHAREDIR)/mupencheat.txt"
 
 clean:
-	$(RM) -r $(TARGET) $(SONAME) $(OBJDIR) $(SRCDIR)/asm_defines/asm_defines_nasm.h $(SRCDIR)/asm_defines/asm_defines_gas.h
+	$(RM) -r $(TARGET) $(SONAME) $(OBJDIR) $(SRCDIR)/asm_defines/asm_defines_*
 
 # build dependency files
 CFLAGS += -MD -MP
@@ -767,8 +779,8 @@ $(ASM_DEFINES_OBJ): $(SRCDIR)/asm_defines/asm_defines.c
 
 # Script hackery for generating ASM include files for the new dynarec assembly code
 $(SRCDIR)/asm_defines/asm_defines_gas.h: $(SRCDIR)/asm_defines/asm_defines_nasm.h
-$(SRCDIR)/asm_defines/asm_defines_nasm.h: $(ASM_DEFINES_OBJ) ../../tools/gen_asm_defines.awk
-	$(STRINGS) "$<" | $(TR) -d '\r' | $(AWK) -v dest_dir="$(SRCDIR)/asm_defines" -f ../../tools/gen_asm_defines.awk
+$(SRCDIR)/asm_defines/asm_defines_nasm.h: $(ASM_DEFINES_OBJ) ../../tools/gen_asm_script.sh
+	sh ../../tools/gen_asm_script.sh "$(SRCDIR)/asm_defines" "$(ASM_DEFINES_OBJ)"
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.asm $(SRCDIR)/asm_defines/asm_defines_nasm.h
