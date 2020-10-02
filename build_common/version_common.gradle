@@ -1,5 +1,7 @@
 
 android {
+    buildToolsVersion '30.0.2'
+
     compileSdkVersion 30
 	
     ndkVersion '21.3.6528147'
