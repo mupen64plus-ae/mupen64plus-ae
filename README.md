@@ -1,5 +1,4 @@
-mupen64plus-ae
-==============
+# Mupen64Plus-AE
 
 Mupen64Plus, Android Edition (AE) is an Android user interface for Mupen64Plus.
 
@@ -9,8 +8,17 @@ Please visit [the official forum](http://www.paulscode.com/forum/index.php) for 
       alt="Get it on F-Droid"
       height="80">](https://f-droid.org/packages/org.mupen64plusae.v3.alpha/)
 
-Build Instructions
-==================
+
+## Build Status
+
+|Build status: 	| [![Build Status][Build]][Actions] 
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+[Actions]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions
+[Build]: https://github.com/mupen64plus-ae/mupen64plus-ae/workflows/Mupen64Plus-AE/badge.svg
+
+
+## Build Instructions
 
 1. Download and install the prerequisites
    - [Android Studio](https://developer.android.com/studio/index.html)

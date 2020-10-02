@@ -1,0 +1,28 @@
+name: Mupen64Plus-AE
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ubuntu-20.04
+    runs-on: ubuntu-20.04
+    container: cirrusci/android-sdk:30-ndk
+ 
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+
+    - name: Install
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y file
+        sudo apt-get install -y gawk
+        echo y | sdkmanager "cmake;3.10.2.4988404"
+        echo y | sdkmanager "ndk-bundle"
+        
+    - name: Set Environment
+      run: export ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/21.3.6528147
+
+    - name: Build
+      run: ./gradlew assemble
