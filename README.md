@@ -9,10 +9,10 @@ Please visit [the official forum](http://www.paulscode.com/forum/index.php) for 
       height="80">](https://f-droid.org/packages/org.mupen64plusae.v3.alpha/)
 
 
-## Build Status
+## Nightly Builds
 
-|Build status: 	| [![Build Status][Build]][Actions] 
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Download nightly builds from continuous integration: 	| [![Build Status][Build]][Actions] 
+|-------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 
 [Actions]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions
 [Build]: https://github.com/mupen64plus-ae/mupen64plus-ae/workflows/Mupen64Plus-AE/badge.svg
