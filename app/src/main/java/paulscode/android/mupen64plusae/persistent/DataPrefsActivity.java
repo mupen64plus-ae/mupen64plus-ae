@@ -161,10 +161,8 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.enablePreference(this, GlobalPrefs.PATH_GAME_SAVES,
                 mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
 
-        if (mAppData.useLegacyFileBrowser) {
-            PrefUtil.removePreference(this, SCREEN_ROOT, GlobalPrefs.GAME_DATA_STORAGE_TYPE);
-            PrefUtil.removePreference(this, SCREEN_ROOT, GlobalPrefs.PATH_GAME_SAVES);
-        }
+        PrefUtil.removePreference(this, SCREEN_ROOT, GlobalPrefs.GAME_DATA_STORAGE_TYPE);
+        PrefUtil.removePreference(this, SCREEN_ROOT, GlobalPrefs.PATH_GAME_SAVES);
     }
 
     private void startFolderPicker()
