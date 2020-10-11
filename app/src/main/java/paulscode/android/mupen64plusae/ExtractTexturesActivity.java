@@ -70,7 +70,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
 
         if (mFileDescriptionTextView != null && mFileUri != null) {
             DocumentFile file = FileUtil.getDocumentFileSingle(this, mFileUri);
-            mFileDescriptionTextView.setText(file.getName());
+            mFileDescriptionTextView.setText(file == null ? "" : file.getName());
         }
 
         Button cancelButton = findViewById(R.id.buttonCancel);
@@ -131,7 +131,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
 
                 if (mFileDescriptionTextView != null && mFileUri != null) {
                     DocumentFile file = FileUtil.getDocumentFileSingle(this, mFileUri);
-                    mFileDescriptionTextView.setText(file.getName());
+                    mFileDescriptionTextView.setText(file == null ? "" : file.getName());
                 }
             } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
                 final Bundle extras = data.getExtras();
@@ -143,7 +143,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
 
                     if (mFileDescriptionTextView != null && mFileUri.getPath() != null) {
                         DocumentFile file = FileUtil.getDocumentFileSingle(this, mFileUri);
-                        mFileDescriptionTextView.setText(file.getName());
+                        mFileDescriptionTextView.setText(file == null ? "" : file.getName());
                     }
                 }
             }

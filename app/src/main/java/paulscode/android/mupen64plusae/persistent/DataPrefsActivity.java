@@ -145,7 +145,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
             if (!TextUtils.isEmpty(uri)) {
                 DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(uri));
-                currentPreference.setSummary(file.getName());
+                currentPreference.setSummary(file == null ? "" : file.getName());
             }
         }
     }
@@ -231,7 +231,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
                         getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
                         DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
-                        String summary = file.getName();
+                        String summary = file == null ? "" : file.getName();
                         currentPreference.setSummary(summary);
                         mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
                     }

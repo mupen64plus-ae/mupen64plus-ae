@@ -79,7 +79,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
             CharSequence title = getString( R.string.pathHiResTexturesTask_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
             DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), mTexturesFile);
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, file.getName(), message, true );
+            mProgress = new ProgressDialog( mProgress, requireActivity(), title, file == null ? "" : file.getName(), message, true );
             mProgress.show();
         }
     }
@@ -146,7 +146,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         CharSequence title = getString( R.string.pathHiResTexturesTask_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
         DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), mTexturesFile);
-        mProgress = new ProgressDialog( mProgress, requireActivity(), title, file.getName(), message, true );
+        mProgress = new ProgressDialog( mProgress, requireActivity(), title, file == null ? "" : file.getName(), message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

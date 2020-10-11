@@ -1111,6 +1111,12 @@ public final class FileUtil
     public static DocumentFile getDocumentFileSingle(Context context, Uri uri)
     {
         DocumentFile file;
+
+        if (uri.getScheme()== null)
+        {
+            return null;
+        }
+
         if (uri.getScheme() != null && uri.getScheme().equals("file")) {
             file = uri.getPath() != null ? DocumentFile.fromFile(new File(uri.getPath())) : null;
         } else {

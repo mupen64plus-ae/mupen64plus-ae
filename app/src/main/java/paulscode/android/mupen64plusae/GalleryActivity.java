@@ -645,7 +645,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 successful = true;
 
                 DocumentFile romDocFile = FileUtil.getDocumentFileSingle(this, romPathUri);
-                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, romDocFile.getName(), header.crc, header.countryCode );
+                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, romDocFile == null ? "" : romDocFile.getName(), header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
                 launchGameActivity( romPathUri.toString(), null, computedMd5, header.crc, header.name,
                         header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false );

@@ -169,7 +169,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
 
         DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(romPath));
-        String fileName = file.getName();
+
+        // This is a little hacky, if rom is a zip file, then the file name is passed as
+        // the romPath and not a URI.
+        String fileName = file == null ? null : file.getName();
 
         // If this is a ROM not in the database inside a zip file, this will happen
         if (TextUtils.isEmpty(fileName)) {
@@ -210,7 +213,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             if (value != null ) {
                 try {
                     DocumentFile file = FileUtil.getDocumentFileSingle(this, Uri.parse(value));
-                    String summary = file.getName();
+                    String summary = file == null ? "" : file.getName();
                     currentPreference.setSummary(summary);
                 } catch (java.lang.SecurityException exception) {
                     Log.e("GamePrefs", "Permission denied, key=" + filePickerPreferenceKey + " value=" + value);
@@ -332,7 +335,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                             copyGalleryImageAndUpdateConfig(fileUri);
                         } else {
                             DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
-                            String summary = file.getName();
+                            String summary = file == null ? "" : file.getName();
                             currentPreference.setSummary(summary);
                             mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
                         }
@@ -365,7 +368,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         if (FileUtil.isFileImage(getApplicationContext(), uri)) {
             DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), uri);
-            if (FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ) )) {
+            if (file != null && FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ) )) {
 
                 ConfigFile configFile = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
                 configFile.put(mRomMd5, "artPath", mGlobalPrefs.coverArtDir + "/" + file.getName());

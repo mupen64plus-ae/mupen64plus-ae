@@ -201,7 +201,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 CharSequence message = getString( R.string.toast_pleaseWait );
 
                 DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), Uri.parse(mZipPath));
-                String zipName = file.getName();
+                String zipName = file == null ? "" : file.getName();
                 mProgress = new ProgressDialog( mProgress, requireActivity(), title, zipName, message, false );
                 mProgress.show();
             });

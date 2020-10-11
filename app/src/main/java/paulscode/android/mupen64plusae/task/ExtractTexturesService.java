@@ -124,7 +124,7 @@ public class ExtractTexturesService extends Service
             GlobalPrefs globalPrefs = new GlobalPrefs( ExtractTexturesService.this, appData );
 
             DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), mFileUri);
-            String name = file.getName();
+            String name = file == null ? "" : file.getName();
 
             RomHeader header = new RomHeader(getApplicationContext(), mFileUri);
             if(name != null && (name.toLowerCase().endsWith("htc") || name.toLowerCase().endsWith("hts")))

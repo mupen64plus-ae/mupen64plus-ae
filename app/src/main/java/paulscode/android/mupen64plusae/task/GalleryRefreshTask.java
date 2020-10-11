@@ -213,7 +213,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 
                         if (mContext.get() != null) {
                             DocumentFile file = FileUtil.getDocumentFileSingle(mContext.get(), Uri.parse(romPath));
-                            displayName = file.getName();
+                            displayName = file == null ? "" : file.getName();
                         }
 
                         if (TextUtils.isEmpty(displayName)) {

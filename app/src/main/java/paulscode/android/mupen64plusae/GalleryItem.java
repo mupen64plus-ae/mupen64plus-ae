@@ -129,7 +129,7 @@ public class GalleryItem
             return displayName;
         else if( !TextUtils.isEmpty( romUri ) ) {
             DocumentFile file = FileUtil.getDocumentFileSingle(context.get(), Uri.parse(romUri));
-            String romName = file.getName();
+            String romName = file == null ? null : file.getName();
             if (romName == null) {
                 romName = "unknown file";
             }
