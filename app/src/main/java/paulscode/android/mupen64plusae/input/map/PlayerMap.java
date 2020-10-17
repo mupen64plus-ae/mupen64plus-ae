@@ -68,12 +68,15 @@ public class PlayerMap extends SerializableMap
     
     /**
      * Instantiates a new player map from a serialization.
-     * 
+     *
+     * @param autoPlayerMapping True if auto player mapping is enablef
      * @param serializedMap The serialization of the map.
      */
-    public PlayerMap( String serializedMap )
+    public PlayerMap( Boolean autoPlayerMapping, String serializedMap )
     {
         super();
+
+        mAutoMapping = autoPlayerMapping;
         deserialize( serializedMap );
     }
     
@@ -156,7 +159,6 @@ public class PlayerMap extends SerializableMap
                 }
             //If not previously mapped and auto mapping is enabled
             } else if (mAutoMapping) {
-
                 int nextMappablePlayer = getNextAvailablePlayer();
 
                 if (nextMappablePlayer != -1) {
@@ -302,8 +304,6 @@ public class PlayerMap extends SerializableMap
     {
         // Reset the map
         unmapAll();
-
-        mAutoMapping = TextUtils.isEmpty(s);
 
         // Parse the new map data from the multi-delimited string
         if(!mAutoMapping )

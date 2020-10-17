@@ -417,11 +417,11 @@ public class GamePrefs
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
         if( useDefaultPlayerMapping) {
-            playerMapString = globalPrefs.autoPlayerMapping ? "" : globalPrefs.getString(GlobalPrefs.PLAYER_MAP, "");
+            playerMapString = globalPrefs.getString(GlobalPrefs.PLAYER_MAP, "");
             Log.i("GamePrefs", "Using default player mapping");
         }
 
-        playerMap = new PlayerMap( playerMapString );
+        playerMap = new PlayerMap( globalPrefs.autoPlayerMapping, playerMapString );
 
         // Cheats menu
         isCheatOptionsShown = mPreferences.getBoolean( PLAY_SHOW_CHEATS, false );
