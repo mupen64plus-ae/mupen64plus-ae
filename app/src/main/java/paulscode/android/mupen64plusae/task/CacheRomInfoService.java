@@ -751,5 +751,9 @@ public class CacheRomInfoService extends Service
                 if( mbStopped ) break;
             }
         }
+
+        mListener.GetProgressDialog().setMessage("");
+        mListener.GetProgressDialog().setSubtext("");
+        mListener.GetProgressDialog().setText("");
     }
 }
