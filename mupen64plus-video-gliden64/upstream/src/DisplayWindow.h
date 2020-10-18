@@ -58,6 +58,7 @@ protected:
 	u32 m_heightOffset = 0;
 	u32 m_screenWidth = 0;
 	u32 m_screenHeight = 0;
+	u32 m_screenRefresh = 0;
 	u32 m_resizeWidth = 0;
 	u32 m_resizeHeight = 0;
 	f32 m_scaleX = 0;
@@ -71,6 +72,7 @@ private:
 
 	virtual bool _start() = 0;
 	virtual void _stop() = 0;
+	virtual void _restart() = 0;
 	virtual void _swapBuffers() = 0;
 	virtual void _saveScreenshot() = 0;
 	virtual void _saveBufferContent(graphics::ObjectHandle _fbo, CachedTexture *_pTexture) = 0;

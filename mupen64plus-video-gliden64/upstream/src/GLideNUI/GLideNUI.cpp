@@ -29,13 +29,19 @@ int openConfigDialog(const wchar_t * _strFileName, const char * _romName, bool &
 	if (config.generalEmulation.enableCustomSettings != 0 && _romName != nullptr && strlen(_romName) != 0)
 		loadCustomRomSettings(strIniFileName, _romName);
 
-	int argc = 0;
-	char * argv = 0;
-	QApplication a(argc, &argv);
+	std::unique_ptr<QApplication> pQApp;
+	QCoreApplication* pApp = QCoreApplication::instance();
+
+	if (pApp == nullptr) {
+		int argc = 0;
+		char * argv = 0;
+		pQApp.reset(new QApplication(argc, &argv));
+		pApp = pQApp.get();
+	}
 
 	QTranslator translator;
 	if (translator.load(getTranslationFile(), strIniFileName))
-		a.installTranslator(&translator);
+		pApp->installTranslator(&translator);
 
 	ConfigDialog w(Q_NULLPTR, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
 
@@ -43,7 +49,8 @@ int openConfigDialog(const wchar_t * _strFileName, const char * _romName, bool &
 	w.setRomName(_romName);
 	w.setTitle();
 	w.show();
-	const int res = a.exec();
+
+	int res = pQApp ? pQApp->exec() : w.exec();
 	_accepted = w.isAccepted();
 	return res;
 }
