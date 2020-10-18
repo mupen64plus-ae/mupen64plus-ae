@@ -13,8 +13,5 @@
     <androidx.preference.Preference
         android:key="actionImportCheatsAndProfiles"
         android:title="@string/importExportActivity_importCheatsAndProfiles" />
-    <androidx.preference.Preference
-        android:key="actionImportTouchscreenGraphics"
-        android:title="@string/importExportActivity_importTouchscreenGraphics" />
 
 </androidx.preference.PreferenceScreen>

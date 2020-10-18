@@ -80,6 +80,9 @@
         android:key="touchscreenSkin"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenStyle_title" />
+    <androidx.preference.Preference
+        android:key="actionImportTouchscreenGraphics"
+        android:title="@string/importExportActivity_importTouchscreenGraphics" />
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/touchscreenAutoHold_default"
         android:entries="@array/touchscreenAutoHold_entries"
