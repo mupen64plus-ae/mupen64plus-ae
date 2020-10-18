@@ -22,9 +22,11 @@ package paulscode.android.mupen64plusae.profile;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.widget.Toolbar;
@@ -46,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
@@ -212,7 +215,17 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         
         refreshList();
     }
-    
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ActivityHelper.MANAGE_PROFILE_ACTIVITY) {
+            mConfigCustom.reload();
+            refreshList();
+        }
+    }
+
     @Override
     public void onSaveInstanceState( Bundle savedInstanceState )
     {

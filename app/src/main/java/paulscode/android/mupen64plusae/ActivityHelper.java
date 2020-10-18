@@ -111,7 +111,8 @@ public class ActivityHelper
 
         //@formatter:on
     }
-    static final int GAME_ACTIVITY_CODE = 3;
+    public static final int GAME_ACTIVITY_CODE = 3;
+    public static final int MANAGE_PROFILE_ACTIVITY = 4321;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
@@ -305,25 +306,25 @@ public class ActivityHelper
         context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
     }
     
-    public static void startEmulationProfileActivity( Context context, String profileName )
+    public static void startEmulationProfileActivity( Activity activity, String profileName )
     {
-        Intent intent = new Intent( context, EmulationProfileActivity.class );
+        Intent intent = new Intent( activity, EmulationProfileActivity.class );
         intent.putExtra( Keys.PROFILE_NAME, profileName );
-        context.startActivity( intent );
+        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
     }
     
-    public static void startTouchscreenProfileActivity( Context context, String profileName )
+    public static void startTouchscreenProfileActivity( Activity activity, String profileName )
     {
-        Intent intent = new Intent( context, TouchscreenProfileActivity.class );
+        Intent intent = new Intent( activity, TouchscreenProfileActivity.class );
         intent.putExtra( Keys.PROFILE_NAME, profileName );
-        context.startActivity( intent );
+        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
     }
     
-    public static void startControllerProfileActivity( Context context, String profileName )
+    public static void startControllerProfileActivity( Activity activity, String profileName )
     {
-        Intent intent = new Intent( context, ControllerProfileActivity.class );
+        Intent intent = new Intent( activity, ControllerProfileActivity.class );
         intent.putExtra( Keys.PROFILE_NAME, profileName );
-        context.startActivity( intent );
+        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
     }
     
     public static void startControllerProfileActivityBigScreen( Context context, String profileName )
