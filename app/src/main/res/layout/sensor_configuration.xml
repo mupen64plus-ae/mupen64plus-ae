@@ -39,16 +39,6 @@
                 android:inputType="text|textNoSuggestions"
                 android:maxLength="4" />
 
-            <TextView
-                android:layout_columnSpan="2"
-                android:layout_gravity="center|right"
-                android:text="@string/sensorConfig_angle" />
-
-            <EditText
-                android:id="@+id/sensorConfig_angleX"
-                android:layout_gravity="fill"
-                android:inputType="numberSigned|numberDecimal" />
-
             <CheckBox
                 android:id="@+id/sensorConfig_invertX"
                 android:layout_gravity="fill"
@@ -87,16 +77,6 @@
                 android:layout_gravity="fill"
                 android:inputType="text|textNoSuggestions"
                 android:maxLength="4" />
-
-            <TextView
-                android:layout_columnSpan="2"
-                android:layout_gravity="center|right"
-                android:text="@string/sensorConfig_angle" />
-
-            <EditText
-                android:id="@+id/sensorConfig_angleY"
-                android:layout_gravity="fill"
-                android:inputType="numberSigned|numberDecimal" />
 
             <CheckBox
                 android:id="@+id/sensorConfig_invertY"

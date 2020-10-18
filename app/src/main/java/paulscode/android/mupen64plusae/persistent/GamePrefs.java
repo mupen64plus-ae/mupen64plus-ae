@@ -212,17 +212,11 @@ public class GamePrefs
     /** The sensor values used for X axis emulation */
     public final String sensorAxisX;
 
-    /** The phone's orientation angle for X axis value=0 */
-    public final float sensorAngleX;
-
     /** The sensor's X axis sensitivity (%), may be negative to invert axes */
     public final int sensorSensitivityX;
 
     /** The sensor values used for Y axis emulation */
     public final String sensorAxisY;
-
-    /** The phone's orientation angle for Y axis value=0 */
-    public final float sensorAngleY;
 
     /** The sensor's Y axis sensitivity (%), may be negative to invert axes */
     public final int sensorSensitivityY;
@@ -504,7 +498,6 @@ public class GamePrefs
             isAnalogHiddenWhenSensor = touchscreenProfile.get("touchscreenHideAnalogWhenSensor", "False").equals( "True" );
             sensorActivateOnStart = touchscreenProfile.get("sensorActivateOnStart", "False").equals( "True" );
             sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
-            sensorAngleX = SafeMethods.toFloat(touchscreenProfile.get("sensorAngleX"), 0);
             int sensitivity;
             try {
                 sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityX"));
@@ -516,7 +509,6 @@ public class GamePrefs
             }
             sensorSensitivityX = sensitivity;
             sensorAxisY = touchscreenProfile.get("sensorAxisY", "");
-            sensorAngleY = SafeMethods.toFloat(touchscreenProfile.get("sensorAngleY"), 0);
             try {
                 sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityY"));
             } catch (final NumberFormatException ex) {
@@ -536,10 +528,8 @@ public class GamePrefs
             isAnalogHiddenWhenSensor = false;
             sensorActivateOnStart = false;
             sensorAxisX = "";
-            sensorAngleX = 0;
             sensorSensitivityX = 100;
             sensorAxisY = null;
-            sensorAngleY = 0;
             sensorSensitivityY = 100;
         }
 

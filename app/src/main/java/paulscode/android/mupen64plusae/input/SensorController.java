@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -42,10 +41,11 @@ public class SensorController extends AbstractController implements SensorEventL
     private final int[] sensorEventValuesRefX, sensorEventAdjacentValuesRefX, sensorEventValuesRefY,
             sensorEventAdjacentValuesRefY;
 
-    private final float angleX, angleY;
+    private float angleX, angleY;
     private final float sensitivityX, sensitivityY;
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
+    private boolean mSensorAngleSet = false;
 
     /**
      * Constructor
@@ -55,14 +55,12 @@ public class SensorController extends AbstractController implements SensorEventL
      * @param listener State change listener
      * @param sensorAxisX Sensor X axis
      * @param sensorSensitivityX Sensor X sensitivity
-     * @param sensorAngleX Sensor X angle
      * @param sensorAxisY Sensor Y axis
      * @param sensorSensitivityY  Sensor Y sensitivity
-     * @param sensorAngleY Sensor Y angle
      */
     public SensorController(CoreFragment coreFragment, SensorManager sensorManager, OnStateChangedListener listener,
-                            String sensorAxisX, int sensorSensitivityX, float sensorAngleX, String sensorAxisY,
-                            int sensorSensitivityY, float sensorAngleY) {
+                            String sensorAxisX, int sensorSensitivityX, String sensorAxisY,
+                            int sensorSensitivityY) {
         super(coreFragment);
 
         mSensorManager = sensorManager;
@@ -84,8 +82,8 @@ public class SensorController extends AbstractController implements SensorEventL
             sensorEventValuesRefY = new int[0];
             sensorEventAdjacentValuesRefY = sensorEventValuesRefY;
         }
-        angleX = sensorAngleX;
-        angleY = sensorAngleY;
+        angleX = 0;
+        angleY = 0;
         this.sensitivityX = sensorSensitivityX / 100f;
         this.sensitivityY = sensorSensitivityY / 100f;
     }
@@ -100,7 +98,7 @@ public class SensorController extends AbstractController implements SensorEventL
     }
 
     /**
-     * Should be called on {@link Activity#onResume()}
+     * Should be called on Activity onResume()
      */
     public void onResume() {
         isPaused = false;
@@ -108,7 +106,7 @@ public class SensorController extends AbstractController implements SensorEventL
     }
 
     /**
-     * Should be called on {@link Activity#onPause()}
+     * Should be called on Activity onPause()
      */
     public void onPause() {
         isPaused = true;
@@ -116,11 +114,15 @@ public class SensorController extends AbstractController implements SensorEventL
     }
 
     private void updateListener() {
-        if (mSensorEnabled && isPaused == false) {
+        if (mSensorEnabled && !isPaused) {
             mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_GAME);
         } else {
             mSensorManager.unregisterListener(this);
+        }
+
+        if (!mSensorEnabled) {
+            mSensorAngleSet = false;
         }
     }
 
@@ -130,6 +132,14 @@ public class SensorController extends AbstractController implements SensorEventL
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+
+        if (!mSensorAngleSet)
+        {
+            angleX = getIdleAngle(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX);
+            angleY = getIdleAngle(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY);
+            mSensorAngleSet = true;
+        }
+
         float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX);
         rawX *= sensitivityX;
         float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY);
@@ -141,6 +151,31 @@ public class SensorController extends AbstractController implements SensorEventL
         mState.axisFractionY = rawY / factor;
         notifyChanged(false);
         mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
+    }
+
+    /**
+     * Determines the sensor idle angle
+     *
+     * @see #calculateAcceleration(float[], int[])
+     *
+     * @param sensorEventValues
+     *            the {@link SensorEvent#values}
+     * @param valuesRef
+     *            the indexes of the {@link SensorEvent#values} to be used to
+     *            calculate the strength
+     * @param adjacentValuesRef
+     *            the indexes of the {@link SensorEvent#values} to be used as
+     *            adjacent value
+     * @return the idle angle
+     */
+    private float getIdleAngle(float[] sensorEventValues, int[] valuesRef, int[] adjacentValuesRef) {
+        if (valuesRef.length == 0 || adjacentValuesRef.length == 0) {
+            return 0; // This axis is disabled
+        }
+        float value = calculateAcceleration(sensorEventValues, valuesRef);
+        float adjacentValue = calculateAcceleration(sensorEventValues, adjacentValuesRef);
+
+        return calculateAngle(value, adjacentValue);
     }
 
     /**
@@ -157,18 +192,19 @@ public class SensorController extends AbstractController implements SensorEventL
      * @param adjacentValuesRef
      *            the indexes of the {@link SensorEvent#values} to be used as
      *            adjacent value
-     * @param idleAngleDegree
+     * @param idleAngle
      *            the angle that defines joystick IDLE state
      * @return the strength
      */
     private float getStrength(float[] sensorEventValues, int[] valuesRef, int[] adjacentValuesRef,
-            float idleAngleDegree) {
+            float idleAngle) {
         if (valuesRef.length == 0 || adjacentValuesRef.length == 0) {
             return 0; // This axis is disabled
         }
         float value = calculateAcceleration(sensorEventValues, valuesRef);
         float adjacentValue = calculateAcceleration(sensorEventValues, adjacentValuesRef);
-        float angle = calculateAngle(value, adjacentValue) - idleAngleDegree / 180 * (float) Math.PI;
+
+        float angle = calculateAngle(value, adjacentValue) - idleAngle;
         // Fixing angle to have range in [-Pi,Pi]
         while (Math.abs(angle) > Math.PI) {
             angle -= Math.signum(angle) * 2 * Math.PI;

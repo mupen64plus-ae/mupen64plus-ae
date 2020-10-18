@@ -35,7 +35,6 @@ class SensorConfigurationDialog implements OnClickListener {
     private final CheckBox activateOnStart;
     private final Spinner xAxisSpinner, yAxisSpinner;
     private final EditText xAxisEditText, yAxisEditText;
-    private final EditText xAngleEditText, yAngleEditText;
     private final Button xSensitivityButton, ySensitivityButton;
     private final CheckBox xInvertCheckbox, yInvertCheckbox;
 
@@ -48,12 +47,10 @@ class SensorConfigurationDialog implements OnClickListener {
 
         xAxisSpinner = view.findViewById(R.id.sensorConfig_sensorX);
         xAxisEditText = view.findViewById(R.id.sensorConfig_customX);
-        xAngleEditText = view.findViewById(R.id.sensorConfig_angleX);
         xSensitivityButton = view.findViewById(R.id.sensorConfig_sensitivityX);
         xInvertCheckbox = view.findViewById(R.id.sensorConfig_invertX);
         yAxisSpinner = view.findViewById(R.id.sensorConfig_sensorY);
         yAxisEditText = view.findViewById(R.id.sensorConfig_customY);
-        yAngleEditText = view.findViewById(R.id.sensorConfig_angleY);
         ySensitivityButton = view.findViewById(R.id.sensorConfig_sensitivityY);
         yInvertCheckbox = view.findViewById(R.id.sensorConfig_invertY);
 
@@ -62,13 +59,11 @@ class SensorConfigurationDialog implements OnClickListener {
         String xAxisValue = mProfile.get("sensorAxisX", "");
         updateSpinner(xAxisSpinner, xAxisValue);
         xAxisEditText.setText(xAxisValue);
-        xAngleEditText.setText(mProfile.get("sensorAngleX"));
         xSensitivityButton.setText(mProfile.get("sensorSensitivityX", "100") + "%");
         xInvertCheckbox.setChecked(Boolean.valueOf(mProfile.get("sensorInvertX")));
         String yAxisValue = mProfile.get("sensorAxisY", "");
         updateSpinner(yAxisSpinner, yAxisValue);
         yAxisEditText.setText(yAxisValue);
-        yAngleEditText.setText(mProfile.get("sensorAngleY"));
         ySensitivityButton.setText(mProfile.get("sensorSensitivityY", "100") + "%");
         yInvertCheckbox.setChecked(Boolean.valueOf(mProfile.get("sensorInvertY")));
 
@@ -89,8 +84,6 @@ class SensorConfigurationDialog implements OnClickListener {
             mProfile.put("sensorActivateOnStart", String.valueOf(activateOnStart.isChecked()));
             mProfile.put("sensorAxisX", fixSensorAxisString(xAxisEditText.getText().toString()));
             mProfile.put("sensorAxisY", fixSensorAxisString(yAxisEditText.getText().toString()));
-            mProfile.put("sensorAngleX", String.valueOf(SafeMethods.toFloat(xAngleEditText.getText().toString(), 0)));
-            mProfile.put("sensorAngleY", String.valueOf(SafeMethods.toFloat(yAngleEditText.getText().toString(), 0)));
             mProfile.put("sensorSensitivityX", String.valueOf(getSensitivity(xSensitivityButton)));
             mProfile.put("sensorSensitivityY", String.valueOf(getSensitivity(ySensitivityButton)));
             mProfile.put("sensorInvertX", String.valueOf(xInvertCheckbox.isChecked()));

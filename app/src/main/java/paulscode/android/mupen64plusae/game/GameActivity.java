@@ -1110,8 +1110,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 // Create the sensor controller
                 final SensorManager sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
                 mSensorController = new SensorController(mCoreFragment, sensorManager, mOverlay, mGamePrefs.sensorAxisX,
-                        mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
-                        mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
+                        mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAxisY,
+                        mGamePrefs.sensorSensitivityY);
                 if (mGamePrefs.sensorActivateOnStart) {
                     mSensorController.setSensorEnabled(true);
                     mOverlay.onSensorEnabled(true);
