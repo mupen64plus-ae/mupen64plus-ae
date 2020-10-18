@@ -1,10 +1,12 @@
 package paulscode.android.mupen64plusae;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -13,6 +15,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class ScanRomsActivity extends AppCompatActivity
 {
@@ -27,6 +30,18 @@ public class ScanRomsActivity extends AppCompatActivity
     private Uri mFileUri = null;
 
     private static final String URI_TO_IMPORT = "URI_TO_IMPORT";
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
  
     @Override
     protected void onCreate( Bundle savedInstanceState )

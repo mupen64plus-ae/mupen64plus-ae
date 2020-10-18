@@ -1,5 +1,6 @@
 package paulscode.android.mupen64plusae;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
@@ -25,6 +26,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.DeleteFilesFragment.DeleteFilesFinishedListener;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DeleteTexturesActivity extends AppCompatActivity implements OnItemClickListener, PromptConfirmListener,
         DeleteFilesFinishedListener
@@ -37,6 +39,18 @@ public class DeleteTexturesActivity extends AppCompatActivity implements OnItemC
     public static final int CLEAR_CONFIRM_DIALOG_ID = 0;
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final String STATE_DELETE_FILES_FRAGMENT= "STATE_DELETE_FILES_FRAGMENT";
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
  
     @Override
     protected void onCreate( Bundle savedInstanceState )

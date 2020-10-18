@@ -7,7 +7,9 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -35,6 +38,18 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
     private TextView mFileDescriptionTextView = null;
     private static final String URI_TO_IMPORT = "URI_TO_IMPORT";
     private static final String CURRENT_PATH = "CURRENT_PATH";
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
 
     @Override
     protected void onCreate( Bundle savedInstanceState )

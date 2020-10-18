@@ -1,11 +1,13 @@
 package paulscode.android.mupen64plusae.util;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -28,6 +30,18 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
 
     private File mCurrentPath = null;
     private boolean mCanSelectFile = false;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
 
     @Override
     /* Default legacy data path, needed for moving legacy data to internal storage */

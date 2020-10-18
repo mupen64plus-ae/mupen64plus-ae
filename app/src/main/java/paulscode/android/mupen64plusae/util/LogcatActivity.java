@@ -1,7 +1,10 @@
 package paulscode.android.mupen64plusae.util;
 
+import android.content.Context;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -21,6 +24,18 @@ public class LogcatActivity extends AppCompatActivity
 
     private final String TEXT_KEY = "TEXT_KEY";
     private final String TEXT_SCROLL = "TEXT_SCROLL";
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
