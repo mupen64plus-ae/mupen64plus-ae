@@ -23,7 +23,7 @@ static uint32_t vi_integer_sqrt(uint32_t a)
     return res;
 }
 
-static STRICTINLINE void gamma_filters(struct rgba* pixel, bool gamma_enable, bool gamma_dither_enable, uint32_t* rstate)
+static STRICTINLINE void gamma_filters(struct n64video_pixel* pixel, bool gamma_enable, bool gamma_dither_enable, uint32_t* rstate)
 {
     int cdith, dith;
 
@@ -35,13 +35,13 @@ static STRICTINLINE void gamma_filters(struct rgba* pixel, bool gamma_enable, bo
         cdith = irand(rstate);
         dith = cdith & 1;
         if (pixel->r < 255)
-            pixel->r += dith;
+            pixel->r += (uint8_t)dith;
         dith = (cdith >> 1) & 1;
         if (pixel->g < 255)
-            pixel->g += dith;
+            pixel->g += (uint8_t)dith;
         dith = (cdith >> 2) & 1;
         if (pixel->b < 255)
-            pixel->b += dith;
+            pixel->b += (uint8_t)dith;
         break;
     case 2: // gamma enabled, no dithering
         pixel->r = gamma_table[pixel->r];
@@ -65,13 +65,13 @@ void vi_gamma_init(void)
     int i;
     for (i = 0; i < 256; i++)
     {
-        gamma_table[i] = vi_integer_sqrt(i << 6);
+        gamma_table[i] = (uint8_t)vi_integer_sqrt(i << 6);
         gamma_table[i] <<= 1;
     }
 
     for (i = 0; i < 0x4000; i++)
     {
-        gamma_dither_table[i] = vi_integer_sqrt(i);
+        gamma_dither_table[i] = (uint8_t)vi_integer_sqrt(i);
         gamma_dither_table[i] <<= 1;
     }
 }

@@ -50,6 +50,15 @@ if (NOT ANDROID)
     find_package(OpenGL REQUIRED)
 endif()
 
+# use warning levels as recommended by
+# https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Available.md
+if ( CMAKE_COMPILER_IS_GNUCC )
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic")
+endif()
+if ( MSVC )
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4 /w14640 /permissive-")
+endif()
+
 set(PATH_SRC "src")
 
 # RDP core library
@@ -81,12 +90,20 @@ endif()
 
 add_library(alp-core STATIC ${SOURCES_CORE} ${PATH_VERSION})
 
+# output library
+set(PATH_OUTPUT "${PATH_SRC}/output")
+
+file(GLOB SOURCES_OUTPUT "${PATH_OUTPUT}/*.c" "${PATH_OUTPUT}/*.cpp")
+
+add_library(alp-output STATIC ${SOURCES_OUTPUT})
+
 if(MINGW)
     # link libgcc/libstdc++ statically, fixes cryptic "_ZNSt13runtime_errorC1EPKc" error
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
 else(MINGW)
     # set PIC option for non-MinGW targets
     set_target_properties(alp-core PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(alp-output PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif(MINGW)
 
 # set IPO option, if supported
@@ -108,20 +125,19 @@ if(WIN32)
 
     set_target_properties(${NAME_PLUGIN_ZILMAR} PROPERTIES PREFIX "")
 
-    target_link_libraries(${NAME_PLUGIN_ZILMAR} alp-core shlwapi ${OPENGL_LIBRARIES})
+    target_link_libraries(${NAME_PLUGIN_ZILMAR} alp-core alp-output shlwapi ${OPENGL_LIBRARIES})
 endif(WIN32)
 
 # Mupen64Plus GFX plugin
-if (ANDROID)
-    set(NAME_PLUGIN_M64P "libmupen64plus-video-${CMAKE_PROJECT_NAME}")
-else()
-    set(NAME_PLUGIN_M64P "mupen64plus-video-${CMAKE_PROJECT_NAME}")
-endif()
+set(NAME_PLUGIN_M64P "mupen64plus-video-${CMAKE_PROJECT_NAME}")
+
 set(PATH_PLUGIN_M64P "${PATH_SRC}/plugin/mupen64plus")
 
 file(GLOB SOURCES_PLUGIN_M64P "${PATH_PLUGIN_M64P}/*.c")
 add_library(${NAME_PLUGIN_M64P} SHARED ${SOURCES_PLUGIN_M64P})
 
-set_target_properties(${NAME_PLUGIN_M64P} PROPERTIES PREFIX "")
+if(NOT ANDROID)
+    set_target_properties(${NAME_PLUGIN_M64P} PROPERTIES PREFIX "")
+endif()
 
-target_link_libraries(${NAME_PLUGIN_M64P} alp-core ${CMAKE_THREAD_LIBS_INIT} ${OPENGL_LIBRARIES})
+target_link_libraries(${NAME_PLUGIN_M64P} alp-core alp-output ${CMAKE_THREAD_LIBS_INIT} ${OPENGL_LIBRARIES})

@@ -1,9 +1,9 @@
+#include "wgl_ext.h"
+#include "output/gl_proc.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include "wgl_ext.h"
-
-void* IntGetProcAddress(const char *name);
 
 int wgl_ext_EXT_swap_control = wgl_LOAD_FAILED;
 int wgl_ext_ARB_create_context = wgl_LOAD_FAILED;

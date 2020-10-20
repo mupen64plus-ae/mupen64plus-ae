@@ -32,3 +32,6 @@
 #else
 #define STRICTINLINE inline
 #endif
+
+// misc
+#define UNUSED(x) (void)(x)

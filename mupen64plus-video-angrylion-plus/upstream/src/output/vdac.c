@@ -1,6 +1,6 @@
 #include "vdac.h"
 #include "screen.h"
-#include "msg.h"
+#include "core/msg.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -17,14 +17,14 @@
 #define TEX_FORMAT GL_RGBA
 #define TEX_TYPE GL_UNSIGNED_BYTE
 
-static GLuint program;
-static GLuint vao;
-static GLuint texture;
+static GLuint m_program;
+static GLuint m_vao;
+static GLuint m_texture;
 
-static int32_t tex_width;
-static int32_t tex_height;
+static uint32_t m_tex_width;
+static uint32_t m_tex_height;
 
-static int32_t tex_height_out;
+static uint32_t m_tex_height_out;
 
 #ifdef _DEBUG
 static void gl_check_errors(void)
@@ -137,7 +137,6 @@ static GLuint gl_shader_compile(GLenum type, const GLchar* source, const char* p
         GLchar log[4096];
         glGetShaderInfoLog(shader, sizeof(log), NULL, log);
         msg_error("%s shader error: %s\n", type == GL_FRAGMENT_SHADER ? "Frag" : "Vert", log);
-        return 0;
     }
 
     return shader;
@@ -201,16 +200,16 @@ void vdac_init(struct n64video_config* config)
     // compile and link OpenGL program
     GLuint vert = gl_shader_compile(GL_VERTEX_SHADER, vert_shader, "alp_screen.vert");
     GLuint frag = gl_shader_compile(GL_FRAGMENT_SHADER, frag_shader, "alp_screen.frag");
-    program = gl_shader_link(vert, frag);
-    glUseProgram(program);
+    m_program = gl_shader_link(vert, frag);
+    glUseProgram(m_program);
 
     // prepare dummy VAO
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
 
     // prepare texture
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenTextures(1, &m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 
     // select interpolation method
     GLint filter;
@@ -229,7 +228,7 @@ void vdac_init(struct n64video_config* config)
     gl_check_errors();
 }
 
-void vdac_read(struct frame_buffer* fb, bool alpha)
+void vdac_read(struct n64video_frame_buffer* fb, bool alpha)
 {
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
@@ -243,34 +242,34 @@ void vdac_read(struct frame_buffer* fb, bool alpha)
     }
 }
 
-void vdac_write(struct frame_buffer* fb)
+void vdac_write(struct n64video_frame_buffer* fb)
 {
-    bool buffer_size_changed = tex_width != fb->width || tex_height != fb->height;
+    bool buffer_size_changed = m_tex_width != fb->width || m_tex_height != fb->height;
 
     // check if the framebuffer size has changed
     if (buffer_size_changed) {
-        tex_width = fb->width;
-        tex_height = fb->height;
+        m_tex_width = fb->width;
+        m_tex_height = fb->height;
 
         // set pitch for all unpacking operations
         glPixelStorei(GL_UNPACK_ROW_LENGTH, fb->pitch);
 
         // reallocate texture buffer on GPU
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex_width,
-            tex_height, 0, TEX_FORMAT, TEX_TYPE, fb->pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_tex_width,
+            m_tex_height, 0, TEX_FORMAT, TEX_TYPE, fb->pixels);
 
-        msg_debug("%s: resized framebuffer texture: %dx%d", __FUNCTION__, tex_width, tex_height);
+        msg_debug("%s: resized framebuffer texture: %dx%d", __FUNCTION__, m_tex_width, m_tex_height);
     } else {
         // copy local buffer to GPU texture buffer
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tex_width, tex_height,
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_tex_width, m_tex_height,
             TEX_FORMAT, TEX_TYPE, fb->pixels);
     }
 
     // update output size
-    tex_height_out = fb->height_out;
+    m_tex_height_out = fb->height_out;
 }
 
-void vdac_sync(bool invalid)
+void vdac_sync(bool valid)
 {
     // clear old buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -281,7 +280,7 @@ void vdac_sync(bool invalid)
     int32_t win_x;
     int32_t win_y;
 
-    screen_adjust(tex_width, tex_height_out, &win_width, &win_height, &win_x, &win_y);
+    screen_adjust(m_tex_width, m_tex_height_out, &win_width, &win_height, &win_x, &win_y);
 
     // if the screen is invalid or hidden, do nothing
     if (win_width <= 0 || win_height <= 0) {
@@ -289,22 +288,22 @@ void vdac_sync(bool invalid)
     }
 
     // skip rendering and leave buffer blank if there's no valid input
-    if (invalid) {
+    if (!valid) {
         screen_update();
         return;
     }
 
-    int32_t hw = tex_height_out * win_width;
-    int32_t wh = tex_width * win_height;
+    int32_t hw = m_tex_height_out * win_width;
+    int32_t wh = m_tex_width * win_height;
 
     // add letterboxes or pillarboxes if the window has a different aspect ratio
     // than the current display mode
     if (hw > wh) {
-        int32_t w_max = wh / tex_height_out;
+        int32_t w_max = wh / m_tex_height_out;
         win_x += (win_width - w_max) / 2;
         win_width = w_max;
     } else if (hw < wh) {
-        int32_t h_max = hw / tex_width;
+        int32_t h_max = hw / m_tex_width;
         win_y += (win_height - h_max) / 2;
         win_height = h_max;
     }
@@ -324,14 +323,14 @@ void vdac_sync(bool invalid)
 
 void vdac_close(void)
 {
-    tex_width = 0;
-    tex_height = 0;
+    m_tex_width = 0;
+    m_tex_height = 0;
 
-    tex_height_out = 0;
+    m_tex_height_out = 0;
 
-    glDeleteTextures(1, &texture);
-    glDeleteVertexArrays(1, &vao);
-    glDeleteProgram(program);
+    glDeleteTextures(1, &m_texture);
+    glDeleteVertexArrays(1, &m_vao);
+    glDeleteProgram(m_program);
 
     screen_close();
 }

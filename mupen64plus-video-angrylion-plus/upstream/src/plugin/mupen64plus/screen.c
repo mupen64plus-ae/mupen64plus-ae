@@ -1,8 +1,10 @@
 #include "gfx_m64p.h"
 #include "api/m64p_vidext.h"
 
-#include "core/screen.h"
+#include "core/common.h"
 #include "core/msg.h"
+
+#include "output/screen.h"
 
 #include <stdlib.h>
 
@@ -31,6 +33,8 @@ void* IntGetProcAddress(const char *name)
 
 void screen_init(struct n64video_config* config)
 {
+    UNUSED(config);
+
     /* Get the core Video Extension function pointers from the library handle */
     CoreVideo_Init = (ptr_VidExt_Init) DLSYM(CoreLibHandle, "VidExt_Init");
     CoreVideo_Quit = (ptr_VidExt_Quit) DLSYM(CoreLibHandle, "VidExt_Quit");
@@ -61,6 +65,9 @@ void screen_init(struct n64video_config* config)
 
 void screen_adjust(int32_t width_out, int32_t height_out, int32_t* width, int32_t* height, int32_t* x, int32_t* y)
 {
+    UNUSED(width_out);
+    UNUSED(height_out);
+
     *width = win_width;
     *height = win_height;
     *x = 0;
