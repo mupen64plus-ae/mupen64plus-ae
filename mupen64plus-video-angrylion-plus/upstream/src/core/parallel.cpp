@@ -126,6 +126,7 @@ private:
                 });
             }
 #else
+            }
             //Busy loop wait for a bit to keep cores awake
             bool workAvailable = false;
             int count = 0;
