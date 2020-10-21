@@ -22,6 +22,7 @@ add_library(${NAME_PLUGIN_M64P} SHARED
 #		debug_rsp.cpp
 		rsp/vfunctions.cpp
 		rsp_jit.cpp rsp_jit.hpp
+		jit_allocator.cpp jit_allocator.hpp
 		rsp_disasm.cpp rsp_disasm.hpp
 		rsp/ls.cpp rsp/pipeline.h
 		rsp/reciprocal.cpp rsp/reciprocal.h
@@ -63,7 +64,7 @@ option(PARALLEL_RSP_DEBUG_JIT "Enable the debug JIT." OFF)
 if (PARALLEL_RSP_DEBUG_JIT)
 	if (ANDROID)
 		message("Android does not support debug JIT. Disabling it.")
-	else()
+	elseif (NOT WIN32)
 		target_sources(${NAME_PLUGIN_M64P} PRIVATE debug_rsp.cpp debug_rsp.hpp debug_jit.cpp debug_jit.hpp)
 		target_compile_definitions(${NAME_PLUGIN_M64P} PUBLIC PARALLEL_RSP_DEBUG_JIT)
 	endif()
@@ -104,7 +105,7 @@ add_executable(rsp-runner main.cpp)
 target_link_libraries(rsp-runner PRIVATE ${NAME_PLUGIN_M64P})
 target_compile_options(rsp-runner PRIVATE ${PARALLEL_RSP_CXX_FLAGS})
 
-if (PARALLEL_RSP_DEBUG_JIT)
+if (PARALLEL_RSP_DEBUG_JIT AND NOT WIN32)
 	set_target_properties(rsp-runner PROPERTIES LINK_FLAGS "-rdynamic")
 endif()
 

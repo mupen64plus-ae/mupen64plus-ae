@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/mupen64plus-ae/parallel-rsp.git
 	branch = master
-	commit = 743f4d8e1a9c48187e930d28ffde463349225940
-	parent = ec858d6f0777f71373aacafad95dd250d1fa728b
+	commit = a6566dad6c09a925e7ae7d714b8fd24fb9667627
+	parent = ba065e8cd0c40ec4f03c3010be589ff1a4366775
 	method = merge
 	cmdver = 0.4.0

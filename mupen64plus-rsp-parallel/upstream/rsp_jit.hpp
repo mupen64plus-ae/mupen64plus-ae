@@ -10,6 +10,7 @@
 
 #include "rsp_op.hpp"
 #include "state.hpp"
+#include "jit_allocator.hpp"
 
 extern "C"
 {
@@ -135,8 +136,6 @@ private:
 
 	int enter(uint32_t pc);
 
-	std::vector<jit_state_t *> cleanup_jit_states;
-
 	void init_jit_thunks();
 
 	struct
@@ -198,6 +197,7 @@ private:
 	std::vector<Link> local_branches;
 
 	RegisterCache regs;
+	Allocator allocator;
 };
 } // namespace JIT
 } // namespace RSP

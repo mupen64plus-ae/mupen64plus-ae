@@ -294,8 +294,42 @@ static void validate_trace(RSP::CPU &cpu, const char *path)
 }
 #endif
 
+#if 0
+static void test()
+{
+	RSP::JIT::Allocator alloc;
+
+	auto *_jit = jit_new_state();
+	jit_prolog();
+	jit_frame(256);
+	auto *a0 = jit_arg();
+	auto *a1 = jit_arg();
+
+	jit_getarg(JIT_R0, a0);
+	jit_getarg(JIT_R1, a1);
+	jit_addr(JIT_R0, JIT_R0, JIT_R1);
+	jit_retr(JIT_R0);
+
+	jit_realize();
+	jit_word_t code_size;
+	jit_get_code(&code_size);
+	void *code = alloc.allocate_code(code_size);
+	jit_set_code(code, code_size);
+
+	auto *func = reinterpret_cast<int (*)(int, int)>(jit_emit());
+
+	jit_clear_state();
+	jit_destroy_state();
+	RSP::JIT::Allocator::commit_code(code, code_size);
+	int ret = func(10, 20);
+	printf("%d\n", ret);
+}
+#endif
+
 int main(int argc, char *argv[])
 {
+	//test();
+
 	RSP::JIT::CPU cpu;
 	auto &state = cpu.get_state();
 #ifdef PARALLEL_RSP_DEBUG_JIT

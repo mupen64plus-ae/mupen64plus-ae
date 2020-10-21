@@ -32,15 +32,12 @@ namespace JIT
 {
 CPU::CPU()
 {
-	cleanup_jit_states.reserve(16 * 1024);
 	init_jit("RSP");
 	init_jit_thunks();
 }
 
 CPU::~CPU()
 {
-	for (auto *_jit : cleanup_jit_states)
-		jit_destroy_state();
 	finish_jit();
 }
 
@@ -426,6 +423,14 @@ void CPU::init_jit_thunks()
 	// Return status. This register is considered common for all thunks.
 	jit_retr(JIT_REGISTER_MODE);
 
+	jit_realize();
+	jit_word_t code_size;
+	jit_get_code(&code_size);
+	void *thunk_code = allocator.allocate_code(code_size);
+	if (!thunk_code)
+		abort();
+	jit_set_code(thunk_code, code_size);
+
 	thunks.enter_frame = reinterpret_cast<int (*)(void *)>(jit_emit());
 	thunks.enter_thunk = jit_address(entry_label);
 	thunks.return_thunk = jit_address(return_label);
@@ -434,7 +439,10 @@ void CPU::init_jit_thunks()
 	//jit_disassemble();
 	jit_clear_state();
 	//printf(" === END DISASM ===\n");
-	cleanup_jit_states.push_back(_jit);
+	jit_destroy_state();
+
+	if (!Allocator::commit_code(thunk_code, code_size))
+		abort();
 }
 
 Func CPU::get_jit_block(uint32_t pc)
@@ -1882,6 +1890,14 @@ Func CPU::jit_region(uint64_t hash, unsigned pc_word, unsigned instruction_count
 	for (auto &b : local_branches)
 		jit_patch_at(b.node, branch_targets[b.local_index]);
 
+	jit_realize();
+	jit_word_t code_size;
+	jit_get_code(&code_size);
+	auto *block_code = allocator.allocate_code(code_size);
+	if (!block_code)
+		abort();
+	jit_set_code(block_code, code_size);
+
 	auto ret = reinterpret_cast<Func>(jit_emit());
 
 #ifdef TRACE_DISASM
@@ -1891,7 +1907,10 @@ Func CPU::jit_region(uint64_t hash, unsigned pc_word, unsigned instruction_count
 	printf(" === DISASM END ===\n\n");
 #endif
 	jit_clear_state();
-	cleanup_jit_states.push_back(_jit);
+	jit_destroy_state();
+
+	if (!Allocator::commit_code(block_code, code_size))
+		abort();
 	return ret;
 }
 
