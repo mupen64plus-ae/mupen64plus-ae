@@ -257,45 +257,49 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
         FileUtil.deleteFolder(new File(mGlobalPrefs.legacyCoreConfigDir));
 
-        //Move data to the new location
-        publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
-        ++mCurrentAsset;
-        if (!createBackupAndMove(mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg)) {
-            Failure failure = new Failure( mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg, Failure.Reason.FILE_IO_EXCEPTION );
-            Log.e( TAG, failure.toString() );
-            failures.add( failure );
-        }
+        // Don't move data from the legacy folders if a user selects to use external storage. This is because a use could select
+        // to use external sorage and use the same folder as the legacy data folder.
+        if (!mGlobalPrefs.useExternalStorge) {
+            //Move data to the new location
+            publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            ++mCurrentAsset;
+            if (!createBackupAndMove(mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg)) {
+                Failure failure = new Failure( mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg, Failure.Reason.FILE_IO_EXCEPTION );
+                Log.e( TAG, failure.toString() );
+                failures.add( failure );
+            }
 
-        publishProgress( "Moving: " + mGlobalPrefs.legacyCoverArtDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
-        ++mCurrentAsset;
-        if (!createBackupAndMove(mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir)) {
-            Failure failure = new Failure( mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir, Failure.Reason.FILE_IO_EXCEPTION );
-            Log.e( TAG, failure.toString() );
-            failures.add( failure );
-        }
+            publishProgress( "Moving: " + mGlobalPrefs.legacyCoverArtDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            ++mCurrentAsset;
+            if (!createBackupAndMove(mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir)) {
+                Failure failure = new Failure( mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir, Failure.Reason.FILE_IO_EXCEPTION );
+                Log.e( TAG, failure.toString() );
+                failures.add( failure );
+            }
 
-        publishProgress( "Moving: " + mGlobalPrefs.legacyProfilesDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
-        ++mCurrentAsset;
-        if (!createBackupAndMove(mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir)) {
-            Failure failure = new Failure( mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir, Failure.Reason.FILE_IO_EXCEPTION );
-            Log.e( TAG, failure.toString() );
-            failures.add( failure );
-        }
+            publishProgress( "Moving: " + mGlobalPrefs.legacyProfilesDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            ++mCurrentAsset;
+            if (!createBackupAndMove(mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir)) {
+                Failure failure = new Failure( mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir, Failure.Reason.FILE_IO_EXCEPTION );
+                Log.e( TAG, failure.toString() );
+                failures.add( failure );
+            }
 
-        publishProgress( "Moving: " + mGlobalPrefs.legacyTouchscreenCustomSkinsDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
-        ++mCurrentAsset;
-        if (!createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir)) {
-            Failure failure = new Failure( mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir, Failure.Reason.FILE_IO_EXCEPTION );
-            Log.e( TAG, failure.toString() );
-            failures.add( failure );
-        }
+            publishProgress( "Moving: " + mGlobalPrefs.legacyTouchscreenCustomSkinsDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            ++mCurrentAsset;
+            if (!createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir)) {
+                Failure failure = new Failure( mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir, Failure.Reason.FILE_IO_EXCEPTION );
+                Log.e( TAG, failure.toString() );
+                failures.add( failure );
+            }
 
-        publishProgress( "Moving: " + mAppData.legacyGameDataDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
-        ++mCurrentAsset;
-        if (!createBackupAndMove(mAppData.legacyGameDataDir, mAppData.gameDataDir)) {
-            Failure failure = new Failure( mAppData.legacyGameDataDir, mAppData.gameDataDir, Failure.Reason.FILE_IO_EXCEPTION );
-            Log.e( TAG, failure.toString() );
-            failures.add( failure );
+            publishProgress( "Moving: " + mAppData.legacyGameDataDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            ++mCurrentAsset;
+            if (!createBackupAndMove(mAppData.legacyGameDataDir, mAppData.gameDataDir)) {
+                Failure failure = new Failure( mAppData.legacyGameDataDir, mAppData.gameDataDir, Failure.Reason.FILE_IO_EXCEPTION );
+                Log.e( TAG, failure.toString() );
+                failures.add( failure );
+            }
         }
 
         return extractAssets(failures, mSrcPath, mDstPath );
