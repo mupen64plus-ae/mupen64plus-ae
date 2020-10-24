@@ -47,8 +47,9 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     SharedPreferences.OnSharedPreferenceChangeListener
 {
     public static final int FOLDER_PICKER_REQUEST_CODE = 1;
-    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 2;
-    public static final int FILE_PICKER_REQUEST_CODE = 3;
+    public static final int LEGACY_FOLDER_PICKER_REQUEST_CODE = 2;
+    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 3;
+    public static final int FILE_PICKER_REQUEST_CODE = 4;
 
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -164,13 +165,22 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
     private void startFolderPicker()
     {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
-                Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-        intent = Intent.createChooser(intent, getString(R.string.gameDataStorageLocation_title));
-        startActivityForResult(intent, FOLDER_PICKER_REQUEST_CODE);
+        Intent intent;
+        int requestCode;
+        if (mAppData.useLegacyFileBrowser) {
+            intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
+            requestCode = LEGACY_FOLDER_PICKER_REQUEST_CODE;
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+            intent = Intent.createChooser(intent, getString(R.string.gameDataStorageLocation_title));
+            requestCode = FOLDER_PICKER_REQUEST_CODE;
+        }
+        startActivityForResult(intent, requestCode);
     }
 
     private void startFilePicker()
@@ -209,6 +219,21 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
+                        DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
+                        String summary = file.getName();
+                        currentPreference.setSummary(summary);
+                        mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
+                    }
+                }
+            } else if (requestCode == LEGACY_FOLDER_PICKER_REQUEST_CODE) {
+                final Bundle extras = data.getExtras();
+
+                if (extras != null) {
+                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+                    Uri fileUri = Uri.parse(searchUri);
+                    Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
+
+                    if (currentPreference != null && fileUri != null) {
                         DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
                         String summary = file.getName();
                         currentPreference.setSummary(summary);
