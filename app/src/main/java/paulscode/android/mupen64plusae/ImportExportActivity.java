@@ -140,16 +140,16 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
 
         switch (key) {
             case ACTION_EXPORT_GAME_DATA:
-                startFilePicker(PICK_FILE_EXPORT_GAME_DATA_REQUEST_CODE, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                startFilePicker(PICK_FILE_EXPORT_GAME_DATA_REQUEST_CODE, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
                 break;
             case ACTION_EXPORT_CHEATS_AND_PROFILES:
-                startFilePicker(PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                startFilePicker(PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
                 break;
             case ACTION_IMPORT_GAME_DATA:
-                startFilePicker(PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startFilePicker(PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);
                 break;
             case ACTION_IMPORT_CHEATS_AND_PROFILES:
-                startFilePicker(PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startFilePicker(PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);
                 break;
             default:
                 // Let Android handle all other preference clicks
@@ -160,13 +160,14 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         return true;
     }
 
-    private void startFilePicker(int requestCode, int permissions)
+    private void startFilePicker(int requestCode, int permissions, boolean canViewExtStorage)
     {
         AppData appData = new AppData( this );
         Intent intent;
         if (appData.useLegacyFileBrowser) {
             intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
+            intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, canViewExtStorage);
         } else {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(permissions);

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.TextUtils;
@@ -30,6 +32,7 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
 
     private File mCurrentPath = null;
     private boolean mCanSelectFile = false;
+    private boolean mCanViewExternalStorage = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -59,6 +62,7 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
         }
 
         mCanSelectFile = extras.getBoolean(ActivityHelper.Keys.CAN_SELECT_FILE);
+        mCanViewExternalStorage = extras.getBoolean(ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE);
 
         String currentPath = null;
 
@@ -100,7 +104,7 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
     }
 
     @Override
-    public void onSaveInstanceState( Bundle savedInstanceState )
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState )
     {
         if( mCurrentPath != null )
             savedInstanceState.putString( ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getAbsolutePath() );
@@ -117,7 +121,9 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
             // Get the filenames and absolute paths
             List<CharSequence> names = new ArrayList<>();
             mPaths = new ArrayList<>();
-            FileUtil.populate( mCurrentPath, true, true, true, names, mPaths );
+
+            boolean showParent = mCanViewExternalStorage || !(new File(Environment.getExternalStorageDirectory().getAbsolutePath()).equals(mCurrentPath));
+            FileUtil.populate( mCurrentPath, showParent, true, true, names, mPaths );
 
             ListView listView1 = findViewById( R.id.listView1 );
             ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, names);

@@ -94,6 +94,7 @@ public class ActivityHelper
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
         public static final String CAN_SELECT_FILE      = NAMESPACE + "CAN_SELECT_FILE";
+        public static final String CAN_VIEW_EXT_STORAGE = NAMESPACE + "CAN_VIEW_EXT_STORAGE";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
         public static final String ART_DIR              = NAMESPACE + "GALLERY_ART_PATH";

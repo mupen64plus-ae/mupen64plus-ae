@@ -170,6 +170,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         if (mAppData.useLegacyFileBrowser) {
             intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
+            intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, false);
             requestCode = LEGACY_FOLDER_PICKER_REQUEST_CODE;
         } else {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -188,6 +189,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         if (mAppData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
+            intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
             startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
         } else {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);

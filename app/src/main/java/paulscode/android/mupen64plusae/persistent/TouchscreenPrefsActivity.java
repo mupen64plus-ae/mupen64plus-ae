@@ -269,6 +269,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         AppData appData = new AppData( this );
         if (appData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             startActivityForResult( intent, requestCode );
         } else {

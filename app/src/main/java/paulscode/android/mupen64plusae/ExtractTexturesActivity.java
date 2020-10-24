@@ -121,6 +121,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
         if (appData.useLegacyFileBrowser) {
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
+            intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
             startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
         } else {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
