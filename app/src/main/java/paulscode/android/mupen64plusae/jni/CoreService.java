@@ -49,6 +49,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import paulscode.android.mupen64plusae.R;
 
