@@ -590,7 +590,7 @@ public class GlobalPrefs
 
         enableBlitScreenWorkaround = mPreferences.getBoolean( "enableBlitScreenWorkaround", false );
         threadedGLideN64 = mPreferences.getBoolean( "threadedGLideN64", true );
-        hybridTextureFilterGLideN64 = mPreferences.getBoolean( "hybridTextureFilter", false );
+        hybridTextureFilterGLideN64 = mPreferences.getBoolean( "hybridTextureFilter_v2", true );
 
         // Audio prefs
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
