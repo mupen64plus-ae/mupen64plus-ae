@@ -397,8 +397,9 @@ public class AppData
         isAndroidTv = uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        useLegacyFileBrowser = isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O ||
-                intent.resolveActivity(context.getPackageManager()) == null;
+        useLegacyFileBrowser = (isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O ||
+                intent.resolveActivity(context.getPackageManager()) == null) &&
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.R; // Android 11 fails this check but it requires the SAF file browser.
     }
 
     /**
