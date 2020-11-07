@@ -80,7 +80,11 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         {
             CharSequence title = getString( R.string.scanning_title );
             CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, mSearchUri, message, true );
+
+            DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(requireActivity(), Uri.parse(mSearchUri));
+            String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
+
+            mProgress = new ProgressDialog( mProgress, requireActivity(), title, text, message, true );
             mProgress.show();
         }
     }
