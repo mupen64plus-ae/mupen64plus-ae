@@ -524,7 +524,7 @@ class CoreInterface
      * This function attaches the given plugin to the emulator core. There can only
      * be one plugin of each type attached to the core at any given time.
      */
-    int coreAttachPlugin(CoreTypes.m64p_plugin_type pluginType, String pluginName)
+    int coreAttachPlugin(CoreTypes.m64p_plugin_type pluginType, String pluginName, boolean loggingEnabled)
     {
         Log.w(TAG, "Using plugin for type: " + pluginType.name() + ":" + pluginName);
 
@@ -548,7 +548,7 @@ class CoreInterface
         mPluginContext.put(pluginType, new Memory(bytes.length + 1));
 
         mPluginContext.get(pluginType).setString(0, pluginName);
-        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), mDebugCallBackPlugin);
+        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), loggingEnabled ? mDebugCallBackPlugin : null);
 
         Pointer handle = mAeBridgeLibrary.loadLibrary(pluginName);
         return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
