@@ -76,7 +76,7 @@ import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class CoreService extends Service implements CoreInterface.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
 
     interface CoreServiceListener
@@ -166,20 +166,21 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return fileName.toLowerCase().endsWith("png");
     };
 
-    private CoreInterface mCoreInterface = new CoreInterface();
+    private final CoreInterface mCoreInterface = new CoreInterface();
 
     /**
      * Last time we received an FPS changed callback. This is used to determine if the core
      * is locked up since these won't happen if it is.
      */
     private long mLastFpsChangedTime;
-    private Handler mFpsCangedHandler = new Handler();
+    private final Handler mFpsCangedHandler = new Handler();
+    private final Handler mPeriodicActionHandler = new Handler();
 
     final static int ONGOING_NOTIFICATION_ID = 1;
 
     // Our handler for received Intents. This will be called whenever an Intent
     // with an action named "SERVICE_EVENT" is broadcasted.
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
@@ -895,6 +896,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mRaphnetHandler.requestDeviceAccess();
             }
 
+            mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
+            mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
+
             updateNotification();
         }
 
@@ -972,6 +976,27 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
+    Runnable mPeriodicAction = new Runnable() {
+        @Override
+        public void run() {
+            //If we are paused and we are still somehow swapping buffers
+            //then pause again. This can happen if the user pauses the emulator
+            //before it's done starting.
+            if(mIsPaused)
+            {
+                mCoreInterface.emuPause();
+            }
+
+            if (mScreenshotRequested && mWorkingDir != null) {
+                mScreenshotRequested = false;
+                mFpsCangedHandler.post(mExportScreenshotChecker);
+            }
+
+            mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
+            mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
+        }
+    };
+
     Runnable mLastFpsChangedChecker = new Runnable() {
         @Override
         public void run() {
@@ -1014,19 +1039,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
-
-        //If we are paused and we are still somehow swapping buffers
-        //then pause again. This can happen if the user pauses the emulator
-        //before it's done starting.
-        if(mIsPaused)
-        {
-            mCoreInterface.emuPause();
-        }
-
-        if (mScreenshotRequested && mWorkingDir != null) {
-            mScreenshotRequested = false;
-            mFpsCangedHandler.post(mExportScreenshotChecker);
-        }
     }
 
     private void exportScreenshot(File file)
