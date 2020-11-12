@@ -414,12 +414,12 @@ class NativeConfigFiles
                 Log.i("NativeConfigFile", "Using interpreter due to FBInfo");
             }
 
-            Log.i("NativeConfigFile", "param(override)=" + setting + " value=" + glideN64settingValue);
+            Log.i("NativeConfigFile", headerNameURL + " param(override)=" + setting + " value=" + glideN64settingValue);
         }
         else
         {
             mupenConfigFile.put( "Video-GLideN64", setting, value);
-            Log.i("NativeConfigFile", "param=" + setting + " value=" + value);
+            Log.i("NativeConfigFile", headerNameURL + " param=" + setting + " value=" + value);
         }
     }
 
