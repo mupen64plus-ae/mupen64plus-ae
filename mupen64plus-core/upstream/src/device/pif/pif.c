@@ -32,6 +32,7 @@
 #include "backends/api/joybus.h"
 #include "device/memory/memory.h"
 #include "device/r4300/r4300_core.h"
+#include "device/rcp/si/si_controller.h"
 #include "plugin/plugin.h"
 #include "main/netplay.h"
 
@@ -126,10 +127,12 @@ void init_pif(struct pif* pif,
     void* jbds[PIF_CHANNELS_COUNT],
     const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
     const uint8_t* ipl3,
-    struct r4300_core* r4300)
+    struct r4300_core* r4300,
+    struct si_controller* si)
 {
     size_t i;
 
+    pif->base = pif_base;
     pif->ram = pif_base + 0x7c0;
 
     for (i = 0; i < PIF_CHANNELS_COUNT; ++i) {
@@ -140,6 +143,7 @@ void init_pif(struct pif* pif,
     init_cic_using_ipl3(&pif->cic, ipl3);
 
     pif->r4300 = r4300;
+    pif->si = si;
 }
 
 void reset_pif(struct pif* pif, unsigned int reset_type)
@@ -279,36 +283,34 @@ void poweron_pif(struct pif* pif)
     reset_pif(pif, 0); /* cold reset */
 }
 
-void read_pif_ram(void* opaque, uint32_t address, uint32_t* value)
+void read_pif_mem(void* opaque, uint32_t address, uint32_t* value)
 {
     struct pif* pif = (struct pif*)opaque;
-    uint32_t addr = pif_ram_address(address);
+    uint32_t addr = pif_address(address);
 
-    if (addr >= PIF_RAM_SIZE)
-    {
-        DebugMessage(M64MSG_ERROR, "Invalid PIF address: %08" PRIX32, address);
-        *value = 0;
-        return;
-    }
-
-    memcpy(value, pif->ram + addr, sizeof(*value));
-    *value = tohl(*value);
+    memcpy(value, pif->base + addr, sizeof(*value));
+    if (addr >= PIF_ROM_SIZE)
+        *value = tohl(*value);
 }
 
-void write_pif_ram(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
+void write_pif_mem(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
 {
     struct pif* pif = (struct pif*)opaque;
-    uint32_t addr = pif_ram_address(address);
+    uint32_t addr = pif_address(address);
 
-    if (addr >= PIF_RAM_SIZE)
+    if (addr < PIF_ROM_SIZE)
     {
-        DebugMessage(M64MSG_ERROR, "Invalid PIF address: %08" PRIX32, address);
+        DebugMessage(M64MSG_ERROR, "Invalid write to PIF ROM: %08" PRIX32, address);
         return;
     }
 
-    masked_write((uint32_t*)(&pif->ram[addr]), fromhl(value), fromhl(mask));
+    masked_write((uint32_t*)(&pif->base[addr]), fromhl(value), fromhl(mask));
 
-    process_pif_ram(pif);
+    pif->si->dma_dir = SI_DMA_WRITE;
+
+    cp0_update_count(pif->r4300);
+    pif->si->regs[SI_STATUS_REG] |= (SI_STATUS_DMA_BUSY | SI_STATUS_IO_BUSY);
+    add_interrupt_event(&pif->r4300->cp0, SI_INT, pif->si->dma_duration);
 }
 
 
@@ -350,10 +352,17 @@ void process_pif_ram(struct pif* pif)
         clrmask |= 0x08;
     }
 
+    if (flags & 0x30)
+    {
+        pif->ram[0x3f] = 0x80;
+    }
+
+#ifdef DEBUG_PIF
     if (flags & 0xf4)
     {
         DebugMessage(M64MSG_ERROR, "error in process_pif_ram(): %" PRIX8, flags);
     }
+#endif
 
     pif->ram[0x3f] &= ~clrmask;
 }
