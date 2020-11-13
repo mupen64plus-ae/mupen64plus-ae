@@ -63,7 +63,7 @@
   /* string functions */
   #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
 
-#ifdef __SSE__
+#if defined(__SSE__) && defined(__x86_64__)
   #include <immintrin.h>
   #define OSAL_SSE
 #endif
