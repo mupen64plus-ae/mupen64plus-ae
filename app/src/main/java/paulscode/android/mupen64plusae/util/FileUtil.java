@@ -478,13 +478,6 @@ public final class FileUtil
      */
     public static boolean copyFolder( Context context, File src, DocumentFile dest )
     {
-        // Do this instead for directly accessible files
-        if(dest.getUri().getScheme().equals("file")) {
-
-            File destFile = new File(dest.getUri().getPath() + "/" + src.getName());
-            return copyFile( src, destFile, false );
-        }
-
         if( src == null)
         {
             Log.e( "copyFile", "src null" );
@@ -495,6 +488,13 @@ public final class FileUtil
         {
             Log.e( "copyFile", "dest null" );
             return false;
+        }
+
+        // Do this instead for directly accessible files
+        if(dest.getUri().getScheme().equals("file")) {
+
+            File destFile = new File(dest.getUri().getPath() + "/" + src.getName());
+            return copyFile( src, destFile, false );
         }
 
         boolean success = true;

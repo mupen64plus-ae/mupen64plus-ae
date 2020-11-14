@@ -727,11 +727,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             String[] optionStrings;
             optionStrings = cheatText.option.split( "\n" );
 
+            if (selectedOption >= optionStrings.length)
+            {
+                selectedOption = 0;
+            }
+
             String option = optionStrings[selectedOption];
 
             String valueString = option.substring(option.length()-4);
             codes.get(indexOfOption).value = Integer.valueOf(valueString, 16);
         }
+        
         return codes;
     }
 

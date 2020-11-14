@@ -32,6 +32,7 @@ import android.os.Vibrator;
 
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import android.text.InputType;
 import android.util.Log;
@@ -168,9 +169,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         if( errorCode != 0)
         {
-            final String message = requireActivity().getString( R.string.toast_nativeMainFailure07 );
-
-            requireActivity().runOnUiThread(() -> Notifier.showToast( requireActivity(), message ));
+            String message = null;
+            try {
+                FragmentActivity activity = requireActivity();
+                message = activity.getString( R.string.toast_nativeMainFailure07 );
+                String finalMessage = message;
+                activity.runOnUiThread(() -> Notifier.showToast( activity, finalMessage));
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
 
             Log.e( "CoreFragment", "Launch failure: " + message );
         }
@@ -183,7 +190,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         mCoreService = null;
     }
-    
+
     @Override
     public void onCoreServiceDestroyed()
     {
@@ -196,13 +203,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void romExtractionStarted()
     {
         try {
-            requireActivity().runOnUiThread(() -> {
+            FragmentActivity activity = requireActivity();
+            activity.runOnUiThread(() -> {
                 CharSequence title = getString( R.string.extractRomTask_title );
                 CharSequence message = getString( R.string.toast_pleaseWait );
 
-                DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), Uri.parse(mZipPath));
+                DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mZipPath));
                 String zipName = file == null ? "" : file.getName();
-                mProgress = new ProgressDialog( mProgress, requireActivity(), title, zipName, message, false );
+                mProgress = new ProgressDialog( mProgress, activity, title, zipName, message, false );
                 mProgress.show();
             });
         } catch (java.lang.IllegalStateException e) {
@@ -250,12 +258,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if(!mIsRunning)
         {
-            actuallyStartCore(requireActivity());
+            try {
+                actuallyStartCore(requireActivity());
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
 
             mIsRunning = true;
         }
     }
-    
+
     private void actuallyStartCore(Activity activity)
     {
         Log.i("CoreFragment", "actuallyStartCore");
@@ -276,11 +288,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreService.setRomExtractionListener(CoreFragment.this);
 
                 if(mCoreEventListener != null) {
-                    try {
-                        requireActivity().runOnUiThread(() -> mCoreEventListener.onCoreServiceStarted());
-                    } catch (java.lang.IllegalStateException e) {
-                        e.printStackTrace();
-                    }
+                    activity.runOnUiThread(() -> mCoreEventListener.onCoreServiceStarted());
                 }
             }
 
@@ -307,7 +315,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     private void actuallyStopCore()
     {
         Log.i("CoreFragment", "actuallyStopCore");
@@ -315,10 +323,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mIsRunning)
         {
             mIsRunning = false;
-            requireActivity().runOnUiThread(() -> {
-                mCoreService = null;
-                ActivityHelper.stopCoreService(requireActivity().getApplicationContext(), mServiceConnection);
-            });
+
+            try {
+                Activity activity = requireActivity();
+
+                activity.runOnUiThread(() -> {
+                    mCoreService = null;
+                    ActivityHelper.stopCoreService(activity.getApplicationContext(), mServiceConnection);
+                });
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -432,14 +447,19 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.pauseEmulator();
         }
 
-        String title = requireActivity().getString( R.string.confirm_title );
-        String message = requireActivity().getString( R.string.confirmExitGame_message );
+        try {
+            FragmentActivity activity = requireActivity();
+            String title = activity.getString(R.string.confirm_title);
+            String message = activity.getString(R.string.confirmExitGame_message);
 
-        ConfirmationDialog confirmationDialog =
-                ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
 
-        FragmentManager fm = requireActivity().getSupportFragmentManager();
-        confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
+            FragmentManager fm = activity.getSupportFragmentManager();
+            confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     public void toggleSpeed()
@@ -473,7 +493,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             int slot = mCoreService.getSlot();
 
-            Notifier.showToast( requireActivity(), R.string.toast_savingSlot, slot );
+            try {
+                Notifier.showToast(requireActivity(), R.string.toast_savingSlot, slot);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
 
             mCoreService.saveSlot();
 
@@ -491,8 +515,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (mCoreService != null)
         {
             int slot = mCoreService.getSlot();
-            
-            Notifier.showToast( requireActivity(), R.string.toast_loadingSlot, slot );
+            try {
+                Notifier.showToast( requireActivity(), R.string.toast_loadingSlot, slot );
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
 
             mCoreService.loadSlot();
 
@@ -536,69 +563,82 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             return;
         }
 
-        final CharSequence title = requireActivity().getString(R.string.menuItem_selectSlot);
+        try {
+            Activity activity = requireActivity();
+            final CharSequence title = activity.getString(R.string.menuItem_selectSlot);
 
-        Prompt.promptRadioInteger( requireActivity(), title, mCoreService.getSlot(), 0, 2, 5,
-                (value, which) -> {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        if (mCoreService != null) {
-                            mCoreService.setSlot(value);
-                        }
+            Prompt.promptRadioInteger(activity, title, mCoreService.getSlot(), 0, 2, 5,
+                    (value, which) -> {
+                        if (which == DialogInterface.BUTTON_POSITIVE) {
+                            if (mCoreService != null) {
+                                mCoreService.setSlot(value);
+                            }
 
-                        if(mCoreEventListener != null)
-                        {
-                            mCoreEventListener.onPromptFinished();
+                            if (mCoreEventListener != null) {
+                                mCoreEventListener.onPromptFinished();
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveFileFromPrompt()
     {
         Log.i("CoreFragment", "saveFileFromPrompt");
 
-        CharSequence title = requireActivity().getText( R.string.menuItem_fileSave );
-        CharSequence hint = requireActivity().getText( R.string.hintFileSave );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( requireActivity(), title, null, null, hint, inputType, (text, which) -> {
-            if( which == DialogInterface.BUTTON_POSITIVE )
-            {
-                saveState(text.toString());
-            }
-        });
+        try {
+            Activity activity = requireActivity();
+            CharSequence title = activity.getText(R.string.menuItem_fileSave);
+            CharSequence hint = activity.getText(R.string.hintFileSave);
+            int inputType = InputType.TYPE_CLASS_TEXT;
+            Prompt.promptText(activity, title, null, null, hint, inputType, (text, which) -> {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    saveState(text.toString());
+                }
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     private void saveState( final String filename )
     {
         Log.i("CoreFragment", "saveState");
 
-        mCurrentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" +
-                filename + "." + mRomGoodName + ".sav");
-
-        if( mCurrentSaveStateFile.exists() )
-        {
-
-            String title = requireActivity().getString( R.string.confirm_title );
-            String message = requireActivity().getString( R.string.confirmOverwriteFile_message, filename );
-
-            ConfirmationDialog confirmationDialog =
-                    ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
-
-            FragmentManager fm = requireActivity().getSupportFragmentManager();
-            confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+        if (!mIsRunning) {
+            return;
         }
-        else
-        {
-            if (mCoreService != null) {
-                mCoreService.saveState(mCurrentSaveStateFile.getName());
-                Notifier.showToast( requireActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
-            }
 
-            if(mCoreEventListener != null)
-            {
-                mCoreEventListener.onSaveLoad();
+        try {
+            FragmentActivity activity = requireActivity();
+
+            mCurrentSaveStateFile = new File(mGamePrefs.getUserSaveDir() + "/" +
+                    filename + "." + mRomGoodName + ".sav");
+
+            if (mCurrentSaveStateFile.exists()) {
+
+                String title = activity.getString(R.string.confirm_title);
+                String message = activity.getString(R.string.confirmOverwriteFile_message, filename);
+
+                ConfirmationDialog confirmationDialog =
+                        ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
+
+                FragmentManager fm = activity.getSupportFragmentManager();
+                confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+            } else {
+                if (mCoreService != null) {
+                    mCoreService.saveState(mCurrentSaveStateFile.getName());
+                    Notifier.showToast(activity, R.string.toast_savingFile, mCurrentSaveStateFile.getName());
+                }
+
+                if (mCoreEventListener != null) {
+                    mCoreEventListener.onSaveLoad();
+                }
             }
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 
@@ -606,45 +646,63 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "loadFileFromPrompt");
 
-        CharSequence title = requireActivity().getText( R.string.menuItem_fileLoad );
-        File startPath = new File( mGamePrefs.getUserSaveDir() );
-        Prompt.promptFile( requireActivity(), title, null, startPath, "", (file, which) -> {
-            if( which >= 0 )
-            {
-                loadState(file);
+        if (!mIsRunning) {
+            return;
+        }
 
-                if(mCoreEventListener != null)
-                {
-                    mCoreEventListener.onSaveLoad();
+        try {
+            Activity activity = requireActivity();
+            CharSequence title = activity.getText(R.string.menuItem_fileLoad);
+            File startPath = new File(mGamePrefs.getUserSaveDir());
+            Prompt.promptFile(activity, title, null, startPath, "", (file, which) -> {
+                if (which >= 0) {
+                    loadState(file);
+
+                    if (mCoreEventListener != null) {
+                        mCoreEventListener.onSaveLoad();
+                    }
                 }
-            }
-        });
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadAutoSaveFromPrompt()
     {
         Log.i("CoreFragment", "loadAutoSaveFromPrompt");
 
-        CharSequence title = requireActivity().getText( R.string.menuItem_fileLoadAutoSave );
-        File startPath = new File( mGamePrefs.getAutoSaveDir() );
-        Prompt.promptFile( requireActivity(), title, null, startPath, "sav", (file, which) -> {
-            if( which >= 0 )
-            {
-                loadState(file);
+        if (!mIsRunning) {
+            return;
+        }
 
-                if(mCoreEventListener != null)
-                {
-                    mCoreEventListener.onSaveLoad();
+        try {
+            Activity activity = requireActivity();
+            CharSequence title = activity.getText(R.string.menuItem_fileLoadAutoSave);
+            File startPath = new File(mGamePrefs.getAutoSaveDir());
+            Prompt.promptFile(activity, title, null, startPath, "sav", (file, which) -> {
+                if (which >= 0) {
+                    loadState(file);
+
+                    if (mCoreEventListener != null) {
+                        mCoreEventListener.onSaveLoad();
+                    }
                 }
-            }
-        });
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadState( File file )
     {
         Log.i("CoreFragment", "loadState");
 
-        Notifier.showToast( requireActivity(), R.string.toast_loadingFile, file.getName() );
+        try {
+            Notifier.showToast(requireActivity(), R.string.toast_loadingFile, file.getName());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
 
         if (mCoreService != null) {
             mCoreService.loadState(file);
@@ -667,7 +725,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if (mCoreService != null)
         {
-            Notifier.showToast( requireActivity(), R.string.toast_savingScreenshot );
+            try {
+                Notifier.showToast(requireActivity(), R.string.toast_savingScreenshot);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
             mCoreService.screenshot();
         }
     }
@@ -696,14 +758,20 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (mCoreService != null)
         {
             mCoreService.pauseEmulator();
-            String title = requireActivity().getString( R.string.confirm_title );
-            String message = requireActivity().getString( R.string.confirmResetGame_message );
 
-            ConfirmationDialog confirmationDialog =
-                    ConfirmationDialog.newInstance(RESET_CONFIRM_DIALOG_ID, title, message);
+            try {
+                FragmentActivity activity = requireActivity();
+                String title = activity.getString(R.string.confirm_title);
+                String message = activity.getString(R.string.confirmResetGame_message);
 
-            FragmentManager fm = requireActivity().getSupportFragmentManager();
-            confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
+                ConfirmationDialog confirmationDialog =
+                        ConfirmationDialog.newInstance(RESET_CONFIRM_DIALOG_ID, title, message);
+
+                FragmentManager fm = activity.getSupportFragmentManager();
+                confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -789,19 +857,22 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "setCustomSpeedFromPrompt");
 
-        final CharSequence title = requireActivity().getText( R.string.menuItem_setSpeed );
-        Prompt.promptInteger( requireActivity(), title, "%1$d %%", mCustomSpeed, MIN_SPEED, MAX_SPEED,
-                (value, which) -> {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        setCustomSpeed( value );
+        try {
+            Activity activity = requireActivity();
+            final CharSequence title = activity.getText(R.string.menuItem_setSpeed);
+            Prompt.promptInteger(activity, title, "%1$d %%", mCustomSpeed, MIN_SPEED, MAX_SPEED,
+                    (value, which) -> {
+                        if (which == DialogInterface.BUTTON_POSITIVE) {
+                            setCustomSpeed(value);
 
-                        if(mCoreEventListener != null)
-                        {
-                            mCoreEventListener.onPromptFinished();
+                            if (mCoreEventListener != null) {
+                                mCoreEventListener.onPromptFinished();
+                            }
                         }
-                    }
-                });
+                    });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onPromptDialogClosed(int id, int which)
@@ -813,8 +884,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             if (mCoreService != null) {
                 mCoreService.saveState(mCurrentSaveStateFile.getName());
             }
-
-            Notifier.showToast(requireActivity(), R.string.toast_overwritingFile, mCurrentSaveStateFile.getName());
+            try {
+                Notifier.showToast(requireActivity(), R.string.toast_overwritingFile, mCurrentSaveStateFile.getName());
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
             if(mCoreEventListener != null)
             {
                 mCoreEventListener.onSaveLoad();

@@ -780,16 +780,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_coverart);
             }
 
-            int dimension = Math.min(bitmap.getWidth(), bitmap.getHeight());
-            Bitmap croppedBitmap = ThumbnailUtils.extractThumbnail(bitmap, dimension, dimension);
+            if (bitmap != null) {
+                int dimension = Math.min(bitmap.getWidth(), bitmap.getHeight());
+                Bitmap croppedBitmap = ThumbnailUtils.extractThumbnail(bitmap, dimension, dimension);
 
-            IconCompat icon = IconCompat.createWithBitmap(croppedBitmap);
-            ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, item.md5)
-                    .setIcon(icon)
-                    .setIntent(gameIntent)
-                    .setShortLabel(item.displayName)
-                    .build();
-            ShortcutManagerCompat.requestPinShortcut(this, shortcut, null);
+                IconCompat icon = IconCompat.createWithBitmap(croppedBitmap);
+                ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, item.md5)
+                        .setIcon(icon)
+                        .setIntent(gameIntent)
+                        .setShortLabel(item.displayName)
+                        .build();
+                ShortcutManagerCompat.requestPinShortcut(this, shortcut, null);
+            }
         }
     }
 
