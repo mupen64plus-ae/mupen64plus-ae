@@ -55,8 +55,6 @@ import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
@@ -68,7 +66,6 @@ import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.SensorController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -77,7 +74,6 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
@@ -144,7 +140,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
     private AxisProvider mAxisProvider;
-    private Controller mMogaController;
     TouchController mTouchscreenController;
     private SensorController mSensorController;
     private long mLastTouchTime;
@@ -239,8 +234,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mAppData = new AppData( this );
 
-        mMogaController = Controller.getInstance( this );
-
         // Initialize the objects and data files interfacing to the emulator core
         final FragmentManager fm = this.getSupportFragmentManager();
         mCoreFragment = (CoreFragment) fm.findFragmentByTag(STATE_CORE_FRAGMENT);
@@ -279,9 +272,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             finish();
-
-        // Initialize MOGA controller API
-        MogaHack.init( mMogaController, this );
 
         // Get app data and user preferences
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -480,8 +470,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSidebar.setBackground(new DrawerDrawable(
                 mGlobalPrefs.displayActionBarTransparency));
 
-        mMogaController.onResume();
-
         if(mDrawerOpenState)
         {
             if(mCoreFragment != null)
@@ -524,8 +512,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (mSensorController != null) {
             mSensorController.onPause();
         }
-
-        mMogaController.onPause();
     }
 
     //This is only called once when fragment is destroyed due to rataining the state
@@ -960,7 +946,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "onExitRequested" );
         if(shouldExit)
         {
-            mMogaController.exit();
             shutdownEmulator();
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && mCoreFragment != null)
@@ -1139,7 +1124,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Create the input providers shared among all peripheral controllers
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
                 mGlobalPrefs.unmappableKeyCodes );
-        final MogaProvider mogaProvider = new MogaProvider( mMogaController );
         mAxisProvider = new AxisProvider(inputSource);
 
         // Request focus for proper listening
@@ -1152,16 +1136,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if( mGamePrefs.isControllerEnabled[index])
             {
                 final ControllerProfile p = mGamePrefs.controllerProfile[index];
-                initSingleController(index + 1, p, mogaProvider);
+                initSingleController(index + 1, p);
             }
         }
     }
 
-    private void initSingleController(int player, ControllerProfile p, final MogaProvider mogaProvider)
+    private void initSingleController(int player, ControllerProfile p)
     {
         if(p != null) {
            new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
+                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider);
             Log.i("GameActivity", "Player " + player + " controller has been enabled");
         }
     }

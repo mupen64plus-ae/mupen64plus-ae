@@ -36,8 +36,6 @@ import androidx.preference.PreferenceScreen;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
@@ -49,7 +47,6 @@ import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
-import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
@@ -112,9 +109,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     private String mCurrentFilePickerKey = null;
 
-    // MOGA controller interface
-    private final Controller mMogaController = Controller.getInstance( this );
-
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -149,9 +143,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         if( TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "MD5 must be passed via the extras bundle" );
-
-        // Initialize MOGA controller API
-        MogaHack.init( mMogaController, this );
 
         // Get app data and user preferences
         mAppData = new AppData( this );
@@ -203,7 +194,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
-        mMogaController.onResume();
     }
 
     private void setFilePickerPreferenceSummary(String filePickerPreferenceKey, String value)
@@ -281,14 +271,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         super.onPause();
         mPrefs.unregisterOnSharedPreferenceChangeListener( this );
-        mMogaController.onPause();
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        mMogaController.exit();
     }
 
     @Override
@@ -655,11 +637,5 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         if( playerPref.getValue().equals( mGlobalPrefs.getString( GamePrefs.PLAYER_MAP, "" ) ) )
             playerPref.setValue( "" );
-    }
-
-    @Override
-    public Controller getMogaController()
-    {
-        return mMogaController;
     }
 }

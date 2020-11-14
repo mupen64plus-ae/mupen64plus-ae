@@ -27,13 +27,10 @@ import android.os.Bundle;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
-import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
@@ -49,9 +46,6 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
-
-    // MOGA controller interface
-    private final Controller mMogaController = Controller.getInstance(this);
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -76,9 +70,6 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Initialize MOGA controller API
-        MogaHack.init(mMogaController, this);
-
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_defaults);
 
@@ -92,7 +83,6 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
         super.onPause();
 
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
-        mMogaController.onPause();
     }
 
     @Override
@@ -105,14 +95,6 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
         refreshViews();
 
         mPrefs.registerOnSharedPreferenceChangeListener(this);
-        mMogaController.onResume();
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        mMogaController.exit();
     }
 
     @Override
@@ -227,11 +209,5 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
     {
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
         playerPref.onDialogClosed(inputCode, hardwareId, which);
-    }
-
-    @Override
-    public Controller getMogaController()
-    {
-        return mMogaController;
     }
 }
