@@ -1019,6 +1019,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Call this here as well since onActivityResult happens before onResume
+        createSearchMenu();
+
         // Check which request we're responding to
         if (requestCode == SCAN_ROM_REQUEST_CODE) {
             // Make sure the request was successful
