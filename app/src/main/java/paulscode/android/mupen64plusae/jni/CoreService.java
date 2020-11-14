@@ -989,7 +989,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (mScreenshotRequested && mWorkingDir != null) {
                 mScreenshotRequested = false;
-                mFpsCangedHandler.post(mExportScreenshotChecker);
+                mPeriodicActionHandler.post(mExportScreenshotChecker);
             }
 
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
@@ -1024,8 +1024,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         if (workingDirFiles != null && workingDirFiles.length != 0) {
 
             for (File file : workingDirFiles) {
-                exportScreenshot(file);
-                if (file.delete()) {
+                boolean exportSuccess = exportScreenshot(file);
+                if (exportSuccess && file.delete()) {
                     Log.e(TAG, "Could not delete file " + file.getAbsolutePath());
                 }
             }
@@ -1041,8 +1041,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
     }
 
-    private void exportScreenshot(File file)
+    private boolean exportScreenshot(File file)
     {
+        boolean exportSuccess = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
             final String relativeLocation = Environment.DIRECTORY_PICTURES + File.separator + "mupen64plus";
@@ -1059,9 +1060,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (uri != null) {
                 try (OutputStream stream = resolver.openOutputStream(uri)) {
-                    if (stream != null) {
+                    if (stream != null && bitmap != null) {
                         if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
                             Log.e(TAG, "Could not save picture: " + file.getAbsolutePath());
+                            exportSuccess = false;
                         }
                     }
                 } catch (IOException e) {
@@ -1069,5 +1071,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
             }
         }
+
+        return exportSuccess;
     }
 }
