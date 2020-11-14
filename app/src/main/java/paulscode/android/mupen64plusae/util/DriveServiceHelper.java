@@ -363,7 +363,16 @@ public class DriveServiceHelper {
 
         DocumentFile file = FileUtil.getDocumentFileSingle(context, localFile);
 
-        ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file.getUri(), "r");
+        ParcelFileDescriptor parcelFileDescriptor = null;
+
+        try {
+            if (file != null) {
+                parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file.getUri(), "r");
+            }
+        } catch (java.lang.IllegalArgumentException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Unable to save data to google drive");
+        }
 
         GoogleDriveFileHolder googleDriveFileHolder = new GoogleDriveFileHolder();
 
