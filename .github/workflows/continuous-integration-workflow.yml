@@ -7,11 +7,19 @@ jobs:
     name: ubuntu-20.04
     runs-on: ubuntu-20.04
     container: cirrusci/android-sdk:30-ndk
- 
+
     steps:
     - uses: actions/checkout@v1
       with:
         submodules: true
+
+    - name: Decode debug keystore
+      env:
+        DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
+      run: |
+        echo $DEBUG_KEYSTORE > debug.keystore.base64
+        base64 --decode debug.keystore.base64 > debug.keystore
+        sudo cp -f debug.keystore /root/.android/.
 
     - name: Install
       run: |
