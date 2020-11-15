@@ -169,16 +169,13 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
 
         mGalleryRefreshTask = new GalleryRefreshTask(SyncProgramsJobService.this,
                 getApplicationContext(), globalPrefs, "", config);
-        mGalleryRefreshTask.execute();
+        mGalleryRefreshTask.doInBackground();
 
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        if (mGalleryRefreshTask != null) {
-            mGalleryRefreshTask.cancel(false);
-        }
         return true;
     }
 

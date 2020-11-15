@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae.task;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -43,7 +42,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
-public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
+public class GalleryRefreshTask
 {
     public interface GalleryRefreshFinishedListener
     {
@@ -54,9 +53,9 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
     private final GlobalPrefs mGlobalPrefs;
     private final WeakReference<Context> mContext;
     private final String mSearchQuery;
-    private List<GalleryItem> mItems = new ArrayList<>();
-    private List<GalleryItem> mRecentItems = new ArrayList<>();
-    private ConfigFile mConfig;
+    private final List<GalleryItem> mItems = new ArrayList<>();
+    private final List<GalleryItem> mRecentItems = new ArrayList<>();
+    private final ConfigFile mConfig;
 
     public GalleryRefreshTask(GalleryRefreshFinishedListener listener, Context context, GlobalPrefs globalPrefs,
                               String searchQuery, ConfigFile config)
@@ -68,17 +67,14 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         mConfig = config;
     }
     
-    @Override
-    protected String doInBackground( Void... params )
+    public void doInBackground()
     {
-        generateGridItemsAndSaveConfig(mItems, mRecentItems);
-        return "";
-    }
-    
-    @Override
-    protected void onPostExecute( String result )
-    {
-        mListener.onGalleryRefreshFinished( mItems, mRecentItems );
+        Thread refreshThread = new Thread(() -> {
+            generateGridItemsAndSaveConfig(mItems, mRecentItems);
+            mListener.onGalleryRefreshFinished( mItems, mRecentItems );
+        });
+        refreshThread.setDaemon(true);
+        refreshThread.start();
     }
 
     /**
@@ -222,7 +218,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                     }
 
                     boolean matchesSearch = true;
-                    if ( searches != null && searches.length > 0 && !TextUtils.isEmpty(displayName)) {
+                    if ( searches != null && searches.length > 0 && displayName != null) {
                         // Make sure the ROM name contains every token in the query
                         final String lowerName = displayName.toLowerCase( Locale.US );
                         for ( final String search : searches ) {

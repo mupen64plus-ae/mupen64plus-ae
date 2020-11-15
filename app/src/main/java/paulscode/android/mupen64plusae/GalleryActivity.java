@@ -1095,7 +1095,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
-        galleryRefreshTask.execute();
+        galleryRefreshTask.doInBackground();
 
         SyncProgramsJobService.syncProgramsForChannel(this, mAppData.getChannelId());
     }
@@ -1110,7 +1110,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems)
     {
-        refreshGrid(items, recentItems);
+        runOnUiThread(() -> refreshGrid(items, recentItems));
     }
 
     synchronized void refreshGrid(List<GalleryItem> items, List<GalleryItem> recentItems)

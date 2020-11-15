@@ -26,6 +26,7 @@ import java.util.List;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 
+@SuppressWarnings({"deprecation", "RedundantSuppression"})
 public class LegacyFilePicker extends AppCompatActivity implements OnItemClickListener
 {
     private List<String> mPaths;
