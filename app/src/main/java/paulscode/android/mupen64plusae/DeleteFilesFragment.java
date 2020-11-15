@@ -37,7 +37,7 @@ import paulscode.android.mupen64plusae.task.DeleteFilesService;
 import paulscode.android.mupen64plusae.task.DeleteFilesService.DeleteFilesListener;
 import paulscode.android.mupen64plusae.task.DeleteFilesService.LocalBinder;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "RedundantSuppression"})
 public class DeleteFilesFragment extends Fragment implements DeleteFilesListener {
 
     public interface DeleteFilesFinishedListener {
@@ -68,11 +68,16 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         super.onActivityCreated(savedInstanceState);
 
         if (mInProgress) {
-            CharSequence title = getString(R.string.pathDeletingFilesTask_title);
-            CharSequence message = getString(R.string.toast_pleaseWait);
+            try {
+                Activity activity = requireActivity();
+                CharSequence title = getString(R.string.pathDeletingFilesTask_title);
+                CharSequence message = getString(R.string.toast_pleaseWait);
 
-            mProgress = new ProgressDialog(mProgress, requireActivity(), title, "", message, false);
-            mProgress.show();
+                mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
+                mProgress.show();
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -89,7 +94,11 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
     @Override
     public void onDestroy() {
         if (mServiceConnection != null && mInProgress) {
-            ActivityHelper.stopDeleteFilesService(requireActivity().getApplicationContext(), mServiceConnection);
+            try {
+                ActivityHelper.stopDeleteFilesService(requireActivity().getApplicationContext(), mServiceConnection);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
 
         super.onDestroy();
@@ -97,8 +106,13 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
     @Override
     public void onDeleteFilesFinished() {
-        if (requireActivity() instanceof DeleteFilesFinishedListener) {
-            ((DeleteFilesFinishedListener)requireActivity()).onDeleteFilesFinished();
+        try {
+            Activity activity = requireActivity();
+            if (activity instanceof DeleteFilesFinishedListener) {
+                ((DeleteFilesFinishedListener) activity).onDeleteFilesFinished();
+            }
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 
@@ -121,7 +135,11 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         if (deletePath.size() != filter.size()) {
             throw new RuntimeException("Both arrays must be the same size");
         }
-        actuallyDeleteFiles(requireActivity());
+        try {
+            actuallyDeleteFiles(requireActivity());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     private void actuallyDeleteFiles(Activity activity) {
@@ -130,7 +148,7 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         CharSequence title = getString(R.string.pathDeletingFilesTask_title);
         CharSequence message = getString(R.string.toast_pleaseWait);
 
-        mProgress = new ProgressDialog(mProgress, requireActivity(), title, "", message, false);
+        mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
         mProgress.show();
 
         // Defines callbacks for service binding, passed to bindService() */

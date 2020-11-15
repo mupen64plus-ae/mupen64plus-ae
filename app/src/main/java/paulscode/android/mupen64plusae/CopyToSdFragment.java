@@ -39,7 +39,7 @@ import paulscode.android.mupen64plusae.task.CopyToSdService;
 import paulscode.android.mupen64plusae.task.CopyToSdService.CopyFilesListener;
 import paulscode.android.mupen64plusae.task.CopyToSdService.LocalBinder;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
 public class CopyToSdFragment extends Fragment implements CopyFilesListener
 {
     public interface OnFinishListener
@@ -77,10 +77,15 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         
         if(mInProgress)
         {
-            CharSequence title = getString( R.string.importExportActivity_exportDialogTitle );
-            CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, "", message, true );
-            mProgress.show();
+            try {
+                Activity activity = requireActivity();
+                CharSequence title = getString(R.string.importExportActivity_exportDialogTitle);
+                CharSequence message = getString(R.string.toast_pleaseWait);
+                mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
+                mProgress.show();
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -101,7 +106,11 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     {        
         if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopCopyToSdService(requireActivity().getApplicationContext(), mServiceConnection);
+            try {
+                ActivityHelper.stopCopyToSdService(requireActivity().getApplicationContext(), mServiceConnection);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         
         super.onDestroy();
@@ -110,8 +119,13 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     @Override
     public void onCopyToSdFinished()
     {
-        if (requireActivity() instanceof OnFinishListener) {
-            ((OnFinishListener)requireActivity()).onFinish();
+        try {
+            Activity activity = requireActivity();
+            if (activity instanceof OnFinishListener) {
+                ((OnFinishListener) activity).onFinish();
+            }
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
         }
     }
     
@@ -132,7 +146,11 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     {
         this.mSource = source;
         this.mDestination = destination;
-        actuallyCopyFiles(requireActivity());
+        try {
+            actuallyCopyFiles(requireActivity());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
     
     private void actuallyCopyFiles(Activity activity)
@@ -141,7 +159,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         
         CharSequence title = getString( R.string.importExportActivity_exportDialogTitle );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, requireActivity(), title, "", message, true );
+        mProgress = new ProgressDialog( mProgress, activity, title, "", message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

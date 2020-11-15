@@ -76,11 +76,16 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         
         if(mInProgress)
         {
-            CharSequence title = getString( R.string.pathHiResTexturesTask_title );
-            CharSequence message = getString( R.string.toast_pleaseWait );
-            DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), mTexturesFile);
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, file == null ? "" : file.getName(), message, true );
-            mProgress.show();
+            try {
+                Activity activity = requireActivity();
+                CharSequence title = getString(R.string.pathHiResTexturesTask_title);
+                CharSequence message = getString(R.string.toast_pleaseWait);
+                DocumentFile file = FileUtil.getDocumentFileSingle(activity, mTexturesFile);
+                mProgress = new ProgressDialog(mProgress, activity, title, file == null ? "" : file.getName(), message, true);
+                mProgress.show();
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -101,7 +106,11 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     {        
         if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopExtractTexturesService(requireActivity().getApplicationContext(), mServiceConnection);
+            try {
+                ActivityHelper.stopExtractTexturesService(requireActivity().getApplicationContext(), mServiceConnection);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         
         super.onDestroy();
@@ -111,8 +120,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     public void onExtractTexturesFinished()
     {
         try {
-            if (requireActivity() instanceof OnFinishListener) {
-                ((OnFinishListener)requireActivity()).onFinish();
+            Activity activity = requireActivity();
+            if (activity instanceof OnFinishListener) {
+                ((OnFinishListener)activity).onFinish();
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -136,7 +146,11 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     {
         this.mTexturesFile = textureFile;
 
-        actuallyExtractTextures(requireActivity());
+        try {
+            actuallyExtractTextures(requireActivity());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
     
     private void actuallyExtractTextures(Activity activity)
@@ -145,8 +159,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         
         CharSequence title = getString( R.string.pathHiResTexturesTask_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        DocumentFile file = FileUtil.getDocumentFileSingle(requireActivity(), mTexturesFile);
-        mProgress = new ProgressDialog( mProgress, requireActivity(), title, file == null ? "" : file.getName(), message, true );
+        DocumentFile file = FileUtil.getDocumentFileSingle(activity, mTexturesFile);
+        mProgress = new ProgressDialog( mProgress, activity, title, file == null ? "" : file.getName(), message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */

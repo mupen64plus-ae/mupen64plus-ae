@@ -41,7 +41,7 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoService.CacheRomInfoList
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.LocalBinder;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "RedundantSuppression"})
 public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 {    
     //Progress dialog for ROM scan
@@ -78,14 +78,19 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         
         if(mInProgress)
         {
-            CharSequence title = getString( R.string.scanning_title );
-            CharSequence message = getString( R.string.toast_pleaseWait );
+            try {
+                Activity activity = requireActivity();
+                CharSequence title = getString(R.string.scanning_title);
+                CharSequence message = getString(R.string.toast_pleaseWait);
 
-            DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(requireActivity(), Uri.parse(mSearchUri));
-            String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
+                DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
+                String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
 
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, text, message, true );
-            mProgress.show();
+                mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
+                mProgress.show();
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -106,7 +111,11 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     {        
         if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopCacheRomInfoService(requireActivity().getApplicationContext(), mServiceConnection);
+            try {
+                ActivityHelper.stopCacheRomInfoService(requireActivity().getApplicationContext(), mServiceConnection);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         
         super.onDestroy();
@@ -124,7 +133,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         mInProgress = false;
 
         try {
-            requireActivity().runOnUiThread(() -> ((GalleryActivity)requireActivity()).reloadCacheAndRefreshGrid());
+            Activity activity = requireActivity();
+            activity.runOnUiThread(((GalleryActivity) activity)::reloadCacheAndRefreshGrid);
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
         }
@@ -149,7 +159,11 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         this.mAppData = appData;
         this.mGlobalPrefs = globalPrefs;
 
-        ActuallyRefreshRoms(requireActivity());
+        try {
+            ActuallyRefreshRoms(requireActivity());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
     
     private void ActuallyRefreshRoms(Activity activity)
