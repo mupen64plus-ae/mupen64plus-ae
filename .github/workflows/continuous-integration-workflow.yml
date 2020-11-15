@@ -30,13 +30,21 @@ jobs:
         echo y | sdkmanager "ndk-bundle"
         
     - name: Set Environment
-      run: export ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/21.3.6528147
+      run: |
+        export ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/21.3.6528147
 
     - name: Build
       run: ./gradlew assemble
 
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
       with: 
-        name: apk
+        name: mupen64plus-ae-${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
         path: ${{ github.workspace }}/app/build/outputs/apk/debug/*
