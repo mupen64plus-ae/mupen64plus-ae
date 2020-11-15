@@ -151,9 +151,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private void loadGameFromExtras( Bundle extras) {
 
+        Intent intent = new Intent(CoreService.SERVICE_EVENT);
         if (extras != null) {
 
-            Intent intent = new Intent(CoreService.SERVICE_EVENT);
             // You can also include some extra data.
             intent.putExtra(CoreService.SERVICE_QUIT, true);
             sendBroadcast(intent);
@@ -210,7 +210,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 getIntent().replaceExtras((Bundle)null);
             }
         } else {
-            Intent intent = new Intent(CoreService.SERVICE_EVENT);
             // You can also include some extra data.
             intent.putExtra(CoreService.SERVICE_RESUME, true);
             sendBroadcast(intent);
@@ -659,82 +658,78 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
-        switch (item.getItemId())
-        {
-        case R.id.menuItem_refreshRoms:
+        if (item.getItemId() == R.id.menuItem_refreshRoms) {
             Intent intent = new Intent(this, ScanRomsActivity.class);
             startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
             return true;
-        case R.id.menuItem_categoryLibrary:
+        } else if (item.getItemId() == R.id.menuItem_categoryLibrary) {
             tagForRefreshNeeded();
-            ActivityHelper.startLibraryPrefsActivity( this );
+            ActivityHelper.startLibraryPrefsActivity(this);
             return true;
-        case R.id.menuItem_categoryDisplay:
+        } else if (item.getItemId() == R.id.menuItem_categoryDisplay) {
             tagForRefreshNeeded();
             ActivityHelper.startDisplayPrefsActivity( this );
             return true;
-        case R.id.menuItem_categoryAudio:
+        } else if (item.getItemId() == R.id.menuItem_categoryAudio) {
             ActivityHelper.startAudioPrefsActivity( this );
             return true;
-        case R.id.menuItem_categoryTouchscreen:
+        } else if (item.getItemId() == R.id.menuItem_categoryTouchscreen) {
             tagForRefreshNeeded();
             ActivityHelper.startTouchscreenPrefsActivity( this );
             return true;
-        case R.id.menuItem_categoryInput:
+        } else if (item.getItemId() == R.id.menuItem_categoryInput) {
             ActivityHelper.startInputPrefsActivity( this );
             return true;
-        case R.id.menuItem_categoryData:
+        } else if (item.getItemId() == R.id.menuItem_categoryData) {
             tagForRefreshNeeded();
             ActivityHelper.startDataPrefsActivity( this );
             return true;
-         case R.id.menuItem_categoryDefaults:
+         } else if (item.getItemId() == R.id.menuItem_categoryDefaults) {
             ActivityHelper.startDefaultPrefsActivity( this );
             return true;
-        case R.id.menuItem_emulationProfiles:
+        } else if (item.getItemId() == R.id.menuItem_emulationProfiles) {
             ActivityHelper.startManageEmulationProfilesActivity(this);
             return true;
-        case R.id.menuItem_touchscreenProfiles:
+        } else if (item.getItemId() == R.id.menuItem_touchscreenProfiles) {
             ActivityHelper.startManageTouchscreenProfilesActivity(this);
             return true;
-        case R.id.menuItem_controllerProfiles:
+        } else if (item.getItemId() == R.id.menuItem_controllerProfiles) {
             ActivityHelper.startManageControllerProfilesActivity(this);
             return true;
-        case R.id.menuItem_faq:
+        } else if (item.getItemId() == R.id.menuItem_faq) {
             Popups.showFaq(this);
             return true;
-        case R.id.menuItem_helpForum:
+        } else if (item.getItemId() == R.id.menuItem_helpForum) {
             ActivityHelper.launchUri(this, R.string.uri_forum);
             return true;
-        case R.id.menuItem_controllerDiagnostics:
+        } else if (item.getItemId() == R.id.menuItem_controllerDiagnostics) {
             ActivityHelper.startDiagnosticActivity(this);
             return true;
-        case R.id.menuItem_reportBug:
+        } else if (item.getItemId() == R.id.menuItem_reportBug) {
             ActivityHelper.launchUri(this, R.string.uri_bugReport);
             return true;
-        case R.id.menuItem_appVersion:
+        } else if (item.getItemId() == R.id.menuItem_appVersion) {
             Popups.showAppVersion(this);
             return true;
-        case R.id.menuItem_logcat:
+        } else if (item.getItemId() == R.id.menuItem_logcat) {
             ActivityHelper.startLogcatActivity(this);
             return true;
-        case R.id.menuItem_hardwareInfo:
+        } else if (item.getItemId() == R.id.menuItem_hardwareInfo) {
             Popups.showHardwareInfo(this);
             return true;
-        case R.id.menuItem_credits:
+        } else if (item.getItemId() == R.id.menuItem_credits) {
             ActivityHelper.launchUri(GalleryActivity.this, R.string.uri_credits);
             return true;
-        case R.id.menuItem_localeOverride:
+        } else if (item.getItemId() == R.id.menuItem_localeOverride) {
             mGlobalPrefs.changeLocale(this);
             return true;
-        case R.id.menuItem_extract:
+        } else if (item.getItemId() == R.id.menuItem_extract) {
             ActivityHelper.starExtractTextureActivity(this);
             return true;
-        case R.id.menuItem_clear:
+        } else if (item.getItemId() == R.id.menuItem_clear) {
             ActivityHelper.startDeleteTextureActivity(this);
             return true;
-        case R.id.menuItem_clearShaderCache:
-        {
-
+        } else if (item.getItemId() == R.id.menuItem_clearShaderCache) {
             final CharSequence title = getText( R.string.confirm_title );
             final CharSequence message = getText( R.string.menuItem_ConfirmationClearShaderCache );
 
@@ -744,12 +739,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             final FragmentManager fm = getSupportFragmentManager();
             confirmationDialog.show(fm, STATE_CLEAR_SHADERCACHE_DIALOG);
             return true;
-        }
-        case R.id.menuItem_importExportData:
-            ActivityHelper.startImportExportActivity( this );
+        } else if (item.getItemId() == R.id.menuItem_importExportData) {
+            ActivityHelper.startImportExportActivity(this);
             return true;
-
-        default:
+        } else {
             return super.onOptionsItemSelected(item);
         }
     }
@@ -802,45 +795,32 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( item == null || item.romUri == null)
             return;
 
-        switch( menuItem.getItemId() )
-        {
-            case R.id.menuItem_resume:
-                launchGameActivity( item.romUri,
-                        item.zipUri,
-                        item.md5, item.crc, item.headerName,
-                        item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false );
-                break;
-            case R.id.menuItem_start:
-                launchGameActivity( item.romUri,
-                        item.zipUri,
-                        item.md5, item.crc,
-                        item.headerName, item.countryCode.getValue(), item.artPath,
-                        item.goodName, item.displayName, true );
-                break;
-            case R.id.menuItem_settings:
-            {
-                tagForRefreshNeeded();
-                ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
-                        item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue());
-                break;
+        if (menuItem.getItemId() == R.id.menuItem_resume) {
+            launchGameActivity( item.romUri,
+                    item.zipUri,
+                    item.md5, item.crc, item.headerName,
+                    item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false );
+        } else if (menuItem.getItemId() == R.id.menuItem_start) {
+            launchGameActivity( item.romUri,
+                    item.zipUri,
+                    item.md5, item.crc,
+                    item.headerName, item.countryCode.getValue(), item.artPath,
+                    item.goodName, item.displayName, true );
+        } else if (menuItem.getItemId() == R.id.menuItem_settings) {
+            tagForRefreshNeeded();
+            ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
+                    item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue());
+        } else if (menuItem.getItemId() == R.id.menuItem_remove) {
+            final CharSequence title = getText( R.string.confirm_title );
+            final CharSequence message = getText( R.string.confirmRemoveFromLibrary_message );
 
-            }
-            case R.id.menuItem_remove:
-            {
-                final CharSequence title = getText( R.string.confirm_title );
-                final CharSequence message = getText( R.string.confirmRemoveFromLibrary_message );
+            final ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(REMOVE_FROM_LIBRARY_DIALOG_ID, title.toString(), message.toString());
 
-                final ConfirmationDialog confirmationDialog =
-                        ConfirmationDialog.newInstance(REMOVE_FROM_LIBRARY_DIALOG_ID, title.toString(), message.toString());
-
-                final FragmentManager fm = getSupportFragmentManager();
-                confirmationDialog.show(fm, STATE_REMOVE_FROM_LIBRARY_DIALOG);
-                break;
-            }
-            case R.id.menuItem_createShortcut:
-                createGameShortcut(item);
-                break;
-            default:
+            final FragmentManager fm = getSupportFragmentManager();
+            confirmationDialog.show(fm, STATE_REMOVE_FROM_LIBRARY_DIALOG);
+        } else if (menuItem.getItemId() == R.id.menuItem_createShortcut) {
+            createGameShortcut(item);
         }
     }
 
