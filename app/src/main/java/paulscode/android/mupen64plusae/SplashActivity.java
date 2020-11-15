@@ -324,9 +324,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
             for (int i = 0; i < grantResults.length && good; i++)
             {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
-                {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                     good = false;
+                    break;
                 }
             }
 
@@ -377,60 +377,63 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private void extractAssets()
     {
         // Extract and merge the assets if they are out of date
-        new ExtractAssetsOrCleanupTask( this, getAssets(), mAppData, mGlobalPrefs, SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+        new ExtractAssetsOrCleanupTask( this, getAssets(), mAppData, mGlobalPrefs, SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).doInBackground();
     }
 
     @Override
     public void onExtractAssetsProgress( String nextFileToExtract, int currentAsset, int totalAssets )
     {
-        final float percent = ( 100f * currentAsset ) / totalAssets;
-        final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
-        mTextView.setText( text );
+        runOnUiThread(() -> {
+            final float percent = ( 100f * currentAsset ) / totalAssets;
+            final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
+            mTextView.setText( text );
+        });
     }
-
 
     @Override
     public void onExtractAssetsFinished( List<Failure> failures )
     {
-        if (failures.size() != 0)
-        {
-            // Extraction failed, update the on-screen text and don't start next activity
-            final String message = getString( R.string.assetExtractor_failed );
-
-            StringBuilder builder = new StringBuilder();
-            builder.append(message.replace( "\n", "<br/>" )).append("<p><small>");
-            for( final Failure failure : failures )
+        runOnUiThread(() -> {
+            if (failures.size() != 0)
             {
-                builder.append(failure.toString());
-                builder.append("<br/>");
+                // Extraction failed, update the on-screen text and don't start next activity
+                final String message = getString( R.string.assetExtractor_failed );
+
+                StringBuilder builder = new StringBuilder();
+                builder.append(message.replace( "\n", "<br/>" )).append("<p><small>");
+                for( final Failure failure : failures )
+                {
+                    builder.append(failure.toString());
+                    builder.append("<br/>");
+                }
+                builder.append("</small>");
+
+                mTextView.setText( AppData.fromHtml( builder.toString() ) );
+                Log.e("SplashActivity", "Setting text: " +  AppData.fromHtml( builder.toString() ));
+
+                mAppData.putAssetCheckNeeded( true );
+
+            } else {
+                mAppData.putAssetCheckNeeded( false );
+                mTextView.setText( R.string.assetExtractor_finished );
             }
-            builder.append("</small>");
 
-            mTextView.setText( AppData.fromHtml( builder.toString() ) );
-            Log.e("SplashActivity", "Setting text: " +  AppData.fromHtml( builder.toString() ));
+            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
 
-            mAppData.putAssetCheckNeeded( true );
+            if(!RomDatabase.getInstance().hasDatabaseFile())
+            {
+                RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+            }
 
-        } else {
-            mAppData.putAssetCheckNeeded( false );
-            mTextView.setText( R.string.assetExtractor_finished );
-        }
-
-        CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
-
-        if(!RomDatabase.getInstance().hasDatabaseFile())
-        {
-            RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
-        }
-
-        // We never want to come back to this activity, so finish it
-        final Handler handler = new Handler(Looper.getMainLooper());
-        long delay = failures.size() != 0 ? 5000 : 0;
-        handler.postDelayed(() -> {
-            // Launch gallery activity, passing ROM path if it was provided externally
-            ActivityHelper.startGalleryActivity( this, getIntent() );
-            SplashActivity.this.finish();
-        }, delay);
+            // We never want to come back to this activity, so finish it
+            final Handler handler = new Handler(Looper.getMainLooper());
+            long delay = failures.size() != 0 ? 5000 : 0;
+            handler.postDelayed(() -> {
+                // Launch gallery activity, passing ROM path if it was provided externally
+                ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent() );
+                SplashActivity.this.finish();
+            }, delay);
+        });
     }
 
     private void createChannel()

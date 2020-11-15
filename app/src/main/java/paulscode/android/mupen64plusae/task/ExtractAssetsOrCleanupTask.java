@@ -26,7 +26,6 @@ package paulscode.android.mupen64plusae.task;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.os.AsyncTask;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,8 +45,8 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
-@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
-public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<ExtractAssetsOrCleanupTask.Failure>>
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "RedundantSuppression"})
+public class ExtractAssetsOrCleanupTask
 {
 
     private static final HashMap<String, Integer> mAssetVersions = new HashMap<>();
@@ -210,12 +209,11 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
     private final SharedPreferences mPreferences;
     private int mCurrentAsset = 0;
     private int mTotalAssets = 0;
-    private AppData mAppData;
-    private GlobalPrefs mGlobalPrefs;
+    private final AppData mAppData;
+    private final GlobalPrefs mGlobalPrefs;
 
     public ExtractAssetsOrCleanupTask(Context context, AssetManager assetManager, AppData appData, GlobalPrefs globalPrefs, String srcPath, String dstPath, ExtractAssetsListener listener )
     {
-
         if (assetManager == null )
             throw new IllegalArgumentException( "Asset manager cannot be null" );
         if( TextUtils.isEmpty( srcPath ) )
@@ -247,9 +245,17 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         return backupSuccess && copySuccess;
     }
 
+    public void doInBackground()
+    {
+        Thread refreshThread = new Thread(() -> {
+            List<Failure> failures = startExtractionAndCleanup();
+            mListener.onExtractAssetsFinished( failures );
+        });
+        refreshThread.setDaemon(true);
+        refreshThread.start();
+    }
     
-    @Override
-    protected List<Failure> doInBackground( Void... params )
+    protected List<Failure> startExtractionAndCleanup()
     {
         final List<Failure> failures = new ArrayList<>();
         
@@ -261,7 +267,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         // to use external sorage and use the same folder as the legacy data folder.
         if (!mGlobalPrefs.useExternalStorge) {
             //Move data to the new location
-            publishProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            mListener.onExtractAssetsProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, mCurrentAsset, mTotalAssets);
             ++mCurrentAsset;
             if (!createBackupAndMove(mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg)) {
                 Failure failure = new Failure( mGlobalPrefs.legacyRomInfoCacheCfg, mGlobalPrefs.romInfoCacheCfg, Failure.Reason.FILE_IO_EXCEPTION );
@@ -269,7 +275,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
                 failures.add( failure );
             }
 
-            publishProgress( "Moving: " + mGlobalPrefs.legacyCoverArtDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            mListener.onExtractAssetsProgress( "Moving: " + mGlobalPrefs.legacyCoverArtDir, mCurrentAsset, mTotalAssets);
             ++mCurrentAsset;
             if (!createBackupAndMove(mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir)) {
                 Failure failure = new Failure( mGlobalPrefs.legacyCoverArtDir, mGlobalPrefs.coverArtDir, Failure.Reason.FILE_IO_EXCEPTION );
@@ -277,7 +283,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
                 failures.add( failure );
             }
 
-            publishProgress( "Moving: " + mGlobalPrefs.legacyProfilesDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            mListener.onExtractAssetsProgress( "Moving: " + mGlobalPrefs.legacyProfilesDir, mCurrentAsset, mTotalAssets);
             ++mCurrentAsset;
             if (!createBackupAndMove(mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir)) {
                 Failure failure = new Failure( mGlobalPrefs.legacyProfilesDir, mGlobalPrefs.profilesDir, Failure.Reason.FILE_IO_EXCEPTION );
@@ -285,7 +291,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
                 failures.add( failure );
             }
 
-            publishProgress( "Moving: " + mGlobalPrefs.legacyTouchscreenCustomSkinsDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            mListener.onExtractAssetsProgress( "Moving: " + mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mCurrentAsset, mTotalAssets);
             ++mCurrentAsset;
             if (!createBackupAndMove(mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir)) {
                 Failure failure = new Failure( mGlobalPrefs.legacyTouchscreenCustomSkinsDir, mGlobalPrefs.touchscreenCustomSkinsDir, Failure.Reason.FILE_IO_EXCEPTION );
@@ -293,7 +299,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
                 failures.add( failure );
             }
 
-            publishProgress( "Moving: " + mAppData.legacyGameDataDir, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+            mListener.onExtractAssetsProgress( "Moving: " + mAppData.legacyGameDataDir, mCurrentAsset, mTotalAssets);
             ++mCurrentAsset;
             if (!createBackupAndMove(mAppData.legacyGameDataDir, mAppData.gameDataDir)) {
                 Failure failure = new Failure( mAppData.legacyGameDataDir, mAppData.gameDataDir, Failure.Reason.FILE_IO_EXCEPTION );
@@ -304,19 +310,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
 
         return extractAssets(failures, mSrcPath, mDstPath );
     }
-    
-    @Override
-    protected void onProgressUpdate( String... values )
-    {
-        mListener.onExtractAssetsProgress( values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]) );
-    }
-    
-    @Override
-    protected void onPostExecute( List<ExtractAssetsOrCleanupTask.Failure> result )
-    {
-        mListener.onExtractAssetsFinished( result );
-    }
-    
+
     public static final class Failure
     {
         public enum Reason
@@ -435,7 +429,7 @@ public class ExtractAssetsOrCleanupTask extends AsyncTask<Void, String, List<Ext
         final List<Failure> failures = new ArrayList<>();
 
         // Call the progress listener before extracting
-        publishProgress( "Extracting: " + destination, Integer.toString(mCurrentAsset), Integer.toString(mTotalAssets));
+        mListener.onExtractAssetsProgress( "Extracting: " + destination, mCurrentAsset, mTotalAssets);
 
         // IO objects, initialize null to eliminate lint error
         OutputStream out = null;
