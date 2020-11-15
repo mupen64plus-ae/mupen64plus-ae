@@ -1,0 +1,19 @@
+Mupen64Plus, Android Edition (AE) is an N64 emulator for Android.
+
+All necessary cores and plugins are included. There are many caveats though.
+
+* There will be issues with specific games or devices.
+* Not all games work, but most do.
+* For games that do work, you may have to try different video plugins
+* This includes the new GLideN64 plugin which should work with most games as long as your device is powerful enough. Not all games will work with default GLideN64 settings though, so you may have to play around with creating new profiles.
+* Not all video plugins will work with every device, and there could be glitches.
+* There are many missing translations. It may be better to stick with English.
+* Transfer pak is suported, but not writing back to save data and no gameboy tower support.
+* 64DD is supported, but not writing back to disk.
+
+For support, please go to either: /r/EmulationOnAndroid or www.paulscode.com
+
+Here is a great guide: http://www.paulscode.com/forum/index.php?topic=15692.0
+Here is how to modify controller mappings: http://www.paulscode.com/forum/index.php?topic=15812.0
+
+
