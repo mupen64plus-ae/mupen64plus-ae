@@ -1,5 +1,6 @@
 package paulscode.android.mupen64plusae.compat;
 
+import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListene
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 
 public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
@@ -92,7 +92,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     }
     
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         if (getActivity() instanceof OnFragmentCreationListener)
         {
@@ -117,9 +117,11 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
             {
                 fragment.setTargetFragment(this, 0);
 
-                FragmentManager fragmentManager = getFragmentManager();
-                if (fragmentManager != null) {
-                    fragment.show(getFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG");
+                try {
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    fragment.show(fragmentManager, "androidx.preference.PreferenceFragment.DIALOG");
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -137,7 +139,10 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 
         // Set the default white background in the view so as to avoid
         // transparency
-        view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.background_material_dark));
+        Context context = getContext();
+        if (context != null) {
+            view.setBackgroundColor(ContextCompat.getColor(context, R.color.background_material_dark));
+        }
     }
     
     @Override
@@ -151,33 +156,41 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         recyclerView.addOnChildAttachStateChangeListener(new OnChildAttachStateChangeListener()
         {
             @Override
-            public void onChildViewAttachedToWindow(View childView)
+            public void onChildViewAttachedToWindow(@NonNull View childView)
             {
                 final LinearLayoutManager layoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
 
                 //Prevent scrolling past the top
                 childView.setOnKeyListener((v, keyCode, event) -> {
-                    View focusedChild = layoutManager.getFocusedChild();
-                    int selectedPos = recyclerView.getChildAdapterPosition(focusedChild);
+                    View focusedChild;
+                    if (layoutManager != null && adapter != null) {
+                        focusedChild = layoutManager.getFocusedChild();
+                        int selectedPos;
+                        if (focusedChild != null) {
+                            selectedPos = recyclerView.getChildAdapterPosition(focusedChild);
 
-                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        switch(keyCode) {
-                            case KeyEvent.KEYCODE_DPAD_DOWN:
-                                return !(selectedPos < adapter.getItemCount() - 1);
-                            case KeyEvent.KEYCODE_DPAD_UP:
-                                return selectedPos == 0;
-                            case KeyEvent.KEYCODE_DPAD_RIGHT:
-                                return true;
+                            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                                switch(keyCode) {
+                                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                                        return !(selectedPos < adapter.getItemCount() - 1);
+                                    case KeyEvent.KEYCODE_DPAD_UP:
+                                        return selectedPos == 0;
+                                    case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                        return true;
+                                }
+                                return false;
+                            }
+                            return false;
                         }
-                        return false;
                     }
+
                     return false;
                 });
                 
                 //Make sure all views are focusable
                 childView.setFocusable(true);
 
-                if(adapter.getItemCount() > 0)
+                if(adapter != null && layoutManager != null && adapter.getItemCount() > 0)
                 {
                     int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition();
 
@@ -197,7 +210,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
             }
 
             @Override
-            public void onChildViewDetachedFromWindow(View arg0)
+            public void onChildViewDetachedFromWindow(@NonNull View arg0)
             {
                 // Nothing to do here
             }
