@@ -3,9 +3,14 @@ apply from: '../build_common/native_common.gradle'
 android {
 
     packagingOptions {
-        exclude 'lib/x86/libSDL2.so'
-        exclude 'lib/x86_64/libSDL2.so'
-        exclude 'lib/armeabi-v7a/libSDL2.so'
-        exclude 'lib/arm64-v8a/libSDL2.so'
+        exclude 'lib/x86/libsoundtouch.so'
+        exclude 'lib/x86_64/libsoundtouch.so'
+        exclude 'lib/armeabi-v7a/libsoundtouch.so'
+        exclude 'lib/arm64-v8a/libsoundtouch.so'
+
+        exclude 'lib/x86/libsoundtouch_fp.so'
+        exclude 'lib/x86_64/libsoundtouch_fp.so'
+        exclude 'lib/armeabi-v7a/libsoundtouch_fp.so'
+        exclude 'lib/arm64-v8a/libsoundtouch_fp.so'
     }
 }
