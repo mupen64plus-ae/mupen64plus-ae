@@ -95,7 +95,7 @@ const char *AlphaInput[] = {
 };
 
 inline
-int correctFirstStageParam(int _param)
+u32 correctFirstStageParam(u32 _param)
 {
 	switch (_param) {
 	case G_GCI_TEXEL1:
@@ -109,7 +109,7 @@ int correctFirstStageParam(int _param)
 static
 void _correctFirstStageParams(CombinerStage & _stage)
 {
-	for (int i = 0; i < _stage.numOps; ++i) {
+	for (u32 i = 0; i < _stage.numOps; ++i) {
 		_stage.op[i].param1 = correctFirstStageParam(_stage.op[i].param1);
 		_stage.op[i].param2 = correctFirstStageParam(_stage.op[i].param2);
 		_stage.op[i].param3 = correctFirstStageParam(_stage.op[i].param3);
@@ -117,7 +117,7 @@ void _correctFirstStageParams(CombinerStage & _stage)
 }
 
 inline
-int correctFirstStageParam2Cyc(int _param)
+u32 correctFirstStageParam2Cyc(u32 _param)
 {
 	switch (_param) {
 	case G_GCI_COMBINED:
@@ -129,7 +129,7 @@ int correctFirstStageParam2Cyc(int _param)
 static
 void _correctFirstStageParams2Cyc(CombinerStage & _stage)
 {
-	for (int i = 0; i < _stage.numOps; ++i) {
+	for (u32 i = 0; i < _stage.numOps; ++i) {
 		_stage.op[i].param1 = correctFirstStageParam2Cyc(_stage.op[i].param1);
 		_stage.op[i].param2 = correctFirstStageParam2Cyc(_stage.op[i].param2);
 		_stage.op[i].param3 = correctFirstStageParam2Cyc(_stage.op[i].param3);
@@ -137,7 +137,7 @@ void _correctFirstStageParams2Cyc(CombinerStage & _stage)
 }
 
 inline
-int correctSecondStageParam(int _param)
+u32 correctSecondStageParam(u32 _param)
 {
 	switch (_param) {
 	case G_GCI_TEXEL0:
@@ -154,7 +154,7 @@ int correctSecondStageParam(int _param)
 
 static
 void _correctSecondStageParams(CombinerStage & _stage) {
-	for (int i = 0; i < _stage.numOps; ++i) {
+	for (u32 i = 0; i < _stage.numOps; ++i) {
 		_stage.op[i].param1 = correctSecondStageParam(_stage.op[i].param1);
 		_stage.op[i].param2 = correctSecondStageParam(_stage.op[i].param2);
 		_stage.op[i].param3 = correctSecondStageParam(_stage.op[i].param3);
@@ -165,7 +165,7 @@ static
 CombinerInputs _compileCombiner(const CombinerStage & _stage, const char** _Input, std::stringstream & _strShader) {
 	bool bBracketOpen = false;
 	CombinerInputs inputs;
-	for (int i = 0; i < _stage.numOps; ++i) {
+	for (u32 i = 0; i < _stage.numOps; ++i) {
 		switch (_stage.op[i].op) {
 		case LOAD:
 			//			sprintf(buf, "(%s ", _Input[_stage.op[i].param1]);
@@ -822,14 +822,14 @@ public:
 		}
 
 		m_part +=
-			"  lowp mat4 bayer = mat4( 0.0, 0.25, 0.0625, 0.3125,						\n"
-			"                          0.25, 0.0, 0.3125, 0.0625,						\n"
-			"                          0.1875, 0.4375, 0.125, 0.375,					\n"
-			"                          0.4375, 0.1875, 0.375, 0.125);					\n"
-			"  lowp mat4 mSquare = mat4( 0.0, 0.6875, 0.75, 0.4375,						\n"
-			"                            0.875, 0.3125, 0.125, 0.5625, 					\n"
-			"                            0.1875, 0.5, 0.9375, 0.25,						\n"
-			"                            0.8125, 0.375, 0.0625, 0.625);					\n"
+			"  lowp mat4 bayer = mat4( 0.0, 0.5, 0.125, 0.625,							\n"
+			"                          0.5, 0.0, 0.625, 0.125,							\n"
+			"                          0.375, 0.875, 0.25, 0.75,						\n"
+			"                          0.875, 0.375, 0.75, 0.25);						\n"
+			"  lowp mat4 mSquare = mat4( 0.0, 0.75, 0.125, 0.875,						\n"
+			"                            0.5, 0.25, 0.625, 0.375, 						\n"
+			"                            0.375, 0.625, 0.25, 0.5,						\n"
+			"                            0.875, 0.125, 0.75, 0.0);						\n"
 			// Try to keep dithering visible even at higher resolutions
 			"  lowp float divider = 1.0 + step(3.0, uScreenScale.x);					\n"
 			"  mediump ivec2 position = ivec2(mod((gl_FragCoord.xy - 0.5) / divider,4.0));\n"
@@ -2162,7 +2162,7 @@ public:
 class ShaderCalcLight : public ShaderPart
 {
 public:
-	ShaderCalcLight(const opengl::GLInfo & _glinfo)
+	ShaderCalcLight(const opengl::GLInfo & /*_glinfo*/)
 	{
 		m_part =
 			"uniform mediump vec3 uLightDirection[8];	\n"
@@ -2714,7 +2714,7 @@ CombinerInputs CombinerProgramBuilder::compileCombiner(const CombinerKey & _key,
 		m_legacyBlender->write(ssShader);
 	}
 
-	_strShader = std::move(ssShader.str());
+	_strShader = ssShader.str();
 	return inputs;
 }
 
@@ -2856,7 +2856,7 @@ graphics::CombinerProgram * CombinerProgramBuilder::buildCombinerProgram(Combine
 
 	m_shaderN64DepthRender->write(ssShader);
 
-	const std::string strFragmentShader(std::move(ssShader.str()));
+	const std::string strFragmentShader(ssShader.str());
 
 	/* Create shader program */
 
@@ -2910,7 +2910,7 @@ GLuint _createVertexShader(ShaderPart * _header, ShaderPart * _body, ShaderPart 
 	_header->write(ssShader);
 	_body->write(ssShader);
 	_footer->write(ssShader);
-	const std::string strShader(std::move(ssShader.str()));
+	const std::string strShader(ssShader.str());
 	const GLchar * strShaderData = strShader.data();
 
 	GLuint shader_object = glCreateShader(GL_VERTEX_SHADER);
