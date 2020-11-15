@@ -42,6 +42,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
+
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.WindowManager.LayoutParams;
@@ -353,7 +355,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
             // Extract the assets in a separate thread and launch the menu activity
             // Handler.postDelayed ensures this runs only after activity has resumed
-            final Handler handler = new Handler();
+            final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
         }
         else
@@ -422,7 +424,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
 
         // We never want to come back to this activity, so finish it
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(Looper.getMainLooper());
         long delay = failures.size() != 0 ? 5000 : 0;
         handler.postDelayed(() -> {
             // Launch gallery activity, passing ROM path if it was provided externally

@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.game;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -140,7 +141,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
     }
 
-    final Handler mHandler = new Handler();
+    final Handler mHandler = new Handler(Looper.getMainLooper());
     Runnable mShowTouchscreen = new Runnable() {
         @Override
         public void run() {

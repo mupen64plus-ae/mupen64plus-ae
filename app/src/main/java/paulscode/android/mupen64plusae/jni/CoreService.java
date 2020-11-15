@@ -173,8 +173,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
      * is locked up since these won't happen if it is.
      */
     private long mLastFpsChangedTime;
-    private final Handler mFpsCangedHandler = new Handler();
-    private final Handler mPeriodicActionHandler = new Handler();
+    private final Handler mFpsCangedHandler = new Handler(Looper.getMainLooper());
+    private final Handler mPeriodicActionHandler = new Handler(Looper.getMainLooper());
 
     final static int ONGOING_NOTIFICATION_ID = 1;
 
