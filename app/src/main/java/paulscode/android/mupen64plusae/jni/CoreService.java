@@ -1062,7 +1062,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             final ContentResolver resolver = getApplicationContext().getContentResolver();
 
             final Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            Uri uri = resolver.insert(contentUri, contentValues);
+            Uri uri = null;
+
+            try {
+                uri = resolver.insert(contentUri, contentValues);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
 
             if (uri != null) {
                 try (OutputStream stream = resolver.openOutputStream(uri)) {
