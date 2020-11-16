@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2015 Paul Lamb
@@ -28,10 +28,9 @@ import java.util.Collections;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
-public class ExtractCheatsTask extends AsyncTask<String, String, String>
+public class ExtractCheatsTask
 {
     private final WeakReference<Context> mContext;
     private final ExtractCheatListener mExtractCheatListener;
@@ -58,13 +57,14 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
         mCheats = new ArrayList<>();
     }
 
-    @Override
-    protected String doInBackground(String... params)
+    public void doInBackground()
     {
-        buildCheatsCategory();
-
-        
-        return null;
+        Thread refreshThread = new Thread(() -> {
+            buildCheatsCategory();
+            mExtractCheatListener.onExtractFinished(mCheats);
+        });
+        refreshThread.setDaemon(true);
+        refreshThread.start();
     }
     
     private void buildCheatsCategory()
@@ -91,11 +91,4 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             mCheats.addAll(cheats);
         }
     }
-    
-    @Override
-    protected void onPostExecute( String result )
-    {        
-        mExtractCheatListener.onExtractFinished(mCheats);
-    }
-
 }

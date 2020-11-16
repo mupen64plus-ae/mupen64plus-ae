@@ -195,7 +195,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         
         //Do this in a separate task since it takes longer
         ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_default, crc, countryCode);
-        cheatsTask.execute((String) null);
+        cheatsTask.doInBackground();
         
         //We don't extract user cheats in a separate task since there aren't as many
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
@@ -213,8 +213,10 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     @Override
     public void onExtractFinished(ArrayList<Cheat> moreCheats)
     {
-        systemCheats.clear();
-        systemCheats.addAll( moreCheats );
+        runOnUiThread(() -> {
+            systemCheats.clear();
+            systemCheats.addAll( moreCheats );
+        });
     }    
     
     private void save( String crc )
@@ -373,8 +375,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         Builder builder = new Builder( this );
         builder.setTitle( R.string.cheatEditor_delete );
         builder.setMessage( R.string.cheatEditor_confirm );
-        builder.setPositiveButton( android.R.string.yes, listener );
-        builder.setNegativeButton( android.R.string.no, listener );
+        builder.setPositiveButton( android.R.string.ok, listener );
+        builder.setNegativeButton( android.R.string.cancel, listener );
         builder.create().show();
     }
  
