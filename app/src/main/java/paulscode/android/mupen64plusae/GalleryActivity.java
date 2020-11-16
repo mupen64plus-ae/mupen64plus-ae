@@ -412,7 +412,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             final String sideBarMd5 = savedInstanceState.getString( STATE_SIDEBAR );
             if( sideBarMd5 != null )
             {
-                mSelectedItem = new GalleryItem(getApplicationContext(), sideBarMd5, null, null,
+                mSelectedItem = new GalleryItem(this, sideBarMd5, null, null,
                         CountryCode.DEMO, null, null, null, null, null, 0, 0.0f);
             }
 
@@ -909,7 +909,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Check if valid image
         if (FileUtil.isFileImage(new File(item.artPath))) {
             // Set the cover art in the sidebar
-            item.loadBitmap();
+            item.loadBitmap(this);
             mGameSidebar.setImage(item.artBitmap);
         } else {
             mGameSidebar.setImage(null);

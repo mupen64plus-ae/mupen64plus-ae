@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 
@@ -64,7 +65,7 @@ public class GalleryItem
     public final int lastPlayed;
     public final String romUri;
     public final String zipUri;
-    public final WeakReference<Context>  context;
+    public final WeakReference<Context> context;
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
     public final float scale;
@@ -106,28 +107,21 @@ public class GalleryItem
         this.scale = 1.0f;
     }
     
-    void loadBitmap()
+    void loadBitmap(Context context)
     {
         if( artBitmap != null )
             return;
 
-        Context tempContext = context.get();
-        if( !TextUtils.isEmpty( artPath ) && new File( artPath ).exists() && tempContext != null)
-            artBitmap = new BitmapDrawable( tempContext.getResources(), artPath );
-    }
-    
-    void clearBitmap()
-    {
-        artBitmap = null;
+        if( !TextUtils.isEmpty( artPath ) && new File( artPath ).exists())
+            artBitmap = new BitmapDrawable( context.getResources(), artPath );
     }
 
     @NonNull
-    @Override
     public String toString()
     {
         if( !TextUtils.isEmpty( goodName ) )
             return displayName;
-        else if( !TextUtils.isEmpty( romUri ) ) {
+        else if( !TextUtils.isEmpty( romUri ) && context.get() != null) {
             DocumentFile file = FileUtil.getDocumentFileSingle(context.get(), Uri.parse(romUri));
             String romName = file == null ? null : file.getName();
             if (romName == null) {
@@ -172,13 +166,12 @@ public class GalleryItem
             OnLongClickListener
     {
         public GalleryItem item;
-        private WeakReference<Context> mContext;
-        LoadBitmapTask mLoadBitmapTask = null;
+        private final WeakReference<Activity> mActivity;
         
-        ViewHolder( WeakReference<Context> context, View view )
+        ViewHolder( WeakReference<Activity> activity, View view)
         {
             super( view );
-            mContext = context;
+            mActivity = activity;
             view.setOnClickListener( this );
             view.setOnLongClickListener( this );
         }
@@ -193,7 +186,7 @@ public class GalleryItem
         @Override
         public void onClick( View view )
         {
-            Context tempContext = mContext.get();
+            Context tempContext = mActivity.get();
             if ( tempContext instanceof GalleryActivity )
             {
                 GalleryActivity activity = (GalleryActivity) tempContext;
@@ -204,7 +197,7 @@ public class GalleryItem
         @Override
         public boolean onLongClick( View view )
         {
-            Context tempContext = mContext.get();
+            Context tempContext = mActivity.get();
 
             if ( tempContext instanceof GalleryActivity )
             {
@@ -217,13 +210,15 @@ public class GalleryItem
     
     public static class Adapter extends RecyclerView.Adapter<ViewHolder>
     {
-        private final WeakReference<Context> mContext;
+        private final WeakReference<Activity> mActivity;
         private final List<GalleryItem> mObjects;
+        private final LoadBitmapTask mLoadBitMapTask;
         
-        public Adapter( Context context, List<GalleryItem> objects )
+        public Adapter( Activity activity, List<GalleryItem> objects )
         {
-            mContext = new WeakReference<>(context);
+            mActivity = new WeakReference<>(activity);
             mObjects = objects;
+            mLoadBitMapTask = new LoadBitmapTask(activity);
         }
         
         @Override
@@ -249,14 +244,9 @@ public class GalleryItem
             // Clear the now-offscreen bitmap to conserve memory, also cancel any tasks reading the bitmap
             if( holder.item != null )
             {
-                if(holder.mLoadBitmapTask != null)
-                {
-                    holder.mLoadBitmapTask.cancel(true);
-                    holder.mLoadBitmapTask = null;
-                }
-                holder.item.clearBitmap();
+                mLoadBitMapTask.cancel(holder.hashCode());
             }
-            
+
             // Called by RecyclerView to display the data at the specified position.
             View view = holder.itemView;
             GalleryItem item = mObjects.get( position );
@@ -269,11 +259,11 @@ public class GalleryItem
                 TextView tv1 = view.findViewById( R.id.text1 );
                 tv1.setText( item.toString() );
 
-                Context tempContext = item.context.get();
+                Activity tempActivity = mActivity.get();
 
-                if (tempContext != null) {
+                if (tempActivity != null) {
                     LinearLayout linearLayout = view.findViewById( R.id.galleryItem );
-                    GalleryActivity activity = (GalleryActivity) tempContext;
+                    GalleryActivity activity = (GalleryActivity) tempActivity;
 
                     if( item.isHeading )
                     {
@@ -301,8 +291,7 @@ public class GalleryItem
                         artView.setImageResource( R.drawable.default_coverart );
 
                         //Load the real cover art in a background task
-                        holder.mLoadBitmapTask = new LoadBitmapTask(tempContext, item.artPath, artView);
-                        holder.mLoadBitmapTask.execute((String) null);
+                        mLoadBitMapTask.loadInBackGround(holder.hashCode(), item.artPath, artView);
 
                         artView.getLayoutParams().width = activity.galleryWidth;
                         artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
@@ -318,17 +307,17 @@ public class GalleryItem
         @NonNull
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType )
         {
-            Context tempContext = mContext.get();
-            LayoutInflater inflater = (LayoutInflater) tempContext
+            Context tempActivity = mActivity.get();
+            LayoutInflater inflater = (LayoutInflater) tempActivity
                     .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
             View view;
             if (inflater != null) {
                 view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
             } else {
-                view = new View(mContext.get(), null);
+                view = new View(tempActivity, null);
             }
-            return new ViewHolder( mContext, view );
+            return new ViewHolder( mActivity, view );
         }
     }
 }

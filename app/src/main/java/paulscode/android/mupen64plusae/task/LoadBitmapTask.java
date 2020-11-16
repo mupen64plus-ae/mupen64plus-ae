@@ -22,71 +22,108 @@ package paulscode.android.mupen64plusae.task;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-import org.mupen64plusae.v3.alpha.R;
-
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
 import paulscode.android.mupen64plusae.util.FileUtil;
 
-public class LoadBitmapTask extends AsyncTask<String, String, String>
+@SuppressWarnings({"unused", "RedundantSuppression"})
+public class LoadBitmapTask
 {
-    
-    private final String mBitmapPath;
-    private final WeakReference<ImageView> mArtView;
-    private BitmapDrawable mArtBitmap;
-    private final WeakReference<Context> mContext;
-    private boolean mIsCancelled;
-    
-    public LoadBitmapTask( Context context, String bitmapPath, ImageView artView)
-    {
-        mBitmapPath = bitmapPath;
-        mArtView = new WeakReference<>(artView);
-        mArtBitmap = null;
-        mContext = new WeakReference<>(context);
-        mIsCancelled = false;
-    }
+    ExecutorService mExecutorService;
+    HashMap<Integer, LoadBitmapRunnable> mPendingJobs = new HashMap<>();
+    HashMap<Integer, Future<?>> mPendingFutures = new HashMap<>();
+    private final WeakReference<Activity> mActivity;
 
-    @Override
-    protected String doInBackground(String... params)
-    {
-        Context tempContext = mContext.get();
+    class LoadBitmapRunnable implements Runnable {
 
-        if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() && tempContext != null )
+        private boolean mCancel = false;
+        private final String mBitmapPath;
+        private final WeakReference<ImageView> mArtView;
+
+        public LoadBitmapRunnable(String bitmapPath, ImageView artView)
         {
-            // Check if valid image
-            if (FileUtil.isFileImage(new File(mBitmapPath))) {
-                mArtBitmap = new BitmapDrawable( tempContext.getResources(), mBitmapPath );
+            mBitmapPath = bitmapPath;
+            mArtView = new WeakReference<>(artView);
+        }
+
+        @Override
+        public void run() {
+            Activity tempActivity = mActivity.get();
+            BitmapDrawable artBitmap = null;
+
+            boolean cancelled = Thread.currentThread().isInterrupted() || mCancel;
+
+            if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() && tempActivity != null && !cancelled)
+            {
+                // Check if valid image
+                if (FileUtil.isFileImage(new File(mBitmapPath))) {
+                    artBitmap = new BitmapDrawable( tempActivity.getResources(), mBitmapPath );
+                }
+
+                cancelled = Thread.currentThread().isInterrupted() || mCancel;
+                if(!cancelled)
+                {
+                    BitmapDrawable finalArtBitmap = artBitmap;
+
+                    tempActivity.runOnUiThread(() -> {
+                        if (!mCancel) {
+                            ImageView tempArtView = mArtView.get();
+
+                            if( tempArtView != null ) {
+                                tempArtView.setImageDrawable(finalArtBitmap);
+                                tempArtView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                            }
+                        }
+                    });
+                }
             }
         }
-        return null;
-    }
-    
-    @Override
-    protected void onPostExecute( String result )
-    {
-        ImageView tempArtView = mArtView.get();
 
-        if(!mIsCancelled && tempArtView != null)
+        public void cancel()
         {
-            if( mArtBitmap != null )
-                tempArtView.setImageDrawable( mArtBitmap );
-            else
-                tempArtView.setImageResource( R.drawable.default_coverart );
-
-            tempArtView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mCancel = true;
         }
     }
-    
-    @Override
-    protected void onCancelled() {
-        super.onCancelled();
-        
-        mIsCancelled = true;
+
+    public LoadBitmapTask( Activity context)
+    {
+        mExecutorService = Executors.newFixedThreadPool(3);
+        mActivity = new WeakReference<>(context);
     }
 
+    public void Shutdown()
+    {
+        mExecutorService.shutdown();
+    }
+
+    public void loadInBackGround(int itemId, String bitmapPath, ImageView artView)
+    {
+        LoadBitmapRunnable loadRunnable = new LoadBitmapRunnable(bitmapPath, artView);
+
+        Future<?> future = mExecutorService.submit(loadRunnable);
+        mPendingJobs.put(itemId, loadRunnable);
+        mPendingFutures.put(itemId, future);
+    }
+
+    public void cancel(int itemId) {
+        LoadBitmapRunnable pendingJob = mPendingJobs.get(itemId);
+        if (pendingJob != null) {
+            pendingJob.cancel();
+            mPendingJobs.remove(itemId);
+        }
+
+        Future<?> future = mPendingFutures.get(itemId);
+        if (future != null) {
+            future.cancel(true);
+            mPendingFutures.remove(itemId);
+        }
+    }
 }

@@ -32,6 +32,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Vibrator;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -424,7 +425,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Check periodically for touch input to determine if we should
         // hide the controls
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
         mLastTouchTime = System.currentTimeMillis() / 1000L;
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
