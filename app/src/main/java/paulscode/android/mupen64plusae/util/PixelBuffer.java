@@ -1,4 +1,4 @@
-/**
+/*
  * GL off screen rendered taken from http://www.anddev.org/android-2d-3d-graphics-opengl-tutorials-f2/possible-to-do-opengl-off-screen-rendering-in-android-t13232.html#wrap
  */
 
@@ -28,6 +28,7 @@ import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
 import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class PixelBuffer {
     final static String TAG = "PixelBuffer";
     final static boolean LIST_CONFIGS = false;

@@ -47,7 +47,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 /* ExpandableListView which stores its data set as a Menu hierarchy */
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class MenuListView extends ExpandableListView
 {
     private MenuListAdapter mAdapter;
@@ -142,10 +142,10 @@ public class MenuListView extends ExpandableListView
     
     public static class MenuListAdapter extends BaseExpandableListAdapter
     {
-        private MenuListView mListView;
-        private Menu mListData;
-        private SparseArray<View> mMenuViews;
-        private SparseArray<View> mMenuViewsExpanded;
+        private final MenuListView mListView;
+        private final Menu mListData;
+        private final SparseArray<View> mMenuViews;
+        private final SparseArray<View> mMenuViewsExpanded;
         
         MenuListAdapter( MenuListView listView, Menu listData )
         {
@@ -224,9 +224,8 @@ public class MenuListView extends ExpandableListView
                 }
                 
                 // Indent child views by 30 points
-                DisplayMetrics metrics = new DisplayMetrics();
-                ( (Activity) mListView.getContext() ).getWindowManager().getDefaultDisplay()
-                        .getMetrics( metrics );
+                Context context = mListView.getContext();
+                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
                 
                 view.setPadding((int) ( 30 * metrics.density ), view.getPaddingTop(),
                         view.getPaddingRight(), view.getPaddingBottom() );

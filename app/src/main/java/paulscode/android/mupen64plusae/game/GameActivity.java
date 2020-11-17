@@ -42,6 +42,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -84,6 +85,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -303,12 +305,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         } else {
             // If auto rotation is on, lock orientation until graphics have initialized. We don't
             // want the surface to be destroyed in the middle of initialization
-            if (getWindowManager().getDefaultDisplay().getRotation()== Surface.ROTATION_0)
+            Display display = DisplayWrapper.getDisplay(this);
+            if (display.getRotation()== Surface.ROTATION_0)
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            if (getWindowManager().getDefaultDisplay().getRotation()== Surface.ROTATION_90)
+            else if (display.getRotation()== Surface.ROTATION_90)
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            if (getWindowManager().getDefaultDisplay().getRotation()== Surface.ROTATION_270)
+            else if (display.getRotation()== Surface.ROTATION_270)
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            else if (display.getRotation()== Surface.ROTATION_180)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
 
             mScreenOrientationSet = false;
         }

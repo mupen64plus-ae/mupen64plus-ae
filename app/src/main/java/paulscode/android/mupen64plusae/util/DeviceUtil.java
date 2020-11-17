@@ -310,12 +310,8 @@ public final class DeviceUtil
     {
         if( view == null )
             return null;
-        
+
         Context context = view.getContext();
-        if( !( context instanceof Activity ) )
-            return null;
-        DisplayMetrics metrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        return metrics;
+        return context.getResources().getDisplayMetrics();
     }
 }

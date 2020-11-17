@@ -48,7 +48,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -83,6 +82,7 @@ import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
 import paulscode.android.mupen64plusae.task.SyncProgramsJobService;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -1133,10 +1133,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         galleryAspectRatio = galleryMaxWidth * 1.0f
                 / getResources().getDimension( R.dimen.galleryImageHeight )/mGlobalPrefs.coverArtScale;
 
-        final DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        int widthPixels = DisplayWrapper.getScreenWidth(this);
 
-        final int width = metrics.widthPixels - galleryHalfSpacing * 2;
+        final int width = widthPixels - galleryHalfSpacing * 2;
         galleryColumns = (int) Math
                 .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;

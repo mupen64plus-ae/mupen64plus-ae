@@ -12,7 +12,7 @@ import android.os.Build;
 
 import java.util.Locale;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class LocaleContextWrapper extends ContextWrapper {
 
     private static String mLocaleCode = null;

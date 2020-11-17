@@ -34,7 +34,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.WordUtils;
@@ -54,6 +53,7 @@ import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
@@ -92,7 +92,7 @@ import static java.lang.Integer.parseInt;
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
  */
-@SuppressWarnings({"WeakerAccess", "FieldCanBeLocal", "ConstantConditions"})
+@SuppressWarnings({"WeakerAccess", "FieldCanBeLocal"})
 public class GlobalPrefs
 {
     public enum DisplayScaling
@@ -101,7 +101,7 @@ public class GlobalPrefs
         STRETCH("stretch"),
         STRETCH_169("stretch169");
 
-        private String text;
+        private final String text;
 
         DisplayScaling(String text) {
             this.text = text;
@@ -977,21 +977,13 @@ public class GlobalPrefs
     {
         // Determine the pixel dimensions of the rendering context and view surface
         // Screen size
-        final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
-        final Display display = windowManager != null ? windowManager.getDefaultDisplay() : null;
 
         final Point dimensions = new Point(0,0);
 
-        if( display != null )
-        {
-            if(isImmersiveModeEnabled )
-            {
-                display.getRealSize(dimensions);
-            }
-            else
-            {
-                display.getSize(dimensions);
-            }
+        if(isImmersiveModeEnabled ) {
+            DisplayWrapper.getRealSize(context, dimensions);
+        } else {
+            DisplayWrapper.getSize(context, dimensions);
         }
 
         switch (scaling) {
