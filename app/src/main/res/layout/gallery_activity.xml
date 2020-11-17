@@ -39,6 +39,7 @@
             android:paddingBottom="72dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:background="@color/mupen_black"
             />
 
         <ImageView
@@ -61,6 +62,7 @@
                 android:layout_height="wrap_content"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
+                android:background="@color/mupen_black"
                 android:minHeight="?attr/actionBarSize">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
