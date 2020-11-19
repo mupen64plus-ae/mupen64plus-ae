@@ -292,7 +292,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final Window window = this.getWindow();
 
         // Enable full-screen mode
-        window.setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        DisplayWrapper.setFullScreen(this);
         window.setFlags(LayoutParams.FLAG_LAYOUT_IN_SCREEN, LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
         // Keep screen from going to sleep
@@ -1142,11 +1142,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if( mGlobalPrefs.isImmersiveModeEnabled )
             {
-                mDrawerLayout.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+                DisplayWrapper.enableImmersiveMode(this, mDrawerLayout);
             }
         }
     }

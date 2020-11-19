@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 
@@ -117,4 +118,33 @@ public class DisplayWrapper {
             }
         }
     }
+
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    public static void setFullScreen(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController insetsController = activity.getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.statusBars());
+            }
+        } else {
+            activity.getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+        }
+    }
+
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    public static void enableImmersiveMode(Activity activity, View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.getWindow().setDecorFitsSystemWindows(false);
+        } else {
+            view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+        }
+    }
+
 }

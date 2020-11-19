@@ -29,8 +29,6 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -39,11 +37,11 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager.LayoutParams;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
@@ -61,6 +59,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener, OnDialogMenuItemSelectedListener
@@ -99,8 +98,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     
     // User preferences wrapper
     private GlobalPrefs mGlobalPrefs;
-    private AppData mAppData;
-    
+
     // Visual elements
     private VisibleTouchMap mTouchscreenMap;
     private GameOverlay mOverlay;
@@ -138,8 +136,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         super.onCreate( savedInstanceState );
         
         // Get the user preferences wrapper
-        mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        AppData appData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs( this, appData);
         
         // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();
@@ -181,7 +179,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         READABLE_NAMES.put( TouchMap.TOGGLE_SENSOR, getString( R.string.controller_buttonSensor ) );
         
         // Enable full-screen mode
-        getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        DisplayWrapper.setFullScreen(this);
         
         // Lay out content and get the views
         setContentView( R.layout.touchscreen_profile_activity );
@@ -399,18 +397,16 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     @SuppressLint( "InlinedApi" )
     private void hideSystemBars()
     {
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null)
+            getSupportActionBar().hide();
+
+        DisplayWrapper.setFullScreen(this);
+
         View view = mSurface.getRootView();
         if( view != null )
         {
             if( mGlobalPrefs.isImmersiveModeEnabled )
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
-            else
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
+                DisplayWrapper.enableImmersiveMode(this, view);
         }
     }
 
@@ -604,9 +600,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
 
         if( assetName.equals("analog") )
         {
-            hide.setChecked(Boolean.valueOf(mProfile.get("touchscreenHideAnalogWhenSensor")));
-            invertTouchXAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_X_AXIS, "False")));
-            invertTouchYAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_Y_AXIS, "False")));
+            hide.setChecked(Boolean.parseBoolean(mProfile.get("touchscreenHideAnalogWhenSensor")));
+            invertTouchXAxis.setChecked(Boolean.parseBoolean(mProfile.get(INVERT_TOUCH_X_AXIS, "False")));
+            invertTouchYAxis.setChecked(Boolean.parseBoolean(mProfile.get(INVERT_TOUCH_Y_AXIS, "False")));
 
             hide.setOnCheckedChangeListener((buttonView, isChecked) -> mProfile.put("touchscreenHideAnalogWhenSensor", ( isChecked ? "True" : "False" )));
             invertTouchXAxis.setOnCheckedChangeListener((buttonView, isChecked) -> mProfile.put(INVERT_TOUCH_X_AXIS, isChecked ? "True" : "False"));
