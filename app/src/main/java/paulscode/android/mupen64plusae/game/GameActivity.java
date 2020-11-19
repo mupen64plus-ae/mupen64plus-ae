@@ -173,7 +173,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
 
-    private boolean[] isControllerPlugged = new boolean[4];
+    private final boolean[] isControllerPlugged = new boolean[4];
 
     private boolean mScreenOrientationSet = false;
 
@@ -292,7 +292,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final Window window = this.getWindow();
 
         // Enable full-screen mode
-        window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        window.setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         window.setFlags(LayoutParams.FLAG_LAYOUT_IN_SCREEN, LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
         // Keep screen from going to sleep
@@ -661,33 +661,25 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         if(mCoreFragment == null) return;
 
-        switch (menuItem.getItemId())
-        {
-        case R.id.menuItem_exit:
+        if (menuItem.getItemId() ==  R.id.menuItem_exit) {
             mCoreFragment.exit();
-            break;
-        case R.id.menuItem_toggle_speed:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_toggle_speed) {
             mCoreFragment.toggleSpeed();
 
             //Reload the menu with the new speed
             final MenuItem toggleSpeedItem =
-                mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
+                    mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
             toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
             mGameSidebar.reload();
-            break;
-        case R.id.menuItem_set_speed:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_set_speed ) {
             mCoreFragment.setCustomSpeedFromPrompt();
-            break;
-        case R.id.menuItem_screenshot:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_screenshot) {
             mCoreFragment.screenshot();
-            break;
-        case R.id.menuItem_set_slot:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_set_slot) {
             mCoreFragment.setSlotFromPrompt();
-            break;
-        case R.id.menuItem_slot_load:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_slot_load) {
             mCoreFragment.loadSlot();
-            break;
-        case R.id.menuItem_slot_save:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_slot_save) {
             mCoreFragment.saveSlot();
 
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
@@ -695,17 +687,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mDrawerLayout.closeDrawer( GravityCompat.START );
                 mOverlay.requestFocus();
             }
-            break;
-        case R.id.menuItem_file_load:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_file_load) {
             mCoreFragment.loadFileFromPrompt();
-            break;
-        case R.id.menuItem_file_save:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_file_save) {
             mCoreFragment.saveFileFromPrompt();
-            break;
-        case R.id.menuItem_file_load_auto_save:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_file_load_auto_save) {
             mCoreFragment.loadAutoSaveFromPrompt();
-            break;
-        case R.id.menuItem_disable_frame_limiter:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_disable_frame_limiter) {
             mCoreFragment.toggleFramelimiter();
 
             final int resId = mCoreFragment.getFramelimiter() ?
@@ -717,29 +705,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mGameSidebar.getMenu().findItem(R.id.menuItem_disable_frame_limiter);
             frameLimiterItem.setTitle(this.getString(resId));
             mGameSidebar.reload();
-            break;
-        case R.id.menuItem_player_one:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_player_one) {
             setPakTypeFromPrompt(1);
-            break;
-        case R.id.menuItem_player_two:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_player_two) {
             setPakTypeFromPrompt(2);
-            break;
-        case R.id.menuItem_player_three:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_player_three) {
             setPakTypeFromPrompt(3);
-            break;
-        case R.id.menuItem_player_four:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_player_four) {
             setPakTypeFromPrompt(4);
-            break;
-        case R.id.menuItem_setIme:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_setIme) {
             final InputMethodManager imeManager = (InputMethodManager)
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imeManager != null)
                 imeManager.showInputMethodPicker();
-            break;
-        case R.id.menuItem_reset:
+        } else if (menuItem.getItemId() ==  R.id.menuItem_reset) {
             mCoreFragment.restart();
-            break;
-        default:
         }
     }
 
