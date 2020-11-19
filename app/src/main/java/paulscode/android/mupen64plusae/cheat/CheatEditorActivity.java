@@ -227,14 +227,20 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         combinedCheats.addAll(userCheats);
         Collections.sort(combinedCheats);
 
-        FileUtil.makeDirs(new File( mGlobalPrefs.customCheats_txt ).getParentFile().getPath());
-        
-        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
-        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
-        CheatUtils.save( crc, usrcheat_txt, userCheats, mRomHeaderName, mRomCountryCode, this, false );
-        CheatUtils.save( crc, mupencheat_txt, combinedCheats, mRomHeaderName, mRomCountryCode, this, true );
-        
-        setResult(RESULT_OK, null);
+        File cheatsParent = new File( mGlobalPrefs.customCheats_txt ).getParentFile();
+
+        if (cheatsParent != null) {
+            FileUtil.makeDirs(cheatsParent.getPath());
+
+            CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
+            CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
+            CheatUtils.save( crc, usrcheat_txt, userCheats, mRomHeaderName, mRomCountryCode, this, false );
+            CheatUtils.save( crc, mupencheat_txt, combinedCheats, mRomHeaderName, mRomCountryCode, this, true );
+
+            setResult(RESULT_OK, null);
+        } else {
+            setResult(RESULT_CANCELED, null);
+        }
     }
     
     @Override
@@ -260,19 +266,12 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     @Override
     public void onDialogMenuItemSelected( int dialogId, MenuItem item)
     {
-        switch( item.getItemId() )
-        {
-            case R.id.menuItem_edit:
-                CreateCheatEditorDialog(false);
-                break;
-            case R.id.menuItem_advaned_edit:
-                CreateCheatEditorDialog(true);
-                break;
-            case R.id.menuItem_delete:
-                promptDelete(mSelectedCheat);
-                break;
-            default:
-                break;
+        if (item.getItemId() == R.id.menuItem_edit) {
+            CreateCheatEditorDialog(false);
+        } else if (item.getItemId() == R.id.menuItem_advaned_edit) {
+            CreateCheatEditorDialog(true);
+        } else if (item.getItemId() == R.id.menuItem_delete) {
+            promptDelete(mSelectedCheat);
         }
     }
     
