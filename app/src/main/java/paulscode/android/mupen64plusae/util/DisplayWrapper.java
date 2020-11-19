@@ -8,11 +8,13 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 public class DisplayWrapper {
 
@@ -85,6 +87,34 @@ public class DisplayWrapper {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             return displayMetrics.widthPixels;
+        }
+    }
+
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    public static void setDialogToResizeWithKeyboard(AlertDialog dialog, View dialogView) {
+        /* Make the dialog resize to the keyboard */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setDecorFitsSystemWindows(false);
+
+                dialogView.setOnApplyWindowInsetsListener((view, insets) -> {
+                    WindowInsets imeWindowInsets = view.getRootWindowInsets();
+
+                    if (imeWindowInsets.isVisible(WindowInsets.Type.ime())) {
+                        // Move view by the height of the IME
+                        Insets imeInsets = view.getRootWindowInsets().getInsets(WindowInsets.Type.ime());
+                        view.setTranslationX((float)imeInsets.bottom);
+                    } else {
+                        view.setTranslationX(0);
+                    }
+
+                    return insets;
+                });
+            }
+        } else {
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            }
         }
     }
 }

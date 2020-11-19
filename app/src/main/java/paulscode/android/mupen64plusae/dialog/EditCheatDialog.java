@@ -8,9 +8,12 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity.CheatAddressData;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity.CheatOptionData;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.Insets;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -275,12 +279,7 @@ public class EditCheatDialog extends DialogFragment
         builder.setNegativeButton(android.R.string.cancel, null);
 
         AlertDialog dialog = builder.create();
-
-        /* Make the dialog resize to the keyboard */
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        }
+        DisplayWrapper.setDialogToResizeWithKeyboard(dialog, dialogView);
 
         return dialog;
     }
