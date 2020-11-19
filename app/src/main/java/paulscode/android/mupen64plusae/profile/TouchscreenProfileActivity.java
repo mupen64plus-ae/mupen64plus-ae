@@ -284,51 +284,35 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     
     @Override
     public void onDialogMenuItemSelected( int dialogId, MenuItem item)
-    {        
-        switch( item.getItemId() )
-        {
-            case R.id.menuItem_globalSettings:
-                ActivityHelper.startTouchscreenPrefsActivity( this );
-                break;
-            case R.id.menuItem_sensorConfiguration:
-                new SensorConfigurationDialog(this, mProfile).show();
-                break;
-            case R.id.menuItem_exit:
-                finish();
-                break;
-            case R.id.menuItem_analog:
-                toggleAsset( ANALOG );
-                break;
-            case R.id.menuItem_dpad:
-                toggleAsset( DPAD );
-                break;
-            case R.id.menuItem_groupAB:
-                toggleAsset( GROUP_AB );
-                break;
-            case R.id.menuItem_buttonA:
-                toggleAsset( BUTTON_A );
-                break;
-            case R.id.menuItem_buttonB:
-                toggleAsset( BUTTON_B );
-                break;
-            case R.id.menuItem_groupC:
-                toggleAsset( GROUP_C );
-                break;
-            case R.id.menuItem_buttonL:
-                toggleAsset( BUTTON_L );
-                break;
-            case R.id.menuItem_buttonR:
-                toggleAsset( BUTTON_R );
-                break;
-            case R.id.menuItem_buttonZ:
-                toggleAsset( BUTTON_Z );
-                break;
-            case R.id.menuItem_buttonS:
-                toggleAsset( BUTTON_S );
-                break;
-            case R.id.menuItem_buttonSensor:
-                toggleAsset( BUTTON_SENSOR );
-                break;
+    {
+        if (item.getItemId() == R.id.menuItem_globalSettings) {
+            ActivityHelper.startTouchscreenPrefsActivity( this );
+        } else if (item.getItemId() == R.id.menuItem_sensorConfiguration) {
+            new SensorConfigurationDialog(this, mProfile).show();
+        } else if (item.getItemId() == R.id.menuItem_exit) {
+            finish();
+        } else if (item.getItemId() == R.id.menuItem_analog) {
+            toggleAsset( ANALOG );
+        } else if (item.getItemId() == R.id.menuItem_dpad) {
+            toggleAsset( DPAD );
+        } else if (item.getItemId() == R.id.menuItem_groupAB) {
+            toggleAsset( GROUP_AB );
+        } else if (item.getItemId() == R.id.menuItem_buttonA) {
+            toggleAsset( BUTTON_A );
+        } else if (item.getItemId() == R.id.menuItem_buttonB) {
+            toggleAsset( BUTTON_B );
+        } else if (item.getItemId() == R.id.menuItem_groupC) {
+            toggleAsset( GROUP_C );
+        } else if (item.getItemId() == R.id.menuItem_buttonL) {
+            toggleAsset( BUTTON_L );
+        } else if (item.getItemId() == R.id.menuItem_buttonR) {
+            toggleAsset( BUTTON_R );
+        } else if (item.getItemId() == R.id.menuItem_buttonZ) {
+            toggleAsset( BUTTON_Z );
+        } else if (item.getItemId() == R.id.menuItem_buttonS) {
+            toggleAsset( BUTTON_S );
+        } else if (item.getItemId() == R.id.menuItem_buttonSensor) {
+            toggleAsset( BUTTON_SENSOR );
         }
     }
     
