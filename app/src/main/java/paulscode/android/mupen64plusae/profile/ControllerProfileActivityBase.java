@@ -83,7 +83,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     // Command information
     protected String[] mCommandNames;
     protected int[] mCommandIndices;
-    private SparseArray<InputEntry> mEntryMap = new SparseArray<>();
+    private final SparseArray<InputEntry> mEntryMap = new SparseArray<>();
     private InputStrengthCalculator mStrengthCalculator;
     
     // Input listening
@@ -198,26 +198,24 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
-        switch( item.getItemId() )
-        {
-            case R.id.menuItem_unmapAll:
-                unmapAll();
-                return true;
-            case R.id.menuItem_deadzone:
-                setDeadzone();
-                return true;
-            case R.id.menuItem_sensitivity_x:
-                setSensitivityX();
-                return true;
-            case R.id.menuItem_sensitivity_y:
-                setSensitivityY();
-                return true;
-            case R.id.menuItem_exit:
-                finish();
-                return true;
-            default:
-                return false;
+        int itemId = item.getItemId();
+        if (itemId == R.id.menuItem_unmapAll) {
+            unmapAll();
+            return true;
+        } else if (itemId == R.id.menuItem_deadzone) {
+            setDeadzone();
+            return true;
+        } else if (itemId == R.id.menuItem_sensitivity_x) {
+            setSensitivityX();
+            return true;
+        } else if (itemId == R.id.menuItem_sensitivity_y) {
+            setSensitivityY();
+            return true;
+        } else if (itemId == R.id.menuItem_exit) {
+            finish();
+            return true;
         }
+        return false;
     }
     
     private void unmapAll()

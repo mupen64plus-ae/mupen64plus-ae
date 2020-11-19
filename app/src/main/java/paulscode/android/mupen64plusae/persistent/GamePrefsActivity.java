@@ -636,7 +636,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     public void onDialogClosed(int inputCode, int hardwareId, int which)
     {
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
-        playerPref.onDialogClosed(inputCode, hardwareId, which);
+        playerPref.onDialogClosed(hardwareId, which);
 
         if( playerPref.getValue().equals( mGlobalPrefs.getString( GamePrefs.PLAYER_MAP, "" ) ) )
             playerPref.setValue( "" );

@@ -208,6 +208,6 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
     public void onDialogClosed(int inputCode, int hardwareId, int which)
     {
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
-        playerPref.onDialogClosed(inputCode, hardwareId, which);
+        playerPref.onDialogClosed(hardwareId, which);
     }
 }

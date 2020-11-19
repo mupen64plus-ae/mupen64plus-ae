@@ -131,21 +131,17 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     public boolean onLongClick(View view)
     {
-        switch( view.getId() )
-        {
-            case R.id.btnPlayer1:
-                mMap.unmapPlayer( 1 );
-                break;
-            case R.id.btnPlayer2:
-                mMap.unmapPlayer( 2 );
-                break;
-            case R.id.btnPlayer3:
-                mMap.unmapPlayer( 3 );
-                break;
-            case R.id.btnPlayer4:
-                mMap.unmapPlayer( 4 );
-                break;
-            default: return false;
+        int id = view.getId();
+        if (id == R.id.btnPlayer1) {
+            mMap.unmapPlayer(1);
+        } else if (id == R.id.btnPlayer2) {
+            mMap.unmapPlayer(2);
+        } else if (id == R.id.btnPlayer3) {
+            mMap.unmapPlayer(3);
+        } else if (id == R.id.btnPlayer4) {
+            mMap.unmapPlayer(4);
+        } else {
+            return false;
         }
 
         updateViews();
@@ -185,20 +181,15 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     public void onClick( View view )
     {
-        switch( view.getId() )
-        {
-            case R.id.btnPlayer1:
-                promptPlayer( 1 );
-                break;
-            case R.id.btnPlayer2:
-                promptPlayer( 2 );
-                break;
-            case R.id.btnPlayer3:
-                promptPlayer( 3 );
-                break;
-            case R.id.btnPlayer4:
-                promptPlayer( 4 );
-                break;
+        int id = view.getId();
+        if (id == R.id.btnPlayer1) {
+            promptPlayer(1);
+        } else if (id == R.id.btnPlayer2) {
+            promptPlayer(2);
+        } else if (id == R.id.btnPlayer3) {
+            promptPlayer(3);
+        } else if (id == R.id.btnPlayer4) {
+            promptPlayer(4);
         }
     }
 
@@ -220,7 +211,7 @@ public class PlayerMapPreference extends DialogPreference implements
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
     }
 
-    public void onDialogClosed( int inputCode, int hardwareId, int which )
+    public void onDialogClosed(int hardwareId, int which)
     {
         if( which != DialogInterface.BUTTON_NEGATIVE )
         {

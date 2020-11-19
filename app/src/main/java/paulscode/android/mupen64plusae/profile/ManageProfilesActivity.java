@@ -256,20 +256,18 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     public boolean onOptionsItemSelected( MenuItem item )
     {
         mSelectedOperation = item.getItemId();
-        
-        switch( item.getItemId() )
-        {
-            case R.id.menuItem_new:
-                promptNameComment( R.string.menuItem_new, "", "", false);
-                return true;
-            case R.id.menuItem_toggleBuiltins:
-                setBuiltinVisibility( !getBuiltinVisibility() );
-                invalidateOptionsMenu();
-                refreshList();
-                return true;
-            default:
-                return super.onOptionsItemSelected( item );
+
+        int itemId = item.getItemId();
+        if (itemId == R.id.menuItem_new) {
+            promptNameComment(R.string.menuItem_new, "", "", false);
+            return true;
+        } else if (itemId == R.id.menuItem_toggleBuiltins) {
+            setBuiltinVisibility(!getBuiltinVisibility());
+            invalidateOptionsMenu();
+            refreshList();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -322,20 +320,14 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         
         mSelectedOperation = item.getItemId();
 
-        switch (mSelectedOperation) {
-            case R.id.menuItem_editCustomProfile:
-                editProfile(profile);
-                break;
-            case R.id.menuItem_copyCustomProfile:
-            case R.id.menuItem_copyBuiltinProfile:
-                promptNameComment(R.string.listItem_copy, profile.name, profile.comment, false);
-                break;
-            case R.id.menuItem_renameCustomProfile:
-                promptNameComment(R.string.listItem_rename, profile.name, profile.comment, true);
-                break;
-            case R.id.menuItem_deleteCustomProfile:
-                deleteProfile(profile);
-                break;
+        if (mSelectedOperation == R.id.menuItem_editCustomProfile) {
+            editProfile(profile);
+        } else if (mSelectedOperation == R.id.menuItem_copyCustomProfile || mSelectedOperation == R.id.menuItem_copyBuiltinProfile) {
+            promptNameComment(R.string.listItem_copy, profile.name, profile.comment, false);
+        } else if (mSelectedOperation == R.id.menuItem_renameCustomProfile) {
+            promptNameComment(R.string.listItem_rename, profile.name, profile.comment, true);
+        } else if (mSelectedOperation == R.id.menuItem_deleteCustomProfile) {
+            deleteProfile(profile);
         }
     }
     
@@ -445,19 +437,13 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     public void onProfileNameDialogButton( int dialogId, int selectedButton, String name, String comment )
     {
         if( selectedButton == DialogInterface.BUTTON_POSITIVE )
-        {            
-            switch (mSelectedOperation)
-            {
-            case R.id.menuItem_new:
+        {
+            if (mSelectedOperation == R.id.menuItem_new) {
                 addProfile(name, comment);
-                break;
-            case R.id.menuItem_copyCustomProfile:
-            case R.id.menuItem_copyBuiltinProfile:
+            } else if (mSelectedOperation == R.id.menuItem_copyCustomProfile || mSelectedOperation == R.id.menuItem_copyBuiltinProfile) {
                 copyProfile(name, comment);
-                break;
-            case R.id.menuItem_renameCustomProfile:
+            } else if (mSelectedOperation == R.id.menuItem_renameCustomProfile) {
                 renameProfile(name, comment);
-                break;
             }
         }
     }
