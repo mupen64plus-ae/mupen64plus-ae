@@ -175,6 +175,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private long mLastFpsChangedTime;
     private final Handler mFpsCangedHandler = new Handler(Looper.getMainLooper());
     private final Handler mPeriodicActionHandler = new Handler(Looper.getMainLooper());
+    private final Handler mShutdownHandler = new Handler(Looper.getMainLooper());
 
     final static int ONGOING_NOTIFICATION_ID = 1;
 
@@ -260,11 +261,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mIsShuttingDown = true;
         }
 
-        mCoreInterface.addOnStateCallbackListener(new CoreInterface.OnStateCallbackListener() {
+        CoreInterface.OnStateCallbackListener saveComplete = new CoreInterface.OnStateCallbackListener() {
             @Override
-            public void onStateCallback( int paramChanged, int newValue ) {
+            public void onStateCallback(int paramChanged, int newValue) {
                 if (paramChanged == CoreTypes.m64p_core_param.M64CORE_STATE_SAVECOMPLETE.ordinal()) {
-                    mCoreInterface.removeOnStateCallbackListener( this );
 
                     //newValue == 1, then it was successful
                     if (newValue == 1) {
@@ -279,14 +279,25 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                         Log.e(TAG, "Unable to save file due to bad return: " + latestSave);
                     }
 
-                    if (shutdownOnFinish) {
-                        shutdownEmulator();
-                    }
+                    final CoreInterface.OnStateCallbackListener saveCompleteListener = this;
+
+                    // Don't do this on teh same thread since the core doesn't like to be called
+                    // back to again on a call back
+                    mShutdownHandler.postDelayed(() -> {
+                        mCoreInterface.removeOnStateCallbackListener(this);
+
+                        if (shutdownOnFinish) {
+                            shutdownEmulator();
+                        }
+                    }, 500);
+
                 } else {
                     Log.i(TAG, "Param changed = " + paramChanged + " value = " + newValue);
                 }
             }
-        } );
+        };
+
+        mCoreInterface.addOnStateCallbackListener(saveComplete);
 
         mCoreInterface.emuSaveFile( latestSave );
     }
