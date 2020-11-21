@@ -119,13 +119,13 @@ private:
 
                 // notify main thread
                 m_signal_done.notify_one();
-#if !defined(ANDROID)
+// #if !defined(ANDROID)
                 // take a break and wait for more work
                 m_signal_work.wait(ul, [worker_mask, this] {
                     return (m_tasks_done & worker_mask) == 0;
                 });
             }
-#else
+/*#else
             }
             //Busy loop wait for a bit to keep cores awake
             bool workAvailable = false;
@@ -142,13 +142,13 @@ private:
             m_signal_work.wait(ul, [worker_mask, this] {
                 return (m_tasks_done & worker_mask) == 0;
             });
-#endif
+#endif */
         }
     }
 
     void wait() {
 
-#ifdef ANDROID
+/* #ifdef ANDROID
         //Busy loop wait for a bit to keep cores awake
         bool waitingForWorkDone = true;
         int count = 0;
@@ -156,7 +156,7 @@ private:
             waitingForWorkDone = m_tasks_done != m_all_tasks_done;
             std::this_thread::yield();
         }
-#endif
+#endif */
 
         // wait for all workers to set their task bits
         std::unique_lock<std::mutex> ul(m_signal_mutex);
