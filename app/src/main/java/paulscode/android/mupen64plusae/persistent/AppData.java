@@ -149,8 +149,8 @@ public class AppData
 
     public enum AudioPlugin {
         DUMMY("dummy"),
-        ANDROID("mupen64plus-audio-audio"),
-        ANDROID_FP("mupen64plus-audio-audio-fp");
+        ANDROID("mupen64plus-audio-android"),
+        ANDROID_FP("mupen64plus-audio-android-fp");
 
         String mPlugingLib;
 

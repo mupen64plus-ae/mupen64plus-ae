@@ -47,9 +47,3 @@ extern ptr_ConfigGetParamInt      ConfigGetParamInt;
 extern ptr_ConfigGetParamFloat    ConfigGetParamFloat;
 extern ptr_ConfigGetParamBool     ConfigGetParamBool;
 extern ptr_ConfigGetParamString   ConfigGetParamString;
-
-struct QueueData {
-    int16_t* data;
-    unsigned int samples;
-    double timeSinceStart;
-};
