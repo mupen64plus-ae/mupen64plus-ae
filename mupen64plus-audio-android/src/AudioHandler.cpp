@@ -431,7 +431,7 @@ void AudioHandler::audioConsumerStretch() {
 			double timeDiff = currQueueData.timeSinceStart - prevTime;
 			prevTime = currQueueData.timeSinceStart;
 
-			// Ignore negative time, it can be nagative if game is falling too far behind real time
+			// Ignore negative time, it can be negative if game is falling too far behind real time
 			if (timeDiff > 0) {
 				feedTimes[feedTimeIndex] = timeDiff;
 				averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
