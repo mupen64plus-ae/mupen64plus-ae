@@ -356,10 +356,8 @@ EXPORT void CALL AiLenChanged(void) {
     unsigned char *inputAudio = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
 
     // Push data to the audio handler
-    std::unique_ptr<int16_t[]> data = std::make_unique<int16_t[]>(LenReg/sizeof(int16_t));
-    std::copy(inputAudio, inputAudio + LenReg, reinterpret_cast<unsigned char*>(data.get()));
     std::chrono::duration<double> timeSinceStart = currentTime - gameStartTime;
-    AudioHandler::get().pushData(std::move(data), LenReg/N64_SAMPLE_BYTES, timeSinceStart);
+    AudioHandler::get().pushData(reinterpret_cast<int16_t*>(inputAudio), LenReg/N64_SAMPLE_BYTES, timeSinceStart);
 
     //Calculate total ellapsed game time
     totalElapsedSamples += LenReg / N64_SAMPLE_BYTES;

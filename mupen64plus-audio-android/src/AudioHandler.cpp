@@ -24,7 +24,8 @@ AudioHandler& AudioHandler::get()
 
 AudioHandler::AudioHandler() :
     mShutdownThread(true),
-    mState{}
+    mState{},
+	mSoundBufferPool(1024*1024)
 {
 }
 
@@ -279,14 +280,19 @@ void AudioHandler::initializeAudio(int freq) {
 	}
 }
 
-void AudioHandler::pushData(std::unique_ptr<int16_t[]> data, int samples, std::chrono::duration<double> timeSinceStart) {
-	//Add data to the queue
-	auto theQueueData = new QueueData;
-	theQueueData->data = std::move(data);
-	theQueueData->samples = samples;
-	theQueueData->timeSinceStart = timeSinceStart.count();
+void AudioHandler::pushData(const int16_t* _data, int _samples, std::chrono::duration<double> timeSinceStart) {
 
-	mAudioConsumerQueue.push(theQueueData);
+	int numValues = _samples*2; // two values per sample since it's stereo
+
+	PoolBufferPointer data = mSoundBufferPool.createPoolBuffer(reinterpret_cast<const char*>(_data), numValues*sizeof(int16_t));
+
+	//Add data to the queue
+	QueueData theQueueData;
+	theQueueData.data = data;
+	theQueueData.samples = _samples;
+	theQueueData.timeSinceStart = timeSinceStart.count();
+
+	mAudioConsumerQueue.enqueue(theQueueData);
 }
 
 void AudioHandler::audioConsumerStretchEntry(void* audioHandler) {
@@ -361,9 +367,8 @@ void AudioHandler::audioConsumerStretch() {
 
 		ranDry = slesQueueLength < minQueueSize;
 
-		QueueData* currQueueData;
-
-		if (mAudioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
+		QueueData currQueueData;
+		if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(1000))) {
 
 			double temp = averageGameTime / averageFeedTime;
 
@@ -372,7 +377,9 @@ void AudioHandler::audioConsumerStretch() {
 				speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
 				mSoundTouch.setTempo(speedFactor);
 
-				processAudioSoundTouch(std::move(currQueueData->data), currQueueData->samples);
+				auto shortData = reinterpret_cast<const int16_t*>(mSoundBufferPool.getBufferFromPool(currQueueData.data));
+				processAudioSoundTouch(shortData, currQueueData.samples);
+				mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 
 			} else {
 
@@ -405,7 +412,9 @@ void AudioHandler::audioConsumerStretch() {
 					mSoundTouch.setTempo(slowAdjustment);
 				}
 
-				processAudioSoundTouch(std::move(currQueueData->data), currQueueData->samples);
+				auto shortData = reinterpret_cast<const int16_t*>(mSoundBufferPool.getBufferFromPool(currQueueData.data));
+				processAudioSoundTouch(shortData, currQueueData.samples);
+				mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 			}
 
 			//Useful logging
@@ -418,14 +427,14 @@ void AudioHandler::audioConsumerStretch() {
 			//We don't want to calculate the average until we give everything a time to settle.
 
 			//Figure out how much to slow down by
-			double timeDiff = currQueueData->timeSinceStart - prevTime;
+			double timeDiff = currQueueData.timeSinceStart - prevTime;
 
-			prevTime = currQueueData->timeSinceStart;
+			prevTime = currQueueData.timeSinceStart;
 
 			feedTimes[feedTimeIndex] = timeDiff;
 			averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-			gameTimes[feedTimeIndex] = (float)currQueueData->samples / (float)mInputFreq;
+			gameTimes[feedTimeIndex] = (float)currQueueData.samples / (float)mInputFreq;
 			averageGameTime = getAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
 			++feedTimeIndex;
@@ -439,8 +448,6 @@ void AudioHandler::audioConsumerStretch() {
 			if (feedTimeWindowSize > maxWindowSize) {
 				feedTimeWindowSize = maxWindowSize;
 			}
-
-			delete currQueueData;
 		}
 	}
 }
@@ -452,15 +459,14 @@ void AudioHandler::audioConsumerNoStretchEntry(void* audioHandler) {
 void AudioHandler::audioConsumerNoStretch() {
 
 	if (mSamplingType == 0) {
-		QueueData* currQueueData = nullptr;
+		QueueData currQueueData;
 
 		while (!mShutdownThread)
 		{
-			if (mAudioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
-
-				processAudioTrivial(std::move(currQueueData->data), currQueueData->samples);
-
-				delete currQueueData;
+			if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(1000))) {
+				auto shortData = reinterpret_cast<const int16_t*>(mSoundBufferPool.getBufferFromPool(currQueueData.data));
+				processAudioTrivial(shortData, currQueueData.samples);
+				mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 			}
 		}
 	} else {
@@ -472,13 +478,13 @@ void AudioHandler::audioConsumerNoStretch() {
 		mSoundTouch.setTempo(speedFactor);
 
 		mSoundTouch.setRate((double) mInputFreq / (double) mOutputFreq);
-		QueueData* currQueueData = nullptr;
+		QueueData currQueueData;
 
 		int lastSpeedFactor = mSpeedFactor;
 
 		while (!mShutdownThread)
 		{
-			if (mAudioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
+			if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(1000))) {
 
 				if (lastSpeedFactor != mSpeedFactor)
 				{
@@ -486,9 +492,9 @@ void AudioHandler::audioConsumerNoStretch() {
 					mSoundTouch.setTempo(static_cast<double>(mSpeedFactor) / 100.0);
 				}
 
-				processAudioSoundTouch(std::move(currQueueData->data), currQueueData->samples);
-
-				delete currQueueData;
+				auto shortData = reinterpret_cast<const int16_t*>(mSoundBufferPool.getBufferFromPool(currQueueData.data));
+				processAudioSoundTouch(shortData, currQueueData.samples);
+				mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 			}
 		}
 	}
@@ -506,7 +512,7 @@ void AudioHandler::queueCallback(SLAndroidSimpleBufferQueueItf caller, void *con
 	}
 }
 
-int AudioHandler::convertBufferToSlesBuffer(std::unique_ptr<int16_t[]> inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart)
+int AudioHandler::convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart)
 {
 	if (inputSamples*slesSamplesBytes < mPrimaryBufferBytes) {
 
@@ -553,9 +559,9 @@ int AudioHandler::convertBufferToSlesBuffer(std::unique_ptr<int16_t[]> inputBuff
 	return outputBufferStart;
 }
 
-void AudioHandler::processAudioSoundTouch(std::unique_ptr<int16_t[]> buffer, unsigned int samples) {
+void AudioHandler::processAudioSoundTouch(const int16_t* buffer, unsigned int samples) {
 
-	convertBufferToSlesBuffer(std::move(buffer), samples, mPrimaryBuffer, 0);
+	convertBufferToSlesBuffer(buffer, samples, mPrimaryBuffer, 0);
 
 	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE*>(mPrimaryBuffer), samples);
 
@@ -614,13 +620,13 @@ static int resample(const unsigned char *input, int bytesPerSample, int oldsampl
 }
 
 
-void AudioHandler::processAudioTrivial(std::unique_ptr<int16_t[]> buffer, unsigned int samples)
+void AudioHandler::processAudioTrivial(const int16_t* buffer, unsigned int samples)
 {
 	static const int secondaryBufferBytes = mSecondaryBufferSize * slesSamplesBytes;
 
 	static int primaryBufferPos = 0;
 
-	primaryBufferPos = convertBufferToSlesBuffer(std::move(buffer), samples, mPrimaryBuffer, primaryBufferPos);
+	primaryBufferPos = convertBufferToSlesBuffer(buffer, samples, mPrimaryBuffer, primaryBufferPos);
 
 	int newsamplerate = mOutputFreq * 100 / mSpeedFactor;
 	int oldsamplerate = mInputFreq;

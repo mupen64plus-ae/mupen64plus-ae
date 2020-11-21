@@ -41,7 +41,8 @@ find_package (oboe REQUIRED CONFIG)
 add_library (mupen64plus-audio-android SHARED
         src/plugin.cpp
         src/osal_dynamiclib_unix.cpp
-        src/AudioHandler.cpp)
+        src/AudioHandler.cpp
+        src/RingBufferPool.cpp)
 target_compile_definitions(mupen64plus-audio-android PUBLIC -D__SOFTFP__ -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
@@ -51,7 +52,8 @@ target_link_libraries(mupen64plus-audio-android log OpenSLES oboe::oboe SOUNDTOU
 add_library (mupen64plus-audio-android-fp SHARED
         src/plugin.cpp
         src/osal_dynamiclib_unix.cpp
-        src/AudioHandler.cpp)
+        src/AudioHandler.cpp
+        src/RingBufferPool.cpp)
 target_compile_definitions(mupen64plus-audio-android-fp PUBLIC -DFP_ENABLED -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe

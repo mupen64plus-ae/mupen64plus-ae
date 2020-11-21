@@ -1,11 +1,15 @@
 #pragma once
 
 #include "m64p_config.h"
-#include "BlockingQueue.h"
+#include "RingBufferPool.h"
+#include "readerwriterqueue.h"
 #include <SoundTouch.h>
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include <thread>
+
+
+using namespace moodycamel;
 
 class AudioHandler
 {
@@ -74,7 +78,7 @@ public:
 	/*
 	 * Pushes audio data to be processed
 	 */
-	void pushData(std::unique_ptr<int16_t[]> _data, int _samples, std::chrono::duration<double> _timeSinceStart);
+	void pushData(const int16_t* _data, int _samples, std::chrono::duration<double> _timeSinceStart);
 
 	// Default start-time size of primary buffer (in equivalent output samples).
 	// This is the buffer where audio is loaded after it's extracted from n64's memory.
@@ -95,7 +99,7 @@ private:
 	};
 
 	struct QueueData {
-		std::unique_ptr<int16_t[]> data;
+		PoolBufferPointer data;
 		unsigned int samples;
 		double timeSinceStart;
 	};
@@ -113,12 +117,12 @@ private:
 	/*
 	 * Processes input samples by using soundtouch library
 	 */
-	void processAudioSoundTouch(std::unique_ptr<int16_t[]> buffer, unsigned int samples);
+	void processAudioSoundTouch(const int16_t* buffer, unsigned int samples);
 
 	/*
 	 * Processes input sample using a trivial resampler
 	 */
-	void processAudioTrivial(std::unique_ptr<int16_t[]> buffer, unsigned int samples);
+	void processAudioTrivial(const int16_t* buffer, unsigned int samples);
 
 	/*
 	 * Thread entry point for sound stretching processing
@@ -148,7 +152,7 @@ private:
 	/*
 	 * Converts a N64 buffer to a SLES buffer
 	 */
-	int convertBufferToSlesBuffer(std::unique_ptr<int16_t[]> inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart);
+	int convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart);
 
 	/*
 	 * Creates the primary audio buffer
@@ -214,7 +218,7 @@ private:
 	std::thread mAudioConsumerThread;
 
 	// Queue used to communicate with the audio consumer thread
-	BlockingQueue<QueueData *> mAudioConsumerQueue;
+	BlockingReaderWriterQueue<QueueData> mAudioConsumerQueue;
 
 	// Gets set to true to shut down the audio prcoessing thread
 	std::atomic<bool> mShutdownThread;
@@ -237,5 +241,9 @@ private:
 	SLPlayItf mPlayerPlay = nullptr;
     // Buffer queue interfaces
 	SLAndroidSimpleBufferQueueItf mBufferQueue = nullptr;
+
+	// Memory pool used to store samples until they are processed by the
+	// sound processing thread
+	RingBufferPool mSoundBufferPool;
 };
 
