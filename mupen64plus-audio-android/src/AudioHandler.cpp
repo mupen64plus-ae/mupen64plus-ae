@@ -391,11 +391,11 @@ void AudioHandler::audioConsumerStretch() {
 									 (float) (secondaryBufferNumber - minQueueSize) *
 									 maxSpeedUpRate;
 				}
-					//Device can't keep up with the game
+				//Device can't keep up with the game
 				else if (ranDry) {
 					drainQueue = false;
 					currAdjustment = temp - slowRate;
-					//Good case
+				//Good case
 				} else if (slesQueueLength < maxQueueSize) {
 					currAdjustment = temp;
 				}
@@ -418,35 +418,38 @@ void AudioHandler::audioConsumerStretch() {
 			}
 
 			//Useful logging
-			//if(slesQueueLength == 0)
-			//{
-			// DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d count=%d",
-			//            slesQueueLength, threadQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize, state.totalBuffersProcessed);
-			//}
-
+			/*
+			if(slesQueueLength == 0)
+			{
+			 DebugMessage(M64MSG_ERROR, "sles_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%dd",
+			            slesQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
+			}
+			 */
 			//We don't want to calculate the average until we give everything a time to settle.
 
 			//Figure out how much to slow down by
 			double timeDiff = currQueueData.timeSinceStart - prevTime;
-
 			prevTime = currQueueData.timeSinceStart;
 
-			feedTimes[feedTimeIndex] = timeDiff;
-			averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
+			// Ignore negative time, it can be nagative if game is falling too far behind real time
+			if (timeDiff > 0) {
+				feedTimes[feedTimeIndex] = timeDiff;
+				averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-			gameTimes[feedTimeIndex] = (float)currQueueData.samples / (float)mInputFreq;
-			averageGameTime = getAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
+				gameTimes[feedTimeIndex] = static_cast<float>(currQueueData.samples) / mInputFreq;
+				averageGameTime = getAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-			++feedTimeIndex;
-			if (feedTimeIndex >= feedTimeWindowSize) {
-				feedTimeIndex = 0;
-				feedTimesSet = true;
-			}
+				++feedTimeIndex;
+				if (feedTimeIndex >= feedTimeWindowSize) {
+					feedTimeIndex = 0;
+					feedTimesSet = true;
+				}
 
-			//Normalize window size
-			feedTimeWindowSize = static_cast<int>(defaultSampleLength / averageGameTime * 50);
-			if (feedTimeWindowSize > maxWindowSize) {
-				feedTimeWindowSize = maxWindowSize;
+				//Normalize window size
+				feedTimeWindowSize = static_cast<int>(defaultSampleLength / averageGameTime * 50);
+				if (feedTimeWindowSize > maxWindowSize) {
+					feedTimeWindowSize = maxWindowSize;
+				}
 			}
 		}
 	}

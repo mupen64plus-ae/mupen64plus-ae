@@ -357,7 +357,7 @@ EXPORT void CALL AiLenChanged(void) {
 
     // Push data to the audio handler
     std::chrono::duration<double> timeSinceStart = currentTime - gameStartTime;
-    AudioHandler::get().pushData(reinterpret_cast<int16_t*>(inputAudio), LenReg/N64_SAMPLE_BYTES, timeSinceStart);
+	AudioHandler::get().pushData(reinterpret_cast<int16_t*>(inputAudio), LenReg/N64_SAMPLE_BYTES, timeSinceStart);
 
     //Calculate total ellapsed game time
     totalElapsedSamples += LenReg / N64_SAMPLE_BYTES;
