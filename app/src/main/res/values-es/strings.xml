@@ -206,8 +206,8 @@
     <string name="audioSynchronize_summary">Minimiza la latencia, pero puede causar errores en algunos juegos/dispositivos</string>
     <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
     <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
-    <string name="audioSLESTimeStretch_title">Estirar el audio</string>
-    <string name="audioSLESTimeStretch_summary">Habilitar estirar el audio para mejorar la calidad pero causa un retraso</string>
+    <string name="audioTimeStretch_title">Estirar el audio</string>
+    <string name="audioTimeStretch_summary">Habilitar estirar el audio para mejorar la calidad pero causa un retraso</string>
     <string name="showRecentlyPlayed_title">Recientes Jugados</string>
     <string name="showRecentlyPlayed_summary">Mostrar juegos jugados en los últimos 7 días</string>
     <string name="showFullNames_title">Nombres completos</string>
@@ -431,17 +431,10 @@
     <string name="displayZoomDefault_title">Utilizar zoom predeterminado</string>
     <string name="displayZoomDefault_summary">Desactive esta opción para especificar un zoom personalizado para este juego</string>
 
-    <string name="audioPlugin_title">Plugin de audio</string>
-    <string name="audioPlugin_entryNone">Ninguno (audio deshabilitado)</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">Ninguna depuración(audio desactivado, sin límite de velocidad)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferNbr_title">Numero de bufer de audio</string>
-    <string name="audioSLESRate_title">Tasa de muestreo</string>
-    <string name="audioSLESRate_entry_orig">Fijada por el juego</string>
-    <string name="audioSLESRate_best_for_hw">Mejor para el dispositivo</string>
-    <string name="audioSLESSamplingType_title">Tipo de Muestreo</string>
-    <string name="audioSLESFloatingPoint_title">Flotación de puntos de muestras</string>
-    <string name="audioSLESFloatingPoint_summary">FP de audio de mayor calidad. Algunos dispositivos pueden no ser compatibles.</string>
+    <string name="audioBufferNbr_title">Numero de bufer de audio</string>
+    <string name="audioSamplingType_title">Tipo de Muestreo</string>
+    <string name="audioFloatingPoint_title">Flotación de puntos de muestras</string>
+    <string name="audioFloatingPoint_summary">FP de audio de mayor calidad. Algunos dispositivos pueden no ser compatibles.</string>
     <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
     <!--Seek Bar Preferences (selected value and units will become the summary-->
     <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>

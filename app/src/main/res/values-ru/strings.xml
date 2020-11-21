@@ -197,8 +197,8 @@
     <string name="audioSynchronize_summary">Минимизирует задержку, но может привести к треску в звуке на некоторых играх/устройствах</string>
     <string name="audioSwapChannels_title">Поменять аудио каналы</string>
     <string name="audioSwapChannels_summary">Поменять местами левый и правы аудио каналы</string>
-    <string name="audioSLESTimeStretch_title">Растягивать аудио</string>
-    <string name="audioSLESTimeStretch_summary">Включение растягивания аудио уменьшает треск в звуке, но может привести к новым ошибкам</string>
+    <string name="audioTimeStretch_title">Растягивать аудио</string>
+    <string name="audioTimeStretch_summary">Включение растягивания аудио уменьшает треск в звуке, но может привести к новым ошибкам</string>
     <string name="showRecentlyPlayed_title">Недавние игры</string>
     <string name="showRecentlyPlayed_summary">Показывает игры, которые игрались за последнюю неделю.</string>
     <string name="showFullNames_title">Полные имена</string>
@@ -408,13 +408,9 @@
     <string name="rsp_cxd4_lle">CXD4 LLE Video</string>
 
     <string name="displayZoom_title">Увеличение</string>
-    <string name="audioPlugin_title">Аудио плагин</string>
-    <string name="audioPlugin_entryNone">Нет (Аудио отключено)</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">Без дебага (аудио отключено, нет ограничения скорсти)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferNbr_title">Номер аудио буффера</string>
-    <string name="audioSLESFloatingPoint_title">Значения с плавающей точкой</string>
-    <string name="audioSLESFloatingPoint_summary">более высокое качество FP аудио. Не поддерживается на некоторых устройствах.</string>
+    <string name="audioBufferNbr_title">Номер аудио буффера</string>
+    <string name="audioFloatingPoint_title">Значения с плавающей точкой</string>
+    <string name="audioFloatingPoint_summary">более высокое качество FP аудио. Не поддерживается на некоторых устройствах.</string>
     <string name="localeOverride_entrySystemDefault">Системные умолчанья</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

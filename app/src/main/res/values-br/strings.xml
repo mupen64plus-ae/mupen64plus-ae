@@ -240,8 +240,8 @@
     <string name="audioSynchronize_summary">Bihanaat ar c\'hortozadenn, met a c\'hall degas strakadennoù e-barzh c\'hoarioù/trobarzhelloù \'zo</string>
     <string name="audioSwapChannels_title">Eskemm plas ar chadennoù aodio</string>
     <string name="audioSwapChannels_summary">Eskemm plas d\'ar chadennoù aodio kleiz ha dehou</string>
-    <string name="audioSLESTimeStretch_title">Aodio amzeret</string>
-    <string name="audioSLESTimeStretch_summary">Enaouiñ an aodio amzerel evit bihanaat ar strakadennoù, met e sanker ul linkad aodio</string>
+    <string name="audioTimeStretch_title">Aodio amzeret</string>
+    <string name="audioTimeStretch_summary">Enaouiñ an aodio amzerel evit bihanaat ar strakadennoù, met e sanker ul linkad aodio</string>
     <string name="showRecentlyPlayed_title">C\'hoariet nevez \'zo</string>
     <string name="showRecentlyPlayed_summary">Diskouez ar c\'hoarioù c\'hoariet outo ar sizhun dremenet</string>
     <string name="showFullNames_title">Anvioù klok</string>
@@ -527,16 +527,9 @@
     <string name="displayZoomDefault_title">Implijit ar zoum dre ziouer</string>
     <string name="displayZoomDefault_summary">Digochit ar c\'hombod-mañ evit spisaat un dalvoudegezh zoum personelaet evit ar c\'hoari-mañ</string>
     
-    <string name="audioPlugin_title">Lugant aodio</string>
-    <string name="audioPlugin_entryNone">Hini ebet (aodio lazhet)</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">Nann-diveugiñ (aodio lazhet, bevenn tizh ebet)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferNbr_title">Niverenn aodio ar skurzer</string>
-    <string name="audioSLESRate_title">Feur standilhoniñ</string>
-    <string name="audioSLESRate_entry_orig">Termenet gant ar c\'hoari</string>
-    <string name="audioSLESRate_best_for_hw">Peurvat evit ar periant</string>
-    <string name="audioSLESFloatingPoint_title">Standilhonoù gant ur poent nijus</string>
-    <string name="audioSLESFloatingPoint_summary">Kalite aodio FP uheloc\'h. Trevnadoù \'zo n\'hallont ket bezañ kenglotus.</string>
+    <string name="audioBufferNbr_title">Niverenn aodio ar skurzer</string>
+    <string name="audioFloatingPoint_title">Standilhonoù gant ur poent nijus</string>
+    <string name="audioFloatingPoint_summary">Kalite aodio FP uheloc\'h. Trevnadoù \'zo n\'hallont ket bezañ kenglotus.</string>
     <string name="localeOverride_entrySystemDefault">Sistem dre ziouer</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

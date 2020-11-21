@@ -149,8 +149,8 @@ public class AppData
 
     public enum AudioPlugin {
         DUMMY("dummy"),
-        SLES("mupen64plus-audio-sles"),
-        SLES_FP("mupen64plus-audio-sles-fp");
+        ANDROID("mupen64plus-audio-audio"),
+        ANDROID_FP("mupen64plus-audio-audio-fp");
 
         String mPlugingLib;
 
@@ -166,17 +166,13 @@ public class AppData
 
         static AudioPlugin getPlugin(GlobalPrefs prefs)
         {
-            if (prefs.audioPlugin.name.contains("sles")) {
-                if (prefs.audioSLESFloatingPoint)
-                {
-                    return SLES_FP;
-                }
-                else
-                {
-                    return SLES;
-                }
-            } else {
-                return DUMMY;
+            if (prefs.audioFloatingPoint)
+            {
+                return ANDROID_FP;
+            }
+            else
+            {
+                return ANDROID;
             }
         }
     }

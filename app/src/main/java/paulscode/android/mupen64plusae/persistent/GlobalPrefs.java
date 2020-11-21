@@ -32,7 +32,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -307,23 +306,23 @@ public class GlobalPrefs
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
 
-    /** Stretch audio to prevent crackling in SLES audio plugin */
-    public final boolean enableSLESAudioTimeSretching;
+    /** Stretch audio to prevent crackling in audio plugin */
+    public final boolean enableAudioTimeSretching;
 
-    /** Size of secondary buffer in output samples. This is SLES's hardware buffer, which directly affects latency. */
-    public final int audioSLESSecondaryBufferSize;
+    /** Size of secondary buffer in output samples. This is a hardware buffer size, which directly affects latency. */
+    public final int audioSecondaryBufferSize;
 
-    /** Number of SLES secondary buffers. */
-    public final int audioSLESSecondaryBufferNbr;
+    /** Number of audio secondary buffers. */
+    public final int audioSecondaryBufferNbr;
 
-    /** Number of SLES sampling rate. */
-    public final int audioSLESSamplingRate;
+    /** Audio sampling rate. */
+    public final int audioSamplingRate;
 
-    /** SLES sampling type, 0=trivial, 1=soundtouch. */
-    public final int audioSLESSamplingType;
+    /** Audio sampling type, 0=trivial, 1=soundtouch. */
+    public final int audioSamplingType;
 
-    /** Use SLES floating point samples */
-    public final boolean audioSLESFloatingPoint;
+    /** Use audio floating point samples */
+    public final boolean audioFloatingPoint;
 
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
@@ -595,37 +594,33 @@ public class GlobalPrefs
         // Audio prefs
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
-        enableSLESAudioTimeSretching = mPreferences.getBoolean( "audioSLESTimeStretch", true );
-        audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
-        audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
-        audioSLESSamplingType = getSafeInt( mPreferences, "audioSLESSamplingType", 0 );
+        enableAudioTimeSretching = mPreferences.getBoolean( "audioTimeStretch", true );
+        audioSecondaryBufferNbr = getSafeInt( mPreferences, "audioBufferNbr", 10 );
+        audioFloatingPoint = mPreferences.getBoolean( "audioFloatingPoint", false );
+        audioSamplingType = getSafeInt( mPreferences, "audioSamplingType", 0 );
 
-        boolean audioSlesSamplingRateGame = mPreferences.getString( "audioSLESSamplingRate2", "game" ).equals("game");
+        int tempAudioSamplingRate = 0;
 
-        int tempAudioSLESSamplingRate = 0;
-
-        //If sampling rate is not set to game, then automatically determine best sampling rate
-        if(!audioSlesSamplingRateGame) {
-            try {
-                tempAudioSLESSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
-            } catch (java.lang.NumberFormatException e) {
-                Log.e("GlobalPrefs", "Invalid sampling rate number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
-            }
+        // Automatically determine best sampling rate
+        try {
+            tempAudioSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+        } catch (java.lang.NumberFormatException e) {
+            Log.e("GlobalPrefs", "Invalid sampling rate number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
         }
 
-        audioSLESSamplingRate = tempAudioSLESSamplingRate;
+        audioSamplingRate = tempAudioSamplingRate;
 
-        int tempAudioSLESSecondaryBufferSize = 256;
+        int tempAudioSecondaryBufferSize = 256;
         try
         {
-            tempAudioSLESSecondaryBufferSize = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+            tempAudioSecondaryBufferSize = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
         }
         catch(java.lang.NumberFormatException e)
         {
             Log.e("GlobalPrefs", "Invalid frames per buffer number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
         }
 
-        audioSLESSecondaryBufferSize = tempAudioSLESSecondaryBufferSize;
+        audioSecondaryBufferSize = tempAudioSecondaryBufferSize;
 
         if( audioPlugin.enabled )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );

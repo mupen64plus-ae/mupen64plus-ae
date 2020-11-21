@@ -178,8 +178,8 @@
     <string name="audioSynchronize_title">Synchronizuj dźwięk i obraz</string>
     <string name="audioSwapChannels_title">Zamień kanały audio</string>
     <string name="audioSwapChannels_summary">Zamień prawy i lewy kanał audio</string>
-    <string name="audioSLESTimeStretch_title">Rozciągnij dźwięk</string>
-    <string name="audioSLESTimeStretch_summary">Włącz rozciąganie dźwięku, aby zmniejszyć trzaski, ale powoduje opóźnienie dźwięku</string>
+    <string name="audioTimeStretch_title">Rozciągnij dźwięk</string>
+    <string name="audioTimeStretch_summary">Włącz rozciąganie dźwięku, aby zmniejszyć trzaski, ale powoduje opóźnienie dźwięku</string>
     <string name="showRecentlyPlayed_title">Ostatnio grane</string>
     <string name="showRecentlyPlayed_summary">Pokaż gry grane w ciągu ostatniego tygodnia</string>
     <string name="showFullNames_title">Pełne nazwy</string>
@@ -300,11 +300,7 @@
     <string name="r4300Emulator_entryPureInterpreter">Czysty interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Buforowany interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamiczny rekompilator (dynarec)</string>
-    <string name="audioPlugin_title">Wtyczka dźwięku</string>
-    <string name="audioPlugin_entryNone">Brak (wyłączony dźwięk)</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">Brak debugowania (dźwięk wyłączony, nie ma ograniczenia prędkości)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferNbr_title">Numer bufora dźwięku</string>
+    <string name="audioBufferNbr_title">Numer bufora dźwięku</string>
     <string name="localeOverride_entrySystemDefault">Domyślne ustawienia systemowe</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

@@ -401,13 +401,7 @@
     <string name="r4300Emulator_entryCachedInterpreter">Gecachter Interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamischer Recompiler (dynarec)</string>
     <string name="displayZoom_title">Zoom</string>
-    <string name="audioPlugin_title">Audioplugin</string>
-    <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferNbr_title">Audio-Puffernummer</string>
-    <string name="audioSLESRate_title">Abtastrate</string>
-    <string name="audioSLESRate_entry_orig">Nach Spiel festlegen</string>
+    <string name="audioBufferNbr_title">Audio-Puffernummer</string>
     <string name="localeOverride_entrySystemDefault">Systemstandard</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

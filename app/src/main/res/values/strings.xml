@@ -251,8 +251,8 @@
     <string name="audioSynchronize_summary">Minimizes latency, but may cause crackling in some games/devices</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
-    <string name="audioSLESTimeStretch_title">Time stretch audio</string>
-    <string name="audioSLESTimeStretch_summary">Enable time stretch audio to reduce crackling, but introduces audio lag</string>
+    <string name="audioTimeStretch_title">Time stretch audio</string>
+    <string name="audioTimeStretch_summary">Enable time stretch audio to reduce crackling, but introduces audio lag</string>
     <string name="showRecentlyPlayed_title">Recently played</string>
     <string name="showRecentlyPlayed_summary">Show games played within the past week</string>
     <string name="showFullNames_title">Full names</string>
@@ -575,19 +575,12 @@
     <string name="displayZoomDefault_title">Use default zoom</string>
     <string name="displayZoomDefault_summary">Uncheck this to specify a custom zoom value for this game</string>
 
-    <string name="audioPlugin_title">Audio plugin</string>
-    <string name="audioPlugin_entryNone">None (audio disabled)</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferNbr_title">Audio buffer number</string>
-    <string name="audioSLESRate_title">Sampling Rate</string>
-    <string name="audioSLESRate_entry_orig">Set by game</string>
-    <string name="audioSLESRate_best_for_hw">Best for hardware</string>
-    <string name="audioSLESSamplingType_title">Sampling Type</string>
-    <string name="audioSLESSamplingType_trivial">Trivial</string>
-    <string name="audioSLESSamplingType_soundtouch">SoundTouch</string>
-    <string name="audioSLESFloatingPoint_title">Floating Point Samples</string>
-    <string name="audioSLESFloatingPoint_summary">Higher quality FP audio. Some devices may not be compatible.</string>
+    <string name="audioBufferNbr_title">Audio buffer number</string>
+    <string name="audioSamplingType_title">Sampling Type</string>
+    <string name="audioSamplingType_trivial">Trivial</string>
+    <string name="audioSamplingType_soundtouch">SoundTouch</string>
+    <string name="audioFloatingPoint_title">Floating Point Samples</string>
+    <string name="audioFloatingPoint_summary">Higher quality FP audio. Some devices may not be compatible.</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

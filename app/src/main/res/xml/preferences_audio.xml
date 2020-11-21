@@ -47,23 +47,16 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
-        android:defaultValue="@string/audioPlugin_default"
-        android:entries="@array/audioPlugin_entries"
-        android:entryValues="@array/audioPlugin_values"
-        android:key="audioPlugin"
-        android:summary="@string/selectedValue"
-        android:title="@string/audioPlugin_title" />
     <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
-        android:key="audioSLESTimeStretch"
-        android:summary="@string/audioSLESTimeStretch_summary"
-        android:title="@string/audioSLESTimeStretch_title" />
+        android:key="audioTimeStretch"
+        android:summary="@string/audioTimeStretch_summary"
+        android:title="@string/audioTimeStretch_title" />
 
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="10"
-        android:key="audioSLESBufferNbr2"
-        android:title="@string/audioSLESBufferNbr_title"
+        android:key="audioBufferNbr"
+        android:title="@string/audioBufferNbr_title"
         mupen64:maximumValue="50"
         mupen64:minimumValue="2"
         mupen64:saveType="string"
@@ -71,26 +64,18 @@
         mupen64:units=" buffers" />
 
     <paulscode.android.mupen64plusae.preference.CompatListPreference
-        android:defaultValue="@string/audioSLESRate_default"
-        android:entries="@array/audioSLESRate_entries"
-        android:entryValues="@array/audioSLESRate_values"
-        android:key="audioSLESSamplingRate2"
+        android:defaultValue="@string/audioSamplingType_default"
+        android:entries="@array/audioSamplingType_entries"
+        android:entryValues="@array/audioSamplingType_values"
+        android:key="audioSamplingType"
         android:summary="@string/selectedValue"
-        android:title="@string/audioSLESRate_title" />
-
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
-        android:defaultValue="@string/audioSLESSamplingType_default"
-        android:entries="@array/audioSLESSamplingType_entries"
-        android:entryValues="@array/audioSLESSamplingType_values"
-        android:key="audioSLESSamplingType"
-        android:summary="@string/selectedValue"
-        android:title="@string/audioSLESSamplingType_title" />
+        android:title="@string/audioSamplingType_title" />
 
     <androidx.preference.CheckBoxPreference
         android:defaultValue="false"
-        android:key="audioSLESFloatingPoint"
-        android:summary="@string/audioSLESFloatingPoint_summary"
-        android:title="@string/audioSLESFloatingPoint_title" />
+        android:key="audioFloatingPoint"
+        android:summary="@string/audioFloatingPoint_summary"
+        android:title="@string/audioFloatingPoint_title" />
 
     <androidx.preference.CheckBoxPreference
         android:defaultValue="true"

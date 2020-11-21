@@ -98,7 +98,7 @@ dependencies {
     }
     implementation 'net.java.dev.jna:jna:5.6.0@aar'
     testImplementation 'junit:junit:4.12'
-    implementation project(':mupen64plus-audio-sles')
+    implementation project(':mupen64plus-audio-android')
     implementation project(':mupen64plus-core')
     implementation project(':mupen64plus-video-gliden64')
     implementation project(':mupen64plus-video-glide64mk2')

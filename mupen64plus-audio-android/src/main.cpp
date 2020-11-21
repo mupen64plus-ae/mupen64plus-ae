@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-audio-sles - main.c                                       *
+ *   Mupen64plus-audio-android - main.c                                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2015 Gilles Siberlin                                    *
  *   Copyright (C) 2007-2009 Richard Goedeken                              *
@@ -547,8 +547,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         return M64ERR_INCOMPATIBLE;
 
     /* get a configuration section handle */
-    if (ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio) != M64ERR_SUCCESS) {
-        DebugMessage(M64MSG_ERROR, "Couldn't open config section 'Audio-OpenSLES'");
+    if (ConfigOpenSection("Audio-Android", &l_ConfigAudio) != M64ERR_SUCCESS) {
+        DebugMessage(M64MSG_ERROR, "Couldn't open config section 'Audio-Android'");
         return M64ERR_INPUT_NOT_FOUND;
     }
 
@@ -557,23 +557,23 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     if (ConfigGetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fConfigParamsVersion,
                            sizeof(float)) != M64ERR_SUCCESS) {
         DebugMessage(M64MSG_WARNING,
-                     "No version number in 'Audio-OpenSLES' config section. Setting defaults.");
-        ConfigDeleteSection("Audio-OpenSLES");
-        ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio);
+                     "No version number in 'Audio-Android' config section. Setting defaults.");
+        ConfigDeleteSection("Audio-Android");
+        ConfigOpenSection("Audio-Android", &l_ConfigAudio);
         bSaveConfig = 1;
     } else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION)) {
         DebugMessage(M64MSG_WARNING,
-                     "Incompatible version %.2f in 'Audio-OpenSLES' config section: current is %.2f. Setting defaults.",
+                     "Incompatible version %.2f in 'Audio-Android' config section: current is %.2f. Setting defaults.",
                      fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
-        ConfigDeleteSection("Audio-OpenSLES");
-        ConfigOpenSection("Audio-OpenSLES", &l_ConfigAudio);
+        ConfigDeleteSection("Audio-Android");
+        ConfigOpenSection("Audio-Android", &l_ConfigAudio);
         bSaveConfig = 1;
     } else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f) {
         /* handle upgrades */
         float fVersion = CONFIG_PARAM_VERSION;
         ConfigSetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fVersion);
         DebugMessage(M64MSG_INFO,
-                     "Updating parameter set version in 'Audio-OpenSLES' config section to %.2f",
+                     "Updating parameter set version in 'Audio-Android' config section to %.2f",
                      fVersion);
         bSaveConfig = 1;
     }
@@ -598,7 +598,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
                          "Enable audio time stretching to prevent crackling");
 
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
-        ConfigSaveSection("Audio-OpenSLES");
+        ConfigSaveSection("Audio-Android");
 
     l_PluginInit = 1;
 
@@ -634,7 +634,7 @@ PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersi
         *APIVersion = AUDIO_PLUGIN_API_VERSION;
 
     if (PluginNamePtr != nullptr)
-        *PluginNamePtr = "Mupen64Plus OpenSLES Audio Plugin";
+        *PluginNamePtr = "Mupen64Plus Android Audio Plugin";
 
     if (Capabilities != nullptr) {
         *Capabilities = 0;
@@ -1160,7 +1160,7 @@ EXPORT void CALL RomClosed(void) {
     if (critical_failure == 1)
         return;
 
-    DebugMessage(M64MSG_VERBOSE, "Cleaning up OpenSLES sound plugin...");
+    DebugMessage(M64MSG_VERBOSE, "Cleaning up Android sound plugin...");
 
     CloseAudio();
 }

@@ -85,13 +85,13 @@ class NativeConfigFiles
         // Core and rice config file
         final ConfigFile mupen64plus_cfg = new ConfigFile( game.getMupen64plusCfg() );
 
-        mupen64plus_cfg.put( "Audio-OpenSLES", "Version", "1.000000" );
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSLESSecondaryBufferSize ) );
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_NBR", String.valueOf( global.audioSLESSecondaryBufferNbr ) );
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SAMPLING_RATE", String.valueOf( global.audioSLESSamplingRate ) );
-        mupen64plus_cfg.put( "Audio-OpenSLES", "SAMPLING_TYPE", String.valueOf( global.audioSLESSamplingType ) );
-        mupen64plus_cfg.put( "Audio-OpenSLES", "TIME_STRETCH_ENABLED", boolToTF( global.enableSLESAudioTimeSretching ) );
+        mupen64plus_cfg.put( "Audio-Android", "Version", "1.000000" );
+        mupen64plus_cfg.put( "Audio-Android", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );
+        mupen64plus_cfg.put( "Audio-Android", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSecondaryBufferSize) );
+        mupen64plus_cfg.put( "Audio-Android", "SECONDARY_BUFFER_NBR", String.valueOf( global.audioSecondaryBufferNbr) );
+        mupen64plus_cfg.put( "Audio-Android", "SAMPLING_RATE", String.valueOf( global.audioSamplingRate) );
+        mupen64plus_cfg.put( "Audio-Android", "SAMPLING_TYPE", String.valueOf( global.audioSamplingType) );
+        mupen64plus_cfg.put( "Audio-Android", "TIME_STRETCH_ENABLED", boolToTF( global.enableAudioTimeSretching) );
 
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );

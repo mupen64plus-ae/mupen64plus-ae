@@ -38,19 +38,19 @@ include_directories(
 # Find the Oboe package
 find_package (oboe REQUIRED CONFIG)
 
-add_library (mupen64plus-audio-sles SHARED
+add_library (mupen64plus-audio-android SHARED
         src/main.cpp
         src/osal_dynamiclib_unix.cpp)
-target_compile_definitions(mupen64plus-audio-sles PUBLIC -D__SOFTFP__ -DANDROID)
+target_compile_definitions(mupen64plus-audio-android PUBLIC -D__SOFTFP__ -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
-target_link_libraries(mupen64plus-audio-sles log OpenSLES oboe::oboe SOUNDTOUCH)
+target_link_libraries(mupen64plus-audio-android log OpenSLES oboe::oboe SOUNDTOUCH)
 
 # Build our own native library
-add_library (mupen64plus-audio-sles-fp SHARED
+add_library (mupen64plus-audio-android-fp SHARED
         src/main.cpp
         src/osal_dynamiclib_unix.cpp)
-target_compile_definitions(mupen64plus-audio-sles-fp PUBLIC -DFP_ENABLED -DANDROID)
+target_compile_definitions(mupen64plus-audio-android-fp PUBLIC -DFP_ENABLED -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
-target_link_libraries(mupen64plus-audio-sles-fp log OpenSLES oboe::oboe SOUNDTOUCHFP)
+target_link_libraries(mupen64plus-audio-android-fp log OpenSLES oboe::oboe SOUNDTOUCHFP)

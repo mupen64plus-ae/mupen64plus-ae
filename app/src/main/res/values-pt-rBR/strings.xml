@@ -253,7 +253,7 @@
   <string name="audioPlugin_title">Plugin de áudio</string>
   <string name="audioPlugin_entryNone">Nenhum (áudio desativado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Nenhum-debug (audio desativado, sem limite de velocidade)</string>
-  <string name="audioSLESBufferNbr_title">Número do buffer de áudio</string>
+  <string name="audioBufferNbr_title">Número do buffer de áudio</string>
   <string name="localeOverride_entrySystemDefault">Padrão do sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparência dos botões</string>

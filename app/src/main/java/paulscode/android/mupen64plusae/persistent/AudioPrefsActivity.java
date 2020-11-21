@@ -30,28 +30,11 @@ import android.text.TextUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class AudioPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
-    // These constants must match the keys used in res/xml/preferences.xml
-    private static final String AUDIO_SLES_TIME_STRETCH = "audioSLESTimeStretch";
-    private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr2";
-    private static final String AUDIO_SLES_SAMPLING_RATE = "audioSLESSamplingRate2";
-    private static final String AUDIO_SLES_SAMPLING_TYPE = "audioSLESSamplingType";
-    private static final String AUDIO_SLES_FLOATING_POINT = "audioSLESFloatingPoint";
-    private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
-    private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
-
-    private static final String AUDIO_SLES_PLUGIN = "sles";
-
-    private static final String ROOT = "screenRoot";
-
-
-    // App data and user preferences
-    private AppData mAppData = null;
-    private GlobalPrefs mGlobalPrefs = null;
+    // User preferences
     private SharedPreferences mPrefs = null;
 
     @Override
@@ -70,18 +53,10 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        // Get app data and user preferences
-        mAppData = new AppData(this);
-        mGlobalPrefs = new GlobalPrefs(this, mAppData);
-
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_audio);
-
-        // Refresh the preference data wrapper
-        mGlobalPrefs = new GlobalPrefs(this, mAppData);
     }
 
     @Override
@@ -103,30 +78,11 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        // Just refresh the preference screens in place
-        refreshViews();
-    }
 
-    private void refreshViews()
-    {
-        // Refresh the preferences object
-        mGlobalPrefs = new GlobalPrefs(this, mAppData);
-
-        // Enable audio prefs if audio is enabled
-        if (mGlobalPrefs.audioPlugin.name != null) {
-            PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.toLowerCase().contains(AUDIO_SLES_PLUGIN));
-            PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.toLowerCase().contains(AUDIO_SLES_PLUGIN));
-            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.toLowerCase().contains( AUDIO_SLES_PLUGIN ) );
-            PrefUtil.enablePreference(this, AUDIO_SLES_SAMPLING_TYPE, mGlobalPrefs.audioPlugin.name.toLowerCase().contains( AUDIO_SLES_PLUGIN ) && !mGlobalPrefs.enableSLESAudioTimeSretching);
-            PrefUtil.enablePreference(this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.toLowerCase().contains( AUDIO_SLES_PLUGIN ) );
-            PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
-            PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);
-        }
     }
 
     @Override
     protected void OnPreferenceScreenChange(String key)
     {
-        refreshViews();
     }
 }

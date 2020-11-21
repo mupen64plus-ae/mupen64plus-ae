@@ -1150,41 +1150,17 @@
 
     <string name="videoPlugin_default" translatable="false">glide64mk2</string>
 
-    <!-- Audio Plugins -->
-    <string-array name="audioPlugin_entries" translatable="false">
-        <item>@string/audioPlugin_entryNone</item>
-        <item>@string/audioPlugin_entrySles</item>
+    <!-- Audio Sampling Type -->
+    <string-array name="audioSamplingType_entries" translatable="false">
+        <item>@string/audioSamplingType_trivial</item>
+        <item>@string/audioSamplingType_soundtouch</item>
     </string-array>
-    <string-array name="audioPlugin_values" translatable="false">
-        <item>dummy</item>
-        <item>sles</item>
-    </string-array>
-
-    <string name="audioPlugin_default" translatable="false">sles</string>
-
-    <!-- Audio SLES Sampling Rate -->
-    <string-array name="audioSLESRate_entries" translatable="false">
-        <item>@string/audioSLESRate_entry_orig</item>
-        <item>@string/audioSLESRate_best_for_hw</item>
-    </string-array>
-    <string-array name="audioSLESRate_values" translatable="false">
-        <item>game</item>
-        <item>auto</item>
-    </string-array>
-
-    <string name="audioSLESRate_default" translatable="false">game</string>
-
-    <!-- Audio SLES Sampling Type -->
-    <string-array name="audioSLESSamplingType_entries" translatable="false">
-        <item>@string/audioSLESSamplingType_trivial</item>
-        <item>@string/audioSLESSamplingType_soundtouch</item>
-    </string-array>
-    <string-array name="audioSLESSamplingType_values" translatable="false">
+    <string-array name="audioSamplingType_values" translatable="false">
         <item>0</item>
         <item>1</item>
     </string-array>
 
-    <string name="audioSLESSamplingType_default" translatable="false">0</string>
+    <string name="audioSamplingType_default" translatable="false">0</string>
 
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
