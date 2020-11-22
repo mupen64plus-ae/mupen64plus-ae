@@ -4,8 +4,7 @@
 #include "RingBufferPool.h"
 #include "readerwriterqueue.h"
 #include <SoundTouch.h>
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
+#include <oboe/Oboe.h>
 #include <thread>
 
 
@@ -84,17 +83,19 @@ public:
 	// This is the buffer where audio is loaded after it's extracted from n64's memory.
 	static const int primaryBufferSize = 16384;
 
-	// Size of a single secondary buffer, in output samples. This is the requested size of OpenSLES's
+	// Size of a single secondary buffer, in output samples. This is the requested size of the
 	// hardware buffer, this should be a power of two.
 	static const int defaultSecondaryBufferSize = 256;
 
-	// This is the requested number of OpenSLES's hardware buffers
-	static const int secondaryBufferNumber = 100;
+	// This is the requested number of hardware buffers
+	static const int secondaryBufferNumber = 10;
+
+	// Number of audio channels
+	static const int numberOfChannels = 2;
 
 private:
 
-	struct slesState {
-		int value;
+	struct HardwareState {
 		int errors;
 	};
 
@@ -145,14 +146,9 @@ private:
 	void audioConsumerNoStretch();
 
 	/*
-	 * Call back from SLES audio when a sample has been processed
+	 * Converts a N64 buffer to a hardware buffer
 	 */
-	static void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context);
-
-	/*
-	 * Converts a N64 buffer to a SLES buffer
-	 */
-	int convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart);
+	int convertBufferToHwBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart);
 
 	/*
 	 * Creates the primary audio buffer
@@ -162,22 +158,27 @@ private:
 	/*
 	 * Creates the secondary audio buffers
 	 */
-	void createSecondaryBuffers();
-
-	/*
-	 * Called if initialization fails
-	 */
-	void onInitFailure();
+	void createSecondaryBuffer();
 
 	/*
 	 * Computes the average time on the provided times
 	 */
 	static double getAverageTime(const double *feedTimes, int numTimes);
 
+	/**
+	 * Pauses playback
+	 */
+	void pausePlayback();
+
+	/**
+	 * Resume playback
+	 */
+	void resumePlayback();
+
 #ifdef FP_ENABLED
-    static const int slesSamplesBytes = 8;
+    static const int hwSamplesBytes = 8;
 #else
-	static const int slesSamplesBytes = 4;
+	static const int hwSamplesBytes = 4;
 #endif
 
 	void (*mDebugCallback)(void *, int, const char *) = nullptr;
@@ -190,7 +191,7 @@ private:
 	// Size of the primary buffer */
 	int mPrimaryBufferBytes = 0;
 	// Pointer to secondary buffers */
-	unsigned char **mSecondaryBuffers = nullptr;
+	unsigned char *mSecondaryBuffer = nullptr;
 	// Size of a single secondary audio buffer in output samples */
 	int mSecondaryBufferSize = defaultSecondaryBufferSize;
 	// Time stretched audio enabled */
@@ -226,24 +227,17 @@ private:
 	// Soundtouch library
 	soundtouch::SoundTouch mSoundTouch;
 
-    // SLES state
-	slesState mState;
+    // Hardware state
+	HardwareState mState;
 
-    // Engine interfaces
-	SLObjectItf mEngineObject = nullptr;
-	SLEngineItf mEngineEngine = nullptr;
-
-    // Output mix interfaces
-	SLObjectItf mOutputMixObject = nullptr;
-
-    // Player interfaces
-	SLObjectItf mPlayerObject = nullptr;
-	SLPlayItf mPlayerPlay = nullptr;
-    // Buffer queue interfaces
-	SLAndroidSimpleBufferQueueItf mBufferQueue = nullptr;
+	// Oboe audio stream
+	oboe::ManagedStream mOutStream;
 
 	// Memory pool used to store samples until they are processed by the
 	// sound processing thread
 	RingBufferPool mSoundBufferPool;
+
+	// True if playback is paused
+	bool mPlaybackPaused = false;
 };
 

@@ -25,7 +25,7 @@ AudioHandler& AudioHandler::get()
 AudioHandler::AudioHandler() :
     mShutdownThread(true),
     mState{},
-	mSoundBufferPool(1024*1024)
+	mSoundBufferPool(1024*1024*50)
 {
 }
 
@@ -45,43 +45,14 @@ void AudioHandler::closeAudio() {
 		mPrimaryBuffer = nullptr;
 	}
 
-	/* Delete Secondary buffers */
-	if (mSecondaryBuffers != nullptr) {
-		for (int index = 0; index < secondaryBufferNumber; ++index) {
-			if (mSecondaryBuffers[index] != nullptr) {
-				delete[] mSecondaryBuffers[index];
-				mSecondaryBuffers[index] = nullptr;
-			}
-		}
-		delete[] mSecondaryBuffers;
-		mSecondaryBuffers = nullptr;
+	/* Delete Secondary buffer */
+	if (mSecondaryBuffer != nullptr) {
+		delete[] mSecondaryBuffer;
+		mSecondaryBuffer = nullptr;
 	}
 
-	/* Destroy buffer queue audio player object, and invalidate all associated interfaces */
-	if (mPlayerObject != nullptr && mPlayerPlay != nullptr) {
-		SLuint32 state = SL_PLAYSTATE_PLAYING;
-		(*mPlayerPlay)->SetPlayState(mPlayerPlay, SL_PLAYSTATE_STOPPED);
-
-		while (state != SL_PLAYSTATE_STOPPED)
-			(*mPlayerPlay)->GetPlayState(mPlayerPlay, &state);
-
-		(*mPlayerObject)->Destroy(mPlayerObject);
-		mPlayerObject = nullptr;
-		mPlayerPlay = nullptr;
-		mBufferQueue = nullptr;
-	}
-
-	/* Destroy output mix object, and invalidate all associated interfaces */
-	if (mOutputMixObject != nullptr) {
-		(*mOutputMixObject)->Destroy(mOutputMixObject);
-		mOutputMixObject = nullptr;
-	}
-
-	/* Destroy engine object, and invalidate all associated interfaces */
-	if (mEngineObject != nullptr) {
-		(*mEngineObject)->Destroy(mEngineObject);
-		mEngineObject = nullptr;
-		mEngineEngine = nullptr;
+	if (mOutStream != nullptr) {
+		mOutStream->close();
 	}
 }
 
@@ -90,7 +61,7 @@ bool AudioHandler::isCriticalFailure() const {
 }
 
 void AudioHandler::createPrimaryBuffer() {
-	auto primaryBytes = (unsigned int) (primaryBufferSize * slesSamplesBytes);
+	auto primaryBytes = (unsigned int) (primaryBufferSize * hwSamplesBytes);
 
 	DebugMessage(M64MSG_VERBOSE, "Allocating memory for primary audio buffer: %i bytes.",
 				 primaryBytes);
@@ -101,175 +72,71 @@ void AudioHandler::createPrimaryBuffer() {
 	mPrimaryBufferBytes = primaryBytes;
 }
 
-void AudioHandler::createSecondaryBuffers() {
-	int secondaryBytes = mSecondaryBufferSize * slesSamplesBytes;
+void AudioHandler::createSecondaryBuffer() {
+	int secondaryBytes = mSecondaryBufferSize * hwSamplesBytes;
 
 	DebugMessage(M64MSG_VERBOSE, "Allocating memory for %d secondary audio buffers: %i bytes.",
 				 secondaryBufferNumber, secondaryBytes);
 
-	/* Allocate number of secondary buffers */
-	mSecondaryBuffers = new unsigned char *[secondaryBufferNumber];
-
-	/* Allocate size of each secondary buffers */
-	for (int index = 0; index < secondaryBufferNumber; index++) {
-		mSecondaryBuffers[index] = new unsigned char[secondaryBytes];
-		std::memset(mSecondaryBuffers[index], 0, (size_t) secondaryBytes);
-	}
+	/* Allocate size of secondary buffer */
+	mSecondaryBuffer = new unsigned char[secondaryBytes];
+	std::memset(mSecondaryBuffer, 0, (size_t) secondaryBytes);
 }
 
-void AudioHandler::onInitFailure() {
-	DebugMessage(M64MSG_ERROR, "Couldn't open OpenSLES audio");
-	closeAudio();
-	mCriticalFailure = true;
-}
-
-void AudioHandler::initializeAudio(int freq) {
-
-	SLuint32 sample_rate;
+void AudioHandler::initializeAudio(int _freq) {
 
 	/* Sometimes a bad frequency is requested so ignore it */
-	if (freq < 4000)
+	if (_freq < 4000)
 		return;
 
 	if (mCriticalFailure)
 		return;
 
 	/* This is important for the sync */
-	mInputFreq = freq;
+	mInputFreq = _freq;
 
 	if (mSamplingRateSelection == 0) {
-		if ((freq / 1000) <= 11) {
+		if ((_freq / 1000) <= 11) {
 			mOutputFreq = 11025;
-		} else if ((freq / 1000) <= 22) {
+		} else if ((_freq / 1000) <= 22) {
 			mOutputFreq = 22050;
-		} else if ((freq / 1000) <= 32) {
+		} else if ((_freq / 1000) <= 32) {
 			mOutputFreq = 32000;
 		} else {
 			mOutputFreq = 44100;
 		}
 	} else {
 		mOutputFreq = mSamplingRateSelection;
-		/*
-		 #define SL_SAMPLINGRATE_64		((SLuint32) 64000000)
-#define SL_SAMPLINGRATE_88_2	((SLuint32) 88200000)
-#define SL_SAMPLINGRATE_96		((SLuint32) 96000000)
-#define SL_SAMPLINGRATE_192	((SLuint32) 192000000)
-		 */
 	}
-
-	sample_rate = mOutputFreq*1000;
-
-	DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz.", mOutputFreq);
 
 	/* Close everything because InitializeAudio can be called more than once */
 	closeAudio();
 
+	oboe::AudioStreamBuilder builder;
+	// The builder set methods can be chained for convenience.
+	builder.setSharingMode(oboe::SharingMode::Exclusive)
+			->setPerformanceMode(oboe::PerformanceMode::LowLatency)
+			->setChannelCount(numberOfChannels)
+			->setSampleRate(mOutputFreq);
+
+#ifdef FP_ENABLED
+	builder.setFormat(oboe::AudioFormat::Float);
+#else
+	builder.setFormat(oboe::AudioFormat::I16);
+#endif
+
+	builder.openManagedStream(mOutStream);
+	mOutStream->setBufferSizeInFrames(mSecondaryBufferSize*2);
+
+	DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq, mOutStream->getFramesPerBurst()*2);
+
 	/* Create primary buffer */
 	createPrimaryBuffer();
 
-	/* Create secondary buffers */
-	createSecondaryBuffers();
+	/* Create secondary buffer */
+	createSecondaryBuffer();
 
 	mState.errors = 0;
-	mState.value = secondaryBufferNumber;
-
-	/* Engine object */
-	SLresult result = slCreateEngine(&mEngineObject, 0, nullptr, 0, nullptr, nullptr);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	result = (*mEngineObject)->Realize(mEngineObject, SL_BOOLEAN_FALSE);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	result = (*mEngineObject)->GetInterface(mEngineObject, SL_IID_ENGINE, &mEngineEngine);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	/* Output mix object */
-	result = (*mEngineEngine)->CreateOutputMix(mEngineEngine, &mOutputMixObject, 0, nullptr, nullptr);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	result = (*mOutputMixObject)->Realize(mOutputMixObject, SL_BOOLEAN_FALSE);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, secondaryBufferNumber};
-
-#ifdef FP_ENABLED
-
-	SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, sample_rate,
-                   32, 32, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
-                   SL_BYTEORDER_LITTLEENDIAN, SL_ANDROID_PCM_REPRESENTATION_FLOAT};
-#else
-	SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, sample_rate,
-								   SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-								   (SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT),
-								   SL_BYTEORDER_LITTLEENDIAN};
-#endif
-
-	SLDataSource audioSrc = {&loc_bufq, &format_pcm};
-
-	/* Configure audio sink */
-	SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, mOutputMixObject};
-	SLDataSink audioSnk = {&loc_outmix, nullptr};
-
-	/* Create audio player */
-	const SLInterfaceID ids1[] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
-	const SLboolean req1[] = {SL_BOOLEAN_TRUE};
-	result = (*mEngineEngine)->CreateAudioPlayer(mEngineEngine, &(mPlayerObject), &audioSrc, &audioSnk,
-												 1, ids1, req1);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	/* Realize the player */
-	result = (*mPlayerObject)->Realize(mPlayerObject, SL_BOOLEAN_FALSE);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	/* Get the play interface */
-	result = (*mPlayerObject)->GetInterface(mPlayerObject, SL_IID_PLAY, &(mPlayerPlay));
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	/* Get the buffer queue interface */
-	result = (*mPlayerObject)->GetInterface(mPlayerObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
-											&(mBufferQueue));
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	/* register callback on the buffer queue */
-	result = (*mBufferQueue)->RegisterCallback(mBufferQueue, queueCallback, &mState);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
-
-	/* set the player's state to playing */
-	result = (*mPlayerPlay)->SetPlayState(mPlayerPlay, SL_PLAYSTATE_PLAYING);
-	if (result != SL_RESULT_SUCCESS) {
-		onInitFailure();
-		return;
-	}
 
 	mShutdownThread = false;
 
@@ -282,7 +149,7 @@ void AudioHandler::initializeAudio(int freq) {
 
 void AudioHandler::pushData(const int16_t* _data, int _samples, std::chrono::duration<double> timeSinceStart) {
 
-	int numValues = _samples*2; // two values per sample since it's stereo
+	int numValues = _samples*numberOfChannels;
 
 	PoolBufferPointer data = mSoundBufferPool.createPoolBuffer(reinterpret_cast<const char*>(_data), numValues*sizeof(int16_t));
 
@@ -306,7 +173,7 @@ void AudioHandler::audioConsumerStretch() {
 	static int overlapMS = 7;*/
 
 	mSoundTouch.setSampleRate((uint) mInputFreq);
-	mSoundTouch.setChannels(2);
+	mSoundTouch.setChannels(numberOfChannels);
 	mSoundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
 	mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
 	//soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
@@ -357,22 +224,25 @@ void AudioHandler::audioConsumerStretch() {
 
 	while (!mShutdownThread) {
 
-		if (mBufferQueue == nullptr) {
-			return;
+		int hardwareQueueLength = secondaryBufferNumber;
+
+		oboe::ResultWithValue<int32_t> availableFrames = mOutStream->getAvailableFrames();
+
+		if (availableFrames.error() == oboe::Result::OK) {
+			hardwareQueueLength = availableFrames.value();
 		}
 
-		SLAndroidSimpleBufferQueueState slesState;
-		(*mBufferQueue)->GetState(mBufferQueue, &slesState);
-		int slesQueueLength = slesState.count;
+		auto totalFrames = mOutStream->getFramesWritten();
 
-		ranDry = slesQueueLength < minQueueSize;
+		ranDry = hardwareQueueLength < minQueueSize;
 
 		QueueData currQueueData;
-		if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(1000))) {
+		if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(100))) {
+			resumePlayback();
 
 			double temp = averageGameTime / averageFeedTime;
 
-			if (slesState.index < secondaryBufferNumber) {
+			if (totalFrames < secondaryBufferNumber) {
 
 				speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
 				mSoundTouch.setTempo(speedFactor);
@@ -384,10 +254,10 @@ void AudioHandler::audioConsumerStretch() {
 			} else {
 
 				//Game is running too fast speed up audio
-				if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
+				if ((hardwareQueueLength > maxQueueSize || drainQueue) && !ranDry) {
 					drainQueue = true;
 					currAdjustment = temp +
-									 (float) (slesQueueLength - minQueueSize) /
+									 (float) (hardwareQueueLength - minQueueSize) /
 									 (float) (secondaryBufferNumber - minQueueSize) *
 									 maxSpeedUpRate;
 				}
@@ -396,7 +266,7 @@ void AudioHandler::audioConsumerStretch() {
 					drainQueue = false;
 					currAdjustment = temp - slowRate;
 				//Good case
-				} else if (slesQueueLength < maxQueueSize) {
+				} else if (hardwareQueueLength < maxQueueSize) {
 					currAdjustment = temp;
 				}
 
@@ -419,12 +289,13 @@ void AudioHandler::audioConsumerStretch() {
 
 			//Useful logging
 			/*
-			if(slesQueueLength == 0)
+			 if(hardwareQueueLength == 0)
 			{
-			 DebugMessage(M64MSG_ERROR, "sles_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%dd",
-			            slesQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
+			 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%dd",
+			            hardwareQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
 			}
 			 */
+
 			//We don't want to calculate the average until we give everything a time to settle.
 
 			//Figure out how much to slow down by
@@ -451,6 +322,8 @@ void AudioHandler::audioConsumerStretch() {
 					feedTimeWindowSize = maxWindowSize;
 				}
 			}
+		} else {
+			pausePlayback();
 		}
 	}
 }
@@ -466,15 +339,20 @@ void AudioHandler::audioConsumerNoStretch() {
 
 		while (!mShutdownThread)
 		{
-			if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(1000))) {
+			checkForBuffersPrimed();
+
+			if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(100))) {
+				resumePlayback();
 				auto shortData = reinterpret_cast<const int16_t*>(mSoundBufferPool.getBufferFromPool(currQueueData.data));
 				processAudioTrivial(shortData, currQueueData.samples);
 				mSoundBufferPool.removeBufferFromPool(currQueueData.data);
+			} else {
+				pausePlayback();
 			}
 		}
 	} else {
 		mSoundTouch.setSampleRate(mInputFreq);
-		mSoundTouch.setChannels(2);
+		mSoundTouch.setChannels(numberOfChannels);
 		mSoundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
 		mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
 		double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
@@ -487,7 +365,10 @@ void AudioHandler::audioConsumerNoStretch() {
 
 		while (!mShutdownThread)
 		{
-			if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(1000))) {
+			checkForBuffersPrimed();
+			if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(100))) {
+
+				resumePlayback();
 
 				if (lastSpeedFactor != mSpeedFactor)
 				{
@@ -498,32 +379,22 @@ void AudioHandler::audioConsumerNoStretch() {
 				auto shortData = reinterpret_cast<const int16_t*>(mSoundBufferPool.getBufferFromPool(currQueueData.data));
 				processAudioSoundTouch(shortData, currQueueData.samples);
 				mSoundBufferPool.removeBufferFromPool(currQueueData.data);
+			} else {
+				pausePlayback();
 			}
 		}
 	}
 }
 
-/* This callback handler is called every time a buffer finishes playing */
-void AudioHandler::queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context) {
-	auto state = (slesState *) context;
-
-	SLAndroidSimpleBufferQueueState st;
-	SLresult result = (*caller)->GetState(caller, &st);
-
-	if (result == SL_RESULT_SUCCESS) {
-		state->value = secondaryBufferNumber - static_cast<int>(st.count);
-	}
-}
-
-int AudioHandler::convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart)
+int AudioHandler::convertBufferToHwBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart)
 {
-	if (inputSamples*slesSamplesBytes < mPrimaryBufferBytes) {
+	if (inputSamples * hwSamplesBytes < mPrimaryBufferBytes) {
 
 #ifndef FP_ENABLED
 		auto outputBufferType = reinterpret_cast<int16_t*>(outputBuffer);
 		int outputStart = outputBufferStart/static_cast<int>(sizeof(int16_t));
 		for (int sampleIndex = 0; sampleIndex < inputSamples; ++sampleIndex) {
-			int bufferIndex = sampleIndex*2;
+			int bufferIndex = sampleIndex*numberOfChannels;
 			if (mSwapChannels == 0) {
 				// Left channel
 				outputBufferType[outputStart + bufferIndex] = inputBuffer[bufferIndex + 1];
@@ -540,7 +411,7 @@ int AudioHandler::convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned
 		auto outputBufferType = reinterpret_cast<float*>(outputBuffer);
         int outputStart = outputBufferStart/static_cast<int>(sizeof(float));
         for (int sampleIndex = 0; sampleIndex < inputSamples; ++sampleIndex) {
-            int bufferIndex = sampleIndex*2;
+            int bufferIndex = sampleIndex*numberOfChannels;
             if (mSwapChannels == 0) {
                 // Left channel
                 outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0;
@@ -555,38 +426,31 @@ int AudioHandler::convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned
         }
 #endif
 
-		outputBufferStart += static_cast<int>(inputSamples)*slesSamplesBytes;
+		outputBufferStart += static_cast<int>(inputSamples) * hwSamplesBytes;
 	} else
-		DebugMessage(M64MSG_WARNING, "convertBufferToSlesBuffer(): Audio primary buffer overflow.");
+		DebugMessage(M64MSG_WARNING, "convertBufferToHwBuffer(): Audio primary buffer overflow.");
 
 	return outputBufferStart;
 }
 
 void AudioHandler::processAudioSoundTouch(const int16_t* buffer, unsigned int samples) {
 
-	convertBufferToSlesBuffer(buffer, samples, mPrimaryBuffer, 0);
+	convertBufferToHwBuffer(buffer, samples, mPrimaryBuffer, 0);
 
 	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE*>(mPrimaryBuffer), samples);
 
 	unsigned int outSamples;
-	static int secondaryBufferIndex = 0;
 
-	do {
-		outSamples = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE*>(mSecondaryBuffers[secondaryBufferIndex]),
+	while (mSoundTouch.numSamples() >= mSecondaryBufferSize) {
+		outSamples = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE*>(mSecondaryBuffer),
 												static_cast<unsigned int>(mSecondaryBufferSize));
 
-		if (outSamples != 0 && mState.value > 0) {
-			SLresult result = (*mBufferQueue)->Enqueue(mBufferQueue,
-													   mSecondaryBuffers[secondaryBufferIndex],
-													  outSamples * slesSamplesBytes);
+		oboe::ResultWithValue<int32_t> result = mOutStream->write(mSecondaryBuffer, outSamples, 1e9);
 
-			if (result != SL_RESULT_SUCCESS) {
-				mState.errors++;
-			}
-
-			secondaryBufferIndex = (secondaryBufferIndex + 1)%secondaryBufferNumber;
+		if (result.error() != oboe::Result::OK) {
+			mState.errors++;
 		}
-	} while (outSamples != 0);
+	}
 }
 
 static int resample(const unsigned char *input, int bytesPerSample, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
@@ -625,25 +489,26 @@ static int resample(const unsigned char *input, int bytesPerSample, int oldsampl
 
 void AudioHandler::processAudioTrivial(const int16_t* buffer, unsigned int samples)
 {
-	static const int secondaryBufferBytes = mSecondaryBufferSize * slesSamplesBytes;
+	static const int secondaryBufferBytes = mSecondaryBufferSize * hwSamplesBytes;
 
 	static int primaryBufferPos = 0;
 
-	primaryBufferPos = convertBufferToSlesBuffer(buffer, samples, mPrimaryBuffer, primaryBufferPos);
+	primaryBufferPos = convertBufferToHwBuffer(buffer, samples, mPrimaryBuffer, primaryBufferPos);
 
 	int newsamplerate = mOutputFreq * 100 / mSpeedFactor;
 	int oldsamplerate = mInputFreq;
-	static int secondaryBufferIndex = 0;
 
 	while (primaryBufferPos >= ((secondaryBufferBytes * oldsamplerate) / newsamplerate))
 	{
-		int input_used = resample(mPrimaryBuffer, slesSamplesBytes, oldsamplerate, mSecondaryBuffers[secondaryBufferIndex], secondaryBufferBytes, newsamplerate);
-		(*mBufferQueue)->Enqueue(mBufferQueue, mSecondaryBuffers[secondaryBufferIndex], secondaryBufferBytes);
+		int input_used = resample(mPrimaryBuffer, hwSamplesBytes, oldsamplerate, mSecondaryBuffer, secondaryBufferBytes, newsamplerate);
+		oboe::ResultWithValue<int32_t> result = mOutStream->write(mSecondaryBuffer, mSecondaryBufferSize, 1e9);
+
+		if (result.error() != oboe::Result::OK) {
+			mState.errors++;
+		}
 
 		memmove(mPrimaryBuffer, &mPrimaryBuffer[input_used], primaryBufferPos - input_used);
 		primaryBufferPos -= input_used;
-
-		secondaryBufferIndex = (secondaryBufferIndex + 1)%secondaryBufferNumber;
 	}
 }
 
@@ -689,4 +554,24 @@ void AudioHandler::setLoggingFunction(void* _context, void (*_debugCallback)(voi
 
 void AudioHandler::setSwapChannels(bool _swapChannels) {
 	mSwapChannels = _swapChannels;
+}
+
+void AudioHandler::pausePlayback() {
+	if (!mPlaybackPaused) {
+		if (mOutStream != nullptr) {
+			mOutStream->pause();
+		}
+
+		mPlaybackPaused = true;
+	}
+}
+
+void AudioHandler::resumePlayback() {
+	if (mPlaybackPaused) {
+		if (mOutStream != nullptr) {
+			mOutStream->start();
+		}
+
+		mPlaybackPaused = false;
+	}
 }

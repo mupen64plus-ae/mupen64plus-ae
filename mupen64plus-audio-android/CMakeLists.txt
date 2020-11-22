@@ -46,7 +46,7 @@ add_library (mupen64plus-audio-android SHARED
 target_compile_definitions(mupen64plus-audio-android PUBLIC -D__SOFTFP__ -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
-target_link_libraries(mupen64plus-audio-android log OpenSLES oboe::oboe SOUNDTOUCH)
+target_link_libraries(mupen64plus-audio-android log oboe::oboe SOUNDTOUCH)
 
 # Build our own native library
 add_library (mupen64plus-audio-android-fp SHARED
@@ -57,4 +57,4 @@ add_library (mupen64plus-audio-android-fp SHARED
 target_compile_definitions(mupen64plus-audio-android-fp PUBLIC -DFP_ENABLED -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
-target_link_libraries(mupen64plus-audio-android-fp log OpenSLES oboe::oboe SOUNDTOUCHFP)
+target_link_libraries(mupen64plus-audio-android-fp log oboe::oboe SOUNDTOUCHFP)

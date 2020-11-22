@@ -286,28 +286,29 @@ PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersi
 
 /* ----------- Audio Functions ------------- */
 EXPORT void CALL AiDacrateChanged(int SystemType) {
-    int f;
+    int freq;
 
     if (!l_PluginInit)
         return;
 
     switch (SystemType) {
         case SYSTEM_NTSC:
-            f = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
+            freq = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
         case SYSTEM_PAL:
-            f = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
+            freq = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
         case SYSTEM_MPAL:
-            f = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
+            freq = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
         default:
-            f = defaultFrequency;
+            freq = defaultFrequency;
             break;
     }
 
     ReadConfig();
-    AudioHandler::get().initializeAudio(f);
+    GameFreq = freq;
+    AudioHandler::get().initializeAudio(freq);
 }
 
 bool isSpeedLimiterEnabled() {
@@ -402,8 +403,8 @@ EXPORT void CALL AiLenChanged(void) {
         }
 
         //Useful logging
-        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
-        //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
+        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, speed=%d, sleep_before_factor=%f",
+        //             timeSinceStart.count(), totalElapsedGameTime, sleepNeeded, gameStartTime, speed_factor, sleepNeeded*speedFactor);
         if (sleepNeeded > 0.0 && sleepNeeded < (maxSleepNeeded / speedFactor)) {
             auto endTime = currentTime + std::chrono::duration<double>(sleepNeeded);
 
