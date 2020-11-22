@@ -103,14 +103,14 @@ static void ReadConfig() {
     /* read the configuration values into our static variables */
     int swapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
     int secondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    int targetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
+    int targetSecondaryBuffersMs = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
     int samplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
     int samplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
     int timeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 
     AudioHandler::get().setSwapChannels(swapChannels);
     AudioHandler::get().setSecondaryBufferSize(secondaryBufferSize);
-    AudioHandler::get().setTargetSecondaryBuffers(targetSecondaryBuffers);
+    AudioHandler::get().setTargetSecondaryBuffersMs(targetSecondaryBuffersMs);
     AudioHandler::get().setSamplingRateSelection(samplingRateSelection);
     AudioHandler::get().setSamplingType(samplingType);
     AudioHandler::get().setTimeStretchEnabled(timeStretchEnabled);

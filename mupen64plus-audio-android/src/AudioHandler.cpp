@@ -135,6 +135,9 @@ void AudioHandler::initializeAudio(int _freq) {
 	mSoundTouch.setTempo(speedFactor);
 	mSoundTouch.setRate((double) mInputFreq / (double) mOutputFreq);
 
+	mPrimeComplete = false;
+	mInjectedSilenceMs = 0;
+
 	mOutStream->requestStart();
 }
 
@@ -157,18 +160,19 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 
 oboe::DataCallbackResult
 AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
-	if (!audioProviderNoStretch(audioData, numFrames)) {
-		DebugMessage(M64MSG_ERROR, "NO DATA");
-		// If there was no data, fill it with zeroes
-		char *data = reinterpret_cast<char *>(audioData);
-		for (int frameIndex = 0; frameIndex < numFrames; ++frameIndex) {
 
-			int startIndex = frameIndex * hwSamplesBytes;
+	mInjectedSilenceMs += static_cast<int>(static_cast<double>(numFrames)/mOutputFreq*1000);
 
-			for (int byteIndex = 0; byteIndex < hwSamplesBytes; ++byteIndex) {
-				data[startIndex + byteIndex] = 0;
-			}
-		}
+	if (mInjectedSilenceMs < mTargetSecondaryBuffersMs){
+		mPrimeComplete = true;
+	}
+
+	if (!mPrimeComplete) {
+		injectSilence(audioData, numFrames);
+	} else if (!audioProviderNoStretch(audioData, numFrames)) {
+		injectSilence(audioData, numFrames);
+		mPrimeComplete = false;
+		mInjectedSilenceMs = 0;
 	}
 	return oboe::DataCallbackResult::Continue;
 }
@@ -197,11 +201,11 @@ bool AudioHandler::audioProviderStretch(void *audioData, int32_t numFrames, void
 							   mSecondaryBufferSize);
 
 	int bufferLimit = secondaryBufferNumber - 20;
-	int maxQueueSize = (int) ((mTargetSecondaryBuffers + 30.0) * bufferMultiplier);
+	int maxQueueSize = (int) ((mTargetSecondaryBuffersMs + 30.0) * bufferMultiplier);
 	if (maxQueueSize > bufferLimit) {
 		maxQueueSize = bufferLimit;
 	}
-	int minQueueSize = (int) (mTargetSecondaryBuffers * bufferMultiplier);
+	int minQueueSize = (int) (mTargetSecondaryBuffersMs * bufferMultiplier);
 	bool drainQueue = false;
 
 	//Sound queue ran dry, device is running slow
@@ -512,8 +516,8 @@ void AudioHandler::setSamplingType(int _samplingType) {
 	mSamplingType = _samplingType;
 }
 
-void AudioHandler::setTargetSecondaryBuffers(int _targetSecondaryBuffers) {
-	mTargetSecondaryBuffers = _targetSecondaryBuffers;
+void AudioHandler::setTargetSecondaryBuffersMs(int _targetSecondaryBuffersMs) {
+	mTargetSecondaryBuffersMs = _targetSecondaryBuffersMs;
 }
 
 void AudioHandler::setSamplingRateSelection(int _samplingRateSelection) {
@@ -552,5 +556,19 @@ void AudioHandler::resumePlayback() {
 		}
 
 		mPlaybackPaused = false;
+	}
+}
+
+void AudioHandler::injectSilence (void *audioData, int32_t numFrames)
+{
+	// If there was no data, fill it with zeroes
+	char *data = reinterpret_cast<char *>(audioData);
+	for (int frameIndex = 0; frameIndex < numFrames; ++frameIndex) {
+
+		int startIndex = frameIndex * hwSamplesBytes;
+
+		for (int byteIndex = 0; byteIndex < hwSamplesBytes; ++byteIndex) {
+			data[startIndex + byteIndex] = 0;
+		}
 	}
 }

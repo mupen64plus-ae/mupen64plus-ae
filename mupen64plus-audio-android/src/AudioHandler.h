@@ -39,10 +39,11 @@ public:
 	 */
 	void setSamplingType(int _samplingType);
 
-	/*
-	 * Number of secondary buffers
+	/**
+	 * BUffer ammount in milliseconds
+	 * @param _targetSecondaryBuffersMs
 	 */
-	void setTargetSecondaryBuffers(int _targetSecondaryBuffers);
+	void setTargetSecondaryBuffersMs(int _targetSecondaryBuffersMs);
 
 	/*
 	 * Set the output sampling rate
@@ -86,7 +87,7 @@ public:
 
 	// Default start-time size of primary buffer (in equivalent output samples).
 	// This is the buffer where audio is loaded after it's extracted from n64's memory.
-	static const int primaryBufferSize = 16384;
+	static const int primaryBufferSize = 1024*1024;
 
 	// Size of a single secondary buffer, in output samples. This is the requested size of the
 	// hardware buffer, this should be a power of two.
@@ -176,6 +177,13 @@ private:
 	 */
 	void resumePlayback();
 
+	/**
+	 * Injects silence
+	 * @param audioData
+	 * @param numFrames
+	 */
+	void injectSilence (void *audioData, int32_t numFrames);
+
 #ifdef FP_ENABLED
     static const int hwSamplesBytes = 8;
 #else
@@ -204,8 +212,8 @@ private:
 	// Frequency of provided data
 	int mInputFreq = defaultFreq;
 
-    // Number of secondary buffers to target */
-	int mTargetSecondaryBuffers = 20;
+    // Number of secondary buffers to target in milliseconds */
+	int mTargetSecondaryBuffersMs = 20;
     // Selected samplin rate */
 	int mSamplingRateSelection = 0;
     // Output Audio frequency */
@@ -234,5 +242,11 @@ private:
 
 	// True if playback is paused
 	bool mPlaybackPaused = false;
+
+	// Amount of injected silence to allow the buffers to prime
+	int mInjectedSilenceMs = 0;
+
+	// True if priming is complete while inejcting silence
+	bool mPrimeComplete = false;
 };
 
