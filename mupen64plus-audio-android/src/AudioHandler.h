@@ -10,7 +10,7 @@
 
 using namespace moodycamel;
 
-class AudioHandler
+class AudioHandler : public oboe::AudioStreamCallback
 {
 public:
 
@@ -79,6 +79,11 @@ public:
 	 */
 	void pushData(const int16_t* _data, int _samples, std::chrono::duration<double> _timeSinceStart);
 
+	/*
+	 * Oboe audio callback
+	 */
+	oboe::DataCallbackResult onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
+
 	// Default start-time size of primary buffer (in equivalent output samples).
 	// This is the buffer where audio is loaded after it's extracted from n64's memory.
 	static const int primaryBufferSize = 16384;
@@ -88,7 +93,7 @@ public:
 	static const int defaultSecondaryBufferSize = 256;
 
 	// This is the requested number of hardware buffers
-	static const int secondaryBufferNumber = 10;
+	static const int secondaryBufferNumber = 100;
 
 	// Number of audio channels
 	static const int numberOfChannels = 2;
@@ -118,32 +123,28 @@ private:
 	/*
 	 * Processes input samples by using soundtouch library
 	 */
-	void processAudioSoundTouch(const int16_t* buffer, unsigned int samples);
+	bool processAudioSoundTouch(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
 
 	/*
-	 * Processes input sample using a trivial resampler
+	 * Performs audio resampling
 	 */
-	void processAudioTrivial(const int16_t* buffer, unsigned int samples);
+	static int resample(const unsigned char *input, int bytesPerSample, int oldsamplerate, unsigned char *output,
+						   int output_needed, int newsamplerate);
 
 	/*
-	 * Thread entry point for sound stretching processing
+	 * Processes input sample using a trivial resampler, returns true if there was data to process
 	 */
-	static void audioConsumerStretchEntry(void* audioHandler);
+	bool processAudioTrivial(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
 
 	/*
-	 * Performs sound stretching processing
+	 * Performs sound stretching processing, returns true if data was provided, returns true if data was provided
 	 */
-	void audioConsumerStretch();
-
-	/*
-	 * Thread entry point for no sound streteching processing
-	 */
-	static void audioConsumerNoStretchEntry(void* audioHandler);
+	bool audioProviderStretch(void *audioData, int32_t numFrames, void *outAudioData, int32_t outNumFrames);
 
 	/**
-	 * Performs audio processing with no time stretching
+	 * Performs audio processing with no time stretching, returns true if data was provided
 	 */
-	void audioConsumerNoStretch();
+	bool audioProviderNoStretch(void *audioData, int32_t numFrames);
 
 	/*
 	 * Converts a N64 buffer to a hardware buffer
@@ -215,14 +216,8 @@ private:
 	//  Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
 	bool mCriticalFailure = 0;
 
-	// Audio consumer thread, audio processing is done in this thread
-	std::thread mAudioConsumerThread;
-
 	// Queue used to communicate with the audio consumer thread
 	BlockingReaderWriterQueue<QueueData> mAudioConsumerQueue;
-
-	// Gets set to true to shut down the audio prcoessing thread
-	std::atomic<bool> mShutdownThread;
 
 	// Soundtouch library
 	soundtouch::SoundTouch mSoundTouch;
