@@ -22,7 +22,6 @@ AudioHandler &AudioHandler::get() {
 }
 
 AudioHandler::AudioHandler() :
-		mState{},
 		mSoundBufferPool(1024 * 1024 * 50) {
 }
 
@@ -125,8 +124,6 @@ void AudioHandler::initializeAudio(int _freq) {
 	DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
 				 mOutStream->getFramesPerBurst());
 
-	mState.errors = 0;
-
 	mSoundTouch.setSampleRate(mInputFreq);
 	mSoundTouch.setChannels(numberOfChannels);
 	mSoundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
@@ -136,7 +133,7 @@ void AudioHandler::initializeAudio(int _freq) {
 	mSoundTouch.setRate((double) mInputFreq / (double) mOutputFreq);
 
 	mPrimeComplete = false;
-	mInjectedSilenceMs = 0;
+	mPrimingTimeMs = 0;
 
 	mOutStream->requestStart();
 }
@@ -161,157 +158,85 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 oboe::DataCallbackResult
 AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
 
-	mInjectedSilenceMs += static_cast<int>(static_cast<double>(numFrames)/mOutputFreq*1000);
+	if (mTimeStretchEnabled) {
+		if (!audioProviderStretch(audioData, numFrames)) {
+			injectSilence(audioData, numFrames);
+		}
+	} else {
+		mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
 
-	if (mInjectedSilenceMs < mTargetSecondaryBuffersMs){
-		mPrimeComplete = true;
-	}
+		if (mPrimingTimeMs < mTargetSecondaryBuffersMs){
+			mPrimeComplete = true;
+		}
 
-	if (!mPrimeComplete) {
-		injectSilence(audioData, numFrames);
-	} else if (!audioProviderNoStretch(audioData, numFrames)) {
-		injectSilence(audioData, numFrames);
-		mPrimeComplete = false;
-		mInjectedSilenceMs = 0;
+		if (!mPrimeComplete) {
+			injectSilence(audioData, numFrames);
+		} else if (!audioProviderNoStretch(audioData, numFrames)) {
+			injectSilence(audioData, numFrames);
+			mPrimeComplete = false;
+			mPrimingTimeMs = 0;
+		}
 	}
 	return oboe::DataCallbackResult::Continue;
 }
 
-bool AudioHandler::audioProviderStretch(void *audioData, int32_t numFrames, void *outAudioData,
-										int32_t outNumFrames) {
-	/*
-	static int sequenceLenMS = 63;
-	static int seekWindowMS = 16;
-	static int overlapMS = 7;*/
+bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames) {
 
-	mSoundTouch.setSampleRate((uint) mInputFreq);
-	mSoundTouch.setChannels(numberOfChannels);
-	mSoundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
-	mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
-	//soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
-	//soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
-	//soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
-
-	mSoundTouch.setRate((double) mInputFreq / (double) mOutputFreq);
-	double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
-	mSoundTouch.setTempo(speedFactor);
+	double speedFactor;
 
 	double bufferMultiplier = (static_cast<double>(mOutputFreq) / mInputFreq) *
 							  (static_cast<double>(defaultSecondaryBufferSize) /
 							   mSecondaryBufferSize);
 
-	int bufferLimit = secondaryBufferNumber - 20;
-	int maxQueueSize = (int) ((mTargetSecondaryBuffersMs + 30.0) * bufferMultiplier);
+	static const int bufferLimit = secondaryBufferNumber - 20;
+
+	int maxQueueSize = static_cast<int> ((mTargetSecondaryBuffersMs + 30.0) * bufferMultiplier);
 	if (maxQueueSize > bufferLimit) {
 		maxQueueSize = bufferLimit;
 	}
-	int minQueueSize = (int) (mTargetSecondaryBuffersMs * bufferMultiplier);
-	bool drainQueue = false;
+	int minQueueSize = static_cast<int>(mTargetSecondaryBuffersMs * bufferMultiplier);
+	static bool drainQueue = false;
 
 	//Sound queue ran dry, device is running slow
 	int ranDry;
 
 	//adjustment used when a device running too slow
-	double slowAdjustment;
-	double currAdjustment = 1.0;
+	static double slowAdjustment;
+	static double currAdjustment = 1.0;
 
 	//how quickly to return to original speed
-	const double minSlowValue = 0.2;
-	const double maxSlowValue = 3.0;
-	const float maxSpeedUpRate = 0.5;
-	const float slowRate = 0.05;
-	const float defaultSampleLength = 0.01666;
+	static const double minSlowValue = 0.2;
+	static const double maxSlowValue = 3.0;
+	static const float maxSpeedUpRate = 0.5;
+	static const float slowRate = 0.05;
+	static const float defaultSampleLength = 0.01666;
 
-	double prevTime = 0;
+	static double prevTime = 0;
 
 	static const int maxWindowSize = 500;
 
-	int feedTimeWindowSize = 50;
+	static int feedTimeWindowSize = 50;
 
-	int feedTimeIndex = 0;
-	bool feedTimesSet = false;
-	double feedTimes[maxWindowSize] = {};
-	double gameTimes[maxWindowSize] = {};
-	double averageGameTime = defaultSampleLength;
-	double averageFeedTime = defaultSampleLength;
+	static int feedTimeIndex = 0;
+	static bool feedTimesSet = false;
+	static double feedTimes[maxWindowSize] = {};
+	static double gameTimes[maxWindowSize] = {};
+	static double averageGameTime = defaultSampleLength;
+	static double averageFeedTime = defaultSampleLength;
 
-	//while (!mShutdownThread) {
+	int queueLength = static_cast<int>(static_cast<float>(mSoundTouch.numSamples())/static_cast<float>(mOutputFreq)*1000);
 
-	int hardwareQueueLength = secondaryBufferNumber;
+	ranDry = queueLength < minQueueSize;
 
-	oboe::ResultWithValue<int32_t> availableFrames = mOutStream->getAvailableFrames();
-
-	if (availableFrames.error() == oboe::Result::OK) {
-		hardwareQueueLength = availableFrames.value();
-	}
-
-	auto totalFrames = mOutStream->getFramesWritten();
-
-	ranDry = hardwareQueueLength < minQueueSize;
-
+	int primaryBufferPos = 0;
 	QueueData currQueueData;
-	if (mAudioConsumerQueue.wait_dequeue_timed(currQueueData, std::chrono::milliseconds(100))) {
 
-		double temp = averageGameTime / averageFeedTime;
-		int inputSamples = currQueueData.samples;
-
-		if (totalFrames < secondaryBufferNumber) {
-
-			speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
-			mSoundTouch.setTempo(speedFactor);
-
-			auto shortData = reinterpret_cast<const int16_t *>(mSoundBufferPool.getBufferFromPool(
-					currQueueData.data));
-			processAudioSoundTouch(inputSamples, outAudioData, outNumFrames);
-			mSoundBufferPool.removeBufferFromPool(currQueueData.data);
-
-		} else {
-
-			//Game is running too fast speed up audio
-			if ((hardwareQueueLength > maxQueueSize || drainQueue) && !ranDry) {
-				drainQueue = true;
-				currAdjustment = temp +
-								 (float) (hardwareQueueLength - minQueueSize) /
-								 (float) (secondaryBufferNumber - minQueueSize) *
-								 maxSpeedUpRate;
-			}
-				//Device can't keep up with the game
-			else if (ranDry) {
-				drainQueue = false;
-				currAdjustment = temp - slowRate;
-				//Good case
-			} else if (hardwareQueueLength < maxQueueSize) {
-				currAdjustment = temp;
-			}
-
-			//Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
-			if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
-				slowAdjustment = currAdjustment;
-				static const int increments = 4;
-				//Adjust tempo in x% increments so it's more steady
-				double temp2 = round((slowAdjustment * 100) / increments);
-				temp2 *= increments;
-				slowAdjustment = (temp2) / 100;
-
-				mSoundTouch.setTempo(slowAdjustment);
-			}
-
-			auto shortData = reinterpret_cast<const int16_t *>(mSoundBufferPool.getBufferFromPool(
-					currQueueData.data));
-			processAudioSoundTouch(inputSamples, outAudioData, outNumFrames);
-			mSoundBufferPool.removeBufferFromPool(currQueueData.data);
-		}
-
-		//Useful logging
-		/*
-		 if(hardwareQueueLength == 0)
-		{
-		 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%dd",
-					hardwareQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
-		}
-		 */
-
-		//We don't want to calculate the average until we give everything a time to settle.
+	while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
+		auto shortData = reinterpret_cast<const int16_t *>(mSoundBufferPool.getBufferFromPool(
+				currQueueData.data));
+		primaryBufferPos = convertBufferToHwBuffer(shortData, currQueueData.samples, mPrimaryBuffer,
+												   primaryBufferPos);
+		mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 
 		//Figure out how much to slow down by
 		double timeDiff = currQueueData.timeSinceStart - prevTime;
@@ -320,14 +245,10 @@ bool AudioHandler::audioProviderStretch(void *audioData, int32_t numFrames, void
 		// Ignore negative time, it can be negative if game is falling too far behind real time
 		if (timeDiff > 0) {
 			feedTimes[feedTimeIndex] = timeDiff;
-			averageFeedTime = getAverageTime(feedTimes,
-											 feedTimesSet ? feedTimeWindowSize : (feedTimeIndex +
-																				  1));
+			averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
 			gameTimes[feedTimeIndex] = static_cast<float>(currQueueData.samples) / mInputFreq;
-			averageGameTime = getAverageTime(gameTimes,
-											 feedTimesSet ? feedTimeWindowSize : (feedTimeIndex +
-																				  1));
+			averageGameTime = getAverageTime(gameTimes,feedTimesSet ? feedTimeWindowSize : (feedTimeIndex +  1));
 
 			++feedTimeIndex;
 			if (feedTimeIndex >= feedTimeWindowSize) {
@@ -341,12 +262,68 @@ bool AudioHandler::audioProviderStretch(void *audioData, int32_t numFrames, void
 				feedTimeWindowSize = maxWindowSize;
 			}
 		}
-	} else {
-		pausePlayback();
 	}
-	//}
 
-	return false;
+	mPrimingTimeMs += static_cast<int>(static_cast<double>(outNumFrames) / mOutputFreq * 1000);
+
+	if (mPrimingTimeMs < mTargetSecondaryBuffersMs){
+		mPrimeComplete = true;
+	}
+
+	double temp = averageGameTime / averageFeedTime;
+	bool samplesAdded;
+
+	if (!mPrimeComplete) {
+
+		speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
+		mSoundTouch.setTempo(speedFactor);
+
+		samplesAdded = processAudioSoundTouch(primaryBufferPos, outAudioData, outNumFrames);
+
+	} else {
+
+		//Game is running too fast speed up audio
+		if ((queueLength > maxQueueSize || drainQueue) && !ranDry) {
+			drainQueue = true;
+			currAdjustment = temp +
+							 (float) (queueLength - minQueueSize) /
+							 (float) (secondaryBufferNumber - minQueueSize) *
+							 maxSpeedUpRate;
+		}
+			//Device can't keep up with the game
+		else if (ranDry) {
+			drainQueue = false;
+			currAdjustment = temp - slowRate;
+			//Good case
+		} else if (queueLength < maxQueueSize) {
+			currAdjustment = temp;
+		}
+
+		//Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
+		if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
+			slowAdjustment = currAdjustment;
+			static const int increments = 4;
+			//Adjust tempo in x% increments so it's more steady
+			double temp2 = round((slowAdjustment * 100) / increments);
+			temp2 *= increments;
+			slowAdjustment = (temp2) / 100;
+
+			mSoundTouch.setTempo(slowAdjustment);
+		}
+
+		samplesAdded = processAudioSoundTouch(primaryBufferPos, outAudioData, outNumFrames);
+	}
+
+	//Useful logging
+	/*
+	if(queueLength == 0)
+	{
+	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d",
+				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
+	}
+    */
+	
+	return samplesAdded;
 }
 
 bool AudioHandler::audioProviderNoStretch(void *audioData, int32_t numFrames) {

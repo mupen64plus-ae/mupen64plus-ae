@@ -7,7 +7,6 @@
 #include <oboe/Oboe.h>
 #include <thread>
 
-
 using namespace moodycamel;
 
 class AudioHandler : public oboe::AudioStreamCallback
@@ -94,16 +93,12 @@ public:
 	static const int defaultSecondaryBufferSize = 256;
 
 	// This is the requested number of hardware buffers
-	static const int secondaryBufferNumber = 100;
+	static const int secondaryBufferNumber = 200;
 
 	// Number of audio channels
 	static const int numberOfChannels = 2;
 
 private:
-
-	struct HardwareState {
-		int errors;
-	};
 
 	struct QueueData {
 		PoolBufferPointer data;
@@ -140,7 +135,7 @@ private:
 	/*
 	 * Performs sound stretching processing, returns true if data was provided, returns true if data was provided
 	 */
-	bool audioProviderStretch(void *audioData, int32_t numFrames, void *outAudioData, int32_t outNumFrames);
+	bool audioProviderStretch(void *outAudioData, int32_t outNumFrames);
 
 	/**
 	 * Performs audio processing with no time stretching, returns true if data was provided
@@ -230,9 +225,6 @@ private:
 	// Soundtouch library
 	soundtouch::SoundTouch mSoundTouch;
 
-    // Hardware state
-	HardwareState mState;
-
 	// Oboe audio stream
 	oboe::ManagedStream mOutStream;
 
@@ -244,7 +236,7 @@ private:
 	bool mPlaybackPaused = false;
 
 	// Amount of injected silence to allow the buffers to prime
-	int mInjectedSilenceMs = 0;
+	int mPrimingTimeMs = 0;
 
 	// True if priming is complete while inejcting silence
 	bool mPrimeComplete = false;
