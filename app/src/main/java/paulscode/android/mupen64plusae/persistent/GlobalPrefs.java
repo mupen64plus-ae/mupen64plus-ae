@@ -415,7 +415,8 @@ public class GlobalPrefs
     private final String[] mLocaleNames;
     private final String[] mLocaleCodes;
 
-    private final String supportedGlesVersion;
+    public final String supportedGlesVersion;
+    public final String gpuRenderer;
 
     /**
      * Instantiates a new user preferences wrapper.
@@ -707,6 +708,7 @@ public class GlobalPrefs
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
+        gpuRenderer = AppData.getOpenGlEsRenderer();
     }
 
     public void changeLocale( final Activity activity )

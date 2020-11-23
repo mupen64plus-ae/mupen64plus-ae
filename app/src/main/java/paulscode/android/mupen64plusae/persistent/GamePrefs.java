@@ -359,6 +359,12 @@ public class GamePrefs
             tempEmulationProfile = new Profile(true, "None", "Profile not found");
         }
 
+        // For zelda games on Adreno GPUs, force GLideN64 since Adreno has a driver bug that often makes that game crash
+        if ((tempEmulationProfile.getName().equals("Glide64-Accurate") || tempEmulationProfile.getName().equals("Glide64-Fast")) &&
+                mGlobalPrefs.gpuRenderer.toLowerCase().contains("adreno") && goodName.toLowerCase().contains("zelda")) {
+            tempEmulationProfile = new Profile( true, appData.GetEmulationProfilesConfig().get("GlideN64-Medium"));
+        }
+
         emulationProfile = tempEmulationProfile;
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());

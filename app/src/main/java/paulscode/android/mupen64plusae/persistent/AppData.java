@@ -327,6 +327,7 @@ public class AppData
     public final String legacyDefaultDataPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + applicationPath;
 
     private static String openGlVersion = null;
+    private static String openGlRenderer = null;
     
     // Shared preferences keys
     private static final String KEY_FORCE_ASSET_CHECK = "assetCheck";
@@ -679,6 +680,19 @@ public class AppData
         }
 
         return openGlVersion;
+    }
+
+    public static String getOpenGlEsRenderer()
+    {
+        if(openGlRenderer == null)
+        {
+            PixelBuffer buffer = new PixelBuffer(320,240);
+            openGlRenderer = buffer.getGLRenderer();
+            buffer.destroyGlContext();
+            Log.i("AppData", "GL Renderer = " + openGlRenderer);
+        }
+
+        return openGlRenderer;
     }
 
     public static boolean doesSupportFullGL()

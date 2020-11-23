@@ -102,7 +102,13 @@ public class PixelBuffer {
     public String getGLVersion()
     {
         // Create a minimum supported OpenGL ES context, then check:
-        return mGL.glGetString( GL10.GL_VERSION);
+        return mGL.glGetString(GL10.GL_VERSION);
+    }
+
+    public String getGLRenderer()
+    {
+        // Create a minimum supported OpenGL ES context, then check:
+        return mGL.glGetString(GL10.GL_RENDERER);
     }
 
     public Bitmap getBitmap() {
