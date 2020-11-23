@@ -98,17 +98,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         void onCoreServiceDestroyed();
     }
 
-    interface RomExtractionListener
+    interface LoadingDataListener
     {
         /**
          * Called on when ROM extraction starts
          */
-        void romExtractionStarted();
+        void loadingStarted();
 
         /**
          * Called on when ROM extraction finishes
          */
-        void romExtractionFinished();
+        void loadingFinished();
     }
     
     private static final String TAG = "CoreService";
@@ -149,7 +149,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     private final IBinder mBinder = new LocalBinder();
     private CoreServiceListener mListener = null;
-    private RomExtractionListener mRomExtractionListener = null;
+    private LoadingDataListener mLoadingDataListener = null;
     private RaphnetControllerHandler mRaphnetHandler = null;
 
     private boolean mScreenshotRequested = false;
@@ -490,6 +490,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
 
+            if (mLoadingDataListener != null) mLoadingDataListener.loadingStarted();
+
             // Clean up the working directory
             FileUtil.deleteFolder(new File(mWorkingDir));
 
@@ -566,10 +568,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
             else
             {
-                if (mRomExtractionListener != null) mRomExtractionListener.romExtractionStarted();
                 openSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
-                if (mRomExtractionListener != null) mRomExtractionListener.romExtractionFinished();
             }
+
+            if (mLoadingDataListener != null) mLoadingDataListener.loadingFinished();
 
             if (openSuccess)
             {
@@ -982,10 +984,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
-    public void setRomExtractionListener(RomExtractionListener romExtractionListener)
+    public void setLoadingDataListener(LoadingDataListener loadingDataListener)
     {
-        Log.i(TAG, "setRomExtractionListener");
-        mRomExtractionListener = romExtractionListener;
+        Log.i(TAG, "setLoadingDataListener");
+        mLoadingDataListener = loadingDataListener;
     }
 
     @Override

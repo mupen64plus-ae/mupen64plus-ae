@@ -56,7 +56,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
-public class CoreFragment extends Fragment implements CoreServiceListener, CoreService.RomExtractionListener
+public class CoreFragment extends Fragment implements CoreServiceListener, CoreService.LoadingDataListener
 {
     public interface CoreEventListener
     {
@@ -200,7 +200,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     @Override
-    public void romExtractionStarted()
+    public void loadingStarted()
     {
         try {
             FragmentActivity activity = requireActivity();
@@ -219,7 +219,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     @Override
-    public void romExtractionFinished()
+    public void loadingFinished()
     {
         try {
             requireActivity().runOnUiThread(() -> {
@@ -288,7 +288,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreService.setSurface(mSurface);
                 mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mCoreService.setCoreServiceListener(CoreFragment.this);
-                mCoreService.setRomExtractionListener(CoreFragment.this);
+                mCoreService.setLoadingDataListener(CoreFragment.this);
 
                 if(mCoreEventListener != null) {
                     activity.runOnUiThread(() -> mCoreEventListener.onCoreServiceStarted());
