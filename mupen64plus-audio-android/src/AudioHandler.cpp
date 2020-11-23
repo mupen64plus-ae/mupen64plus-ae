@@ -92,12 +92,6 @@ void AudioHandler::initializeAudio(int _freq) {
 	/* Close everything because InitializeAudio can be called more than once */
 	closeAudio();
 
-	/* Create primary buffer */
-	createPrimaryBuffer();
-
-	/* Create secondary buffer */
-	createSecondaryBuffer();
-
 	oboe::DefaultStreamValues::SampleRate = (int32_t) mOutputFreq;
 	oboe::DefaultStreamValues::FramesPerBurst = (int32_t) mSecondaryBufferSize;
 
@@ -121,6 +115,12 @@ void AudioHandler::initializeAudio(int _freq) {
 		mOutputFreq = mOutStream->getSampleRate();
 		mSecondaryBufferSize = mOutStream->getFramesPerBurst();
 	}
+
+	/* Create primary buffer */
+	createPrimaryBuffer();
+
+	/* Create secondary buffer */
+	createSecondaryBuffer();
 
 	DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
 				 mOutStream->getFramesPerBurst());
