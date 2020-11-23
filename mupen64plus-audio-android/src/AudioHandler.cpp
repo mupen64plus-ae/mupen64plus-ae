@@ -98,6 +98,9 @@ void AudioHandler::initializeAudio(int _freq) {
 	/* Create secondary buffer */
 	createSecondaryBuffer();
 
+	oboe::DefaultStreamValues::SampleRate = (int32_t) mOutputFreq;
+	oboe::DefaultStreamValues::FramesPerBurst = (int32_t) mSecondaryBufferSize;
+
 	oboe::AudioStreamBuilder builder;
 	// The builder set methods can be chained for convenience.
 	builder.setSharingMode(oboe::SharingMode::Exclusive);
@@ -113,6 +116,11 @@ void AudioHandler::initializeAudio(int _freq) {
 
 	builder.setCallback(this);
 	builder.openManagedStream(mOutStream);
+
+	if (mOutStream->getAudioApi() == oboe::AudioApi::AAudio) {
+		mOutputFreq = mOutStream->getSampleRate();
+		mSecondaryBufferSize = mOutStream->getFramesPerBurst();
+	}
 
 	DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
 				 mOutStream->getFramesPerBurst());
