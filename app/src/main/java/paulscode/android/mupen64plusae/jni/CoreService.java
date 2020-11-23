@@ -585,6 +585,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 // Attach all the plugins
                 mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
                 mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
+                mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
 
                 if (mUseRaphnetDevicesIfAvailable) {
                     mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);

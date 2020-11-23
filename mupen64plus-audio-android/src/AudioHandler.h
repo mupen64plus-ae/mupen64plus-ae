@@ -74,6 +74,17 @@ public:
 	 */
 	bool isCriticalFailure() const;
 
+
+	/**
+	 * Pauses playback
+	 */
+	void pausePlayback();
+
+	/**
+	 * Resume playback
+	 */
+	void resumePlayback();
+
 	/*
 	 * Pushes audio data to be processed
 	 */
@@ -161,16 +172,6 @@ private:
 	 * Computes the average time on the provided times
 	 */
 	static double getAverageTime(const double *feedTimes, int numTimes);
-
-	/**
-	 * Pauses playback
-	 */
-	void pausePlayback();
-
-	/**
-	 * Resume playback
-	 */
-	void resumePlayback();
 
 	/**
 	 * Injects silence

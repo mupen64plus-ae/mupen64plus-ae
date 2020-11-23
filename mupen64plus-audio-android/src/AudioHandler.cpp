@@ -165,7 +165,7 @@ AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32
 	} else {
 		mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
 
-		if (mPrimingTimeMs < mTargetSecondaryBuffersMs){
+		if (mPrimingTimeMs > mTargetSecondaryBuffersMs){
 			mPrimeComplete = true;
 		}
 
@@ -322,7 +322,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
 	}
     */
-	
+
 	return samplesAdded;
 }
 

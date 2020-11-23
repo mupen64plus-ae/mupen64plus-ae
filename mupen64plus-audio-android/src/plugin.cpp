@@ -467,6 +467,7 @@ EXPORT void CALL VolumeUp(void) {
 }
 
 EXPORT void CALL VolumeDown(void) {
+    DebugMessage(M64MSG_ERROR, "VOLUME DOWN");
 }
 
 EXPORT int CALL VolumeGetLevel(void) {
@@ -480,3 +481,10 @@ EXPORT const char *CALL VolumeGetString(void) {
     return "100%";
 }
 
+extern "C" EXPORT void pauseEmulator(void) {
+	AudioHandler::get().pausePlayback();
+}
+
+extern "C" EXPORT void CALL resumeEmulator(void) {
+	AudioHandler::get().resumePlayback();
+}

@@ -68,7 +68,7 @@ import paulscode.android.mupen64plusae.util.SevenZInputStream;
  *
  * @see CoreService
  */
-@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "FieldCanBeLocal", "WeakerAccess"})
+@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "FieldCanBeLocal", "WeakerAccess", "RedundantSuppression"})
 public
 class CoreInterface
 {
@@ -127,6 +127,9 @@ class CoreInterface
 
     private CoreLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", CoreLibrary.class);
     private AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-bridge", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
+    private AndroidAudioLibrary mAndroidAudioLibrary = Native.load("mupen64plus-audio-android", AndroidAudioLibrary.class);
+    private AndroidAudioLibrary mAndroidAudioLibraryFp = Native.load("mupen64plus-audio-android-fp", AndroidAudioLibrary.class);
+    private AppData.AudioPlugin mSelectedAudioPlugin = AppData.AudioPlugin.DUMMY;
     private HashMap<CoreTypes.m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
 
     private Pointer mCoreContext;
@@ -554,6 +557,10 @@ class CoreInterface
         return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
     }
 
+    void setSelectedAudioPlugin(AppData.AudioPlugin audioPlugin) {
+        mSelectedAudioPlugin = audioPlugin;
+    }
+
     /* coreDetachPlugin()
      *
      * This function detaches the given plugin from the emulator core, and re-attaches
@@ -621,6 +628,12 @@ class CoreInterface
     {
         mAeBridgeLibrary.resumeEmulator();
 
+        if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID) {
+            mAndroidAudioLibrary.resumeEmulator();
+        } else if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID_FP) {
+            mAndroidAudioLibraryFp.resumeEmulator();
+        }
+
         Pointer parameter = null;
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_RESUME.ordinal(), 0, parameter);
     }
@@ -629,6 +642,12 @@ class CoreInterface
     {
         mAeBridgeLibrary.pauseEmulator();
 
+        if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID) {
+            mAndroidAudioLibrary.pauseEmulator();
+        } else if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID_FP) {
+            mAndroidAudioLibraryFp.pauseEmulator();
+        }
+
         Pointer parameter = null;
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PAUSE.ordinal(), 0, parameter);
     }
@@ -636,6 +655,12 @@ class CoreInterface
     void emuAdvanceFrame()
     {
         mAeBridgeLibrary.resumeEmulator();
+
+        if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID) {
+            mAndroidAudioLibrary.resumeEmulator();
+        } else if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID_FP) {
+            mAndroidAudioLibraryFp.resumeEmulator();
+        }
 
         Pointer parameter = null;
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ADVANCE_FRAME.ordinal(), 0, parameter);
