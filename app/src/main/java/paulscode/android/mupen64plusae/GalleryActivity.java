@@ -65,6 +65,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.Task;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -77,7 +81,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.LocaleDialog;
-import paulscode.android.mupen64plusae.dialog.PleaseRateDialog;
+import paulscode.android.mupen64plusae.dialog.TryProDialog;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.jni.CoreService;
@@ -95,7 +99,7 @@ import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
-        GalleryRefreshFinishedListener, PleaseRateDialog.PromptRateListener
+        GalleryRefreshFinishedListener, TryProDialog.PromptTryPoListener
 {
     // Saved instance states
     private static final String STATE_QUERY = "STATE_QUERY";
@@ -112,7 +116,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_HARDWARE_INFO_POPUP = "STATE_HARDWARE_INFO_POPUP";
     private static final String STATE_SHOW_APP_VERSION_POPUP = "STATE_SHOW_APP_VERSION_POPUP";
     private static final String STATE_FAQ_POPUP = "STATE_FAQ_POPUP";
-    private static final String STATE_PLEASE_RATE_DIALOG = "STATE_PLEASE_RATE_DIALOG";
+    private static final String STATE_TRY_PRO_DIALOG = "STATE_TRY_PRO_DIALOG";
 
     public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
     public static final String KEY_IS_SHORTCUT = "KEY_IS_SHORTCUT";
@@ -192,7 +196,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         finishAffinity();
                     }
 
-                    mAppData.incrementNumberOfSuccesfulLaunches();
+                    mAppData.incrementNumberOfSuccesfulLaunchesToRate();
+                    mAppData.incrementNumberOfSuccesfulLaunchesToTryPro();
                 }
             });
 
@@ -585,10 +590,31 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // If no game was launched on creation
         if (getIntent() == null || getIntent().getExtras() == null) {
 
-            if(mAppData.getNumberOfSuccesfulLaunches() > 5 && mAppData.getTimeSinceFirstStart() > 5 && !mAppData.hasAppBeenRated()) {
-                if (fm.findFragmentByTag(STATE_PLEASE_RATE_DIALOG) == null) {
-                    final PleaseRateDialog pleaseRateDialog = PleaseRateDialog.newInstance();
-                    pleaseRateDialog.show(fm, STATE_PLEASE_RATE_DIALOG);
+            if(mAppData.getNumberOfSuccesfulLaunchesToTryPro() > 5 && mAppData.getTimeSinceFirstStartToTryPro() > 10 && !mAppData.shouldNag()) {
+                if (fm.findFragmentByTag(STATE_TRY_PRO_DIALOG) == null) {
+                    final TryProDialog tryProDialog = TryProDialog.newInstance();
+                    tryProDialog.show(fm, STATE_TRY_PRO_DIALOG);
+                }
+            } else {
+                if(mAppData.getNumberOfSuccesfulLaunchesToRate() > 5 && mAppData.getTimeSinceFirstStartToRate() > 5) {
+
+                    // Request a review
+                    ReviewManager manager = ReviewManagerFactory.create(this);
+                    Task<ReviewInfo> request = manager.requestReviewFlow();
+                    request.addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            try {
+                                // We can get the ReviewInfo object
+                                ReviewInfo reviewInfo = task.getResult();
+                                Task<Void> flow = manager.launchReviewFlow(this, reviewInfo);
+                                flow.addOnCompleteListener(flowTask -> mAppData.resetStatisticsToRate());
+                            } catch (android.content.ActivityNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.w("GalleryActivity", "Unable to ask for review");
+                        }
+                    });
                 }
             }
         }
@@ -1015,17 +1041,17 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public void onPromptRateDialogClosed(int which)
+    public void onTryProDialogClosed(int which)
     {
         Log.i( "GalleryActivity", "onPromptRateDialogClosed" );
 
         if( which == DialogInterface.BUTTON_POSITIVE ) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-            mAppData.setAppHasBeenRated();
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=org.mupen64plusae.v3.fzurita.pro")));
+            mAppData.setNoNagPlease();
         } else if (which == DialogInterface.BUTTON_NEUTRAL) {
-            mAppData.resetStatistics();
+            mAppData.resetStatisticsToTryPro();
         } else if (which == DialogInterface.BUTTON_NEGATIVE) {
-            mAppData.setAppHasBeenRated();
+            mAppData.setNoNagPlease();
         }
     }
 

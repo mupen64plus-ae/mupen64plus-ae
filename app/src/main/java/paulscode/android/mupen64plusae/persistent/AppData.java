@@ -349,9 +349,11 @@ public class AppData
     private static final String KEY_FORCE_ASSET_CHECK = "assetCheck";
     private static final String KEY_APP_VERSION = "appVersion";
     private static final String CHANNEL_ID = "CHANNEL_ID";
-    private static final String KEY_NUMBER_OF_LAUNCHES = "NumberOfLaunches";
-    private static final String KEY_FIRST_START_TIME = "FirstStartTime";
-    private static final String KEY_HAS_APP_BEEN_RATED = "HasAppBeenRated";
+    private static final String KEY_NUMBER_OF_LAUNCHES_TO_RATE = "NumberOfLaunchesToRate";
+    private static final String KEY_FIRST_START_TIME_TO_RATE = "FirstStartTimeToRate";
+    private static final String KEY_NUMBER_OF_LAUNCHES_TO_TRY_PRO = "NumberOfLaunchesToTryPro";
+    private static final String KEY_FIRST_START_TIME_TO_TRY_PRO = "FirstStartTimeToTryPro";
+    private static final String KEY_DOES_NOT_WANT = "DoesNotWant";
     // ... add more as needed
     
     /**
@@ -390,7 +392,8 @@ public class AppData
         appVersion = version;
         appVersionCode = (int)(versionCode & 0xffff);
 
-        updateTimeOfFirstStart();
+        updateTimeOfFirstStartToRate();
+        updateTimeOfFirstStartToTryPro();
         
         // Directories
 
@@ -492,19 +495,19 @@ public class AppData
      *
      * @return The number of launches for the app
      */
-    public int getNumberOfSuccesfulLaunches()
+    public int getNumberOfSuccesfulLaunchesToRate()
     {
-        return getInt( KEY_NUMBER_OF_LAUNCHES, 0 );
+        return getInt(KEY_NUMBER_OF_LAUNCHES_TO_RATE, 0 );
     }
 
     /**
      * Increment the number of launches for a game
      */
-    public void incrementNumberOfSuccesfulLaunches()
+    public void incrementNumberOfSuccesfulLaunchesToRate()
     {
-        int numberOfSuccesfulLaunches = getNumberOfSuccesfulLaunches();
+        int numberOfSuccesfulLaunches = getNumberOfSuccesfulLaunchesToRate();
         ++numberOfSuccesfulLaunches;
-        putInt( KEY_NUMBER_OF_LAUNCHES, numberOfSuccesfulLaunches);
+        putInt(KEY_NUMBER_OF_LAUNCHES_TO_RATE, numberOfSuccesfulLaunches);
     }
 
     /**
@@ -512,10 +515,10 @@ public class AppData
      *
      * @return Time since first start in days
      */
-    public double getTimeSinceFirstStart()
+    public double getTimeSinceFirstStartToRate()
     {
         double currentTime = System.currentTimeMillis() / 1000.0;
-        double timeAppFirstStarted = mPreferences.getLong(KEY_FIRST_START_TIME, System.currentTimeMillis())/1000.0;
+        double timeAppFirstStarted = mPreferences.getLong(KEY_FIRST_START_TIME_TO_RATE, System.currentTimeMillis())/1000.0;
 
         return (currentTime - timeAppFirstStarted)/60.0/60.0/24.0;
     }
@@ -523,38 +526,92 @@ public class AppData
     /**
      * Updates the time the app was first started
      */
-    private void updateTimeOfFirstStart()
+    private void updateTimeOfFirstStartToRate()
     {
-        long timeAppFirstStarted = mPreferences.getLong(KEY_FIRST_START_TIME, -1);
+        long timeAppFirstStarted = mPreferences.getLong(KEY_FIRST_START_TIME_TO_RATE, -1);
 
         if (timeAppFirstStarted == -1) {
-            mPreferences.edit().putLong(KEY_FIRST_START_TIME, System.currentTimeMillis()).apply();
+            mPreferences.edit().putLong(KEY_FIRST_START_TIME_TO_RATE, System.currentTimeMillis()).apply();
         }
     }
 
     /**
      * Resets time of first start and number of successful runs
      */
-    public void resetStatistics()
+    public void resetStatisticsToRate()
     {
-        putInt( KEY_NUMBER_OF_LAUNCHES, 0);
-        mPreferences.edit().putLong(KEY_FIRST_START_TIME, System.currentTimeMillis()).apply();
+        putInt(KEY_NUMBER_OF_LAUNCHES_TO_RATE, 0);
+        mPreferences.edit().putLong(KEY_FIRST_START_TIME_TO_RATE, System.currentTimeMillis()).apply();
+    }
+
+    /**
+     * Gets the number of launches for a game
+     *
+     * @return The number of launches for the app
+     */
+    public int getNumberOfSuccesfulLaunchesToTryPro()
+    {
+        return getInt(KEY_NUMBER_OF_LAUNCHES_TO_TRY_PRO, 0 );
+    }
+
+    /**
+     * Increment the number of launches for a game
+     */
+    public void incrementNumberOfSuccesfulLaunchesToTryPro()
+    {
+        int numberOfSuccesfulLaunches = getNumberOfSuccesfulLaunchesToTryPro();
+        ++numberOfSuccesfulLaunches;
+        putInt(KEY_NUMBER_OF_LAUNCHES_TO_TRY_PRO, numberOfSuccesfulLaunches);
+    }
+
+    /**
+     * Gets the number of days since the app was first started
+     *
+     * @return Time since first start in days
+     */
+    public double getTimeSinceFirstStartToTryPro()
+    {
+        double currentTime = System.currentTimeMillis() / 1000.0;
+        double timeAppFirstStarted = mPreferences.getLong(KEY_FIRST_START_TIME_TO_TRY_PRO, System.currentTimeMillis())/1000.0;
+
+        return (currentTime - timeAppFirstStarted)/60.0/60.0/24.0;
+    }
+
+    /**
+     * Updates the time the app was first started
+     */
+    private void updateTimeOfFirstStartToTryPro()
+    {
+        long timeAppFirstStarted = mPreferences.getLong(KEY_FIRST_START_TIME_TO_TRY_PRO, -1);
+
+        if (timeAppFirstStarted == -1) {
+            mPreferences.edit().putLong(KEY_FIRST_START_TIME_TO_TRY_PRO, System.currentTimeMillis()).apply();
+        }
+    }
+
+    /**
+     * Resets time of first start and number of successful runs
+     */
+    public void resetStatisticsToTryPro()
+    {
+        putInt(KEY_NUMBER_OF_LAUNCHES_TO_TRY_PRO, 0);
+        mPreferences.edit().putLong(KEY_FIRST_START_TIME_TO_TRY_PRO, System.currentTimeMillis()).apply();
     }
 
     /**
      * Call to set the app as being rated
      */
-    public void setAppHasBeenRated()
+    public void setNoNagPlease()
     {
-        mPreferences.edit().putBoolean(KEY_HAS_APP_BEEN_RATED, true).apply();
+        mPreferences.edit().putBoolean(KEY_DOES_NOT_WANT, true).apply();
     }
 
     /**
      * Call to set the app as being rated
      */
-    public boolean hasAppBeenRated()
+    public boolean shouldNag()
     {
-        return mPreferences.getBoolean(KEY_HAS_APP_BEEN_RATED, false);
+        return mPreferences.getBoolean(KEY_DOES_NOT_WANT, false);
     }
 
     private int getInt( String key, int defaultValue )
