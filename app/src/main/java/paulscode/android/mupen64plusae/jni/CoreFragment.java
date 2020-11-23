@@ -314,6 +314,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomArtPath(mRomArtPath);
         params.setRestarting(mIsRestarting);
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
+        params.setVideoRenderWidth(mGamePrefs.videoRenderWidth);
+        params.setVideoRenderHeight(mGamePrefs.videoRenderHeight);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }

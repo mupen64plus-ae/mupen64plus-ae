@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
@@ -24,7 +25,13 @@ public class DisplayWrapper {
     public static Display getDisplay(Activity activity)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return activity.getDisplay();
+            Display display = null;
+            try {
+                display = activity.getDisplay();
+            } catch (java.lang.UnsupportedOperationException e) {
+                Log.e("DisplayWrapper", "Can't get display from service");
+            }
+            return display;
         } else {
             return activity.getWindowManager().getDefaultDisplay();
         }
@@ -34,7 +41,13 @@ public class DisplayWrapper {
     public static Display getDisplay(Context context)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return context.getDisplay();
+            Display display = null;
+            try {
+                display = context.getDisplay();
+            } catch (java.lang.UnsupportedOperationException e) {
+                Log.e("DisplayWrapper", "Can't get display from service");
+            }
+            return display;
         } else {
             final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
             return windowManager != null ? windowManager.getDefaultDisplay() : null;
@@ -125,6 +138,8 @@ public class DisplayWrapper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Window window = activity.getWindow();
             if (window != null) {
+                // Force the decor view to be initialized so that the follow up call doesn't crash
+                window.getDecorView();
                 final WindowInsetsController insetsController = window.getInsetsController();
                 if (insetsController != null) {
                     insetsController.hide(WindowInsets.Type.statusBars());
@@ -145,6 +160,8 @@ public class DisplayWrapper {
 
             Window window = activity.getWindow();
             if (window != null) {
+                // Force the decor view to be initialized so that the follow up call doesn't crash
+                window.getDecorView();
                 WindowInsetsController controller = activity.getWindow().getInsetsController();
                 if(controller != null) {
                     controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());

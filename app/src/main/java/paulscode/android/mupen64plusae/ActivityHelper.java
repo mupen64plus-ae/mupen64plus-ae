@@ -105,10 +105,12 @@ public class ActivityHelper
         public static final String SEARCH_SUBDIR        = NAMESPACE + "GALLERY_SEARCH_SUBDIR";
         public static final String DELETE_PATH          = NAMESPACE + "DELETE_PATH";
         public static final String DELETE_FILTER        = NAMESPACE + "DELETE_FILTER";
-        public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
         public static final String USE_RAPHNET_DEVICES  = NAMESPACE + "USE_RAPHNET_DEVICES";
         public static final String EXIT_GAME            = NAMESPACE + "EXIT_GAME";
         public static final String FORCE_EXIT_GAME      = NAMESPACE + "FORCE_EXIT_GAME";
+        public static final String VIDEO_RENDER_WIDTH   = NAMESPACE + "VIDEO_RENDER_WIDTH";
+        public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
+
 
         //@formatter:on
     }
@@ -480,6 +482,8 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_HEADER_NAME, params.getRomHeaderName());
         intent.putExtra(Keys.ROM_COUNTRY_CODE, params.getRomCountryCode());
         intent.putExtra(Keys.ROM_ART_PATH, params.getRomArtPath());
+        intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
+        intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);

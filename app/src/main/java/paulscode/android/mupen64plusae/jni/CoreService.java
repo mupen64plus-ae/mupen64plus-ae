@@ -139,6 +139,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private String mRomCrc = null;
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
+    private int mVideoRenderWidth = 0;
+    private int mVideoRenderHeight = 0;
 
     //Service attributes
     private int mStartId;
@@ -496,7 +498,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 copyGameContentsFromSdCard();
             }
 
-            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData)) {
+            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData, mVideoRenderWidth, mVideoRenderHeight)) {
                 //Stop the service
                 forceExit();
                 return;
@@ -815,6 +817,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
+        notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
+        notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT, mVideoRenderHeight );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -884,6 +888,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
             mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
+            mVideoRenderWidth = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_WIDTH );
+            mVideoRenderHeight = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT );
 
             mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
                     CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );

@@ -57,7 +57,7 @@ class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    static boolean syncConfigFiles(GamePrefs game, GlobalPrefs global, AppData appData)
+    static boolean syncConfigFiles(GamePrefs game, GlobalPrefs global, AppData appData, int renderWidth, int renderHeight)
     {
         //@formatter:off
 
@@ -65,8 +65,8 @@ class NativeConfigFiles
 
         // gln64 config file
         final ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
-        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( game.videoRenderWidth ) );
-        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( game.videoRenderHeight ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( renderWidth ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( renderHeight ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGln64AutoFrameskipEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gln64MaxFrameskip ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset hack", boolToNum( global.isPolygonOffsetHackEnabled ) );
@@ -147,8 +147,8 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Rsp-HLE", "AudioListToAudioPlugin", "0" );
 
         mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );
-        mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );
-        mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( game.videoRenderHeight ) );
+        mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( renderWidth ) );
+        mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( renderHeight ) );
         mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );
 
         mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );
@@ -346,14 +346,17 @@ class NativeConfigFiles
 
                 final byte[] buffer = new byte[4];
 
-                stream.read(buffer);
-                final ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-                wrapped.order(ByteOrder.LITTLE_ENDIAN);
-                final int config = wrapped.getInt();
+                int readInput = stream.read(buffer);
 
-                zipTextureCache = (config & GZ_HIRESTEXCACHE) == GZ_HIRESTEXCACHE;
-                force16bpp = (config & FORCE16BPP_HIRESTEX) == FORCE16BPP_HIRESTEX;
-                fullAlphaChannel = (config & LET_TEXARTISTS_FLY) == LET_TEXARTISTS_FLY;
+                if (readInput != 0) {
+                    final ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+                    wrapped.order(ByteOrder.LITTLE_ENDIAN);
+                    final int config = wrapped.getInt();
+
+                    zipTextureCache = (config & GZ_HIRESTEXCACHE) == GZ_HIRESTEXCACHE;
+                    force16bpp = (config & FORCE16BPP_HIRESTEX) == FORCE16BPP_HIRESTEX;
+                    fullAlphaChannel = (config & LET_TEXARTISTS_FLY) == LET_TEXARTISTS_FLY;
+                }
             }
             catch (final IOException e)
             {
@@ -396,7 +399,7 @@ class NativeConfigFiles
         }
 
         String glideN64settingValue = glideN64ConfigFile.get(headerNameURL, setting);
-        // TODO: A lot of devices have issues with EnableCopyColorToRDRAM=2 for GLES 2.0
+        // A lot of devices have issues with EnableCopyColorToRDRAM=2 for GLES 2.0
         // due to incompatibility with Android Native buffers, due to this, don't load
         // default values from GLideN64.custom.ini when running with GLES 2.0 for EnableCopyColorToRDRAM
         // because it could be set that way there.

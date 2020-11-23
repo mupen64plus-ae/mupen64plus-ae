@@ -37,6 +37,8 @@ public class StartCoreServiceParams
     private String romArtPath;
     private boolean isRestarting;
     private boolean useRaphnetDevicesIfAvailable;
+    private int videoRenderWidth;
+    private int videoRenderHeight;
 
     public String getRomGoodName() {
         return romGoodName;
@@ -124,5 +126,21 @@ public class StartCoreServiceParams
 
     public void setUseRaphnetDevicesIfAvailable(boolean useRaphnetDevicesIfAvailable) {
         this.useRaphnetDevicesIfAvailable = useRaphnetDevicesIfAvailable;
+    }
+
+    public int getVideoRenderWidth() {
+        return videoRenderWidth;
+    }
+
+    public void setVideoRenderWidth(int videoRenderWidth) {
+        this.videoRenderWidth = videoRenderWidth;
+    }
+
+    public int getVideoRenderHeight() {
+        return videoRenderHeight;
+    }
+
+    public void setVideoRenderHeight(int videoRenderHeight) {
+        this.videoRenderHeight = videoRenderHeight;
     }
 }
