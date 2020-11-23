@@ -331,9 +331,6 @@ EXPORT void CALL AiLenChanged(void) {
     static int busyWaitDisableCount = 0;
     static const int busyWaitCheck = 30;
 
-    if (AudioHandler::get().isCriticalFailure())
-        return;
-
     if (!l_PluginInit)
         return;
 
@@ -438,9 +435,6 @@ EXPORT int CALL RomOpen(void) {
 
 EXPORT void CALL RomClosed(void) {
     if (!l_PluginInit)
-        return;
-
-    if (AudioHandler::get().isCriticalFailure())
         return;
 
     DebugMessage(M64MSG_VERBOSE, "Cleaning up Android sound plugin...");

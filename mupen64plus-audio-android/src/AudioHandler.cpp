@@ -43,10 +43,6 @@ void AudioHandler::closeAudio() {
 	}
 }
 
-bool AudioHandler::isCriticalFailure() const {
-	return mCriticalFailure;
-}
-
 void AudioHandler::createPrimaryBuffer() {
 	auto primaryBytes = (unsigned int) (primaryBufferSize * hwSamplesBytes);
 
@@ -74,9 +70,6 @@ void AudioHandler::initializeAudio(int _freq) {
 
 	/* Sometimes a bad frequency is requested so ignore it */
 	if (_freq < 4000)
-		return;
-
-	if (mCriticalFailure)
 		return;
 
 	/* This is important for the sync */
@@ -141,7 +134,7 @@ void AudioHandler::initializeAudio(int _freq) {
 void AudioHandler::pushData(const int16_t *_data, int _samples,
 							std::chrono::duration<double> timeSinceStart) {
 
-	int numBytes = _samples * numberOfChannels*sizeof(int16_t);
+	unsigned int numBytes = _samples * numberOfChannels*sizeof(int16_t);
 
 	PoolBufferPointer data = mSoundBufferPool.createPoolBuffer(
 			reinterpret_cast<const char *>(_data), numBytes);
@@ -247,7 +240,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 			feedTimes[feedTimeIndex] = timeDiff;
 			averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-			gameTimes[feedTimeIndex] = static_cast<float>(currQueueData.samples) / mInputFreq;
+			gameTimes[feedTimeIndex] = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
 			averageGameTime = getAverageTime(gameTimes,feedTimesSet ? feedTimeWindowSize : (feedTimeIndex +  1));
 
 			++feedTimeIndex;

@@ -13,66 +13,71 @@ class AudioHandler : public oboe::AudioStreamCallback
 {
 public:
 
-	/*
+	/**
 	 * Get an instance of this class
+	 * @return Instance of Audio handler
 	 */
 	static AudioHandler& get();
 
-	/*
+	/**
 	 * Enable swappping of audio channels
+	 * @param _swapChannels True if channels should be swapped
 	 */
 	void setSwapChannels(bool _swapChannels);
 
-	/*
-	 * Set secondary buffer size
+	/**
+	 * Set secondary buffer size in samples
+	 * @param _secondaryBufferSize Buffer size in samples
 	 */
 	void setSecondaryBufferSize(int _secondaryBufferSize);
 
-	/*
-	 *  Enable audio time stretching
+	/**
+	 * Enable audio time stretching
+	 * @param _timeStretchEnabled True to enble time stretching
 	 */
 	void setTimeStretchEnabled(int _timeStretchEnabled);
 
-	/*
+	/**
 	 * Changing the sampling type
+	 * @param _samplingType 0 for trivial resampling, anything else for soundtouch resampling
 	 */
 	void setSamplingType(int _samplingType);
 
 	/**
-	 * BUffer ammount in milliseconds
-	 * @param _targetSecondaryBuffersMs
+	 * Triger priming bUffer amount in milliseconds
+	 * @param _targetSecondaryBuffersMs How many milliseconds to prime the audio hardware
 	 */
 	void setTargetSecondaryBuffersMs(int _targetSecondaryBuffersMs);
 
-	/*
+	/**
 	 * Set the output sampling rate
+	 * @param _samplingRateSelection Output sampling rate, set to zero to use the game provided sampling rate
 	 */
 	void setSamplingRateSelection(int _samplingRateSelection);
 
-	/*
-	 * Set the speed factor
+	/**
+	 *  Set the speed factor
+	 * @param _speedFactor Speed factor, 100= normal speed, 200 equals 2x speed, etc
 	 */
 	void setSpeedFactor(int _speedFactor);
 
-	/*
+	/**
 	 * Set the function used for logging
+	 * @param _context Context name string to used for logging
+	 * @param _debugCallback Actual function used for logging
 	 */
 	void setLoggingFunction(void* _context, void (*_debugCallback)(void *, int, const char *));
 
-	/*
+	/**
 	 * Sets the input data freq and intializes audio processing
+	 * @param _freq Input data frequency that will be resampled to the output frequency
 	 */
 	void initializeAudio(int _freq);
 
-	/*
+	/**
 	 * Stops audio processing
 	 */
 	void closeAudio();
-
-	/*
-	 * Returns true if a critical failure has occurred
-	 */
-	bool isCriticalFailure() const;
 
 
 	/**
@@ -85,13 +90,20 @@ public:
 	 */
 	void resumePlayback();
 
-	/*
+	/**
 	 * Pushes audio data to be processed
+	 * @param _data Input data
+	 * @param _samples How many samples the input data contains
+	 * @param _timeSinceStart Game time of this data
 	 */
 	void pushData(const int16_t* _data, int _samples, std::chrono::duration<double> _timeSinceStart);
 
-	/*
+	/**
 	 * Oboe audio callback
+	 * @param oboeStream Oboe stream
+	 * @param audioData Buffer used to copy data to
+	 * @param numFrames How may samples are in this data
+	 * @return Playback state
 	 */
 	oboe::DataCallbackResult onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
 
@@ -111,6 +123,7 @@ public:
 
 private:
 
+	// Structure used for queuing data to be played back
 	struct QueueData {
 		PoolBufferPointer data;
 		unsigned int samples;
@@ -122,63 +135,95 @@ private:
 	 */
 	AudioHandler();
 
-	/*
+	/**
 	 * Logs a debug message
+	 * @param level Debug level
+	 * @param message Debug message
+	 * @param ...
 	 */
 	void DebugMessage(int level, const char *message, ...);
 
-	/*
+	/**
 	 * Processes input samples by using soundtouch library
+	 * @param primaryBufferPos Input Buffer position
+	 * @param outAudioData Data is written to this buffer
+	 * @param outNumFrames How may frames to write
+	 * @return True if data was written
 	 */
 	bool processAudioSoundTouch(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
 
-	/*
-	 * Performs audio resampling
+	/**
+	 * Performs trivial audio resampling
+	 * @param input Input data to sample
+	 * @param bytesPerSample How many bytes are in each sample
+	 * @param oldsamplerate The input data sampling rate
+	 * @param output Where data should be written
+	 * @param output_needed How much data should be written if possible
+	 * @param newsamplerate The desired sampling rate
+	 * @return How many bytes were actually written
 	 */
 	static int resample(const unsigned char *input, int bytesPerSample, int oldsamplerate, unsigned char *output,
 						   int output_needed, int newsamplerate);
 
-	/*
-	 * Processes input sample using a trivial resampler, returns true if there was data to process
+	/**
+	 * Processes input samples by using trivial resampling
+	 * @param primaryBufferPos Input Buffer position
+	 * @param outAudioData Data is written to this buffer
+	 * @param outNumFrames How may frames to write
+	 * @return True if data was written
 	 */
 	bool processAudioTrivial(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
 
-	/*
+	/**
 	 * Performs sound stretching processing, returns true if data was provided, returns true if data was provided
+	 * @param outAudioData Where to write data
+	 * @param outNumFrames how much data to write
+	 * @return True if write was successful
 	 */
 	bool audioProviderStretch(void *outAudioData, int32_t outNumFrames);
 
 	/**
 	 * Performs audio processing with no time stretching, returns true if data was provided
+	 * @param outAudioData Where to write data
+	 * @param outNumFrames how much data to write
+	 * @return True if write was successful
 	 */
 	bool audioProviderNoStretch(void *audioData, int32_t numFrames);
 
-	/*
+	/**
 	 * Converts a N64 buffer to a hardware buffer
+	 * @param inputBuffer Input N64 buffer to convert
+	 * @param inputSamples How many samples are contained in the input buffer
+	 * @param outputBuffer Output where to write the converted samples
+	 * @param outputBufferStart Output start position
+	 * @return Offset to where the data ends
 	 */
 	int convertBufferToHwBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart);
 
-	/*
+	/**
 	 * Creates the primary audio buffer
 	 */
 	void createPrimaryBuffer();
 
-	/*
+	/**
 	 * Creates the secondary audio buffers
 	 */
 	void createSecondaryBuffer();
 
-	/*
-	 * Computes the average time on the provided times
+	/**
+	 * Determines average feed time or game time so that they can be compared to each other
+	 * @param feedTimes A set o times
+	 * @param numTimes How many times are present in the data
+	 * @return The average value
 	 */
 	static double getAverageTime(const double *feedTimes, int numTimes);
 
 	/**
 	 * Injects silence
-	 * @param audioData
-	 * @param numFrames
+	 * @param audioData Output buffer where to write silence to
+	 * @param numFrames How many samples to write silence in provided bufer
 	 */
-	void injectSilence (void *audioData, int32_t numFrames);
+	static void injectSilence (void *audioData, int32_t numFrames);
 
 #ifdef FP_ENABLED
     static const int hwSamplesBytes = 8;
@@ -186,7 +231,10 @@ private:
 	static const int hwSamplesBytes = 4;
 #endif
 
+	// Debug callback function
 	void (*mDebugCallback)(void *, int, const char *) = nullptr;
+
+	// Debug context text
 	void *mDebugContext = nullptr;
 
 	//Default frequency for input and output
@@ -216,9 +264,6 @@ private:
 	int mOutputFreq = defaultFreq;
 	// Audio speed factor (0-100)
 	int mSpeedFactor = 100;
-
-	//  Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
-	bool mCriticalFailure = 0;
 
 	// Queue used to communicate with the audio consumer thread
 	BlockingReaderWriterQueue<QueueData> mAudioConsumerQueue;
