@@ -37,8 +37,6 @@ public class TryProDialog extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         final String title = getString(R.string.confirmTryPro);
         final String message = getString(R.string.confirmPleaseTryPro);
 
@@ -76,16 +74,5 @@ public class TryProDialog extends DialogFragment
         {
             Log.e("PleaseRateDialog", "Activity doesn't implement PromptConfirmListener");
         }
-    }
-
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
     }
 }

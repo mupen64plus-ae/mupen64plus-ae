@@ -149,6 +149,13 @@
     <string name="actionDeleteGameData_title">Borrar datos</string>
     <string name="actionDeleteGameData_summary">Borrar todos los de este juego del almacenamiento interno</string>
     <string name="actionDeleteGameData_confirmation">¿Está seguro de que deseas borrar los datos de este juego del almacenamiento interno?</string>
+    <string name="actionDownloadData_title">Descargar datos</string>
+    <string name="actionDownloadData_summary">Descargar datos del juego de Google Drive</string>
+    <string name="actionDownloadData_confirmation">¿Está seguro de que desea descargar datos de este juego? Esto reemplazará datos locales de este juego.</string>
+    <string name="actionUploadData_title">Subir datos</string>
+    <string name="actionUploadData_summary">Subir datas del juego a Google Drive</string>
+    <string name="actionUploadData_confirmation">¿Está seguro de que desea subir datos de este juego? Esto reemplazará datos remotos de este juego.</string>
+
 
     <!--Preference Screens-->
     <string name="screenCheats_title">Trucos</string>
@@ -563,8 +570,8 @@
     <string name="useUpnpToMapPort_summary">Usar UPnP o NAT/PMP para mapear puertos externos automaticamente</string>
     <string name="roomTcpPort_title">Puerto de TCP para el cuerto</string>
     <string name="serverTcpUdpPort_title">Puero de UDP/TCP para el servidor</string>
-    <string name="enableGoogleDriveSupport_title">Soporte para Google Drive</string>
-    <string name="enableGoogleDriveSupport_summary">Datos de los juegos seran respaldados en Google Drive</string>
+    <string name="enableGoogleDriveSupport_title">Subir a Google Drive</string>
+    <string name="enableGoogleDriveSupport_summary">Automáticamente subir datas del juego a Google Drive cuando se sale.</string>
     <string name="signInToGoogleDrive_title">Inicie sesión en Google Drive</string>
     <string name="signOutOfGoogleDrive_title">Cierre sesión en Google Drive</string>
     <string name="allowBackupOverData_title">Respalde datos dobre data de celular</string>
@@ -573,6 +580,7 @@
     <string name="downloadGoogleDriveBackup_summary">Descargue el última respaldo de Google Drive, esto sobrescribirá datos si ya existen</string>
     <string name="alreadyHaveGoogleDrivePermissions">La sesión a Google Drive ya ha sido iniciada</string>
     <string name="signedOutOfGoogleDrive">La sesión a Google Drive ya ha sido cerrada</string>
+    <string name="notSignedIn">Por favor inicie sesión a Google Drive primero</string>
 
     <!--**************************************************************************-->
     <!--Dialogs and Other Feedback-->

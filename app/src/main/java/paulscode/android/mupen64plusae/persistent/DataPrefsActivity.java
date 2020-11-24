@@ -147,6 +147,12 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        // Get app data and user preferences
+        mAppData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs(this, mAppData);
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         super.onCreate(savedInstanceState);
 
         final FragmentManager fm = getSupportFragmentManager();
@@ -157,12 +163,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             mDownloadFromGoogleDriveFragment = new DownloadFromGoogleDriveFragment();
             fm.beginTransaction().add(mDownloadFromGoogleDriveFragment, STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT).commit();
         }
-
-        // Get app data and user preferences
-        mAppData = new AppData(this);
-        mGlobalPrefs = new GlobalPrefs(this, mAppData);
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -324,7 +324,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
     private void downloadFromGoogleDrive()
     {
-        mDownloadFromGoogleDriveFragment.downloadFromGoogleDrive();
+        mDownloadFromGoogleDriveFragment.downloadFromGoogleDrive(null, null, null, null, null);
     }
 
     private void signOutOffGoogleDrive()

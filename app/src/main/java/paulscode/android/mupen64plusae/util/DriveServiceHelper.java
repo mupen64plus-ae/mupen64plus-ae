@@ -60,7 +60,7 @@ import javax.annotation.Nullable;
  * A utility for performing read/write operations on Drive files via the REST API and opening a
  * file picker UI via Storage Access Framework.
  */
-@SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue", "RedundantSuppression"})
 public class DriveServiceHelper {
     private final Drive mDriveService;
 
@@ -270,6 +270,23 @@ public class DriveServiceHelper {
         return result;
     }
 
+    public List<GoogleDriveFileHolder> getExistingFilesStartWith(final String fileStartsWith, final String folderId) throws IOException
+    {
+        List<GoogleDriveFileHolder> result = new ArrayList<>();
+
+        List<GoogleDriveFileHolder> files = queryFiles(folderId);
+
+        if (files.size() > 0) {
+            for ( GoogleDriveFileHolder driveFile : files) {
+                if (driveFile.getName().startsWith(fileStartsWith) && !driveFile.isDirectory()) {
+                    result.add(driveFile);
+                }
+            }
+        }
+
+        return result;
+    }
+
     public GoogleDriveFileHolder createFolderIfNotExist(final String folderName, @Nullable final String parentFolderId) throws IOException
     {
         GoogleDriveFileHolder foundFolder = getExistingFolder(folderName, parentFolderId);
@@ -369,7 +386,7 @@ public class DriveServiceHelper {
             if (file != null) {
                 parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file.getUri(), "r");
             }
-        } catch (java.lang.IllegalArgumentException e) {
+        } catch (IllegalArgumentException|IllegalStateException e) {
             e.printStackTrace();
             Log.e(TAG, "Unable to save data to google drive");
         }
@@ -389,9 +406,13 @@ public class DriveServiceHelper {
                     .setMimeType(mimeType)
                     .setName(file.getName());
 
-            File fileMeta = mDriveService.files().create(metadata, contentStream).execute();
-            googleDriveFileHolder.setId(fileMeta.getId());
-            googleDriveFileHolder.setName(fileMeta.getName());
+            try {
+                File fileMeta = mDriveService.files().create(metadata, contentStream).execute();
+                googleDriveFileHolder.setId(fileMeta.getId());
+                googleDriveFileHolder.setName(fileMeta.getName());
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
         }
 
         return googleDriveFileHolder;
@@ -433,24 +454,32 @@ public class DriveServiceHelper {
 
     public boolean downloadFolder(Context context, final DocumentFile destData, GoogleDriveFileHolder folder) throws IOException
     {
+        Log.d(TAG, "Downloading folder " + folder.getName());
+
         if (folder.isDirectory()) {
-            Log.d(TAG, "Downloading folder " + folder.getName());
+            Log.d(TAG, "Is folder");
 
             List<GoogleDriveFileHolder> files = queryFiles(folder.getId());
             DocumentFile newFolder = FileUtil.createFolderIfNotPresent(context, destData, folder.getName());
 
             if (newFolder == null) {
+                Log.d(TAG, "New folder is NULL: " + folder.getName() + " aborting...");
                 return false;
             }
 
+            Log.d(TAG, "Total number of files in folder " + folder.getName() + " is " + files.size());
+
             for (GoogleDriveFileHolder file : files) {
                 if (file.isDirectory()) {
+                    Log.d(TAG, "File " + file.getName() + " is directory");
                     downloadFolder(context, newFolder, file);
                 } else {
+                    Log.d(TAG, "File " + file.getName() + " is file");
                     downloadFile(context, newFolder, file);
                 }
             }
         } else {
+            Log.d(TAG, "Is file");
             downloadFile(context, destData, folder);
         }
         return true;
@@ -623,6 +652,8 @@ public class DriveServiceHelper {
 
     public List<GoogleDriveFileHolder> queryFiles(@Nullable final String folderId) throws IOException
     {
+        Log.d(TAG, "Query files on folder id=" + folderId);
+
         List<GoogleDriveFileHolder> googleDriveFileHolderList = new ArrayList<>();
         String parent = "root";
         if (folderId != null) {
@@ -630,6 +661,8 @@ public class DriveServiceHelper {
         }
 
         FileList result = mDriveService.files().list().setQ("'" + parent + "' in parents").setFields("files(id, name,size,createdTime,modifiedTime,starred,mimeType)").setSpaces("drive").execute();
+
+        Log.d(TAG, "Query yielded " + result.getFiles().size() + " files.");
 
         for (int i = 0; i < result.getFiles().size(); i++) {
 
@@ -656,7 +689,13 @@ public class DriveServiceHelper {
             }
 
             if (!googleDriveFileHolder.getName().equals("null")) {
+
+                Log.d(TAG, "Adding file: " + googleDriveFileHolder.getName());
                 googleDriveFileHolderList.add(googleDriveFileHolder);
+            }
+            else
+            {
+                Log.d(TAG, "Not adding file because name was null");
             }
         }
 

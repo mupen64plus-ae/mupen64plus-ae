@@ -63,6 +63,7 @@ import paulscode.android.mupen64plusae.task.DeleteFilesService;
 import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.task.SyncToGoogleDriveService;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -410,9 +411,21 @@ public class ActivityHelper
         }
     };
 
-    static void startDownloadFromGoogleDriveService(Context context, ServiceConnection serviceConnection)
+    static void startDownloadFromGoogleDriveService(Context context, ServiceConnection serviceConnection, String romMd5,
+                                                    String romCrc, String romHeaderName, String romGoodName,  CountryCode romCountryCode)
     {
         Intent intent = new Intent(context, DownloadFromGoogleDriveService.class);
+        intent.putExtra( Keys.ROM_MD5, romMd5 );
+        intent.putExtra( Keys.ROM_CRC, romCrc );
+        intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
+
+        if (romCountryCode != null) {
+            intent.putExtra( Keys.ROM_COUNTRY_CODE, romCountryCode.getValue() );
+        } else {
+            byte zero = 0;
+            intent.putExtra( Keys.ROM_COUNTRY_CODE, zero );
+        }
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
     }

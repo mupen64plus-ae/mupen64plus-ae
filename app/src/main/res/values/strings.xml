@@ -192,6 +192,12 @@
     <string name="actionDeleteGameData_title">Delete data</string>
     <string name="actionDeleteGameData_summary">Delete data for this game, from internal storage. Data in external storage will be left.</string>
     <string name="actionDeleteGameData_confirmation">Are you sure you would like to delete all data for this game from internal storage?</string>
+    <string name="actionDownloadData_title">Download save data</string>
+    <string name="actionDownloadData_summary">Download save data from Google Drive</string>
+    <string name="actionDownloadData_confirmation">Are you sure you would like to download game data? This will overwrite local game data.</string>
+    <string name="actionUploadData_title">Upload save data</string>
+    <string name="actionUploadData_summary">Upload save data to Google Drive</string>
+    <string name="actionUploadData_confirmation">Are you sure you would like to upload game data? This will overwrite remote game data.</string>
 
     <!-- Preference Screens -->
     <string name="screenCheats_title">Cheats</string>
@@ -756,8 +762,8 @@
     <string name="roomTcpPort_title">Room TCP Port</string>
     <string name="serverTcpUdpPort_title">Server UDP/TCP Port</string>
     <string name="googleDriveSection_title">Google Drive</string>
-    <string name="enableGoogleDriveSupport_title">Google Drive support</string>
-    <string name="enableGoogleDriveSupport_summary">Game data will be backed up to Google Drive</string>
+    <string name="enableGoogleDriveSupport_title">Upload to Google Drive</string>
+    <string name="enableGoogleDriveSupport_summary"> Automatically upload save data to Google Drive on game exit</string>
     <string name="signInToGoogleDrive_title">Sign in to Google drive</string>
     <string name="signOutOfGoogleDrive_title">Sign out of Google drive</string>
     <string name="allowBackupOverData_title">Backup over cell data</string>
@@ -766,6 +772,7 @@
     <string name="downloadGoogleDriveBackup_summary">Download the latest Google Drive backup, this will overwrite data if it already exists</string>
     <string name="alreadyHaveGoogleDrivePermissions">Already logged in to Google Drive</string>
     <string name="signedOutOfGoogleDrive">Signed out of Google Drive</string>
+    <string name="notSignedIn">Please sign in to Google Drive</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback -->

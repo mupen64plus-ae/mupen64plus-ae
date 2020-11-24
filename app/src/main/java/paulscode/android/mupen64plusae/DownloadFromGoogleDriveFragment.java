@@ -23,11 +23,14 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import paulscode.android.mupen64plusae.R;
 
@@ -35,6 +38,7 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService;
 import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService.DownloadFilesListener;
 import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService.LocalBinder;
+import paulscode.android.mupen64plusae.util.CountryCode;
 
 @SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
 public class DownloadFromGoogleDriveFragment extends Fragment implements DownloadFilesListener
@@ -49,35 +53,43 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
 
     //Progress dialog for extracting textures
     private ProgressDialog mProgress = null;
-    
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
-    
-    private boolean mInProgress = false;
 
-    // this method is only called once for this fragment
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+    public static class DataViewModel extends ViewModel {
+
+        public DataViewModel() {}
+
+        //Service connection for the progress dialog
+        LocalBinder mBinder = null;
+
+        private boolean mInProgress = false;
+
+        String mRomMd5;
+        String mRomCrc;
+        String mRomHeaderName;
+        String mRomGoodName;
+        CountryCode mRomCountryCode;
+        DownloadFromGoogleDriveFragment mCurrentFragment = null;
     }
 
+    DataViewModel mViewModel;
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        
-        if(mInProgress)
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
+
+        if(mViewModel.mInProgress)
         {
-            try {
-                CharSequence title = getString(R.string.importGoogleDriveService_importNotificationTitle);
-                CharSequence message = getString(R.string.toast_pleaseWait);
-                mProgress = new ProgressDialog(mProgress, requireActivity(), title, "", message, true);
-                mProgress.show();
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
+            CharSequence title = getString(R.string.importGoogleDriveService_importNotificationTitle);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+            mProgress = new ProgressDialog(mProgress, requireActivity(), title, "", message, true);
+            mProgress.show();
+
+            if (mViewModel.mBinder != null) {
+                DownloadFromGoogleDriveService downloadFromGoogleDriveService = mViewModel.mBinder.getService();
+                downloadFromGoogleDriveService.setDownloadFilesListener(mViewModel.mCurrentFragment);
             }
         }
     }
@@ -92,21 +104,6 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
         }
         
         super.onDetach();
-    }
-    
-    @Override
-    public void onDestroy()
-    {        
-        if(mServiceConnection != null && mInProgress)
-        {
-            try {
-                ActivityHelper.stopDownloadFromGoogleDriveService(requireActivity().getApplicationContext(), mServiceConnection);
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        super.onDestroy();
     }
 
     @Override
@@ -125,7 +122,7 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
     @Override
     public void onServiceDestroyed()
     {
-        mInProgress = false;
+        mViewModel.mInProgress = false;
         mProgress.dismiss();
     }
 
@@ -135,8 +132,14 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
         return mProgress;
     }
 
-    public void downloadFromGoogleDrive()
+    public void downloadFromGoogleDrive(String romMd5, String romCrc, String romHeaderName, String romGoodName,  CountryCode romCountryCode)
     {
+        mViewModel.mRomMd5 = romMd5;
+        mViewModel.mRomCrc = romCrc;
+        mViewModel.mRomHeaderName = romHeaderName;
+        mViewModel.mRomGoodName = romGoodName;
+        mViewModel.mRomCountryCode = romCountryCode;
+
         try {
             actuallyDownloadFiles(requireActivity());
         } catch (java.lang.IllegalStateException e) {
@@ -146,7 +149,7 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
     
     private void actuallyDownloadFiles(Activity activity)
     {
-        mInProgress = true;
+        mViewModel.mInProgress = true;
 
         try {
             CharSequence title = getString(R.string.importGoogleDriveService_importNotificationTitle);
@@ -158,15 +161,15 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
         }
         
         /* Defines callbacks for service binding, passed to bindService() */
-        mServiceConnection = new ServiceConnection() {
+        ServiceConnection serviceConnection = new ServiceConnection() {
             
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                DownloadFromGoogleDriveService downloadFromGoogleDriveService = binder.getService();
-                downloadFromGoogleDriveService.setDownloadFilesListener(DownloadFromGoogleDriveFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                DownloadFromGoogleDriveService downloadFromGoogleDriveService = mViewModel.mBinder.getService();
+                downloadFromGoogleDriveService.setDownloadFilesListener(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -176,11 +179,13 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
         };
 
         // Asynchronously copy data to SD
-        ActivityHelper.startDownloadFromGoogleDriveService(activity.getApplicationContext(), mServiceConnection);
+        ActivityHelper.startDownloadFromGoogleDriveService(activity.getApplicationContext(),
+                serviceConnection, mViewModel.mRomMd5, mViewModel.mRomCrc, mViewModel.mRomHeaderName,
+                mViewModel.mRomGoodName, mViewModel.mRomCountryCode);
     }
     
     public boolean IsInProgress()
     {
-        return mInProgress;
+        return mViewModel != null && mViewModel.mInProgress;
     }
 }

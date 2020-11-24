@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res-auto"
+    android:key="screenRoot" >
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayResolution_default_game"
+        android:entries="@array/displayResolutionGame_entries"
+        android:entryValues="@array/displayResolutionGame_values"
+        android:icon="@drawable/ic_display"
+        android:key="displayResolutionGame"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayResolution_title" />
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_display"
+        android:defaultValue="true"
+        android:key="useDefaultZoom"
+        android:summary="@string/displayZoomDefault_summary"
+        android:title="@string/displayZoomDefault_title" />
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="100"
+        android:icon="@drawable/ic_display"
+        android:key="displayZoomSeekGame"
+        android:title="@string/displayZoom_title"
+        mupen64:maximumValue="130"
+        mupen64:minimumValue="100"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayScalingGame_default"
+        android:entries="@array/displayScalingGame_entries"
+        android:entryValues="@array/displayScalingGame_values"
+        android:icon="@drawable/ic_display"
+        android:key="displayScalingGame"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayScaling_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/touchscreenAutoHoldGame_default"
+        android:entries="@array/touchscreenAutoHoldGame_entries"
+        android:entryValues="@array/touchscreenAutoHoldGame_values"
+        android:key="touchscreenAutoHoldGame"
+        android:summary="@string/selectedValue"
+        android:icon="@drawable/ic_phone"
+        android:title="@string/touchscreenAutoHold_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/relativeAnalog_default"
+        android:entries="@array/relativeAnalog_entries"
+        android:entryValues="@array/relativeAnalog_values"
+        android:icon="@drawable/ic_phone"
+        android:key="touchscreenAnalogRelative_game"
+        android:summary="@string/selectedValue"
+        android:title="@string/relativeAnalog_title" />
+
+
+    <androidx.preference.PreferenceScreen
+        android:icon="@drawable/ic_key"
+        android:key="screenCheats"
+        android:title="@string/screenCheats_title" >
+
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showBuiltInCheatCodes"
+            android:title="@string/menuItem_showBuiltins" />
+
+        <androidx.preference.Preference
+            android:key="actionCheatEditor"
+            android:summary="@string/actionCheatEditor_summary"
+            android:title="@string/actionCheatEditor_title" >
+        </androidx.preference.Preference>
+
+        <androidx.preference.PreferenceCategory
+            android:key="categoryCheats"
+            android:title="@string/categoryCheats_title" />
+    </androidx.preference.PreferenceScreen>
+
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_circuit"
+        android:key="emulationProfile"
+        android:summary="@string/selectedValue"
+        android:title="@string/emulationProfile_title"
+        mupen64:allowDisable="false"
+        mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_phone"
+        android:key="touchscreenProfileGame"
+        android:summary="@string/selectedValue"
+        android:title="@string/touchscreenProfile_title"
+        mupen64:allowDisable="true"
+        mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
+
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_save"
+        android:defaultValue="false"
+        android:key="support64dd"
+        android:summary="@string/support64dd_summary"
+        android:title="@string/support64dd_title" />
+
+    <Preference
+        android:icon="@drawable/ic_save"
+        android:key="idlPath64dd"
+        android:title="@string/iplRom64ddPath_title"/>
+
+    <Preference
+        android:icon="@drawable/ic_save"
+        android:key="diskPath64dd"
+        android:title="@string/disk64ddPath_title"/>
+
+    <androidx.preference.PreferenceScreen
+        android:icon="@drawable/ic_gamepad"
+        android:key="screenController"
+        android:title="@string/menuItem_controllerProfiles" >
+
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile1Game"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile1_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile2Game"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile2_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile3Game"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile3_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile4Game"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile4_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/shareController_default"
+            android:entries="@array/shareController_entries"
+            android:entryValues="@array/shareController_values"
+            android:icon="@drawable/ic_gamepad"
+            android:key="inputShareController2"
+            android:summary="@string/selectedValue"
+            android:title="@string/inputShareController_title" />
+        <androidx.preference.CheckBoxPreference
+            android:icon="@drawable/ic_gamepad"
+            android:defaultValue="true"
+            android:key="useDefaultPlayerMapping"
+            android:summary="@string/playerMap_useDefaultPlayerMap_summary"
+            android:title="@string/playerMap_useDefaultPlayerMap_title" />
+
+        <paulscode.android.mupen64plusae.preference.PlayerMapPreference
+            android:icon="@drawable/ic_users"
+            android:key="playerMapGame"
+            android:summary="@string/playerMap_summary"
+            android:title="@string/playerMap_title" />
+
+        <androidx.preference.PreferenceCategory
+            android:key="categoryControllerPaks"
+            android:title="@string/menuItem_paks" >
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType1"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_one" />
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType2"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_two" />
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType3"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_three" />
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType4"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_four" />
+
+        </androidx.preference.PreferenceCategory>
+
+        <androidx.preference.PreferenceCategory
+            android:key="categoryTransferPaks"
+            android:title="@string/menuItem_paks_transfer" >
+
+            <Preference
+                android:key="transferPak1Rom_v2"
+                android:title="@string/menuItem_paks_transfer_player1_rom"/>
+            <Preference
+                android:key="transferPak1Ram_v2"
+                android:title="@string/menuItem_paks_transfer_player1_ram"/>
+            <Preference
+                android:key="transferPak2Rom_v2"
+                android:title="@string/menuItem_paks_transfer_player2_rom"/>
+            <Preference
+                android:key="transferPak2Ram_v2"
+                android:title="@string/menuItem_paks_transfer_player2_ram"/>
+            <Preference
+                android:key="transferPak3Rom_v2"
+                android:title="@string/menuItem_paks_transfer_player3_rom"/>
+            <Preference
+                android:key="transferPak3Ram_v2"
+                android:title="@string/menuItem_paks_transfer_player3_ram"/>
+            <Preference
+                android:key="transferPak4Rom_v2"
+                android:title="@string/menuItem_paks_transfer_player4_rom"/>
+            <Preference
+                android:key="transferPak4Ram_v2"
+                android:title="@string/menuItem_paks_transfer_player4_ram"/>
+
+        </androidx.preference.PreferenceCategory>
+
+    </androidx.preference.PreferenceScreen>
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_picture"
+        android:key="changeCoverArt"
+        android:summary="@string/actionSetGameCoverArt_summary"
+        android:title="@string/actionSetGameCoverArt_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_picture"
+        android:key="clearCoverArt"
+        android:summary="@string/actionClearGameCoverArt_summary"
+        android:title="@string/actionClearGameCoverArt_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_folder"
+        android:key="downloadDataFromGoogleDrive"
+        android:summary="@string/actionDownloadData_summary"
+        android:title="@string/actionDownloadData_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_save"
+        android:key="uploadDataToGoogleDrive"
+        android:summary="@string/actionUploadData_summary"
+        android:title="@string/actionUploadData_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_undo"
+        android:key="deleteGameData"
+        android:summary="@string/actionDeleteGameData_summary"
+        android:title="@string/actionDeleteGameData_title" />
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_help"
+        android:key="actionWiki"
+        android:summary="@string/actionWiki_summary"
+        android:title="@string/actionWiki_title" />
+
+    <androidx.preference.PreferenceScreen
+        android:icon="@drawable/ic_settings"
+        android:key="screenAdvanced"
+        android:title="@string/screenAdvanced_title" >
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedUseDefaultCountPerOp"
+            android:summary="@string/screenAdvanced_CountPerOpDefault_summary"
+            android:title="@string/screenAdvanced_CountPerOpDefault_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="2"
+            android:key="screenAdvancedCountPerOp"
+            android:title="@string/screenAdvanced_CountPerOp_title"
+            mupen64:maximumValue="3"
+            mupen64:minimumValue="1"
+            mupen64:stepSize="1"
+            mupen64:units=""/>
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedUseDefaultCountPerOpDen"
+            android:summary="@string/screenAdvanced_CountPerOpDenDefault_summary"
+            android:title="@string/screenAdvanced_CountPerOpDenDefault_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="screenAdvancedCountPerOpDen"
+            android:title="@string/screenAdvanced_CountPerOpDen_title"
+            mupen64:maximumValue="5"
+            mupen64:minimumValue="0"
+            mupen64:stepSize="1"
+            mupen64:units=""/>
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedUseDefaultViRefresh"
+            android:summary="@string/screenAdvanced_ViRefreshRateDefault_summary"
+            android:title="@string/screenAdvanced_ViRefreshRateDefault_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="1542"
+            android:key="screenAdvancedViRefreshRate"
+            android:title="@string/screenAdvanced_ViRefreshRate_title"
+            mupen64:maximumValue="2200"
+            mupen64:minimumValue="1300"
+            mupen64:stepSize="1"
+            mupen64:units="" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedforceAlignmentOfPiDma"
+            android:summary="@string/screenAdvanced_ForceAlignmentOfPiDma_summary"
+            android:title="@string/screenAdvanced_ForceAlignmentOfPiDma_title" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="screenAdvancedignoreTlbExceptions"
+            android:summary="@string/screenAdvanced_IgnoreTlbExceptions_summary"
+            android:title="@string/screenAdvanced_IgnoreTlbExceptions_title" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedRandomizeInterrupts"
+            android:summary="@string/screenAdvanced_RandomizeInterrupts_summary"
+            android:title="@string/screenAdvanced_RandomizeInterrupts_title" />
+    </androidx.preference.PreferenceScreen>
+
+    <androidx.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

@@ -41,6 +41,10 @@ import androidx.preference.PreferenceScreen;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.Scope;
+
 import paulscode.android.mupen64plusae.R;
 
 import java.io.File;
@@ -48,6 +52,7 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DeleteFilesFragment;
+import paulscode.android.mupen64plusae.DownloadFromGoogleDriveFragment;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
@@ -61,6 +66,7 @@ import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
+import paulscode.android.mupen64plusae.task.SyncToGoogleDriveService;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
@@ -85,12 +91,19 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
     private static final String ACTION_DELETE_GAME_DATA = "deleteGameData";
-
-    private static final String STATE_FILE_PICKER_KEY = "STATE_FILE_PICKER_KEY";
+    private static final String ACTION_DOWNLOAD_GAME_DATA = "downloadDataFromGoogleDrive";
+    private static final String ACTION_UPLOAD_GAME_DATA = "uploadDataToGoogleDrive";
 
     public static final int CLEAR_CONFIRM_DIALOG_ID = 0;
     private static final String STATE_CONFIRM_DIALOG = "STATE_CONFIRM_DIALOG";
     private static final String STATE_DELETE_FILES_FRAGMENT= "STATE_DELETE_FILES_FRAGMENT";
+    private static final String STATE_FILE_PICKER_KEY = "STATE_FILE_PICKER_KEY";
+
+    public static final int DOWNLOAD_CONFIRM_DIALOG_ID = 3;
+    public static final int UPLOAD_CONFIRM_DIALOG_ID = 4;
+
+    private static final String STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT = "STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT";
+    DownloadFromGoogleDriveFragment mDownloadFromGoogleDriveFragment = null;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -257,6 +270,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mDeleteFilesFragment = new DeleteFilesFragment();
             fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
         }
+
+        mDownloadFromGoogleDriveFragment = (DownloadFromGoogleDriveFragment) fm.findFragmentByTag(STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT);
+
+        if(mDownloadFromGoogleDriveFragment == null)
+        {
+            mDownloadFromGoogleDriveFragment = new DownloadFromGoogleDriveFragment();
+            fm.beginTransaction().add(mDownloadFromGoogleDriveFragment, STATE_DOWNLOAD_FROM_GOOGLE_DRIVE_FRAGMENT).commit();
+        }
     }
 
     @Override
@@ -267,7 +288,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     protected int getSharedPrefsId()
     {
-        return R.xml.preferences_game;
+        if (mAppData.isPro) {
+            return R.xml.preferences_game_pro;
+        } else {
+            return R.xml.preferences_game;
+        }
     }
 
     @Override
@@ -320,6 +345,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.DISK_PATH_64DD, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.CHANGE_COVERT_ART, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.CLEAR_COVERT_ART, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_DOWNLOAD_GAME_DATA, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_UPLOAD_GAME_DATA, this );
 
         for (int player = 1; player <= GamePrefs.NUM_CONTROLLERS; ++player) {
             PrefUtil.setOnPreferenceClickListener( this, mGamePrefs.getTransferPakRomKey(player), this );
@@ -406,10 +433,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         Notifier.showToast(getApplicationContext(), R.string.actionClearGameCoverArt_toast);
     }
 
-    private void deleteGameData()
-    {
-        String title = getString( R.string.confirm_title );
-        String message = getString( R.string.actionDeleteGameData_confirmation );
+    private void deleteGameData() {
+        String title = getString(R.string.confirm_title);
+        String message = getString(R.string.actionDeleteGameData_confirmation);
 
         ConfirmationDialog confirmationDialog =
                 ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
@@ -418,11 +444,33 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         confirmationDialog.show(fm1, STATE_CONFIRM_DIALOG);
     }
 
-    @Override
-    public void onPromptDialogClosed(int id, int which)
+    private void downloadGameData()
     {
-        if(id == CLEAR_CONFIRM_DIALOG_ID)
-        {
+        String title = getString(R.string.confirm_title);
+        String message = getString(R.string.actionDownloadData_confirmation);
+
+        ConfirmationDialog confirmationDialog =
+                ConfirmationDialog.newInstance(DOWNLOAD_CONFIRM_DIALOG_ID, title, message);
+
+        FragmentManager fm1 = getSupportFragmentManager();
+        confirmationDialog.show(fm1, STATE_CONFIRM_DIALOG);
+    }
+
+    private void uploadGameData()
+    {
+        String title = getString(R.string.confirm_title);
+        String message = getString(R.string.actionUploadData_confirmation);
+
+        ConfirmationDialog confirmationDialog =
+                ConfirmationDialog.newInstance(UPLOAD_CONFIRM_DIALOG_ID, title, message);
+
+        FragmentManager fm1 = getSupportFragmentManager();
+        confirmationDialog.show(fm1, STATE_CONFIRM_DIALOG);
+    }
+
+    @Override
+    public void onPromptDialogClosed(int id, int which) {
+        if (id == CLEAR_CONFIRM_DIALOG_ID) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
 
                 ArrayList<String> foldersToDelete = new ArrayList<>();
@@ -436,6 +484,28 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 filters.add(mRomHeaderName);
 
                 mDeleteFilesFragment.deleteFiles(foldersToDelete, filters);
+            }
+        } else if (id == DOWNLOAD_CONFIRM_DIALOG_ID) {
+            Scope driveFileScope = new Scope(Scopes.DRIVE_FILE);
+            Scope emailScope = new Scope(Scopes.EMAIL);
+
+            if (GoogleSignIn.hasPermissions(
+                    GoogleSignIn.getLastSignedInAccount(this),
+                    driveFileScope, emailScope)) {
+                mDownloadFromGoogleDriveFragment.downloadFromGoogleDrive(mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName, CountryCode.getCountryCode(mRomCountryCode));
+            } else {
+                Notifier.showToast( this, R.string.notSignedIn );
+            }
+        } else if (id == UPLOAD_CONFIRM_DIALOG_ID) {
+            Scope driveFileScope = new Scope(Scopes.DRIVE_FILE);
+            Scope emailScope = new Scope(Scopes.EMAIL);
+
+            if (GoogleSignIn.hasPermissions(
+                    GoogleSignIn.getLastSignedInAccount(this),
+                    driveFileScope, emailScope)) {
+                SyncToGoogleDriveService.syncToGoogleDrive(getApplicationContext(), mGamePrefs.getGameDataDirName(), mRomGoodName, mRomHeaderName, true);
+            } else {
+                Notifier.showToast( this, R.string.notSignedIn );
             }
         }
     }
@@ -657,6 +727,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             clearCoverArt();
         } else if (key.equals(ACTION_DELETE_GAME_DATA)) {
             deleteGameData();
+        } else if (key.equals(ACTION_DOWNLOAD_GAME_DATA)) {
+            downloadGameData();
+        } else if (key.equals(ACTION_UPLOAD_GAME_DATA)) {
+            uploadGameData();
         }
 
         return false;

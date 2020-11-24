@@ -55,6 +55,7 @@ import paulscode.android.mupen64plusae.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
@@ -170,6 +171,20 @@ public class SyncToGoogleDriveService extends JobService
                     driveServiceHelper.deleteFolderFile(gameFolder.getId());
                 }
 
+
+                // Delete the old flat data file before uploading new one
+                List<GoogleDriveFileHolder> files = driveServiceHelper.getExistingFilesStartWith(gameGoodName, driveFile.getId());
+
+                for (GoogleDriveFileHolder file : files) {
+                    driveServiceHelper.deleteFolderFile(file.getId());
+                }
+
+                files = driveServiceHelper.getExistingFilesStartWith(gameHeaderName, driveFile.getId());
+
+                for (GoogleDriveFileHolder file : files) {
+                    driveServiceHelper.deleteFolderFile(file.getId());
+                }
+
                 driveServiceHelper.uploadFolder(getApplicationContext(), sourceData, driveFile.getId());
                 driveServiceHelper.uploadFilesThatStartWith(getApplicationContext(), sourceFlataData, driveFile.getId(), gameGoodName);
                 driveServiceHelper.uploadFilesThatStartWith(getApplicationContext(), sourceFlataData, driveFile.getId(), gameHeaderName);
@@ -266,7 +281,7 @@ public class SyncToGoogleDriveService extends JobService
      * @param context for accessing the JobScheduler.
      * @param sourceGameDataDirName Foldet name to upload
      */
-    public static void syncToGoogleDrive(Context context, String sourceGameDataDirName, String gameGoodName, String gameHeader )
+    public static void syncToGoogleDrive(Context context, String sourceGameDataDirName, String gameGoodName, String gameHeader, boolean nowRequired )
     {
         if (context == null || sourceGameDataDirName == null || gameGoodName == null || gameHeader == null) {
             return;
@@ -283,7 +298,7 @@ public class SyncToGoogleDriveService extends JobService
         builder.setMinimumLatency(1);
         builder.setPersisted(true);
 
-        if (globalPrefs.backupOverCellData) {
+        if (globalPrefs.backupOverCellData || nowRequired) {
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         } else {
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
