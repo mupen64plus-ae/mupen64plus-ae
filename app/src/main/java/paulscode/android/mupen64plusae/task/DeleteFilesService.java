@@ -35,6 +35,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.text.TextUtils;
+
 import androidx.core.app.NotificationCompat;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -106,7 +108,11 @@ public class DeleteFilesService extends Service {
 
             for (int index = 0 ; index < mDeletePath.size(); ++index) {
                 if (mDeletePath.get(index) != null) {
-                    FileUtil.deleteFolderFilter(new File(mDeletePath.get(index)), mDeleteFilter.get(index));
+                    if (TextUtils.isEmpty(mDeleteFilter.get(index))) {
+                        FileUtil.deleteFolder(new File(mDeletePath.get(index)));
+                    } else {
+                        FileUtil.deleteFileFilter(new File(mDeletePath.get(index)), mDeleteFilter.get(index));
+                    }
                 }
             }
 

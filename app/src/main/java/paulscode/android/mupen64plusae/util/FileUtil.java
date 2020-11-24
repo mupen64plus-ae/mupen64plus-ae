@@ -122,7 +122,7 @@ public final class FileUtil
         
         return results;
     }
-    
+
     private static class FileComparer implements Comparator<File>
     {
         // Compare files first by directory/file then alphabetically (case-insensitive)
@@ -170,6 +170,21 @@ public final class FileUtil
 
         if (!folder.delete()) {
             Log.w("deleteFolder", "Couldn't delete " + folder.getPath());
+        }
+    }
+
+    /**
+     * Deletes only files that match a certain filter in the provided folder
+     *
+     * @param folder The folder to delete.
+     */
+    public static void deleteFileFilter(File folder, String filter) {
+        if (folder.exists() && folder.isDirectory() && folder.listFiles() != null) {
+            for (File child : folder.listFiles()) {
+                if (child.getName().contains(filter) && !child.delete()) {
+                    Log.w("deleteFileFilter", "Couldn't delete " + child.getPath());
+                }
+            }
         }
     }
 

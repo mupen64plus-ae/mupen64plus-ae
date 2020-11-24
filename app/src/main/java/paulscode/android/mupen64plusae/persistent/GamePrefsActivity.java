@@ -84,7 +84,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private static final String STATE_FILE_PICKER_KEY = "STATE_FILE_PICKER_KEY";
 
     public static final int CLEAR_CONFIRM_DIALOG_ID = 0;
-    private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
+    private static final String STATE_CONFIRM_DIALOG = "STATE_CONFIRM_DIALOG";
     private static final String STATE_DELETE_FILES_FRAGMENT= "STATE_DELETE_FILES_FRAGMENT";
 
     // App data and user preferences
@@ -400,7 +400,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
 
         FragmentManager fm1 = getSupportFragmentManager();
-        confirmationDialog.show(fm1, STATE_CLEAR_CONFIRM_DIALOG);
+        confirmationDialog.show(fm1, STATE_CONFIRM_DIALOG);
     }
 
     @Override
