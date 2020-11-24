@@ -759,11 +759,13 @@
     <string name="enableGoogleDriveSupport_title">Google Drive support</string>
     <string name="enableGoogleDriveSupport_summary">Game data will be backed up to Google Drive</string>
     <string name="signInToGoogleDrive_title">Sign in to Google drive</string>
+    <string name="signOutOfGoogleDrive_title">Sign out of Google drive</string>
     <string name="allowBackupOverData_title">Backup over cell data</string>
     <string name="allowBackupOverData_summary">If disabled, backups will only happen over WiFi</string>
     <string name="downloadGoogleDriveBackup_title">Download Google Drive backup</string>
     <string name="downloadGoogleDriveBackup_summary">Download the latest Google Drive backup, this will overwrite data if it already exists</string>
     <string name="alreadyHaveGoogleDrivePermissions">Already logged in to Google Drive</string>
+    <string name="signedOutOfGoogleDrive">Signed out of Google Drive</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback -->

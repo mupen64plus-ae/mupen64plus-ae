@@ -38,6 +38,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.Scope;
 
@@ -209,6 +211,8 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             signInToGoogleDrive();
         } else if (GlobalPrefs.DOWNLOAD_GOOGLE_DRIVE_BACKUP.equals(key)) {
             downloadFromGoogleDrive();
+        } else if (GlobalPrefs.SIGN_OUT_OF_GOOGLE_DRIVE.equals(key)) {
+            signOutOffGoogleDrive();
         } else {
             // Let Android handle all other preference clicks
             return false;
@@ -227,6 +231,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.PATH_JAPAN_IPL_ROM, this);
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.SIGN_IN_TO_GOOGLE_DRIVE, this);
         PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.DOWNLOAD_GOOGLE_DRIVE_BACKUP, this);
+        PrefUtil.setOnPreferenceClickListener(this, GlobalPrefs.SIGN_OUT_OF_GOOGLE_DRIVE, this);
 
         Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
         if (currentPreference != null) {
@@ -320,6 +325,15 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     private void downloadFromGoogleDrive()
     {
         mDownloadFromGoogleDriveFragment.downloadFromGoogleDrive();
+    }
+
+    private void signOutOffGoogleDrive()
+    {
+        GoogleSignInOptions.Builder signInOptionsBuiler = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN);
+        GoogleSignInClient client = GoogleSignIn.getClient(this, signInOptionsBuiler.build());
+
+        client.signOut()
+                .addOnCompleteListener(this, task -> Notifier.showToast( DataPrefsActivity.this, R.string.signedOutOfGoogleDrive ));
     }
 
     @Override

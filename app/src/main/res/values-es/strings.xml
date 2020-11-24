@@ -566,11 +566,13 @@
     <string name="enableGoogleDriveSupport_title">Soporte para Google Drive</string>
     <string name="enableGoogleDriveSupport_summary">Datos de los juegos seran respaldados en Google Drive</string>
     <string name="signInToGoogleDrive_title">Inicie sesión en Google Drive</string>
+    <string name="signOutOfGoogleDrive_title">Cierre sesión en Google Drive</string>
     <string name="allowBackupOverData_title">Respalde datos dobre data de celular</string>
     <string name="allowBackupOverData_summary">Si está deshabilitado, los respaldos solo se realizarán a través de WiFi</string>
     <string name="downloadGoogleDriveBackup_title">Descargar respaldo de Google Drive</string>
     <string name="downloadGoogleDriveBackup_summary">Descargue el última respaldo de Google Drive, esto sobrescribirá datos si ya existen</string>
     <string name="alreadyHaveGoogleDrivePermissions">La sesión a Google Drive ya ha sido iniciada</string>
+    <string name="signedOutOfGoogleDrive">La sesión a Google Drive ya ha sido cerrada</string>
 
     <!--**************************************************************************-->
     <!--Dialogs and Other Feedback-->

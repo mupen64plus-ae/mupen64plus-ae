@@ -102,6 +102,9 @@
             android:summary="@string/downloadGoogleDriveBackup_summary"
             android:title="@string/downloadGoogleDriveBackup_title"/>
 
+        <Preference
+            android:key="signOutOfGoogleDrive"
+            android:title="@string/signOutOfGoogleDrive_title"/>
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

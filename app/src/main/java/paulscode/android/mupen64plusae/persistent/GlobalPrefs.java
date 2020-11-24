@@ -426,6 +426,7 @@ public class GlobalPrefs
     public static final String BACKUP_OVER_CELL_DATA = "backupOverCellData";
     public static final String SIGN_IN_TO_GOOGLE_DRIVE = "signInToGoogleDrive";
     public static final String DOWNLOAD_GOOGLE_DRIVE_BACKUP = "downloadGoogleDriveBackup";
+    public static final String SIGN_OUT_OF_GOOGLE_DRIVE = "signOutOfGoogleDrive";
 
     // ... add more as needed
 
