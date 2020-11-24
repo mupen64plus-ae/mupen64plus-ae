@@ -36,7 +36,7 @@ import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService;
 import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService.DownloadFilesListener;
 import paulscode.android.mupen64plusae.task.DownloadFromGoogleDriveService.LocalBinder;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
 public class DownloadFromGoogleDriveFragment extends Fragment implements DownloadFilesListener
 {
     public interface OnFinishListener
@@ -71,10 +71,14 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
         
         if(mInProgress)
         {
-            CharSequence title = getString( R.string.importGoogleDriveService_importNotificationTitle );
-            CharSequence message = getString( R.string.toast_pleaseWait );
-            mProgress = new ProgressDialog( mProgress, requireActivity(), title, "", message, true );
-            mProgress.show();
+            try {
+                CharSequence title = getString(R.string.importGoogleDriveService_importNotificationTitle);
+                CharSequence message = getString(R.string.toast_pleaseWait);
+                mProgress = new ProgressDialog(mProgress, requireActivity(), title, "", message, true);
+                mProgress.show();
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -95,7 +99,11 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
     {        
         if(mServiceConnection != null && mInProgress)
         {
-            ActivityHelper.stopDownloadFromGoogleDriveService(requireActivity().getApplicationContext(), mServiceConnection);
+            try {
+                ActivityHelper.stopDownloadFromGoogleDriveService(requireActivity().getApplicationContext(), mServiceConnection);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         
         super.onDestroy();
@@ -104,8 +112,13 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
     @Override
     public void onDownloadFinished()
     {
-        if (requireActivity() instanceof OnFinishListener) {
-            ((OnFinishListener)requireActivity()).onFinish();
+        try {
+            Activity activity = requireActivity();
+            if (activity instanceof OnFinishListener) {
+                ((OnFinishListener) activity).onFinish();
+            }
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
         }
     }
     
@@ -124,17 +137,25 @@ public class DownloadFromGoogleDriveFragment extends Fragment implements Downloa
 
     public void downloadFromGoogleDrive()
     {
-        actuallyDownloadFiles(requireActivity());
+        try {
+            actuallyDownloadFiles(requireActivity());
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
     
     private void actuallyDownloadFiles(Activity activity)
     {
         mInProgress = true;
-        
-        CharSequence title = getString( R.string.importGoogleDriveService_importNotificationTitle );
-        CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, requireActivity(), title, "", message, true );
-        mProgress.show();
+
+        try {
+            CharSequence title = getString(R.string.importGoogleDriveService_importNotificationTitle);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+            mProgress = new ProgressDialog(mProgress, requireActivity(), title, "", message, true);
+            mProgress.show();
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
         
         /* Defines callbacks for service binding, passed to bindService() */
         mServiceConnection = new ServiceConnection() {
