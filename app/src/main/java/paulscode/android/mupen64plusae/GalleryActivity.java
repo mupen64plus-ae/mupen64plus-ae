@@ -1135,7 +1135,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         int widthPixels = DisplayWrapper.getScreenWidth(this);
 
-        final int width = widthPixels - galleryHalfSpacing * 2;
+        int width = widthPixels - galleryHalfSpacing * 2;
+        width = Math.max(width, galleryHalfSpacing*4);
         galleryColumns = (int) Math
                 .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
