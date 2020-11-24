@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -29,6 +30,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceGroup;
@@ -42,10 +44,12 @@ import java.io.File;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.DeleteFilesFragment;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -62,7 +66,7 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener
+        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener, ConfirmationDialog.PromptConfirmListener
 {
     private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
     private static final int PICK_FILE_REQUEST_CODE = 2;
@@ -75,14 +79,21 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
+    private static final String ACTION_DELETE_GAME_DATA = "deleteGameData";
 
     private static final String STATE_FILE_PICKER_KEY = "STATE_FILE_PICKER_KEY";
+
+    public static final int CLEAR_CONFIRM_DIALOG_ID = 0;
+    private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
+    private static final String STATE_DELETE_FILES_FRAGMENT= "STATE_DELETE_FILES_FRAGMENT";
 
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
     private SharedPreferences mPrefs = null;
+
+    private DeleteFilesFragment mDeleteFilesFragment = null;
 
     // ROM info
     private String mRomMd5 = null;
@@ -179,6 +190,15 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         {
             mCurrentFilePickerKey = savedInstanceState.getString( STATE_FILE_PICKER_KEY );
         }
+
+        final FragmentManager fm = getSupportFragmentManager();
+        mDeleteFilesFragment = (DeleteFilesFragment) fm.findFragmentByTag(STATE_DELETE_FILES_FRAGMENT);
+
+        if(mDeleteFilesFragment == null)
+        {
+            mDeleteFilesFragment = new DeleteFilesFragment();
+            fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
+        }
     }
 
     @Override
@@ -226,6 +246,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
+        PrefUtil.setOnPreferenceClickListener(this, ACTION_DELETE_GAME_DATA, this);
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.IDL_PATH_64DD, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.DISK_PATH_64DD, this );
         PrefUtil.setOnPreferenceClickListener( this, GamePrefs.CHANGE_COVERT_ART, this );
@@ -368,6 +389,40 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         configFile.save();
 
         Notifier.showToast(getApplicationContext(), R.string.actionClearGameCoverArt_toast);
+    }
+
+    private void deleteGameData()
+    {
+        String title = getString( R.string.confirm_title );
+        String message = getString( R.string.actionDeleteGameData_confirmation );
+
+        ConfirmationDialog confirmationDialog =
+                ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
+
+        FragmentManager fm1 = getSupportFragmentManager();
+        confirmationDialog.show(fm1, STATE_CLEAR_CONFIRM_DIALOG);
+    }
+
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        if(id == CLEAR_CONFIRM_DIALOG_ID)
+        {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+
+                ArrayList<String> foldersToDelete = new ArrayList<>();
+                ArrayList<String> filters = new ArrayList<>();
+
+                foldersToDelete.add(mGamePrefs.getGameDataDir());
+                filters.add("");
+                foldersToDelete.add(mAppData.gameDataDir);
+                filters.add(mRomGoodName);
+                foldersToDelete.add(mAppData.gameDataDir);
+                filters.add(mRomHeaderName);
+
+                mDeleteFilesFragment.deleteFiles(foldersToDelete, filters);
+            }
+        }
     }
 
     private void refreshViews()
@@ -581,6 +636,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             startFilePicker(true);
         } else if (key.equals(GamePrefs.CLEAR_COVERT_ART)) {
             clearCoverArt();
+        } else if (key.equals(ACTION_DELETE_GAME_DATA)) {
+            deleteGameData();
         }
 
         return false;

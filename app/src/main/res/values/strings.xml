@@ -182,6 +182,9 @@
     <string name="actionClearGameCoverArt_title">Clear cover art</string>
     <string name="actionClearGameCoverArt_summary">Clear previously set custom cover art</string>
     <string name="actionClearGameCoverArt_toast">Covert art has been cleared</string>
+    <string name="actionDeleteGameData_title">Delete data</string>
+    <string name="actionDeleteGameData_summary">Delete data for this game, from internal storage. Data in external storage will be left.</string>
+    <string name="actionDeleteGameData_confirmation">Are you sure you would like to delete all data for this game from internal storage?</string>
 
     <!-- Preference Screens -->
     <string name="screenCheats_title">Cheats</string>

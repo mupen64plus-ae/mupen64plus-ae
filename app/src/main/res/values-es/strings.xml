@@ -141,6 +141,9 @@
     <string name="actionClearGameCoverArt_title">Eliminar portada</string>
     <string name="actionClearGameCoverArt_summary">Eliminar portada del juego personalizada</string>
     <string name="actionClearGameCoverArt_toast">Portada del juego ha sido eliminada</string>
+    <string name="actionDeleteGameData_title">Borrar datos</string>
+    <string name="actionDeleteGameData_summary">Borrar todos los de este juego del almacenamiento interno</string>
+    <string name="actionDeleteGameData_confirmation">¿Está seguro de que deseas borrar los datos de este juego del almacenamiento interno?</string>
 
     <!--Preference Screens-->
     <string name="screenCheats_title">Trucos</string>

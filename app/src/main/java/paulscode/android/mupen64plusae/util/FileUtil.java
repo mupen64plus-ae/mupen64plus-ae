@@ -213,7 +213,7 @@ public final class FileUtil
      * @param src         Source file
      * @param dest        Desired destination
      * 
-     * @return True if the copy dsucceeded, false otherwise.
+     * @return True if the copy succeeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest, boolean move )
     {
