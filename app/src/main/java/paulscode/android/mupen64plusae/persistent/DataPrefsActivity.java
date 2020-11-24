@@ -47,7 +47,6 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DownloadFromGoogleDriveFragment;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
-import paulscode.android.mupen64plusae.task.SyncToGoogleDriveService;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -260,13 +259,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     {
         PrefUtil.enablePreference(this, GlobalPrefs.PATH_GAME_SAVES,
                 mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
-
-        PrefUtil.enablePreference(this, GlobalPrefs.BACKUP_OVER_CELL_DATA,
-                mPrefs.getBoolean(GlobalPrefs.BACKUP_TO_GOOGLE_DRIVE, false));
-        PrefUtil.enablePreference(this, GlobalPrefs.SIGN_IN_TO_GOOGLE_DRIVE,
-                mPrefs.getBoolean(GlobalPrefs.BACKUP_TO_GOOGLE_DRIVE, false));
-        PrefUtil.enablePreference(this, GlobalPrefs.DOWNLOAD_GOOGLE_DRIVE_BACKUP,
-                mPrefs.getBoolean(GlobalPrefs.BACKUP_TO_GOOGLE_DRIVE, false));
     }
 
     private void startFolderPicker()
