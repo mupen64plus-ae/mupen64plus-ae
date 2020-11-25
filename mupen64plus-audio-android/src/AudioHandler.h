@@ -153,6 +153,12 @@ private:
 	bool processAudioSoundTouch(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
 
 	/**
+	* Processes input samples by using soundtouch library without outputting sound, used to build up a buffer
+	* @param primaryBufferPos Input Buffer position
+	*/
+	void processAudioSoundTouchNoOutput(int& primaryBufferPos);
+
+	/**
 	 * Performs trivial audio resampling
 	 * @param input Input data to sample
 	 * @param bytesPerSample How many bytes are in each sample
@@ -286,5 +292,8 @@ private:
 
 	// True if priming is complete while inejcting silence
 	bool mPrimeComplete = false;
+
+	// Primary buffer position
+	int mPrimaryBufferPos = 0;
 };
 

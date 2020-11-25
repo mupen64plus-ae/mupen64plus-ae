@@ -53,6 +53,8 @@ void AudioHandler::createPrimaryBuffer() {
 
 	std::memset(mPrimaryBuffer, 0, primaryBytes);
 	mPrimaryBufferBytes = primaryBytes;
+
+	mPrimaryBufferPos = 0;
 }
 
 void AudioHandler::createSecondaryBuffer() {
@@ -142,6 +144,17 @@ void AudioHandler::initializeAudio(int _freq) {
 void AudioHandler::pushData(const int16_t *_data, int _samples,
 							std::chrono::duration<double> timeSinceStart) {
 
+	static int failedToStartCount = 0;
+	if (mOutStream->getState() != oboe::StreamState::Started) {
+
+		if (failedToStartCount++ == 100) {
+			initializeAudio(mInputFreq);
+			DebugMessage(M64MSG_WARNING, "Reinitializing audio");
+			failedToStartCount = 0;
+		}
+		return;
+	}
+
 	unsigned int numBytes = _samples * numberOfChannels*sizeof(int16_t);
 
 	PoolBufferPointer data = mSoundBufferPool.createPoolBuffer(
@@ -206,8 +219,8 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	static double currAdjustment = 1.0;
 
 	//how quickly to return to original speed
-	static const double minSlowValue = 0.2;
-	static const double maxSlowValue = 3.0;
+	static const double minSlowValue = 0.1;
+	static const double maxSlowValue = 10.0;
 	static const float maxSpeedUpRate = 0.5;
 	static const float slowRate = 0.05;
 	static const float defaultSampleLength = 0.01666;
@@ -216,7 +229,8 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 
 	static const int maxWindowSize = 500;
 
-	static int feedTimeWindowSize = 50;
+	static int defaultWindowSize = 50;
+	static int feedTimeWindowSize = defaultWindowSize;
 
 	static int feedTimeIndex = 0;
 	static bool feedTimesSet = false;
@@ -258,7 +272,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 			}
 
 			//Normalize window size
-			feedTimeWindowSize = static_cast<int>(defaultSampleLength / averageGameTime * 50);
+			feedTimeWindowSize = static_cast<int>(defaultSampleLength / averageGameTime * defaultWindowSize);
 			if (feedTimeWindowSize > maxWindowSize) {
 				feedTimeWindowSize = maxWindowSize;
 			}
@@ -266,8 +280,9 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	}
 
 	mPrimingTimeMs += static_cast<int>(static_cast<double>(outNumFrames) / mOutputFreq * 1000);
+	int totalPrimingTime = static_cast<int>(static_cast<float>(feedTimeWindowSize)*averageGameTime*1000);
 
-	if (mPrimingTimeMs < mTargetSecondaryBuffersMs){
+	if (mPrimingTimeMs > totalPrimingTime){
 		mPrimeComplete = true;
 	}
 
@@ -275,11 +290,10 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	bool samplesAdded;
 
 	if (!mPrimeComplete) {
-
 		speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
 		mSoundTouch.setTempo(speedFactor);
-
-		samplesAdded = processAudioSoundTouch(primaryBufferPos, outAudioData, outNumFrames);
+		processAudioSoundTouchNoOutput(primaryBufferPos);
+		samplesAdded = false;
 
 	} else {
 
@@ -287,8 +301,8 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		if ((queueLength > maxQueueSize || drainQueue) && !ranDry) {
 			drainQueue = true;
 			currAdjustment = temp +
-							 (float) (queueLength - minQueueSize) /
-							 (float) (secondaryBufferNumber - minQueueSize) *
+							 static_cast<float> (queueLength - minQueueSize) /
+									 static_cast<float> (secondaryBufferNumber - minQueueSize) *
 							 maxSpeedUpRate;
 		}
 			//Device can't keep up with the game
@@ -300,50 +314,57 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 			currAdjustment = temp;
 		}
 
-		//Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
-		if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
-			slowAdjustment = currAdjustment;
-			static const int increments = 4;
-			//Adjust tempo in x% increments so it's more steady
-			double temp2 = round((slowAdjustment * 100) / increments);
-			temp2 *= increments;
-			slowAdjustment = (temp2) / 100;
+		// Bounds checking
+		currAdjustment = std::max(minSlowValue, currAdjustment);
+		currAdjustment = std::min(maxSlowValue, currAdjustment);
 
-			mSoundTouch.setTempo(slowAdjustment);
-		}
+		//Adjust tempo in x% increments so it's more steady
+		slowAdjustment = currAdjustment;
+		static const int increments = 4;
+		double temp2 = round((slowAdjustment * 100) / increments);
+		temp2 *= increments;
+		slowAdjustment = (temp2) / 100;
+
+		mSoundTouch.setTempo(slowAdjustment);
 
 		samplesAdded = processAudioSoundTouch(primaryBufferPos, outAudioData, outNumFrames);
 	}
 
 	//Useful logging
-	/*
-	if(queueLength == 0)
+
+	//if(queueLength == 0)
+
 	{
 	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d",
 				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
 	}
-    */
 
 	return samplesAdded;
 }
 
 bool AudioHandler::audioProviderNoStretch(void *audioData, int32_t numFrames) {
 
-	static int primaryBufferPos = 0;
 	QueueData currQueueData;
 
 	while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
 		auto shortData = reinterpret_cast<const int16_t *>(mSoundBufferPool.getBufferFromPool(
 				currQueueData.data));
-		primaryBufferPos = convertBufferToHwBuffer(shortData, currQueueData.samples, mPrimaryBuffer,
-												   primaryBufferPos);
+		mPrimaryBufferPos = convertBufferToHwBuffer(shortData, currQueueData.samples, mPrimaryBuffer,
+													mPrimaryBufferPos);
 		mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 	}
 
 	if (mSamplingType == 0) {
-		return processAudioTrivial(primaryBufferPos, audioData, numFrames);
+		return processAudioTrivial(mPrimaryBufferPos, audioData, numFrames);
 	} else {
-		return processAudioSoundTouch(primaryBufferPos, audioData, numFrames);
+		static int lastSpeedFactor = mSpeedFactor;
+
+		if (lastSpeedFactor != mSpeedFactor) {
+			lastSpeedFactor = mSpeedFactor;
+			mSoundTouch.setTempo(static_cast<double>(mSpeedFactor) / 100.0);
+		}
+
+		return processAudioSoundTouch(mPrimaryBufferPos, audioData, numFrames);
 	}
 }
 
@@ -396,13 +417,6 @@ int AudioHandler::convertBufferToHwBuffer(const int16_t *inputBuffer, unsigned i
 
 bool AudioHandler::processAudioSoundTouch(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames) {
 
-	static int lastSpeedFactor = mSpeedFactor;
-
-	if (lastSpeedFactor != mSpeedFactor) {
-		lastSpeedFactor = mSpeedFactor;
-		mSoundTouch.setTempo(static_cast<double>(mSpeedFactor) / 100.0);
-	}
-
 	bool bytesWritten = false;
 
 	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mPrimaryBuffer), primaryBufferPos/hwSamplesBytes);
@@ -417,6 +431,11 @@ bool AudioHandler::processAudioSoundTouch(int& primaryBufferPos, void *outAudioD
 	primaryBufferPos = 0;
 
 	return bytesWritten;
+}
+
+void AudioHandler::processAudioSoundTouchNoOutput(int& primaryBufferPos)
+{
+	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mPrimaryBuffer), primaryBufferPos/hwSamplesBytes);
 }
 
 int
@@ -521,18 +540,28 @@ void AudioHandler::pausePlayback() {
 	if (!mPlaybackPaused) {
 		if (mOutStream != nullptr) {
 			mOutStream->pause();
+			mOutStream->flush();
 		}
 
 		mPlaybackPaused = true;
+
+		mPrimeComplete = false;
+		mPrimingTimeMs = 0;
+		mPrimaryBufferPos = 0;
+
+		mSoundTouch.clear();
+
+		// Clear all pending buffers
+		QueueData currQueueData;
+		while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
+			mSoundBufferPool.removeBufferFromPool(currQueueData.data);
+		}
 	}
 }
 
 void AudioHandler::resumePlayback() {
 	if (mPlaybackPaused) {
-		if (mOutStream != nullptr) {
-			mOutStream->start();
-		}
-
+		mOutStream->start();
 		mPlaybackPaused = false;
 	}
 }
