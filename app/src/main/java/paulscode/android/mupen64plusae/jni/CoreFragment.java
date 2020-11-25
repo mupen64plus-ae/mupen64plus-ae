@@ -212,7 +212,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
                 if (mZipPath != null) {
                     DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mZipPath));
-                    displayName = file == null ? "" : file.getName();
+                    displayName = file == null ? mRomDisplayName : file.getName();
                 } else {
                     displayName = mRomDisplayName;
                 }
