@@ -228,9 +228,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void loadingFinished()
     {
         try {
-            requireActivity().runOnUiThread(() -> {
+            Activity activity = requireActivity();
+            activity.runOnUiThread(() -> {
                 if (mProgress != null) {
-                    requireActivity().runOnUiThread(() -> mProgress.dismiss());
+                    activity.runOnUiThread(() -> mProgress.dismiss());
                 }
             });
 
