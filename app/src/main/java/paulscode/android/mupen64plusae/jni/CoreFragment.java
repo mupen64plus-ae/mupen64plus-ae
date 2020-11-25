@@ -208,9 +208,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 CharSequence title = getString( R.string.extractRomTask_title );
                 CharSequence message = getString( R.string.toast_pleaseWait );
 
-                DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mZipPath));
-                String zipName = file == null ? "" : file.getName();
-                mProgress = new ProgressDialog( mProgress, activity, title, zipName, message, false );
+                String displayName;
+
+                if (mZipPath != null) {
+                    DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mZipPath));
+                    displayName = file == null ? "" : file.getName();
+                } else {
+                    displayName = mRomDisplayName;
+                }
+                mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
                 mProgress.show();
             });
         } catch (java.lang.IllegalStateException e) {
