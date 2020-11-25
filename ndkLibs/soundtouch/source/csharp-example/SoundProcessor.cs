@@ -64,8 +64,8 @@ namespace csharp_example
         {
             inputStr = input;
             st = new SoundTouch();
-            st.SetChannels((uint)input.WaveFormat.Channels);
-            st.SetSampleRate((uint)input.WaveFormat.SampleRate);
+            st.Channels = (uint)input.WaveFormat.Channels;
+            st.SampleRate = (uint)input.WaveFormat.SampleRate;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace csharp_example
                 // Iterate until enough samples available for output:
                 // - read samples from input stream
                 // - put samples to SoundStretch processor
-                while (st.NumSamples() < count)
+                while (st.AvailableSampleCount < count)
                 {
                     int nbytes = inputStr.Read(bytebuffer, 0, bytebuffer.Length);
                     if (nbytes == 0)
@@ -185,7 +185,7 @@ namespace csharp_example
         /// <summary>
         /// Start / resume playback
         /// </summary>
-        /// <returns>true if succesful, false if audio file not open</returns>
+        /// <returns>true if successful, false if audio file not open</returns>
         public bool Play()
         {
             if (waveOut == null) return false;
@@ -201,7 +201,7 @@ namespace csharp_example
         /// <summary>
         /// Pause playback
         /// </summary>
-        /// <returns>true if succesful, false if audio not playing</returns>
+        /// <returns>true if successful, false if audio not playing</returns>
         public bool Pause()
         {
             if (waveOut == null) return false;
@@ -218,7 +218,7 @@ namespace csharp_example
         /// <summary>
         /// Stop playback
         /// </summary>
-        /// <returns>true if succesful, false if audio file not open</returns>
+        /// <returns>true if successful, false if audio file not open</returns>
         public bool Stop()
         {
             if (waveOut == null) return false;
@@ -238,7 +238,7 @@ namespace csharp_example
 
 
         /// <summary>
-        /// Proxy event handler for receiving playback stoped event from WaveOut
+        /// Proxy event handler for receiving playback stopped event from WaveOut
         /// </summary>
         protected void EventHandler_stopped(object sender, StoppedEventArgs args)
         {

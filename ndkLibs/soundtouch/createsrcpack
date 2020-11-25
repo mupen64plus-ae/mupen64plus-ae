@@ -1,5 +1,4 @@
 # Helper script for building a source code release package
-# $Id: createsrcpack 111 2011-07-15 20:21:28Z oparviai $
 
 rm -Rf soundtouch
 rm soundtouch.zip

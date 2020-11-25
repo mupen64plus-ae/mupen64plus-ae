@@ -8,13 +8,6 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2017-07-30 12:28:06 +0300 (su, 30 heinä 2017) $
-// File revision : $Revision: 3 $
-//
-// $Id: STTypes.h 252 2017-07-30 09:28:06Z oparviai $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
 // License :
 //
 //  SoundTouch audio processing library
@@ -63,6 +56,9 @@ typedef unsigned long   ulong;
 
 namespace soundtouch
 {
+    /// Max allowed number of channels
+    #define SOUNDTOUCH_MAX_CHANNELS     16
+
     /// Activate these undef's to overrule the possible sampletype 
     /// setting inherited from some other header file:
     //#undef SOUNDTOUCH_INTEGER_SAMPLES
@@ -153,8 +149,9 @@ namespace soundtouch
 
         // floating point samples
         typedef float  SAMPLETYPE;
-        // data type for sample accumulation: Use double to utilize full precision.
-        typedef double LONG_SAMPLETYPE;
+        // data type for sample accumulation: Use float also here to enable
+        // efficient autovectorization
+        typedef float LONG_SAMPLETYPE;
 
         #ifdef SOUNDTOUCH_ALLOW_X86_OPTIMIZATIONS
             // Allow SSE optimizations
@@ -162,6 +159,12 @@ namespace soundtouch
         #endif
 
     #endif  // SOUNDTOUCH_INTEGER_SAMPLES
+
+    #if ((SOUNDTOUCH_ALLOW_SSE) || (__SSE__) || (SOUNDTOUCH_USE_NEON))
+        #if SOUNDTOUCH_ALLOW_NONEXACT_SIMD_OPTIMIZATION
+            #define ST_SIMD_AVOID_UNALIGNED
+        #endif
+    #endif
 
 };
 

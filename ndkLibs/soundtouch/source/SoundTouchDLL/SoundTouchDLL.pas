@@ -10,10 +10,6 @@ unit SoundTouchDLL;
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-// $Id: SoundTouchDLL.pas 253 2017-07-30 09:35:00Z oparviai $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
 // License :
 //
 //  SoundTouch audio processing library
@@ -118,7 +114,7 @@ type
   // Changes a setting controlling the processing system behaviour. See the
   // 'SETTING_...' defines for available setting ID's.
   //
-  // \return 'TRUE' if the setting was succesfully changed
+  // \return 'TRUE' if the setting was successfully changed
   TSoundTouchSetSetting = function (Handle: TSoundTouchHandle;
                                  SettingId: Integer;   //< Setting ID number. see SETTING_... defines.
                                  Value: Integer        //< New setting value.
@@ -423,6 +419,13 @@ var
   SoundTouchLibHandle: HINST;
   SoundTouchDLLFile: PAnsiChar = 'SoundTouch.dll';
 
+  // bpm detect functions. untested -- if these don't work then remove:
+  bpm_createInstance: function(chan: CInt32; sampleRate : CInt32): THandle; cdecl;
+  bpm_destroyInstance: procedure(h: THandle); cdecl;
+  bpm_getBpm: function(h: THandle): cfloat; cdecl;
+  bpm_putSamples: procedure(h: THandle; const samples: pcfloat;
+  numSamples: cardinal); cdecl;
+
 procedure InitDLL;
 begin
   SoundTouchLibHandle := LoadLibrary(SoundTouchDLLFile);
@@ -454,6 +457,11 @@ begin
     Pointer(SoundTouchNumSamples)            := GetProcAddress(SoundTouchLibHandle, 'soundtouch_numSamples');
     Pointer(SoundTouchIsEmpty)               := GetProcAddress(SoundTouchLibHandle, 'soundtouch_isEmpty');
 
+    Pointer(bpm_createInstance)             :=GetProcAddress(SoundTouchLibHandle, 'bpm_createInstance');
+    Pointer(bpm_destroyInstance)            :=GetProcAddress(SoundTouchLibHandle, 'bpm_destroyInstance');
+    Pointer(bpm_getBpm)                     :=GetProcAddress(SoundTouchLibHandle, 'bpm_getBpm');
+    Pointer(bpm_putSamples)                 :=GetProcAddress(SoundTouchLibHandle, 'bpm_putSamples');
+        
   except
     FreeLibrary(SoundTouchLibHandle);
     SoundTouchLibHandle := 0;

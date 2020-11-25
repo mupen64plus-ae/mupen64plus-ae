@@ -8,13 +8,6 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2014-04-06 18:57:21 +0300 (su, 06 huhti 2014) $
-// File revision : $Revision: 4 $
-//
-// $Id: RunParameters.cpp 195 2014-04-06 15:57:21Z oparviai $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
 // License :
 //
 //  SoundTouch audio processing library
@@ -158,7 +151,6 @@ RunParameters::RunParameters(const int nParams, const char * const paramStr[])
 }
 
 
-
 // Checks parameter limits
 void RunParameters::checkLimits()
 {
@@ -191,7 +183,6 @@ void RunParameters::checkLimits()
 }
 
 
-
 // Unknown switch parameter -- throws an exception with an error message
 void RunParameters::throwIllegalParamExp(const string &str) const
 {
@@ -201,7 +192,6 @@ void RunParameters::throwIllegalParamExp(const string &str) const
     msg += usage;
     ST_THROW_RT_ERROR(msg.c_str());
 }
-
 
 
 void RunParameters::throwLicense() const
@@ -267,7 +257,7 @@ void RunParameters::parseSwitchParam(const string &str)
             {
                 goalBPM = parseSwitchValue(str);
             } 
-            catch (const runtime_error)
+            catch (const runtime_error &)
             {
                 // illegal or missing bpm value => just calculate bpm
                 goalBPM = 0;

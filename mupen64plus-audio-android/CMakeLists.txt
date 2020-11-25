@@ -43,7 +43,7 @@ add_library (mupen64plus-audio-android SHARED
         src/osal_dynamiclib_unix.cpp
         src/AudioHandler.cpp
         src/RingBufferPool.cpp)
-target_compile_definitions(mupen64plus-audio-android PUBLIC -D__SOFTFP__ -DANDROID)
+target_compile_definitions(mupen64plus-audio-android PUBLIC -D__SOFTFP__ -DSOUNDTOUCH_USE_NEON -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
 target_link_libraries(mupen64plus-audio-android log oboe::oboe SOUNDTOUCH)
@@ -54,7 +54,7 @@ add_library (mupen64plus-audio-android-fp SHARED
         src/osal_dynamiclib_unix.cpp
         src/AudioHandler.cpp
         src/RingBufferPool.cpp)
-target_compile_definitions(mupen64plus-audio-android-fp PUBLIC -DFP_ENABLED -DANDROID)
+target_compile_definitions(mupen64plus-audio-android-fp PUBLIC -DFP_ENABLED -DSOUNDTOUCH_USE_NEON -DSOUNDTOUCH_FLOAT_SAMPLES -DANDROID)
 
 # Specify the libraries which our native library is dependent on, including Oboe
 target_link_libraries(mupen64plus-audio-android-fp log oboe::oboe SOUNDTOUCHFP)

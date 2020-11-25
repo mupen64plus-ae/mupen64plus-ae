@@ -45,7 +45,7 @@
     open Cygwin/bash shell, go to directory <b>&quot;soundtouch/source/Android-lib/jni&quot;</b> and invoke the NDK 
     compiler with following command:</p>
 <pre>    $NDK/ndk-build</pre>
-<p>This will build binaries for all the supported Android platforms (arm-v5, arm-v7, X86, MIPS etc) of SoundTouch library, plus the JNI wrapper interface as discussed below. The target binaries will be built into the &quot;libs&quot; subdirectory. As long as all these .so binary library versions are included in the APK Application delivery package, the targer Android device can choose the correct library version to use. </p>
+<p>This will build binaries for all the supported Android platforms (arm-v5, arm-v7, X86, MIPS etc) of SoundTouch library, plus the JNI wrapper interface as discussed below. The target binaries will be built into the &quot;libs&quot; subdirectory. As long as all these .so binary library versions are included in the APK Application delivery package, the target Android device can choose the correct library version to use. </p>
 <p>Notice that to allow Cygwin/bash to locate the NDK compile scripts, you 
     need to define the location of the NDK installation defined in environment 
     variable &quot;NDK&quot;. That's easiest done by adding the NDK path definition at end of 
@@ -103,6 +103,7 @@ in the <strong>soundtouch-jni.cpp </strong>source code file for more details.</p
 	the Java interface class that loasd & accesses the JNI routines in the natively compiled library.
 	The example Android application uses this class as interface for processing audio files 
 	with SoundTouch.</li>
+        <li><b>Android-lib/build.gradle</b>: Top level build script file for Android Studio 3.1.4+</li>
     </ul>
 <p>
         Feel free to examine and extend the provided cpp/java source code example file pair to 
@@ -123,8 +124,5 @@ in the <strong>soundtouch-jni.cpp </strong>source code file for more details.</p
         <p>When Android devices with more capable device is used, the device will automatically choose a proper library version for ideal sound quality.</p>
 <hr />
     <p style="text-align: center"><i>Copyright &copy; Olli Parviainen</i></p>
-    <!--
-$Id: README-SoundTouch-Android.html 235 2015-11-11 21:47:19Z oparviai $
--->
 </body>
 </html>

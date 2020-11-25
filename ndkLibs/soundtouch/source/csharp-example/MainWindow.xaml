@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:csharp_example"
         mc:Ignorable="d"
-        Title="C# SoundTouch example" Height="250   " Width="400">
+        Title="C# SoundTouch example" Height="250" Width="400" AllowDrop="True" Drop="Window_Drop">
     <Grid Margin="0,0,0,-3">
         <TextBlock HorizontalAlignment="Left" Margin="10,21,0,0" Text="Input audio file:" VerticalAlignment="Top"/>
         <TextBox x:Name="textBox_filename" Height="23" Margin="107,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="180" IsEnabled="False"/>

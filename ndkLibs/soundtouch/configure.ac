@@ -1,7 +1,3 @@
-dnl SoundTouch configure.ac, by David W. Durham
-dnl
-dnl $Id: configure.ac 253 2017-07-30 09:35:00Z oparviai $
-dnl
 dnl This file is part of SoundTouch, an audio processing library for pitch/time adjustments
 dnl 
 dnl SoundTouch is free software; you can redistribute it and/or modify it under the
@@ -19,7 +15,7 @@ dnl this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([SoundTouch], [2.0.0], [http://www.surina.net/soundtouch])
+AC_INIT([SoundTouch], [2.2], [http://www.surina.net/soundtouch])
 dnl Default to libSoundTouch.so.$LIB_SONAME.0.0
 LIB_SONAME=1
 AC_SUBST(LIB_SONAME)
@@ -35,8 +31,12 @@ AC_DISABLE_STATIC	dnl This makes libtool only build shared libs
 
 AC_LANG(C++)
 
+# Compiler flags. Apply -ffast-math to allow gcc autovectorization
+# generate effective SIMD code.
+CXXFLAGS="-O3 -ffast-math"
 
-
+# Set AR_FLAGS to avoid build warning "ar: `u' modifier ignored since `D' is the default (see `U')"
+AR_FLAGS='cr'
 
 
 dnl ############################################################################
@@ -63,6 +63,7 @@ AC_HEADER_STDC
 #AC_HEADER_SYS_WAIT
 #	add any others you want to check for here
 AC_CHECK_HEADERS([cpuid.h])
+AC_CHECK_HEADERS([arm_neon.h])
 
 if test "x$ac_cv_header_cpuid_h" = "xno"; then
 	AC_MSG_WARN([The cpuid.h file was not found therefore the x86 optimizations will be disabled.])
@@ -82,8 +83,7 @@ AC_C_INLINE
 
 AC_ARG_ENABLE(integer-samples,
               [AC_HELP_STRING([--enable-integer-samples],
-                              [use integer samples instead of floats
-[default=no]])],,
+                              [use integer samples instead of floats [default=no]])],,
               [enable_integer_samples=no])
 
 
@@ -96,9 +96,16 @@ AC_ARG_ENABLE(openmp,
 # Useful when compiling on non-x86 architectures.
 AC_ARG_ENABLE([x86-optimizations],
               [AS_HELP_STRING([--enable-x86-optimizations],
-                              [use MMX or SSE optimization
-[default=yes]])],[enable_x86_optimizations="${enableval}"],
+                              [use MMX or SSE optimization [default=yes]])],[enable_x86_optimizations="${enableval}"],
               [enable_x86_optimizations=yes])
+
+# Let the user enable/disable the x86 optimizations.
+# Useful when compiling on non-x86 architectures.
+AC_ARG_ENABLE([neon-optimizations],
+              [AS_HELP_STRING([--enable-neon-optimizations],
+                              [use ARM NEON optimization [default=yes]])],[enable_neon_optimizations="${enableval}"],
+              [enable_neon_optimizations=yes])
+
 
 # Tell the Makefile.am if the user wants to disable optimizations.
 # Makefile.am will enable them by default if support is available.
@@ -197,6 +204,32 @@ else
 	# Disable optimizations in SSTypes.h since the user requested it.
         echo "****** x86 optimizations disabled ******"
         CPPFLAGS="-DSOUNDTOUCH_DISABLE_X86_OPTIMIZATIONS $CPPFLAGS"
+fi
+
+
+if test "x$enable_neon_optimizations" = "xyes" -a "x$ac_cv_header_arm_neon_h" = "xyes"; then
+
+	# Check for ARM NEON support
+	original_saved_CXXFLAGS=$CXXFLAGS
+	have_neon=no
+	CXXFLAGS="-mfpu=neon -march=native $CXXFLAGS"
+
+	# Check if can compile neon code using intrinsics, require GCC >= 4.3 for autovectorization.
+	AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+	#if defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 3))
+	#error "Need GCC >= 4.3 for neon autovectorization"
+	#endif
+	#include <arm_neon.h>
+	int main () {
+		int32x4_t t = {1};
+		return vaddq_s32(t,t)[0] == 2;
+	}]])],[have_neon=yes])
+	CXXFLAGS=$original_saved_CXXFLAGS
+	if test "x$have_neon" = "xyes" ; then
+		echo "****** NEON support enabled ******"
+		CPPFLAGS="-mfpu=neon -march=native -mtune=native $CPPFLAGS"
+		AC_DEFINE(SOUNDTOUCH_USE_NEON,1,[Use ARM NEON extension])
+	fi
 fi
 
 # Set AM_CXXFLAGS

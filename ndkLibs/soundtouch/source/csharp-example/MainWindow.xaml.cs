@@ -14,6 +14,7 @@
 
 using soundtouch;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -38,14 +39,14 @@ namespace csharp_example
 
 
         /// <summary>
-        /// Display SoundTouch library version string in status bar. This also indicates whether the DLL was loaded succesfully or not ...
+        /// Display SoundTouch library version string in status bar. This also indicates whether the DLL was loaded successfully or not ...
         /// </summary>
         private void DisplaySoundTouchVersion()
         {
             string status;
             try
             {
-                status = String.Format("SoundTouch version: {0}", SoundTouch.GetVersionString());
+                status = String.Format("SoundTouch version: {0}", SoundTouch.Version);
             }
             catch (Exception exp)
             {
@@ -61,27 +62,44 @@ namespace csharp_example
         }
 
 
+        // Open mp3 file for playback
+        private void OpenFile(string fileName)
+        {
+            Stop();
+            if (processor.OpenMp3File(fileName) == true)
+            {
+                textBox_filename.Text = fileName;
+                button_play.IsEnabled = true;
+                button_stop.IsEnabled = true;
+
+                // Parse adjustment settings
+                ParseTempoTextBox();
+                ParsePitchTextBox();
+                ParseRateTextBox();
+            }
+            else
+            {
+                textBox_filename.Text = "";
+                button_play.IsEnabled = false;
+                button_stop.IsEnabled = false;
+                MessageBox.Show("Coudln't open audio file " + fileName);
+            }
+        }
+
+
         private void button_browse_Click(object sender, RoutedEventArgs e)
         {
+            // Show file selection dialog
             Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();
+            if (string.IsNullOrEmpty(textBox_filename.Text) == false)
+            {
+                // if an audio file is open, set directory to same as with the file
+                openDialog.InitialDirectory = Path.GetDirectoryName(textBox_filename.Text);
+            }
             openDialog.Filter = "MP3 files (*.mp3)|*.mp3";
             if (openDialog.ShowDialog() == true)
             {
-                if (processor.OpenMp3File(openDialog.FileName) == true)
-                {
-                    textBox_filename.Text = openDialog.FileName;
-                    button_play.IsEnabled = true;
-                    button_stop.IsEnabled = true;
-
-                    // Parse adjustment settings
-                    ParseTempoTextBox();
-                    ParsePitchTextBox();
-                    ParseRateTextBox();
-                }
-                else
-                {
-                    MessageBox.Show("Coudln't open audio file " + openDialog.FileName);
-                }
+                OpenFile(openDialog.FileName);
             }
         }
 
@@ -105,7 +123,7 @@ namespace csharp_example
 
         private void button_play_Click(object sender, RoutedEventArgs e)
         {
-            if (button_play.Content == "_Pause")
+            if ((string)button_play.Content == "_Pause")
             {
                 // Pause
                 if (processor.Pause())
@@ -126,13 +144,19 @@ namespace csharp_example
         }
 
 
-        private void button_stop_Click(object sender, RoutedEventArgs e)
+        private void Stop()
         {
             if (processor.Stop())
             {
                 text_status.Text = "Stopped";
             }
             setPlayButtonMode(true);
+        }
+
+
+        private void button_stop_Click(object sender, RoutedEventArgs e)
+        {
+            Stop();
         }
 
 
@@ -150,7 +174,7 @@ namespace csharp_example
             double pitchValue;
             if (double.TryParse(textBox_pitch.Text, out pitchValue))
             {
-                if (processor.streamProcessor != null) processor.streamProcessor.st.SetPitchSemiTones((float)pitchValue);
+                if (processor.streamProcessor != null) processor.streamProcessor.st.PitchSemiTones = (float)pitchValue;
             }
         }
 
@@ -160,7 +184,7 @@ namespace csharp_example
             double tempoValue;
             if (parse_percentValue(textBox_tempo, out tempoValue))
             {
-                if (processor.streamProcessor != null) processor.streamProcessor.st.SetTempoChange((float)tempoValue);
+                if (processor.streamProcessor != null) processor.streamProcessor.st.TempoChange = (float)tempoValue;
             }
         }
 
@@ -170,7 +194,7 @@ namespace csharp_example
             double rateValue;
             if (parse_percentValue(textBox_rate, out rateValue))
             {
-                if (processor.streamProcessor != null) processor.streamProcessor.st.SetRateChange((float)rateValue);
+                if (processor.streamProcessor != null) processor.streamProcessor.st.RateChange = (float)rateValue;
             }
         }
 
@@ -220,6 +244,15 @@ namespace csharp_example
                 // enter pressed -- parse value
                 ParseRateTextBox();
             }
+        }
+
+
+        //  Handler for file drag & drop over the window
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            // open 1st of the chosen files
+            OpenFile(files[0]);
         }
     }
 }

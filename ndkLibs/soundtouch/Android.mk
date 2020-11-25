@@ -16,22 +16,31 @@
 
 LOCAL_PATH := $(call my-dir)
 
-MY_LOCAL_SRC_FILES := ../../SoundTouch/AAFilter.cpp ../../SoundTouch/FIFOSampleBuffer.cpp \
-                ../../SoundTouch/FIRFilter.cpp ../../SoundTouch/cpu_detect_x86.cpp \
-                ../../SoundTouch/RateTransposer.cpp ../../SoundTouch/SoundTouch.cpp \
-                ../../SoundTouch/InterpolateCubic.cpp ../../SoundTouch/InterpolateLinear.cpp \
-                ../../SoundTouch/InterpolateShannon.cpp ../../SoundTouch/TDStretch.cpp \
-                ../../SoundTouch/BPMDetect.cpp ../../SoundTouch/PeakFinder.cpp \
-
-ifeq ($(TARGET_ARCH_ABI), x86)
-MY_LOCAL_SRC_FILES += ../../SoundTouch/mmx_optimized.cpp ../../SoundTouch/sse_optimized.cpp \
-
-endif
+MY_LOCAL_SRC_FILES := ../../SoundTouch/AAFilter.cpp  ../../SoundTouch/FIFOSampleBuffer.cpp \
+                                      ../../SoundTouch/FIRFilter.cpp ../../SoundTouch/cpu_detect_x86.cpp \
+                                      ../../SoundTouch/sse_optimized.cpp ../../SoundStretch/WavFile.cpp \
+                                      ../../SoundTouch/RateTransposer.cpp ../../SoundTouch/SoundTouch.cpp \
+                                      ../../SoundTouch/InterpolateCubic.cpp ../../SoundTouch/InterpolateLinear.cpp \
+                                      ../../SoundTouch/InterpolateShannon.cpp ../../SoundTouch/TDStretch.cpp \
+                                      ../../SoundTouch/BPMDetect.cpp ../../SoundTouch/PeakFinder.cpp
 
 MY_LOCAL_LDLIBS    := -llog
 MY_LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../include
 MY_LOCAL_CFLAGS := -fdata-sections -ffunction-sections -fexceptions
 MY_LOCAL_ARM_MODE := arm
+
+ifeq ($(TARGET_ARCH_ABI), x86)
+MY_LOCAL_SRC_FILES += ../../SoundTouch/mmx_optimized.cpp
+endif
+
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+MY_LOCAL_CFLAGS += -mfpu=neon -DSOUNDTOUCH_USE_NEON
+endif
+
+ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+MY_LOCAL_CFLAGS += -mfpu=neon -DSOUNDTOUCH_USE_NEON
+endif
+
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := soundtouch
