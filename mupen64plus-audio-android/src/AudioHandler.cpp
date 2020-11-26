@@ -22,7 +22,10 @@ AudioHandler &AudioHandler::get() {
 }
 
 AudioHandler::AudioHandler() :
-		mSoundBufferPool(1024 * 1024 * 50) {
+		mOutStream(nullptr),
+		mSoundBufferPool(1024 * 1024 * 50),
+		mFeedTimes{},
+		mGameTimes{} {
 	mFeedTimes.fill(0.0);
 	mGameTimes.fill(0.0);
 	mFeedTimeIndex = 0;
@@ -221,7 +224,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	int ranDry;
 
 	//adjustment used when a device running too slow
-	double slowAdjustment = 1.0;
+	double slowAdjustment;
 	double currAdjustment = 1.0;
 
 	//how quickly to return to original speed
