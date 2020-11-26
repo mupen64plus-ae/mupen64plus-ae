@@ -30,11 +30,15 @@ AudioHandler::AudioHandler() :
 	mGameTimes.fill(0.0);
 	mFeedTimeIndex = 0;
 	mFeedTimesSet = false;
+
+	mSoundTouch.setSampleRate(mInputFreq);
+	mSoundTouch.setChannels(numberOfChannels);
 }
 
 void AudioHandler::closeAudio() {
 	if (mOutStream != nullptr) {
 		mOutStream->close();
+		mOutStream = nullptr;
 	}
 	/* Delete Primary buffer */
 	if (mPrimaryBuffer != nullptr) {
