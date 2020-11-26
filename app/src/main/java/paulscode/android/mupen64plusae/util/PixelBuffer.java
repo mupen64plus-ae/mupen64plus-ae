@@ -39,11 +39,11 @@ public class PixelBuffer {
 
     EGL10 mEGL;
     EGLDisplay mEGLDisplay;
-    EGLConfig[] mEGLConfigs;
+    EGLConfig[] mEGLConfigs = null;
     EGLConfig mEGLConfig;
-    EGLContext mEGLContext;
-    EGLSurface mEGLSurface;
-    GL10 mGL;
+    EGLContext mEGLContext = null;
+    EGLSurface mEGLSurface = null;
+    GL10 mGL = null;
 
     String mThreadOwner;
 
@@ -64,15 +64,17 @@ public class PixelBuffer {
         mEGL.eglInitialize(mEGLDisplay, version);
         mEGLConfig = chooseConfig(); // Choosing a config is a little more complicated
 
-        final int[] contextAttrs = new int[] {
-                EGL_CONTEXT_CLIENT_VERSION,
-                2,
-                EGL10.EGL_NONE };
+        if (mEGLConfig != null) {
+            final int[] contextAttrs = new int[]{
+                    EGL_CONTEXT_CLIENT_VERSION,
+                    2,
+                    EGL10.EGL_NONE};
 
-        mEGLContext = mEGL.eglCreateContext(mEGLDisplay, mEGLConfig, EGL_NO_CONTEXT, contextAttrs);
-        mEGLSurface = mEGL.eglCreatePbufferSurface(mEGLDisplay, mEGLConfig,  attribList);
-        mEGL.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
-        mGL = (GL10) mEGLContext.getGL();
+            mEGLContext = mEGL.eglCreateContext(mEGLDisplay, mEGLConfig, EGL_NO_CONTEXT, contextAttrs);
+            mEGLSurface = mEGL.eglCreatePbufferSurface(mEGLDisplay, mEGLConfig, attribList);
+            mEGL.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
+            mGL = (GL10) mEGLContext.getGL();
+        }
 
         // Record thread owner of OpenGL context
         mThreadOwner = Thread.currentThread().getName();
@@ -80,9 +82,11 @@ public class PixelBuffer {
 
     public void destroyGlContext()
     {
-        mEGL.eglMakeCurrent(mEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        mEGL.eglDestroySurface( mEGLDisplay, mEGLSurface );
-        mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
+        if (mEGL != null) {
+            mEGL.eglMakeCurrent(mEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            mEGL.eglDestroySurface( mEGLDisplay, mEGLSurface );
+            mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
+        }
     }
 
     public void setRenderer(GLSurfaceView.Renderer renderer) {
@@ -94,21 +98,23 @@ public class PixelBuffer {
             return;
         }
 
-        // Call the renderer initialization routines
-        mRenderer.onSurfaceCreated(mGL, mEGLConfig);
-        mRenderer.onSurfaceChanged(mGL, mWidth, mHeight);
+        if (mGL != null) {
+            // Call the renderer initialization routines
+            mRenderer.onSurfaceCreated(mGL, mEGLConfig);
+            mRenderer.onSurfaceChanged(mGL, mWidth, mHeight);
+        }
     }
 
     public String getGLVersion()
     {
         // Create a minimum supported OpenGL ES context, then check:
-        return mGL.glGetString(GL10.GL_VERSION);
+        return mGL != null ? mGL.glGetString(GL10.GL_VERSION) : null;
     }
 
     public String getGLRenderer()
     {
         // Create a minimum supported OpenGL ES context, then check:
-        return mGL.glGetString(GL10.GL_RENDERER);
+        return mGL != null ? mGL.glGetString(GL10.GL_RENDERER) : null;
     }
 
     public Bitmap getBitmap() {
@@ -125,9 +131,13 @@ public class PixelBuffer {
         }
 
         // Call the renderer draw routine
-        mRenderer.onDrawFrame(mGL);
-        convertToBitmap();
-        return mBitmap;
+        if (mGL != null) {
+            mRenderer.onDrawFrame(mGL);
+            convertToBitmap();
+            return mBitmap;
+        } else {
+            return null;
+        }
     }
 
     private EGLConfig chooseConfig() {
@@ -148,7 +158,7 @@ public class PixelBuffer {
             listConfig();
         }
 
-        return mEGLConfigs[0];  // Best match is probably the first configuration
+        return mEGLConfigs.length == 0 ? null : mEGLConfigs[0];  // Best match is probably the first configuration
     }
 
     private void listConfig() {
