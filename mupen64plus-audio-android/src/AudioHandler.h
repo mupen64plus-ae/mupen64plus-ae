@@ -312,5 +312,9 @@ private:
 
 	// If we have enough values in mFeedTimes and mGmeTimes
 	bool mFeedTimesSet = false;
+
+	// Busy-loop used to cause cores to ramp up to max frequency when first priming audio
+	// it helps with audio skipping when first starting playback
+	std::atomic<bool> mBusyLoop;
 };
 

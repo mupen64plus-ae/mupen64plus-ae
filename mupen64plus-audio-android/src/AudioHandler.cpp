@@ -30,6 +30,7 @@ AudioHandler::AudioHandler() :
 	mGameTimes.fill(0.0);
 	mFeedTimeIndex = 0;
 	mFeedTimesSet = false;
+	mBusyLoop = true;
 
 	mSoundTouch.setSampleRate(mInputFreq);
 	mSoundTouch.setChannels(numberOfChannels);
@@ -158,6 +159,9 @@ void AudioHandler::initializeAudio(int _freq) {
 
 void AudioHandler::pushData(const int16_t *_data, int _samples,
 							std::chrono::duration<double> timeSinceStart) {
+    if (mBusyLoop) {
+    	return;
+    }
 
 	static int failedToStartCount = 0;
 	if (mOutStream == nullptr || mOutStream->getState() != oboe::StreamState::Started) {
@@ -187,6 +191,16 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 oboe::DataCallbackResult
 AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
 
+	// Cause this thread to ramp up frequency to avoid the audio skipping when resuming a game after pausing
+	if (mBusyLoop) {
+		int busyLoopCount = 0;
+		while (busyLoopCount < 10000) {
+			std::this_thread::yield();
+			++busyLoopCount;
+		}
+
+		mBusyLoop = false;
+	}
 	mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
 
 	if (mPrimingTimeMs > mTargetSecondaryBuffersMs){
@@ -552,6 +566,7 @@ void AudioHandler::pausePlayback() {
 		mGameTimes.fill(0.0);
 		mFeedTimeIndex = 0;
 		mFeedTimesSet = false;
+		mBusyLoop = true;
 
 		mSoundTouch.clear();
 
