@@ -6,6 +6,7 @@
 #include <SoundTouch.h>
 #include <oboe/Oboe.h>
 #include <thread>
+#include <array>
 
 using namespace moodycamel;
 
@@ -295,5 +296,21 @@ private:
 
 	// Primary buffer position
 	int mPrimaryBufferPos = 0;
+
+	// This is the max window size used for performing game speed averaging for Audio time stretching
+	static const int maxWindowSize = 500;
+
+	// This holds an array of time deltas between game samples
+	std::array<double, maxWindowSize> mFeedTimes;
+
+
+	// This holds an array of time deltas as provided by the game itself
+	std::array<double, maxWindowSize> mGameTimes;
+
+	// Next index where a valid value will be injected in mFeedTimes and mGameTimes
+	int mFeedTimeIndex = 0;
+
+	// If we have enough values in mFeedTimes and mGmeTimes
+	bool mFeedTimesSet = false;
 };
 

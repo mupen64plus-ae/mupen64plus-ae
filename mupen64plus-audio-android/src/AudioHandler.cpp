@@ -23,6 +23,10 @@ AudioHandler &AudioHandler::get() {
 
 AudioHandler::AudioHandler() :
 		mSoundBufferPool(1024 * 1024 * 50) {
+	mFeedTimes.fill(0.0);
+	mGameTimes.fill(0.0);
+	mFeedTimeIndex = 0;
+	mFeedTimesSet = false;
 }
 
 void AudioHandler::closeAudio() {
@@ -137,6 +141,10 @@ void AudioHandler::initializeAudio(int _freq) {
 
 	mPrimeComplete = false;
 	mPrimingTimeMs = 0;
+	mFeedTimes.fill(0.0);
+	mGameTimes.fill(0.0);
+	mFeedTimeIndex = 0;
+	mFeedTimesSet = false;
 
 	mOutStream->requestStart();
 }
@@ -172,17 +180,17 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 oboe::DataCallbackResult
 AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
 
+	mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
+
+	if (mPrimingTimeMs > mTargetSecondaryBuffersMs){
+		mPrimeComplete = true;
+	}
+
 	if (mTimeStretchEnabled) {
 		if (!audioProviderStretch(audioData, numFrames)) {
 			injectSilence(audioData, numFrames);
 		}
 	} else {
-		mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
-
-		if (mPrimingTimeMs > mTargetSecondaryBuffersMs){
-			mPrimeComplete = true;
-		}
-
 		if (!mPrimeComplete) {
 			injectSilence(audioData, numFrames);
 		} else if (!audioProviderNoStretch(audioData, numFrames)) {
@@ -195,8 +203,6 @@ AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32
 }
 
 bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames) {
-
-	double speedFactor;
 
 	double bufferMultiplier = (static_cast<double>(mOutputFreq) / mInputFreq) *
 							  (static_cast<double>(defaultSecondaryBufferSize) /
@@ -215,8 +221,8 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	int ranDry;
 
 	//adjustment used when a device running too slow
-	static double slowAdjustment;
-	static double currAdjustment = 1.0;
+	double slowAdjustment = 1.0;
+	double currAdjustment = 1.0;
 
 	//how quickly to return to original speed
 	static const double minSlowValue = 0.1;
@@ -225,19 +231,13 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	static const float slowRate = 0.05;
 	static const float defaultSampleLength = 0.01666;
 
+	static const int defaultWindowSize = 50;
+
 	static double prevTime = 0;
 
-	static const int maxWindowSize = 500;
-
-	static int defaultWindowSize = 50;
-	static int feedTimeWindowSize = defaultWindowSize;
-
-	static int feedTimeIndex = 0;
-	static bool feedTimesSet = false;
-	static double feedTimes[maxWindowSize] = {};
-	static double gameTimes[maxWindowSize] = {};
-	static double averageGameTime = defaultSampleLength;
-	static double averageFeedTime = defaultSampleLength;
+	int feedTimeWindowSize = defaultWindowSize;
+	double averageGameTime = defaultSampleLength;
+	double averageFeedTime = defaultSampleLength;
 
 	int queueLength = static_cast<int>(static_cast<float>(mSoundTouch.numSamples())/static_cast<float>(mOutputFreq)*1000);
 
@@ -259,16 +259,16 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 
 		// Ignore negative time, it can be negative if game is falling too far behind real time
 		if (timeDiff > 0) {
-			feedTimes[feedTimeIndex] = timeDiff;
-			averageFeedTime = getAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
+			mFeedTimes[mFeedTimeIndex] = timeDiff;
+			averageFeedTime = getAverageTime(mFeedTimes.data(), mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex + 1));
 
-			gameTimes[feedTimeIndex] = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
-			averageGameTime = getAverageTime(gameTimes,feedTimesSet ? feedTimeWindowSize : (feedTimeIndex +  1));
+			mGameTimes[mFeedTimeIndex] = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
+			averageGameTime = getAverageTime(mGameTimes.data(),mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex +  1));
 
-			++feedTimeIndex;
-			if (feedTimeIndex >= feedTimeWindowSize) {
-				feedTimeIndex = 0;
-				feedTimesSet = true;
+			++mFeedTimeIndex;
+			if (mFeedTimeIndex >= feedTimeWindowSize) {
+				mFeedTimeIndex = 0;
+				mFeedTimesSet = true;
 			}
 
 			//Normalize window size
@@ -279,18 +279,11 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		}
 	}
 
-	mPrimingTimeMs += static_cast<int>(static_cast<double>(outNumFrames) / mOutputFreq * 1000);
-	int totalPrimingTime = static_cast<int>(static_cast<float>(feedTimeWindowSize)*averageGameTime*1000);
-
-	if (mPrimingTimeMs > totalPrimingTime){
-		mPrimeComplete = true;
-	}
-
 	double temp = averageGameTime / averageFeedTime;
 	bool samplesAdded;
 
 	if (!mPrimeComplete) {
-		speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
+		double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
 		mSoundTouch.setTempo(speedFactor);
 		processAudioSoundTouchNoOutput(primaryBufferPos);
 		samplesAdded = false;
@@ -548,6 +541,10 @@ void AudioHandler::pausePlayback() {
 		mPrimeComplete = false;
 		mPrimingTimeMs = 0;
 		mPrimaryBufferPos = 0;
+		mFeedTimes.fill(0.0);
+		mGameTimes.fill(0.0);
+		mFeedTimeIndex = 0;
+		mFeedTimesSet = false;
 
 		mSoundTouch.clear();
 
