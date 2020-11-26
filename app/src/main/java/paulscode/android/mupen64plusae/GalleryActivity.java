@@ -975,7 +975,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return true;
         }
 
-        return super.onKeyDown( keyCode, event );
+        boolean returnValue = false;
+
+        // Some Android TV boxes seem to cause this
+        try {
+            returnValue = super.onKeyDown(keyCode, event);
+        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+
+        return returnValue;
     }
 
     @Override
