@@ -137,34 +137,35 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         mConfigFile = new ConfigFile( mGlobalPrefs.controllerProfiles_cfg );
         ConfigSection section = mConfigFile.get( name );
-        if( section == null )
-            throw new Error( "Invalid usage: profile name not found in config file" );
-        mProfile = new ControllerProfile( false, section );
-        
-        // Set up input listeners
-        mUnmappableInputCodes = mGlobalPrefs.unmappableKeyCodes;
-        
-        if( savedInstanceState != null )
-        {
-            mSelectedPopupIndex = savedInstanceState.getInt(STATE_SELECTED_POPUP_INDEX);
+        if( section != null ) {
+            mProfile = new ControllerProfile(false, section);
+
+            // Set up input listeners
+            mUnmappableInputCodes = mGlobalPrefs.unmappableKeyCodes;
+
+            if (savedInstanceState != null) {
+                mSelectedPopupIndex = savedInstanceState.getInt(STATE_SELECTED_POPUP_INDEX);
+            }
+
+            // Initialize the layout
+            initLayout();
+
+            // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
+            Toolbar toolbar = findViewById(R.id.toolbar);
+
+            // Set the title of the activity
+            if (TextUtils.isEmpty(mProfile.comment))
+                toolbar.setTitle(mProfile.name);
+            else
+                toolbar.setTitle(mProfile.name + " : " + mProfile.comment);
+
+            setSupportActionBar(toolbar);
+
+            // Refresh everything
+            refreshAllButtons(false);
+        } else {
+            finish();
         }
-        
-        // Initialize the layout
-        initLayout();
-        
-        // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
-        Toolbar toolbar = findViewById( R.id.toolbar );
-        
-        // Set the title of the activity
-        if( TextUtils.isEmpty( mProfile.comment ) )
-            toolbar.setTitle( mProfile.name );
-        else
-            toolbar.setTitle( mProfile.name + " : " + mProfile.comment );
-        
-        setSupportActionBar( toolbar );
-        
-        // Refresh everything
-        refreshAllButtons(false);
     }
     
     @Override
