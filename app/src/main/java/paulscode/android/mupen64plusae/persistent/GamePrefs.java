@@ -24,7 +24,6 @@ import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Plugin;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 
 @SuppressWarnings("WeakerAccess")
 public class GamePrefs
@@ -70,10 +69,10 @@ public class GamePrefs
     private final String mSharedPrefsName;
 
     /** App data */
-    private AppData mAppData;
+    private final AppData mAppData;
 
     /** Global prefs */
-    private GlobalPrefs mGlobalPrefs;
+    private final GlobalPrefs mGlobalPrefs;
 
     /** The name of the parent directory containing all game-specific data files. */
     private String gameDataDir;
@@ -359,8 +358,6 @@ public class GamePrefs
             tempEmulationProfile = new Profile(true, "None", "Profile not found");
         }
 
-        String openGlVersion = AppData.getOpenGlEsVersion(context);
-
         emulationProfile = tempEmulationProfile;
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
@@ -502,21 +499,21 @@ public class GamePrefs
             sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
             int sensitivity;
             try {
-                sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityX"));
+                sensitivity = Integer.parseInt(touchscreenProfile.get("sensorSensitivityX"));
             } catch (final NumberFormatException ex) {
                 sensitivity = 100;
             }
-            if (Boolean.valueOf(touchscreenProfile.get("sensorInvertX"))) {
+            if (Boolean.parseBoolean(touchscreenProfile.get("sensorInvertX"))) {
                 sensitivity = -sensitivity;
             }
             sensorSensitivityX = sensitivity;
             sensorAxisY = touchscreenProfile.get("sensorAxisY", "");
             try {
-                sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityY"));
+                sensitivity = Integer.parseInt(touchscreenProfile.get("sensorSensitivityY"));
             } catch (final NumberFormatException ex) {
                 sensitivity = 100;
             }
-            if (Boolean.valueOf(touchscreenProfile.get("sensorInvertY"))) {
+            if (Boolean.parseBoolean(touchscreenProfile.get("sensorInvertY"))) {
                 sensitivity = -sensitivity;
             }
             sensorSensitivityY = sensitivity;
@@ -679,11 +676,6 @@ public class GamePrefs
         return mupen64plus_cfg;
     }
 
-    String getMupen64plusCfgAlt()
-    {
-        return mupen64plus_cfg.replace(":", "");
-    }
-
     public String getSramDataDir()
     {
         return sramDataDir;
@@ -750,7 +742,7 @@ public class GamePrefs
                 {
                     String indexString = matcher.group(1);
 
-                    if (!TextUtils.isEmpty(indexString))
+                    if (!TextUtils.isEmpty(indexString) && indexString != null)
                     {
                         final int index = Integer.parseInt( indexString );
                         cheatSelection.add(new CheatSelection(index, value-1));
