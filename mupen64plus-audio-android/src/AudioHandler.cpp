@@ -333,12 +333,12 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	//Useful logging
 
 	//if(queueLength == 0)
-
+/*
 	{
 	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d",
 				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
 	}
-
+*/
 	return samplesAdded;
 }
 
