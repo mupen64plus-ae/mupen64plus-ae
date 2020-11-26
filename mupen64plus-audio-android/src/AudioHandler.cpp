@@ -145,7 +145,7 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 							std::chrono::duration<double> timeSinceStart) {
 
 	static int failedToStartCount = 0;
-	if (mOutStream->getState() != oboe::StreamState::Started) {
+	if (mOutStream == nullptr || mOutStream->getState() != oboe::StreamState::Started) {
 
 		if (failedToStartCount++ == 100) {
 			initializeAudio(mInputFreq);
@@ -561,7 +561,9 @@ void AudioHandler::pausePlayback() {
 
 void AudioHandler::resumePlayback() {
 	if (mPlaybackPaused) {
-		mOutStream->start();
+		if (mOutStream != nullptr) {
+			mOutStream->start();
+		}
 		mPlaybackPaused = false;
 	}
 }
