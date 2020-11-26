@@ -587,29 +587,35 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
 
                 // Attach all the plugins
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
-                mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
+                try {
+                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
+                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
+                    mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
 
-                if (mUseRaphnetDevicesIfAvailable) {
-                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
-                } else {
-                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
+                    if (mUseRaphnetDevicesIfAvailable) {
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
+                    } else {
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
+                    }
+
+                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
+                } catch (java.lang.IllegalArgumentException e) {
+                    openSuccess = false;
                 }
 
-                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
-
                 // This call blocks until emulation is stopped
-                mCoreInterface.emuStart();
+                if (openSuccess) {
+                    mCoreInterface.emuStart();
 
-                // Detach all the plugins
-                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);
-                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
-                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
-                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
+                    // Detach all the plugins
+                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);
+                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
+                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
+                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
 
-                mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
-                mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
+                    mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
+                    mCoreInterface.writeDdDiskData(getApplicationContext(), mGamePrefs.diskPath64Dd);
+                }
             }
 
             // Clean up the working directory
