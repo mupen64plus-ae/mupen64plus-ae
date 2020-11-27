@@ -958,36 +958,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public boolean onKeyDown( int keyCode, KeyEvent event )
-    {
-        if( keyCode == KeyEvent.KEYCODE_MENU )
-        {
-            // Show the navigation drawer when the user presses the Menu button
-            // http://stackoverflow.com/q/22220275
-            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
-            {
-                mDrawerLayout.closeDrawer( GravityCompat.START );
-            }
-            else
-            {
-                mDrawerLayout.openDrawer( GravityCompat.START );
-            }
-            return true;
-        }
-
-        boolean returnValue = false;
-
-        // Some Android TV boxes seem to cause this
-        try {
-            returnValue = super.onKeyDown(keyCode, event);
-        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-        }
-
-        return returnValue;
-    }
-
-    @Override
     public void onBackPressed()
     {
         if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
