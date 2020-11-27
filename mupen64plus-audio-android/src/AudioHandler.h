@@ -286,7 +286,7 @@ private:
 	RingBufferPool mSoundBufferPool;
 
 	// True if playback is paused
-	bool mPlaybackPaused = false;
+	std::atomic<bool> mPlaybackPaused;
 
 	// Amount of injected silence to allow the buffers to prime
 	int mPrimingTimeMs = 0;

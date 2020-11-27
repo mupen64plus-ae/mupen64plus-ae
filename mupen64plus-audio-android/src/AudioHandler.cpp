@@ -24,6 +24,7 @@ AudioHandler &AudioHandler::get() {
 AudioHandler::AudioHandler() :
 		mOutStream(nullptr),
 		mSoundBufferPool(1024 * 1024 * 50),
+		mPlaybackPaused(false),
 		mFeedTimes{},
 		mGameTimes{} {
 	mFeedTimes.fill(0.0);
@@ -159,7 +160,7 @@ void AudioHandler::initializeAudio(int _freq) {
 
 void AudioHandler::pushData(const int16_t *_data, int _samples,
 							std::chrono::duration<double> timeSinceStart) {
-    if (mBusyLoop) {
+    if (mBusyLoop || mPlaybackPaused) {
     	return;
     }
 
@@ -552,12 +553,13 @@ void AudioHandler::setSwapChannels(bool _swapChannels) {
 
 void AudioHandler::pausePlayback() {
 	if (!mPlaybackPaused) {
+
+		mPlaybackPaused = true;
+		
 		if (mOutStream != nullptr) {
 			mOutStream->pause();
 			mOutStream->flush();
 		}
-
-		mPlaybackPaused = true;
 
 		mPrimeComplete = false;
 		mPrimingTimeMs = 0;
