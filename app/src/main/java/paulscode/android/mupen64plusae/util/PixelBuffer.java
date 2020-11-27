@@ -82,9 +82,9 @@ public class PixelBuffer {
 
     public void destroyGlContext()
     {
-        if (mEGL != null) {
+        if (mEGL != null && mEGLSurface != null && mEGLContext != null) {
             mEGL.eglMakeCurrent(mEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-            mEGL.eglDestroySurface( mEGLDisplay, mEGLSurface );
+            mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface );
             mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
         }
     }
