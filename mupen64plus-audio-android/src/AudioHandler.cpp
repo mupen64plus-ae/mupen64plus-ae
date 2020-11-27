@@ -124,11 +124,16 @@ void AudioHandler::initializeAudio(int _freq) {
 #endif
 
 	builder.setCallback(this);
-	builder.openManagedStream(mOutStream);
+	if (builder.openManagedStream(mOutStream) == oboe::Result::OK) {
 
-	if (mOutStream->getAudioApi() == oboe::AudioApi::AAudio) {
-		mOutputFreq = mOutStream->getSampleRate();
-		mSecondaryBufferSize = mOutStream->getFramesPerBurst();
+		if (mOutStream->getAudioApi() == oboe::AudioApi::AAudio) {
+			mOutputFreq = mOutStream->getSampleRate();
+			mSecondaryBufferSize = mOutStream->getFramesPerBurst();
+		}
+		DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
+					 mOutStream->getFramesPerBurst());
+	} else {
+		mOutStream.reset(nullptr);
 	}
 
 	/* Create primary buffer */
@@ -136,9 +141,6 @@ void AudioHandler::initializeAudio(int _freq) {
 
 	/* Create secondary buffer */
 	createSecondaryBuffer();
-
-	DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
-				 mOutStream->getFramesPerBurst());
 
 	mSoundTouch.setSampleRate(mInputFreq);
 	mSoundTouch.setChannels(numberOfChannels);
@@ -155,7 +157,9 @@ void AudioHandler::initializeAudio(int _freq) {
 	mFeedTimeIndex = 0;
 	mFeedTimesSet = false;
 
-	mOutStream->requestStart();
+	if (mOutStream != nullptr) {
+		mOutStream->requestStart();
+	}
 }
 
 void AudioHandler::pushData(const int16_t *_data, int _samples,
@@ -555,10 +559,9 @@ void AudioHandler::pausePlayback() {
 	if (!mPlaybackPaused) {
 
 		mPlaybackPaused = true;
-		
+
 		if (mOutStream != nullptr) {
-			mOutStream->pause();
-			mOutStream->flush();
+			mOutStream->stop();
 		}
 
 		mPrimeComplete = false;
