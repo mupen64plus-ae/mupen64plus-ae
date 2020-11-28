@@ -783,7 +783,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         .setIntent(gameIntent)
                         .setShortLabel(item.displayName)
                         .build();
-                ShortcutManagerCompat.requestPinShortcut(this, shortcut, null);
+
+                try {
+                    ShortcutManagerCompat.requestPinShortcut(this, shortcut, null);
+                } catch (java.lang.IllegalStateException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
