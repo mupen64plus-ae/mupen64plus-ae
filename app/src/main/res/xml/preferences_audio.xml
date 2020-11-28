@@ -47,21 +47,21 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="64"
+        android:key="audioBufferSize"
+        android:title="@string/audioBufferSize_title"
+        mupen64:maximumValue="128"
+        mupen64:minimumValue="1"
+        mupen64:saveType="string"
+        mupen64:stepSize="16"
+        mupen64:units="ms" />
+
     <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="audioTimeStretch"
         android:summary="@string/audioTimeStretch_summary"
         android:title="@string/audioTimeStretch_title" />
-
-    <paulscode.android.mupen64plusae.preference.SeekBarPreference
-        android:defaultValue="10"
-        android:key="audioBufferNbr"
-        android:title="@string/audioBufferNbr_title"
-        mupen64:maximumValue="50"
-        mupen64:minimumValue="2"
-        mupen64:saveType="string"
-        mupen64:stepSize="1"
-        mupen64:units=" buffers" />
 
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/audioSamplingType_default"

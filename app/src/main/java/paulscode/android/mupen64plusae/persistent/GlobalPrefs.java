@@ -596,7 +596,7 @@ public class GlobalPrefs
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         enableAudioTimeSretching = mPreferences.getBoolean( "audioTimeStretch", true );
-        audioSecondaryBufferNbr = getSafeInt( mPreferences, "audioBufferNbr", 10 );
+        audioSecondaryBufferNbr = getSafeInt( mPreferences, "audioBufferSize", 64 );
         audioFloatingPoint = mPreferences.getBoolean( "audioFloatingPoint", false );
         audioSamplingType = getSafeInt( mPreferences, "audioSamplingType", 0 );
 

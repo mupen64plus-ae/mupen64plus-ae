@@ -401,7 +401,6 @@
     <string name="r4300Emulator_entryCachedInterpreter">Gecachter Interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamischer Recompiler (dynarec)</string>
     <string name="displayZoom_title">Zoom</string>
-    <string name="audioBufferNbr_title">Audio-Puffernummer</string>
     <string name="localeOverride_entrySystemDefault">Systemstandard</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

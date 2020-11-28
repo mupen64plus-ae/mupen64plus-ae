@@ -527,7 +527,6 @@
     <string name="displayZoomDefault_title">Implijit ar zoum dre ziouer</string>
     <string name="displayZoomDefault_summary">Digochit ar c\'hombod-mañ evit spisaat un dalvoudegezh zoum personelaet evit ar c\'hoari-mañ</string>
     
-    <string name="audioBufferNbr_title">Niverenn aodio ar skurzer</string>
     <string name="audioFloatingPoint_title">Standilhonoù gant ur poent nijus</string>
     <string name="audioFloatingPoint_summary">Kalite aodio FP uheloc\'h. Trevnadoù \'zo n\'hallont ket bezañ kenglotus.</string>
     <string name="localeOverride_entrySystemDefault">Sistem dre ziouer</string>

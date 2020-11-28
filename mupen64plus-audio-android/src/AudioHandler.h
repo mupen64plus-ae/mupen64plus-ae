@@ -27,10 +27,10 @@ public:
 	void setSwapChannels(bool _swapChannels);
 
 	/**
-	 * Set secondary buffer size in samples
-	 * @param _secondaryBufferSize Buffer size in samples
+	 * Set hardware buffer size in samples
+	 * @param _hardwareBufferSize Buffer size in samples
 	 */
-	void setSecondaryBufferSize(int _secondaryBufferSize);
+	void setHardwareBufferSize(int _hardwareBufferSize);
 
 	/**
 	 * Enable audio time stretching
@@ -45,10 +45,10 @@ public:
 	void setSamplingType(int _samplingType);
 
 	/**
-	 * Triger priming bUffer amount in milliseconds
-	 * @param _targetSecondaryBuffersMs How many milliseconds to prime the audio hardware
+	 * Triger priming buffer amount in milliseconds
+	 * @param _targetPrimingBuffersMs How many milliseconds to prime the audio hardware
 	 */
-	void setTargetSecondaryBuffersMs(int _targetSecondaryBuffersMs);
+	void setTargetPrimingBuffersMs(int _targetPrimingBuffersMs);
 
 	/**
 	 * Set the output sampling rate
@@ -108,16 +108,16 @@ public:
 	 */
 	oboe::DataCallbackResult onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
 
-	// Default start-time size of primary buffer (in equivalent output samples).
+	// Default start-time size of working buffer (in equivalent output samples).
 	// This is the buffer where audio is loaded after it's extracted from n64's memory.
-	static const int primaryBufferSize = 1024*1024;
+	static const int workingBufferSize = 1024 * 1024;
 
-	// Size of a single secondary buffer, in output samples. This is the requested size of the
+	// Size of a single hardware buffer, in output samples. This is the requested size of the
 	// hardware buffer, this should be a power of two.
-	static const int defaultSecondaryBufferSize = 256;
+	static const int defaultHardwareBufferSize = 256;
 
-	// This is the requested number of hardware buffers
-	static const int secondaryBufferNumber = 200;
+	// This is the maximum buffer size in milliseconds
+	static const int maxBufferSizeMs = 500;
 
 	// Number of audio channels
 	static const int numberOfChannels = 2;
@@ -146,18 +146,18 @@ private:
 
 	/**
 	 * Processes input samples by using soundtouch library
-	 * @param primaryBufferPos Input Buffer position
+	 * @param validBytes Number of valid bytes in the working buffer
 	 * @param outAudioData Data is written to this buffer
 	 * @param outNumFrames How may frames to write
 	 * @return True if data was written
 	 */
-	bool processAudioSoundTouch(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
+	bool processAudioSoundTouch(int& validBytes, void *outAudioData, int32_t outNumFrames);
 
 	/**
 	* Processes input samples by using soundtouch library without outputting sound, used to build up a buffer
-	* @param primaryBufferPos Input Buffer position
+	* @param validBytes Number of valid bytes in the working buffer
 	*/
-	void processAudioSoundTouchNoOutput(int& primaryBufferPos);
+	void processAudioSoundTouchNoOutput(int& validBytes);
 
 	/**
 	 * Performs trivial audio resampling
@@ -174,12 +174,12 @@ private:
 
 	/**
 	 * Processes input samples by using trivial resampling
-	 * @param primaryBufferPos Input Buffer position
+	 * @param validBytes Number of valid bytes in the working buffer
 	 * @param outAudioData Data is written to this buffer
 	 * @param outNumFrames How may frames to write
 	 * @return True if data was written
 	 */
-	bool processAudioTrivial(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames);
+	bool processAudioTrivial(int& validBytes, void *outAudioData, int32_t outNumFrames);
 
 	/**
 	 * Performs sound stretching processing, returns true if data was provided, returns true if data was provided
@@ -208,14 +208,10 @@ private:
 	int convertBufferToHwBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int outputBufferStart);
 
 	/**
-	 * Creates the primary audio buffer
+	 * Creates the working audio buffer, this buffer will be used to store samples converted from the N64 format
+	 * to the hardware format
 	 */
-	void createPrimaryBuffer();
-
-	/**
-	 * Creates the secondary audio buffers
-	 */
-	void createSecondaryBuffer();
+	void createWorkingBuffer();
 
 	/**
 	 * Determines average feed time or game time so that they can be compared to each other
@@ -251,14 +247,10 @@ private:
 
 	//Default frequency for input and output
 	static const int defaultFreq = 33600;
-    // Pointer to the primary audio buffer
-	unsigned char *mPrimaryBuffer = nullptr;
-	// Size of the primary buffer */
-	int mPrimaryBufferBytes = 0;
-	// Pointer to secondary buffers */
-	unsigned char *mSecondaryBuffer = nullptr;
-	// Size of a single secondary audio buffer in output samples */
-	int mSecondaryBufferSize = defaultSecondaryBufferSize;
+    // Pointer to the working audio buffer
+	unsigned char *mWorkingBuffer = nullptr;
+	// Size of a single hardware audio buffer in output samples */
+	int mHardwareBufferSize = defaultHardwareBufferSize;
 	// Time stretched audio enabled */
 	bool mTimeStretchEnabled = true;
 	// Sampling type 0=trivial 1=Soundtouch*/
@@ -268,8 +260,8 @@ private:
 	// Frequency of provided data
 	int mInputFreq = defaultFreq;
 
-    // Number of secondary buffers to target in milliseconds */
-	int mTargetSecondaryBuffersMs = 20;
+    // Target priming time in milliseconds */
+	int mTargetBuffersMs = 16;
     // Selected samplin rate */
 	int mSamplingRateSelection = 0;
     // Output Audio frequency */
@@ -299,8 +291,8 @@ private:
 	// True if priming is complete while inejcting silence
 	bool mPrimeComplete = false;
 
-	// Primary buffer position
-	int mPrimaryBufferPos = 0;
+	// The number of valid bytes int the working buffer
+	int mWorkingBufferValidBytes = 0;
 
 	// This is the max window size used for performing game speed averaging for Audio time stretching
 	static const int maxWindowSize = 500;

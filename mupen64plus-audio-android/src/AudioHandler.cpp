@@ -38,43 +38,24 @@ void AudioHandler::closeAudio() {
 		mOutStream->close();
 		mOutStream = nullptr;
 	}
-	/* Delete Primary buffer */
-	if (mPrimaryBuffer != nullptr) {
-		mPrimaryBufferBytes = 0;
-		delete[] mPrimaryBuffer;
-		mPrimaryBuffer = nullptr;
-	}
-
-	/* Delete Secondary buffer */
-	if (mSecondaryBuffer != nullptr) {
-		delete[] mSecondaryBuffer;
-		mSecondaryBuffer = nullptr;
+	/* Delete working buffer */
+	if (mWorkingBuffer != nullptr) {
+		delete[] mWorkingBuffer;
+		mWorkingBuffer = nullptr;
 	}
 }
 
-void AudioHandler::createPrimaryBuffer() {
-	auto primaryBytes = (unsigned int) (primaryBufferSize * hwSamplesBytes);
+void AudioHandler::createWorkingBuffer() {
+	auto workingBufferBytes = (unsigned int) (workingBufferSize * hwSamplesBytes);
 
-	DebugMessage(M64MSG_VERBOSE, "Allocating memory for primary audio buffer: %i bytes.",
-				 primaryBytes);
+	DebugMessage(M64MSG_VERBOSE, "Allocating memory for working audio buffer: %i bytes.",
+				 workingBufferBytes);
 
-	mPrimaryBuffer = new unsigned char[primaryBytes];
+	mWorkingBuffer = new unsigned char[workingBufferBytes];
 
-	std::memset(mPrimaryBuffer, 0, primaryBytes);
-	mPrimaryBufferBytes = primaryBytes;
+	std::memset(mWorkingBuffer, 0, workingBufferBytes);
 
-	mPrimaryBufferPos = 0;
-}
-
-void AudioHandler::createSecondaryBuffer() {
-	int secondaryBytes = mSecondaryBufferSize * hwSamplesBytes;
-
-	DebugMessage(M64MSG_VERBOSE, "Allocating memory for %d secondary audio buffers: %i bytes.",
-				 secondaryBufferNumber, secondaryBytes);
-
-	/* Allocate size of secondary buffer */
-	mSecondaryBuffer = new unsigned char[secondaryBytes];
-	std::memset(mSecondaryBuffer, 0, (size_t) secondaryBytes);
+	mWorkingBufferValidBytes = 0;
 }
 
 void AudioHandler::initializeAudio(int _freq) {
@@ -104,7 +85,7 @@ void AudioHandler::initializeAudio(int _freq) {
 	closeAudio();
 
 	oboe::DefaultStreamValues::SampleRate = (int32_t) mOutputFreq;
-	oboe::DefaultStreamValues::FramesPerBurst = (int32_t) mSecondaryBufferSize;
+	oboe::DefaultStreamValues::FramesPerBurst = (int32_t) mHardwareBufferSize;
 
 	oboe::AudioStreamBuilder builder;
 	// The builder set methods can be chained for convenience.
@@ -124,7 +105,7 @@ void AudioHandler::initializeAudio(int _freq) {
 
 		if (mOutStream->getAudioApi() == oboe::AudioApi::AAudio) {
 			mOutputFreq = mOutStream->getSampleRate();
-			mSecondaryBufferSize = mOutStream->getFramesPerBurst();
+			mHardwareBufferSize = mOutStream->getFramesPerBurst();
 		}
 		DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
 					 mOutStream->getFramesPerBurst());
@@ -132,11 +113,8 @@ void AudioHandler::initializeAudio(int _freq) {
 		mOutStream.reset(nullptr);
 	}
 
-	/* Create primary buffer */
-	createPrimaryBuffer();
-
-	/* Create secondary buffer */
-	createSecondaryBuffer();
+	/* Create working buffer */
+	createWorkingBuffer();
 
 	mSoundTouch.setSampleRate(mInputFreq);
 	mSoundTouch.setChannels(numberOfChannels);
@@ -199,7 +177,7 @@ AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32
 	}
 	mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
 
-	if (mPrimingTimeMs > mTargetSecondaryBuffersMs){
+	if (mPrimingTimeMs > mTargetBuffersMs){
 		mPrimeComplete = true;
 	}
 
@@ -222,16 +200,16 @@ AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32
 bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames) {
 
 	double bufferMultiplier = (static_cast<double>(mOutputFreq) / mInputFreq) *
-							  (static_cast<double>(defaultSecondaryBufferSize) /
-							   mSecondaryBufferSize);
+							  (static_cast<double>(defaultHardwareBufferSize) /
+							   mHardwareBufferSize);
 
-	static const int bufferLimit = secondaryBufferNumber - 20;
+	static const int bufferLimit = maxBufferSizeMs - 20;
 
-	int maxQueueSize = static_cast<int> ((mTargetSecondaryBuffersMs + 30.0) * bufferMultiplier);
+	int maxQueueSize = static_cast<int> ((mTargetBuffersMs + 30.0) * bufferMultiplier);
 	if (maxQueueSize > bufferLimit) {
 		maxQueueSize = bufferLimit;
 	}
-	int minQueueSize = static_cast<int>(mTargetSecondaryBuffersMs * bufferMultiplier);
+	int minQueueSize = static_cast<int>(mTargetBuffersMs * bufferMultiplier);
 	static bool drainQueue = false;
 
 	//Sound queue ran dry, device is running slow
@@ -260,14 +238,14 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 
 	ranDry = queueLength < minQueueSize;
 
-	int primaryBufferPos = 0;
+	int workingBufferValidBytes = 0;
 	QueueData currQueueData;
 
 	while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
 		auto shortData = reinterpret_cast<const int16_t *>(mSoundBufferPool.getBufferFromPool(
 				currQueueData.data));
-		primaryBufferPos = convertBufferToHwBuffer(shortData, currQueueData.samples, mPrimaryBuffer,
-												   primaryBufferPos);
+		workingBufferValidBytes = convertBufferToHwBuffer(shortData, currQueueData.samples, mWorkingBuffer,
+														  workingBufferValidBytes);
 		mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 
 		//Figure out how much to slow down by
@@ -302,7 +280,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	if (!mPrimeComplete) {
 		double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
 		mSoundTouch.setTempo(speedFactor);
-		processAudioSoundTouchNoOutput(primaryBufferPos);
+		processAudioSoundTouchNoOutput(workingBufferValidBytes);
 		samplesAdded = false;
 
 	} else {
@@ -311,9 +289,9 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		if ((queueLength > maxQueueSize || drainQueue) && !ranDry) {
 			drainQueue = true;
 			currAdjustment = temp +
-							 static_cast<float> (queueLength - minQueueSize) /
-									 static_cast<float> (secondaryBufferNumber - minQueueSize) *
-							 maxSpeedUpRate;
+					static_cast<float> (queueLength - minQueueSize) /
+					static_cast<float> (maxBufferSizeMs - minQueueSize) *
+					maxSpeedUpRate;
 		}
 			//Device can't keep up with the game
 		else if (ranDry) {
@@ -337,7 +315,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 
 		mSoundTouch.setTempo(slowAdjustment);
 
-		samplesAdded = processAudioSoundTouch(primaryBufferPos, outAudioData, outNumFrames);
+		samplesAdded = processAudioSoundTouch(workingBufferValidBytes, outAudioData, outNumFrames);
 	}
 
 	//Useful logging
@@ -359,13 +337,13 @@ bool AudioHandler::audioProviderNoStretch(void *audioData, int32_t numFrames) {
 	while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
 		auto shortData = reinterpret_cast<const int16_t *>(mSoundBufferPool.getBufferFromPool(
 				currQueueData.data));
-		mPrimaryBufferPos = convertBufferToHwBuffer(shortData, currQueueData.samples, mPrimaryBuffer,
-													mPrimaryBufferPos);
+		mWorkingBufferValidBytes = convertBufferToHwBuffer(shortData, currQueueData.samples, mWorkingBuffer,
+														   mWorkingBufferValidBytes);
 		mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 	}
 
 	if (mSamplingType == 0) {
-		return processAudioTrivial(mPrimaryBufferPos, audioData, numFrames);
+		return processAudioTrivial(mWorkingBufferValidBytes, audioData, numFrames);
 	} else {
 		static int lastSpeedFactor = mSpeedFactor;
 
@@ -374,13 +352,16 @@ bool AudioHandler::audioProviderNoStretch(void *audioData, int32_t numFrames) {
 			mSoundTouch.setTempo(static_cast<double>(mSpeedFactor) / 100.0);
 		}
 
-		return processAudioSoundTouch(mPrimaryBufferPos, audioData, numFrames);
+		return processAudioSoundTouch(mWorkingBufferValidBytes, audioData, numFrames);
 	}
 }
 
 int AudioHandler::convertBufferToHwBuffer(const int16_t *inputBuffer, unsigned int inputSamples,
 										  unsigned char *outputBuffer, int outputBufferStart) {
-	if ((outputBufferStart + inputSamples) * hwSamplesBytes < mPrimaryBufferBytes) {
+
+	static const auto maxWorkingBufferBytes = (unsigned int) (workingBufferSize * hwSamplesBytes);
+
+	if ((outputBufferStart + inputSamples) * hwSamplesBytes < maxWorkingBufferBytes) {
 
 #ifndef FP_ENABLED
 		auto outputBufferType = reinterpret_cast<int16_t *>(outputBuffer);
@@ -420,16 +401,16 @@ int AudioHandler::convertBufferToHwBuffer(const int16_t *inputBuffer, unsigned i
 
 		outputBufferStart += static_cast<int>(inputSamples) * hwSamplesBytes;
 	} else
-		DebugMessage(M64MSG_WARNING, "convertBufferToHwBuffer(): Audio primary buffer overflow.");
+		DebugMessage(M64MSG_WARNING, "convertBufferToHwBuffer(): Audio working buffer overflow.");
 
 	return outputBufferStart;
 }
 
-bool AudioHandler::processAudioSoundTouch(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames) {
+bool AudioHandler::processAudioSoundTouch(int& validBytes, void *outAudioData, int32_t outNumFrames) {
 
 	bool bytesWritten = false;
 
-	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mPrimaryBuffer), primaryBufferPos/hwSamplesBytes);
+	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mWorkingBuffer), validBytes / hwSamplesBytes);
 
 	if (mSoundTouch.numSamples() >= outNumFrames) {
 		mSoundTouch.receiveSamples(
@@ -438,14 +419,14 @@ bool AudioHandler::processAudioSoundTouch(int& primaryBufferPos, void *outAudioD
 		bytesWritten = true;
 	}
 
-	primaryBufferPos = 0;
+	validBytes = 0;
 
 	return bytesWritten;
 }
 
-void AudioHandler::processAudioSoundTouchNoOutput(int& primaryBufferPos)
+void AudioHandler::processAudioSoundTouchNoOutput(int& validBytes)
 {
-	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mPrimaryBuffer), primaryBufferPos/hwSamplesBytes);
+	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mWorkingBuffer), validBytes / hwSamplesBytes);
 }
 
 int
@@ -482,20 +463,20 @@ AudioHandler::resample(const unsigned char *input, int bytesPerSample, int oldsa
 }
 
 
-bool AudioHandler::processAudioTrivial(int& primaryBufferPos, void *outAudioData, int32_t outNumFrames) {
+bool AudioHandler::processAudioTrivial(int& validBytes, void *outAudioData, int32_t outNumFrames) {
 
 	bool dataWritten = false;
-	int secondaryBufferBytes = outNumFrames * hwSamplesBytes;
-	auto secondaryBuffer = reinterpret_cast<unsigned char*>(outAudioData);
+	int hardwareBufferBytes = outNumFrames * hwSamplesBytes;
+	auto hardwareBuffer = reinterpret_cast<unsigned char*>(outAudioData);
 
 	int newsamplerate = mOutputFreq * 100 / mSpeedFactor;
 
-	if (primaryBufferPos >= ((secondaryBufferBytes * mInputFreq) / newsamplerate)) {
-		int input_used = resample(mPrimaryBuffer, hwSamplesBytes, mInputFreq, secondaryBuffer,
-								  secondaryBufferBytes, newsamplerate);
+	if (validBytes >= ((hardwareBufferBytes * mInputFreq) / newsamplerate)) {
+		int input_used = resample(mWorkingBuffer, hwSamplesBytes, mInputFreq, hardwareBuffer,
+								  hardwareBufferBytes, newsamplerate);
 
-		memmove(mPrimaryBuffer, &mPrimaryBuffer[input_used], primaryBufferPos - input_used);
-		primaryBufferPos -= input_used;
+		memmove(mWorkingBuffer, &mWorkingBuffer[input_used], validBytes - input_used);
+		validBytes -= input_used;
 		dataWritten = true;
 	}
 
@@ -511,8 +492,8 @@ double AudioHandler::getAverageTime(const double *feedTimes, int numTimes) {
 	return sum / (float) numTimes;
 }
 
-void AudioHandler::setSecondaryBufferSize(int _secondaryBufferSize) {
-	mSecondaryBufferSize = _secondaryBufferSize;
+void AudioHandler::setHardwareBufferSize(int _hardwareBufferSize) {
+	mHardwareBufferSize = _hardwareBufferSize;
 }
 
 void AudioHandler::setTimeStretchEnabled(int _timeStretchEnabled) {
@@ -523,8 +504,8 @@ void AudioHandler::setSamplingType(int _samplingType) {
 	mSamplingType = _samplingType;
 }
 
-void AudioHandler::setTargetSecondaryBuffersMs(int _targetSecondaryBuffersMs) {
-	mTargetSecondaryBuffersMs = _targetSecondaryBuffersMs;
+void AudioHandler::setTargetPrimingBuffersMs(int _targetPrimingBuffersMs) {
+	mTargetBuffersMs = _targetPrimingBuffersMs;
 }
 
 void AudioHandler::setSamplingRateSelection(int _samplingRateSelection) {
@@ -586,7 +567,7 @@ void AudioHandler::reset()
 {
 	mPrimeComplete = false;
 	mPrimingTimeMs = 0;
-	mPrimaryBufferPos = 0;
+	mWorkingBufferValidBytes = 0;
 	mFeedTimes.fill(0.0);
 	mGameTimes.fill(0.0);
 	mFeedTimeIndex = 0;

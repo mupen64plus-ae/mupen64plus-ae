@@ -300,7 +300,6 @@
     <string name="r4300Emulator_entryPureInterpreter">Czysty interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Buforowany interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamiczny rekompilator (dynarec)</string>
-    <string name="audioBufferNbr_title">Numer bufora dźwięku</string>
     <string name="localeOverride_entrySystemDefault">Domyślne ustawienia systemowe</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

@@ -408,7 +408,6 @@
     <string name="rsp_cxd4_lle">CXD4 LLE Video</string>
 
     <string name="displayZoom_title">Увеличение</string>
-    <string name="audioBufferNbr_title">Номер аудио буффера</string>
     <string name="audioFloatingPoint_title">Значения с плавающей точкой</string>
     <string name="audioFloatingPoint_summary">более высокое качество FP аудио. Не поддерживается на некоторых устройствах.</string>
     <string name="localeOverride_entrySystemDefault">Системные умолчанья</string>
