@@ -102,18 +102,20 @@ static void DebugMessage(int level, const char *message, ...) {
 static void ReadConfig() {
     /* read the configuration values into our static variables */
     int swapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
-    int secondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    int targetSecondaryBuffersMs = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
+    int hardwareBufferSize = ConfigGetParamInt(l_ConfigAudio, "HARDWARE_BUFFER_SIZE");
+    int audioBuffersMs = ConfigGetParamInt(l_ConfigAudio, "AUDIO_BUFFER_SIZE_MS");
+    int volume = ConfigGetParamInt(l_ConfigAudio, "VOLUME");
     int samplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
     int samplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
     int timeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 
     AudioHandler::get().setSwapChannels(swapChannels);
-    AudioHandler::get().setHardwareBufferSize(secondaryBufferSize);
-    AudioHandler::get().setTargetPrimingBuffersMs(targetSecondaryBuffersMs);
+    AudioHandler::get().setHardwareBufferSize(hardwareBufferSize);
+    AudioHandler::get().setTargetPrimingBuffersMs(audioBuffersMs);
     AudioHandler::get().setSamplingRateSelection(samplingRateSelection);
     AudioHandler::get().setSamplingType(samplingType);
     AudioHandler::get().setTimeStretchEnabled(timeStretchEnabled);
+    AudioHandler::get().setVolume(volume);
 }
 
 /* Mupen64Plus plugin functions */
@@ -227,12 +229,13 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultFloat(l_ConfigAudio, "Version", CONFIG_PARAM_VERSION,
                           "Mupen64Plus SDL Audio Plugin config parameter version number");
     ConfigSetDefaultBool(l_ConfigAudio, "SWAP_CHANNELS", 0, "Swaps left and right channels");
-    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", AudioHandler::defaultHardwareBufferSize,
-                        "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
-    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR", AudioHandler::maxBufferSizeMs,
-                        "Number of secondary buffers.");
+    ConfigSetDefaultInt(l_ConfigAudio, "HARDWARE_BUFFER_SIZE", AudioHandler::defaultHardwareBufferSize,
+                        "Size of  hardware buffer in samples");
+    ConfigSetDefaultInt(l_ConfigAudio, "AUDIO_BUFFER_SIZE_MS", AudioHandler::maxBufferSizeMs,
+                        "Audio buffer size in milliseconds");
+    ConfigSetDefaultInt(l_ConfigAudio, "VOLUME", 100, "Desired volume");
     ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE", 0,
-                        "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
+                        "Sampling rate in hz, (0=game original");
     ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_TYPE", 0,
                         "Sampling type when not time streteching, (0=trivial, 1=soundtouch");
     ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,

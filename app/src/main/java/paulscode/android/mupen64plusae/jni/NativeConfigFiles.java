@@ -87,8 +87,9 @@ class NativeConfigFiles
 
         mupen64plus_cfg.put( "Audio-Android", "Version", "1.000000" );
         mupen64plus_cfg.put( "Audio-Android", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );
-        mupen64plus_cfg.put( "Audio-Android", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSecondaryBufferSize) );
-        mupen64plus_cfg.put( "Audio-Android", "SECONDARY_BUFFER_NBR", String.valueOf( global.audioSecondaryBufferNbr) );
+        mupen64plus_cfg.put( "Audio-Android", "HARDWARE_BUFFER_SIZE", String.valueOf( global.audioHardwareBufferSize) );
+        mupen64plus_cfg.put( "Audio-Android", "AUDIO_BUFFER_SIZE_MS", String.valueOf( global.audioBufferSizeMs) );
+        mupen64plus_cfg.put( "Audio-Android", "VOLUME", String.valueOf( global.audioVolume) );
         mupen64plus_cfg.put( "Audio-Android", "SAMPLING_RATE", String.valueOf( global.audioSamplingRate) );
         mupen64plus_cfg.put( "Audio-Android", "SAMPLING_TYPE", String.valueOf( global.audioSamplingType) );
         mupen64plus_cfg.put( "Audio-Android", "TIME_STRETCH_ENABLED", boolToTF( global.enableAudioTimeSretching) );

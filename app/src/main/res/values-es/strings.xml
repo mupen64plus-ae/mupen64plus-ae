@@ -434,7 +434,8 @@
     <string name="displayZoomDefault_title">Utilizar zoom predeterminado</string>
     <string name="displayZoomDefault_summary">Desactive esta opción para especificar un zoom personalizado para este juego</string>
 
-    <string name="audioBufferSize_title">Tamaño del búfer de audio en ms</string>
+    <string name="audioVolume_title">Volumen de Audio</string>
+    <string name="audioBufferSize_title">Tamaño del Búfer de Audio</string>
     <string name="audioSamplingType_title">Tipo de Muestreo</string>
     <string name="audioFloatingPoint_title">Flotación de puntos de muestras</string>
     <string name="audioFloatingPoint_summary">FP de audio de mayor calidad. Algunos dispositivos pueden no ser compatibles.</string>

@@ -281,7 +281,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         //Allow volume keys to control media volume if they are not mapped
 
-        if (!mGlobalPrefs.volKeysMappable && mGlobalPrefs.audioPlugin.enabled)
+        if (!mGlobalPrefs.volKeysMappable)
         {
             this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }

@@ -57,6 +57,12 @@ public:
 	void setSamplingRateSelection(int _samplingRateSelection);
 
 	/**
+	 * Set the audio volume
+	 * @param _samplingRateSelection Audio volume as a percentage, 0-100
+	 */
+	void setVolume(int _audioVolume);
+
+	/**
 	 *  Set the speed factor
 	 * @param _speedFactor Speed factor, 100= normal speed, 200 equals 2x speed, etc
 	 */
@@ -264,6 +270,8 @@ private:
 	int mTargetBuffersMs = 16;
     // Selected samplin rate */
 	int mSamplingRateSelection = 0;
+    // Audio voljume */
+	int mVolume = 100;
     // Output Audio frequency */
 	int mOutputFreq = defaultFreq;
 	// Audio speed factor (0-100)

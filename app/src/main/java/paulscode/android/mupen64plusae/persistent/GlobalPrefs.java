@@ -189,9 +189,6 @@ public class GlobalPrefs
     /** The path of the user's custom cheat files. */
     public final String customCheats_txt;
 
-    /** The selected audio plug-in. */
-    public final Plugin audioPlugin;
-
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
 
@@ -309,11 +306,14 @@ public class GlobalPrefs
     /** Stretch audio to prevent crackling in audio plugin */
     public final boolean enableAudioTimeSretching;
 
-    /** Size of secondary buffer in output samples. This is a hardware buffer size, which directly affects latency. */
-    public final int audioSecondaryBufferSize;
+    /** Size of hardware buffer in output samples. This is a hardware buffer size, which directly affects latency. */
+    public final int audioHardwareBufferSize;
 
-    /** Number of audio secondary buffers. */
-    public final int audioSecondaryBufferNbr;
+    /** Audio volume percent */
+    public final int audioVolume;
+
+    /** Audio buffer size in milliseconds. */
+    public final int audioBufferSizeMs;
 
     /** Audio sampling rate. */
     public final int audioSamplingRate;
@@ -487,9 +487,6 @@ public class GlobalPrefs
         customCheats_txt = profilesDir + "/customCheats.txt";
         touchscreenCustomSkinsDir = context.getFilesDir().getAbsolutePath() + "/CustomSkins";
 
-        // Plug-ins
-        audioPlugin = new Plugin( mPreferences, "audioPlugin" );
-
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
         sortByRomName = mPreferences.getString( "sortingMethod", "romName" ).equals("romName");
@@ -596,7 +593,8 @@ public class GlobalPrefs
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         enableAudioTimeSretching = mPreferences.getBoolean( "audioTimeStretch", true );
-        audioSecondaryBufferNbr = getSafeInt( mPreferences, "audioBufferSize", 64 );
+        audioVolume = getSafeInt( mPreferences, "audioVolume", 100 );
+        audioBufferSizeMs = getSafeInt( mPreferences, "audioBufferSize", 64 );
         audioFloatingPoint = mPreferences.getBoolean( "audioFloatingPoint", false );
         audioSamplingType = getSafeInt( mPreferences, "audioSamplingType", 0 );
 
@@ -621,9 +619,9 @@ public class GlobalPrefs
             Log.e("GlobalPrefs", "Invalid frames per buffer number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
         }
 
-        audioSecondaryBufferSize = tempAudioSecondaryBufferSize;
+        audioHardwareBufferSize = tempAudioSecondaryBufferSize;
 
-        if( audioPlugin.enabled )
+        if( audioVolume != 0 )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );
         else
             isFramelimiterEnabled = true;

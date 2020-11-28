@@ -26,7 +26,8 @@ AudioHandler::AudioHandler() :
 		mSoundBufferPool(1024 * 1024 * 50),
 		mPlaybackPaused(false),
 		mFeedTimes{},
-		mGameTimes{} {
+		mGameTimes{},
+		mBusyLoop(true){
 	reset();
 
 	mSoundTouch.setSampleRate(mInputFreq);
@@ -364,37 +365,39 @@ int AudioHandler::convertBufferToHwBuffer(const int16_t *inputBuffer, unsigned i
 	if ((outputBufferStart + inputSamples) * hwSamplesBytes < maxWorkingBufferBytes) {
 
 #ifndef FP_ENABLED
-		auto outputBufferType = reinterpret_cast<int16_t *>(outputBuffer);
+		auto outputBufferType = reinterpret_cast<int16_t*>(outputBuffer);
 		int outputStart = outputBufferStart / static_cast<int>(sizeof(int16_t));
+		float volume = static_cast<float>(mVolume) / 100.0f;
 		for (int sampleIndex = 0; sampleIndex < inputSamples; ++sampleIndex) {
 			int bufferIndex = sampleIndex * numberOfChannels;
 			if (mSwapChannels == 0) {
 				// Left channel
-				outputBufferType[outputStart + bufferIndex] = inputBuffer[bufferIndex + 1];
+				outputBufferType[outputStart + bufferIndex] = static_cast<int16_t>(static_cast<float>(inputBuffer[bufferIndex + 1])*volume);
 				// Right channel
-				outputBufferType[outputStart + bufferIndex + 1] = inputBuffer[bufferIndex];
+				outputBufferType[outputStart + bufferIndex + 1] = static_cast<int16_t>(static_cast<float>(inputBuffer[bufferIndex])*volume);
 			} else {
 				// Left channel
-				outputBufferType[outputStart + bufferIndex] = inputBuffer[bufferIndex];
+				outputBufferType[outputStart + bufferIndex] = static_cast<int16_t>(static_cast<float>(inputBuffer[bufferIndex])*volume);
 				// Right channel
-				outputBufferType[outputStart + bufferIndex + 1] = inputBuffer[bufferIndex + 1];
+				outputBufferType[outputStart + bufferIndex + 1] = static_cast<int16_t>(static_cast<float>(inputBuffer[bufferIndex + 1])*volume);
 			}
 		}
 #else
 		auto outputBufferType = reinterpret_cast<float*>(outputBuffer);
 		int outputStart = outputBufferStart/static_cast<int>(sizeof(float));
+		float volume = static_cast<float>(mVolume)/100.0f;
 		for (int sampleIndex = 0; sampleIndex < inputSamples; ++sampleIndex) {
 			int bufferIndex = sampleIndex*numberOfChannels;
 			if (mSwapChannels == 0) {
 				// Left channel
-				outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0;
+				outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0*volume;
 				// Right channel
-				outputBufferType[outputStart + bufferIndex + 1] = static_cast<float>(inputBuffer[bufferIndex])/32767.0;
+				outputBufferType[outputStart + bufferIndex + 1] = static_cast<float>(inputBuffer[bufferIndex])/32767.0*volume;
 			} else {
 				// Left channel
-				outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex])/32767.0;
+				outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex])/32767.0*volume;
 				// Right channel
-				outputBufferType[outputStart + bufferIndex + 1] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0;
+				outputBufferType[outputStart + bufferIndex + 1] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0*volume;
 			}
 		}
 #endif
@@ -512,10 +515,13 @@ void AudioHandler::setSamplingRateSelection(int _samplingRateSelection) {
 	mSamplingRateSelection = _samplingRateSelection;
 }
 
+void AudioHandler::setVolume(int _volume) {
+	mVolume = _volume;
+}
+
 void AudioHandler::setSpeedFactor(int _speedFactor) {
 	mSpeedFactor = _speedFactor;
 }
-
 
 void AudioHandler::setLoggingFunction(void *_context,
 									  void (*_debugCallback)(void *, int, const char *)) {

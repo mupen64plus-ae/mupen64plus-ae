@@ -166,7 +166,11 @@ public class AppData
 
         static AudioPlugin getPlugin(GlobalPrefs prefs)
         {
-            if (prefs.audioFloatingPoint)
+            if (prefs.audioVolume == 0)
+            {
+                return DUMMY;
+            }
+            else if (prefs.audioFloatingPoint)
             {
                 return ANDROID_FP;
             }
