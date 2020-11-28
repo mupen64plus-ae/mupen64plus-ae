@@ -232,6 +232,11 @@ private:
 	 */
 	static void injectSilence (void *audioData, int32_t numFrames);
 
+	/**
+	 * Reset Audio processing
+	 */
+	void reset();
+
 #ifdef FP_ENABLED
     static const int hwSamplesBytes = 8;
 #else

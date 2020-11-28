@@ -27,11 +27,7 @@ AudioHandler::AudioHandler() :
 		mPlaybackPaused(false),
 		mFeedTimes{},
 		mGameTimes{} {
-	mFeedTimes.fill(0.0);
-	mGameTimes.fill(0.0);
-	mFeedTimeIndex = 0;
-	mFeedTimesSet = false;
-	mBusyLoop = true;
+	reset();
 
 	mSoundTouch.setSampleRate(mInputFreq);
 	mSoundTouch.setChannels(numberOfChannels);
@@ -150,12 +146,7 @@ void AudioHandler::initializeAudio(int _freq) {
 	mSoundTouch.setTempo(speedFactor);
 	mSoundTouch.setRate((double) mInputFreq / (double) mOutputFreq);
 
-	mPrimeComplete = false;
-	mPrimingTimeMs = 0;
-	mFeedTimes.fill(0.0);
-	mGameTimes.fill(0.0);
-	mFeedTimeIndex = 0;
-	mFeedTimesSet = false;
+	reset();
 
 	if (mOutStream != nullptr) {
 		mOutStream->requestStart();
@@ -564,22 +555,7 @@ void AudioHandler::pausePlayback() {
 			mOutStream->stop();
 		}
 
-		mPrimeComplete = false;
-		mPrimingTimeMs = 0;
-		mPrimaryBufferPos = 0;
-		mFeedTimes.fill(0.0);
-		mGameTimes.fill(0.0);
-		mFeedTimeIndex = 0;
-		mFeedTimesSet = false;
-		mBusyLoop = true;
-
-		mSoundTouch.clear();
-
-		// Clear all pending buffers
-		QueueData currQueueData;
-		while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
-			mSoundBufferPool.removeBufferFromPool(currQueueData.data);
-		}
+		reset();
 	}
 }
 
@@ -603,5 +579,25 @@ void AudioHandler::injectSilence (void *audioData, int32_t numFrames)
 		for (int byteIndex = 0; byteIndex < hwSamplesBytes; ++byteIndex) {
 			data[startIndex + byteIndex] = 0;
 		}
+	}
+}
+
+void AudioHandler::reset()
+{
+	mPrimeComplete = false;
+	mPrimingTimeMs = 0;
+	mPrimaryBufferPos = 0;
+	mFeedTimes.fill(0.0);
+	mGameTimes.fill(0.0);
+	mFeedTimeIndex = 0;
+	mFeedTimesSet = false;
+	mBusyLoop = true;
+
+	mSoundTouch.clear();
+
+	// Clear all pending buffers
+	QueueData currQueueData;
+	while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
+		mSoundBufferPool.removeBufferFromPool(currQueueData.data);
 	}
 }
