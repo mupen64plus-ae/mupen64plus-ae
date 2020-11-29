@@ -27,9 +27,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -49,8 +52,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -130,14 +132,16 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 */
 //@formatter:on
 
-public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback,
+public class GameActivity extends AppCompatActivity implements PromptConfirmListener, TextureView.SurfaceTextureListener,
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener
 {
     // Activity and views
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
-    private SurfaceView mSurfaceView;
+    private TextureView mSurfaceView;
+    private GLSurfaceView mGlShaderView;
+    private ShaderDrawer mShaderDrawer;
 
     // Input resources
     private VisibleTouchMap mTouchscreenMap;
@@ -321,6 +325,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
         mSurfaceView = this.findViewById( R.id.gameSurface );
+        mGlShaderView = this.findViewById( R.id.shaderSurface );
+        mGlShaderView.setVisibility(View.INVISIBLE);
+        mGlShaderView.setEGLContextClientVersion(2);
+
+        mShaderDrawer = new ShaderDrawer(mSurfaceView, this);
+        mGlShaderView.setRenderer(mShaderDrawer);
 
         mOverlay = findViewById(R.id.gameOverlay);
         mDrawerLayout = findViewById(R.id.drawerLayout);
@@ -340,25 +350,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
         // Listen to game surface events (created, changed, destroyed)
-        mSurfaceView.getHolder().addCallback( this );
+        mSurfaceView.setSurfaceTextureListener(this);
 
-        // Update the SurfaceView size
-        mSurfaceView.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
-        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
-        params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
-        params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
+        // Set parameters for texture view
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
+        params.width = Math.round(Math.max(mGamePrefs.videoSurfaceWidth, mGamePrefs.videoRenderWidth));
+        params.height = Math.round(Math.max(mGamePrefs.videoSurfaceHeight, mGamePrefs.videoRenderHeight));
         params.gravity = Gravity.CENTER_HORIZONTAL;
+        params.gravity |= Gravity.TOP;
+        mSurfaceView.setLayoutParams(params);
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
-        {
-            params.gravity |= Gravity.TOP;
-        }
-        else
-        {
-            params.gravity |= Gravity.CENTER_VERTICAL;
-        }
-
-        mSurfaceView.setLayoutParams( params );
+        // Set parameters for gl texture view
+        params = (FrameLayout.LayoutParams) mGlShaderView.getLayoutParams();
+        params.width = mGamePrefs.videoSurfaceWidth;
+        params.height = mGamePrefs.videoSurfaceHeight;
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+        params.gravity |= Gravity.TOP;
+        mGlShaderView.setLayoutParams(params);
 
         if (savedInstanceState == null)
         {
@@ -538,11 +546,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // It's hard to tell what exactly is NULL when that happens.
         if(mSurfaceView != null)
         {
-            SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
-
-            if (surfaceHolder != null) {
-                surfaceHolder.removeCallback( this );
-            }
+            mSurfaceView.setSurfaceTextureListener(null);
         }
 
         // This apparently can happen on rare occasion, not sure how, so protect against it
@@ -805,12 +809,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 });
     }
 
-    @Override
-    public void surfaceCreated( SurfaceHolder holder )
-    {
-        Log.i( "GameActivity", "surfaceCreated" );
-    }
-
     private void tryRunning()
     {
         if (mCoreFragment.hasServiceStarted()) {
@@ -830,38 +828,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             mCoreFragment.setOnFpsChangedListener(this, 15);
-        }
-    }
-
-    @Override
-    public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
-    {
-        Log.i( "GameActivity", "surfaceChanged" );
-
-        if(mCoreFragment != null)
-        {
-            mCoreFragment.setSurface(holder.getSurface());
-
-            if (!mCoreFragment.IsInProgress()) {
-                mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
-            }
-
-            // Try running now in case the core service has already started
-            // If it hasn't started running yet, then check again when the core service connection happens
-            // in onCoreServiceStarted
-            tryRunning();
-        }
-    }
-
-    @Override
-    public void surfaceDestroyed( SurfaceHolder holder )
-    {
-        Log.i( "GameActivity", "surfaceDestroyed" );
-
-        if(mCoreFragment != null)
-        {
-            mCoreFragment.destroySurface();
         }
     }
 
@@ -1243,5 +1209,75 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
             isControllerPlugged[player-1] = true;
         }
+    }
+
+    private void scaleTexture() {
+
+        float zoom = ( mGamePrefs.videoSurfaceZoom / 100.f );
+        Matrix transform = new Matrix();
+        mSurfaceView.getTransform(transform);
+        Log.e( "GameActivity", "scaleTexture surface=(" + mGamePrefs.videoSurfaceWidth + "," + mGamePrefs.videoSurfaceHeight +
+                ") render=(" + mGamePrefs.videoRenderWidth + "," + mGamePrefs.videoRenderHeight +
+                ") scale=" + ((float)mGamePrefs.videoSurfaceHeight/mGamePrefs.videoRenderWidth) +
+                " zoom=" + zoom +
+                " surface_view=(" + mSurfaceView.getWidth() + "," + mSurfaceView.getHeight() + ")");
+
+        if (mGamePrefs.videoRenderWidth < mSurfaceView.getWidth()) {
+            float scalex = (float)mSurfaceView.getWidth()/mGamePrefs.videoRenderWidth;
+            float scaley = (float)mSurfaceView.getHeight()/mGamePrefs.videoRenderHeight;
+            transform.setScale(scalex, scaley, 0, mSurfaceView.getHeight());
+            transform.postScale(zoom, zoom, mSurfaceView.getWidth()/2.0f, mSurfaceView.getHeight()/2.0f);
+        } else {
+            float scalex = (float)mGamePrefs.videoSurfaceWidth/mGamePrefs.videoRenderWidth;
+            float scaley = (float)mGamePrefs.videoSurfaceHeight/mGamePrefs.videoRenderHeight;
+            transform.setScale(scalex, scaley, mSurfaceView.getWidth()/2.0f, 0.0f);
+            transform.postScale(zoom, zoom, mSurfaceView.getWidth()/2.0f, mGamePrefs.videoSurfaceHeight/2.0f);
+        }
+
+        mSurfaceView.setTransform(transform);
+    }
+
+    @Override
+    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
+        if(mCoreFragment != null)
+        {
+            scaleTexture();
+
+            Surface surfaceForNdk = new Surface(surface);
+            mCoreFragment.setSurface(surfaceForNdk);
+
+            if (!mCoreFragment.IsInProgress()) {
+                mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
+            }
+
+            // Try running now in case the core service has already started
+            // If it hasn't started running yet, then check again when the core service connection happens
+            // in onCoreServiceStarted
+            tryRunning();
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
+
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+
+        Log.i( "GameActivity", "surfaceDestroyed" );
+
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.destroySurface();
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
+
     }
 }

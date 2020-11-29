@@ -258,6 +258,9 @@ public class GlobalPrefs
     /** The rendering heigh in pixels with the correct aspect ratio. */
     private int videoRenderHeightNative;
 
+    /** True if the screen is currently in portrait mode */
+    public boolean screenPortrait;
+
     /** Screen aspect ratio */
     private float aspect;
 
@@ -998,8 +1001,8 @@ public class GlobalPrefs
         videoRenderHeightNative = minDimension;
 
         // Assume we are are in portrait mode if height is greater than the width
-        boolean portrait = dimensions.y > dimensions.x;
-        if(portrait)
+        screenPortrait = dimensions.y > dimensions.x;
+        if(screenPortrait)
         {
             videoSurfaceWidthOriginal = minDimension;
             videoSurfaceHeightOriginal = Math.round( minDimension*aspect);
@@ -1045,5 +1048,10 @@ public class GlobalPrefs
     int getSurfaceResolutionWidth()
     {
         return videoSurfaceWidthOriginal;
+    }
+
+    public boolean isScreenPortrait()
+    {
+        return screenPortrait;
     }
 }
