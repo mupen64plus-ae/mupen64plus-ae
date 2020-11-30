@@ -61,6 +61,11 @@ public:
 	 * @param _samplingRateSelection Audio volume as a percentage, 0-100
 	 */
 	void setVolume(int _audioVolume);
+	/**
+	 * Force SLES audio
+	 * @param _forceSles 0 for auto, not zero to force SLES
+	 */
+	void forceSles(int _forceSles);
 
 	/**
 	 *  Set the speed factor
@@ -266,13 +271,15 @@ private:
 	// Frequency of provided data
 	int mInputFreq = defaultFreq;
 
-    // Target priming time in milliseconds */
+    // Target priming time in milliseconds
 	int mTargetBuffersMs = 16;
-    // Selected samplin rate */
+    // Selected samplin rate
 	int mSamplingRateSelection = 0;
-    // Audio voljume */
+    // Audio voljume
 	int mVolume = 100;
-    // Output Audio frequency */
+	// Force SLES audio
+	int mForceSles = 0;
+    // Output Audio frequency
 	int mOutputFreq = defaultFreq;
 	// Audio speed factor (0-100)
 	int mSpeedFactor = 100;

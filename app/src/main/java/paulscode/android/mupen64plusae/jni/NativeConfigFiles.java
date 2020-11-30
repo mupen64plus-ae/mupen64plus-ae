@@ -94,6 +94,9 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Audio-Android", "SAMPLING_TYPE", String.valueOf( global.audioSamplingType) );
         mupen64plus_cfg.put( "Audio-Android", "TIME_STRETCH_ENABLED", boolToTF( global.enableAudioTimeSretching) );
 
+        // Nubia devices don't implement AAudio correctly
+        mupen64plus_cfg.put( "Audio-Android", "FORCE_SLES", boolToTF(appData.manufacturer.toLowerCase().contains("nubia")) );
+
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );
         mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );

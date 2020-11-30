@@ -108,6 +108,7 @@ static void ReadConfig() {
     int samplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
     int samplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
     int timeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
+    int forceSles = ConfigGetParamBool(l_ConfigAudio, "FORCE_SLES");
 
     AudioHandler::get().setSwapChannels(swapChannels);
     AudioHandler::get().setHardwareBufferSize(hardwareBufferSize);
@@ -116,6 +117,7 @@ static void ReadConfig() {
     AudioHandler::get().setSamplingType(samplingType);
     AudioHandler::get().setTimeStretchEnabled(timeStretchEnabled);
     AudioHandler::get().setVolume(volume);
+    AudioHandler::get().forceSles(forceSles);
 }
 
 /* Mupen64Plus plugin functions */
@@ -240,6 +242,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
                         "Sampling type when not time streteching, (0=trivial, 1=soundtouch");
     ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,
                          "Enable audio time stretching to prevent crackling");
+    ConfigSetDefaultBool(l_ConfigAudio, "FORCE_SLES", 0, "Force SLES audio (0=auto,1=force)");
 
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-Android");

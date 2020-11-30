@@ -95,6 +95,10 @@ void AudioHandler::initializeAudio(int _freq) {
 	builder.setChannelCount(numberOfChannels);
 	builder.setSampleRate(mOutputFreq);
 
+	if (mForceSles != 0) {
+		builder.setAudioApi(oboe::AudioApi::OpenSLES);
+	}
+
 #ifdef FP_ENABLED
 	builder.setFormat(oboe::AudioFormat::Float);
 #else
@@ -517,6 +521,10 @@ void AudioHandler::setSamplingRateSelection(int _samplingRateSelection) {
 
 void AudioHandler::setVolume(int _volume) {
 	mVolume = _volume;
+}
+
+void AudioHandler::forceSles(int _forceSles) {
+	mForceSles = _forceSles;
 }
 
 void AudioHandler::setSpeedFactor(int _speedFactor) {

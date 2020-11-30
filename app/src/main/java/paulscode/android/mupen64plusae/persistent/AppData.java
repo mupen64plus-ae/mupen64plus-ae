@@ -332,6 +332,8 @@ public class AppData
 
     private static String openGlVersion = null;
     private static String openGlRenderer = null;
+
+    public final String manufacturer;
     
     // Shared preferences keys
     private static final String KEY_FORCE_ASSET_CHECK = "assetCheck";
@@ -401,6 +403,8 @@ public class AppData
         useLegacyFileBrowser = (isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1 ||
                 intent.resolveActivity(context.getPackageManager()) == null) &&
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.R; // Android 11 fails this check but it requires the SAF file browser.
+
+        manufacturer = android.os.Build.MANUFACTURER;
     }
 
     /**
