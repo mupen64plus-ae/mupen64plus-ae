@@ -354,19 +354,36 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Set parameters for texture view
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
+        params.width = mGamePrefs.videoRenderWidth;
+        params.height = mGamePrefs.videoRenderHeight;
+        mSurfaceView.setLayoutParams(params);
+
+        // Use this when shaders are disabled since we will be displaying this view directly
+        /*
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
         params.width = Math.round(Math.max(mGamePrefs.videoSurfaceWidth, mGamePrefs.videoRenderWidth));
         params.height = Math.round(Math.max(mGamePrefs.videoSurfaceHeight, mGamePrefs.videoRenderHeight));
         params.gravity = Gravity.CENTER_HORIZONTAL;
         params.gravity |= Gravity.TOP;
         mSurfaceView.setLayoutParams(params);
+         */
 
-        // Set parameters for gl texture view
+        // Set parameters for shader view
         params = (FrameLayout.LayoutParams) mGlShaderView.getLayoutParams();
-        params.width = mGamePrefs.videoSurfaceWidth;
-        params.height = mGamePrefs.videoSurfaceHeight;
+        params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
+        params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        params.gravity |= Gravity.TOP;
-        mGlShaderView.setLayoutParams(params);
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
+        {
+            params.gravity |= Gravity.TOP;
+        }
+        else
+        {
+            params.gravity |= Gravity.CENTER_VERTICAL;
+        }
+
+        mGlShaderView.setLayoutParams( params );
 
         if (savedInstanceState == null)
         {
@@ -1234,13 +1251,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
+
+        mShaderDrawer.onSurfaceTextureAvailable(surface, width, height);
+
         if(mCoreFragment != null)
         {
             scaleTexture();
 
             Surface surfaceForNdk = new Surface(surface);
             mCoreFragment.setSurface(surfaceForNdk);
-            mShaderDrawer.onSurfaceTextureAvailable(surface, width, height);
 
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
@@ -1263,6 +1282,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
 
         Log.i( "GameActivity", "surfaceDestroyed" );
+
+        mShaderDrawer.onSurfaceTextureDestoryed(surface);
 
         if(mCoreFragment != null)
         {

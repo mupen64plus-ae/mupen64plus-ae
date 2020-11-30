@@ -20,7 +20,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class ShaderDrawer implements GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
+public class ShaderDrawer implements GLSurfaceView.Renderer {
 
     public class Square {
 
@@ -156,6 +156,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
 
     private static final String TAG = "ShaderDrawer";
     private boolean mSurfaceTextureAvailable = false;
+    private boolean mSurfaceTextureDestroyed = false;
     private SurfaceTexture mSurfaceTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
@@ -177,12 +178,6 @@ public class ShaderDrawer implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
         mSurfaceTexture = surface;
-        mSurfaceTexture.setOnFrameAvailableListener(this);
-    }
-
-    @Override
-    public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-        Log.e(TAG, "onFrameAvailable");
     }
 
     @Override
@@ -202,6 +197,12 @@ public class ShaderDrawer implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         mSurfaceTextureAvailable = true;
     }
 
+    public void onSurfaceTextureDestoryed(SurfaceTexture surface) {
+        Log.e(TAG, "onSurfaceTextureDestroyed");
+
+        mSurfaceTextureDestroyed = true;
+    }
+
     @Override
     public void onDrawFrame(GL10 gl) {
 
@@ -210,33 +211,18 @@ public class ShaderDrawer implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
             GLES20.glClearColor(0, 0, 0, 1);
 
             generateSquare(mGameView.getSurfaceTexture());
-/*
-            mBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.dummy_screen);
 
-            if (mBitmap != null) {
-                GLES20.glBindTexture(mTextureTarget, textures[0]);
-                GLUtils.texImage2D(mTextureTarget, 0, mBitmap, 0);
-            }
-
- */
             square = new Square();
 
             mSurfaceTexture.attachToGLContext(textures[0]);
 
             mSurfaceTextureAvailable = false;
         }
-        //getBitMapFromSurfaceView();
-        /*
-        synchronized (syncObject) {
-            if (mBitmap != null) {
 
-                GLES20.glBindTexture(mTextureTarget, textures[0]);
-                GLUtils.texImage2D(mTextureTarget, 0, mBitmap, 0);
-                square.draw(textures[0]);
-            }
-        }
-
-         */
+       if (mSurfaceTextureDestroyed) {
+           mSurfaceTexture.detachFromGLContext();
+           mSurfaceTextureDestroyed = true;
+       }
 
 
         if (mSurfaceTexture != null) {
