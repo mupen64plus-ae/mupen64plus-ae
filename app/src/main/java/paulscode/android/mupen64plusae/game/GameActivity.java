@@ -326,11 +326,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         this.setContentView( R.layout.game_activity);
         mSurfaceView = this.findViewById( R.id.gameSurface );
         mGlShaderView = this.findViewById( R.id.shaderSurface );
-        mGlShaderView.setVisibility(View.INVISIBLE);
         mGlShaderView.setEGLContextClientVersion(2);
 
-        mShaderDrawer = new ShaderDrawer(mSurfaceView, this);
+        mShaderDrawer = new ShaderDrawer(mSurfaceView, mGlShaderView, this);
         mGlShaderView.setRenderer(mShaderDrawer);
+        //mGlShaderView.setVisibility(View.INVISIBLE);
 
         mOverlay = findViewById(R.id.gameOverlay);
         mDrawerLayout = findViewById(R.id.drawerLayout);
@@ -1216,11 +1216,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         float zoom = ( mGamePrefs.videoSurfaceZoom / 100.f );
         Matrix transform = new Matrix();
         mSurfaceView.getTransform(transform);
-        Log.e( "GameActivity", "scaleTexture surface=(" + mGamePrefs.videoSurfaceWidth + "," + mGamePrefs.videoSurfaceHeight +
-                ") render=(" + mGamePrefs.videoRenderWidth + "," + mGamePrefs.videoRenderHeight +
-                ") scale=" + ((float)mGamePrefs.videoSurfaceHeight/mGamePrefs.videoRenderWidth) +
-                " zoom=" + zoom +
-                " surface_view=(" + mSurfaceView.getWidth() + "," + mSurfaceView.getHeight() + ")");
 
         if (mGamePrefs.videoRenderWidth < mSurfaceView.getWidth()) {
             float scalex = (float)mSurfaceView.getWidth()/mGamePrefs.videoRenderWidth;
@@ -1245,6 +1240,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             Surface surfaceForNdk = new Surface(surface);
             mCoreFragment.setSurface(surfaceForNdk);
+            mShaderDrawer.onSurfaceTextureAvailable(surface, width, height);
 
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
