@@ -142,7 +142,7 @@ public class ExtractTexturesService extends Service
                     handler.post(() -> Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show());
                 }
             } else if (header.isZip || header.is7Zip) {
-                String headerName;
+                String headerName = null;
                 if (header.isZip) {
                     headerName = TextureInfo.getTexturePackNameFromZip(getApplicationContext(), mFileUri);
 
@@ -160,24 +160,7 @@ public class ExtractTexturesService extends Service
                             FileUtil.deleteFolder( new File( outputFolder ) );
                             FileUtil.unSevenZAll( getApplicationContext(), mFileUri, outputFolder );
                         }
-                    } else {
-                        File temp7zipFile  = new File(getCacheDir().getPath() + "/" + name);
-                        FileUtil.copySingleFile( getApplicationContext(), mFileUri, temp7zipFile );
-
-                        headerName = TextureInfo.getTexturePackNameFromSevenZ(temp7zipFile.getPath());
-
-                        if( !TextUtils.isEmpty( headerName ) ) {
-                            String outputFolder = globalPrefs.hiResTextureDir + headerName;
-                            FileUtil.deleteFolder( new File( outputFolder ) );
-                            FileUtil.unSevenZAll( temp7zipFile, outputFolder );
-                        }
-
-                        if (!temp7zipFile.delete())
-                        {
-                            Log.w("ExtractTexturesService", "Unable to delete: " + temp7zipFile.getPath());
-                        }
                     }
-
                 }
 
                 if( TextUtils.isEmpty( headerName ) ) {

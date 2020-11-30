@@ -251,16 +251,20 @@ public final class FileUtil
             if (src.exists() && src.list() != null) {
                 String[] files = src.list();
 
-                FileUtil.makeDirs(dest.getPath());
+                if (files != null) {
+                    FileUtil.makeDirs(dest.getPath());
 
-                for( String file : files )
-                {
-                    failure = !copyFile( new File( src, file ), new File( dest, file ), move ) || failure;
-                }
+                    for( String file : files )
+                    {
+                        failure = !copyFile( new File( src, file ), new File( dest, file ), move ) || failure;
+                    }
 
-                if (move && src.listFiles() != null && src.listFiles().length == 0) {
-                    if (!src.delete()) {
-                        Log.w("deleteFolder", "Couldn't delete " + src.getAbsolutePath());
+                    File[] filesFile = src.listFiles();
+
+                    if (move && filesFile != null && filesFile.length == 0) {
+                        if (!src.delete()) {
+                            Log.w("deleteFolder", "Couldn't delete " + src.getAbsolutePath());
+                        }
                     }
                 }
             }
