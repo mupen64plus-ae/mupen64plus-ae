@@ -382,6 +382,8 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 	{
 		if (new_surface) {
 
+			new_surface = false;
+
 			LOGI("VidExtFuncGLSwapBuf: New surface has been detected");
 
 			if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
@@ -401,8 +403,6 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 			}
 
 			eglSwapInterval(display, vsync);
-
-			new_surface = false;
 		}
 
 		if(surface != EGL_NO_SURFACE)

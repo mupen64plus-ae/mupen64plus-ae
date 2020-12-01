@@ -1,6 +1,5 @@
 package paulscode.android.mupen64plusae.game;
 
-import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -21,14 +20,14 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
         private FloatBuffer verticesBuffer;
         private FloatBuffer textureBuffer;
 
-        private float vertices[] = {
+        private final float[] vertices = {
                 -1f, -1f,
                 1f, -1f,
                 -1f, 1f,
                 1f, 1f,
         };
 
-        private float textureVertices[] = {
+        private final float[] textureVertices = {
                 0f,1f,
                 1f,1f,
                 0f,0f,
@@ -43,15 +42,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
                         "  gl_Position = aPosition;" +
                         "  vTexPosition = aTexPosition;" +
                         "}";
-/*
-        private final String fragmentShaderCode =
-                "precision mediump float;" +
-                        "uniform sampler2D uTexture;" +
-                        "varying vec2 vTexPosition;" +
-                        "void main() {" +
-                        "  gl_FragColor = texture2D(uTexture, vTexPosition);" +
-                        "}";
- */
+
         private final String fragmentShaderCode =
         "#extension GL_OES_EGL_image_external : require\n" +
                 "precision mediump float;" +
@@ -63,20 +54,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
                         "  gl_FragColor = vec4( vec3(dot( color.rgb, lum)), color.a);" +
                         "}";
 
-/*
-        private final String fragmentShaderCode =
-                "precision mediump float;" +
-                        "uniform sampler2D uTexture;" +
-                        "varying vec2 vTexPosition;" +
-                        "void main() {" +
-                        " vec4 color = texture2D(uTexture, vTexPosition);" +
-                        " vec3 lum = vec3(0.299, 0.587, 0.114);" +
-                        "  gl_FragColor = vec4( vec3(dot( color.rgb, lum)), color.a);" +
-                        "}";
-*/
 
-        private int vertexShader;
-        private int fragmentShader;
         private int program;
 
         public Square(){
@@ -99,11 +77,11 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
         }
 
         private void initializeProgram(){
-            vertexShader = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
+            int vertexShader = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
             GLES20.glShaderSource(vertexShader, vertexShaderCode);
             GLES20.glCompileShader(vertexShader);
 
-            fragmentShader = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
+            int fragmentShader = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
             GLES20.glShaderSource(fragmentShader, fragmentShaderCode);
             GLES20.glCompileShader(fragmentShader);
 
@@ -137,17 +115,15 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         }
     }
-
-    private int textures[] = new int[1];
+    private int mTextureId;
     private Square square;
-    private Bitmap mBitmap;
-    private final Object syncObject = new Object();
     private final int mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
     //private final int mTextureTarget = GLES20.GL_TEXTURE_2D;
 
     private static final String TAG = "ShaderDrawer";
     private boolean mSurfaceTextureAvailable = false;
     private boolean mSurfaceTextureDestroyed = false;
+    private boolean mInitializeNow = false;
     private SurfaceTexture mGameTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
@@ -156,16 +132,16 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
         super();
     }
 
-    private void generateSquare(SurfaceTexture surface){
+    private void generateSquare(){
+        int[] textures = new int[1];
         GLES20.glGenTextures(1, textures, 0);
-        GLES20.glBindTexture(mTextureTarget, textures[0]);
+        mTextureId = textures[0];
+        GLES20.glBindTexture(mTextureTarget, mTextureId);
 
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-
-        mGameTexture = surface;
     }
 
     @Override
@@ -174,19 +150,23 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Log.e(TAG, "onSurfaceChanged");
+        Log.i(TAG, "onSurfaceChanged (" + width + "," + height + ")");
         mSurfaceWidth = width;
         mSurfaceHeight = height;
     }
 
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        Log.e(TAG, "onSurfaceTextureAvailable");
-        mGameTexture = surface;
-        mSurfaceTextureAvailable = true;
+    public void onSurfaceTextureAvailable(SurfaceTexture surface) {
+        if (!mSurfaceTextureAvailable) {
+            Log.i(TAG, "onSurfaceTextureAvailable");
+
+            mGameTexture = surface;
+            mSurfaceTextureAvailable = true;
+            mInitializeNow = true;
+        }
     }
 
-    public void onSurfaceTextureDestoryed(SurfaceTexture surface) {
-        Log.e(TAG, "onSurfaceTextureDestroyed");
+    public void onSurfaceTextureDestoryed() {
+        Log.i(TAG, "onSurfaceTextureDestroyed");
 
         mSurfaceTextureDestroyed = true;
     }
@@ -194,31 +174,31 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        if (mSurfaceTextureAvailable) {
-            Log.e(TAG, "ATTACH");
+        if (mInitializeNow) {
+            Log.i(TAG, "External texture attached");
             GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight);
             GLES20.glClearColor(0, 0, 0, 1);
 
-            generateSquare(mGameTexture);
+            generateSquare();
 
             square = new Square();
 
-            mGameTexture.attachToGLContext(textures[0]);
-
-            mSurfaceTextureAvailable = false;
+            mGameTexture.attachToGLContext(mTextureId);
+            mInitializeNow = false;
         }
 
         if (mGameTexture != null) {
             mGameTexture.updateTexImage();
 
             if (square != null)
-                square.draw(textures[0]);
+                square.draw(mTextureId);
         }
 
         if (mSurfaceTextureDestroyed) {
-            Log.e(TAG, "DETACH");
+            Log.i(TAG, "External texture detached");
             mGameTexture.detachFromGLContext();
             mSurfaceTextureDestroyed = true;
+            mSurfaceTextureAvailable = false;
         }
     }
 }

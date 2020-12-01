@@ -27,8 +27,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Matrix;
-import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -52,7 +50,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -91,6 +88,7 @@ import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.PixelBuffer;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
@@ -132,15 +130,15 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 */
 //@formatter:on
 
-public class GameActivity extends AppCompatActivity implements PromptConfirmListener, TextureView.SurfaceTextureListener,
+public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener
 {
     // Activity and views
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
-    private TextureView mSurfaceView;
     private ShaderDrawer mShaderDrawer;
+    private PixelBuffer mPixelBuffer;
 
     // Input resources
     private VisibleTouchMap mTouchscreenMap;
@@ -323,7 +321,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
-        mSurfaceView = this.findViewById( R.id.gameSurface );
+
         GLSurfaceView glShaderView = this.findViewById(R.id.shaderSurface);
         glShaderView.setEGLContextClientVersion(2);
 
@@ -348,27 +346,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
-        // Listen to game surface events (created, changed, destroyed)
-        mSurfaceView.setSurfaceTextureListener(this);
-
-        // Set parameters for texture view
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
-        params.width = mGamePrefs.videoRenderWidth;
-        params.height = mGamePrefs.videoRenderHeight;
-        mSurfaceView.setLayoutParams(params);
-
-        // Use this when shaders are disabled since we will be displaying this view directly
-        /*
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
-        params.width = Math.round(Math.max(mGamePrefs.videoSurfaceWidth, mGamePrefs.videoRenderWidth));
-        params.height = Math.round(Math.max(mGamePrefs.videoSurfaceHeight, mGamePrefs.videoRenderHeight));
-        params.gravity = Gravity.CENTER_HORIZONTAL;
-        params.gravity |= Gravity.TOP;
-        mSurfaceView.setLayoutParams(params);
-         */
-
         // Set parameters for shader view
-        params = (FrameLayout.LayoutParams) glShaderView.getLayoutParams();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) glShaderView.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -459,6 +438,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mHandler.postDelayed(mPeriodicChecker, 500);
+
+        mPixelBuffer = new PixelBuffer(mGamePrefs.videoRenderWidth,mGamePrefs.videoRenderHeight);
+        mShaderDrawer.onSurfaceTextureAvailable(mPixelBuffer.getmSurfaceTexture());
+
+        Surface surfaceForNdk = new Surface(mPixelBuffer.getmSurfaceTexture());
+        mCoreFragment.setSurface(surfaceForNdk);
     }
 
     @Override
@@ -482,8 +467,18 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onStart();
         Log.i("GameActivity", "onStart");
 
-        //This can happen if the screen is turned off while the emulator is running then turned back on
-        tryRunning();
+        if(mCoreFragment != null)
+        {
+            if (!mCoreFragment.IsInProgress()) {
+                mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
+            }
+
+            // Try running now in case the core service has already started
+            // If it hasn't started running yet, then check again when the core service connection happens
+            // in onCoreServiceStarted
+            tryRunning();
+        }
     }
 
     @Override
@@ -552,18 +547,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         super.onDestroy();
 
+        mShaderDrawer.onSurfaceTextureDestoryed();
+
         if(mCoreFragment != null)
         {
             mCoreFragment.clearOnFpsChangedListener();
             mCoreFragment.unsetSurface();
+            mCoreFragment.destroySurface();
         }
 
-        // Some devices are crashing here at times as reported in google play store
-        // It's hard to tell what exactly is NULL when that happens.
-        if(mSurfaceView != null)
-        {
-            mSurfaceView.setSurfaceTextureListener(null);
-        }
+        mPixelBuffer.destroyGlContext();
 
         // This apparently can happen on rare occasion, not sure how, so protect against it
         if(mHandler != null)
@@ -1225,75 +1218,5 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
             isControllerPlugged[player-1] = true;
         }
-    }
-
-    private void scaleTexture() {
-
-        float zoom = ( mGamePrefs.videoSurfaceZoom / 100.f );
-        Matrix transform = new Matrix();
-        mSurfaceView.getTransform(transform);
-
-        if (mGamePrefs.videoRenderWidth < mSurfaceView.getWidth()) {
-            float scalex = (float)mSurfaceView.getWidth()/mGamePrefs.videoRenderWidth;
-            float scaley = (float)mSurfaceView.getHeight()/mGamePrefs.videoRenderHeight;
-            transform.setScale(scalex, scaley, 0, mSurfaceView.getHeight());
-            transform.postScale(zoom, zoom, mSurfaceView.getWidth()/2.0f, mSurfaceView.getHeight()/2.0f);
-        } else {
-            float scalex = (float)mGamePrefs.videoSurfaceWidth/mGamePrefs.videoRenderWidth;
-            float scaley = (float)mGamePrefs.videoSurfaceHeight/mGamePrefs.videoRenderHeight;
-            transform.setScale(scalex, scaley, mSurfaceView.getWidth()/2.0f, 0.0f);
-            transform.postScale(zoom, zoom, mSurfaceView.getWidth()/2.0f, mGamePrefs.videoSurfaceHeight/2.0f);
-        }
-
-        mSurfaceView.setTransform(transform);
-    }
-
-    @Override
-    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
-
-        mShaderDrawer.onSurfaceTextureAvailable(surface, width, height);
-
-        if(mCoreFragment != null)
-        {
-            scaleTexture();
-
-            Surface surfaceForNdk = new Surface(surface);
-            mCoreFragment.setSurface(surfaceForNdk);
-
-            if (!mCoreFragment.IsInProgress()) {
-                mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
-            }
-
-            // Try running now in case the core service has already started
-            // If it hasn't started running yet, then check again when the core service connection happens
-            // in onCoreServiceStarted
-            tryRunning();
-        }
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
-
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
-
-        Log.i( "GameActivity", "surfaceDestroyed" );
-
-        mShaderDrawer.onSurfaceTextureDestoryed(surface);
-
-        if(mCoreFragment != null)
-        {
-            mCoreFragment.destroySurface();
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
-
     }
 }

@@ -5,8 +5,12 @@
 package paulscode.android.mupen64plusae.util;
 
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
+import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
+import android.view.Surface;
 
 import java.nio.IntBuffer;
 
@@ -43,6 +47,8 @@ public class PixelBuffer {
     EGLConfig mEGLConfig;
     EGLContext mEGLContext = null;
     EGLSurface mEGLSurface = null;
+    Surface mSurface = null;
+    SurfaceTexture mSurfaceTexture = null;
     GL10 mGL = null;
 
     String mThreadOwner;
@@ -65,6 +71,7 @@ public class PixelBuffer {
         mEGLConfig = chooseConfig(); // Choosing a config is a little more complicated
 
         if (mEGLConfig != null) {
+
             final int[] contextAttrs = new int[]{
                     EGL_CONTEXT_CLIENT_VERSION,
                     2,
@@ -74,6 +81,18 @@ public class PixelBuffer {
             mEGLSurface = mEGL.eglCreatePbufferSurface(mEGLDisplay, mEGLConfig, attribList);
             mEGL.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
             mGL = (GL10) mEGLContext.getGL();
+
+            int[] textures = new int[1];
+            GLES20.glGenTextures(1, textures, 0);
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textures[0]);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            mSurfaceTexture = new SurfaceTexture(textures[0]);
+            mSurfaceTexture.setDefaultBufferSize(mWidth, mHeight);
+            mSurfaceTexture.detachFromGLContext();
+            mSurface = new Surface(mSurfaceTexture);
         }
 
         // Record thread owner of OpenGL context
@@ -87,6 +106,17 @@ public class PixelBuffer {
             mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface );
             mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
         }
+        mSurfaceTexture.release();
+    }
+
+    public SurfaceTexture getmSurfaceTexture()
+    {
+        return mSurfaceTexture;
+    }
+
+    public Surface getmSurface()
+    {
+        return mSurface;
     }
 
     public void setRenderer(GLSurfaceView.Renderer renderer) {
