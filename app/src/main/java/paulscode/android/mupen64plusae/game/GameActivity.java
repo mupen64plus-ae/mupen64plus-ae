@@ -140,7 +140,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
     private TextureView mSurfaceView;
-    private GLSurfaceView mGlShaderView;
     private ShaderDrawer mShaderDrawer;
 
     // Input resources
@@ -325,12 +324,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
         mSurfaceView = this.findViewById( R.id.gameSurface );
-        mGlShaderView = this.findViewById( R.id.shaderSurface );
-        mGlShaderView.setEGLContextClientVersion(2);
+        GLSurfaceView glShaderView = this.findViewById(R.id.shaderSurface);
+        glShaderView.setEGLContextClientVersion(2);
 
-        mShaderDrawer = new ShaderDrawer(mSurfaceView, mGlShaderView, this);
-        mGlShaderView.setRenderer(mShaderDrawer);
-        //mGlShaderView.setVisibility(View.INVISIBLE);
+        mShaderDrawer = new ShaderDrawer();
+        glShaderView.setRenderer(mShaderDrawer);
+        //glShaderView.setVisibility(View.INVISIBLE);
 
         mOverlay = findViewById(R.id.gameOverlay);
         mDrawerLayout = findViewById(R.id.drawerLayout);
@@ -369,7 +368,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
          */
 
         // Set parameters for shader view
-        params = (FrameLayout.LayoutParams) mGlShaderView.getLayoutParams();
+        params = (FrameLayout.LayoutParams) glShaderView.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -383,7 +382,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             params.gravity |= Gravity.CENTER_VERTICAL;
         }
 
-        mGlShaderView.setLayoutParams( params );
+        glShaderView.setLayoutParams( params );
 
         if (savedInstanceState == null)
         {

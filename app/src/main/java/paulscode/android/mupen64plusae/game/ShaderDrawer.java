@@ -1,17 +1,11 @@
 package paulscode.android.mupen64plusae.game;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
 import android.util.Log;
-import android.view.TextureView;
-
-import org.mupen64plusae.v3.alpha.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -146,9 +140,6 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
 
     private int textures[] = new int[1];
     private Square square;
-    private TextureView mGameView;
-    private GLSurfaceView mShaderView;
-    private Context mContext;
     private Bitmap mBitmap;
     private final Object syncObject = new Object();
     private final int mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
@@ -157,15 +148,12 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     private static final String TAG = "ShaderDrawer";
     private boolean mSurfaceTextureAvailable = false;
     private boolean mSurfaceTextureDestroyed = false;
-    private SurfaceTexture mSurfaceTexture;
+    private SurfaceTexture mGameTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
 
-    public ShaderDrawer(TextureView gameView, GLSurfaceView shaderView, Context context){
+    public ShaderDrawer(){
         super();
-        mGameView = gameView;
-        mShaderView = shaderView;
-        mContext = context;
     }
 
     private void generateSquare(SurfaceTexture surface){
@@ -177,7 +165,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
-        mSurfaceTexture = surface;
+        mGameTexture = surface;
     }
 
     @Override
@@ -193,7 +181,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
 
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         Log.e(TAG, "onSurfaceTextureAvailable");
-
+        mGameTexture = surface;
         mSurfaceTextureAvailable = true;
     }
 
@@ -207,32 +195,30 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
 
         if (mSurfaceTextureAvailable) {
+            Log.e(TAG, "ATTACH");
             GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight);
             GLES20.glClearColor(0, 0, 0, 1);
 
-            generateSquare(mGameView.getSurfaceTexture());
+            generateSquare(mGameTexture);
 
             square = new Square();
 
-            mSurfaceTexture.attachToGLContext(textures[0]);
+            mGameTexture.attachToGLContext(textures[0]);
 
             mSurfaceTextureAvailable = false;
         }
 
-       if (mSurfaceTextureDestroyed) {
-           mSurfaceTexture.detachFromGLContext();
-           mSurfaceTextureDestroyed = true;
-       }
-
-
-        if (mSurfaceTexture != null) {
-            //mSurfaceTexture.attachToGLContext(textures[0]);
-            mSurfaceTexture.updateTexImage();
+        if (mGameTexture != null) {
+            mGameTexture.updateTexImage();
 
             if (square != null)
                 square.draw(textures[0]);
+        }
 
-            //mSurfaceTexture.detachFromGLContext();
+        if (mSurfaceTextureDestroyed) {
+            Log.e(TAG, "DETACH");
+            mGameTexture.detachFromGLContext();
+            mSurfaceTextureDestroyed = true;
         }
     }
 }
