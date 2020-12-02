@@ -205,8 +205,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         try {
             FragmentActivity activity = requireActivity();
             activity.runOnUiThread(() -> {
-                CharSequence title = getString( R.string.extractRomTask_title );
-                CharSequence message = getString( R.string.toast_pleaseWait );
+                CharSequence title = activity.getString( R.string.extractRomTask_title );
+                CharSequence message = activity.getString( R.string.toast_pleaseWait );
 
                 String displayName;
 
