@@ -325,7 +325,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         GLSurfaceView glShaderView = this.findViewById(R.id.shaderSurface);
         glShaderView.setEGLContextClientVersion(2);
 
-        mShaderDrawer = new ShaderDrawer();
+        mShaderDrawer = new ShaderDrawer(this);
         glShaderView.setRenderer(mShaderDrawer);
         //glShaderView.setVisibility(View.INVISIBLE);
 

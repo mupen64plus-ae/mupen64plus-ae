@@ -1,11 +1,16 @@
 package paulscode.android.mupen64plusae.game;
 
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -34,32 +39,46 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
                 1f,0f
         };
 
-        private final String vertexShaderCode =
-                "attribute vec4 aPosition;" +
-                        "attribute vec2 aTexPosition;" +
-                        "varying vec2 vTexPosition;" +
-                        "void main() {" +
-                        "  gl_Position = aPosition;" +
-                        "  vTexPosition = aTexPosition;" +
-                        "}";
+        private final String defaultVertexShaderCode =
+                "attribute vec4 VertexCoord;\n" +
+                "attribute vec4 TexCoord;\n" +
+                "varying vec2 vTexPosition;\n" +
+                "void main() {\n" +
+                "  gl_Position = VertexCoord;\n" +
+                "  vTexPosition = TexCoord.xy;\n" +
+                "}\n";
 
-        private final String fragmentShaderCode =
-        "#extension GL_OES_EGL_image_external : require\n" +
-                "precision mediump float;" +
-                        "uniform samplerExternalOES uTexture;" +
-                        "varying vec2 vTexPosition;" +
-                        "void main() {" +
-                        " vec4 color = texture2D(uTexture, vTexPosition);" +
-                        " vec3 lum = vec3(0.299, 0.587, 0.114);" +
-                        "  gl_FragColor = vec4( vec3(dot( color.rgb, lum)), color.a);" +
-                        "}";
-
+        private final String defaultFragmentShaderCode =
+                "#extension GL_OES_EGL_image_external : require\n" +
+                "precision mediump float;\n" +
+                "uniform samplerExternalOES Texture;\n" +
+                "varying vec2 vTexPosition;\n" +
+                "void main() {\n" +
+                "  gl_FragColor = texture2D(Texture, vTexPosition);\n" +
+                "}\n";
 
         private int program;
 
-        public Square(){
+        public Square(Context context){
+
+            String vertex = defaultVertexShaderCode;
+            String fragment = defaultFragmentShaderCode;
+
+            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/scanlines-sine-abs_vert.glsl"))) {
+                vertex = IOUtils.toString(reader);
+
+            } catch (IOException|NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/scanlines-sine-abs_frag.glsl"))) {
+                fragment = IOUtils.toString(reader);
+            } catch (IOException|NullPointerException e) {
+                e.printStackTrace();
+            }
+
             initializeBuffers();
-            initializeProgram();
+            initializeProgram(vertex, fragment);
         }
 
         private void initializeBuffers() {
@@ -76,13 +95,13 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
             textureBuffer.position(0);
         }
 
-        private void initializeProgram(){
+        private void initializeProgram(String vertexShaderText, String fragmentShaderText){
             int vertexShader = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
-            GLES20.glShaderSource(vertexShader, vertexShaderCode);
+            GLES20.glShaderSource(vertexShader, vertexShaderText);
             GLES20.glCompileShader(vertexShader);
 
             int fragmentShader = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
-            GLES20.glShaderSource(fragmentShader, fragmentShaderCode);
+            GLES20.glShaderSource(fragmentShader, fragmentShaderText);
             GLES20.glCompileShader(fragmentShader);
 
             program = GLES20.glCreateProgram();
@@ -97,9 +116,10 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
             GLES20.glUseProgram(program);
             GLES20.glDisable(GLES20.GL_BLEND);
 
-            int positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
-            int textureHandle = GLES20.glGetUniformLocation(program, "uTexture");
-            int texturePositionHandle = GLES20.glGetAttribLocation(program, "aTexPosition");
+            int positionHandle = GLES20.glGetAttribLocation(program, "VertexCoord");
+            int textureHandle = GLES20.glGetUniformLocation(program, "Texture");
+            int textureSize = GLES20.glGetUniformLocation(program, "TextureSize");
+            int texturePositionHandle = GLES20.glGetAttribLocation(program, "TexCoord");
 
             GLES20.glVertexAttribPointer(texturePositionHandle, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
             GLES20.glEnableVertexAttribArray(texturePositionHandle);
@@ -107,6 +127,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(mTextureTarget, texture);
             GLES20.glUniform1i(textureHandle, 0);
+            GLES20.glUniform2f(textureSize, mSurfaceWidth, mSurfaceHeight);
 
             GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, verticesBuffer);
             GLES20.glEnableVertexAttribArray(positionHandle);
@@ -127,9 +148,11 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     private SurfaceTexture mGameTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
+    private Context mContext = null;
 
-    public ShaderDrawer(){
+    public ShaderDrawer(Context context){
         super();
+        mContext = context;
     }
 
     private void generateSquare(){
@@ -181,7 +204,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
 
             generateSquare();
 
-            square = new Square();
+            square = new Square(mContext);
 
             mGameTexture.attachToGLContext(mTextureId);
             mInitializeNow = false;
