@@ -327,7 +327,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mShaderDrawer = new ShaderDrawer(this);
         glShaderView.setRenderer(mShaderDrawer);
-        //glShaderView.setVisibility(View.INVISIBLE);
 
         mOverlay = findViewById(R.id.gameOverlay);
         mDrawerLayout = findViewById(R.id.drawerLayout);

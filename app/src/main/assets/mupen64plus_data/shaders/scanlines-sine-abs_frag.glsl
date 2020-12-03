@@ -19,8 +19,6 @@
 
 precision mediump float;
 
-#define mediump mediump
-
 uniform samplerExternalOES Texture;
 varying vec4 TEX0;
 varying float angle;

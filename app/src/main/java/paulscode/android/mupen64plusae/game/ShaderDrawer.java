@@ -61,17 +61,20 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
 
         public Square(Context context){
 
+            String shaderName = "test-pattern";
+            //String shaderName = "scanlines-sine-abs";
+
             String vertex = defaultVertexShaderCode;
             String fragment = defaultFragmentShaderCode;
 
-            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/scanlines-sine-abs_vert.glsl"))) {
+            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shaderName + "_vert.glsl"))) {
                 vertex = IOUtils.toString(reader);
 
             } catch (IOException|NullPointerException e) {
                 e.printStackTrace();
             }
 
-            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/scanlines-sine-abs_frag.glsl"))) {
+            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shaderName + "_frag.glsl"))) {
                 fragment = IOUtils.toString(reader);
             } catch (IOException|NullPointerException e) {
                 e.printStackTrace();
@@ -127,7 +130,8 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(mTextureTarget, texture);
             GLES20.glUniform1i(textureHandle, 0);
-            GLES20.glUniform2f(textureSize, mSurfaceWidth, mSurfaceHeight);
+
+            GLES20.glUniform2f(textureSize, (float)mSurfaceWidth, (float)mSurfaceHeight);
 
             GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, verticesBuffer);
             GLES20.glEnableVertexAttribArray(positionHandle);
@@ -139,7 +143,6 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     private int mTextureId;
     private Square square;
     private final int mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
-    //private final int mTextureTarget = GLES20.GL_TEXTURE_2D;
 
     private static final String TAG = "ShaderDrawer";
     private boolean mSurfaceTextureAvailable = false;
