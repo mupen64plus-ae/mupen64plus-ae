@@ -11,6 +11,8 @@
 #define amp              1.250000
 #define phase            0.500000
 
+precision highp float;
+
 attribute vec4 VertexCoord;
 attribute vec4 TexCoord;
 uniform vec2 TextureSize;
@@ -23,6 +25,6 @@ void main()
     TEX0.xy = TexCoord.xy;
 
     float omega = 2.0 * pi * freq;              // Angular frequency
-    angle = TEX0.y * omega * TextureSize.y + phase;
+    angle = TEX0.y * omega * (TextureSize.y/2.8) + phase;
 }
 

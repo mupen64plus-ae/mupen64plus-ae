@@ -14,10 +14,10 @@
 #define offset           0.000000
 
 #define amp              1.250000
-#define lines_black      0.000000
+#define lines_black      0.100000
 #define lines_white      1.000000
 
-precision mediump float;
+precision highp float;
 
 uniform samplerExternalOES Texture;
 varying vec4 TEX0;

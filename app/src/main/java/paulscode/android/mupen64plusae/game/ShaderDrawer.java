@@ -61,27 +61,34 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
 
         public Square(Context context){
 
-            String shaderName = "test-pattern";
-            //String shaderName = "scanlines-sine-abs";
+            //String shaderName = "test-pattern";
+            String shaderName = "scanlines-sine-abs";
 
-            String vertex = defaultVertexShaderCode;
-            String fragment = defaultFragmentShaderCode;
+            String vertexShader = null;
+            String fragmentShader = null;
 
             try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shaderName + "_vert.glsl"))) {
-                vertex = IOUtils.toString(reader);
+                vertexShader = IOUtils.toString(reader);
 
             } catch (IOException|NullPointerException e) {
                 e.printStackTrace();
+                Log.e(TAG, "Can't find vertex shader");
             }
 
             try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shaderName + "_frag.glsl"))) {
-                fragment = IOUtils.toString(reader);
+                fragmentShader = IOUtils.toString(reader);
             } catch (IOException|NullPointerException e) {
                 e.printStackTrace();
+                Log.e(TAG, "Can't find fragment shader");
+            }
+
+            if (vertexShader == null || fragmentShader == null) {
+                vertexShader = defaultVertexShaderCode;
+                fragmentShader = defaultFragmentShaderCode;
             }
 
             initializeBuffers();
-            initializeProgram(vertex, fragment);
+            initializeProgram(vertexShader, fragmentShader);
         }
 
         private void initializeBuffers() {
@@ -131,7 +138,9 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
             GLES20.glBindTexture(mTextureTarget, texture);
             GLES20.glUniform1i(textureHandle, 0);
 
-            GLES20.glUniform2f(textureSize, (float)mSurfaceWidth, (float)mSurfaceHeight);
+            // Normalize to 480 pixel height
+            float scale = mSurfaceHeight/480.0f;
+            GLES20.glUniform2f(textureSize, (float)mSurfaceWidth/scale, (float)mSurfaceHeight/scale);
 
             GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, verticesBuffer);
             GLES20.glEnableVertexAttribArray(positionHandle);
@@ -151,7 +160,7 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     private SurfaceTexture mGameTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
-    private Context mContext = null;
+    private final Context mContext;
 
     public ShaderDrawer(Context context){
         super();
