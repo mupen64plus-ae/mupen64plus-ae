@@ -99,6 +99,11 @@ public class PixelBuffer {
         mThreadOwner = Thread.currentThread().getName();
     }
 
+    public void releaseSurfaceTexture()
+    {
+        mSurfaceTexture.release();
+    }
+
     public void destroyGlContext()
     {
         if (mEGL != null && mEGLSurface != null && mEGLContext != null) {
@@ -106,15 +111,14 @@ public class PixelBuffer {
             mEGL.eglDestroySurface(mEGLDisplay, mEGLSurface );
             mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
         }
-        mSurfaceTexture.release();
     }
 
-    public SurfaceTexture getmSurfaceTexture()
+    public SurfaceTexture getSurfaceTexture()
     {
         return mSurfaceTexture;
     }
 
-    public Surface getmSurface()
+    public Surface getSurface()
     {
         return mSurface;
     }

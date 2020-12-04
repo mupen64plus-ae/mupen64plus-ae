@@ -30,7 +30,6 @@ import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -88,7 +87,6 @@ import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.PixelBuffer;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
@@ -137,8 +135,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
-    private ShaderDrawer mShaderDrawer;
-    private PixelBuffer mPixelBuffer;
+    private GameSurface mGameSurface;
 
     // Input resources
     private VisibleTouchMap mTouchscreenMap;
@@ -322,11 +319,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
 
-        GLSurfaceView glShaderView = this.findViewById(R.id.shaderSurface);
-        glShaderView.setEGLContextClientVersion(2);
-
-        mShaderDrawer = new ShaderDrawer(this);
-        glShaderView.setRenderer(mShaderDrawer);
+        mGameSurface = this.findViewById(R.id.shaderSurface);
 
         mOverlay = findViewById(R.id.gameOverlay);
         mDrawerLayout = findViewById(R.id.drawerLayout);
@@ -346,7 +339,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
         // Set parameters for shader view
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) glShaderView.getLayoutParams();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mGameSurface.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -360,7 +353,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             params.gravity |= Gravity.CENTER_VERTICAL;
         }
 
-        glShaderView.setLayoutParams( params );
+        mGameSurface.setLayoutParams( params );
 
         if (savedInstanceState == null)
         {
@@ -438,11 +431,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mHandler.postDelayed(mPeriodicChecker, 500);
 
-        mPixelBuffer = new PixelBuffer(mGamePrefs.videoRenderWidth,mGamePrefs.videoRenderHeight);
-        mShaderDrawer.onSurfaceTextureAvailable(mPixelBuffer.getmSurfaceTexture());
-
-        Surface surfaceForNdk = new Surface(mPixelBuffer.getmSurfaceTexture());
-        mCoreFragment.setSurface(surfaceForNdk);
     }
 
     @Override
@@ -491,8 +479,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         // Set the sidebar opacity
-        mGameSidebar.setBackground(new DrawerDrawable(
-                mGlobalPrefs.displayActionBarTransparency));
+        mGameSidebar.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
 
         if(mDrawerOpenState)
         {
@@ -504,6 +491,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mGameSidebar.requestFocus();
             ReloadAllMenus();
         }
+
+        mGameSurface.startGlContext();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("GameActivity", "onPause");
+
+        mGameSurface.stopGlContext();
     }
 
     @Override
@@ -532,7 +529,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             mCoreFragment.pauseEmulator();
         }
-        
+
         if (mSensorController != null) {
             mSensorController.onPause();
         }
@@ -546,16 +543,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         super.onDestroy();
 
-        mShaderDrawer.onSurfaceTextureDestoryed();
-
         if(mCoreFragment != null)
         {
             mCoreFragment.clearOnFpsChangedListener();
-            mCoreFragment.unsetSurface();
-            mCoreFragment.destroySurface();
         }
-
-        mPixelBuffer.destroyGlContext();
 
         // This apparently can happen on rare occasion, not sure how, so protect against it
         if(mHandler != null)
@@ -820,19 +811,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private void tryRunning()
     {
         if (mCoreFragment.hasServiceStarted()) {
-            if (!mDrawerLayout.isDrawerOpen(GravityCompat.START) && !mDrawerOpenState) {
-                mCoreFragment.resumeEmulator();
-            } else {
+            mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
 
-                mCoreFragment.resumeEmulator();
-
-                //Sleep for a bit to allow screen to refresh while running, then pause
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerOpenState) {
                 mCoreFragment.pauseEmulator();
+            } else {
+                mCoreFragment.resumeEmulator();
             }
 
             mCoreFragment.setOnFpsChangedListener(this, 15);
@@ -878,6 +862,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         mOverlay.requestFocus();
+        mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
 
         if(mShouldExit)
         {
@@ -924,7 +909,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mCoreFragment != null)
         {
             mCoreFragment.setCoreEventListener(null);
-            mCoreFragment.destroySurface();
             mCoreFragment = null;
         }
 

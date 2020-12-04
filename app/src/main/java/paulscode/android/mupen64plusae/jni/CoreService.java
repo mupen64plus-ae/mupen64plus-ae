@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Binder;
@@ -74,6 +75,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.PixelBuffer;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -141,6 +143,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private byte mRomCountryCode = 0;
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
+    private PixelBuffer mPixelBuffer = null;
 
     //Service attributes
     private int mStartId;
@@ -438,17 +441,21 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mCoreInterface.emuGetState();
     }
 
-    void setSurface(Surface surface)
+    SurfaceTexture getSurfaceTexture() {
+        return mPixelBuffer.getSurfaceTexture();
+    }
+
+    private void setSurface(Surface surface)
     {
         mCoreInterface.setNativeWindow(surface);
     }
 
-    void unsetSurface()
+    private void unsetSurface()
     {
         mCoreInterface.unsetNativeWindow();
     }
 
-    void destroySurface()
+    private void destroySurface()
     {
         mCoreInterface.emuDestroySurface();
     }
@@ -872,7 +879,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         Log.i(TAG, "onStartCommand");
 
         if(intent != null)
@@ -931,6 +937,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
             mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
 
+            // This must happen here instead of OnCreate because we only find out the redering
+            // resolution here.
+            if (mPixelBuffer == null) {
+                mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);
+                Surface surfaceForNdk = new Surface(mPixelBuffer.getSurfaceTexture());
+                setSurface(surfaceForNdk);
+                mPixelBuffer.destroyGlContext();
+            }
+
             updateNotification();
         }
 
@@ -947,6 +962,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         // Unregister since the activity is about to be closed.
         unregisterReceiver(mMessageReceiver);
+
+        unsetSurface();
+        destroySurface();
+        mPixelBuffer.releaseSurfaceTexture();
 
         forceExit();
     }

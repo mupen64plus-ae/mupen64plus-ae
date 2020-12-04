@@ -16,9 +16,9 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
-public class ShaderDrawer implements GLSurfaceView.Renderer {
+public class ShaderDrawer {
 
     public class Square {
 
@@ -154,9 +154,6 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
     private final int mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 
     private static final String TAG = "ShaderDrawer";
-    private boolean mSurfaceTextureAvailable = false;
-    private boolean mSurfaceTextureDestroyed = false;
-    private boolean mInitializeNow = false;
     private SurfaceTexture mGameTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
@@ -179,61 +176,52 @@ public class ShaderDrawer implements GLSurfaceView.Renderer {
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
     }
 
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-    }
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        Log.i(TAG, "onSurfaceTextureAvailable");
 
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Log.i(TAG, "onSurfaceChanged (" + width + "," + height + ")");
-        mSurfaceWidth = width;
-        mSurfaceHeight = height;
-    }
+        if (mGameTexture == null) {
+            Log.i(TAG, "Texture available, width=" + width + " height=" + height);
 
-    public void onSurfaceTextureAvailable(SurfaceTexture surface) {
-        if (!mSurfaceTextureAvailable) {
-            Log.i(TAG, "onSurfaceTextureAvailable");
+            mSurfaceWidth = width;
+            mSurfaceHeight = height;
 
-            mGameTexture = surface;
-            mSurfaceTextureAvailable = true;
-            mInitializeNow = true;
-        }
-    }
-
-    public void onSurfaceTextureDestoryed() {
-        Log.i(TAG, "onSurfaceTextureDestroyed");
-
-        mSurfaceTextureDestroyed = true;
-    }
-
-    @Override
-    public void onDrawFrame(GL10 gl) {
-
-        if (mInitializeNow) {
-            Log.i(TAG, "External texture attached");
             GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight);
             GLES20.glClearColor(0, 0, 0, 1);
 
             generateSquare();
 
-            square = new Square(mContext);
-
+            mGameTexture = surface;
             mGameTexture.attachToGLContext(mTextureId);
-            mInitializeNow = false;
+            // For some reason this is needed, otherwise frame callbacks stop happening on orientation
+            // changes or if the app is put on the background then foreground again
+            mGameTexture.updateTexImage();
+
+            square = new Square(mContext);
+        }
+    }
+
+    public void onSurfaceTextureDestroyed() {
+        Log.i(TAG, "onSurfaceTextureDestroyed");
+
+        if (mGameTexture != null) {
+            Log.i(TAG, "Dettaching texture");
+
+            mGameTexture.detachFromGLContext();
+            mGameTexture = null;
         }
 
+        int[] textures = new int[1];
+        textures[0] = mTextureId;
+        GLES20.glDeleteTextures(1, textures, 0);
+    }
+
+    public void onDrawFrame() {
         if (mGameTexture != null) {
             mGameTexture.updateTexImage();
 
-            if (square != null)
+            if (square != null) {
                 square.draw(mTextureId);
-        }
-
-        if (mSurfaceTextureDestroyed) {
-            Log.i(TAG, "External texture detached");
-            mGameTexture.detachFromGLContext();
-            mSurfaceTextureDestroyed = true;
-            mSurfaceTextureAvailable = false;
+            }
         }
     }
 }

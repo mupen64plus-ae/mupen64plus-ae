@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -117,7 +118,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
-    private Surface mSurface = null;
     private OnFpsChangedListener mFpsChangeListener = null;
     private int mFpsRecalcPeriod = 1;
     private File mCurrentSaveStateFile = null;
@@ -292,7 +292,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 LocalBinder binder = (LocalBinder) service;
                 mCoreService = binder.getService();
 
-                mCoreService.setSurface(mSurface);
                 mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mCoreService.setCoreServiceListener(CoreFragment.this);
                 mCoreService.setLoadingDataListener(CoreFragment.this);
@@ -919,34 +918,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreEventListener.onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
     }
-    public void setSurface(Surface surface)
-    {
-        Log.i( "CoreFragment", "setSurface" );
-        mSurface = surface;
-        if(mCoreService != null)
-        {
-            mCoreService.setSurface(mSurface);
-        }
-    }
-
-    public void unsetSurface()
-    {
-        Log.i( "CoreFragment", "unsetSurface" );
-        if(mCoreService != null)
-        {
-            mCoreService.unsetSurface();
-        }
-    }
-
-    public void destroySurface()
-    {
-        Log.i("CoreFragment", "destroySurface");
-
-        if(mCoreService != null)
-        {
-            mCoreService.destroySurface();
-        }
-    }
 
     public void forceExit()
     {
@@ -966,5 +937,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public boolean hasServiceStarted()
     {
         return mCoreService != null;
+    }
+
+    public SurfaceTexture getSurfaceTexture() {
+        return mCoreService.getSurfaceTexture();
     }
 }
