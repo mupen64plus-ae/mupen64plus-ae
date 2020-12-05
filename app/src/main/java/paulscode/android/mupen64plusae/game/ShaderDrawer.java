@@ -62,7 +62,8 @@ public class ShaderDrawer {
 
             //String shaderName = "test-pattern";
             //String shaderName = "scanlines-sine-abs";
-            String shaderName = "blur9x9";
+            //String shaderName = "blur9x9";
+            String shaderName = "crt-geom";
 
             String vertexShader = null;
             String fragmentShader = null;
@@ -121,7 +122,7 @@ public class ShaderDrawer {
             GLES20.glLinkProgram(program);
         }
 
-        public void draw(int texture){
+        public void draw(int texture, int frameCountValue){
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
             GLES20.glUseProgram(program);
             GLES20.glDisable(GLES20.GL_BLEND);
@@ -132,6 +133,7 @@ public class ShaderDrawer {
             int textureSize = GLES20.glGetUniformLocation(program, "TextureSize");
             int inputSize = GLES20.glGetUniformLocation(program, "InputSize");
             int outputSize = GLES20.glGetUniformLocation(program, "OutputSize");
+            int frameCount = GLES20.glGetUniformLocation(program, "FrameCount");
 
             GLES20.glVertexAttribPointer(texturePositionHandle, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
             GLES20.glEnableVertexAttribArray(texturePositionHandle);
@@ -139,6 +141,7 @@ public class ShaderDrawer {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(mTextureTarget, texture);
             GLES20.glUniform1i(textureHandle, 0);
+            GLES20.glUniform1i(frameCount, frameCountValue);
 
             // Normalize to 480 pixel height
             float scale = mSurfaceHeight/480.0f;
@@ -163,6 +166,7 @@ public class ShaderDrawer {
     private int mSurfaceHeight = 0;
     private int mRenderWidth = 0;
     private int mRenderHeight = 0;
+    private int mFrameCount = 0;
     private final Context mContext;
 
     public ShaderDrawer(Context context){
@@ -229,7 +233,8 @@ public class ShaderDrawer {
             mGameTexture.updateTexImage();
 
             if (square != null) {
-                square.draw(mTextureId);
+                square.draw(mTextureId, mFrameCount);
+                ++mFrameCount;
             }
         }
     }
