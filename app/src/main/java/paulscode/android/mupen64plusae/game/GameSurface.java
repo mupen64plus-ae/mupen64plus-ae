@@ -41,6 +41,8 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
+import paulscode.android.mupen64plusae.util.PixelBuffer;
+
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
@@ -105,7 +107,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     private boolean mFullOpenGL = false;
     private ShaderDrawer mShaderDrawer;
     private RenderThread mRenderThread = null;
-    private SurfaceTexture mSurfaceTexture = null;
+    private PixelBuffer.SurfaceTextureWithSize mSurfaceTexture = null;
     boolean mSurfaceAvailable = false;
     boolean mGlContextStarted = false;
     Context mContext;
@@ -135,14 +137,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
      * Set the surface texture used for the GL context
      * @param surfaceTexture Game surface texture
      */
-    public void setSurfaceTexture(SurfaceTexture surfaceTexture)
+    public void setSurfaceTexture(PixelBuffer.SurfaceTextureWithSize surfaceTexture)
     {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) this.getLayoutParams();
 
         mSurfaceTexture = surfaceTexture;
 
         if (mRenderThread != null && mRenderThread.getHandler() != null && mSurfaceTexture != null) {
-            mRenderThread.getHandler().sendSurfaceTextureAvailable(params.width, params.height, surfaceTexture);
+            mRenderThread.getHandler().sendSurfaceTextureAvailable(params.width, params.height, mSurfaceTexture);
         }
     }
 
@@ -731,8 +733,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         /**
          * Handles incoming fram
          */
-        private void surfaceTextureAvailable(int width, int height, SurfaceTexture surfaceTexture) {
-            mFrameAvailableTexture = surfaceTexture;
+        private void surfaceTextureAvailable(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
+            mFrameAvailableTexture = surfaceTexture.mSurfaceTexture;
 
             long timestime = mFrameAvailableTexture.getTimestamp();
 
@@ -798,7 +800,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
          * <p>
          * Call from UI thread.
          */
-        public void sendSurfaceTextureAvailable(int width, int height, SurfaceTexture surfaceTexture) {
+        public void sendSurfaceTextureAvailable(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
             sendMessage(obtainMessage(MSG_SURFACETEXTURE_AVAILABLE, width, height, surfaceTexture));
         }
 
@@ -830,7 +832,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                     renderThread.frameAvailable();
                     break;
                 case MSG_SURFACETEXTURE_AVAILABLE:
-                    renderThread.surfaceTextureAvailable(msg.arg1, msg.arg2, (SurfaceTexture) msg.obj);
+                    renderThread.surfaceTextureAvailable(msg.arg1, msg.arg2, (PixelBuffer.SurfaceTextureWithSize) msg.obj);
                     break;
                 case MSG_SURFACETEXTURE_DESTROYED:
                     renderThread.surfaceTextureDestroyed();

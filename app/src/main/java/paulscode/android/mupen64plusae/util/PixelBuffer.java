@@ -48,10 +48,24 @@ public class PixelBuffer {
     EGLContext mEGLContext = null;
     EGLSurface mEGLSurface = null;
     Surface mSurface = null;
-    SurfaceTexture mSurfaceTexture = null;
+    SurfaceTextureWithSize mSurfaceTexture = null;
     GL10 mGL = null;
 
     String mThreadOwner;
+
+    public static class SurfaceTextureWithSize {
+        public final SurfaceTexture mSurfaceTexture;
+        public final int mWidth;
+        public final int mHeight;
+
+        public SurfaceTextureWithSize(SurfaceTexture surfaceTexture, int width, int height) {
+            mSurfaceTexture = surfaceTexture;
+            mSurfaceTexture.setDefaultBufferSize(width, height);
+            mSurfaceTexture.detachFromGLContext();
+            mWidth = width;
+            mHeight = height;
+        }
+    }
 
     public PixelBuffer(int width, int height) {
         mWidth = width;
@@ -89,10 +103,8 @@ public class PixelBuffer {
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-            mSurfaceTexture = new SurfaceTexture(textures[0]);
-            mSurfaceTexture.setDefaultBufferSize(mWidth, mHeight);
-            mSurfaceTexture.detachFromGLContext();
-            mSurface = new Surface(mSurfaceTexture);
+            mSurfaceTexture = new SurfaceTextureWithSize(new SurfaceTexture(textures[0]), mWidth, mHeight);
+            mSurface = new Surface(mSurfaceTexture.mSurfaceTexture);
         }
 
         // Record thread owner of OpenGL context
@@ -101,7 +113,7 @@ public class PixelBuffer {
 
     public void releaseSurfaceTexture()
     {
-        mSurfaceTexture.release();
+        mSurfaceTexture.mSurfaceTexture.release();
     }
 
     public void destroyGlContext()
@@ -113,7 +125,7 @@ public class PixelBuffer {
         }
     }
 
-    public SurfaceTexture getSurfaceTexture()
+    public SurfaceTextureWithSize getSurfaceTexture()
     {
         return mSurfaceTexture;
     }

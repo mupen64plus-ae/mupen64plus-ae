@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
@@ -14,9 +13,9 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL11;
+import paulscode.android.mupen64plusae.util.PixelBuffer;
 
 public class ShaderDrawer {
 
@@ -62,7 +61,8 @@ public class ShaderDrawer {
         public Square(Context context){
 
             //String shaderName = "test-pattern";
-            String shaderName = "scanlines-sine-abs";
+            //String shaderName = "scanlines-sine-abs";
+            String shaderName = "blur9x9";
 
             String vertexShader = null;
             String fragmentShader = null;
@@ -127,9 +127,11 @@ public class ShaderDrawer {
             GLES20.glDisable(GLES20.GL_BLEND);
 
             int positionHandle = GLES20.glGetAttribLocation(program, "VertexCoord");
+            int texturePositionHandle = GLES20.glGetAttribLocation(program, "TexCoord");
             int textureHandle = GLES20.glGetUniformLocation(program, "Texture");
             int textureSize = GLES20.glGetUniformLocation(program, "TextureSize");
-            int texturePositionHandle = GLES20.glGetAttribLocation(program, "TexCoord");
+            int inputSize = GLES20.glGetUniformLocation(program, "InputSize");
+            int outputSize = GLES20.glGetUniformLocation(program, "OutputSize");
 
             GLES20.glVertexAttribPointer(texturePositionHandle, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
             GLES20.glEnableVertexAttribArray(texturePositionHandle);
@@ -141,6 +143,8 @@ public class ShaderDrawer {
             // Normalize to 480 pixel height
             float scale = mSurfaceHeight/480.0f;
             GLES20.glUniform2f(textureSize, (float)mSurfaceWidth/scale, (float)mSurfaceHeight/scale);
+            GLES20.glUniform2f(inputSize, (float)mRenderWidth, (float)mRenderHeight);
+            GLES20.glUniform2f(outputSize, (float)mSurfaceWidth, (float)mSurfaceHeight);
 
             GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, verticesBuffer);
             GLES20.glEnableVertexAttribArray(positionHandle);
@@ -157,6 +161,8 @@ public class ShaderDrawer {
     private SurfaceTexture mGameTexture;
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
+    private int mRenderWidth = 0;
+    private int mRenderHeight = 0;
     private final Context mContext;
 
     public ShaderDrawer(Context context){
@@ -176,21 +182,24 @@ public class ShaderDrawer {
         GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
     }
 
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+    public void onSurfaceTextureAvailable(PixelBuffer.SurfaceTextureWithSize surface, int width, int height) {
         Log.i(TAG, "onSurfaceTextureAvailable");
 
         if (mGameTexture == null) {
-            Log.i(TAG, "Texture available, width=" + width + " height=" + height);
+            Log.i(TAG, "Texture available, surface=" + width + "x" + height +
+                    " render=" + surface.mWidth + "x" + surface.mHeight);
 
             mSurfaceWidth = width;
             mSurfaceHeight = height;
+            mRenderWidth = surface.mWidth;
+            mRenderHeight = surface.mHeight;
 
             GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight);
             GLES20.glClearColor(0, 0, 0, 1);
 
             generateSquare();
 
-            mGameTexture = surface;
+            mGameTexture = surface.mSurfaceTexture;
             mGameTexture.attachToGLContext(mTextureId);
             // For some reason this is needed, otherwise frame callbacks stop happening on orientation
             // changes or if the app is put on the background then foreground again

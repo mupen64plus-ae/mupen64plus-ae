@@ -37,7 +37,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Surface;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -54,6 +53,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.PixelBuffer;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
@@ -939,7 +939,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         return mCoreService != null;
     }
 
-    public SurfaceTexture getSurfaceTexture() {
+    public PixelBuffer.SurfaceTextureWithSize getSurfaceTexture() {
         return mCoreService.getSurfaceTexture();
     }
 }

@@ -441,7 +441,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mCoreInterface.emuGetState();
     }
 
-    SurfaceTexture getSurfaceTexture() {
+    PixelBuffer.SurfaceTextureWithSize getSurfaceTexture() {
         return mPixelBuffer.getSurfaceTexture();
     }
 
@@ -941,8 +941,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             // resolution here.
             if (mPixelBuffer == null) {
                 mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);
-                Surface surfaceForNdk = new Surface(mPixelBuffer.getSurfaceTexture());
-                setSurface(surfaceForNdk);
+                setSurface(mPixelBuffer.getSurface());
                 mPixelBuffer.destroyGlContext();
             }
 
