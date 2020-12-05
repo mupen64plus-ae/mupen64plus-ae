@@ -173,8 +173,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private final boolean[] isControllerPlugged = new boolean[4];
 
-    private boolean mScreenOrientationSet = false;
-
     @Override
     protected void attachBaseContext(Context newBase) {
 
@@ -299,21 +297,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Set the screen orientation
         if (mGlobalPrefs.displayOrientation != -1) {
             setRequestedOrientation( mGlobalPrefs.displayOrientation );
-            mScreenOrientationSet = true;
-        } else {
-            // If auto rotation is on, lock orientation until graphics have initialized. We don't
-            // want the surface to be destroyed in the middle of initialization
-            Display display = DisplayWrapper.getDisplay(this);
-            if (display.getRotation()== Surface.ROTATION_0)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            else if (display.getRotation()== Surface.ROTATION_90)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            else if (display.getRotation()== Surface.ROTATION_270)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-            else if (display.getRotation()== Surface.ROTATION_180)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-
-            mScreenOrientationSet = false;
         }
 
         // Lay out content and get the views
@@ -436,12 +419,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onFpsChanged(int newValue)
     {
-        // Set the screen orientation the first time there is a screen update
-        if (mGlobalPrefs.displayOrientation == -1 && !mScreenOrientationSet) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            mScreenOrientationSet = true;
-        }
-
         if(mGlobalPrefs.isFpsEnabled && mOverlay != null)
         {
             mOverlay.onFpsChanged(newValue);
