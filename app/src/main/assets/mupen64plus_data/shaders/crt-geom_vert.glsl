@@ -60,9 +60,6 @@ attribute vec4 COLOR;
 attribute vec4 TexCoord;
 varying vec4 TEX0;
 
-vec4 _oPosition1;
-uniform mediump int FrameDirection;
-uniform mediump int FrameCount;
 uniform mediump vec2 OutputSize;
 uniform mediump vec2 TextureSize;
 uniform mediump vec2 InputSize;
@@ -151,7 +148,6 @@ void main()
 
     vec2 _otexCoord;
     gl_Position = VertexCoord;
-    _oPosition1 = gl_Position;
     _otexCoord = TexCoord.xy;
     TEX0.xy = TexCoord.xy;
 

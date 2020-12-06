@@ -44,7 +44,7 @@
 #define CRTgamma 2.4
 #define monitorgamma 2.2
 #define d 1.6
-#define CURVATURE 1.0
+#define CURVATURE 0.6
 #define R 2.0
 #define cornersize 0.03
 #define cornersmooth 1000.0
@@ -56,7 +56,7 @@
 #define SHARPER 1.0
 #define scanline_weight 0.3
 #define lum 0.0
-#define interlace_detect 1.0
+#define interlace_detect 0.0
 
 precision highp float;
 

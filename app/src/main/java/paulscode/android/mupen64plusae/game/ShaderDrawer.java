@@ -144,8 +144,8 @@ public class ShaderDrawer {
             GLES20.glUniform1i(frameCount, frameCountValue);
 
             // Normalize to 480 pixel height
-            float scale = mSurfaceHeight/480.0f;
-            GLES20.glUniform2f(textureSize, (float)mSurfaceWidth/scale, (float)mSurfaceHeight/scale);
+            float scale = mRenderWidth/480.0f;
+            GLES20.glUniform2f(textureSize, (float)mRenderWidth, (float)mRenderHeight);
             GLES20.glUniform2f(inputSize, (float)mRenderWidth, (float)mRenderHeight);
             GLES20.glUniform2f(outputSize, (float)mSurfaceWidth, (float)mSurfaceHeight);
 
@@ -198,7 +198,7 @@ public class ShaderDrawer {
             mRenderWidth = surface.mWidth;
             mRenderHeight = surface.mHeight;
 
-            GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight);
+            GLES20.glViewport(0, 0, mRenderWidth*3, mRenderHeight*3);
             GLES20.glClearColor(0, 0, 0, 1);
 
             generateSquare();
