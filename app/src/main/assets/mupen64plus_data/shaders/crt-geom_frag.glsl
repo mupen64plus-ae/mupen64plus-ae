@@ -20,8 +20,6 @@
 	This shader variant is pre-configured with screen curvature
 */
 
-#extension GL_OES_EGL_image_external : require
-
 /*
 #pragma parameter CRTgamma "CRTGeom Target Gamma" 2.4 0.1 5.0 0.1
 #pragma parameter monitorgamma "CRTGeom Monitor Gamma" 2.2 0.1 5.0 0.1
@@ -64,7 +62,7 @@ uniform mediump int FrameCount;
 uniform mediump vec2 OutputSize;
 uniform mediump vec2 TextureSize;
 uniform mediump vec2 InputSize;
-uniform samplerExternalOES Texture;
+uniform sampler2D Texture;
 varying vec4 TEX0;
 
 // Comment the next line to disable interpolation in linear gamma (and

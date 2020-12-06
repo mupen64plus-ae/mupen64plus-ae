@@ -1,16 +1,12 @@
 package paulscode.android.mupen64plusae.game;
 
-import android.content.Context;
-import android.graphics.SurfaceTexture;
+
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-
-import paulscode.android.mupen64plusae.util.PixelBuffer;
 
 public class Shader {
 
@@ -33,9 +29,8 @@ public class Shader {
 
     private int program;
     private int mTextureId;
-    private final int mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
+    private int mTextureTarget = GLES20.GL_TEXTURE_2D;
 
-    private static final String TAG = "ShaderDrawer";
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
     private int mRenderWidth = 0;
@@ -45,8 +40,16 @@ public class Shader {
     private final String mVertexCode;
     private final String mFragmentCode;
 
-    public Shader(String vertexCode, String fragmentCode){
+    public Shader(String vertexCode, String fragmentCode, boolean firstPass){
         mVertexCode = vertexCode;
+
+        if (firstPass) {
+            String builder = "#extension GL_OES_EGL_image_external : require\n" +
+                    fragmentCode;
+            fragmentCode = builder.replace("sampler2D ", "samplerExternalOES ");
+            mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
+        }
+
         mFragmentCode = fragmentCode;
     }
 

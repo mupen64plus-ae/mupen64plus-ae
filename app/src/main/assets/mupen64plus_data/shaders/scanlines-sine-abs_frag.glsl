@@ -4,7 +4,6 @@
     by RiskyJumps
 	license: public domain
 */
-#extension GL_OES_EGL_image_external : require
 
 #pragma parameter amp          "Amplitude"      1.2500  0.000 2.000 0.05
 #pragma parameter phase        "Phase"          0.5000  0.000 2.000 0.05
@@ -19,7 +18,7 @@
 
 precision highp float;
 
-uniform samplerExternalOES Texture;
+uniform sampler2D Texture;
 varying vec4 TEX0;
 varying float angle;
 

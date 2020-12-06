@@ -1,6 +1,4 @@
 // Ported from https://raw.githubusercontent.com/gizmo98/common-shaders/master/blurs/blur9x9.glsl
-#extension GL_OES_EGL_image_external : require
-
 precision highp float;
 
 vec4 _TMP35;
@@ -14,7 +12,7 @@ float _TMP3;
 float _TMP2;
 float _TMP1;
 float _TMP0;
-uniform samplerExternalOES Texture;
+uniform sampler2D Texture;
 vec3 _TMP40;
 float _texel1to2ratio0043;
 float _texel3to4ratio0043;

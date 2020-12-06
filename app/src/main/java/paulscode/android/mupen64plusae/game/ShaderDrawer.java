@@ -2,27 +2,22 @@ package paulscode.android.mupen64plusae.game;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.util.PixelBuffer;
 
 public class ShaderDrawer {
-    
+
     private static final String TAG = "ShaderDrawer";
     private SurfaceTexture mGameTexture;
-    private final ShaderLoader mSelectedShader;
-    private final Shader mShader;
+    private final ArrayList<Shader> mShaderPasses = new ArrayList<>();
 
     public ShaderDrawer(Context context) {
         ShaderLoader.loadShaders(context);
-        mSelectedShader = ShaderLoader.CTR_GEOM;
-        mShader = new Shader(mSelectedShader.getVertCode(), mSelectedShader.getFragCode());
+        mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true));
     }
 
     public void onSurfaceTextureAvailable(PixelBuffer.SurfaceTextureWithSize surface, int width, int height) {
@@ -32,15 +27,16 @@ public class ShaderDrawer {
             Log.i(TAG, "Texture available, surface=" + width + "x" + height +
                     " render=" + surface.mWidth + "x" + surface.mHeight);
 
-            mShader.setDimensions(width, height, surface.mWidth, surface.mHeight);
-
             GLES20.glViewport(0, 0, width, height);
             GLES20.glClearColor(0, 0, 0, 1);
 
-            mShader.initShader();
+            for (Shader shader : mShaderPasses) {
+                shader.setDimensions(width, height, surface.mWidth, surface.mHeight);
+                shader.initShader();
+            }
 
             mGameTexture = surface.mSurfaceTexture;
-            mGameTexture.attachToGLContext(mShader.getTextureId());
+            mGameTexture.attachToGLContext(mShaderPasses.get(0).getTextureId());
 
             // For some reason this is needed, otherwise frame callbacks stop happening on orientation
             // changes or if the app is put on the background then foreground again
@@ -63,7 +59,9 @@ public class ShaderDrawer {
         if (mGameTexture != null) {
             mGameTexture.updateTexImage();
 
-            mShader.draw();
+            for (Shader shader : mShaderPasses) {
+                shader.draw();
+            }
         }
     }
 }
