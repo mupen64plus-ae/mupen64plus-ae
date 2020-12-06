@@ -56,7 +56,7 @@
 #define SHARPER 1.0
 #define scanline_weight 0.3
 #define lum 0.0
-#define interlace_detect 0.0
+#define interlace_detect 1.0
 
 precision highp float;
 

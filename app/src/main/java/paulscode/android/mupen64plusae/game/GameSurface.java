@@ -28,11 +28,13 @@ import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
 import android.opengl.EGLSurface;
 import android.opengl.GLES10;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -42,6 +44,8 @@ import androidx.annotation.NonNull;
 import java.lang.ref.WeakReference;
 
 import paulscode.android.mupen64plusae.util.PixelBuffer;
+
+import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
@@ -160,6 +164,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
         Log.i(TAG, "surfaceCreated");
         mSurfaceAvailable = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            holder.getSurface().setFrameRate(59.94f, FRAME_RATE_COMPATIBILITY_DEFAULT);
+        }
         startGlContext();
     }
 
@@ -517,6 +524,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 Log.e( TAG, EGL_BIND_FAIL );
                 return false;
             }
+
+            // Disable vsync for minimum latency
+            EGL14.eglSwapInterval(mEglDisplay, 0);
+
             Log.v( TAG, EGL_BIND );
             return true;
         }
@@ -627,7 +638,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
      * Thread that handles all rendering and camera operations.
      */
     private class RenderThread extends Thread implements
-            SurfaceTexture.OnFrameAvailableListener {
+            SurfaceTexture.OnFrameAvailableListener, Choreographer.FrameCallback {
         // Object must be created on render thread to get correct Looper, but is used from
         // UI thread, so we need to declare it volatile to ensure the UI thread sees a fully
         // constructed object.
@@ -700,6 +711,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
                 if (mFrameAvailableTexture != null) {
                     mFrameAvailableTexture.setOnFrameAvailableListener(null);
+                    Choreographer.getInstance().removeFrameCallback(this);
                 }
                 mShaderDrawer.onSurfaceTextureDestroyed();
                 Looper.myLooper().quit();
@@ -722,6 +734,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
+        @Override
+        public void doFrame(long frameTimeNanos) {
+            /*
+            synchronized (mStopLock)
+            {
+                if (!mShuttingDown) {
+                    Choreographer.getInstance().postFrameCallback(this);
+                    mHandler.sendFrameAvailable();
+                }
+            }
+             */
+        }
+
         /**
          * Handles incoming fram
          */
@@ -735,11 +760,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
          */
         private void surfaceTextureAvailable(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
             mFrameAvailableTexture = surfaceTexture.mSurfaceTexture;
-
-            long timestime = mFrameAvailableTexture.getTimestamp();
-
             mFrameAvailableTexture.setOnFrameAvailableListener(this);
+            Choreographer.getInstance().postFrameCallback(this);
             mShaderDrawer.onSurfaceTextureAvailable(surfaceTexture, width, height);
+
+            // Draw a single frame to prevent a black screen on rotation while game is paused
+            frameAvailable();
         }
 
         /**
@@ -748,6 +774,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private void surfaceTextureDestroyed() {
             if (mFrameAvailableTexture != null) {
                 mFrameAvailableTexture.setOnFrameAvailableListener(null);
+                Choreographer.getInstance().removeFrameCallback(this);
             }
             mShaderDrawer.onSurfaceTextureDestroyed();
         }

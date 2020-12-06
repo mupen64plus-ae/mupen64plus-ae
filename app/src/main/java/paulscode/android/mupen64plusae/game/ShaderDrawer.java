@@ -74,18 +74,19 @@ public class ShaderDrawer {
             mRenderWidth = surface.mWidth;
             mRenderHeight = surface.mHeight;
 
-            GLES20.glViewport(0, 0, mRenderWidth*3, mRenderHeight*3);
+            GLES20.glViewport(0, 0, mRenderWidth*2, mRenderHeight*2);
             GLES20.glClearColor(0, 0, 0, 1);
 
             generateShaderTexture();
 
             mGameTexture = surface.mSurfaceTexture;
             mGameTexture.attachToGLContext(mTextureId);
+
+            loadShaders();
+
             // For some reason this is needed, otherwise frame callbacks stop happening on orientation
             // changes or if the app is put on the background then foreground again
             mGameTexture.updateTexImage();
-
-            loadShaders();
         }
     }
 

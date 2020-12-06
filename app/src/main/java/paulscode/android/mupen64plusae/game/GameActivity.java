@@ -336,7 +336,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mGameSurface.setLayoutParams( params );
         //mGameSurface.getHolder().setFixedSize(mGamePrefs.videoSurfaceWidth, mGamePrefs.videoSurfaceHeight);
-        mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*3, mGamePrefs.videoRenderHeight*3);
+        mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*2, mGamePrefs.videoRenderHeight*2);
 
         if (savedInstanceState == null)
         {
