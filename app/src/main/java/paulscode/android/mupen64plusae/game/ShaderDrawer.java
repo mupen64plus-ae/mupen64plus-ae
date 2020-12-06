@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae.game;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -17,7 +18,7 @@ public class ShaderDrawer {
 
     public ShaderDrawer(Context context) {
         ShaderLoader.loadShaders(context);
-        mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true));
+        mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true, true));
     }
 
     public void onSurfaceTextureAvailable(PixelBuffer.SurfaceTextureWithSize surface, int width, int height) {
@@ -30,17 +31,29 @@ public class ShaderDrawer {
             GLES20.glViewport(0, 0, width, height);
             GLES20.glClearColor(0, 0, 0, 1);
 
-            for (Shader shader : mShaderPasses) {
-                shader.setDimensions(width, height, surface.mWidth, surface.mHeight);
-                shader.initShader();
-            }
+            int[] textures = new int[1];
+            GLES20.glGenTextures(1, textures, 0);
+            int texture = textures[0];
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textures[0]);
+
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
             mGameTexture = surface.mSurfaceTexture;
-            mGameTexture.attachToGLContext(mShaderPasses.get(0).getTextureId());
+            mGameTexture.attachToGLContext(texture);
 
             // For some reason this is needed, otherwise frame callbacks stop happening on orientation
             // changes or if the app is put on the background then foreground again
             mGameTexture.updateTexImage();
+
+            for (Shader shader : mShaderPasses) {
+                shader.setSourceTexture(texture);
+                shader.setDimensions(width, height, surface.mWidth, surface.mHeight);
+                shader.initShader();
+                texture = shader.getFboTextureId();
+            }
         }
     }
 

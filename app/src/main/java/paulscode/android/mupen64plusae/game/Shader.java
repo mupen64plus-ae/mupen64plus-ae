@@ -30,6 +30,10 @@ public class Shader {
     private int program;
     private int mTextureId;
     private int mTextureTarget = GLES20.GL_TEXTURE_2D;
+    private int mFboId = 0;
+    private int mFboTextureId = 0;
+    private final boolean mFirstPass;
+    private final boolean mLastPass;
 
     private int mSurfaceWidth = 0;
     private int mSurfaceHeight = 0;
@@ -40,7 +44,7 @@ public class Shader {
     private final String mVertexCode;
     private final String mFragmentCode;
 
-    public Shader(String vertexCode, String fragmentCode, boolean firstPass){
+    public Shader(String vertexCode, String fragmentCode, boolean firstPass, boolean lastPass){
         mVertexCode = vertexCode;
 
         if (firstPass) {
@@ -51,11 +55,28 @@ public class Shader {
         }
 
         mFragmentCode = fragmentCode;
+        mFirstPass = firstPass;
+        mLastPass = lastPass;
     }
-
 
     public int getTextureId() {
         return mTextureId;
+    }
+
+    public int getFboTextureId() {
+        return mFboTextureId;
+    }
+
+    public void setSourceTexture(int sourceTexture) {
+        mTextureId = sourceTexture;
+    }
+
+    public boolean isFirstPass() {
+        return mFirstPass;
+    }
+
+    public boolean isLastPass() {
+        return mLastPass;
     }
 
     public void setDimensions(int surfaceWidth, int surfaceHeight, int renderWidth, int renderHeight) {
@@ -66,18 +87,37 @@ public class Shader {
     }
 
     public void initShader(){
-        int[] textures = new int[1];
-        GLES20.glGenTextures(1, textures, 0);
-        mTextureId = textures[0];
-        GLES20.glBindTexture(mTextureTarget, mTextureId);
 
-        GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(mTextureTarget, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
         initializeBuffers();
         initializeProgram(mVertexCode, mFragmentCode);
+
+        if (!mLastPass) {
+            initializeFbo();
+        }
+    }
+
+    private void initializeFbo() {
+
+        int[] framebuffers = new int[1];
+        GLES20.glGenFramebuffers(1, framebuffers, 0);
+        mFboId = framebuffers[0];
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFboId);
+
+        //Create a texture
+        int[] textures = new int[1];
+        GLES20.glGenTextures(1, textures, 0);
+        mFboTextureId = textures[0];
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFboTextureId);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mSurfaceWidth, mSurfaceHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+        //Attach the texture to the framebuffer
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, mFboTextureId, 0);
+
     }
 
     private void initializeBuffers() {
@@ -111,7 +151,13 @@ public class Shader {
     }
 
     public void draw(){
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFboId);
+
+        if (!mLastPass) {
+            GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, mFboTextureId);
+        }
+
         GLES20.glUseProgram(program);
         GLES20.glDisable(GLES20.GL_BLEND);
 
