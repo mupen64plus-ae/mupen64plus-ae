@@ -68,6 +68,14 @@
         android:key="displayScaling"
         android:summary="@string/selectedValue"
         android:title="@string/displayScaling_title" />
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="2"
+        android:key="shaderScaleFactor"
+        android:title="@string/displayShaderScale_title"
+        mupen64:maximumValue="4"
+        mupen64:minimumValue="1"
+        mupen64:stepSize="1"
+        mupen64:units="X" />
 
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayOrientation_default"

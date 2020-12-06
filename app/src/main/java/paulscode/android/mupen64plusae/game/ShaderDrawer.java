@@ -74,7 +74,7 @@ public class ShaderDrawer {
             mRenderWidth = surface.mWidth;
             mRenderHeight = surface.mHeight;
 
-            GLES20.glViewport(0, 0, mRenderWidth*2, mRenderHeight*2);
+            GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight);
             GLES20.glClearColor(0, 0, 0, 1);
 
             generateShaderTexture();

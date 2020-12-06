@@ -55,7 +55,6 @@ import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
-import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
 import static java.lang.Integer.parseInt;
@@ -242,6 +241,9 @@ public class GlobalPrefs
 
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
+
+    /** Surface scale facor for shaders */
+    public final int shaderScaleFactor;
 
     /** Display scaling */
     final DisplayScaling displayScaling;
@@ -516,6 +518,7 @@ public class GlobalPrefs
         // Video prefs
         displayResolution = getSafeInt( mPreferences, "displayResolution", 480 );
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
+        shaderScaleFactor = mPreferences.getInt( "shaderScaleFactor", 2 );
         displayScaling = DisplayScaling.getScaling(mPreferences.getString( "displayScaling", "original" ));
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode_v2", true );
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
@@ -1048,10 +1051,5 @@ public class GlobalPrefs
     int getSurfaceResolutionWidth()
     {
         return videoSurfaceWidthOriginal;
-    }
-
-    public boolean isScreenPortrait()
-    {
-        return screenPortrait;
     }
 }

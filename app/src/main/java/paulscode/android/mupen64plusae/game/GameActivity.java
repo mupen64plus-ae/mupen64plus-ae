@@ -335,8 +335,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         mGameSurface.setLayoutParams( params );
-        //mGameSurface.getHolder().setFixedSize(mGamePrefs.videoSurfaceWidth, mGamePrefs.videoSurfaceHeight);
-        mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*2, mGamePrefs.videoRenderHeight*2);
+        mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*mGlobalPrefs.shaderScaleFactor,
+                mGamePrefs.videoRenderHeight*mGlobalPrefs.shaderScaleFactor);
+        mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
 
         if (savedInstanceState == null)
         {
@@ -424,7 +425,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             float shaderFps = mGameSurface.getFps();
 
             int fps = 0;
-            if ( mCoreFragment.getCurrentSpeed() != CoreFragment.BASELINE_SPEED) {
+            if ( mCoreFragment.getCurrentSpeed() == CoreFragment.BASELINE_SPEED) {
                 fps = Math.min((int)shaderFps, newValue);
             } else {
                 fps = newValue;

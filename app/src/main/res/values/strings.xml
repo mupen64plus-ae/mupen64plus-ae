@@ -304,6 +304,7 @@
     <string name="displayResolution_entry480x360">480 x 360</string>
     <string name="displayResolution_entry320x240">320 x 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
+    <string name="displayShaderScale_title">Shader scale factor</string>
     <string name="displayScaling_title">Screen scaling</string>
     <string name="displayScaling_entryOriginal">Original\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>

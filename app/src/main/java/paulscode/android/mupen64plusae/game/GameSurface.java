@@ -115,6 +115,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     boolean mSurfaceAvailable = false;
     boolean mGlContextStarted = false;
     Context mContext;
+    int mShaderScaleFactor = 1;
 
     private boolean mIsEGLContextReady = false;     // true if the context is ready
 
@@ -143,12 +144,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
      */
     public void setSurfaceTexture(PixelBuffer.SurfaceTextureWithSize surfaceTexture)
     {
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) this.getLayoutParams();
-
         mSurfaceTexture = surfaceTexture;
 
         if (mRenderThread != null && mRenderThread.getHandler() != null && mSurfaceTexture != null) {
-            mRenderThread.getHandler().sendSurfaceTextureAvailable(params.width, params.height, mSurfaceTexture);
+            mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth*mShaderScaleFactor,
+                    mSurfaceTexture.mHeight*mShaderScaleFactor, mSurfaceTexture);
         }
     }
 
@@ -228,6 +228,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         return fps;
+    }
+
+    public void setShaderScaleFactor(int shaderScale) {
+        mShaderScaleFactor = shaderScale;
     }
 
     /**
