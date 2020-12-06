@@ -421,7 +421,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         if(mGlobalPrefs.isFpsEnabled && mOverlay != null)
         {
-            mOverlay.onFpsChanged(newValue);
+            float shaderFps = mGameSurface.getFps();
+
+            int fps = 0;
+            if ( mCoreFragment.getCurrentSpeed() != CoreFragment.BASELINE_SPEED) {
+                fps = Math.min((int)shaderFps, newValue);
+            } else {
+                fps = newValue;
+            }
+            mOverlay.onFpsChanged(fps);
         }
     }
 

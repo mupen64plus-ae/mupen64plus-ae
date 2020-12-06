@@ -123,7 +123,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private File mCurrentSaveStateFile = null;
 
     // Speed info - used internally
-    private static final int BASELINE_SPEED = 100;
+    public static final int BASELINE_SPEED = 100;
     private static final int DEFAULT_SPEED = 250;
     private static final int MAX_SPEED = 300;
     private static final int MIN_SPEED = 10;

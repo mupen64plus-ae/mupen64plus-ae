@@ -221,6 +221,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    public float getFps() {
+        float fps = 0;
+        if (mRenderThread != null) {
+            fps = mRenderThread.getLastFps();
+        }
+
+        return fps;
+    }
 
     /**
      * Create and bind an OpenGL ES rendering context and window surface.
@@ -650,6 +658,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private boolean mReady = false;
         private SurfaceTexture mFrameAvailableTexture = null;
         private boolean mShuttingDown = false;
+        private float mLastFps = 0;
+        private int mFrameCount = 0;
+        private long mTimeMilliseconds = 0;
+        private static final int mFpsRecalPeriodFrames = 15;
 
         /**
          * Constructor.
@@ -719,6 +731,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
+         * Get the last calculated FPS value
+         * @return Last calculated FPS
+         */
+        public float getLastFps() {
+            return mLastFps;
+        }
+
+        /**
          * Returns the render thread's Handler. This may be called from any thread.
          */
         public RenderHandler getHandler() {
@@ -753,6 +773,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private void frameAvailable() {
             mShaderDrawer.onDrawFrame();
             flipBuffers();
+
+            mFrameCount++;
+            if (mFrameCount >= mFpsRecalPeriodFrames) {
+                long timeMs = System.currentTimeMillis();
+                mLastFps = ((float) mFrameCount / (float) (timeMs - mTimeMilliseconds)) * 1000.0f;
+                mFrameCount = 0;
+                mTimeMilliseconds = timeMs;
+            }
         }
 
         /**
