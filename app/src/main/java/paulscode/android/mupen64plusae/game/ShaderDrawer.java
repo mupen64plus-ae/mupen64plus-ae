@@ -51,7 +51,12 @@ public class ShaderDrawer {
 
             for (Shader shader : mShaderPasses) {
                 shader.setSourceTexture(texture);
-                shader.setDimensions(width, height, surface.mWidth, surface.mHeight);
+                if (shader.isFirstPass()) {
+                    shader.setDimensions(surface.mWidth, surface.mHeight, surface.mWidth, surface.mHeight, width, height);
+                } else {
+                    shader.setDimensions(surface.mWidth, surface.mHeight, width, height, width, height);
+
+                }
                 shader.initShader();
                 texture = shader.getFboTextureId();
             }

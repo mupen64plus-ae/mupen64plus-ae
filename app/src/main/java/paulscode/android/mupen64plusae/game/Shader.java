@@ -42,10 +42,12 @@ public class Shader {
     private final boolean mFirstPass;
     private final boolean mLastPass;
 
-    private int mSurfaceWidth = 0;
-    private int mSurfaceHeight = 0;
-    private int mRenderWidth = 0;
-    private int mRenderHeight = 0;
+    private int mOutputWidth = 0;
+    private int mOutputHeight = 0;
+    private int mInputWidth = 0;
+    private int mInputHeight = 0;
+    private int mTextureWidth = 0;
+    private int mTextureHeight = 0;
     private int mFrameCount = 0;
 
     private final String mVertexCode;
@@ -66,31 +68,26 @@ public class Shader {
         mLastPass = lastPass;
     }
 
-    public int getTextureId() {
-        return mTextureId;
-    }
-
     public int getFboTextureId() {
         return mFboTextureId;
-    }
-
-    public void setSourceTexture(int sourceTexture) {
-        mTextureId = sourceTexture;
     }
 
     public boolean isFirstPass() {
         return mFirstPass;
     }
 
-    public boolean isLastPass() {
-        return mLastPass;
+    public void setSourceTexture(int sourceTexture) {
+        mTextureId = sourceTexture;
     }
 
-    public void setDimensions(int surfaceWidth, int surfaceHeight, int renderWidth, int renderHeight) {
-        mSurfaceWidth = surfaceWidth;
-        mSurfaceHeight = surfaceHeight;
-        mRenderWidth = renderWidth;
-        mRenderHeight = renderHeight;
+    public void setDimensions(int inputWidth, int inputHeight, int textureWidth, int textureHeight,
+                              int outputeWidth, int outputHeight) {
+        mInputWidth = inputWidth;
+        mInputHeight = inputHeight;
+        mTextureWidth = textureWidth;
+        mTextureHeight = textureHeight;
+        mOutputWidth = outputeWidth;
+        mOutputHeight = outputHeight;
     }
 
     public void initShader(){
@@ -116,7 +113,7 @@ public class Shader {
         GLES20.glGenTextures(1, textures, 0);
         mFboTextureId = textures[0];
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFboTextureId);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mSurfaceWidth, mSurfaceHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, mOutputWidth, mOutputHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
@@ -192,10 +189,9 @@ public class Shader {
         GLES20.glUniform1i(textureHandle, 0);
         GLES20.glUniform1i(frameCount, mFrameCount);
 
-        // Normalize to 480 pixel height
-        GLES20.glUniform2f(textureSize, (float)mRenderWidth, (float)mRenderHeight);
-        GLES20.glUniform2f(inputSize, (float)mRenderWidth, (float)mRenderHeight);
-        GLES20.glUniform2f(outputSize, (float)mSurfaceWidth, (float)mSurfaceHeight);
+        GLES20.glUniform2f(inputSize, (float) mInputWidth, (float) mInputHeight);
+        GLES20.glUniform2f(textureSize, (float) mInputWidth, (float) mInputHeight);
+        GLES20.glUniform2f(outputSize, (float) mOutputWidth, (float) mOutputHeight);
 
         GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, verticesBuffer);
         GLES20.glEnableVertexAttribArray(positionHandle);
