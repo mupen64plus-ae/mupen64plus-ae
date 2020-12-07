@@ -13,6 +13,7 @@ public enum ShaderLoader {
     SCANLINES_SINE_ABS("scanlines-sine-abs"),
     TEST_PATTERN("test-pattern"),
     BLUR9X9("blur9x9"),
+    N64_DITHER("n64-dither"),
     CTR_GEOM("crt-geom");
 
     private final String mShaderName;

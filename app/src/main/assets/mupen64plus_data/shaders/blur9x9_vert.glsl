@@ -5,7 +5,6 @@ attribute vec4 TexCoord;
 varying vec4 TEX0;
 varying vec4 TEX1;
 
-uniform mat4 MVPMatrix;
 uniform mediump vec2 OutputSize;
 uniform mediump vec2 TextureSize;
 uniform mediump vec2 InputSize;
