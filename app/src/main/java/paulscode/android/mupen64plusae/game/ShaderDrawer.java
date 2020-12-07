@@ -18,7 +18,8 @@ public class ShaderDrawer {
 
     public ShaderDrawer(Context context) {
         ShaderLoader.loadShaders(context);
-        mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true, true));
+        mShaderPasses.add(new Shader(ShaderLoader.BLUR9X9.getVertCode(), ShaderLoader.BLUR9X9.getFragCode(), true, false));
+        mShaderPasses.add(new Shader(ShaderLoader.CTR_GEOM.getVertCode(), ShaderLoader.CTR_GEOM.getFragCode(), false, true));
     }
 
     public void onSurfaceTextureAvailable(PixelBuffer.SurfaceTextureWithSize surface, int width, int height) {

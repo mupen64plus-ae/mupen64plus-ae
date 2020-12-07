@@ -27,6 +27,13 @@ public class Shader {
             1f,0f
     };
 
+    private final float[] textureVerticesInverted = {
+            0f,0f,
+            1f,0f,
+            0f,1f,
+            1f,1f
+    };
+
     private int program;
     private int mTextureId;
     private int mTextureTarget = GLES20.GL_TEXTURE_2D;
@@ -127,10 +134,17 @@ public class Shader {
         verticesBuffer.put(vertices);
         verticesBuffer.position(0);
 
-        buff = ByteBuffer.allocateDirect(textureVertices.length * 4);
+        float[] textureVerticesFinal;
+        if (mFirstPass) {
+            textureVerticesFinal = textureVertices;
+        } else {
+            textureVerticesFinal = textureVerticesInverted;
+        }
+
+        buff = ByteBuffer.allocateDirect(textureVerticesFinal.length * 4);
         buff.order(ByteOrder.nativeOrder());
         textureBuffer = buff.asFloatBuffer();
-        textureBuffer.put(textureVertices);
+        textureBuffer.put(textureVerticesFinal);
         textureBuffer.position(0);
     }
 

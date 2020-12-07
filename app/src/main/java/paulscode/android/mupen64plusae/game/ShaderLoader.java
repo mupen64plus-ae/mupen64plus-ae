@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 
 public enum ShaderLoader {
     DEFAULT("default"),
+    SCANLINES_SINE_ABS("scanlines-sine-abs"),
     TEST_PATTERN("test-pattern"),
     BLUR9X9("blur9x9"),
     CTR_GEOM("crt-geom");
