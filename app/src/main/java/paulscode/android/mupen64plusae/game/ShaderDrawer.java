@@ -15,16 +15,24 @@ public class ShaderDrawer {
     private static final String TAG = "ShaderDrawer";
     private SurfaceTexture mGameTexture;
     private final ArrayList<Shader> mShaderPasses = new ArrayList<>();
+    private final ArrayList<ShaderLoader> mShadersToLoad = new ArrayList<>();
 
     public ShaderDrawer(Context context) {
         ShaderLoader.loadShaders(context);
-        //mShaderPasses.add(new Shader(ShaderLoader.N64_DITHER.getVertCode(), ShaderLoader.N64_DITHER.getFragCode(), true, true));
-        mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true, true));
-/*
-        mShaderPasses.add(new Shader(ShaderLoader.BLUR9X9.getVertCode(), ShaderLoader.BLUR9X9.getFragCode(), true, false));
-        mShaderPasses.add(new Shader(ShaderLoader.CTR_GEOM.getVertCode(), ShaderLoader.CTR_GEOM.getFragCode(), false, true));
 
- */
+        //mShadersToLoad.add(ShaderLoader.DEFAULT);
+        mShadersToLoad.add(ShaderLoader.FXAA);
+
+        /*
+        mShadersToLoad.add(ShaderLoader.BLUR9X9);
+        mShadersToLoad.add(ShaderLoader.CTR_GEOM);
+        */
+
+        for (int index = 0; index < mShadersToLoad.size(); ++ index) {
+            boolean first = index == 0;
+            boolean last = index == mShadersToLoad.size() - 1;
+            mShaderPasses.add(new Shader(mShadersToLoad.get(index).getVertCode(), mShadersToLoad.get(index).getFragCode(), first, last));
+        }
 
     }
 

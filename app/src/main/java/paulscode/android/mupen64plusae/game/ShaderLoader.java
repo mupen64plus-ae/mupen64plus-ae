@@ -14,6 +14,7 @@ public enum ShaderLoader {
     TEST_PATTERN("test-pattern"),
     BLUR9X9("blur9x9"),
     N64_DITHER("n64-dither"),
+    FXAA("fxaa"),
     CTR_GEOM("crt-geom");
 
     private final String mShaderName;
