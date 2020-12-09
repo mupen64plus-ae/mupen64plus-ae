@@ -658,10 +658,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
         // Used to wait for the thread to start.
         private final Object mStartLock = new Object();
-        private final Object mStopLock = new Object();
         private boolean mReady = false;
         private SurfaceTexture mFrameAvailableTexture = null;
-        private boolean mShuttingDown = false;
         private float mLastFps = 0;
         private int mFrameCount = 0;
         private long mTimeMilliseconds = 0;
@@ -721,17 +719,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private void shutdown() {
             Log.i(TAG, "shutdown");
 
-            synchronized (mStopLock)
-            {
-                mShuttingDown = true;
-
-                if (mFrameAvailableTexture != null) {
-                    mFrameAvailableTexture.setOnFrameAvailableListener(null);
-                    Choreographer.getInstance().removeFrameCallback(this);
-                }
-                mShaderDrawer.onSurfaceTextureDestroyed();
-                Looper.myLooper().quit();
+            if (mFrameAvailableTexture != null) {
+                mFrameAvailableTexture.setOnFrameAvailableListener(null);
+                Choreographer.getInstance().removeFrameCallback(this);
             }
+            mShaderDrawer.onSurfaceTextureDestroyed();
+            Looper.myLooper().quit();
         }
 
         /**
@@ -749,26 +742,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             return mHandler;
         }
 
-        @Override   // SurfaceTexture.OnFrameAvailableListener; runs on arbitrary thread
+        @Override
         public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-            synchronized (mStopLock)
-            {
-                if (!mShuttingDown)
-                    mHandler.sendFrameAvailable();
-            }
+            frameAvailable();
         }
 
         @Override
         public void doFrame(long frameTimeNanos) {
-            /*
-            synchronized (mStopLock)
-            {
-                if (!mShuttingDown) {
-                    Choreographer.getInstance().postFrameCallback(this);
-                    mHandler.sendFrameAvailable();
-                }
-            }
-             */
+            //Choreographer.getInstance().postFrameCallback(this);
+            //frameAvailable();
         }
 
         /**
@@ -788,11 +770,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
-         * Handles incoming fram
+         * Handles incoming frame
          */
         private void surfaceTextureAvailable(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
             mFrameAvailableTexture = surfaceTexture.mSurfaceTexture;
-            mFrameAvailableTexture.setOnFrameAvailableListener(this);
+            mFrameAvailableTexture.setOnFrameAvailableListener(this, mHandler);
             Choreographer.getInstance().postFrameCallback(this);
             mShaderDrawer.onSurfaceTextureAvailable(surfaceTexture, width, height);
 
@@ -800,9 +782,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             frameAvailable();
         }
 
-        /**
-         * Handles incoming fram
-         */
         private void surfaceTextureDestroyed() {
             if (mFrameAvailableTexture != null) {
                 mFrameAvailableTexture.setOnFrameAvailableListener(null);
@@ -846,15 +825,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
-         * Sends the "frame available" message.
-         * <p>
-         * Call from UI thread.
-         */
-        public void sendFrameAvailable() {
-            sendMessage(obtainMessage(MSG_FRAME_AVAILABLE));
-        }
-
-        /**
          * Sends the "surface texture available" message
          * <p>
          * Call from UI thread.
@@ -886,9 +856,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             switch (what) {
                 case MSG_SHUTDOWN:
                     renderThread.shutdown();
-                    break;
-                case MSG_FRAME_AVAILABLE:
-                    renderThread.frameAvailable();
                     break;
                 case MSG_SURFACETEXTURE_AVAILABLE:
                     renderThread.surfaceTextureAvailable(msg.arg1, msg.arg2, (PixelBuffer.SurfaceTextureWithSize) msg.obj);
