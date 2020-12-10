@@ -53,11 +53,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define FXAA_REDUCE_MUL   (1.0 / 8.0)
 #define FXAA_SPAN_MAX     8.0
 
+precision mediump float;
+
+
 varying vec2 vTexPosition;
 uniform mediump vec2 TextureSize;
 uniform sampler2D Texture;
 
-vec4 fxaa(vec2 fragCoord) {
+void main() {
 
     vec2 fragCoord = vTexPosition * TextureSize;
     vec2 inverseVP = vec2(1.0) / TextureSize;
@@ -66,7 +69,7 @@ vec4 fxaa(vec2 fragCoord) {
     vec2 rgbSWcoord = (fragCoord + vec2(-1.0, 1.0)) * inverseVP;
     vec2 rgbSEcoord = (fragCoord + vec2(1.0, 1.0)) * inverseVP;
     vec2 rgbMcoord = vTexPosition;
-  
+
     vec4 color;
     vec3 rgbNW = texture2D(Texture, rgbNWcoord).xyz;
     vec3 rgbNE = texture2D(Texture, rgbNEcoord).xyz;
@@ -107,9 +110,5 @@ vec4 fxaa(vec2 fragCoord) {
         color = vec4(rgbA, texColor.a);
     else
         color = vec4(rgbB, texColor.a);
-    return color;
-}
-
-void main() {
-  gl_FragColor = fxaa(gl_FragCoord.xy);
+    gl_FragColor = color;
 }
