@@ -28,6 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -46,11 +47,14 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -425,6 +429,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
             mCurrentVisiblePosition = savedInstanceState.getInt( STATE_SCROLL_TO_POSITION);
         }
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mDrawerLayout.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW));
+            }
+        }, 1000);
 
         // find the retained fragment on activity restarts
         final FragmentManager fm = getSupportFragmentManager();
