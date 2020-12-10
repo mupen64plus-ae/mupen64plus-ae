@@ -4,27 +4,44 @@ import android.content.Context;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
+import org.mupen64plusae.v3.alpha.R;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public enum ShaderLoader {
-    DEFAULT("default"),
-    SCANLINES_SINE_ABS("scanlines-sine-abs"),
-    TEST_PATTERN("test-pattern"),
-    BLUR9X9("blur9x9"),
-    N64_DITHER("n64-dither"),
-    FXAA("fxaa"),
-    CTR_GEOM("crt-geom");
+    DEFAULT("default", R.string.shadersNone_title, R.string.shadersNone_summary),
+    SCANLINES_SINE_ABS("scanlines-sine-abs", R.string.shadersScanlines_title, R.string.shadersScanlines_summary),
+    TEST_PATTERN("test-pattern", R.string.shadersTestPattern_title, R.string.shadersTestPattern_summary),
+    BLUR9X9("blur9x9", R.string.shadersBlur9x9_title, R.string.shadersBlur9x9_summary),
+    N64_DITHER("n64-dither", R.string.shadersN64Dither_title, R.string.shadersN64Dither_summary),
+    FXAA("fxaa", R.string.shadersFxaa_title, R.string.shadersFxaa_summary),
+    CTR_GEOM("crt-geom", R.string.shadersCrtGeom_title, R.string.shadersCrtGeom_summary);
 
     private final String mShaderName;
+    private final int mFriendlyName;
+    private final int mDescription;
     private String mVertCode = null;
     private String mFragCode = null;
 
     static final String TAG = "ShaderLoader";
 
-    ShaderLoader(String shaderName) {
+    ShaderLoader(String shaderName, int friendlyName, int description) {
         mShaderName = shaderName;
+        mFriendlyName = friendlyName;
+        mDescription = description;
+    }
+
+    public String getName() {
+        return mShaderName;
+    }
+
+    public int getFriendlyName() {
+        return mFriendlyName;
+    }
+
+    public int getDescription() {
+        return mDescription;
     }
 
     private void setVertCode(String vertCode) {

@@ -15,23 +15,18 @@ public class ShaderDrawer {
     private static final String TAG = "ShaderDrawer";
     private SurfaceTexture mGameTexture;
     private final ArrayList<Shader> mShaderPasses = new ArrayList<>();
-    private final ArrayList<ShaderLoader> mShadersToLoad = new ArrayList<>();
 
-    public ShaderDrawer(Context context) {
+    public ShaderDrawer(Context context, ArrayList<ShaderLoader> selectedShaders) {
         ShaderLoader.loadShaders(context);
 
-        //mShadersToLoad.add(ShaderLoader.DEFAULT);
-        mShadersToLoad.add(ShaderLoader.FXAA);
-
-        /*
-        mShadersToLoad.add(ShaderLoader.BLUR9X9);
-        mShadersToLoad.add(ShaderLoader.CTR_GEOM);
-        */
-
-        for (int index = 0; index < mShadersToLoad.size(); ++ index) {
+        for (int index = 0; index < selectedShaders.size(); ++ index) {
             boolean first = index == 0;
-            boolean last = index == mShadersToLoad.size() - 1;
-            mShaderPasses.add(new Shader(mShadersToLoad.get(index).getVertCode(), mShadersToLoad.get(index).getFragCode(), first, last));
+            boolean last = index == selectedShaders.size() - 1;
+            mShaderPasses.add(new Shader(selectedShaders.get(index).getVertCode(), selectedShaders.get(index).getFragCode(), first, last));
+        }
+
+        if (mShaderPasses.size() == 0) {
+            mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true, true));
         }
 
     }

@@ -20,8 +20,6 @@
 package paulscode.android.mupen64plusae.preference;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import androidx.fragment.app.FragmentActivity;
@@ -44,7 +42,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.profile.Profile;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class ProfilePreference extends ListPreference implements OnPreferenceDialogListener
 {
     private static final boolean DEFAULT_ALLOW_DISABLE = false;

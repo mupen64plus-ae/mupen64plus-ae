@@ -46,6 +46,7 @@ import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
 import paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen;
@@ -253,6 +254,12 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, DisplayPrefsActivity.class );
         context.startActivity( intent );    
+    }
+
+    static void startShadersPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, ShaderPrefsActivity.class );
+        context.startActivity( intent );
     }
     
     static void startInputPrefsActivity( Context context )

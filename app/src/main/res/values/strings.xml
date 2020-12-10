@@ -202,6 +202,7 @@
     <string name="categoryAngrylion_title">Angrylion RDP Plus settings</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
+    <string name="categoryShaders_title">Shaders</string>
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryTouchscreen_title">Touchscreen</string>
     <string name="categoryInput_title">Input</string>
@@ -266,6 +267,8 @@
     <string name="galleryLibrary">Library</string>
 
     <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
+    <string name="preferenceAdd_title">Add</string>
+    <string name="preferenceRemove_title">Remove</string>
     <string name="gallerySortingMethod_title">Sort</string>
     <string name="gallerySortingMethod_entryRomName">ROM name</string>
     <string name="gallerySortingMethod_entryFileName">File name</string>
@@ -304,7 +307,6 @@
     <string name="displayResolution_entry480x360">480 x 360</string>
     <string name="displayResolution_entry320x240">320 x 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
-    <string name="displayShaderScale_title">Shader scale factor</string>
     <string name="displayScaling_title">Screen scaling</string>
     <string name="displayScaling_entryOriginal">Original\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
@@ -578,6 +580,24 @@
     <string name="displayZoom_title">Zoom</string>
     <string name="displayZoomDefault_title">Use default zoom</string>
     <string name="displayZoomDefault_summary">Uncheck this to specify a custom zoom value for this game</string>
+
+    <string name="shadersScale_title">Shader scale factor</string>
+    <string name="shadersPasses_title">Shader Passes</string>
+    <string name="shadersPass_title">Pass</string>
+    <string name="shadersNone_title">None</string>
+    <string name="shadersNone_summary">No change to game output</string>
+    <string name="shadersScanlines_title">Scan lines</string>
+    <string name="shadersScanlines_summary">Simple scan lines that have low impact on performance.</string>
+    <string name="shadersTestPattern_title">Test Pattern</string>
+    <string name="shadersTestPattern_summary">Test Pattern to see shader effect, no game output will be displayed.</string>
+    <string name="shadersBlur9x9_title">Blur</string>
+    <string name="shadersBlur9x9_summary">Blur effect, this can be expensive in performance.</string>
+    <string name="shadersN64Dither_title">N64 Dither</string>
+    <string name="shadersN64Dither_summary">N64 VI filter approximation, medium performance impact.</string>
+    <string name="shadersFxaa_title">FXAA</string>
+    <string name="shadersFxaa_summary">Fast approximate anti-aliasing, medium performance impact.</string>
+    <string name="shadersCrtGeom_title">CRT Geometry</string>
+    <string name="shadersCrtGeom_summary">Approximates the look of a CRT, this can be expensive in performance.</string>
 
     <string name="audioVolume_title">Audio Volume</string>
     <string name="audioBufferSize_title">Audio Buffer Size</string>

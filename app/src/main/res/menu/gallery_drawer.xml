@@ -18,6 +18,9 @@
                 android:id="@+id/menuItem_categoryDisplay"
                 android:title="@string/categoryDisplay_title"/>
             <item
+                android:id="@+id/menuItem_categoryShaders"
+                android:title="@string/categoryShaders_title"/>
+            <item
                 android:id="@+id/menuItem_categoryAudio"
                 android:title="@string/categoryAudio_title"/>
             <item

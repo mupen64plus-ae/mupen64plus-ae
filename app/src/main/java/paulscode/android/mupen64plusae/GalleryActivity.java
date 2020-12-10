@@ -680,6 +680,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             tagForRefreshNeeded();
             ActivityHelper.startDisplayPrefsActivity( this );
             return true;
+        } else if (item.getItemId() == R.id.menuItem_categoryShaders) {
+            tagForRefreshNeeded();
+            ActivityHelper.startShadersPrefsActivity( this );
+            return true;
         } else if (item.getItemId() == R.id.menuItem_categoryAudio) {
             ActivityHelper.startAudioPrefsActivity( this );
             return true;

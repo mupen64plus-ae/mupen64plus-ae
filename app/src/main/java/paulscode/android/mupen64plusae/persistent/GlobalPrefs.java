@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
@@ -245,6 +246,9 @@ public class GlobalPrefs
     /** Surface scale facor for shaders */
     public final int shaderScaleFactor;
 
+    /** User selected shader passes */
+    private final ArrayList<String> shaderPasses;
+
     /** Display scaling */
     final DisplayScaling displayScaling;
 
@@ -397,6 +401,7 @@ public class GlobalPrefs
     static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     public static final String KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH = "touchscreenCustomSkin";
+    public static final String KEY_SHADER_PASS = "shaderPass";
     public static final String CONTROLLER_PROFILE1 = "controllerProfile1";
     public static final String CONTROLLER_PROFILE2 = "controllerProfile2";
     public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
@@ -518,7 +523,18 @@ public class GlobalPrefs
         // Video prefs
         displayResolution = getSafeInt( mPreferences, "displayResolution", 480 );
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
-        shaderScaleFactor = mPreferences.getInt( "shaderScaleFactor", 2 );
+
+        shaderPasses = new ArrayList<>();
+        String shaderPassesString =  mPreferences.getString( KEY_SHADER_PASS, "" );
+
+        if (!TextUtils.isEmpty(shaderPassesString)) {
+            String[] passesSplitString = shaderPassesString.split(",");
+            Collections.addAll(shaderPasses, passesSplitString);
+        }
+
+        // No need to scale if we are just using the default shader
+        shaderScaleFactor = shaderPasses.size() == 0 ? 1 : mPreferences.getInt( "shaderScaleFactor", 2 );
+
         displayScaling = DisplayScaling.getScaling(mPreferences.getString( "displayScaling", "original" ));
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode_v2", true );
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
@@ -1051,5 +1067,36 @@ public class GlobalPrefs
     int getSurfaceResolutionWidth()
     {
         return videoSurfaceWidthOriginal;
+    }
+
+    public ArrayList<ShaderLoader> getShaderPasses() {
+        ArrayList<ShaderLoader> shaderPassesValues = new ArrayList<>();
+
+        for (int index = 0; index < shaderPasses.size(); ++index) {
+            ShaderLoader selectedShader;
+
+            try {
+                selectedShader = ShaderLoader.valueOf(shaderPasses.get(index));
+            } catch (java.lang.IllegalArgumentException e) {
+                selectedShader = null;
+            }
+
+            if (selectedShader != null) {
+                shaderPassesValues.add(selectedShader);
+            }
+        }
+
+        return shaderPassesValues;
+    }
+
+    public void putShaderPasses(ArrayList<ShaderLoader> shaderPasses) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (ShaderLoader shaderPass : shaderPasses) {
+            sb.append(shaderPass.toString()).append(",");
+        }
+
+        putString(KEY_SHADER_PASS, sb.toString());
     }
 }

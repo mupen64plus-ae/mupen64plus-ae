@@ -859,8 +859,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public int getCurrentSpeed()
     {
-        Log.i("CoreFragment", "getCurrentSpeed");
-
         return mUseCustomSpeed ? mCustomSpeed : BASELINE_SPEED;
     }
 

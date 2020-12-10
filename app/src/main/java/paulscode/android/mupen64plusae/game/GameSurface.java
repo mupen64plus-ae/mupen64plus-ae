@@ -37,11 +37,11 @@ import android.util.Log;
 import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.util.PixelBuffer;
 
@@ -116,6 +116,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     boolean mGlContextStarted = false;
     Context mContext;
     int mShaderScaleFactor = 1;
+    ArrayList<ShaderLoader> mSelectedShaders = null;
 
     private boolean mIsEGLContextReady = false;     // true if the context is ready
 
@@ -187,7 +188,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         Log.i(TAG, "StartGlContext");
 
         if (mSurfaceAvailable && !mGlContextStarted) {
-            mShaderDrawer = new ShaderDrawer(mContext);
+            mShaderDrawer = new ShaderDrawer(mContext, mSelectedShaders);
             mRenderThread = new RenderThread();
             mRenderThread.setName("Render thread");
             mRenderThread.start();
@@ -232,6 +233,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
     public void setShaderScaleFactor(int shaderScale) {
         mShaderScaleFactor = shaderScale;
+    }
+
+    public void setSelectedShader(ArrayList<ShaderLoader> selectedShaders) {
+        mSelectedShaders = selectedShaders;
     }
 
     /**

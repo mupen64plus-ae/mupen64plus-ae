@@ -159,6 +159,7 @@
     <string name="categoryGlide64_title">Opciones del plugin Glide64</string>
     <string name="categoryLibrary_title">Biblioteca</string>
     <string name="categoryDisplay_title">Pantalla</string>
+    <string name="categoryShaders_title">Efectos</string>
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryTouchscreen_title">Pantalla táctil</string>
     <string name="categoryInput_title">Entrada</string>
@@ -220,6 +221,8 @@
     <string name="galleryRecentlyPlayed">Jugado Reciente</string>
     <string name="galleryLibrary">Biblioteca de Juegos</string>
     <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+    <string name="preferenceAdd_title">Agregar</string>
+    <string name="preferenceRemove_title">Quitar</string>
     <string name="gallerySortingMethod_title">Orden</string>
     <string name="gallerySortingMethod_entryRomName">Nombre de ROM</string>
     <string name="gallerySortingMethod_entryFileName">Nombre de archivo</string>
@@ -248,7 +251,6 @@
     <string name="displayResolution_entry480x360">480 X 360</string>
     <string name="displayResolution_entry320x240">320 X 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (mayor FPS)</string>
-    <string name="displayShaderScale_title">Factor de escala de efectos</string>
     <string name="displayScaling_title">Tamaño de la pantalla</string>
     <string name="displayScaling_entryOriginal">Original\n<small>LLenar la pantalla, sin distortion (agrega barras negras)</small></string>
     <string name="displayScaling_entryStretch">Estirar\n<small>Rellena la pantalla, sin barras negras (agrega distorsión)</small></string>
@@ -434,6 +436,24 @@
     <string name="displayZoom_title">Zoom</string>
     <string name="displayZoomDefault_title">Utilizar zoom predeterminado</string>
     <string name="displayZoomDefault_summary">Desactive esta opción para especificar un zoom personalizado para este juego</string>
+
+    <string name="shadersScale_title">Factor de escala de efectos</string>
+    <string name="shadersPasses_title">Pasos de efectos</string>
+    <string name="shadersPass_title">Paso</string>
+    <string name="shadersNone_title">Sin cambios</string>
+    <string name="shadersNone_summary">Sin cambios en la apariencia del juego.</string>
+    <string name="shadersScanlines_title">Línea de exploración</string>
+    <string name="shadersScanlines_summary">Líneas de exploración simples que tienen un bajo impacto en el rendimiento.</string>
+    <string name="shadersTestPattern_title">Patrón de prueba</string>
+    <string name="shadersTestPattern_summary">Patrón de prueba para ver efectos, el juego no se verá.</string>
+    <string name="shadersBlur9x9_title">Difuminar</string>
+    <string name="shadersBlur9x9_summary">Efecto de Difuminar, esto tiene un gran impacto en el rendimientoe.</string>
+    <string name="shadersN64Dither_title">Tramado de N64</string>
+    <string name="shadersN64Dither_summary">Aproximación del filtro N64 VI, impacto de rendimiento medio.</string>
+    <string name="shadersFxaa_title">FXAA</string>
+    <string name="shadersFxaa_summary">Anti-aliasing rápido aproximado, impacto de rendimiento medio.</string>
+    <string name="shadersCrtGeom_title">Geometría CRT</string>
+    <string name="shadersCrtGeom_summary">Se aproxima al aspecto de un CRT, esto puede tener un rendimiento costoso.</string>
 
     <string name="audioVolume_title">Volumen de Audio</string>
     <string name="audioBufferSize_title">Tamaño del Búfer de Audio</string>

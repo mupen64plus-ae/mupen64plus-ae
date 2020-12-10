@@ -337,6 +337,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSurface.setLayoutParams( params );
         mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*mGlobalPrefs.shaderScaleFactor,
                 mGamePrefs.videoRenderHeight*mGlobalPrefs.shaderScaleFactor);
+
+        mGameSurface.setSelectedShader(mGlobalPrefs.getShaderPasses());
         mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
 
         if (savedInstanceState == null)
@@ -424,7 +426,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             float shaderFps = mGameSurface.getFps();
 
-            int fps = 0;
+            int fps;
             if ( mCoreFragment.getCurrentSpeed() == CoreFragment.BASELINE_SPEED) {
                 fps = Math.min((int)shaderFps, newValue);
             } else {
