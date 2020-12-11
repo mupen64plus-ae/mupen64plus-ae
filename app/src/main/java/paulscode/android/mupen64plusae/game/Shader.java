@@ -3,6 +3,7 @@ package paulscode.android.mupen64plusae.game;
 
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -150,9 +151,20 @@ public class Shader {
         GLES20.glShaderSource(vertexShader, vertexShaderText);
         GLES20.glCompileShader(vertexShader);
 
+        int[] params = new int[1];
+        GLES20.glGetShaderiv(vertexShader, GLES20.GL_COMPILE_STATUS, params, 0);
+        if (params[0] == GLES20.GL_FALSE) {
+            Log.e("Shader", "Vertex Compilation error:\n" + GLES20.glGetShaderInfoLog(vertexShader));
+        }
+
         int fragmentShader = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
         GLES20.glShaderSource(fragmentShader, fragmentShaderText);
         GLES20.glCompileShader(fragmentShader);
+
+        GLES20.glGetShaderiv(fragmentShader, GLES20.GL_COMPILE_STATUS, params, 0);
+        if (params[0] == GLES20.GL_FALSE) {
+            Log.e("Shader", "Fragment Compilation error:\n" + GLES20.glGetShaderInfoLog(fragmentShader));
+        }
 
         program = GLES20.glCreateProgram();
         GLES20.glAttachShader(program, vertexShader);
