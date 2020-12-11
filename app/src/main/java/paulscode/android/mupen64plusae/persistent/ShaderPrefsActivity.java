@@ -25,7 +25,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
@@ -81,8 +80,6 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_shader);
-
-        Log.e("ShaderPrefs", "onCreate");
     }
 
     @Override
@@ -160,8 +157,6 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     @Override
     protected void OnPreferenceScreenChange(String key)
     {
-
-        PreferenceGroup screenRoot = (PreferenceGroup) findPreference(SCREEN_ROOT);
         mCategoryPasses = (PreferenceGroup) findPreference( CATEGORY_PASSES );
 
         PrefUtil.setOnPreferenceClickListener(this, ADD_PREFERENCE, this);
@@ -190,14 +185,15 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     }
 
     public void addShaderPass(ShaderLoader shader, int shaderPass) {
-
         if (mCategoryPasses != null) {
             ShaderPreference preference = new ShaderPreference(getPreferenceManagerContext());
-            preference.setKey(SHADER_PASS_KEY + shaderPass);
+            String key = SHADER_PASS_KEY + shaderPass;
+            preference.setKey(key);
             preference.populateShaderOptions(this);
             String title = getString(R.string.shadersPass_title) + " " + shaderPass;
             preference.setTitle(title);
             preference.setSummary(shader.getFriendlyName());
+            preference.setValue(shader.toString());
             preference.setOnRemoveCallback(this);
 
             mCategoryPasses.addPreference(preference);
@@ -206,7 +202,6 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
 
     @Override
     public void onRemove(String key) {
-
         String[] currentPassSplitString = key.split(",");
 
         if (currentPassSplitString.length == 2) {
