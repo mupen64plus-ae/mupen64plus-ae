@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
@@ -70,6 +71,8 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.i("Shader", "onCreate");
+
         super.onCreate(savedInstanceState);
 
         // Get app data and user preferences
@@ -93,15 +96,18 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     @Override
     protected void onResume()
     {
+        Log.i("Shader", "onResume");
+
         super.onResume();
         // Just refresh the preference screens in place
-        refreshViews();
         mPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
+        Log.i("Shader", "onSharedPreferenceChanged");
+
         ArrayList<ShaderLoader> shaderPasses = mGlobalPrefs.getShaderPasses();
 
         if (key.startsWith(SHADER_PASS_KEY)) {
@@ -131,6 +137,8 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
 
     private void refreshViews()
     {
+        Log.i("Shader", "refreshViews");
+
         // Refresh the preferences object
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
         PreferenceGroup screenRoot = (PreferenceGroup) findPreference(SCREEN_ROOT);
@@ -147,20 +155,27 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
         }
 
         // If there are no shaders, then remove the category
-        if (shaderPasses.isEmpty()) {
-            screenRoot.removePreference(mCategoryPasses);
-        } else if (categoryPasses == null) {
-            screenRoot.addPreference(mCategoryPasses);
+        if (mCategoryPasses != null) {
+            if (shaderPasses.isEmpty()) {
+                screenRoot.removePreference(mCategoryPasses);
+            } else if (categoryPasses == null) {
+                screenRoot.addPreference(mCategoryPasses);
+            }
         }
     }
 
     @Override
     protected void OnPreferenceScreenChange(String key)
     {
+        Log.i("Shader", "OnPreferenceScreenChange");
         mCategoryPasses = (PreferenceGroup) findPreference( CATEGORY_PASSES );
 
-        PrefUtil.setOnPreferenceClickListener(this, ADD_PREFERENCE, this);
-        refreshViews();
+        if (mCategoryPasses == null) {
+            resetPreferences();
+        } else {
+            PrefUtil.setOnPreferenceClickListener(this, ADD_PREFERENCE, this);
+            refreshViews();
+        }
     }
 
     @Override
