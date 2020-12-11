@@ -492,14 +492,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Set cheats screen summary text
         mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );
 
-        // This is null when entering sub screens other than "SCREEN_CHEATS"
-        if(mScreenCheats != null)
-        {
-            mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
-                    ? R.string.screenCheats_summaryEnabled
-                    : R.string.screenCheats_summaryDisabled );
-        }
-
         // Enable/disable player map item as necessary
         PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP,
                 mGamePrefs.playerMap.isEnabled() && !mGamePrefs.useDefaultPlayerMapping );
@@ -551,65 +543,58 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
             mCategoryCheats.removeAll();
 
-            if (mGamePrefs.isCheatOptionsShown)
+            if (mCategoryCheats.getPreferenceCount() == 0 || mClearCheats)
             {
-                if (mCategoryCheats.getPreferenceCount() == 0 || mClearCheats)
+                // Layout the menu, populating it with appropriate cheat options
+                for (final Cheat cheat : cheats)
                 {
-                    // Layout the menu, populating it with appropriate cheat options
-                    for (final Cheat cheat : cheats)
+                    // Get the short title of the cheat (shown in the menu)
+                    String title;
+                    if( cheat.name == null )
                     {
-                        // Get the short title of the cheat (shown in the menu)
-                        String title;
-                        if( cheat.name == null )
-                        {
-                            // Title not available, just use a default string for the menu
-                            title = getString( R.string.cheats_defaultName, cheat.cheatIndex );
-                        }
-                        else
-                        {
-                            // Title available, remove the leading/trailing quotation marks
-                            title = cheat.name;
-                        }
-                        final String notes = cheat.desc;
-                        final String options = cheat.option;
-                        String[] optionStrings = null;
-                        if( !TextUtils.isEmpty( options ) )
-                        {
-                            optionStrings = options.split( "\n" );
-                        }
-
-                        // Create the menu item associated with this cheat
-                        final CheatPreference pref = new CheatPreference( getPreferenceManagerContext(),
-                                cheat.cheatIndex, title, notes, optionStrings );
-
-                        //We store the cheat index in the key as a string
-                        final String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
-                        pref.setKey( key );
-
-                        // Add the preference menu item to the cheats category
-                        mCategoryCheats.addPreference( pref );
-
-                        // We reset if the list was changed by the user
-                        if (mClearCheats)
-                        {
-                            pref.onOptionChoice(0);
-                        }
+                        // Title not available, just use a default string for the menu
+                        title = getString( R.string.cheats_defaultName, cheat.cheatIndex );
+                    }
+                    else
+                    {
+                        // Title available, remove the leading/trailing quotation marks
+                        title = cheat.name;
+                    }
+                    final String notes = cheat.desc;
+                    final String options = cheat.option;
+                    String[] optionStrings = null;
+                    if( !TextUtils.isEmpty( options ) )
+                    {
+                        optionStrings = options.split( "\n" );
                     }
 
-                    mScreenCheats.addPreference( mCategoryCheats );
+                    // Create the menu item associated with this cheat
+                    final CheatPreference pref = new CheatPreference( getPreferenceManagerContext(),
+                            cheat.cheatIndex, title, notes, optionStrings );
 
-                    if(mClearCheats)
+                    //We store the cheat index in the key as a string
+                    final String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
+                    pref.setKey( key );
+
+                    // Add the preference menu item to the cheats category
+                    mCategoryCheats.addPreference( pref );
+
+                    // We reset if the list was changed by the user
+                    if (mClearCheats)
                     {
-                        //Reset this to false if it was set
-                        mPrefs.edit().apply();
-
-                        mClearCheats = false;
+                        pref.onOptionChoice(0);
                     }
                 }
-            }
-            else
-            {
-                mScreenCheats.removePreference(mCategoryCheats);
+
+                mScreenCheats.addPreference( mCategoryCheats );
+
+                if(mClearCheats)
+                {
+                    //Reset this to false if it was set
+                    mPrefs.edit().apply();
+
+                    mClearCheats = false;
+                }
             }
         });
     }
