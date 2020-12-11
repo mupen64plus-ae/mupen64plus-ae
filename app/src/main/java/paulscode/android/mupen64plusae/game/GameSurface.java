@@ -541,9 +541,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 Log.e( TAG, EGL_BIND_FAIL );
                 return false;
             }
-
+            
             // Disable vsync for minimum latency
-            EGL14.eglSwapInterval(mEglDisplay, 0);
+            EGL14.eglSwapInterval(mEglDisplay, ShaderLoader.needsVsync(mSelectedShaders) ? 1 : 0);
 
             Log.v( TAG, EGL_BIND );
             return true;
@@ -754,8 +754,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
         @Override
         public void doFrame(long frameTimeNanos) {
-            //Choreographer.getInstance().postFrameCallback(this);
-            //frameAvailable();
+            Choreographer.getInstance().postFrameCallback(this);
+            frameAvailable();
         }
 
         /**
@@ -779,8 +779,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
          */
         private void surfaceTextureAvailable(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
             mFrameAvailableTexture = surfaceTexture.mSurfaceTexture;
-            mFrameAvailableTexture.setOnFrameAvailableListener(this, mHandler);
-            Choreographer.getInstance().postFrameCallback(this);
+            if(ShaderLoader.needsVsync(mSelectedShaders)) {
+                Choreographer.getInstance().postFrameCallback(this);
+            } else {
+                mFrameAvailableTexture.setOnFrameAvailableListener(this, mHandler);
+            }
+
             mShaderDrawer.onSurfaceTextureAvailable(surfaceTexture, width, height);
 
             // Draw a single frame to prevent a black screen on rotation while game is paused
