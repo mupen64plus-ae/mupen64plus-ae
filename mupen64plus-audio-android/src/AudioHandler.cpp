@@ -146,6 +146,7 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 	if (mOutStream == nullptr || mOutStream->getState() != oboe::StreamState::Started) {
 
 		if (failedToStartCount++ == 100) {
+			mForceSles = 1;
 			initializeAudio(mInputFreq);
 			DebugMessage(M64MSG_WARNING, "Reinitializing audio");
 			failedToStartCount = 0;
