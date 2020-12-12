@@ -607,7 +607,7 @@ public class GlobalPrefs
                 break;
         }
 
-        enableBlitScreenWorkaround = mPreferences.getBoolean( "enableBlitScreenWorkaround", false );
+        enableBlitScreenWorkaround = false;
         threadedGLideN64 = mPreferences.getBoolean( "threadedGLideN64", true );
         hybridTextureFilterGLideN64 = mPreferences.getBoolean( "hybridTextureFilter_v2", true );
 
