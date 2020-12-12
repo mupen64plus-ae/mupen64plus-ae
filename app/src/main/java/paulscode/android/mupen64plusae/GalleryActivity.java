@@ -446,6 +446,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
 
+        //DisplayWrapper.enableEdgeToEdge(this, mDrawerLayout);
+
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
         loadGameFromExtras(extras);

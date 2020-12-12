@@ -57,6 +57,13 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="MupenTheme_DarkFullScreen" parent="Theme.AppCompat.NoActionBar">
+        <!-- Optional, if drawing behind the status bar too -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
     <style name="MupenTheme_Dark_Sidebar" parent="MupenTheme_Dark">
         <item name="android:background">@color/mupen_black</item>
         <item name="android:textColor">@color/mupen_white</item>
