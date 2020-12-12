@@ -261,6 +261,26 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         super.onCreate( savedInstanceState );
 
+        if( savedInstanceState != null )
+        {
+            mSelectedItem = null;
+            final String sideBarMd5 = savedInstanceState.getString( STATE_SIDEBAR );
+            if( sideBarMd5 != null )
+            {
+                mSelectedItem = new GalleryItem(this, sideBarMd5, null, null,
+                        CountryCode.DEMO, null, null, null, null, null, 0, 0.0f);
+            }
+
+            final String query = savedInstanceState.getString( STATE_QUERY );
+            if( query != null )
+                mSearchQuery = query;
+
+            mPathToDelete = savedInstanceState.getString( STATE_FILE_TO_DELETE );
+            mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
+            mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
+            mCurrentVisiblePosition = savedInstanceState.getInt( STATE_SCROLL_TO_POSITION);
+        }
+
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -299,9 +319,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     }
             );
         }
-
-        // Don't call the async version otherwise the scroll position is lost
-        refreshGrid();
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         final Toolbar toolbar = findViewById( R.id.toolbar );
@@ -410,26 +427,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
 
-        if( savedInstanceState != null )
-        {
-            mSelectedItem = null;
-            final String sideBarMd5 = savedInstanceState.getString( STATE_SIDEBAR );
-            if( sideBarMd5 != null )
-            {
-                mSelectedItem = new GalleryItem(this, sideBarMd5, null, null,
-                        CountryCode.DEMO, null, null, null, null, null, 0, 0.0f);
-            }
-
-            final String query = savedInstanceState.getString( STATE_QUERY );
-            if( query != null )
-                mSearchQuery = query;
-
-            mPathToDelete = savedInstanceState.getString( STATE_FILE_TO_DELETE );
-            mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
-            mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
-            mCurrentVisiblePosition = savedInstanceState.getInt( STATE_SCROLL_TO_POSITION);
-        }
-
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mDrawerLayout.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW));
@@ -445,6 +442,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mCacheRomInfoFragment = new ScanRomsFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
+
+        // Don't call the async version otherwise the scroll position is lost
+        refreshGrid();
 
         //DisplayWrapper.enableEdgeToEdge(this, mDrawerLayout);
 
