@@ -13,4 +13,7 @@ public interface AndroidAudioLibrary extends Library {
 
     // Notify that emulation has been resumed
     void resumeEmulator();
+
+    // Change volume
+    void setVolume(int volume);
 }

@@ -253,8 +253,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
-        //Resume to allow save to take place
-        resumeEmulator();
         Log.i(TAG, "Saving file: " + latestSave);
 
         if (shutdownOnFinish)
@@ -264,7 +262,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
 
             mIsShuttingDown = true;
+
+            mCoreInterface.setVolume(0);
         }
+
+        //Resume to allow save to take place
+        resumeEmulator();
 
         CoreInterface.OnStateCallbackListener saveComplete = new CoreInterface.OnStateCallbackListener() {
             @Override

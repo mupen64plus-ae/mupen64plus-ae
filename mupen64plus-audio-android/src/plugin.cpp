@@ -488,3 +488,7 @@ extern "C" EXPORT void pauseEmulator(void) {
 extern "C" EXPORT void CALL resumeEmulator(void) {
 	AudioHandler::get().resumePlayback();
 }
+
+extern "C" EXPORT void CALL setVolume(int volume) {
+	AudioHandler::get().setVolume(volume);
+}

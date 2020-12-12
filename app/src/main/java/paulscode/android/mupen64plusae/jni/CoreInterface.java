@@ -652,6 +652,14 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PAUSE.ordinal(), 0, parameter);
     }
 
+    void setVolume(int volume) {
+        if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID) {
+            mAndroidAudioLibrary.setVolume(volume);
+        } else if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID_FP) {
+            mAndroidAudioLibraryFp.setVolume(volume);
+        }
+    }
+
     void emuAdvanceFrame()
     {
         mAeBridgeLibrary.resumeEmulator();
