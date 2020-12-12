@@ -192,7 +192,8 @@ public class GLideN64Prefs {
         enableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
         forceDepthBufferClear = emulationProfile.get( "ForceDepthBufferClear", "False" ).equals( "True" );
 
-        fxaa = emulationProfile.get( "FXAA", "False" ).equals( "True" );
+        // This can be set through post processing shaders now
+        fxaa = false;
 
         enableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
         useNativeResolutionFactor = enableNativeResTexrects ?
