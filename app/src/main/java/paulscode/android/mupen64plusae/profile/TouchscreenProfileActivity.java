@@ -194,6 +194,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
 
         //Always show FPS
         enableFps();
+
+        hideSystemBars();
     }
     
     private void refresh()

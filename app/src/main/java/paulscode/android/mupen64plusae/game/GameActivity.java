@@ -416,7 +416,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mHandler.postDelayed(mPeriodicChecker, 500);
-
+        
+        hideSystemBars();
     }
 
     @Override
