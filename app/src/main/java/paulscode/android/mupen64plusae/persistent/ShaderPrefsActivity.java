@@ -225,8 +225,8 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
 
             if (changedPass >= 0 && changedPass < shaderPasses.size()) {
                 shaderPasses.remove(changedPass);
+                mPrefs.edit().remove(key).apply();
                 mGlobalPrefs.putShaderPasses(shaderPasses);
-                mPrefs.edit().putString(key, "").apply();
 
                 refreshViews();
             }

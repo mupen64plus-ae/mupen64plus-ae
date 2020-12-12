@@ -521,7 +521,7 @@ void AudioHandler::setSamplingRateSelection(int _samplingRateSelection) {
 }
 
 void AudioHandler::setVolume(int _volume) {
-	DebugMessage(M64MSG_ERROR, "Change volume to %d", _volume);
+	DebugMessage(M64MSG_INFO, "Change volume to %d", _volume);
 	mVolume = _volume;
 }
 
