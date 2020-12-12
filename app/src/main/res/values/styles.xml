@@ -54,7 +54,7 @@
     <style name="MupenTheme_Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:navigationBarColor">@color/mupen_black</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">17sp</item>
     </style>
 
     <style name="MupenTheme_DarkFullScreen" parent="Theme.AppCompat.NoActionBar">
