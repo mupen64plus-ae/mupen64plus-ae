@@ -11,14 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-
-        <android.view.SurfaceView
-            android:id="@+id/gameSurface"
+        
+        <paulscode.android.mupen64plusae.game.GameSurface
+            android:id="@+id/shaderSurface"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false" />
-
         <paulscode.android.mupen64plusae.game.GameOverlay
             android:id="@+id/gameOverlay"
             android:layout_width="match_parent"
