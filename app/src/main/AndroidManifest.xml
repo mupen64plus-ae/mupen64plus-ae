@@ -180,7 +180,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity"
             android:exported="false"
             android:label="@string/ManageControllerProfilesActivity_title"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.ManageControllerProfilesActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -190,7 +190,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
             android:exported="false"
             android:label="@string/ControllerProfileActivity_title"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.ControllerProfileActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -200,7 +200,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen"
             android:exported="false"
             android:label="@string/ControllerProfileActivity_title"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.ControllerProfileActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -210,7 +210,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity"
             android:exported="false"
             android:label="@string/ManageEmulationProfilesActivity_title"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.ManageEmulationProfilesActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -230,7 +230,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity"
             android:exported="false"
             android:label="@string/ManageTouchscreenProfilesActivity_title"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.ManageTouchscreenProfilesActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -281,7 +281,7 @@
             android:exported="false"
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
-            android:theme="@style/Theme.AppCompat.Black"
+            android:theme="@style/Theme.Mupen64plusaeTheme"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <activity
             android:name="paulscode.android.mupen64plusae.ImportExportActivity"

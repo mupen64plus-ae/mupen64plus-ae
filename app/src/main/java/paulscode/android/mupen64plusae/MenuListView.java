@@ -305,7 +305,7 @@ public class MenuListView extends ExpandableListView
                 }
 
                 icon.setImageDrawable( item.getIcon() );
-                TextViewCompat.setTextAppearance(text1, R.style.darkParentMenuItem);
+                TextViewCompat.setTextAppearance(text1, R.style.Theme_Mupen64plusaeTheme);
 
                 if( item.getSubMenu() == null )
                     indicator.setImageResource( 0x0 );

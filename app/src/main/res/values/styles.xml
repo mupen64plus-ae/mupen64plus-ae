@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="appTheme" parent="@android:style/Theme.Holo">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
@@ -10,12 +10,14 @@
     <style name="Theme.AppCompat.Black">
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="android:navigationBarColor">@color/mupen_black</item>
     </style>
 
     <style name="Theme.AppCompat.Black.OverlayActionBar">
         <item name="windowActionBarOverlay">true</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="android:navigationBarColor">@color/mupen_black</item>
     </style>
 
     <style name="btnMappable" parent="@android:style/Widget.Button">
@@ -52,6 +54,7 @@
     <style name="MupenTheme_Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:navigationBarColor">@color/mupen_black</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="MupenTheme_Dark_Sidebar" parent="MupenTheme_Dark">
@@ -61,22 +64,10 @@
         <item name="android:divider">@drawable/divider_parent</item>
         <item name="android:childDivider">@drawable/divider_menu</item>
         <item name="android:scrollbars">none</item>
+        <item name="android:navigationBarColor">@color/mupen_black</item>
     </style>
 
-    <style name="Theme.Mupen64plusaeTheme" parent="Theme.AppCompat">
-        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <item name="android:colorBackground">#ff252525</item>8==
-        <item name="android:divider">@drawable/divider_parent</item>
-        <item name="android:childDivider">@drawable/divider_menu</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textColor">#ffefefef</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:textSize">16sp</item>-->
-    </style>
-
-    <style name="darkParentMenuItem" parent="Theme.Mupen64plusaeTheme">
-        <!--<item name="android:textAllCaps">true</item>
-        <item name="android:textSize">15sp</item>-->
+    <style name="Theme.Mupen64plusaeTheme" parent="MupenTheme_Dark">
     </style>
 
 </resources>
