@@ -468,7 +468,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         // Create EGL rendering context
         if( forceCreate || mEglContext == null || mEglContext == EGL14.EGL_NO_CONTEXT )
         {
-            final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
             int[] contextAttrs;
 
             if(mFullOpenGL)
@@ -478,7 +477,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             else
             {
                 contextAttrs = new int[] {
-                        EGL_CONTEXT_CLIENT_VERSION,
+                        EGL14.EGL_CONTEXT_CLIENT_VERSION,
                         glMajorVersion,
                         EGL14.EGL_NONE };
             }
