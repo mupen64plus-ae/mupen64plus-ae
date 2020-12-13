@@ -691,6 +691,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
             if (createGLContext(2, false)) {
                 Looper.loop();
+            // Try a seecond time
+            } else if (createGLContext(2, true)) {
+                Looper.loop();
             }
 
             if (!destroyGLContext()) {
