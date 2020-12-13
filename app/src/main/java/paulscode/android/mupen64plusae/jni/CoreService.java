@@ -511,7 +511,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 copyGameContentsFromSdCard();
             }
 
-            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData, mVideoRenderWidth, mVideoRenderHeight)) {
+            if(!NativeConfigFiles.syncConfigFiles( getApplicationContext(), mGamePrefs, mGlobalPrefs, mAppData, mVideoRenderWidth, mVideoRenderHeight)) {
                 //Stop the service
                 forceExit();
                 return;

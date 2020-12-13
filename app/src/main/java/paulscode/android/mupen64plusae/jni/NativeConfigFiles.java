@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -57,7 +58,7 @@ class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    static boolean syncConfigFiles(GamePrefs game, GlobalPrefs global, AppData appData, int renderWidth, int renderHeight)
+    static boolean syncConfigFiles(Context context, GamePrefs game, GlobalPrefs global, AppData appData, int renderWidth, int renderHeight)
     {
         //@formatter:off
 
@@ -208,7 +209,7 @@ class NativeConfigFiles
         readHiResSettings(game, global);
 
         // gln64 config file
-        final ConfigFile glideN64_conf = new ConfigFile( appData.glideN64_conf );
+        final ConfigFile glideN64_conf = new ConfigFile(context, appData.glideN64_conf);
 
         mupen64plus_cfg.put( "Video-GLideN64", "configVersion", String.valueOf(GLideN64Prefs.VERSION) );
 

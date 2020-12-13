@@ -386,7 +386,7 @@ public class AppData
 
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
-        glideN64_conf = coreSharedDataDir + "/GLideN64.custom.ini";
+        glideN64_conf = "mupen64plus_data/GLideN64.custom.ini";
         mupen64plus_test_rom_v64 = "mupen64plus_data/m64p_test_rom.v64";
         mupencheat_default = coreSharedDataDir + "/mupencheat.default";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
