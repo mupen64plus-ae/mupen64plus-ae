@@ -20,12 +20,17 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The Image class provides a simple interface to common image manipulation methods.
@@ -46,15 +51,30 @@ public final class Image
     
     /**
      * Constructor: Loads an image file and sets the initial properties.
-     * 
+     * @param context Context used for asset manager, if null then filename will be treated
+     *                as a path
      * @param res
      *            A handle to the app resources.
      * @param filename
      *            The path to the image file.
      */
-    public Image( Resources res, String filename )
+    public Image(Context context, Resources res, String filename )
     {
-        image = BitmapFactory.decodeFile( filename );
+        Bitmap bitmap;
+        if (context != null) {
+            try {
+                InputStream inputStream = context.getAssets().open(filename);
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            }
+            catch(IOException ex) {
+                bitmap = null;
+            }
+        } else {
+            bitmap = BitmapFactory.decodeFile( filename );
+        }
+
+        image = bitmap;
+
         drawable = new BitmapDrawable( res, image );
         
         if( image == null )

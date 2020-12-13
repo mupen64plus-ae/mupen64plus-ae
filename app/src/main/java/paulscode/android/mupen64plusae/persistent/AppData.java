@@ -381,7 +381,7 @@ public class AppData
         gameDataDir = context.getFilesDir().getAbsolutePath() + "/GameData";
 
         coreSharedDataDir = context.getFilesDir().getAbsolutePath();
-        touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
+        touchscreenSkinsDir = "mupen64plus_data/skins/touchscreen/";
         String profilesDir = coreSharedDataDir + "/profiles";
 
         gln64_conf = coreSharedDataDir + "/gln64.conf";

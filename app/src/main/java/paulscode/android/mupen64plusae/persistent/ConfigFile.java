@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -30,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +70,9 @@ public class ConfigFile
     
     /** Sections mapped by title for easy lookup, with insertion order retained. */
     private final LinkedHashMap<String, ConfigSection> mConfigMap;
+
+    /** True if the file was read using a context */
+    private boolean mReadUsingContext = false;
     
     /**
      * Reads the entire config file, and saves the data to internal collections for manipulation.
@@ -78,9 +83,25 @@ public class ConfigFile
     {
         mFilename = filename;
         mConfigMap = new LinkedHashMap<>();
-        reload();
+        reload(null);
     }
-    
+
+    /**
+     * Reads the entire config file, and saves the data to internal collections for manipulation.
+     * When reading a file using a context, the file will be read only.
+     *
+     * @param context Context to read from assets
+     * @param filename The config file to read from.
+     */
+    public ConfigFile(Context context, String filename )
+    {
+        mFilename = filename;
+        mConfigMap = new LinkedHashMap<>();
+        reload(context);
+        mReadUsingContext = context != null;
+    }
+
+
     /**
      * Looks up a config section by its title.
      * 
@@ -156,6 +177,17 @@ public class ConfigFile
     {
         mConfigMap.clear();
     }
+
+    /**
+     * Re-loads the entire config file, overwriting any unsaved changes, and saves the data in
+     * 'configMap'.
+     *
+     * @return True if successful.
+     * @see #save()
+     */
+    public boolean reload() {
+        return reload(null);
+    }
     
     /**
      * Re-loads the entire config file, overwriting any unsaved changes, and saves the data in
@@ -164,24 +196,37 @@ public class ConfigFile
      * @return True if successful.
      * @see #save()
      */
-    public synchronized boolean reload()
+    private synchronized boolean reload(Context context)
     {
+        if (mReadUsingContext) {
+            return false;
+        }
+
         // Make sure a file was actually specified
         if( TextUtils.isEmpty( mFilename ) )
             return false;
         
         // Free any previously loaded data
         clear();
-        
-        FileInputStream fstream;
-        try
-        {
-            fstream = new FileInputStream( mFilename );
-        }
-        catch( FileNotFoundException fnfe )
-        {
-            // File not found... we can't continue
-            return false;
+
+        InputStream fstream;
+
+        if (context == null) {
+            try
+            {
+                fstream = new FileInputStream( mFilename );
+            }
+            catch( FileNotFoundException fnfe )
+            {
+                // File not found... we can't continue
+                return false;
+            }
+        } else {
+            try {
+                fstream = context.getAssets().open(mFilename);
+            } catch (IOException|NullPointerException e) {
+                return false;
+            }
         }
         
         DataInputStream in = new DataInputStream( fstream );
@@ -275,9 +320,9 @@ public class ConfigFile
     public static class ConfigSection
     {
         public String name; // Section name
-        private HashMap<String, ConfigParameter> parameters; // Parameters sorted by name for easy
+        private final HashMap<String, ConfigParameter> parameters; // Parameters sorted by name for easy
                                                              // lookup
-        private LinkedList<ConfigLine> lines; // All the lines in this section, including comments
+        private final LinkedList<ConfigLine> lines; // All the lines in this section, including comments
         
         // Name of the next section, or null if there are no sections left to read in the file:
         private String nextName = null;
@@ -328,10 +373,10 @@ public class ConfigFile
                 {
                     strLine = fullLine.trim();
                     if( ( strLine.length() < 1 )
-                            || ( strLine.substring( 0, 1 ).equals( "#" ) )
-                            || ( strLine.substring( 0, 1 ).equals( ";" ) )
-                            || ( ( strLine.length() > 1 ) && ( strLine.substring( 0, 2 )
-                                    .equals( "//" ) ) ) )
+                            || ( strLine.startsWith( "#" ) )
+                            || ( strLine.startsWith( ";" ) )
+                            || ( ( strLine.length() > 1 ) && ( strLine
+                                    .startsWith( "//" ) ) ) )
                     
                     { // A comment or blank line.
                         lines.add( new ConfigLine( ConfigLine.LINE_GARBAGE, fullLine + "\n", null ) );
@@ -571,7 +616,7 @@ public class ConfigFile
      */
     private static class ConfigParameter
     {
-        @SuppressWarnings( "unused" )
+        @SuppressWarnings({"unused", "RedundantSuppression"})
         public String parameter;
         public String value;
         

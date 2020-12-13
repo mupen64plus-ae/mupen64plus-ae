@@ -219,6 +219,9 @@ public class GlobalPrefs
     /** The directory of the selected touchscreen skin. */
     public final String touchscreenSkinPath;
 
+    /** True if we are using a custom touchscreen skin */
+    public final boolean isCustomTouchscreenSkin;
+
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
 
@@ -515,7 +518,8 @@ public class GlobalPrefs
         isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative_global", false );
         // Determine the touchscreen layout
         touchscreenSkin = mPreferences.getString( "touchscreenSkin", "JoshaGibs" );
-        if( touchscreenSkin.equals( "Custom" ) )
+        isCustomTouchscreenSkin = touchscreenSkin.equals( "Custom" );
+        if(isCustomTouchscreenSkin)
             touchscreenSkinPath = touchscreenCustomSkinsDir;
         else
             touchscreenSkinPath = appData.touchscreenSkinsDir + touchscreenSkin;

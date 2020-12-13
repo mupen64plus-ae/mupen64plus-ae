@@ -20,11 +20,13 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import paulscode.android.mupen64plusae.game.GameOverlay;
@@ -138,17 +140,14 @@ public class VisibleTouchMap extends TouchMap
         mFpsTextX = mFpsTextY = 50;
         mFpsValue = 0;
         mFpsDigits.clear();
-        for( int i = 0; i < mNumerals.length; i++ )
-            mNumerals[i] = null;
+        Arrays.fill(mNumerals, null);
         for( int i = 0; i < autoHoldImages.length; i++ )
         {
             autoHoldImagesPressed[i] = false;
             autoHoldImages[i] = null;
         }
-        for( int i = 0; i < autoHoldX.length; i++ )
-            autoHoldX[i] = 0;
-        for( int i = 0; i < autoHoldY.length; i++ )
-            autoHoldY[i] = 0;
+        Arrays.fill(autoHoldX, 0);
+        Arrays.fill(autoHoldY, 0);
     }
     
     /**
@@ -462,17 +461,17 @@ public class VisibleTouchMap extends TouchMap
      * @param scale      The factor to scale images by.
      * @param alpha      The opacity of the visible elements.
      */
-    public void load( String skinDir, Profile profile, boolean animated, boolean fpsEnabled, int fpsXPos, int fpsYPos,
-                      float scale, int alpha )
+    public void load(Context context, String skinDir, Profile profile, boolean animated, boolean fpsEnabled, int fpsXPos, int fpsYPos,
+                     float scale, int alpha )
     {
         mFpsEnabled = fpsEnabled;
         mFpsXPos = fpsXPos;
         mFpsYPos = fpsYPos;
         mScalingFactor = scale;
         mTouchscreenTransparency = alpha;
-        
-        super.load( skinDir, profile, animated );
-        ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
+        ConfigFile skin_ini = new ConfigFile( context, skinFolder + "/skin.ini" );
+
+        super.load( context, skin_ini, skinDir, profile, animated );
         mFpsTextX = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numx" ), 27 );
         mFpsTextY = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numy" ), 50 );
         mFpsMinPixels = SafeMethods.toInt( skin_ini.get( "INFO", "fps-minPixels" ), 75 );
@@ -500,9 +499,9 @@ public class VisibleTouchMap extends TouchMap
      * .profile.Profile, boolean)
      */
     @Override
-    protected void loadAllAssets( Profile profile, boolean animated )
+    protected void loadAllAssets( Context context, Profile profile, boolean animated )
     {
-        super.loadAllAssets( profile, animated );
+        super.loadAllAssets( context, profile, animated );
         
         // Set the transparency of the images
         for( Image buttonImage : buttonImages )
@@ -519,29 +518,29 @@ public class VisibleTouchMap extends TouchMap
         }
         
         // Load the FPS and autohold images
-        loadFpsIndicator();
+        loadFpsIndicator(context);
 
         if( profile != null )
         {
             if( mSplitAB  )
             {
-                loadAutoHoldImages( profile, "buttonA-holdA" );
-                loadAutoHoldImages( profile, "buttonB-holdB" );
+                loadAutoHoldImages(context, profile, "buttonA-holdA");
+                loadAutoHoldImages(context, profile, "buttonB-holdB");
             }
             else
             {
-                loadAutoHoldImages( profile, "groupAB-holdA" );
-                loadAutoHoldImages( profile, "groupAB-holdB" );
+                loadAutoHoldImages(context, profile, "groupAB-holdA");
+                loadAutoHoldImages(context, profile, "groupAB-holdB");
             }
-            loadAutoHoldImages( profile, "groupC-holdCu" );
-            loadAutoHoldImages( profile, "groupC-holdCd" );
-            loadAutoHoldImages( profile, "groupC-holdCl" );
-            loadAutoHoldImages( profile, "groupC-holdCr" );
-            loadAutoHoldImages( profile, "buttonL-holdL" );
-            loadAutoHoldImages( profile, "buttonR-holdR" );
-            loadAutoHoldImages( profile, "buttonZ-holdZ" );
-            loadAutoHoldImages( profile, "buttonS-holdS" );
-            loadAutoHoldImages( profile, "buttonSen-holdSen" );
+            loadAutoHoldImages(context, profile, "groupC-holdCu");
+            loadAutoHoldImages(context, profile, "groupC-holdCd");
+            loadAutoHoldImages(context, profile, "groupC-holdCl");
+            loadAutoHoldImages(context, profile, "groupC-holdCr");
+            loadAutoHoldImages(context, profile, "buttonL-holdL");
+            loadAutoHoldImages(context, profile, "buttonR-holdR");
+            loadAutoHoldImages(context, profile, "buttonZ-holdZ");
+            loadAutoHoldImages(context, profile, "buttonS-holdS");
+            loadAutoHoldImages(context, profile, "buttonSen-holdSen");
         }
     }
     
@@ -661,7 +660,7 @@ public class VisibleTouchMap extends TouchMap
     /**
      * Loads FPS indicator assets and properties from the filesystem.
      */
-    private void loadFpsIndicator()
+    private void loadFpsIndicator(Context context)
     {
         if( mFpsXPos >= 0 && mFpsYPos >= 0 ) 
         {
@@ -670,7 +669,7 @@ public class VisibleTouchMap extends TouchMap
             mFpsFrameY = mFpsYPos;
             
             // Load frame image
-            mFpsFrame = new Image( mResources, skinFolder + "/fps.png" );
+            mFpsFrame = new Image( context, mResources, skinFolder + "/fps.png" );
             
             // Minimum factor the FPS indicator can be scaled by
             mFpsMinScale = mFpsMinPixels / (float) mFpsFrame.width;
@@ -683,7 +682,7 @@ public class VisibleTouchMap extends TouchMap
                 for( int i = 0; i < mNumerals.length; i++ )
                 {
                     filename = skinFolder + "/fps-" + i + ".png";
-                    mNumerals[i] = new Image( mResources, filename );
+                    mNumerals[i] = new Image( context, mResources, filename );
                 }
             }
             catch( Exception e )
@@ -701,7 +700,7 @@ public class VisibleTouchMap extends TouchMap
      * @param profile The touchscreen profile containing the auto-hold properties.
      * @param name The name of the image to load.
      */
-    private void loadAutoHoldImages( Profile profile, String name )
+    private void loadAutoHoldImages( Context context, Profile profile, String name )
     {
         if ( !name.contains("-hold") )
             return;
@@ -721,7 +720,7 @@ public class VisibleTouchMap extends TouchMap
             autoHoldY[index] = y;
             
             // The drawable image is in PNG image format.
-            autoHoldImages[index] = new Image( mResources, skinFolder + "/" + name + ".png" );
+            autoHoldImages[index] = new Image( context, mResources, skinFolder + "/" + name + ".png" );
             autoHoldImages[index].setAlpha( 0 );
         }
     }

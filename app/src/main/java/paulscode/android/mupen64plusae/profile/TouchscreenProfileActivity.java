@@ -202,7 +202,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     {
         // Reposition the assets and refresh the overlay and options menu
         mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, false, mGlobalPrefs.isTouchscreenAnimated);
-        mTouchscreenMap.load( mGlobalPrefs.touchscreenSkinPath, mProfile,
+        mTouchscreenMap.load( mGlobalPrefs.isCustomTouchscreenSkin ? null : this,
+                mGlobalPrefs.touchscreenSkinPath, mProfile,
                 mGlobalPrefs.isTouchscreenAnimated, true, mGlobalPrefs.fpsXPosition,
                 mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );

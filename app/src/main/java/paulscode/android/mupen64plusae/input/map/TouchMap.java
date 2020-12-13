@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -569,14 +570,13 @@ public class TouchMap
      * @param profile  The name of the layout profile.
      * @param animated True to load the analog assets in two parts for animation.
      */
-    public void load( String skinDir, Profile profile, boolean animated )
+    public void load(Context context, ConfigFile skin_ini, String skinDir, Profile profile, boolean animated )
     {
         // Clear any old assets and map data
         clear();
         
         // Load the configuration files
         skinFolder = skinDir;
-        ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
 
         mSplitAB = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-AB" ), false);
         
@@ -584,8 +584,8 @@ public class TouchMap
         loadMaskColors( skin_ini );
         
         // Loop through all the configuration sections
-        loadAllAssets( profile, animated );
-        
+        loadAllAssets( context, profile, animated );
+
         
         if( mSplitAB )
         {
@@ -689,25 +689,25 @@ public class TouchMap
      * @param profile  The touchscreen profile.
      * @param animated True to load the analog assets in two parts for animation.
      */
-    protected void loadAllAssets( Profile profile, boolean animated )
+    protected void loadAllAssets(Context context, Profile profile, boolean animated)
     {
         if( profile != null )
         {
-            loadAnalog( profile, animated );
-            loadButton( profile, "dpad" );
+            loadAnalog(context, profile, animated );
+            loadButton(context, profile, "dpad" );
             if( mSplitAB )
             {
-                loadButton( profile, "buttonA" );
-                loadButton( profile, "buttonB" );
+                loadButton(context, profile, "buttonA" );
+                loadButton(context, profile, "buttonB" );
             }
             else
-                loadButton( profile, "groupAB" );
-            loadButton( profile, "groupC" );
-            loadButton( profile, "buttonL" );
-            loadButton( profile, "buttonR" );
-            loadButton( profile, "buttonZ" );
-            loadButton( profile, "buttonS" );
-            loadButton( profile, "buttonSen" );
+                loadButton(context, profile, "groupAB" );
+            loadButton(context, profile, "groupC" );
+            loadButton(context, profile, "buttonL" );
+            loadButton(context, profile, "buttonR" );
+            loadButton(context, profile, "buttonZ" );
+            loadButton(context, profile, "buttonS" );
+            loadButton(context, profile, "buttonSen" );
         }
     }
     
@@ -717,7 +717,7 @@ public class TouchMap
      * @param profile  The touchscreen profile containing the analog properties.
      * @param animated True to load the assets in two parts for animation.
      */
-    private void loadAnalog( Profile profile, boolean animated )
+    private void loadAnalog(Context context, Profile profile, boolean animated)
     {
         int x = profile.getInt( "analog-x", -1 );
         int y = profile.getInt( "analog-y", -1 );
@@ -732,12 +732,12 @@ public class TouchMap
             // The images (used by touchscreens) are in PNG image format.
             if( animated )
             {
-                 analogBackImage = new Image( mResources, skinFolder + "/analog-back.png" );
-                 analogForeImage = new Image( mResources, skinFolder + "/analog-fore.png" );
+                 analogBackImage = new Image( context, mResources, skinFolder + "/analog-back.png" );
+                 analogForeImage = new Image( context, mResources, skinFolder + "/analog-fore.png" );
             }
             else
             {
-                analogBackImage = new Image( mResources, skinFolder + "/analog.png" );
+                analogBackImage = new Image( context, mResources, skinFolder + "/analog.png" );
             }
             
             // Sensitivity (percentages of the radius, i.e. half the image width)
@@ -754,7 +754,7 @@ public class TouchMap
      * @param profile The touchscreen profile containing the button properties.
      * @param name    The name of the button/group to load.
      */
-    private void loadButton( Profile profile, String name )
+    private void loadButton(Context context, Profile profile, String name)
     {
         int x = profile.getInt( name + "-x", -1 );
         int y = profile.getInt( name + "-y", -1 );
@@ -768,8 +768,8 @@ public class TouchMap
             buttonNames.add( name );
             
             // Load the displayed and mask images
-            buttonImages.add( new Image( mResources, skinFolder + "/" + name + ".png" ) );
-            buttonMasks.add( new Image( mResources, skinFolder + "/" + name + "-mask.png" ) );
+            buttonImages.add( new Image( context, mResources, skinFolder + "/" + name + ".png" ) );
+            buttonMasks.add( new Image( context, mResources, skinFolder + "/" + name + "-mask.png" ) );
             buttonScaling.add( (float) scaling / 100.f );
         }
     }
