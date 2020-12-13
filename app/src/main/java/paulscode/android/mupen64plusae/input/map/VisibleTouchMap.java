@@ -519,9 +519,10 @@ public class VisibleTouchMap extends TouchMap
         }
         
         // Load the FPS and autohold images
+        loadFpsIndicator();
+
         if( profile != null )
         {
-            loadFpsIndicator();
             if( mSplitAB  )
             {
                 loadAutoHoldImages( profile, "buttonA-holdA" );
@@ -662,7 +663,7 @@ public class VisibleTouchMap extends TouchMap
      */
     private void loadFpsIndicator()
     {
-        if( mFpsXPos >= 0 && mFpsYPos >= 0 )
+        if( mFpsXPos >= 0 && mFpsYPos >= 0 ) 
         {
             // Position (percentages of the screen dimensions)
             mFpsFrameX = mFpsXPos;

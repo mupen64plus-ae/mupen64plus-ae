@@ -359,12 +359,10 @@ public class GamePrefs
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
 
-        final String fpsOnlyTouchscreenProfile = "None";
-
         // Touchscreen profile
         if(globalPrefs.isBigScreenMode)
         {
-            touchscreenProfile =  new Profile( true, appData.GetTouchscreenProfilesConfig().get( fpsOnlyTouchscreenProfile ) );
+            touchscreenProfile =  null;
         }
         else
         {
@@ -476,7 +474,7 @@ public class GamePrefs
                 mPreferences.getInt( DISPLAY_ZOOM, 100 );
 
         // Touchscreen prefs
-        isTouchscreenEnabled = touchscreenProfile != null && !touchscreenProfile.getName().equals(fpsOnlyTouchscreenProfile);
+        isTouchscreenEnabled = touchscreenProfile != null;
 
         if ( isTouchscreenEnabled )
         {
