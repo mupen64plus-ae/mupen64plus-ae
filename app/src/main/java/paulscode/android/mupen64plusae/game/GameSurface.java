@@ -422,7 +422,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
             // eglChooseConfig returns a number of configurations that match or exceed the requested attribs.
             // From those, we select the one that matches our requirements more closely
-            Log.v("SDL", "Got " + num_config[0] + " valid modes from egl");
+            Log.v("GameSurface", "Got " + num_config[0] + " valid modes from egl");
             for(int i = 0; i < num_config[0]; i++) {
                 bitdiff = 0;
                 // Go through some of the attributes and compute the bit difference between what we want and what we get.
@@ -486,7 +486,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                     contextAttrs, 0);
             if( mEglContext == EGL14.EGL_NO_CONTEXT )
             {
-                Log.e( TAG, EGL_CREATE_CONTEXT_FAIL );
+                Log.e( TAG, EGL_CREATE_CONTEXT_FAIL + " error=" + EGL14.eglGetError() );
                 return false;
             }
             Log.v( TAG, EGL_CREATE_CONTEXT );
