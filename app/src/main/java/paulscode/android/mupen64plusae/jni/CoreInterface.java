@@ -268,14 +268,39 @@ class CoreInterface
 
         if (success)
         {
-            int romLength = romBuffer.length;
-
-            Pointer parameter = new Memory(romLength);
-            parameter.write(0, romBuffer, 0, romBuffer.length);
-            mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ROM_OPEN.ordinal(), romLength, parameter);
+            openRom(romBuffer);
         }
 
         return success;
+    }
+
+    boolean openRom(Context context, InputStream inputStream)
+    {
+        boolean success = false;
+        byte[] romBuffer = null;
+
+        try {
+            romBuffer = IOUtils.toByteArray(inputStream);
+            success = true;
+
+        } catch (IOException|OutOfMemoryError e) {
+            e.printStackTrace();
+        }
+        if (success)
+        {
+            openRom(romBuffer);
+        }
+
+        return success;
+    }
+
+    void openRom(byte[] romBuffer)
+    {
+        int romLength = romBuffer.length;
+
+        Pointer parameter = new Memory(romLength);
+        parameter.write(0, romBuffer, 0, romBuffer.length);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ROM_OPEN.ordinal(), romLength, parameter);
     }
 
     private byte[] extractZip(Context context, String romFileName, String zipPathUri) {
@@ -386,11 +411,7 @@ class CoreInterface
 
         if (success)
         {
-            int romLength = romBuffer.length;
-
-            Pointer parameter = new Memory(romLength);
-            parameter.write(0, romBuffer, 0, romBuffer.length);
-            mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ROM_OPEN.ordinal(), romLength, parameter);
+            openRom(romBuffer);
         }
 
         return success;

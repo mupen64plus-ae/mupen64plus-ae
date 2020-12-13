@@ -63,6 +63,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
@@ -571,7 +572,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             {
                 // Disk only games still require a ROM image, so use a dummy test ROM
                 if (isNdd) {
-                    openSuccess = mCoreInterface.openRom(getApplicationContext(), Uri.fromFile(new File(mAppData.mupen64plus_test_rom_v64)).toString());
+                    InputStream inputStream ;
+                    try {
+                        inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
+                        openSuccess = mCoreInterface.openRom(getApplicationContext(), inputStream);
+                    } catch (IOException e) {
+                        openSuccess = false;
+                    }
                 } else if (isRom) {
                     openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
                 }

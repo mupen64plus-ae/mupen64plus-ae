@@ -64,7 +64,6 @@ public class ExtractAssetsOrCleanupTask
             mAssetVersions.put("mupen64plus_data/GLideN64.custom.ini", 9);
             mAssetVersions.put("mupen64plus_data/Glide64mk2.ini", 2);
             mAssetVersions.put("mupen64plus_data/RiceVideoLinux.ini", 1);
-            mAssetVersions.put("mupen64plus_data/m64p_test_rom.v64", 1);
             mAssetVersions.put("mupen64plus_data/font.ttf", 1);
             mAssetVersions.put("mupen64plus_data/gln64.conf", 1);
             mAssetVersions.put("mupen64plus_data/gln64rom.conf", 1);
