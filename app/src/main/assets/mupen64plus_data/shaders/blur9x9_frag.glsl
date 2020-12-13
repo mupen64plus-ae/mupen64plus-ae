@@ -1,4 +1,5 @@
 // Ported from https://raw.githubusercontent.com/gizmo98/common-shaders/master/blurs/blur9x9.glsl
+#version 100
 precision highp float;
 
 vec4 _TMP35;

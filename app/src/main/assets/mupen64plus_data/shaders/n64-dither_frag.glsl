@@ -1,3 +1,5 @@
+#version 100
+
 precision mediump float;
 varying vec2 vTexPosition;
 

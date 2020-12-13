@@ -4,6 +4,7 @@
     by RiskyJumps
 	license: public domain
 */
+#version 100
 
 #define freq             0.500000
 #define pi               3.141592654

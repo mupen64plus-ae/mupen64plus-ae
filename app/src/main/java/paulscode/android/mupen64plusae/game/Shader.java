@@ -58,9 +58,10 @@ public class Shader {
         mVertexCode = vertexCode;
 
         if (firstPass) {
-            String builder = "#extension GL_OES_EGL_image_external : require\n" +
-                    fragmentCode;
-            fragmentCode = builder.replace("sampler2D ", "samplerExternalOES ");
+            fragmentCode = fragmentCode.replace("#version 100\n",
+                    "#version 100\n" +
+                            "#extension GL_OES_EGL_image_external : require\n");
+            fragmentCode = fragmentCode.replace("sampler2D ", "samplerExternalOES ");
             mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
         }
 

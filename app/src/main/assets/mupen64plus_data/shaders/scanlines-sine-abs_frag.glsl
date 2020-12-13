@@ -4,6 +4,9 @@
     by RiskyJumps
 	license: public domain
 */
+
+#version 100
+
 /*
 #pragma parameter amp          "Amplitude"      1.2500  0.000 2.000 0.05
 #pragma parameter phase        "Phase"          0.5000  0.000 2.000 0.05

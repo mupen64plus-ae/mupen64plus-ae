@@ -1,4 +1,5 @@
 // Ported from https://raw.githubusercontent.com/gizmo98/common-shaders/master/blurs/blur9x9.glsl
+#version 100
 
 attribute vec4 VertexCoord;
 attribute vec4 TexCoord;

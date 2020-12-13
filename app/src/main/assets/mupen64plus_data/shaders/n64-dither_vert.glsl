@@ -1,3 +1,5 @@
+#version 100
+
 uniform mediump vec2 OutputSize;
 uniform mediump vec2 TextureSize;
 uniform mediump vec2 InputSize;

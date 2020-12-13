@@ -19,6 +19,7 @@
     )
 	This shader variant is pre-configured with screen curvature
 */
+#version 100
 
 /*
 #pragma parameter CRTgamma "CRTGeom Target Gamma" 2.4 0.1 5.0 0.1
