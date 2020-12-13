@@ -291,7 +291,7 @@
             android:exported="false"
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
-            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:theme="@style/Theme.Mupen64plusaeTheme.Game"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <activity
             android:name="paulscode.android.mupen64plusae.ImportExportActivity"

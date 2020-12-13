@@ -77,4 +77,7 @@
     <style name="Theme.Mupen64plusaeTheme" parent="MupenTheme_Dark">
     </style>
 
+    <style name="Theme.Mupen64plusaeTheme.Game" parent="@style/Theme.AppCompat.Black">
+    </style>
+
 </resources>
