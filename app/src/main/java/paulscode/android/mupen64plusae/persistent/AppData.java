@@ -324,6 +324,9 @@ public class AppData
     /** The parent directory containing all user-writable data files. */
     public final String legacyGameDataDir;
 
+    /** Contex */
+    private final Context mContext;
+
     public static final String applicationPath = "mupen64plus";
 
     /** Default legacy data path, needed for moving legacy data to internal storage */
@@ -348,6 +351,7 @@ public class AppData
      */
     public AppData( Context context )
     {
+        mContext = context;
         hardwareInfo = new HardwareInfo();
         final String packageName = context.getPackageName();
 
@@ -382,7 +386,6 @@ public class AppData
 
         coreSharedDataDir = context.getFilesDir().getAbsolutePath();
         touchscreenSkinsDir = "mupen64plus_data/skins/touchscreen/";
-        String profilesDir = coreSharedDataDir + "/profiles";
 
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
@@ -391,9 +394,9 @@ public class AppData
         mupencheat_default = coreSharedDataDir + "/mupencheat.default";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
-        controllerProfiles_cfg = profilesDir + "/controller.cfg";
-        touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
-        emulationProfiles_cfg = profilesDir + "/emulation.cfg";
+        controllerProfiles_cfg = "mupen64plus_data/profiles/controller.cfg";
+        touchscreenProfiles_cfg = "mupen64plus_data/profiles/touchscreen.cfg";
+        emulationProfiles_cfg = "mupen64plus_data/profiles/emulation.cfg";
         
         UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
 
@@ -614,7 +617,7 @@ public class AppData
     {
         if(mEmulationProfilesConfig == null)
         {
-            mEmulationProfilesConfig = new ConfigFile( emulationProfiles_cfg );
+            mEmulationProfilesConfig = new ConfigFile(mContext, emulationProfiles_cfg);
         }
 
         return mEmulationProfilesConfig;
@@ -624,7 +627,7 @@ public class AppData
     {
         if(mTouchscreenProfilesConfig == null)
         {
-            mTouchscreenProfilesConfig = new ConfigFile( touchscreenProfiles_cfg );
+            mTouchscreenProfilesConfig = new ConfigFile(mContext, touchscreenProfiles_cfg);
         }
 
         return mTouchscreenProfilesConfig;
@@ -634,7 +637,7 @@ public class AppData
     {
         if(mControllerProfilesConfig == null)
         {
-            mControllerProfilesConfig = new ConfigFile( controllerProfiles_cfg );
+            mControllerProfilesConfig = new ConfigFile(mContext, controllerProfiles_cfg);
         }
 
         return mControllerProfilesConfig;
