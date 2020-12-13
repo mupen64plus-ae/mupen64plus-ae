@@ -356,6 +356,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         {
             mFullOpenGL = mTryFullGl && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
 
+            if (!mFullOpenGL) {
+                EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
+            }
+
             mEglDisplay = EGL14.eglGetDisplay( EGL14.EGL_DEFAULT_DISPLAY );
             if( mEglDisplay == EGL14.EGL_NO_DISPLAY )
             {
@@ -393,6 +397,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                     EGL14.EGL_GREEN_SIZE, 8,
                     EGL14.EGL_BLUE_SIZE, 8,
                     EGL14.EGL_ALPHA_SIZE, 8,
+                    EGL14.EGL_BUFFER_SIZE, 32,
                     EGL14.EGL_NONE
             };
 
@@ -408,8 +413,17 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 configSpec[index++] = EGL14.EGL_RENDERABLE_TYPE;
                 configSpec[index++] = EGL14.EGL_OPENGL_BIT;
                 configSpec[index] = EGL14.EGL_NONE;
-            }
+            } else {
+                int[] oldConfigSpec = configSpec;
+                configSpec = new int[oldConfigSpec.length + 2];
 
+                System.arraycopy( oldConfigSpec, 0, configSpec, 0, oldConfigSpec.length );
+
+                int index = oldConfigSpec.length - 1;
+                configSpec[index++] = EGL14.EGL_RENDERABLE_TYPE;
+                configSpec[index++] = EGL14.EGL_OPENGL_ES2_BIT;
+                configSpec[index] = EGL14.EGL_NONE;
+            }
 
             if (!EGL14.eglChooseConfig(mEglDisplay, configSpec, 0, configs, 0, 1, num_config, 0) || num_config[0] == 0) {
                 Log.e("GameSurface", "No EGL config available");
