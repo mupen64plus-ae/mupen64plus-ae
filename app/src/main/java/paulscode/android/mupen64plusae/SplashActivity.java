@@ -25,9 +25,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -61,7 +59,6 @@ import java.util.List;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.ExtractAssetsListener;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.Failure;
@@ -103,11 +100,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private boolean mRequestingPermissions = false;
 
     // These constants must match the keys used in res/xml/preferences*.xml
-    private static final String DISPLAY_SCALING = "displayScaling";
-    private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
-    private static final String AUDIO_PLUGIN = "audioPlugin";
-    private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
-    private static final String NAVIGATION_MODE = "navigationMode";
     private static final String STATE_REQUESTING_PERMISSIONS = "STATE_REQUESTING_PERMISSIONS";
 
     @Override
@@ -157,13 +149,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         super.onCreate( savedInstanceState );
 
-        final Resources res = getResources();
-
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
 
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)
