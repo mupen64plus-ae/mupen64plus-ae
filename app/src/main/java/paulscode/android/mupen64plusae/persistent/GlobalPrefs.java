@@ -556,28 +556,28 @@ public class GlobalPrefs
         switch(fpsPosition)
         {
             case "topLeft":
-                tempFpsXPosition = 0;
-                tempFpsYPosition = 0;
+                tempFpsXPosition = 2;
+                tempFpsYPosition = 2;
                 break;
             case "topCenter":
                 tempFpsXPosition = 50;
-                tempFpsYPosition = 0;
+                tempFpsYPosition = 2;
                 break;
             case "topRight":
-                tempFpsXPosition = 100;
-                tempFpsYPosition = 0;
+                tempFpsXPosition = 98;
+                tempFpsYPosition = 2;
                 break;
             case "bottomLeft":
-                tempFpsXPosition = 0;
-                tempFpsYPosition = 100;
+                tempFpsXPosition = 2;
+                tempFpsYPosition = 98;
                 break;
             case "bottomCenter":
                 tempFpsXPosition = 50;
-                tempFpsYPosition = 100;
+                tempFpsYPosition = 98;
                 break;
             case "bottomRight":
-                tempFpsXPosition = 100;
-                tempFpsYPosition = 100;
+                tempFpsXPosition = 98;
+                tempFpsYPosition = 98;
                 break;
         }
         fpsXPosition = tempFpsXPosition;
