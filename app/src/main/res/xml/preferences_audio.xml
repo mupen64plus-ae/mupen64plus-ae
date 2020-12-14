@@ -64,7 +64,7 @@
         mupen64:maximumValue="128"
         mupen64:minimumValue="1"
         mupen64:saveType="string"
-        mupen64:stepSize="16"
+        mupen64:stepSize="1"
         mupen64:units="ms" />
 
     <androidx.preference.CheckBoxPreference
