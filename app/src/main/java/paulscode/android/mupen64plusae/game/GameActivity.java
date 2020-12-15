@@ -324,15 +324,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
-
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
-        {
-            params.gravity |= Gravity.TOP;
-        }
-        else
-        {
-            params.gravity |= Gravity.CENTER_VERTICAL;
-        }
+        params.gravity |= Gravity.TOP;
 
         mGameSurface.setLayoutParams( params );
         mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*mGlobalPrefs.shaderScaleFactor,
