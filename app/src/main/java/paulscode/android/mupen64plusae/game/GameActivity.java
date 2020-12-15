@@ -30,6 +30,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,6 +48,7 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -60,6 +62,7 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
+import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
@@ -409,7 +412,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mHandler.postDelayed(mPeriodicChecker, 500);
-        
+
+        mDrawerLayout.setOnHoverListener((v, event) -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mHandler.post(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GameActivity.this, PointerIcon.TYPE_ARROW)));
+            }
+            return false;
+        });
+
         hideSystemBars();
     }
 

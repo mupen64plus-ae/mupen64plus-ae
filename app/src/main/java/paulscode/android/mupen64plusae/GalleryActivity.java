@@ -54,6 +54,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.PointerIcon;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -152,6 +153,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private int mCurrentVisiblePosition = 0;
 
     private ConfigFile mConfig;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     private void loadGameFromExtras( Bundle extras) {
 
@@ -427,12 +430,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mDrawerLayout.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW));
-            }
-        }, 1000);
-
         // find the retained fragment on activity restarts
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
@@ -447,6 +444,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         refreshGrid();
 
         //DisplayWrapper.enableEdgeToEdge(this, mDrawerLayout);
+        mDrawerLayout.setOnHoverListener((v, event) -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mHandler.post(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW)));
+            }
+            return false;
+        });
 
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
