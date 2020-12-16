@@ -453,7 +453,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onFpsChanged(int newValue)
     {
-        if(mGlobalPrefs.isFpsEnabled && mOverlay != null)
+        if(mGlobalPrefs.isFpsEnabled && mOverlay != null && mCoreFragment != null)
         {
             float shaderFps = mGameSurface.getFps();
 
