@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -330,9 +331,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         params.width = Math.round ( mDisplayResolutionData.getSurfaceResolutionWidth() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mDisplayResolutionData.getSurfaceResolutionHeight() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        params.gravity |= Gravity.TOP;
 
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
+        {
+            params.gravity |= Gravity.TOP;
+        }
+        else
+        {
+            // We need to be center vertical for center vertical in case the screen height in landscape
+            // is less than the game render height
+            params.gravity |= Gravity.CENTER_VERTICAL;
+        }
         mGameSurface.setLayoutParams( params );
+
         mGameSurface.getHolder().setFixedSize(mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution)*mGlobalPrefs.shaderScaleFactor,
                 mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution)*mGlobalPrefs.shaderScaleFactor);
 

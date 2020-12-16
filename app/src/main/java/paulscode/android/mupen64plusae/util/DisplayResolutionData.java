@@ -38,6 +38,8 @@ public class DisplayResolutionData {
         // Screen size
 
         final Point dimensions = new Point(0,0);
+        Point fullscreenSize = new Point(0,0);
+        DisplayWrapper.getRealSize(activity, fullscreenSize);
 
         if(mGlobalPrefs.isImmersiveModeEnabled && !activity.isInMultiWindowMode()) {
             DisplayWrapper.getRealSize(activity, dimensions);
@@ -50,31 +52,43 @@ public class DisplayResolutionData {
                 aspect = 3f/4f;
                 break;
             case STRETCH:
-                aspect = (float)Math.min(dimensions.x, dimensions.y)/Math.max(dimensions.x, dimensions.y);
+                // Match the screen aspect ratio
+                aspect = (float)Math.min(fullscreenSize.x, fullscreenSize.y)/Math.max(fullscreenSize.x, fullscreenSize.y);
                 break;
             case STRETCH_169:
                 aspect = 9f/16f;
                 break;
         }
 
+        int maxDimension = Math.max(dimensions.x, dimensions.y);
         int minDimension = Math.min(dimensions.x, dimensions.y);
-        videoRenderWidthNative = Math.round( minDimension/aspect );
-        videoRenderHeightNative = minDimension;
+
+        int fullscreenMaxDimension = Math.max(fullscreenSize.x, fullscreenSize.y);
+        videoRenderWidthNative = fullscreenMaxDimension;
+        videoRenderHeightNative =  Math.round( fullscreenMaxDimension*aspect );
 
         // Assume we are are in portrait mode if height is greater than the width
-        boolean screenPortrait = dimensions.y > dimensions.x;
+        boolean screenPortrait = dimensions.y > (float)dimensions.x;
         if(screenPortrait)
         {
             videoSurfaceWidthOriginal = minDimension;
-            videoSurfaceHeightOriginal = Math.round( minDimension*aspect);
+            videoSurfaceHeightOriginal = Math.round( minDimension*aspect );
         }
         else
         {
-            videoSurfaceWidthOriginal = Math.round( minDimension/aspect );
-            videoSurfaceHeightOriginal = minDimension;
+            videoSurfaceWidthOriginal = maxDimension;
+            videoSurfaceHeightOriginal = Math.round( maxDimension*aspect );
+
+            if (videoSurfaceHeightOriginal > minDimension) {
+                videoSurfaceWidthOriginal = Math.round( minDimension/aspect );
+                videoSurfaceHeightOriginal = minDimension;
+            }
         }
 
-        Log.i("GlobalPrefs", "render_width=" + videoRenderWidthNative + " render_height=" + videoRenderHeightNative);
+        Log.i("resolutionData", "result=(" + videoSurfaceWidthOriginal + "," + videoSurfaceHeightOriginal + ")" +
+                " full=(" + fullscreenSize.x + "," + fullscreenSize.y + ")" +
+                " view=(" + dimensions.x + "," + dimensions.y + ")" +
+                " aspect=" + aspect);
     }
 
     public int getResolutionWidth(int hResolution)
