@@ -222,7 +222,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	int ranDry;
 
 	//adjustment used when a device running too slow
-	double slowAdjustment;
+	double slowAdjustment = 1.0;
 	double currAdjustment = 1.0;
 
 	//how quickly to return to original speed
@@ -237,8 +237,6 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	static double prevTime = 0;
 
 	int feedTimeWindowSize = defaultWindowSize;
-	double averageGameTime = defaultSampleLength;
-	double averageFeedTime = defaultSampleLength;
 
 	int queueLength = static_cast<int>(static_cast<float>(mSoundTouch.numSamples())/static_cast<float>(mOutputFreq)*1000);
 
@@ -261,10 +259,10 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		// Ignore negative time, it can be negative if game is falling too far behind real time
 		if (timeDiff > 0) {
 			mFeedTimes[mFeedTimeIndex] = timeDiff;
-			averageFeedTime = getAverageTime(mFeedTimes.data(), mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex + 1));
+			mAverageFeedTimeMs = getAverageTime(mFeedTimes.data(), mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex + 1));
 
 			mGameTimes[mFeedTimeIndex] = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
-			averageGameTime = getAverageTime(mGameTimes.data(),mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex +  1));
+			mAverageGameTimeMs = getAverageTime(mGameTimes.data(),mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex +  1));
 
 			++mFeedTimeIndex;
 			if (mFeedTimeIndex >= feedTimeWindowSize) {
@@ -273,14 +271,14 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 			}
 
 			//Normalize window size
-			feedTimeWindowSize = static_cast<int>(defaultSampleLength / averageGameTime * defaultWindowSize);
+			feedTimeWindowSize = static_cast<int>(defaultSampleLength / mAverageGameTimeMs * defaultWindowSize);
 			if (feedTimeWindowSize > maxWindowSize) {
 				feedTimeWindowSize = maxWindowSize;
 			}
 		}
 	}
 
-	double temp = averageGameTime / averageFeedTime;
+	double temp = mAverageGameTimeMs / mAverageFeedTimeMs;
 	bool samplesAdded;
 
 	if (!mPrimeComplete) {
@@ -327,12 +325,13 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	//Useful logging
 
 	//if(queueLength == 0)
-/*
+	/*
 	{
-	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d",
-				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize);
+	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d, pos=%d",
+				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, mAverageFeedTimeMs, mAverageGameTimeMs, minQueueSize, maxQueueSize, mFeedTimeIndex);
 	}
-*/
+	 */
+
 	return samplesAdded;
 }
 

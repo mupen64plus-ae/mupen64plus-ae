@@ -325,6 +325,12 @@ private:
 	// If we have enough values in mFeedTimes and mGmeTimes
 	bool mFeedTimesSet = false;
 
+	// Average game time increment used for time stretching
+	double mAverageGameTimeMs = 0.016;
+
+	// Average actual time increment used for time stretching
+	double mAverageFeedTimeMs = 0.016;
+
 	// Busy-loop used to cause cores to ramp up to max frequency when first priming audio
 	// it helps with audio skipping when first starting playback
 	std::atomic<bool> mBusyLoop;
