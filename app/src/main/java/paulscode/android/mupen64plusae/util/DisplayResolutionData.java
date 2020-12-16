@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
+import android.view.View;
 
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
@@ -26,12 +27,12 @@ public class DisplayResolutionData {
 
     private GlobalPrefs mGlobalPrefs;
 
-    public DisplayResolutionData(GlobalPrefs globalPrefs, Activity activity, GlobalPrefs.DisplayScaling scaling) {
+    public DisplayResolutionData(GlobalPrefs globalPrefs, Activity activity, View parentView, GlobalPrefs.DisplayScaling scaling) {
         mGlobalPrefs = globalPrefs;
-        determineResolutionData(activity, scaling);
+        determineResolutionData(activity, parentView, scaling);
     }
 
-    private void determineResolutionData(Activity activity, GlobalPrefs.DisplayScaling scaling)
+    private void determineResolutionData(Activity activity, View parentView, GlobalPrefs.DisplayScaling scaling)
     {
         // Determine the pixel dimensions of the rendering context and view surface
         // Screen size
@@ -41,7 +42,7 @@ public class DisplayResolutionData {
         if(mGlobalPrefs.isImmersiveModeEnabled && !activity.isInMultiWindowMode()) {
             DisplayWrapper.getRealSize(activity, dimensions);
         } else {
-            DisplayWrapper.getSize(activity, dimensions);
+            dimensions.set(parentView.getWidth(), parentView.getHeight());
         }
 
         switch (scaling) {
