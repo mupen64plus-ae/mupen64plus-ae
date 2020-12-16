@@ -463,6 +463,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // in onCoreServiceStarted
             tryRunning();
         }
+
+        mGameSurface.startGlContext();
     }
 
     @Override
@@ -488,16 +490,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mGameSidebar.requestFocus();
             ReloadAllMenus();
         }
-
-        mGameSurface.startGlContext();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.i("GameActivity", "onPause");
-
-        mGameSurface.stopGlContext();
     }
 
     @Override
@@ -530,6 +528,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (mSensorController != null) {
             mSensorController.onPause();
         }
+
+        mGameSurface.stopGlContext();
     }
 
     //This is only called once when fragment is destroyed due to rataining the state
