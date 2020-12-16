@@ -26,8 +26,7 @@ AudioHandler::AudioHandler() :
 		mSoundBufferPool(1024 * 1024 * 50),
 		mPlaybackPaused(false),
 		mFeedTimes{},
-		mGameTimes{},
-		mBusyLoop(true){
+		mGameTimes{}{
 	reset();
 
 	mSoundTouch.setSampleRate(mInputFreq);
@@ -138,7 +137,7 @@ void AudioHandler::initializeAudio(int _freq) {
 
 void AudioHandler::pushData(const int16_t *_data, int _samples,
 							std::chrono::duration<double> timeSinceStart) {
-    if (mBusyLoop || mPlaybackPaused) {
+    if (mPlaybackPaused) {
     	return;
     }
 
@@ -171,16 +170,6 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 oboe::DataCallbackResult
 AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
 
-	// Cause this thread to ramp up frequency to avoid the audio skipping when resuming a game after pausing
-	if (mBusyLoop) {
-		int busyLoopCount = 0;
-		while (busyLoopCount < 10000) {
-			std::this_thread::yield();
-			++busyLoopCount;
-		}
-
-		mBusyLoop = false;
-	}
 	mPrimingTimeMs += static_cast<int>(static_cast<double>(numFrames) / mOutputFreq * 1000);
 
 	if (mPrimingTimeMs > mTargetBuffersMs){
@@ -257,7 +246,8 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		prevTime = currQueueData.timeSinceStart;
 
 		// Ignore negative time, it can be negative if game is falling too far behind real time
-		if (timeDiff > 0) {
+		// Also ignore really big numbers since that can happen because prevTime intializes to zero
+		if (timeDiff > 0 && timeDiff < 1.0) {
 			mFeedTimes[mFeedTimeIndex] = timeDiff;
 			mAverageFeedTimeMs = getAverageTime(mFeedTimes.data(), mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex + 1));
 
@@ -267,7 +257,20 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 			++mFeedTimeIndex;
 			if (mFeedTimeIndex >= feedTimeWindowSize) {
 				mFeedTimeIndex = 0;
-				mFeedTimesSet = true;
+
+				if (!mFeedTimesSet) {
+					mFeedTimesSet = true;
+
+					// Flush the first set of averages since they can be kind of random
+					double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
+					double feedTime = defaultSampleLength/speedFactor;
+					for (int index = 0; index < feedTimeWindowSize; ++index) {
+						mFeedTimes[index] = feedTime;
+						mGameTimes[index] = defaultSampleLength;
+					}
+					mAverageFeedTimeMs = feedTime;
+					mAverageGameTimeMs = defaultSampleLength;
+				}
 			}
 
 			//Normalize window size
@@ -278,13 +281,17 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		}
 	}
 
-	double temp = mAverageGameTimeMs / mAverageFeedTimeMs;
+	double temp = mAverageGameTimeMs/mAverageFeedTimeMs;
 	bool samplesAdded;
 
-	if (!mPrimeComplete) {
+	if (!mPrimeComplete || !mFeedTimesSet) {
 		double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
 		mSoundTouch.setTempo(speedFactor);
-		processAudioSoundTouchNoOutput(workingBufferValidBytes);
+		if (queueLength < minQueueSize) {
+			processAudioSoundTouchNoOutput(workingBufferValidBytes);
+		} else {
+			processAudioSoundTouch(workingBufferValidBytes, outAudioData, outNumFrames);
+		}
 		samplesAdded = false;
 
 	} else {
@@ -325,13 +332,12 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	//Useful logging
 
 	//if(queueLength == 0)
-	/*
+/*
 	{
 	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d, pos=%d",
 				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, mAverageFeedTimeMs, mAverageGameTimeMs, minQueueSize, maxQueueSize, mFeedTimeIndex);
 	}
-	 */
-
+*/
 	return samplesAdded;
 }
 
@@ -587,7 +593,6 @@ void AudioHandler::reset()
 	mGameTimes.fill(0.0);
 	mFeedTimeIndex = 0;
 	mFeedTimesSet = false;
-	mBusyLoop = true;
 
 	mSoundTouch.clear();
 
