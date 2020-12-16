@@ -26,7 +26,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -84,6 +83,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.DisplayResolutionData;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -165,6 +165,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
+    private DisplayResolutionData mDisplayResolutionData = null;
 
     private static final String STATE_DRAWER_OPEN = "STATE_DRAWER_OPEN";
     private boolean mDrawerOpenState = false;
@@ -322,16 +323,18 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
+        mDisplayResolutionData = new DisplayResolutionData(mGlobalPrefs, this, mGamePrefs.displayScaling);
+
         // Set parameters for shader view
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mGameSurface.getLayoutParams();
-        params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
-        params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
+        params.width = Math.round ( mDisplayResolutionData.getSurfaceResolutionWidth() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
+        params.height = Math.round ( mDisplayResolutionData.getSurfaceResolutionHeight() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.CENTER_HORIZONTAL;
         params.gravity |= Gravity.TOP;
 
         mGameSurface.setLayoutParams( params );
-        mGameSurface.getHolder().setFixedSize(mGamePrefs.videoRenderWidth*mGlobalPrefs.shaderScaleFactor,
-                mGamePrefs.videoRenderHeight*mGlobalPrefs.shaderScaleFactor);
+        mGameSurface.getHolder().setFixedSize(mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution)*mGlobalPrefs.shaderScaleFactor,
+                mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution)*mGlobalPrefs.shaderScaleFactor);
 
         mGameSurface.setSelectedShader(mGlobalPrefs.getShaderPasses());
         mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
@@ -450,7 +453,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart);
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
+                        mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
+                        mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution));
             }
 
             // Try running now in case the core service has already started

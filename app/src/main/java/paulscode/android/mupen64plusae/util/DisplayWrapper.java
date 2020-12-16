@@ -21,7 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class DisplayWrapper {
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    @SuppressWarnings({"deprecation", "RedundantSuppression", "unused"})
     public static Display getDisplay(Activity activity)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -203,7 +203,7 @@ public class DisplayWrapper {
         }
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    @SuppressWarnings({"deprecation", "RedundantSuppression", "unused"})
     public static void enableEdgeToEdge(Activity activity, View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.getWindow().setDecorFitsSystemWindows(false);

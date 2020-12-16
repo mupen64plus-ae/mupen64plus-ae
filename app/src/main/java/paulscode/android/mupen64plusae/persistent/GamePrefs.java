@@ -232,23 +232,17 @@ public class GamePrefs
     /** True if the touchscreen joystick is hidden when sensor is enabled. */
     public final boolean isAnalogHiddenWhenSensor;
 
-    /** The width of the OpenGL rendering context, in pixels. */
-    public final int videoRenderWidth;
+    /** Selectd display scale for this specific game */
+    public final GlobalPrefs.DisplayScaling displayScaling;
 
-    /** The height of the OpenGL rendering context, in pixels. */
-    public final int videoRenderHeight;
+    /** Selected horizontal game resolution */
+    public final int verticalRenderResolution;
 
     /** True if we want use default zoom */
     final boolean useDefaultZoom;
 
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
-
-    /** The width of the viewing surface, in pixels. */
-    public final int videoSurfaceWidth;
-
-    /** The height of the viewing surface, in pixels. */
-    public final int videoSurfaceHeight;
 
     /** Core CountPerOp setting */
     public final int countPerOp;
@@ -453,21 +447,12 @@ public class GamePrefs
         boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && videoPluginLib == AppData.VideoPlugin.GLIDEN64;
 
         final String scaling = mPreferences.getString( "displayScalingGame", "default" );
-        GlobalPrefs.DisplayScaling displayScaling = gliden64Widescreenhack ? GlobalPrefs.DisplayScaling.STRETCH :
+        //Stretch screen if the GLideN64 wide screen hack is enabled and the current video plugin is GLideN64
+        displayScaling = gliden64Widescreenhack ? GlobalPrefs.DisplayScaling.STRETCH :
                 scaling.equals("default") ? globalPrefs.displayScaling : GlobalPrefs.DisplayScaling.getScaling(scaling);
 
-        //Stretch screen if the GLideN64 wide screen hack is enabled and the current video plugin is GLideN64
-        final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
-
-        globalPrefs.determineResolutionData(context, displayScaling);
-        videoSurfaceWidth = globalPrefs.getSurfaceResolutionWidth();
-        videoSurfaceHeight = globalPrefs.getSurfaceResolutionHeight();
-
         //Angrylion only supports 640x480
-        videoRenderWidth = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 640 : globalPrefs.getResolutionWidth(hResolution);
-        videoRenderHeight = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 480 : globalPrefs.getResolutionHeight(hResolution);
-
-        Log.i("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);
+        verticalRenderResolution = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 480 : getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
         useDefaultZoom = mPreferences.getBoolean( "useDefaultZoom", true );
         videoSurfaceZoom = useDefaultZoom ? mGlobalPrefs.videoSurfaceZoom :

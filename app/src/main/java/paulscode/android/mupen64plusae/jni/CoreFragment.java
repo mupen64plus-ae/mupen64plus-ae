@@ -25,7 +25,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
-import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -115,6 +114,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private String mRomArtPath = null;
     private boolean mIsRestarting = false;
     private boolean mUseRaphnetIfAvailable = false;
+    private int mVideoRenderWidth = 0;
+    private int mVideoRenderHeight = 0;
 
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
@@ -249,7 +250,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight)
     {
         Log.i("CoreFragment", "startCore");
 
@@ -265,6 +266,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mRomCountryCode = romCountryCode;
         mRomArtPath = romArtPath;
         mUseRaphnetIfAvailable = globalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
+        mVideoRenderWidth = videoRenderWidth;
+        mVideoRenderHeight = videoRenderHeight;
 
         if(!mIsRunning)
         {
@@ -320,8 +323,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomArtPath(mRomArtPath);
         params.setRestarting(mIsRestarting);
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
-        params.setVideoRenderWidth(mGamePrefs.videoRenderWidth);
-        params.setVideoRenderHeight(mGamePrefs.videoRenderHeight);
+        params.setVideoRenderWidth(mVideoRenderWidth);
+        params.setVideoRenderHeight(mVideoRenderHeight);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
