@@ -30,23 +30,6 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.pm.ShortcutInfoCompat;
-import androidx.core.content.pm.ShortcutManagerCompat;
-import androidx.core.graphics.drawable.IconCompat;
-import androidx.documentfile.provider.DocumentFile;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.SearchView.OnQueryTextListener;
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
@@ -54,10 +37,25 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.PointerIcon;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.SearchView.OnQueryTextListener;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
+import androidx.core.view.GravityCompat;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -87,7 +85,6 @@ import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
 import paulscode.android.mupen64plusae.task.SyncProgramsJobService;
 import paulscode.android.mupen64plusae.util.CountryCode;
-import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -154,7 +151,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private ConfigFile mConfig;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+
+    List<GalleryItem> mItemsCache = new ArrayList<>();
+    List<GalleryItem> mRecentItemsCache = new ArrayList<>();
 
     private void loadGameFromExtras( Bundle extras) {
 
@@ -449,6 +449,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mHandler.post(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW)));
             }
             return false;
+        });
+
+        mDrawerLayout.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            int oldWidth = oldRight - oldLeft;
+            int oldHeight = oldBottom - oldTop;
+            if( v.getWidth() != oldWidth || v.getHeight() != oldHeight )
+            {
+                refreshGrid(mItemsCache, mRecentItemsCache);
+            }
         });
 
         // Get the ROM path if it was passed from another activity/app
@@ -1060,11 +1069,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
-
-        List<GalleryItem> items = new ArrayList<>();
-        List<GalleryItem> recentItems = new ArrayList<>();
-        galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
-        refreshGrid(items, recentItems);
+        
+        galleryRefreshTask.generateGridItemsAndSaveConfig(mItemsCache, mRecentItemsCache);
+        refreshGrid(mItemsCache, mRecentItemsCache);
 
         SyncProgramsJobService.syncProgramsForChannel(this, mAppData.getChannelId());
     }
@@ -1093,7 +1100,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems)
     {
-        runOnUiThread(() -> refreshGrid(items, recentItems));
+        mItemsCache = items;
+        mRecentItemsCache = recentItems;
+        runOnUiThread(() -> refreshGrid(mItemsCache, mRecentItemsCache));
     }
 
     synchronized void refreshGrid(List<GalleryItem> items, List<GalleryItem> recentItems)
@@ -1136,7 +1145,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         galleryAspectRatio = galleryMaxWidth * 1.0f
                 / getResources().getDimension( R.dimen.galleryImageHeight )/mGlobalPrefs.coverArtScale;
 
-        int widthPixels = DisplayWrapper.getScreenWidth(this);
+        int widthPixels = mDrawerLayout.getWidth();
 
         int width = widthPixels - galleryHalfSpacing * 2;
         width = Math.max(width, galleryHalfSpacing*4);
