@@ -17,8 +17,6 @@
     <!-- Activity titles, aliased to other strings -->
     <string name="SplashActivity_title" translatable="false">@string/app_name</string>
     <string name="GalleryActivity_title" translatable="false">@string/app_name</string>
-    <string name="ScanRomsActivity_title" translatable="false">@string/app_name</string>
-    <string name="ExtractTexturesActivity_title" translatable="false">@string/app_name</string>
     <string name="DeleteTexturesActivity_title" translatable="false">@string/app_name</string>
     <string name="PlayMenuActivity_title" translatable="false">@string/menuItem_play</string>
     <string name="ManageControllerProfilesActivity_title" translatable="false">@string/menuItem_controllerProfiles</string>

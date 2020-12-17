@@ -51,13 +51,19 @@
     </style>
 
     <!-- Dark (default) Theme Styles -->
-    <style name="MupenTheme_Dark" parent="Theme.AppCompat.NoActionBar">
+    <style name="MupenTheme_Dark.NoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:navigationBarColor">@color/mupen_black</item>
         <item name="android:textSize">17sp</item>
     </style>
 
-    <style name="MupenTheme_DarkFullScreen" parent="Theme.AppCompat.NoActionBar">
+    <style name="MupenTheme_Dark" parent="Theme.AppCompat">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:navigationBarColor">@color/mupen_black</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="MupenTheme_DarkFullScreen" parent="MupenTheme_Dark.NoActionBar">
         <!-- Optional, if drawing behind the status bar too -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -75,6 +81,9 @@
     </style>
 
     <style name="Theme.Mupen64plusaeTheme" parent="MupenTheme_Dark">
+    </style>
+
+    <style name="Theme.Mupen64plusaeTheme.NoActionBar" parent="MupenTheme_Dark.NoActionBar">
     </style>
 
     <style name="Theme.Mupen64plusaeTheme.Game" parent="@style/Theme.AppCompat.Black">
