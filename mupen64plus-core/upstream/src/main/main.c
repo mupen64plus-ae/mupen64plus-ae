@@ -308,6 +308,9 @@ int main_set_core_defaults(void)
     ConfigSetDefaultString(g_CoreConfig, "SaveSRAMPath", "", "Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserDataPath}/save will be used");
     ConfigSetDefaultString(g_CoreConfig, "SharedDataPath", "", "Path to a directory to search when looking for shared data files");
     ConfigSetDefaultInt(g_CoreConfig, "CountPerOp", 0, "Force number of cycles per emulated instruction");
+    ConfigSetDefaultInt(g_CoreConfig, "ForceAlignmentOfPiDma", -1, "Force alignment of Pi DMA, set to 0 to allow some ROM hacks to work, -1 for game default");
+    ConfigSetDefaultInt(g_CoreConfig, "TlbHack", 0, "Ignore TLB exception, set to 1 to allow some rom hacks to work");
+
     ConfigSetDefaultBool(g_CoreConfig, "RandomizeInterrupt", 1, "Randomize PI/SI Interrupt Timing");
     ConfigSetDefaultInt(g_CoreConfig, "SiDmaDuration", -1, "Duration of SI DMA (-1: use per game settings)");
     ConfigSetDefaultString(g_CoreConfig, "GbCameraVideoCaptureBackend1", DEFAULT_VIDEO_CAPTURE_BACKEND, "Gameboy Camera Video Capture backend");
@@ -1304,6 +1307,7 @@ m64p_error main_run(void)
     uint32_t emumode;
     uint32_t disable_extra_mem;
     uint32_t force_alignment_pi_dma;
+    uint32_t tlb_hack;
     int32_t si_dma_duration;
     int32_t no_compiled_jump;
     int32_t randomize_interrupt;
@@ -1336,13 +1340,17 @@ m64p_error main_run(void)
     //We disable any randomness for netplay
     randomize_interrupt = !netplay_is_init() ? ConfigGetParamBool(g_CoreConfig, "RandomizeInterrupt") : 0;
     count_per_op = ConfigGetParamInt(g_CoreConfig, "CountPerOp");
+    force_alignment_pi_dma = ConfigGetParamInt(g_CoreConfig, "ForceAlignmentOfPiDma");
+    tlb_hack = ConfigGetParamInt(g_CoreConfig, "TlbHack");
 
     if (ROM_PARAMS.disableextramem)
         disable_extra_mem = ROM_PARAMS.disableextramem;
     else
         disable_extra_mem = ConfigGetParamInt(g_CoreConfig, "DisableExtraMem");
 
-    force_alignment_pi_dma = ROM_PARAMS.forcealignmentofpidma;
+    if (force_alignment_pi_dma == -1) {
+        force_alignment_pi_dma = ROM_PARAMS.forcealignmentofpidma;
+    }
     rdram_size = (disable_extra_mem == 0) ? RDRAM_8MB_SIZE : RDRAM_4MB_SIZE;
 
     if (count_per_op <= 0)
@@ -1575,6 +1583,7 @@ m64p_error main_run(void)
                 randomize_interrupt,
                 g_start_address,
                 force_alignment_pi_dma,
+                tlb_hack,
                 &g_dev.ai, &g_iaudio_out_backend_plugin_compat,
                 si_dma_duration,
                 rdram_size,

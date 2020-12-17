@@ -87,6 +87,7 @@ void init_device(struct device* dev,
     int randomize_interrupt,
     uint32_t start_address,
     int forceAlignmentOfPiDma,
+    int tlbHack,
     /* ai */
     void* aout, const struct audio_out_backend_interface* iaout,
     /* si */
@@ -178,7 +179,7 @@ void init_device(struct device* dev,
     init_rdram(&dev->rdram, mem_base_u32(base, MM_RDRAM_DRAM), dram_size, &dev->r4300);
 
     init_r4300(&dev->r4300, &dev->mem, &dev->mi, &dev->rdram, interrupt_handlers,
-            emumode, count_per_op, no_compiled_jump, randomize_interrupt, start_address);
+            emumode, count_per_op, no_compiled_jump, randomize_interrupt, tlbHack, start_address);
     init_rdp(&dev->dp, &dev->sp, &dev->mi, &dev->mem, &dev->rdram, &dev->r4300);
     init_rsp(&dev->sp, mem_base_u32(base, MM_RSP_MEM), &dev->mi, &dev->dp, &dev->ri);
     init_ai(&dev->ai, &dev->mi, &dev->ri, &dev->vi, aout, iaout);

@@ -214,7 +214,7 @@ struct cp0
     offsetof(struct new_dynarec_hot_state, cp0_regs))
 #endif
 
-void init_cp0(struct cp0* cp0, unsigned int count_per_op, struct new_dynarec_hot_state* new_dynarec_hot_state, const struct interrupt_handler* interrupt_handlers);
+void init_cp0(struct cp0* cp0, unsigned int count_per_op, int tlbHack, struct new_dynarec_hot_state* new_dynarec_hot_state, const struct interrupt_handler* interrupt_handlers);
 void poweron_cp0(struct cp0* cp0);
 
 uint32_t* r4300_cp0_regs(struct cp0* cp0);

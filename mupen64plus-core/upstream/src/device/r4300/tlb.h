@@ -59,6 +59,8 @@ struct tlb
     uint32_t LUT_w[0x100000];
 };
 
+void init_tlb(int ignoreTlbExceptions);
+
 void poweron_tlb(struct tlb* tlb);
 
 void tlb_unmap(struct tlb* tlb, size_t entry);

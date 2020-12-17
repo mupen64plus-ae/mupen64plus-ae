@@ -36,7 +36,7 @@
 #endif
 
 /* global functions */
-void init_cp0(struct cp0* cp0, unsigned int count_per_op, struct new_dynarec_hot_state* new_dynarec_hot_state, const struct interrupt_handler* interrupt_handlers)
+void init_cp0(struct cp0* cp0, unsigned int count_per_op, int tlbHack, struct new_dynarec_hot_state* new_dynarec_hot_state, const struct interrupt_handler* interrupt_handlers)
 {
     cp0->count_per_op = count_per_op;
 #ifdef NEW_DYNAREC
@@ -44,6 +44,8 @@ void init_cp0(struct cp0* cp0, unsigned int count_per_op, struct new_dynarec_hot
 #endif
 
     memcpy(cp0->interrupt_handlers, interrupt_handlers, CP0_INTERRUPT_HANDLERS_COUNT*sizeof(*interrupt_handlers));
+
+    init_tlb(tlbHack);
 }
 
 void poweron_cp0(struct cp0* cp0)
