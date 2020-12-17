@@ -3,6 +3,7 @@ package paulscode.android.mupen64plusae.util;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
@@ -41,7 +42,13 @@ public class DisplayResolutionData {
         Point fullscreenSize = new Point(0,0);
         DisplayWrapper.getRealSize(activity, fullscreenSize);
 
-        if(mGlobalPrefs.isImmersiveModeEnabled && !activity.isInMultiWindowMode()) {
+        boolean inMultiWindow = false;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            inMultiWindow = activity.isInMultiWindowMode();
+        }
+
+        if(mGlobalPrefs.isImmersiveModeEnabled && !inMultiWindow) {
             DisplayWrapper.getRealSize(activity, dimensions);
         } else {
             dimensions.set(parentView.getWidth(), parentView.getHeight());
