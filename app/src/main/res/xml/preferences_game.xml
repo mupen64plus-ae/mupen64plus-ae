@@ -265,6 +265,18 @@
             mupen64:minimumValue="0"
             mupen64:stepSize="1"
             mupen64:units=""/>
+        <androidx.preference.CheckBoxPreference
+            android:icon="@drawable/ic_display"
+            android:defaultValue="true"
+            android:key="screenAdvancedforceAlignmentOfPiDma"
+            android:summary="@string/screenAdvanced_ForceAlignmentOfPiDma_summary"
+            android:title="@string/screenAdvanced_ForceAlignmentOfPiDma_title" />
+        <androidx.preference.CheckBoxPreference
+            android:icon="@drawable/ic_display"
+            android:defaultValue="false"
+            android:key="screenAdvancedignoreTlbExceptions"
+            android:summary="@string/screenAdvanced_IgnoreTlbExceptions_summary"
+            android:title="@string/screenAdvanced_IgnoreTlbExceptions_title" />
     </androidx.preference.PreferenceScreen>
 
     <androidx.preference.PreferenceCategory>

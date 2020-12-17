@@ -247,6 +247,12 @@ public class GamePrefs
     /** Core CountPerOp setting */
     public final int countPerOp;
 
+    /** Force alignment of PI DMA */
+    public final int forceAlignmentOfPiDma;
+
+    /** True if we should ignore TLB exceptions */
+    public final boolean ignoreTlbExceptions;
+
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
@@ -570,6 +576,9 @@ public class GamePrefs
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+
+        forceAlignmentOfPiDma = mPreferences.getBoolean( "screenAdvancedforceAlignmentOfPiDma", true ) ? -1 : 0;
+        ignoreTlbExceptions = mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
     }
 
     private void actionReloadAssets(Context context)

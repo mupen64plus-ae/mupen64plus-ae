@@ -151,6 +151,10 @@
     <string name="screenCheats_summaryDisabled">Deshabilitado</string>
     <string name="screenAdvanced_title">Avanzado</string>
     <string name="screenAdvanced_CountPerOpTitle">Cuenta por operación</string>
+    <string name="screenAdvanced_ForceAlignmentOfPiDma_title">Forzar alineación de PI DMA</string>
+    <string name="screenAdvanced_ForceAlignmentOfPiDma_summary">Necesario para algunos hacks, déjelo habilitado para usar la opction predeterminada del juego.</string>
+    <string name="screenAdvanced_IgnoreTlbExceptions_title">Ignorar las excepciones de TLB</string>
+    <string name="screenAdvanced_IgnoreTlbExceptions_summary">Needed for some ROM hacks or Zelda games. Leave disabled otherwise.</string>
 
     <!--Preference Categories-->
     <string name="categoryCheats_title">Ajustes de trucos (mantén oprimido para mostrar notas)</string>
