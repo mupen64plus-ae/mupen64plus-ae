@@ -52,7 +52,13 @@ public class ShaderDrawer {
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
             mGameTexture = surface.mSurfaceTexture;
-            mGameTexture.attachToGLContext(texture);
+
+            try {
+                mGameTexture.attachToGLContext(texture);
+            } catch (RuntimeException e) {
+                mGameTexture = null;
+                return;
+            }
 
             // For some reason this is needed, otherwise frame callbacks stop happening on orientation
             // changes or if the app is put on the background then foreground again
