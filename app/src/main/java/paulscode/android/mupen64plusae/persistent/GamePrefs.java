@@ -578,7 +578,7 @@ public class GamePrefs
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
 
         forceAlignmentOfPiDma = mPreferences.getBoolean( "screenAdvancedforceAlignmentOfPiDma", true ) ? -1 : 0;
-        ignoreTlbExceptions = mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
+        ignoreTlbExceptions = headerName.toLowerCase().contains("zelda") || mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
     }
 
     private void actionReloadAssets(Context context)
