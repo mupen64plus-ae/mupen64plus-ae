@@ -840,7 +840,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.resumeEmulator();
             }
 
-            mCoreFragment.setOnFpsChangedListener(this, 15);
+            mCoreFragment.setOnFpsChangedListener(this, 60);
         }
     }
 
