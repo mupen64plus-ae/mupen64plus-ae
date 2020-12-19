@@ -18,13 +18,28 @@
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false" />
-        <paulscode.android.mupen64plusae.game.GameOverlay
-            android:id="@+id/gameOverlay"
-            android:layout_width="match_parent"
+        <LinearLayout android:orientation="vertical"
             android:layout_height="match_parent"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:background="@drawable/overlay_color"/>
+            android:layout_width="match_parent">
+            <paulscode.android.mupen64plusae.game.FpsOverlay
+                android:id="@+id/fpsOverlay"
+                android:layout_weight="3"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:background="@drawable/overlay_color"/>
+
+            <paulscode.android.mupen64plusae.game.GameOverlay
+                android:id="@+id/gameOverlay"
+                android:layout_weight="4"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:background="@drawable/overlay_color"/>
+
+        </LinearLayout>
     </FrameLayout>
 
     <!-- navigation drawer -->

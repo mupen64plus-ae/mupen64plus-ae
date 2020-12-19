@@ -33,11 +33,10 @@ import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 
-public class GameOverlay extends View implements TouchController.OnStateChangedListener, CoreInterface.OnFpsChangedListener
+public class GameOverlay extends View implements TouchController.OnStateChangedListener
 {
     private VisibleTouchMap mTouchMap;
     private boolean mDrawingEnabled = true;
-    private boolean mFpsEnabled = false;
     private boolean mIsAnalogHiddenWhenSensor = false;
     private int mHatRefreshPeriod = 0;
     private int mHatRefreshCount = 0;
@@ -50,12 +49,11 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         requestFocus();
     }
     
-    public void initialize(VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled,
+    public void initialize(VisibleTouchMap touchMap, boolean drawingEnabled,
                            boolean isAnalogHiddenWhenSensor, boolean joystickAnimated )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
-        mFpsEnabled = fpsEnabled;
         mIsAnalogHiddenWhenSensor = isAnalogHiddenWhenSensor;
         mHatRefreshPeriod = joystickAnimated ? 3 : 0;
     }
@@ -92,14 +90,6 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     }
     
     @Override
-    public void onFpsChanged( int fps )
-    {
-        // Update the FPS indicator assets, and redraw if required
-        if( mTouchMap != null && mTouchMap.updateFps( fps ) )
-            postInvalidate();
-    }
-    
-    @Override
     protected void onSizeChanged( int w, int h, int oldw, int oldh )
     {
         // Recompute skin layout geometry
@@ -124,12 +114,6 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
             
             // Redraw the autoHold mask
             mTouchMap.drawAutoHold( canvas );
-        }
-        
-        if( mFpsEnabled )
-        {
-            // Redraw the dynamic frame rate info
-            mTouchMap.drawFps( canvas );
         }
     }
 

@@ -120,7 +120,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
     private OnFpsChangedListener mFpsChangeListener = null;
-    private int mFpsRecalcPeriod = 1;
+    private int mFpsRecalcPeriod = 30;
     private File mCurrentSaveStateFile = null;
 
     // Speed info - used internally

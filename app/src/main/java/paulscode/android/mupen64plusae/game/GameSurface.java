@@ -681,7 +681,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private float mLastFps = 0;
         private int mFrameCount = 0;
         private long mTimeMilliseconds = 0;
-        private static final int mFpsRecalPeriodFrames = 60;
+        private static final int mFpsRecalPeriodFrames = 30;
 
         /**
          * Constructor.

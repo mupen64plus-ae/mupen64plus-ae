@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.input.map;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -260,40 +259,6 @@ public class TouchMap
         mN64ToColor[DPD_LD] = 0xA000FF;
         mN64ToColor[DPD_LU] = 0x00FF5A;
     }
-
-    /**
-     * Adjusts Y so that in portrait mode, the screen starts in the bottom half of the screen
-     * @param y Percentage before adjustment
-     * @return New percentage at the bottom of the screen
-     */
-    int getAdjustedYPos(int y)
-    {
-        if(mResources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-        {
-            return 50 + (int)((y/100.0) * 50.0f);
-        }
-        else
-        {
-            return y;
-        }
-    }
-
-    /**
-     * Adjusts Y so that in portrait mode, the FPS shows up in the top half of the screen
-     * @param y Percentage before adjustment
-     * @return New percentage at the bottom of the screen
-     */
-    int getAdjustedFpsYPos(int y)
-    {
-        if(mResources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-        {
-            return (int)((y/100.0) * 45.0f);
-        }
-        else
-        {
-            return y;
-        }
-    }
     
     /**
      * Recomputes the map data for a given digitizer size.
@@ -307,16 +272,16 @@ public class TouchMap
         for( int i = 0; i < buttonImages.size(); i++ )
         {
             buttonImages.get( i ).setScale( ( buttonScaling.get( i ) * scale ) );
-            buttonImages.get( i ).fitPercent( buttonX.get( i ), getAdjustedYPos(buttonY.get( i )), w, h );
+            buttonImages.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
             buttonMasks.get( i ).setScale( ( buttonScaling.get( i ) * scale ) );
-            buttonMasks.get( i ).fitPercent( buttonX.get( i ), getAdjustedYPos(buttonY.get( i )), w, h );
+            buttonMasks.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
         }
         
         // Recompute analog background location
         if( analogBackImage != null )
         {
             analogBackImage.setScale( ( analogBackScaling * scale ) );
-            analogBackImage.fitPercent( analogBackX, getAdjustedYPos(analogBackY), w, h );
+            analogBackImage.fitPercent( analogBackX, analogBackY, w, h );
 
             currentAnalogX = analogBackImage.x;
             currentAnalogY = analogBackImage.y;
@@ -616,7 +581,7 @@ public class TouchMap
             {
                 analogBackX = x;
                 analogBackY = y;
-                analogBackImage.fitPercent( analogBackX, getAdjustedYPos(analogBackY), w, h );
+                analogBackImage.fitPercent( analogBackX, analogBackY, w, h );
 
                 currentAnalogX = analogBackImage.x;
                 currentAnalogY = analogBackImage.y;
@@ -640,8 +605,8 @@ public class TouchMap
                     {
                         buttonX.set( i, x );
                         buttonY.set( i, y );
-                        buttonImages.get( i ).fitPercent( buttonX.get( i ), getAdjustedYPos(buttonY.get( i )), w, h );
-                        buttonMasks.get( i ).fitPercent( buttonX.get( i ), getAdjustedYPos(buttonY.get( i )), w, h );
+                        buttonImages.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
+                        buttonMasks.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
                     }
                 }
             }

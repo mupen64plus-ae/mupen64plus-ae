@@ -62,7 +62,6 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
-import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
@@ -135,6 +134,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 {
     // Activity and views
     private GameOverlay mOverlay;
+    private FpsOverlay mFpsOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
     private GameSurface mGameSurface;
@@ -175,6 +175,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private CoreFragment mCoreFragment = null;
 
     private final boolean[] isControllerPlugged = new boolean[4];
+
+    private static final String STATE_CURRENT_FPS = "STATE_CURRENT_FPS";
+    private int currentFps = -1;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -308,6 +311,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSurface = this.findViewById(R.id.shaderSurface);
 
         mOverlay = findViewById(R.id.gameOverlay);
+        mFpsOverlay = findViewById(R.id.fpsOverlay);
         mDrawerLayout = findViewById(R.id.drawerLayout);
         mGameSidebar = findViewById(R.id.gameSidebar);
 
@@ -352,7 +356,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             int oldHeight = oldBottom - oldTop;
             if( v.getWidth() != oldWidth || v.getHeight() != oldHeight )
             {
-                DisplayResolutionData resolutionData = new DisplayResolutionData(mGlobalPrefs, this, mDrawerLayout, mGamePrefs.displayScaling);;
+                DisplayResolutionData resolutionData = new DisplayResolutionData(mGlobalPrefs, this, mDrawerLayout, mGamePrefs.displayScaling);
                 FrameLayout.LayoutParams newParams = (FrameLayout.LayoutParams) mGameSurface.getLayoutParams();
                 newParams.width = Math.round ( resolutionData.getSurfaceResolutionWidth() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
                 newParams.height = Math.round ( resolutionData.getSurfaceResolutionHeight() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
@@ -373,6 +377,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         else
         {
             mDrawerOpenState = savedInstanceState.getBoolean(STATE_DRAWER_OPEN);
+            currentFps = savedInstanceState.getInt(STATE_CURRENT_FPS);
         }
 
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
@@ -412,16 +417,22 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         });
 
         // Initialize the screen elements
-        if( mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled )
+        if( mGamePrefs.isTouchscreenEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( this.getResources() );
             mTouchscreenMap.load( mGlobalPrefs.isCustomTouchscreenSkin ? null : this,
                     mGlobalPrefs.touchscreenSkinPath, mGamePrefs.touchscreenProfile,
-                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.fpsXPosition,
-                    mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
-            mOverlay.initialize(mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
+                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
+
+            mOverlay.initialize(mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
                     mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.isTouchscreenAnimated);
+        }
+
+        if (mGlobalPrefs.isFpsEnabled) {
+            mFpsOverlay.load(mGlobalPrefs.isCustomTouchscreenSkin ? null : this, getResources(), mGlobalPrefs.touchscreenSkinPath, mGlobalPrefs.fpsXPosition,
+                    mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale);
+            mFpsOverlay.onFpsChanged(currentFps);
         }
 
         // Initialize user interface devices
@@ -453,7 +464,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onFpsChanged(int newValue)
     {
-        if(mGlobalPrefs.isFpsEnabled && mOverlay != null && mCoreFragment != null)
+        if(mGlobalPrefs.isFpsEnabled && mFpsOverlay != null && mCoreFragment != null)
         {
             float shaderFps = mGameSurface.getFps();
 
@@ -463,7 +474,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             } else {
                 fps = newValue;
             }
-            mOverlay.onFpsChanged(fps);
+
+            if (fps > 0) {
+                mFpsOverlay.onFpsChanged(fps);
+                currentFps = fps;
+            }
         }
     }
 
@@ -526,6 +541,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onSaveInstanceState( Bundle savedInstanceState )
     {
         savedInstanceState.putBoolean(STATE_DRAWER_OPEN, mDrawerOpenState);
+        savedInstanceState.putInt(STATE_CURRENT_FPS, currentFps);
 
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -840,7 +856,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.resumeEmulator();
             }
 
-            mCoreFragment.setOnFpsChangedListener(this, 60);
+            mCoreFragment.setOnFpsChangedListener(this, 30);
         }
     }
 
