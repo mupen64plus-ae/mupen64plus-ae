@@ -676,7 +676,9 @@ void GraphicsDrawer::setBlendMode(bool _forceLegacyBlending) const
 		return;
 	}
 
-	if (Context::FramebufferFetchColor && !isTexrectDrawerMode()) {
+	bool blastCorpsHack = (config.generalEmulation.hacks & hack_blastCorps) != 0 &&
+						  gSP.texture.on == 0 && currentCombiner()->usesTexture();
+	if (Context::FramebufferFetchColor && !isTexrectDrawerMode() && !blastCorpsHack) {
 		gfxContext.enable(enable::BLEND, false);
 		return;
 	}
