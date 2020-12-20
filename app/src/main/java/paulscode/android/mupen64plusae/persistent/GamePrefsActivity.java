@@ -586,7 +586,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     }
                 }
 
-                mScreenCheats.addPreference( mCategoryCheats );
+                if (mCategoryCheats.getParent() == null) {
+                    mScreenCheats.addPreference( mCategoryCheats );
+                }
 
                 if(mClearCheats)
                 {
