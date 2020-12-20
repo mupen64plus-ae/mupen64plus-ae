@@ -340,8 +340,10 @@ public class CheatUtils
                 {
                     String[] tmp_ops = cheat.option.split("\n");
                     for (String tmp_op : tmp_ops) {
-                        ops.add(new CheatOption(tmp_op.substring(tmp_op.lastIndexOf(' ') + 1), tmp_op
-                                .substring(0, tmp_op.lastIndexOf(' '))));
+                        int indexOfSpace = tmp_op.lastIndexOf(' ');
+                        if (indexOfSpace != -1) {
+                            ops.add(new CheatOption(tmp_op.substring(indexOfSpace + 1), tmp_op.substring(0, indexOfSpace)));
+                        }
                     }
                 }
             }
