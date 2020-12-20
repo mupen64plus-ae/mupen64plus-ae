@@ -81,7 +81,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String BUTTON_Z = "buttonZ";
     private static final String BUTTON_S = "buttonS";
     private static final String BUTTON_SENSOR = "buttonSen";
-    private static final String FPS = "fps";
     private static final String TAG_X = "-x";
     private static final String TAG_Y = "-y";
     private static final String SCALE = "-scale";
@@ -189,11 +188,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
-        
-        mPopupBeingShown = false;
 
-        //Always show FPS
-        enableFps();
+        mPopupBeingShown = false;
 
         hideSystemBars();
     }
@@ -341,14 +337,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mProfile.putInt( assetName + TAG_Y, newPosition );
         refresh();
     }
-
-    private void enableFps()
-    {
-        String assetName = FPS;
-        mProfile.putInt( assetName + TAG_X, 0 );
-        mProfile.putInt( assetName + TAG_Y, 0 );
-        refresh();
-    }
     
     private void setNotHoldable( int n64Index, boolean holdable )
     {
@@ -476,13 +464,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 // drag this button or analog stick around
                 
                 // calculate the X and Y percentage
-                View view = getWindow().getDecorView();
-                int newDragX = ( x - ( initialX - dragFrame.left ) ) * 100/( view.getWidth() - ( dragFrame.right - dragFrame.left ) );
-                int newDragY = ( y - ( initialY - dragFrame.top ) ) * 100/( view.getHeight() - ( dragFrame.bottom - dragFrame.top ) );
-
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    newDragY = 2*(newDragY - 50);
-                }
+                int newDragX = ( x - ( initialX - dragFrame.left ) ) * 100/( mOverlay.getWidth() - ( dragFrame.right - dragFrame.left ) );
+                int newDragY = ( y - ( initialY - dragFrame.top ) ) * 100/( mOverlay.getHeight() - ( dragFrame.bottom - dragFrame.top ) );
 
                 newDragX = Math.min( Math.max( newDragX, 0 ), 110 );
                 newDragY = Math.min( Math.max( newDragY, 0 ), 110 );
