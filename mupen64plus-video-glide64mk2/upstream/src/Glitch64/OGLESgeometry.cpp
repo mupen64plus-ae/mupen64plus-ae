@@ -50,7 +50,7 @@ int w_buffer_mode;
 int inverted_culling;
 int culling_mode;
 
-#define VERTEX_BUFFER_SIZE 1500 //Max amount of vertices to buffer, this seems large enough.
+#define VERTEX_BUFFER_SIZE 750 //Max amount of vertices to buffer, this seems large enough.
 static VERTEX vertex_buffer[VERTEX_BUFFER_SIZE];
 static int vertex_buffer_count = 0;
 static GLenum vertex_draw_mode;
