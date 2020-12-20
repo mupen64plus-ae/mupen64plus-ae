@@ -572,6 +572,10 @@ public class TouchMap
      */
     void updateButton( Profile profile, String name, int w, int h )
     {
+        if (name == null) {
+            return;
+        }
+        
         int x = profile.getInt( name + "-x", 0 );
         int y = profile.getInt( name + "-y", 95 );
         
