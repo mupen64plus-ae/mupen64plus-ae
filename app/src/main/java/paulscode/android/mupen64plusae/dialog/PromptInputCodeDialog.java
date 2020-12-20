@@ -227,7 +227,7 @@ public class PromptInputCodeDialog extends DialogFragment
         if (activity instanceof PromptInputCodeListener) {
             ((PromptInputCodeListener) activity).onDialogClosed(inputCode, hardwareId, which);
         } else {
-            Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
+            Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener, activity=" + activity.toString());
         }
     }
 }

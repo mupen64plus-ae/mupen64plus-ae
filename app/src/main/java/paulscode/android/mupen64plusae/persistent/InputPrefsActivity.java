@@ -31,15 +31,21 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
+import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
-public class InputPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
+public class InputPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener,
+        PromptInputCodeDialog.PromptInputCodeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String NAVIGATION_MODE = "navigationMode";
 
     // App data and user preferences
     private SharedPreferences mPrefs = null;
+    private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -59,6 +65,10 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
         super.onCreate(savedInstanceState);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Get app data and user preferences
+        mAppData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_input);
@@ -89,6 +99,9 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
+        // Just refresh the preference screens in place
+        refreshViews();
+
         if (key.equals(NAVIGATION_MODE))
         {
             // Sometimes one preference change affects the hierarchy or layout
@@ -99,8 +112,38 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
         }
     }
 
+    private void refreshViews()
+    {
+        // Refresh the preferences object
+        mGlobalPrefs = new GlobalPrefs(this, mAppData);
+
+        // Enable/disable player map item as necessary
+        PrefUtil.enablePreference(this, GlobalPrefs.PLAYER_MAP,
+                !mGlobalPrefs.autoPlayerMapping && !mGlobalPrefs.isControllerShared);
+
+        // Define which buttons to show in player map dialog
+        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
+        if (playerPref != null)
+        {
+            // Check null in case preference has been removed
+            final boolean enable1 = mGlobalPrefs.controllerProfile1 != null;
+            final boolean enable2 = mGlobalPrefs.controllerProfile2 != null;
+            final boolean enable3 = mGlobalPrefs.controllerProfile3 != null;
+            final boolean enable4 = mGlobalPrefs.controllerProfile4 != null;
+            playerPref.setControllersEnabled(enable1, enable2, enable3, enable4);
+        }
+    }
+
     @Override
     protected void OnPreferenceScreenChange(String key)
     {
+        refreshViews();
+    }
+
+    @Override
+    public void onDialogClosed(int inputCode, int hardwareId, int which)
+    {
+        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
+        playerPref.onDialogClosed(hardwareId, which);
     }
 }

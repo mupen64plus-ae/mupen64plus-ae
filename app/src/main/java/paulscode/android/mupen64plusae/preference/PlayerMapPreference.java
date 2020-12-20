@@ -144,6 +144,10 @@ public class PlayerMapPreference extends DialogPreference implements
             return false;
         }
 
+        final String value = mMap.serialize();
+        if( callChangeListener( value ) )
+            setValue( value );
+
         updateViews();
         return true;
     }
@@ -215,10 +219,11 @@ public class PlayerMapPreference extends DialogPreference implements
     {
         if( which != DialogInterface.BUTTON_NEGATIVE )
         {
-            if( which == DialogInterface.BUTTON_POSITIVE )
-                mMap.map( hardwareId, mSelectedPlayer );
-            else
-                mMap.unmapPlayer( mSelectedPlayer );
+            if( which == DialogInterface.BUTTON_POSITIVE ) {
+                mMap.map(hardwareId, mSelectedPlayer);
+            } else {
+                mMap.unmapPlayer(mSelectedPlayer);
+            }
             updateViews();
 
             final String value = mMap.serialize();

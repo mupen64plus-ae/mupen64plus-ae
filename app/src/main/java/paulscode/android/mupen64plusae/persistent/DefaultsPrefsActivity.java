@@ -30,14 +30,11 @@ import android.text.TextUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
-import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
-public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener,
-    PromptInputCodeListener
+public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -174,22 +171,6 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
             controllerProfile4.setSummary(controllerProfile4.getCurrentValue(null));
         }
 
-        // Enable/disable player map item as necessary
-        PrefUtil.enablePreference(this, GlobalPrefs.PLAYER_MAP,
-                !mGlobalPrefs.autoPlayerMapping && !mGlobalPrefs.isControllerShared);
-
-        // Define which buttons to show in player map dialog
-        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
-        if (playerPref != null)
-        {
-            // Check null in case preference has been removed
-            final boolean enable1 = mGlobalPrefs.controllerProfile1 != null;
-            final boolean enable2 = mGlobalPrefs.controllerProfile2 != null;
-            final boolean enable3 = mGlobalPrefs.controllerProfile3 != null;
-            final boolean enable4 = mGlobalPrefs.controllerProfile4 != null;
-            playerPref.setControllersEnabled(enable1, enable2, enable3, enable4);
-        }
-
         //Remove touch screen profile if TV mode
         if(mGlobalPrefs.isBigScreenMode)
         {
@@ -202,12 +183,5 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
     protected void OnPreferenceScreenChange(String key)
     {
         refreshViews();
-    }
-
-    @Override
-    public void onDialogClosed(int inputCode, int hardwareId, int which)
-    {
-        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
-        playerPref.onDialogClosed(hardwareId, which);
     }
 }

@@ -55,6 +55,30 @@
         android:summary="@string/navigationMode_summary"
         android:title="@string/navigationMode_title" />
 
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="autoPlayerMapping"
+        android:summary="@string/defaultsAutoPlayerMapping_summary"
+        android:title="@string/defaultsAutoPlayerMapping_title" />
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="allEmulatedControllersPlugged"
+        android:summary="@string/defaultsAllEmulatedControllersAlwaysAttached_summary"
+        android:title="@string/defaultsAllEmulatedControllersAlwaysAttached_title" />
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="inputShareController"
+        android:summary="@string/inputShareController_summary"
+        android:title="@string/inputShareController_title" />
+    <paulscode.android.mupen64plusae.preference.PlayerMapPreference
+        android:icon="@drawable/ic_users"
+        android:key="playerMap"
+        android:summary="@string/playerMap_summary"
+        android:title="@string/playerMap_title" />
+
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/inGameMenuSetting_default"
         android:entries="@array/inGameMenuSetting_entries"
