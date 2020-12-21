@@ -384,6 +384,12 @@ public class CacheRomInfoService extends Service
                     SevenZFile zipFile = new SevenZFile(channel);
                     SevenZArchiveEntry zipEntry;
                     while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
+
+                        // Skip entries with null file names
+                        if (zipEntry.getName() == null) {
+                            continue;
+                        }
+
                         InputStream zipStream;
                         mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
                         mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
