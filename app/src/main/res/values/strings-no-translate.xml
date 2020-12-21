@@ -35,4 +35,7 @@
     <string name="inputMapActivity_loadSlot" translatable="false">@string/menuItem_slotLoad</string>
     <string name="glide64Frameskip_title" translatable="false">@string/gln64Frameskip_title</string>
 
+    <!-- Other -->
+    <string name="default_font" translatable="false">sans-serif-light</string>
+
 </resources>
