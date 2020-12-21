@@ -163,6 +163,8 @@ static void nullf() {}
 #define MAX_OUTPUT_BLOCK_SIZE 262144
 #define CLOCK_DIVIDER g_dev.r4300.cp0.count_per_op
 
+#define exit(X) longjmp(jump_exit, 1);
+
 struct regstat
 {
   signed char regmap_entry[HOST_REGS];
@@ -413,6 +415,7 @@ static uint64_t get_const(struct regstat *cur,signed char reg)
   }
   DebugMessage(M64MSG_ERROR, "Unknown constant in r%d",reg);
   exit(1);
+  return 0;
 }
 
 // Least soon needed registers

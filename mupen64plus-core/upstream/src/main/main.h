@@ -29,6 +29,7 @@
 #include "main/cheat.h"
 #include "device/device.h"
 #include "osal/preproc.h"
+#include <setjmp.h>
 
 #if defined(__GNUC__)
 #define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
@@ -54,6 +55,8 @@ extern m64p_media_loader g_media_loader;
 extern m64p_frame_callback g_FrameCallback;
 
 extern int g_gs_vi_counter;
+
+jmp_buf jump_exit;
 
 const char* get_savestatepath(void);
 const char* get_savesrampath(void);

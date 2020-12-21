@@ -1646,7 +1646,11 @@ m64p_error main_run(void)
 
     poweron_device(&g_dev);
     pif_bootrom_hle_execute(&g_dev.r4300);
-    run_device(&g_dev);
+
+    if (setjmp(jump_exit) == 0)
+        run_device(&g_dev);
+    else
+        DebugMessage(M64MSG_STATUS, "Exit requested");
 
     /* now begin to shut down */
 #ifdef WITH_LIRC
