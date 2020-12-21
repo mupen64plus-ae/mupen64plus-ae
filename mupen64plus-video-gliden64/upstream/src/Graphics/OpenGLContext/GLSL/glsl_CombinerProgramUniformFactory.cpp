@@ -358,12 +358,9 @@ public:
 		const int forceBlend2 = gDP.otherMode.forceBlender;
 		uForceBlendCycle2.set(forceBlend2, _force);
 
-		const u32 mode = _SHIFTR(gDP.otherMode.l, 16, 16);
-
 		if (!(graphics::Context::DualSourceBlending || graphics::Context::FramebufferFetchColor) || dwnd().getDrawer().isTexrectDrawerMode()) {
 			// Modes, which shader blender can't emulate
 			const u32 mode = _SHIFTR(gDP.otherMode.l, 16, 16);
-
 			switch (mode) {
 			case 0x0040:
 				// Mia Hamm Soccer
