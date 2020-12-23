@@ -339,7 +339,8 @@ public class CacheRomInfoService extends Service
 
                 ZipEntry entry = zipfile.getNextEntry();
 
-                while( entry != null && !mbStopped)
+                // Assume only one entry per zip file
+                if( entry != null && !mbStopped)
                 {
                     mListener.GetProgressDialog().setSubtext( getShortFileName(new File(entry.getName()).getName()));
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
@@ -348,8 +349,6 @@ public class CacheRomInfoService extends Service
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
 
                     cacheZipFileFromInputStream(database, file, config, new File(entry.getName()).getName(), zipStream);
-
-                    entry = zipfile.getNextEntry();
                 }
                 zipfile.close();
             }
@@ -383,21 +382,21 @@ public class CacheRomInfoService extends Service
 
                     SevenZFile zipFile = new SevenZFile(channel);
                     SevenZArchiveEntry zipEntry;
-                    while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
+
+                    // Assume only one entry per zip file
+                    if ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
 
                         // Skip entries with null file names
-                        if (zipEntry.getName() == null) {
-                            continue;
+                        if (zipEntry.getName() != null) {
+                            InputStream zipStream;
+                            mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
+                            mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
+
+                            zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+                            mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
+
+                            cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
                         }
-
-                        InputStream zipStream;
-                        mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
-                        mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
-
-                        zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
-                        mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
-
-                        cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
                     }
                 }
             }
