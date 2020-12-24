@@ -48,6 +48,8 @@ import androidx.documentfile.provider.DocumentFile;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedInputStream;
@@ -61,6 +63,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -181,7 +184,11 @@ public class CacheRomInfoService extends Service
                     cacheFile( file, database, config);
                 } else if (mSearchZips && !configHasZip(config, file.getUri())) {
                     if (header.isZip) {
-                        cacheZip(database, file.getUri(), config);
+                        if (AppData.IS_NOUGAT) {
+                            cacheZipFast(database, file.getUri(), config);
+                        } else {
+                            cacheZip(database, file.getUri(), config);
+                        }
                     } else if (header.is7Zip && AppData.IS_NOUGAT) {
                         cache7Zip(database, file.getUri(), config);
                     }
@@ -362,6 +369,40 @@ public class CacheRomInfoService extends Service
                 }
             } catch (IOException ignored) {
             }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void cacheZipFast(RomDatabase database, Uri file, ConfigFile config)
+    {
+        Log.i( "CacheRomInfoService", "Found zip file " + file.toString() );
+
+        try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
+            if (parcelFileDescriptor != null) {
+                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+
+                ZipFile zipFile = new ZipFile(fileInputStream.getChannel());
+                Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+
+                while (entries.hasMoreElements() && !mbStopped) {
+
+                    ZipArchiveEntry zipEntry = entries.nextElement();
+
+                    InputStream zipStream;
+                    mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
+                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
+
+                    zipStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
+
+                    cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
+                }
+                zipFile.close();
+            }
+        } catch (IOException|IllegalArgumentException|NoSuchAlgorithmException|SecurityException e) {
+            Log.w("CacheRomInfoService", "IOException: " + e);
+        } catch (OutOfMemoryError e) {
+            Log.w("CacheRomInfoService", "Out of memory while extracting 7zip entry: " + file.getPath());
         }
     }
 

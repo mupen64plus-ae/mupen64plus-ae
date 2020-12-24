@@ -1229,12 +1229,13 @@ public final class FileUtil
     public static String computeMd5( InputStream inputStream  ) throws java.io.IOException, NoSuchAlgorithmException
     {
         // From http://stackoverflow.com/a/16938703
-        inputStream.mark( 1 );
+        int byteCache = 1024*1024;
+        inputStream.mark(byteCache);
         int firstByte = inputStream.read();
         inputStream.reset();
 
         MessageDigest digester = MessageDigest.getInstance( "MD5" );
-        byte[] bytes = new byte[8192];
+        byte[] bytes = new byte[byteCache];
         int byteCount;
         while( ( byteCount = inputStream.read( bytes ) ) > 0 )
         {
