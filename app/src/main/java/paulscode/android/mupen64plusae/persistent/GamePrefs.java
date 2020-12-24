@@ -332,6 +332,20 @@ public class GamePrefs
         gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol);
         setGameDirs(appData, globalPrefs, getGameDataDir());
 
+        // Attempt to make base game dir first, if we can't, switch to alternate
+        // FAT32 compatible name
+        FileUtil.makeDirs(getGameDataDir());
+
+        if( !new File(getGameDataDir()).exists()) {
+            useAlternateGameDataDir();
+            FileUtil.makeDirs(getGameDataDir());
+        }
+
+        //If the above didn't work, go with 2nd alternative name, which is just the md5
+        if( !new File(getGameDataDir()).exists()) {
+            useSecondAlternateGameDataDir();
+        }
+
         isDpadGame = isDpadGame(headerName, goodName);
         is64DdGame = is64ddGame(headerName);
 
