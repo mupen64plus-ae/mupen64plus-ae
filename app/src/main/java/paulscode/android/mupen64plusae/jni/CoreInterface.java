@@ -43,7 +43,6 @@ import java.io.File;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -125,17 +124,17 @@ class CoreInterface
     //Frame rate info - used by ae-vidext
     private final ArrayList<OnFpsChangedListener> mFpsListeners = new ArrayList<>();
 
-    private CoreLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", CoreLibrary.class);
-    private AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-bridge", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
-    private AndroidAudioLibrary mAndroidAudioLibrary = Native.load("mupen64plus-audio-android", AndroidAudioLibrary.class);
-    private AndroidAudioLibrary mAndroidAudioLibraryFp = Native.load("mupen64plus-audio-android-fp", AndroidAudioLibrary.class);
+    private final CoreLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", CoreLibrary.class);
+    private final AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-bridge", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
+    private final AndroidAudioLibrary mAndroidAudioLibrary = Native.load("mupen64plus-audio-android", AndroidAudioLibrary.class);
+    private final AndroidAudioLibrary mAndroidAudioLibraryFp = Native.load("mupen64plus-audio-android-fp", AndroidAudioLibrary.class);
     private AppData.AudioPlugin mSelectedAudioPlugin = AppData.AudioPlugin.DUMMY;
-    private HashMap<CoreTypes.m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
+    private final HashMap<CoreTypes.m64p_plugin_type, PluginLibrary> mPlugins = new HashMap<>();
 
     private Pointer mCoreContext;
 
-    private SparseArray<String> mGbRomPaths = new SparseArray<>(4);
-    private SparseArray<String> mGbRamPaths = new SparseArray<>(4);
+    private final SparseArray<String> mGbRomPaths = new SparseArray<>(4);
+    private final SparseArray<String> mGbRamPaths = new SparseArray<>(4);
     private String mDdRom = null;
     private String mDdDisk = null;
     private static final String GB_ROM_NAME = "gb_rom.gb";
@@ -144,13 +143,13 @@ class CoreInterface
     private static final String DD_DISK_NAME = "dd_disk.ndd";
     private File mWorkingPath = null;
 
-    private HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
+    private final HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
-    private CoreLibrary.DebugCallback mDebugCallBackCore = this::DebugCallback;
+    private final CoreLibrary.DebugCallback mDebugCallBackCore = this::DebugCallback;
 
-    private PluginLibrary.DebugCallback mDebugCallBackPlugin = this::DebugCallback;
+    private final PluginLibrary.DebugCallback mDebugCallBackPlugin = this::DebugCallback;
 
-    private CoreLibrary.StateCallback mStateCallBack = new CoreLibrary.StateCallback() {
+    private final CoreLibrary.StateCallback mStateCallBack = new CoreLibrary.StateCallback() {
 
         /**
          * Callback for when an emulator's state/parameter has changed.
@@ -171,7 +170,7 @@ class CoreInterface
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = (cb_data, controller_num) -> {
+    private final CoreTypes.m64p_media_loader.get_gb_cart_rom mGbCartRomCallback = (cb_data, controller_num) -> {
         if (new File(mGbRomPaths.get(controller_num + 1)).exists()) {
             return mGbRomPaths.get(controller_num + 1);
         } else {
@@ -179,7 +178,7 @@ class CoreInterface
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = (cb_data, controller_num) -> {
+    private final CoreTypes.m64p_media_loader.get_gb_cart_ram mGbCartRamCallback = (cb_data, controller_num) -> {
         if (new File(mGbRamPaths.get(controller_num + 1)).exists()) {
             return mGbRamPaths.get(controller_num + 1);
         } else {
@@ -187,7 +186,7 @@ class CoreInterface
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_dd_rom mDdRomCallback = cb_data -> {
+    private final CoreTypes.m64p_media_loader.get_dd_rom mDdRomCallback = cb_data -> {
         if (new File(mDdRom).exists()) {
             return mDdRom;
         } else {
@@ -195,7 +194,7 @@ class CoreInterface
         }
     };
 
-    private CoreTypes.m64p_media_loader.get_dd_disk mDdDiskCallback = cb_data -> {
+    private final CoreTypes.m64p_media_loader.get_dd_disk mDdDiskCallback = cb_data -> {
         if (new File(mDdDisk).exists()) {
             return mDdDisk;
         } else {
@@ -203,7 +202,7 @@ class CoreInterface
         }
     };
 
-    private AeBridgeLibrary.FpsCounterCallback mFpsCounterCallback = fps -> {
+    private final AeBridgeLibrary.FpsCounterCallback mFpsCounterCallback = fps -> {
         synchronized (mFpsListeners)
         {
             for (OnFpsChangedListener listener: mFpsListeners) {
@@ -212,7 +211,7 @@ class CoreInterface
         }
     };
 
-    private CoreTypes.m64p_media_loader mMediaLoaderCallbacks = new CoreTypes.m64p_media_loader();
+    private final CoreTypes.m64p_media_loader mMediaLoaderCallbacks = new CoreTypes.m64p_media_loader();
 
     CoreInterface()
     {
@@ -358,32 +357,28 @@ class CoreInterface
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPath), "r")) {
             if (parcelFileDescriptor != null) {
                 FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-                if (fileInputStream.getChannel().size() < MAX_7ZIP_FILE_SIZE) {
-                    SeekableInMemoryByteChannel channel = new SeekableInMemoryByteChannel(
-                            IOUtils.toByteArray(fileInputStream));
 
-                    SevenZFile zipFile = new SevenZFile(channel);
-                    SevenZArchiveEntry zipEntry;
+                SevenZFile zipFile = new SevenZFile(fileInputStream.getChannel());
+                SevenZArchiveEntry zipEntry;
 
-                    while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
-                    {
-                        InputStream zipStream = new SevenZInputStream(zipFile);
-                        final String entryName = new File(zipEntry.getName()).getName();
+                while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                {
+                    InputStream zipStream = new SevenZInputStream(zipFile);
+                    final String entryName = new File(zipEntry.getName()).getName();
 
-                        lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
+                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
-                        if (lbFound) {
-                            returnData = new byte[(int) zipEntry.getSize()];
+                    if (lbFound) {
+                        returnData = new byte[(int) zipEntry.getSize()];
 
-                            int numBytesRead = 0;
+                        int numBytesRead = 0;
 
-                            while (numBytesRead < returnData.length) {
-                                numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
-                            }
+                        while (numBytesRead < returnData.length) {
+                            numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
+                        }
 
-                            if (numBytesRead != returnData.length) {
-                                returnData = null;
-                            }
+                        if (numBytesRead != returnData.length) {
+                            returnData = null;
                         }
                     }
                 }
@@ -493,7 +488,30 @@ class CoreInterface
             return;
         }
 
-        FileUtil.copySingleFile(context, Uri.parse(ddDiskUri), new File(mDdDisk));
+        byte[] romBuffer;
+        final RomHeader romHeader = new RomHeader(context, Uri.parse(ddDiskUri));
+
+        if (romHeader.isZip || romHeader.is7Zip) {
+
+            if (romHeader.isZip) {
+                romBuffer = extractZip(context, null, ddDiskUri);
+            } else {
+                romBuffer = extractSevenZ(context, null, ddDiskUri);
+            }
+
+            if (romBuffer != null) {
+                try {
+                    FileUtils.writeByteArrayToFile(new File(mDdDisk), romBuffer);
+                    Log.i(TAG, "Copied DD Disk: " + mDdDisk);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Log.i(TAG, "Copying DD Disk: " + mDdDisk);
+            FileUtil.copySingleFile(context, Uri.parse(ddDiskUri), new File(mDdDisk));
+        }
+
     }
 
     public void writeGbRamData(Context context, SparseArray<String> ramUri)

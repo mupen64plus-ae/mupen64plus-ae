@@ -37,19 +37,17 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.Process;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.documentfile.provider.DocumentFile;
-
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.documentfile.provider.DocumentFile;
+
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedInputStream;
@@ -104,7 +102,6 @@ public class CacheRomInfoService extends Service
 
     final static String NOTIFICATION_CHANNEL_ID_V2 = "CacheRomInfoServiceChannelV2";
 
-    final static long MAX_7ZIP_FILE_SIZE = 100*1024*1024;
     final static int MAX_ROM_FILE_NAME_SIZE = 30;
     
     public interface CacheRomInfoListener
@@ -368,36 +365,32 @@ public class CacheRomInfoService extends Service
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void cache7Zip(RomDatabase database, Uri file, ConfigFile config)
     {
         Log.i( "CacheRomInfoService", "Found 7zip file " + file.toString() );
 
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
-
             if (parcelFileDescriptor != null) {
                 FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-                if (fileInputStream.getChannel().size() < MAX_7ZIP_FILE_SIZE) {
-                    SeekableInMemoryByteChannel channel = new SeekableInMemoryByteChannel(
-                            IOUtils.toByteArray(fileInputStream));
 
-                    SevenZFile zipFile = new SevenZFile(channel);
-                    SevenZArchiveEntry zipEntry;
+                SevenZFile zipFile = new SevenZFile(fileInputStream.getChannel());
+                SevenZArchiveEntry zipEntry;
+                while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
 
-                    // Assume only one entry per zip file
-                    if ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
-
-                        // Skip entries with null file names
-                        if (zipEntry.getName() != null) {
-                            InputStream zipStream;
-                            mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
-                            mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
-
-                            zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
-                            mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
-
-                            cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
-                        }
+                    // Skip entries with null file names
+                    if (zipEntry.getName() == null) {
+                        continue;
                     }
+
+                    InputStream zipStream;
+                    mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
+                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
+
+                    zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
+
+                    cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
                 }
             }
         } catch (IOException|IllegalArgumentException|NoSuchAlgorithmException|SecurityException e) {
@@ -416,7 +409,7 @@ public class CacheRomInfoService extends Service
         if(romHeader != null) {
             extractedHeader = new RomHeader( romHeader );
 
-            if(extractedHeader.isValid)
+            if(extractedHeader.isValid || extractedHeader.isNdd)
             {
                 Log.i( "FileUtil", "Found ROM entry " + name);
 
@@ -607,10 +600,10 @@ public class CacheRomInfoService extends Service
         Set<String> keys = theConfigFile.keySet();
         boolean found = false;
 
-        Iterator iter = keys.iterator();
+        Iterator<String> iter = keys.iterator();
         String key = null;
         while (iter.hasNext() && !found) {
-            key = (String) iter.next();
+            key = iter.next();
             String foundZipPath = theConfigFile.get(key, "zipPathUri");
             found = foundZipPath != null && foundZipPath.equals(zipFile.toString());
         }
@@ -635,9 +628,9 @@ public class CacheRomInfoService extends Service
     {
         Set<String> keys = theConfigFile.keySet();
 
-        Iterator iter = keys.iterator();
+        Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
-            String key = (String) iter.next();
+            String key = iter.next();
             String foundZipPath = theConfigFile.get(key, "zipPathUri");
             String foundRomPath = theConfigFile.get(key, "romPathUri");
 
@@ -695,9 +688,9 @@ public class CacheRomInfoService extends Service
     {
         Set<String> keys = theConfigFile.keySet();
 
-        Iterator iter = keys.iterator();
+        Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
-            String key = (String) iter.next();
+            String key = iter.next();
             String foundZipPath = theConfigFile.get(key, "zipPath");
             String foundRomPath = theConfigFile.get(key, "romPath");
 

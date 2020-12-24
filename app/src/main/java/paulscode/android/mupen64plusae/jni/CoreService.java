@@ -32,7 +32,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Binder;
@@ -46,16 +45,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.Vibrator;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.documentfile.provider.DocumentFile;
-
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Surface;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -533,14 +531,32 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             boolean isNdd = false;
             boolean isRom = false;
-            // First check for ROM type
+            // First check to see if it's a disk or a ROM
             if (TextUtils.isEmpty(mZipPath)) {
                 RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mRomPath));
                 isNdd = header.isNdd;
-                isRom = header.isValid;
-                if (isNdd) {
-                    mCoreInterface.setDdRomPath(getApplicationContext(), mGlobalPrefs.japanIplPath);
+            } else {
+                RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mZipPath));
+                if (header.isZip || header.is7Zip) {
+                    RomHeader extractedHeader;
+                    if (header.isZip) {
+                        extractedHeader = FileUtil.getHeaderFromZip(getApplicationContext(), mRomPath, mZipPath);
+                    } else {
+                        extractedHeader = FileUtil.getHeaderFromSevenZip(getApplicationContext(), mRomPath, mZipPath);
+                    }
+
+                    if (extractedHeader != null) {
+                        isNdd = extractedHeader.isNdd;
+                    }
+                }
+            }
+
+            if (isNdd) {
+                mCoreInterface.setDdRomPath(getApplicationContext(), mGlobalPrefs.japanIplPath);
+                if (TextUtils.isEmpty(mZipPath)) {
                     mCoreInterface.setDdDiskPath(getApplicationContext(), mRomPath);
+                } else {
+                    mCoreInterface.setDdDiskPath(getApplicationContext(), mZipPath);
                 }
             }
             else {
@@ -562,30 +578,28 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.emuSetFramelimiter(false);
             }
 
-            boolean openSuccess = false;
+            boolean openSuccess;
 
+            // Disk only games still require a ROM image, so use a dummy test ROM
             if (isNdd) {
                 openSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
-            }
 
-            if (TextUtils.isEmpty(mZipPath))
-            {
-                // Disk only games still require a ROM image, so use a dummy test ROM
-                if (isNdd) {
-                    InputStream inputStream ;
-                    try {
-                        inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
-                        openSuccess = mCoreInterface.openRom(getApplicationContext(), inputStream);
-                    } catch (IOException e) {
-                        openSuccess = false;
-                    }
-                } else if (isRom) {
+                InputStream inputStream ;
+                try {
+                    inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
+                    openSuccess = openSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
+                } catch (IOException e) {
+                    openSuccess = false;
+                }
+            } else {
+                if (TextUtils.isEmpty(mZipPath))
+                {
                     openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
                 }
-            }
-            else
-            {
-                openSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+                else
+                {
+                    openSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+                }
             }
 
             if (mLoadingDataListener != null) mLoadingDataListener.loadingFinished();

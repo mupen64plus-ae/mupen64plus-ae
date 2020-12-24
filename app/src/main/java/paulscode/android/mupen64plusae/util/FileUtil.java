@@ -47,7 +47,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -68,9 +68,11 @@ import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 /**
  * Utility class that provides methods which simplify file I/O tasks.
  */
-@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "WeakerAccess"})
+@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused", "ConstantConditions", "WeakerAccess", "RedundantSuppression"})
 public final class FileUtil
 {
+    public final static long MAX_7ZIP_FILE_ROM_SIZE = 100*1024*1024;
+
     public static void populate( @NonNull File startPath, boolean includeParent, boolean includeDirectories,
             boolean includeFiles, List<CharSequence> outNames, List<String> outPaths )
     {
@@ -693,7 +695,7 @@ public final class FileUtil
         try (FileInputStream stream = new FileInputStream(file)) {
             FileChannel chan = stream.getChannel();
             MappedByteBuffer buf = chan.map(FileChannel.MapMode.READ_ONLY, 0, chan.size());
-            return Charset.forName("UTF-8").decode(buf).toString();
+            return StandardCharsets.UTF_8.decode(buf).toString();
         }
     }
     
@@ -1019,6 +1021,85 @@ public final class FileUtil
         }
 
         return buffer;
+    }
+
+    public static RomHeader getHeaderFromZip(Context context, String romFileName, String zipPathUri) {
+
+        RomHeader returnData = null;
+
+        boolean lbFound = false;
+
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPathUri), "r");
+             ZipInputStream zipfile = new ZipInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()))) {
+
+            ZipEntry zipEntry = zipfile.getNextEntry();
+            while (zipEntry != null && !lbFound) {
+
+                final String entryName = new File(zipEntry.getName()).getName();
+                lbFound = (entryName.equals(romFileName) || romFileName == null) && !zipEntry.isDirectory();
+
+                if (lbFound) {
+
+                    InputStream zipStream = new BufferedInputStream(zipfile);
+                    byte[] romHeader = FileUtil.extractRomHeader(zipStream);
+                    RomHeader extractedHeader;
+                    if(romHeader != null) {
+                        returnData = new RomHeader(romHeader);
+                    }
+                }
+
+                zipEntry = zipfile.getNextEntry();
+            }
+        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|SecurityException|OutOfMemoryError e) {
+            Log.w("FileUtil", e);
+            returnData = null;
+        }
+
+        return returnData;
+    }
+
+    public static RomHeader getHeaderFromSevenZip(Context context, String romFileName, String zipPath)
+    {
+        if (!AppData.IS_NOUGAT) {
+            return null;
+        }
+
+        RomHeader returnData = null;
+
+        boolean lbFound = false;
+
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPath), "r")) {
+            if (parcelFileDescriptor != null) {
+                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+
+                SevenZFile zipFile = new SevenZFile(fileInputStream.getChannel());
+                SevenZArchiveEntry zipEntry;
+
+                while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                {
+                    InputStream zipStream = new SevenZInputStream(zipFile);
+                    final String entryName = new File(zipEntry.getName()).getName();
+
+                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
+
+                    if (lbFound) {
+
+                        byte[] romHeader = FileUtil.extractRomHeader(zipStream);
+                        RomHeader extractedHeader;
+                        if(romHeader != null) {
+                            returnData = new RomHeader(romHeader);
+                        }
+                    }
+                }
+
+                zipFile.close();
+            }
+        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|SecurityException|OutOfMemoryError e) {
+            Log.w("FileUtil", e);
+            returnData = null;
+        }
+
+        return returnData;
     }
 
     /*
