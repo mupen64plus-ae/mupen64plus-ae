@@ -44,7 +44,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.documentfile.provider.DocumentFile;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
@@ -62,7 +61,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -105,7 +103,7 @@ public class CacheRomInfoService extends Service
 
     final static String NOTIFICATION_CHANNEL_ID_V2 = "CacheRomInfoServiceChannelV2";
 
-    final static int MAX_ROM_FILE_NAME_SIZE = 30;
+    final static int MAX_ROM_FILE_NAME_SIZE = 25;
     
     public interface CacheRomInfoListener
     {
@@ -155,9 +153,7 @@ public class CacheRomInfoService extends Service
             FileUtil.makeDirs(mArtDir);
             FileUtil.makeDirs(mUnzipDir);
 
-            DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(getApplicationContext(), mSearchUri);
-
-            final List<DocumentFile> files = getAllFiles( rootDocumentFile, 0 );
+            List<Uri> files = FileUtil.listAllFiles(getApplicationContext(), mSearchUri, mSearchSubdirectories);
 
             final RomDatabase database = RomDatabase.getInstance();
             if(!database.hasDatabaseFile())
@@ -170,34 +166,34 @@ public class CacheRomInfoService extends Service
                 config.clear();
 
             removeLegacyEntries(config);
+            cleanupMissingFiles(config);
             
             mListener.GetProgressDialog().setMaxProgress( files.size() );
-            for( final DocumentFile file : files )
+            for( final Uri file : files )
             {
                 mListener.GetProgressDialog().setSubtext( "" );
-                mListener.GetProgressDialog().setText( getShortFileName(file.getName()));
+                mListener.GetProgressDialog().setText( getShortFileName(FileUtil.getFileName(getApplicationContext(), file)));
                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
                 
                 if( mbStopped ) break;
-                RomHeader header = new RomHeader( getApplicationContext(), file.getUri() );
+                RomHeader header = new RomHeader( getApplicationContext(), file );
                 if( header.isValid || header.isNdd ) {
                     cacheFile( file, database, config);
-                } else if (mSearchZips && !configHasZip(config, file.getUri())) {
+                } else if (mSearchZips && !configHasZip(config, file)) {
                     if (header.isZip) {
                         if (AppData.IS_NOUGAT) {
-                            cacheZipFast(database, file.getUri(), config);
+                            cacheZipFast(database, file, config);
                         } else {
-                            cacheZip(database, file.getUri(), config);
+                            cacheZip(database, file, config);
                         }
                     } else if (header.is7Zip && AppData.IS_NOUGAT) {
-                        cache7Zip(database, file.getUri(), config);
+                        cache7Zip(database, file, config);
                     }
                 }
 
                 mListener.GetProgressDialog().incrementProgress( 1 );
             }
 
-            cleanupMissingFiles(config);
             downloadCoverArt(database, config);
 
             config.save();
@@ -298,39 +294,6 @@ public class CacheRomInfoService extends Service
         return START_STICKY;
     }
 
-    List<DocumentFile> getAllFiles(DocumentFile documentFile, int count) {
-
-        List<DocumentFile> result = new ArrayList<>();
-
-        if (documentFile != null) {
-            if( documentFile.isDirectory())
-            {
-                DocumentFile[] allFiles = documentFile.listFiles();
-
-                for( DocumentFile file : allFiles )
-                {
-                    if( mbStopped ) break;
-
-                    //Search subdirectories if option is enabled and we less than 10 levels deep
-                    if(mSearchSubdirectories && count < 10)
-                    {
-                        result.addAll( getAllFiles( file, ++count ) );
-                    }
-                    else if(!file.isDirectory())
-                    {
-                        if (file.getName() != null)
-                            result.add(file);
-                    }
-                }
-            } else {
-                if (documentFile.getName() != null)
-                    result.add( documentFile );
-            }
-        }
-
-        return result;
-    }
-
     private void cacheZip(RomDatabase database, Uri file, ConfigFile config)
     {
         Log.i( "CacheRomInfoService", "Found zip file " + file.toString() );
@@ -398,6 +361,7 @@ public class CacheRomInfoService extends Service
                     cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
                 }
                 zipFile.close();
+                fileInputStream.close();
             }
         } catch (IOException|IllegalArgumentException|NoSuchAlgorithmException|SecurityException e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
@@ -433,6 +397,9 @@ public class CacheRomInfoService extends Service
 
                     cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
                 }
+                zipFile.close();
+                fileInputStream.close();
+
             }
         } catch (IOException|IllegalArgumentException|NoSuchAlgorithmException|SecurityException e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
@@ -485,20 +452,20 @@ public class CacheRomInfoService extends Service
         }
     }
 
-    private void cacheFile(DocumentFile file, RomDatabase database, ConfigFile config )
+    private void cacheFile(Uri file, RomDatabase database, ConfigFile config )
     {
-        mListener.GetProgressDialog().setSubtext(getShortFileName(file.getName()));
+        String fileName = FileUtil.getFileName(getApplicationContext(), file);
+        mListener.GetProgressDialog().setSubtext(getShortFileName(fileName));
 
-        try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file.getUri(), "r")) {
+        try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
 
             if (parcelFileDescriptor != null) {
                 InputStream bufferedStream = new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
                 String md5 = FileUtil.computeMd5(bufferedStream);
-                RomHeader header = new RomHeader(getApplicationContext(), file.getUri());
+                RomHeader header = new RomHeader(getApplicationContext(), file);
 
-                String fileName = file.getName();
                 if (fileName != null) {
-                    cacheFile(file.getUri(), fileName, header, md5, database, config, null);
+                    cacheFile(file, fileName, header, md5, database, config, null);
                 }
             }
 
@@ -675,44 +642,23 @@ public class CacheRomInfoService extends Service
             String foundZipPath = theConfigFile.get(key, "zipPathUri");
             String foundRomPath = theConfigFile.get(key, "romPathUri");
 
+            Uri uri = null;
+
             //Check if this is a zip file first
             if(!TextUtils.isEmpty(foundZipPath))
             {
-
-                DocumentFile zipFile = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(foundZipPath));
-
-                //Zip file doesn't exist, check if the ROM path exists
-                if(zipFile == null || !zipFile.exists())
-                {
-                    if(!TextUtils.isEmpty(foundRomPath))
-                    {
-                        DocumentFile romFile = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(foundRomPath));
-
-                        //Cleanup the ROM file since this is a zip file
-                        if(romFile != null && !romFile.exists())
-                        {
-                            Log.i( "CacheRomInfoService", "Removing md5=" + key );
-                            if(!romFile.isDirectory() && romFile.delete()) {
-                                Log.w( "CacheRomInfoService", "Unable to delete " + romFile.getName() );
-                            }
-                        }
-                    }
-
-                    theConfigFile.remove(key);
-                    keys = theConfigFile.keySet();
-                    iter = keys.iterator();
-                }
+                uri = Uri.parse(foundZipPath);
             }
             //This was not a zip file, just check the ROM path
             else if(!TextUtils.isEmpty(foundRomPath))
             {
-                DocumentFile romFile = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(foundRomPath));
+                uri = Uri.parse(foundRomPath);
+            }
 
+            if (uri != null) {
                 //Remove the entry since it doesn't exist
-                if(romFile == null || !romFile.exists())
+                if(!FileUtil.fileExists(getApplicationContext(), uri))
                 {
-                    Log.w( "CacheRomInfoService", "Removing md5=" + key );
-
                     theConfigFile.remove(key);
                     keys = theConfigFile.keySet();
                     iter = keys.iterator();

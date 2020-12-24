@@ -24,11 +24,14 @@ import androidx.annotation.NonNull;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -37,6 +40,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -53,6 +57,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
@@ -1279,5 +1284,97 @@ public final class FileUtil
             stringBuilder.append(Integer.toString( ( aByte & 0xff ) + 0x100, 16 ).substring( 1 ));
         }
         return stringBuilder.toString().toUpperCase( Locale.US );
+    }
+
+    public static List<Uri> listAllFiles(Context context, Uri rootUri, boolean subdirs) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
+
+        // Keep track of our directory hierarchy
+        List<Uri> dirNodes = new LinkedList<>();
+        dirNodes.add(childrenUri);
+        List<Uri> files = new ArrayList<>();
+
+        while(!dirNodes.isEmpty()) {
+            childrenUri = dirNodes.remove(0); // get the item from top
+            Cursor c = contentResolver.query(childrenUri, new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                    DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
+            try {
+                while (c.moveToNext()) {
+                    final String docId = c.getString(0);
+                    final String name = c.getString(1);
+                    final String mime = c.getString(2);
+
+                    if(isDirectory(mime)) {
+                        if (subdirs) {
+                            final Uri newNode = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, docId);
+                            dirNodes.add(newNode);
+                        }
+                    } else {
+                        final Uri newNode = DocumentsContract.buildDocumentUriUsingTree(rootUri, docId);
+                        files.add(newNode);
+                    }
+                }
+            } finally {
+                closeQuietly(c);
+            }
+        }
+
+        return files;
+    }
+
+    // Util method to check if the mime type is a directory
+    private static boolean isDirectory(String mimeType) {
+        return DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType);
+    }
+
+    // Util method to close a closeable
+    private static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (RuntimeException re) {
+                throw re;
+            } catch (Exception ignore) {
+                // ignore exception
+            }
+        }
+    }
+
+    public static String getFileName(Context context, Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+
+    public static boolean fileExists(Context context, Uri uri) {
+
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)) != null;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
     }
 }
