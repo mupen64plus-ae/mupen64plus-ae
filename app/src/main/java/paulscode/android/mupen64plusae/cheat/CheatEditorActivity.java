@@ -365,10 +365,12 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         final OnClickListener listener = (dialog, which) -> {
             if( which == DialogInterface.BUTTON_POSITIVE )
             {
-                userCheats.remove( pos );
-                cheatListAdapter.notifyDataSetChanged();
+                if (pos < userCheats.size()) {
+                    userCheats.remove( pos );
+                    cheatListAdapter.notifyDataSetChanged();
 
-                save( mRomCrc );
+                    save( mRomCrc );
+                }
             }
         };
         Builder builder = new Builder( this );
