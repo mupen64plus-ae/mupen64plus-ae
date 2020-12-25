@@ -134,6 +134,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     private CoreEventListener mCoreEventListener = null;
 
+    private boolean mAskingForExit = false;
+
     // this method is only called once for this fragment
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -355,7 +357,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i("CoreFragment", "resumeEmulator");
 
-        if(mCoreService != null)
+        if(mCoreService != null && !mAskingForExit)
         {
             mCoreService.resumeEmulator();
         }
@@ -462,6 +464,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
 
         try {
+            mAskingForExit = true;
             FragmentActivity activity = requireActivity();
             String title = activity.getString(R.string.confirm_title);
             String message = activity.getString(R.string.confirmExitGame_message);
@@ -473,6 +476,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
+            mAskingForExit = false;
         }
     }
 
@@ -915,6 +919,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
         else if (id == EXIT_CONFIRM_DIALOG_ID)
         {
+            mAskingForExit = false;
             if(mCoreEventListener != null)
                 mCoreEventListener.onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
