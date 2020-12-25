@@ -5,7 +5,7 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     style="@style/MupenTheme_Dark_Sidebar"> <!-- Setting this as a theme makes MenuListView throw exception -->
 
     <LinearLayout
@@ -20,6 +20,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="35dp"
         android:orientation="vertical" >
 
         <androidx.recyclerview.widget.RecyclerView
@@ -36,7 +37,7 @@
             app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
             app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:paddingBottom="72dip"
+            android:paddingBottom="154dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:background="@color/mupen_black"
@@ -116,7 +117,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="80dp"
             android:nextFocusUp="@id/gridview"
             android:nextFocusLeft="@id/gridview"
             android:background="@color/blue1"
@@ -124,7 +126,7 @@
             android:elevation="5dp"
             app:srcCompat="@drawable/ic_fab_refresh_roms"
             android:onClick="onFabRefreshRomsClick"
-            />
+            android:contentDescription="@string/menuItem_refreshRoms" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

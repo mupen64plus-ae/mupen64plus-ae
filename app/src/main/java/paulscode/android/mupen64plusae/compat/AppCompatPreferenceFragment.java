@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.R;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +15,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.mupen64plusae.v3.alpha.R;
 
 public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 {
@@ -141,8 +142,10 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         // transparency
         Context context = getContext();
         if (context != null) {
-            view.setBackgroundColor(ContextCompat.getColor(context, R.color.background_material_dark));
+            view.setBackgroundColor(ContextCompat.getColor(context, R.color.mupen_black));
         }
+
+        getListView().setFitsSystemWindows(true);
     }
     
     @Override

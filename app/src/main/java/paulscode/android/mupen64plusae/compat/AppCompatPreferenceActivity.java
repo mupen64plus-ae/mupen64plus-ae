@@ -35,6 +35,8 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
+
 import android.util.Log;
 import android.view.View;
 
@@ -79,7 +81,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         public void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
-            
+
             setRetainInstance(true);
         }
 
@@ -150,6 +152,8 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        DisplayWrapper.drawBehindSystemBars(this);
 
         if(savedInstanceState != null)
         {

@@ -376,12 +376,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
 
         DisplayWrapper.setFullScreen(this);
 
-        View view = mSurface.getRootView();
-        if( view != null )
-        {
-            if( mGlobalPrefs.isImmersiveModeEnabled )
-                DisplayWrapper.enableImmersiveMode(this, view);
-        }
+        if( mGlobalPrefs.isImmersiveModeEnabled )
+            DisplayWrapper.enableImmersiveMode(this);
     }
 
     

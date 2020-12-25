@@ -1133,12 +1133,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private void hideSystemBars()
     {
-        if( mDrawerLayout != null )
+        if( mGlobalPrefs.isImmersiveModeEnabled )
         {
-            if( mGlobalPrefs.isImmersiveModeEnabled )
-            {
-                DisplayWrapper.enableImmersiveMode(this, mDrawerLayout);
-            }
+            DisplayWrapper.enableImmersiveMode(this);
         }
     }
 

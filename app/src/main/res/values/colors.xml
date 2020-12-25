@@ -18,7 +18,7 @@
     <color name="holo_purple1">#AA66CC</color>
     <color name="holo_purple2">#9933CC</color>
 
-    <color name="mupen_black">#252525</color>
+    <color name="mupen_black">#D8252525</color>
     <color name="mupen_white">#EFEFEF</color>
     <color name="mupen_black_wAlpha">#00ffffff</color>
     <color name="mupen_primary">#00DFDF</color>

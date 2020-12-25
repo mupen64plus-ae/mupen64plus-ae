@@ -55,10 +55,11 @@ public class Shader {
     private final String mFragmentCode;
 
     public Shader(String vertexCode, String fragmentCode, boolean firstPass, boolean lastPass){
+
         mVertexCode = vertexCode;
 
         if (firstPass) {
-            fragmentCode = fragmentCode.replace("#version 100\n",
+            fragmentCode = fragmentCode.replaceAll("#version 100\n",
                     "#version 100\n" +
                             "#extension GL_OES_EGL_image_external : require\n");
             fragmentCode = fragmentCode.replace("sampler2D ", "samplerExternalOES ");
