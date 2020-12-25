@@ -367,12 +367,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSurface.setSelectedShader(mGlobalPrefs.getShaderPasses());
         mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
 
+        ReloadAllMenus();
+
         if (savedInstanceState == null)
         {
             // Show the drawer at the start and have it hide itself
             // automatically
             mDrawerLayout.openDrawer(GravityCompat.START);
-            ReloadAllMenus();
         }
         else
         {
@@ -400,6 +401,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mCoreFragment.pauseEmulator();
                 }
                 ReloadAllMenus();
+                mDrawerOpenState = true;
             }
 
             @Override
@@ -525,6 +527,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             {
                 mCoreFragment.pauseEmulator();
             }
+
             mDrawerLayout.openDrawer(GravityCompat.START);
             mGameSidebar.requestFocus();
             ReloadAllMenus();
