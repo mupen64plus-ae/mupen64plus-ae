@@ -58,7 +58,8 @@ class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    static boolean syncConfigFiles(Context context, GamePrefs game, GlobalPrefs global, AppData appData, int renderWidth, int renderHeight)
+    static boolean syncConfigFiles(Context context, GamePrefs game, GlobalPrefs global, AppData appData,
+                                   int renderWidth, int renderHeight, boolean isNdd)
     {
         //@formatter:off
 
@@ -107,7 +108,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.getSlotSaveDir() + '"' );
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );
-        mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );
+        mupen64plus_cfg.put( "Core", "CountPerOp", isNdd ? String.valueOf(1) : String.valueOf( game.countPerOp ) );
         mupen64plus_cfg.put( "Core", "ForceAlignmentOfPiDma", String.valueOf( game.forceAlignmentOfPiDma ) );
         mupen64plus_cfg.put( "Core", "TlbHack", String.valueOf( game.ignoreTlbExceptions ? 1 : 0 ) );
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf(game.currentStateSlot));

@@ -509,12 +509,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 copyGameContentsFromSdCard();
             }
 
-            if(!NativeConfigFiles.syncConfigFiles( getApplicationContext(), mGamePrefs, mGlobalPrefs, mAppData, mVideoRenderWidth, mVideoRenderHeight)) {
-                //Stop the service
-                forceExit();
-                return;
-            }
-
             FileUtil.makeDirs(mWorkingDir);
             mCoreInterface.setWorkingPath(mWorkingDir);
 
@@ -549,6 +543,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                         isNdd = extractedHeader.isNdd;
                     }
                 }
+            }
+
+            if(!NativeConfigFiles.syncConfigFiles( getApplicationContext(), mGamePrefs, mGlobalPrefs, mAppData,
+                    mVideoRenderWidth, mVideoRenderHeight, isNdd || !TextUtils.isEmpty(mGamePrefs.diskPath64Dd))) {
+                //Stop the service
+                forceExit();
+                return;
             }
 
             if (isNdd) {
