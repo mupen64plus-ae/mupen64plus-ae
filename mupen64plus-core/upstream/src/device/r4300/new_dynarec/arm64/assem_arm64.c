@@ -3448,7 +3448,7 @@ static void inline_writestub(int type, int i, u_int addr_const, signed char regm
 static void do_unalignedwritestub(int n)
 {
   set_jump_target(stubs[n][1],(intptr_t)out);
-  emit_breakpoint(0);
+  //emit_breakpoint(0);
   emit_jmp(stubs[n][2]); // return address
 }
 
