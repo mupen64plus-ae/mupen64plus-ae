@@ -687,4 +687,45 @@ inline int SDL_SemPost(SDL_sem * sem)
     return retval;
 }
 
+#include "pthread.h"
+
+struct _SDL_Thread
+{
+	pthread_t threadId;
+	int ( * fn) (void *);
+	void* data;
+	int returnStatus;
+};
+
+typedef struct _SDL_Thread SDL_Thread;
+
+static void* tempThread(void* arg)
+{
+	SDL_Thread* args = (SDL_Thread*)arg;
+	args->returnStatus = args->fn(args->data);
+	return (void*) (&args->returnStatus);
+}
+
+static SDL_Thread * SDL_CreateThread(int ( * fn) (void *), void *data) {
+
+	SDL_Thread* threadPointer = (SDL_Thread*)malloc(sizeof(SDL_Thread));
+	threadPointer->fn = fn;
+	threadPointer->data = data;
+
+	pthread_create(&threadPointer->threadId, NULL, &tempThread, threadPointer);
+
+	return threadPointer;
+}
+
+static void
+SDL_WaitThread(SDL_Thread * thread, int *status)
+{
+	void* statusData;
+	pthread_join(thread->threadId, &statusData);
+
+	free(thread);
+}
+
+
+
 #endif

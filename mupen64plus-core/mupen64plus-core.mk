@@ -9,6 +9,7 @@ ASM_DEFINE_PATH := $(LOCAL_PATH)/upstream/src/asm_defines
 
 LOCAL_MODULE := mupen64plus-core
 LOCAL_STATIC_LIBRARIES := png
+LOCAL_SHARED_LIBRARIES := SDL2_net
 LOCAL_ARM_MODE := arm
 LOCAL_DISABLE_FATAL_LINKER_WARNINGS := true
 
@@ -47,6 +48,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/main/savestates.c                                 \
     $(SRCDIR)/main/sdl_key_converter.c                          \
     $(SRCDIR)/main/util.c                                       \
+    $(SRCDIR)/main/netplay.c                                    \
     $(SRCDIR)/device/memory/memory.c                            \
     $(SRCDIR)/osal/dynamiclib_unix.c                            \
     $(SRCDIR)/osal/files_unix.c                                 \
@@ -106,6 +108,8 @@ LOCAL_CFLAGS :=         \
     -DIOAPI_NO_64       \
     -DNOCRYPT           \
     -DNOUNCRYPT         \
+    -DM64P_NETPLAY=1    \
+    -DWITHOUT_SDL=1     \
     -DUSE_GLES=1
 
 LOCAL_LDFLAGS :=                                                    \
