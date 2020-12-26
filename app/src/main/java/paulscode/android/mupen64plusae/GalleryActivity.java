@@ -54,6 +54,7 @@ import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -449,30 +450,32 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         DisplayWrapper.drawBehindSystemBars(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (isInMultiWindowMode()) {
-                Resources r = getResources();
-                int marginBottom = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        24,
-                        r.getDisplayMetrics()
-                );
+        CoordinatorLayout coordLayout = findViewById(R.id.coordLayout);
 
-                if (floatingActionButton != null) {
-                    CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)floatingActionButton.getLayoutParams();
-                    params.bottomMargin = marginBottom;
-                    floatingActionButton.setLayoutParams(params);
-                }
+        ViewCompat.setOnApplyWindowInsetsListener(coordLayout, (v, insets) -> {
 
-                CoordinatorLayout coordLayout = findViewById(R.id.coordLayout);
-                // With Android R the window top bar is part of the activity but not with older versions
-                if (coordLayout != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                    DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
-                    params.topMargin = 0;
-                    coordLayout.setLayoutParams(params);
-                }
+            Resources r = getResources();
+            int margin = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    24,
+                    r.getDisplayMetrics()
+            );
+
+            if (floatingActionButton != null) {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)floatingActionButton.getLayoutParams();
+                params.bottomMargin = insets.getSystemWindowInsetBottom() + margin;
+                params.rightMargin = insets.getSystemWindowInsetRight() + margin;
+                floatingActionButton.setLayoutParams(params);
             }
-        }
+
+            if (coordLayout != null) {
+                DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
+                params.topMargin = insets.getSystemWindowInsetTop();
+                coordLayout.setLayoutParams(params);
+            }
+
+            return insets;
+        });
 
         mDrawerLayout.setOnHoverListener((v, event) -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
