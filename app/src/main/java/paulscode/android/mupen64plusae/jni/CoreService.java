@@ -555,14 +555,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (isNdd) {
                 mCoreInterface.setDdRomPath(getApplicationContext(), mGlobalPrefs.japanIplPath);
                 if (TextUtils.isEmpty(mZipPath)) {
-                    mCoreInterface.setDdDiskPath(getApplicationContext(), mRomPath);
+                    DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), Uri.parse(mRomPath));
+                    if (file != null) {
+                        mCoreInterface.setDdDiskPath(getApplicationContext(), file.getName(), mRomPath);
+                    }
                 } else {
-                    mCoreInterface.setDdDiskPath(getApplicationContext(), mZipPath);
+                    mCoreInterface.setDdDiskPath(getApplicationContext(), mRomPath, mZipPath);
                 }
             }
             else {
                 mCoreInterface.setDdRomPath(getApplicationContext(), mGamePrefs.idlPath64Dd);
-                mCoreInterface.setDdDiskPath(getApplicationContext(), mGamePrefs.diskPath64Dd);
+                mCoreInterface.setDdDiskPath(getApplicationContext(), mRomHeaderName, mGamePrefs.diskPath64Dd);
             }
 
             mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,

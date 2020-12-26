@@ -226,7 +226,7 @@ class CoreInterface
         mWorkingPath = new File(path);
 
         mDdRom = mWorkingPath + "/" + DD_ROM_NAME;
-        mDdDisk = mWorkingPath + "/" + DD_DISK_NAME;
+        mDdDisk = mWorkingPath + "/"; // Need to add the actual disk name later
 
         for (int player = 1; player <= 4; ++player) {
             mGbRomPaths.put(player, mWorkingPath + "/player" + player + "_" + GB_ROM_NAME);
@@ -482,11 +482,13 @@ class CoreInterface
         }
     }
 
-    public void setDdDiskPath(Context context, String ddDiskUri)
+    public void setDdDiskPath(Context context, String filename, String ddDiskUri)
     {
         if (TextUtils.isEmpty(ddDiskUri)) {
             return;
         }
+
+        mDdDisk += filename;
 
         byte[] romBuffer;
         final RomHeader romHeader = new RomHeader(context, Uri.parse(ddDiskUri));
@@ -521,13 +523,6 @@ class CoreInterface
             if (!TextUtils.isEmpty(ramUri.get(player))) {
                 FileUtil.copyFile(context, new File(mGbRamPaths.get(player)), Uri.parse(ramUri.get(player)));
             }
-        }
-    }
-
-    public void writeDdDiskData(Context context, String ddDiskUri)
-    {
-        if (!TextUtils.isEmpty(ddDiskUri)) {
-            FileUtil.copyFile(context, new File(mDdDisk), Uri.parse(ddDiskUri) );
         }
     }
 
