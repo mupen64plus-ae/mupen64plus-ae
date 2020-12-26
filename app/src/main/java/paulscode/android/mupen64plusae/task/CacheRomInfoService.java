@@ -26,6 +26,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -63,6 +64,7 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -153,7 +155,7 @@ public class CacheRomInfoService extends Service
             FileUtil.makeDirs(mArtDir);
             FileUtil.makeDirs(mUnzipDir);
 
-            List<Uri> files = FileUtil.listAllFiles(getApplicationContext(), mSearchUri, mSearchSubdirectories);
+            List<Uri> filesToSearch = FileUtil.listAllFiles(getApplicationContext(), mSearchUri, mSearchSubdirectories);
 
             final RomDatabase database = RomDatabase.getInstance();
             if(!database.hasDatabaseFile())
@@ -168,8 +170,8 @@ public class CacheRomInfoService extends Service
             removeLegacyEntries(config);
             cleanupMissingFiles(config);
             
-            mListener.GetProgressDialog().setMaxProgress( files.size() );
-            for( final Uri file : files )
+            mListener.GetProgressDialog().setMaxProgress( filesToSearch.size() );
+            for( final Uri file : filesToSearch )
             {
                 mListener.GetProgressDialog().setSubtext( "" );
                 mListener.GetProgressDialog().setText( getShortFileName(FileUtil.getFileName(getApplicationContext(), file)));
@@ -632,8 +634,18 @@ public class CacheRomInfoService extends Service
      * Cleanup any missing files from the config file
      * @param theConfigFile Config file to clean up
      */
-    private void cleanupMissingFiles(ConfigFile theConfigFile)
+    private void cleanupMissingFiles(ConfigFile theConfigFile )
     {
+        List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
+        List<Uri> allFiles = new LinkedList<>();
+        for (UriPermission permission : permissions) {
+            List<Uri> files = FileUtil.listAllFiles(getApplicationContext(), permission.getUri(), true);
+
+            if (files != null) {
+                allFiles.addAll(files);
+            }
+        }
+
         Set<String> keys = theConfigFile.keySet();
 
         Iterator<String> iter = keys.iterator();
@@ -656,8 +668,9 @@ public class CacheRomInfoService extends Service
             }
 
             if (uri != null) {
+
                 //Remove the entry since it doesn't exist
-                if(!FileUtil.fileExists(getApplicationContext(), uri))
+                if(!allFiles.contains(uri))
                 {
                     theConfigFile.remove(key);
                     keys = theConfigFile.keySet();

@@ -1288,7 +1288,14 @@ public final class FileUtil
 
     public static List<Uri> listAllFiles(Context context, Uri rootUri, boolean subdirs) {
         ContentResolver contentResolver = context.getContentResolver();
-        Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
+
+        Uri childrenUri;
+
+        try {
+            childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
+        } catch (java.lang.IllegalArgumentException e) {
+            return null;
+        }
 
         // Keep track of our directory hierarchy
         List<Uri> dirNodes = new LinkedList<>();
