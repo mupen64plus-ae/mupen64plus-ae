@@ -989,9 +989,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         // Unregister since the activity is about to be closed.
         unregisterReceiver(mMessageReceiver);
 
+        mPixelBuffer.releaseSurfaceTexture();
         unsetSurface();
         destroySurface();
-        mPixelBuffer.releaseSurfaceTexture();
 
         forceExit();
     }
