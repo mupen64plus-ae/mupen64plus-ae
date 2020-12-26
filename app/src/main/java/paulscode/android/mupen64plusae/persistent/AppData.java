@@ -365,12 +365,17 @@ public class AppData
         {
             info = context.getPackageManager().getPackageInfo( packageName, 0 );
             version = info.versionName;
-            versionCode = PackageInfoCompat.getLongVersionCode(info);
+            try {
+                versionCode = PackageInfoCompat.getLongVersionCode(info);
+            } catch (java.lang.NoSuchMethodError e) {
+                versionCode = info.versionCode;
+            }
         }
         catch( NameNotFoundException e )
         {
             Log.e( "AppData", e.toString() );
         }
+
         appVersion = version;
         appVersionCode = (int)(versionCode & 0xffff);
         
