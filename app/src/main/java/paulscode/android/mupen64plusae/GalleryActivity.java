@@ -41,7 +41,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.PointerIcon;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
@@ -459,9 +458,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         r.getDisplayMetrics()
                 );
 
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)floatingActionButton.getLayoutParams();
-                params.bottomMargin = marginBottom;
-                floatingActionButton.setLayoutParams(params);
+                if (floatingActionButton != null) {
+                    CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)floatingActionButton.getLayoutParams();
+                    params.bottomMargin = marginBottom;
+                    floatingActionButton.setLayoutParams(params);
+                }
+
+                CoordinatorLayout coordLayout = findViewById(R.id.coordLayout);
+                // With Android R the window top bar is part of the activity but not with older versions
+                if (coordLayout != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                    DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
+                    params.topMargin = 0;
+                    coordLayout.setLayoutParams(params);
+                }
             }
         }
 
