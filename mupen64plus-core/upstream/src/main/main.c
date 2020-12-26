@@ -923,8 +923,6 @@ static void apply_speed_limiter(void)
 
     if(sleepMs > 0 && sleepMs < maxSleepNeeded*SpeedFactorMultiple && l_MainSpeedLimit)
     {
-       DebugMessage(M64MSG_VERBOSE, "    apply_speed_limiter(): Waiting %ims", sleepMs);
-
        SDL_Delay(sleepMs);
     }
 
