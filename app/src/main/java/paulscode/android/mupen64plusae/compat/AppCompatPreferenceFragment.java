@@ -1,6 +1,7 @@
 package paulscode.android.mupen64plusae.compat;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -11,6 +12,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener;
+
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,8 +147,15 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         if (context != null) {
             view.setBackgroundColor(ContextCompat.getColor(context, R.color.mupen_black));
         }
+        
+        Resources r = getResources();
+        int margin = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                70,
+                r.getDisplayMetrics()
+        );
 
-        getListView().setFitsSystemWindows(true);
+        getListView().setPadding(0, margin, 0, margin);
     }
     
     @Override
