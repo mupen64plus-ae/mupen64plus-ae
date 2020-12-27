@@ -46,6 +46,9 @@ public class GLideN64Prefs {
     /** Enable hardware per-pixel lighting. */
     public final boolean enableHWLighting;
 
+    /** Enable pixel coverage calculation. Used for better blending emulation and wire-frame mode. Needs fast GPU. */
+    public final boolean enableCoverage;
+
     /** Do not use shaders to emulate N64 blending modes. Works faster on slow GPU. Can cause glitches. */
     public final boolean enableLegacyBlending;
 
@@ -178,6 +181,7 @@ public class GLideN64Prefs {
         rdramImageDitheringMode = getSafeInt( emulationProfile, "RdramImageDitheringMode", 3);
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
+        enableCoverage = emulationProfile.get( "EnableCoverage", "False" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
         backgroundMode = getSafeInt( emulationProfile, "BackgroundsMode", 0);
 

@@ -456,6 +456,11 @@
             android:key="EnableHWLighting"
             android:title="@string/gliden64_enable_hw_lighting_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="EnableCoverage"
+            android:title="@string/gliden64_enable_coverage_title"
+            android:summary="@string/gliden64_enable_coverage_summary"/>
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableLegacyBlending"
             android:summary="@string/gliden64_enable_legacy_blending_summary"

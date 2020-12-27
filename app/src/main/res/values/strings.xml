@@ -403,6 +403,8 @@
     <string name="gliden64_dithering_mode_rdram_entry_blue_noise">Blue Noise</string>
     <string name="gliden64_enable_lod_title">LOD emulation</string>
     <string name="gliden64_enable_hw_lighting_title">Hardware per-pixel lighting</string>
+    <string name="gliden64_enable_coverage_title">Coverage emulation</string>
+    <string name="gliden64_enable_coverage_summary">Enable pixel coverage calculation. Used for better blending emulation and wire-frame mode. Needs fast GPU.</string>
     <string name="gliden64_enable_legacy_blending_title">Legacy blending</string>
     <string name="gliden64_enable_legacy_blending_summary">Disabling this produces more correct lighting and fog, but it is slower on some devices.</string>
     <string name="gliden64_enable_fragment_depth_write_title">Fragment based depth</string>

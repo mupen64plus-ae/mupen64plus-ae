@@ -344,6 +344,8 @@
     <string name="gliden64_dithering_mode_rdram_entry_blue_noise">Blue Noise</string>
     <string name="gliden64_enable_lod_title">Activar la emulación de LOD</string>
     <string name="gliden64_enable_hw_lighting_title">Activar el hardware iluminación por píxel</string>
+    <string name="gliden64_enable_coverage_title">Emulación de cobertura</string>
+    <string name="gliden64_enable_coverage_summary">Habilite el cálculo de la cobertura de píxeles. Se utiliza para una mejor emulación de mezcla y el modo de estructura de alambre. Necesita una GPU rápido.</string>
     <string name="gliden64_enable_legacy_blending_title">Habilitar blending antiguo</string>
     <string name="gliden64_enable_legacy_blending_summary">Al desactivar esta opción produce iluminación y niebla más correcta, pero es más lento en algunos dispositivos.</string>
     <string name="gliden64_enable_fragment_depth_write_title">Habilitar profundidad basado en fragment</string>
