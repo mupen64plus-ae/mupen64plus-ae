@@ -1,5 +1,5 @@
 # keep EOL normalized
-* text eol=lf
+* text=auto
 
 # use native line ending
 *.6 text
@@ -54,5 +54,9 @@ RELEASE text
 *.pdf binary
 *.png binary
 *.zip binary
+*.a binary
+*.lib binary
+*.so binary
+*.ico binary
 cursor.tex binary
 font.tex binary
