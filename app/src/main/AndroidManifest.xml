@@ -19,6 +19,12 @@
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
     <uses-sdk tools:overrideLibrary="androidx.tvprovider" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+        </intent>
+    </queries>
     
     <application
         android:name="paulscode.android.mupen64plusae.AppMupen64Plus"
@@ -39,6 +45,7 @@
         tools:ignore="UnusedAttribute"
         android:fullBackupContent="@xml/backup_descriptor"
         android:extractNativeLibs="true">
+
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
             android:label="@string/SplashActivity_title"

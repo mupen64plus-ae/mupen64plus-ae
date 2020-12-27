@@ -24,7 +24,6 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
 
@@ -53,7 +52,6 @@ import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.util.CountryCode;
-import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -155,6 +153,9 @@ public class GlobalPrefs
 
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
+
+    /** Directory where user can place ROMs if system doesn't have SAF */
+    public final String externalRomsDirNoSaf;
 
     /** The legacy directory containing all custom touchscreen skin folders. */
     public final String legacyTouchscreenCustomSkinsDir;
@@ -481,6 +482,13 @@ public class GlobalPrefs
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
         touchscreenCustomSkinsDir = context.getFilesDir().getAbsolutePath() + "/CustomSkins";
+
+        File externalRomsDir = context.getExternalFilesDir(null);
+        if (externalRomsDir != null && !externalRomsDir.mkdirs()) {
+            Log.e("GlobalPrefs", "Unable to make path " + externalRomsDir.getAbsolutePath());
+        }
+
+        externalRomsDirNoSaf = externalRomsDir != null ? externalRomsDir.getAbsolutePath() : null;
 
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
