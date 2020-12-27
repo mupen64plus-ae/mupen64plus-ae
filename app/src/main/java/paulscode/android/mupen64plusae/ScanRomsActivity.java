@@ -3,17 +3,21 @@ package paulscode.android.mupen64plusae;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
@@ -63,6 +67,15 @@ public class ScanRomsActivity extends AppCompatActivity
 
         Button filePickerButtont = findViewById(R.id.buttonFilePicker);
         filePickerButtont.setOnClickListener(v -> startFilePicker());
+
+        AppData appData = new AppData( this );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && appData.useLegacyFileBrowser) {
+            GlobalPrefs globalPrefs = new GlobalPrefs( this, appData );
+
+            TextView textViewNoSaf = findViewById(R.id.textNoSafSupport);
+            String text = getString(R.string.scanRomsDialog_no_saf) + " " + globalPrefs.externalRomsDirNoSaf;
+            textViewNoSaf.setText(text);
+        }
                 
         // Set checkbox state
         mCheckBox1 = findViewById( R.id.checkBox1 );
@@ -76,7 +89,7 @@ public class ScanRomsActivity extends AppCompatActivity
     }
     
     @Override
-    public void onSaveInstanceState( Bundle savedInstanceState )
+    public void onSaveInstanceState( @NonNull Bundle savedInstanceState )
     {
         if (mFileUri != null) {
             savedInstanceState.putString( URI_TO_IMPORT, mFileUri.toString() );

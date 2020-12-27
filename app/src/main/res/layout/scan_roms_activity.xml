@@ -19,6 +19,11 @@
             android:layout_height="wrap_content"
             android:text="@string/scanRomsDialog_selectRom"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:id="@+id/textNoSafSupport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
             android:id="@+id/buttonFilePicker"
