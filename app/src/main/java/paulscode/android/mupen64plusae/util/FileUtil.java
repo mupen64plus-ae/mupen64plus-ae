@@ -1286,21 +1286,52 @@ public final class FileUtil
         return stringBuilder.toString().toUpperCase( Locale.US );
     }
 
-    public static List<Uri> listAllFiles(Context context, Uri rootUri, boolean subdirs) {
+    public static @NonNull List<Uri> listAllFilesLegacy(DocumentFile documentFile, boolean subDirectories) {
+
+        List<Uri> result = new ArrayList<>();
+
+        if (documentFile != null) {
+            if( documentFile.isDirectory())
+            {
+                DocumentFile[] allFiles = documentFile.listFiles();
+
+                for( DocumentFile file : allFiles )
+                {
+                    //Search subdirectories if option is enabled and we less than 10 levels deep
+                    if(subDirectories)
+                    {
+                        result.addAll( listAllFilesLegacy( file, subDirectories ) );
+                    }
+                    else if(!file.isDirectory())
+                    {
+                        if (file.getName() != null)
+                            result.add(file.getUri());
+                    }
+                }
+            } else {
+                if (documentFile.getName() != null)
+                    result.add( documentFile.getUri() );
+            }
+        }
+
+        return result;
+    }
+
+    public static @NonNull List<Uri> listAllFiles(Context context, Uri rootUri, boolean subdirs) {
         ContentResolver contentResolver = context.getContentResolver();
 
         Uri childrenUri;
+        List<Uri> files = new ArrayList<>();
 
         try {
             childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
         } catch (java.lang.IllegalArgumentException e) {
-            return null;
+            return files;
         }
 
         // Keep track of our directory hierarchy
         List<Uri> dirNodes = new LinkedList<>();
         dirNodes.add(childrenUri);
-        List<Uri> files = new ArrayList<>();
 
         while(!dirNodes.isEmpty()) {
             childrenUri = dirNodes.remove(0); // get the item from top

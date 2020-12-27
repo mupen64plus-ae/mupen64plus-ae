@@ -3,6 +3,7 @@ package paulscode.android.mupen64plusae.util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
@@ -25,6 +26,8 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 @SuppressWarnings({"deprecation", "RedundantSuppression"})
 public class LegacyFilePicker extends AppCompatActivity implements OnItemClickListener
@@ -79,7 +82,13 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
         else
         {
             // Pick the root of the storage directory by default
-            mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+            } else {
+                AppData appData = new AppData( this );
+                GlobalPrefs globalPrefs = new GlobalPrefs( this, appData );
+                mCurrentPath = new File(globalPrefs.externalRomsDirNoSaf);
+            }
         }
 
         setContentView(R.layout.legacy_file_picker);

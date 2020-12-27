@@ -70,6 +70,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import androidx.documentfile.provider.DocumentFile;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
@@ -162,6 +163,13 @@ public class CacheRomInfoService extends Service
             {
                 database.setDatabaseFile(mDatabasePath);
             }
+
+
+            if (filesToSearch.isEmpty()) {
+
+                DocumentFile fileTree = FileUtil.getDocumentFileTree(getApplicationContext(), mSearchUri);
+                filesToSearch = FileUtil.listAllFilesLegacy(fileTree, mSearchSubdirectories);
+            }
             
             final ConfigFile config = new ConfigFile( mConfigPath );
             if (mClearGallery)
@@ -169,14 +177,14 @@ public class CacheRomInfoService extends Service
 
             removeLegacyEntries(config);
             cleanupMissingFiles(config);
-            
+
             mListener.GetProgressDialog().setMaxProgress( filesToSearch.size() );
             for( final Uri file : filesToSearch )
             {
                 mListener.GetProgressDialog().setSubtext( "" );
                 mListener.GetProgressDialog().setText( getShortFileName(FileUtil.getFileName(getApplicationContext(), file)));
                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
-                
+
                 if( mbStopped ) break;
                 RomHeader header = new RomHeader( getApplicationContext(), file );
                 if( header.isValid || header.isNdd ) {
@@ -640,10 +648,7 @@ public class CacheRomInfoService extends Service
         List<Uri> allFiles = new LinkedList<>();
         for (UriPermission permission : permissions) {
             List<Uri> files = FileUtil.listAllFiles(getApplicationContext(), permission.getUri(), true);
-
-            if (files != null) {
-                allFiles.addAll(files);
-            }
+            allFiles.addAll(files);
         }
 
         Set<String> keys = theConfigFile.keySet();
@@ -670,12 +675,21 @@ public class CacheRomInfoService extends Service
             if (uri != null) {
 
                 //Remove the entry since it doesn't exist
-                if(!allFiles.contains(uri))
-                {
+                boolean removeEntry;
+                if (!allFiles.isEmpty()) {
+                    removeEntry = !allFiles.contains(uri);
+                } else {
+                    DocumentFile romFile = FileUtil.getDocumentFileSingle(getApplicationContext(), uri);
+                    //Remove the entry since it doesn't exist
+                    removeEntry = romFile == null || !romFile.exists();
+                }
+
+                if (removeEntry) {
                     theConfigFile.remove(key);
                     keys = theConfigFile.keySet();
                     iter = keys.iterator();
                 }
+
             }
         }
     }
