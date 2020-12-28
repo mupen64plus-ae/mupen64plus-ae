@@ -1,6 +1,7 @@
 package paulscode.android.mupen64plusae.compat;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -156,6 +157,11 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         );
 
         getListView().setPadding(0, margin, 0, margin);
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE )
+        {
+            getListView().setPadding(0, margin, margin, margin);
+        }
     }
     
     @Override

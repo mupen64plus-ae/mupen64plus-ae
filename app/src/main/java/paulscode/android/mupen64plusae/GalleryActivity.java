@@ -471,6 +471,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if (coordLayout != null) {
                 DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
                 params.topMargin = insets.getSystemWindowInsetTop();
+                params.leftMargin = insets.getSystemWindowInsetLeft();
+                params.rightMargin = insets.getSystemWindowInsetRight();
                 coordLayout.setLayoutParams(params);
             }
 
