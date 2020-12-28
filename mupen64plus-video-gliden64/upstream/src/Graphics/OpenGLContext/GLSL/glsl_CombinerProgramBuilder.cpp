@@ -2722,7 +2722,7 @@ CombinerInputs CombinerProgramBuilder::compileCombiner(const CombinerKey & _key,
 	else
 		ssShader << "  lowp vec4 clampedColor = clamp(cmbRes, 0.0, 1.0);" << std::endl;
 
-    if (g_cycleType <= G_CYC_2CYCLE) {
+	if (g_cycleType <= G_CYC_2CYCLE) {
 		m_callDither->write(ssShader);
 
 		ssShader << "if (uCvgXAlpha != 0) cvg *= clampedColor.a;" << std::endl;
@@ -2748,7 +2748,6 @@ CombinerInputs CombinerProgramBuilder::compileCombiner(const CombinerKey & _key,
 
 	// SHOW COVERAGE HACK
 	//	ssShader << "fragColor.rgb = vec3(cvg);" << std::endl;
-
 
 	_strShader = ssShader.str();
 	return inputs;
@@ -3020,7 +3019,7 @@ CombinerProgramBuilder::CombinerProgramBuilder(const opengl::GLInfo & _glinfo, o
 , m_shaderCoverage(new ShaderCoverage())
 , m_useProgram(_useProgram)
 , m_combinerOptionsBits(graphics::CombinerProgram::getShaderCombinerOptionsBits())
-, m_useCoverage(_glinfo.coverage)
+, m_useCoverage(_glinfo.coverage && config.generalEmulation.enableCoverage != 0)
 {
 	m_vertexShaderRect = _createVertexShader(m_vertexHeader.get(), m_vertexRect.get(), m_vertexEnd.get());
 	m_vertexShaderTriangle = _createVertexShader(m_vertexHeader.get(), m_vertexTriangle.get(), m_vertexEnd.get());

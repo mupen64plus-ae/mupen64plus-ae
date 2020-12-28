@@ -5,8 +5,8 @@
 ;
 [subrepo]
 	remote = https://github.com/fzurita/GLideN64.git
-	branch = standard-two-simplex-cvg
-	commit = ff3ba159de63131e1613235a2e4c0b65ace076ba
-	parent = 2db3f15cb4638433d41043a44f49250e5b2ecb99
+	branch = add_hwlight_bit_to_key
+	commit = 955c2f3b17451a760fea3cf087e39fa3f20e9ac8
+	parent = 14999c9dc7b7fcabb5eeff3a359c8e61bfb6899f
 	method = merge
 	cmdver = 0.4.0

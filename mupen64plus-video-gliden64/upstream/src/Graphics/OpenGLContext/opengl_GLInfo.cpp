@@ -198,7 +198,7 @@ void GLInfo::init() {
 		}
 	}
 
-	coverage = (config.generalEmulation.enableCoverage != 0) && (dual_source_blending || ext_fetch || ext_fetch_arm);
+	coverage = dual_source_blending || ext_fetch || ext_fetch_arm;
 	if (coverage) {
 		GLint maxVertexAttribs = 0;
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);

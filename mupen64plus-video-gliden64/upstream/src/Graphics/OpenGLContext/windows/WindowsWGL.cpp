@@ -131,4 +131,3 @@ void WindowsWGL::swapBuffers()
 	else
 		SwapBuffers(hDC);
 }
-

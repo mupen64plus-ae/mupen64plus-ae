@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <assert.h>
 #include <Log.h>
 #include <Config.h>
@@ -18,6 +19,10 @@
 
 #ifdef OS_ANDROID
 #include <Graphics/OpenGLContext/GraphicBuffer/GraphicBufferWrapper.h>
+#endif
+
+#ifdef min
+#undef min
 #endif
 
 using namespace opengl;
@@ -522,6 +527,15 @@ bool ContextImpl::isSupported(graphics::SpecialFeatures _feature) const
 		return m_glInfo.dual_source_blending;
 	}
 	return false;
+}
+
+s32 ContextImpl::getMaxMSAALevel()
+{
+	GLint maxMSAALevel = 0;
+	glGetIntegerv(GL_MAX_SAMPLES, &maxMSAALevel);
+	// Limit maxMSAALevel by 16.
+	// Graphics driver may return 32 for max samples, but pixel format with 32 samples is not supported.
+	return std::min(maxMSAALevel, 16);
 }
 
 bool ContextImpl::isError() const
