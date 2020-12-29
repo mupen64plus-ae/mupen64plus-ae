@@ -42,7 +42,7 @@ public class UdpServer {
     static final int CP0_DATA_MSG = 4;
 
     DatagramSocket mUdpSocket;
-    Thread mUdpServerThread = new Thread();
+    Thread mUdpServerThread;
     boolean mRunning = true;
     ByteBuffer mSendBuffer = ByteBuffer.allocate( 512 );
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate( 1024*512 );
