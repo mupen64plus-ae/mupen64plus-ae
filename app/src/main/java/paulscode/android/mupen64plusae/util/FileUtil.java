@@ -1341,7 +1341,7 @@ public final class FileUtil
                 c = contentResolver.query(childrenUri, new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                         DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                         DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
-            } catch (java.lang.SecurityException e) {
+            } catch (SecurityException|NullPointerException e) {
                 c = null;
             }
 
@@ -1397,7 +1397,7 @@ public final class FileUtil
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
-            } catch (java.lang.SecurityException e) {
+            } catch (SecurityException|IllegalArgumentException e) {
                 return null;
             }
         }

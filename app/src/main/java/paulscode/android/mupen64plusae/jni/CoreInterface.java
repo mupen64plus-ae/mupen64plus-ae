@@ -261,7 +261,7 @@ class CoreInterface
             InputStream is;
             romBuffer = IOUtils.toByteArray(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
             success = true;
-        } catch (IOException|OutOfMemoryError|IllegalArgumentException|SecurityException e) {
+        } catch (IOException|OutOfMemoryError|IllegalArgumentException|SecurityException|IllegalStateException e) {
             e.printStackTrace();
         }
 
