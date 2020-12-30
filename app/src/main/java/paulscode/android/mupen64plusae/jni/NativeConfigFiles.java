@@ -162,6 +162,7 @@ class NativeConfigFiles
 
         mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );
         mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", boolToNum( global.isPolygonOffsetHackEnabled ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "adreno_crash_workaround", boolToNum( global.gpuRenderer.toLowerCase().contains("adreno") ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( global.videoPolygonOffset ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( global.videoPolygonOffset ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.glide64mk2Prefs.autoFrameskipEnabled ) );
