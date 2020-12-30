@@ -17,9 +17,14 @@ jobs:
       env:
         DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
       run: |
-        echo $DEBUG_KEYSTORE > debug.keystore.base64
-        base64 --decode debug.keystore.base64 > debug.keystore
-        sudo cp -f debug.keystore /root/.android/.
+        if [ -z "$DEBUG_KEYSTORE" ]
+        then
+           echo "No debug keystore value"
+        else
+           echo $DEBUG_KEYSTORE > debug.keystore.base64
+           base64 --decode debug.keystore.base64 > debug.keystore
+           sudo cp -f debug.keystore /root/.android/.
+        fi   
 
     - name: Install
       run: |
@@ -47,4 +52,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with: 
         name: mupen64plus-ae-${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
-        path: ${{ github.workspace }}/app/build/outputs/apk/debug/*
+        path: ${{ github.workspace }}/app/build/outputs/apk/debug/
