@@ -1335,9 +1335,18 @@ public final class FileUtil
 
         while(!dirNodes.isEmpty()) {
             childrenUri = dirNodes.remove(0); // get the item from top
-            Cursor c = contentResolver.query(childrenUri, new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-                    DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
+
+            Cursor c;
+            try {
+                c = contentResolver.query(childrenUri, new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                        DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                        DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
+            } catch (java.lang.SecurityException e) {
+                c = null;
+            }
+
+            if (c == null) continue;
+
             try {
                 while (c.moveToNext()) {
                     final String docId = c.getString(0);
@@ -1383,10 +1392,13 @@ public final class FileUtil
     public static String getFileName(Context context, Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {
+
             try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
+            } catch (java.lang.SecurityException e) {
+                return null;
             }
         }
         if (result == null) {

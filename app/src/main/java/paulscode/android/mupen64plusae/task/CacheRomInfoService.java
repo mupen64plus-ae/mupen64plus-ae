@@ -182,7 +182,13 @@ public class CacheRomInfoService extends Service
             for( final Uri file : filesToSearch )
             {
                 mListener.GetProgressDialog().setSubtext( "" );
-                mListener.GetProgressDialog().setText( getShortFileName(FileUtil.getFileName(getApplicationContext(), file)));
+                String fileName = FileUtil.getFileName(getApplicationContext(), file);
+
+                if (fileName == null) {
+                    continue;
+                }
+
+                mListener.GetProgressDialog().setText( getShortFileName(fileName));
                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
 
                 if( mbStopped ) break;
