@@ -17,9 +17,14 @@ jobs:
       env:
         DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
       run: |
-        echo $DEBUG_KEYSTORE > debug.keystore.base64
-        base64 --decode debug.keystore.base64 > debug.keystore
-        sudo cp -f debug.keystore /root/.android/.
+        if [ -z "$DEBUG_KEYSTORE" ]
+        then
+           echo "No debug keystore value"
+        else
+           echo $DEBUG_KEYSTORE > debug.keystore.base64
+           base64 --decode debug.keystore.base64 > debug.keystore
+           sudo cp -f debug.keystore /root/.android/.
+        fi 
 
     - name: Install
       run: |
@@ -27,11 +32,10 @@ jobs:
         sudo apt-get install -y file
         sudo apt-get install -y gawk
         echo y | sdkmanager "cmake;3.10.2.4988404"
-        echo y | sdkmanager "ndk-bundle"
         
     - name: Set Environment
       run: |
-        export ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/21.3.6528147
+        echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/21.3.6528147" >> $GITHUB_ENV
 
     - name: Build
       run: ./gradlew assemble
@@ -40,11 +44,11 @@ jobs:
       id: vars
       shell: bash
       run: |
-        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
       with: 
         name: mupen64plus-ae-${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
-        path: ${{ github.workspace }}/app/build/outputs/apk/debug/*
+        path: ${{ github.workspace }}/app/build/outputs/apk/debug/
