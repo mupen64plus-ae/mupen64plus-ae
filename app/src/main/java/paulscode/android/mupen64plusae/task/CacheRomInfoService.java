@@ -363,7 +363,11 @@ public class CacheRomInfoService extends Service
                 ZipFile zipFile = new ZipFile(fileInputStream.getChannel());
                 Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
 
-                while (entries.hasMoreElements() && !mbStopped) {
+                // Limit how many times we will look for ROMs in a large zip file
+                final int maxChances = 10;
+                int currentChance = 0;
+
+                while (entries.hasMoreElements() && !mbStopped && currentChance < maxChances) {
 
                     ZipArchiveEntry zipEntry = entries.nextElement();
 
@@ -374,7 +378,11 @@ public class CacheRomInfoService extends Service
                     zipStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
                     mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
 
-                    cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
+                    if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
+                        currentChance = 0;
+                    } else {
+                        ++currentChance;
+                    }
                 }
                 zipFile.close();
                 fileInputStream.close();
@@ -397,7 +405,12 @@ public class CacheRomInfoService extends Service
 
                 SevenZFile zipFile = new SevenZFile(fileInputStream.getChannel());
                 SevenZArchiveEntry zipEntry;
-                while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped) {
+
+                // Limit how many times we will look for ROMs in a large zip file
+                final int maxChances = 10;
+                int currentChance = 0;
+
+                while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped && currentChance < maxChances) {
 
                     // Skip entries with null file names
                     if (zipEntry.getName() == null) {
@@ -411,7 +424,11 @@ public class CacheRomInfoService extends Service
                     zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
                     mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
 
-                    cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream);
+                    if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
+                        currentChance = 0;
+                    } else {
+                        ++currentChance;
+                    }
                 }
                 zipFile.close();
                 fileInputStream.close();
@@ -424,7 +441,7 @@ public class CacheRomInfoService extends Service
         }
     }
 
-    private void cacheZipFileFromInputStream(RomDatabase database, Uri zipFile, ConfigFile config, String name,
+    private boolean cacheZipFileFromInputStream(RomDatabase database, Uri zipFile, ConfigFile config, String name,
                                              InputStream inputStream) throws IOException, NoSuchAlgorithmException {
         //First get the rom header
         inputStream.mark(500);
@@ -443,8 +460,12 @@ public class CacheRomInfoService extends Service
                 String md5 = FileUtil.computeMd5( inputStream );
 
                 cacheFile(null, name, extractedHeader, md5, database, config, zipFile );
+
+                return true;
             }
         }
+
+        return false;
     }
 
     private void cacheFile(@Nullable Uri uri, @NonNull String name, RomHeader header, String md5, RomDatabase database, ConfigFile config, Uri zipFileLocation )
