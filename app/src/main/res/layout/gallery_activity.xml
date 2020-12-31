@@ -8,6 +8,14 @@
     android:fitsSystemWindows="false"
     style="@style/MupenTheme_Dark_Sidebar"> <!-- Setting this as a theme makes MenuListView throw exception -->
 
+    <!-- This is needed to prevent the keyboard from showing up at startup -->
+   <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        tools:ignore="UselessLeaf" />
+
     <!-- activity view -->
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
