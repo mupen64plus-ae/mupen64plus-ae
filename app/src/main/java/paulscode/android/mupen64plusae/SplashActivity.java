@@ -427,15 +427,20 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 .setAppLinkIntent(appIntent);
 
         Context context = getApplicationContext();
-        Uri channelUri = context.getContentResolver().insert(
-                TvContractCompat.Channels.CONTENT_URI, builder.build().toContentValues());
 
-        if (channelUri != null) {
-            long channelId = ContentUris.parseId(channelUri);
-            mAppData.putChannelId(channelId);
-            Bitmap bitmapIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-            ChannelLogoUtils.storeChannelLogo(context, channelId, bitmapIcon);
-            TvContractCompat.requestChannelBrowsable(context, channelId);
+        try {
+            Uri channelUri = context.getContentResolver().insert(
+                    TvContractCompat.Channels.CONTENT_URI, builder.build().toContentValues());
+
+            if (channelUri != null) {
+                long channelId = ContentUris.parseId(channelUri);
+                mAppData.putChannelId(channelId);
+                Bitmap bitmapIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+                ChannelLogoUtils.storeChannelLogo(context, channelId, bitmapIcon);
+                TvContractCompat.requestChannelBrowsable(context, channelId);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
     }
 }
