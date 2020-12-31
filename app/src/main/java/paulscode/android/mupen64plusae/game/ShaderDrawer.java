@@ -62,7 +62,11 @@ public class ShaderDrawer {
 
             // For some reason this is needed, otherwise frame callbacks stop happening on orientation
             // changes or if the app is put on the background then foreground again
-            mGameTexture.updateTexImage();
+            try {
+                mGameTexture.updateTexImage();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
 
             for (Shader shader : mShaderPasses) {
                 shader.setSourceTexture(texture);
@@ -91,7 +95,11 @@ public class ShaderDrawer {
 
     public void onDrawFrame() {
         if (mGameTexture != null) {
-            mGameTexture.updateTexImage();
+            try {
+                mGameTexture.updateTexImage();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
 
             for (Shader shader : mShaderPasses) {
                 shader.draw();
