@@ -37,6 +37,7 @@ import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.PointerIcon;
@@ -448,7 +449,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Don't call the async version otherwise the scroll position is lost
         refreshGrid();
 
-        DisplayWrapper.drawBehindSystemBars(this);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
+        {
+            DisplayWrapper.drawBehindSystemBars(this);
+        }
 
         CoordinatorLayout coordLayout = findViewById(R.id.coordLayout);
 
@@ -464,14 +468,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if (floatingActionButton != null) {
                 CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)floatingActionButton.getLayoutParams();
                 params.bottomMargin = insets.getSystemWindowInsetBottom() + margin;
-                params.rightMargin = insets.getSystemWindowInsetRight() + margin;
                 floatingActionButton.setLayoutParams(params);
             }
 
             if (coordLayout != null) {
                 DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
                 params.topMargin = insets.getSystemWindowInsetTop();
-                params.leftMargin = insets.getSystemWindowInsetLeft();
                 params.rightMargin = insets.getSystemWindowInsetRight();
                 coordLayout.setLayoutParams(params);
             }

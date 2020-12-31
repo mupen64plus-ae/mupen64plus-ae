@@ -349,6 +349,7 @@ public class AppData
      * 
      * @param context The application context.
      */
+    @SuppressWarnings({"unused","deprecation", "RedundantSuppression"})
     public AppData( Context context )
     {
         mContext = context;
