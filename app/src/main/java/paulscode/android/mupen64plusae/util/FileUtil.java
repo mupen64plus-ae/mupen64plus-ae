@@ -1286,8 +1286,8 @@ public final class FileUtil
         return stringBuilder.toString().toUpperCase( Locale.US );
     }
 
-    public static @NonNull List<Uri> listAllFilesLegacy(DocumentFile documentFile, boolean subDirectories) {
-
+    static final int listAllFilesRecursionLimit = 10;
+    public static @NonNull List<Uri> listAllFilesLegacy(DocumentFile documentFile, boolean subDirectories, int recursionCount) {
         List<Uri> result = new ArrayList<>();
 
         if (documentFile != null) {
@@ -1298,9 +1298,10 @@ public final class FileUtil
                 for( DocumentFile file : allFiles )
                 {
                     //Search subdirectories if option is enabled and we less than 10 levels deep
-                    if(subDirectories)
+                    if(subDirectories && recursionCount < listAllFilesRecursionLimit)
                     {
-                        result.addAll( listAllFilesLegacy( file, subDirectories ) );
+                        ++recursionCount;
+                        result.addAll( listAllFilesLegacy( file, subDirectories, recursionCount ) );
                     }
                     else if(!file.isDirectory())
                     {
@@ -1315,6 +1316,10 @@ public final class FileUtil
         }
 
         return result;
+    }
+
+    public static @NonNull List<Uri> listAllFilesLegacy(DocumentFile documentFile, boolean subDirectories) {
+        return listAllFilesLegacy(documentFile, subDirectories, 0);
     }
 
     public static @NonNull List<Uri> listAllFiles(Context context, Uri rootUri, boolean subdirs) {
