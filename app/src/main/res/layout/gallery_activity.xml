@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="24dp"
             android:nextFocusUp="@id/gridview"
             android:nextFocusLeft="@id/gridview"
             android:background="@color/blue1"
