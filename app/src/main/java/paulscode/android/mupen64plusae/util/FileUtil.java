@@ -1341,7 +1341,7 @@ public final class FileUtil
                 c = contentResolver.query(childrenUri, new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                         DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                         DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
-            } catch (SecurityException|NullPointerException e) {
+            } catch (SecurityException|NullPointerException|IllegalStateException e) {
                 c = null;
             }
 
