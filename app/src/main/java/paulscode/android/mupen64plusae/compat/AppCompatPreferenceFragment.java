@@ -5,6 +5,9 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
@@ -148,20 +151,25 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         if (context != null) {
             view.setBackgroundColor(ContextCompat.getColor(context, R.color.mupen_black));
         }
-        
-        Resources r = getResources();
-        int margin = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                70,
-                r.getDisplayMetrics()
-        );
 
-        getListView().setPadding(0, margin, 0, margin);
+        ViewCompat.setOnApplyWindowInsetsListener(getListView(), (v, insets) -> {
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE )
-        {
-            getListView().setPadding(0, margin, margin, margin);
-        }
+            Resources r = getResources();
+            int topMargin = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    70,
+                    r.getDisplayMetrics()
+            );
+
+            getListView().setPadding(0, topMargin, 0, insets.getSystemWindowInsetBottom());
+
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE )
+            {
+                getListView().setPadding(0, topMargin, insets.getSystemWindowInsetRight(), 0);
+            }
+
+            return insets;
+        });
     }
     
     @Override
