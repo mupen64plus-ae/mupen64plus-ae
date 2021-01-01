@@ -1330,7 +1330,7 @@ public final class FileUtil
 
         try {
             childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return files;
         }
 
@@ -1346,7 +1346,8 @@ public final class FileUtil
                 c = contentResolver.query(childrenUri, new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                         DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                         DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null);
-            } catch (SecurityException|NullPointerException|IllegalStateException|IllegalArgumentException e) {
+            } catch (Exception e) {
+                // Catch all exceptions, this has thrown 4 different exceptions at this time across different devices
                 c = null;
             }
 
@@ -1402,7 +1403,7 @@ public final class FileUtil
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
-            } catch (SecurityException|IllegalArgumentException e) {
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -1427,6 +1428,9 @@ public final class FileUtil
                 } else {
                     return false;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
         } else {
             return false;
