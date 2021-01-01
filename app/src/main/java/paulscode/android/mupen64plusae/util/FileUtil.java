@@ -1032,6 +1032,10 @@ public final class FileUtil
 
         RomHeader returnData = null;
 
+        if (zipPathUri == null) {
+            return null;
+        }
+
         boolean lbFound = false;
 
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPathUri), "r");
@@ -1065,7 +1069,7 @@ public final class FileUtil
 
     public static RomHeader getHeaderFromSevenZip(Context context, String romFileName, String zipPath)
     {
-        if (!AppData.IS_NOUGAT) {
+        if (!AppData.IS_NOUGAT || zipPath == null) {
             return null;
         }
 
