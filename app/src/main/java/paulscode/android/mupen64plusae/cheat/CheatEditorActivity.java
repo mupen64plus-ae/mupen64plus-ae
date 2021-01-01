@@ -318,13 +318,19 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         {
             String[] optionStrings;
             optionStrings = options.split( "\n" );
-            
+
+            final int optionLength = 4;
+
             for(String option : optionStrings)
             {
+                if (option.length() < optionLength + 1) {
+                    continue;
+                }
+
                 CheatOptionData cheatData = new CheatOptionData();
-                String valueString = option.substring(option.length()-4);
+                String valueString = option.substring(option.length() - optionLength);
                 cheatData.value = Integer.valueOf(valueString, 16);
-                cheatData.description = option.substring(0, option.length() - 5);
+                cheatData.description = option.substring(0, option.length() - optionLength - 1);
                 optionsList.add(cheatData);
             }
         }
