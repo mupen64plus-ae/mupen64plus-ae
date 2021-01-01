@@ -194,17 +194,6 @@ AudioHandler::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32
 
 bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames) {
 
-	double bufferMultiplier = (static_cast<double>(mOutputFreq) / mInputFreq) *
-							  (static_cast<double>(defaultHardwareBufferSize) /
-							   mHardwareBufferSize);
-
-	static const int bufferLimit = maxBufferSizeMs - 20;
-
-	int maxQueueSize = static_cast<int> ((mTargetBuffersMs + 30.0) * bufferMultiplier);
-	if (maxQueueSize > bufferLimit) {
-		maxQueueSize = bufferLimit;
-	}
-	int minQueueSize = static_cast<int>(mTargetBuffersMs * bufferMultiplier);
 	static bool drainQueue = false;
 
 	//Sound queue ran dry, device is running slow
@@ -217,19 +206,12 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	//how quickly to return to original speed
 	static const double minSlowValue = 0.1;
 	static const double maxSlowValue = 10.0;
-	static const float maxSpeedUpRate = 0.5;
-	static const float slowRate = 0.05;
-	static const float defaultSampleLength = 0.01666;
-
-	static const int defaultWindowSize = 50;
+	static const float maxRateOffset = 0.5;
+	static const float defaultSampleLength = 0.008336;
 
 	static double prevTime = 0;
 
-	int feedTimeWindowSize = defaultWindowSize;
-
 	int queueLength = static_cast<int>(static_cast<float>(mSoundTouch.numSamples())/static_cast<float>(mOutputFreq)*1000);
-
-	ranDry = queueLength < minQueueSize;
 
 	int workingBufferValidBytes = 0;
 	QueueData currQueueData;
@@ -243,45 +225,50 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 
 		//Figure out how much to slow down by
 		double timeDiff = currQueueData.timeSinceStart - prevTime;
+		float temp = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
+
 		prevTime = currQueueData.timeSinceStart;
 
-		// Ignore negative time, it can be negative if game is falling too far behind real time
-		// Also ignore really big numbers since that can happen because prevTime intializes to zero
+		// Ignore really big numbers since that can happen because prevTime initializes to zero or negative
+		// if the game was paused
 		if (timeDiff > 0 && timeDiff < 1.0) {
 			mFeedTimes[mFeedTimeIndex] = timeDiff;
-			mAverageFeedTimeMs = getAverageTime(mFeedTimes.data(), mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex + 1));
+			mAverageFeedTimeMs = getAverageTime(mFeedTimes.data(), mFeedTimesSet ? windowSize : (mFeedTimeIndex + 1));
 
 			mGameTimes[mFeedTimeIndex] = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
-			mAverageGameTimeMs = getAverageTime(mGameTimes.data(),mFeedTimesSet ? feedTimeWindowSize : (mFeedTimeIndex +  1));
+			mAverageGameTimeMs = getAverageTime(mGameTimes.data(),mFeedTimesSet ? windowSize : (mFeedTimeIndex +  1));
+
 
 			++mFeedTimeIndex;
-			if (mFeedTimeIndex >= feedTimeWindowSize) {
+			if (mFeedTimeIndex >= windowSize) {
 				mFeedTimeIndex = 0;
 
 				if (!mFeedTimesSet) {
 					mFeedTimesSet = true;
-
-					// Flush the first set of averages since they can be kind of random
-					double speedFactor = static_cast<double>(mSpeedFactor) / 100.0;
-					double feedTime = defaultSampleLength/speedFactor;
-					for (int index = 0; index < feedTimeWindowSize; ++index) {
-						mFeedTimes[index] = feedTime;
-						mGameTimes[index] = defaultSampleLength;
-					}
-					mAverageFeedTimeMs = feedTime;
-					mAverageGameTimeMs = defaultSampleLength;
 				}
-			}
-
-			//Normalize window size
-			feedTimeWindowSize = static_cast<int>(defaultSampleLength / mAverageGameTimeMs * defaultWindowSize);
-			if (feedTimeWindowSize > maxWindowSize) {
-				feedTimeWindowSize = maxWindowSize;
 			}
 		}
 	}
 
-	double temp = mAverageGameTimeMs/mAverageFeedTimeMs;
+	double bufferMultiplier = static_cast<double>(mOutputFreq) / mInputFreq;
+	double currentGameRate = mAverageGameTimeMs / mAverageFeedTimeMs;
+	int queueSizeOffset = static_cast<int>(mAverageGameTimeMs - defaultSampleLength);
+
+	if (queueSizeOffset < 0) {
+		queueSizeOffset = 0;
+	}
+
+	int minQueueSize = static_cast<int>(mTargetBuffersMs * bufferMultiplier) + queueSizeOffset;
+	ranDry = queueLength < minQueueSize;
+
+	static const int bufferLimit = static_cast<int>(static_cast<double>(maxBufferSizeMs - 20) * bufferMultiplier) + queueSizeOffset;
+
+	int maxQueueSize = static_cast<int> ((mTargetBuffersMs + 60.0 + queueSizeOffset) * bufferMultiplier);
+
+	if (maxQueueSize > bufferLimit) {
+		maxQueueSize = bufferLimit;
+	}
+
 	bool samplesAdded;
 
 	if (!mPrimeComplete || !mFeedTimesSet) {
@@ -299,18 +286,21 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		//Game is running too fast speed up audio
 		if ((queueLength > maxQueueSize || drainQueue) && !ranDry) {
 			drainQueue = true;
-			currAdjustment = temp +
-					static_cast<float> (queueLength - minQueueSize) /
-					static_cast<float> (maxBufferSizeMs - minQueueSize) *
-					maxSpeedUpRate;
+			currAdjustment = currentGameRate +
+							 static_cast<float> (queueLength - minQueueSize) /
+							 static_cast<float> (maxQueueSize - minQueueSize) *
+							 maxRateOffset;
 		}
-			//Device can't keep up with the game
+		//Device can't keep up with the game
 		else if (ranDry) {
 			drainQueue = false;
-			currAdjustment = temp - slowRate;
-			//Good case
+			currAdjustment = currentGameRate +
+							 static_cast<float> (queueLength - minQueueSize) /
+							 static_cast<float> (maxQueueSize - minQueueSize) *
+							 maxRateOffset;
+		//Good case
 		} else if (queueLength < maxQueueSize) {
-			currAdjustment = temp;
+			currAdjustment = currentGameRate;
 		}
 
 		// Bounds checking
@@ -322,22 +312,21 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 		static const int increments = 4;
 		double temp2 = round((slowAdjustment * 100) / increments);
 		temp2 *= increments;
-		slowAdjustment = (temp2) / 100;
+		slowAdjustment = temp2 / 100;
 
 		mSoundTouch.setTempo(slowAdjustment);
 
 		samplesAdded = processAudioSoundTouch(workingBufferValidBytes, outAudioData, outNumFrames);
 	}
 
-	//Useful logging
-
-	//if(queueLength == 0)
+//	if (!samplesAdded)
 /*
 	{
 	 DebugMessage(M64MSG_ERROR, "hw_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d, pos=%d",
-				queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, mAverageFeedTimeMs, mAverageGameTimeMs, minQueueSize, maxQueueSize, mFeedTimeIndex);
+				  queueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, currentGameRate, mAverageFeedTimeMs, mAverageGameTimeMs, minQueueSize, maxQueueSize, mFeedTimeIndex);
 	}
-*/
+ */
+
 	return samplesAdded;
 }
 
@@ -423,7 +412,9 @@ bool AudioHandler::processAudioSoundTouch(int& validBytes, void *outAudioData, i
 
 	bool bytesWritten = false;
 
-	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mWorkingBuffer), validBytes / hwSamplesBytes);
+	if (validBytes != 0 ) {
+		mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mWorkingBuffer), validBytes / hwSamplesBytes);
+	}
 
 	if (mSoundTouch.numSamples() >= outNumFrames) {
 		mSoundTouch.receiveSamples(

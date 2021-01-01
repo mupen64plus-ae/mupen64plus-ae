@@ -325,11 +325,12 @@ bool isSpeedLimiterEnabled() {
 
 EXPORT void CALL AiLenChanged(void) {
     static const double minSleepNeededForReset = -5.0;
-    static const double minSleepNeeded = -0.1;
+    static const double minSleepNeeded = -0.05;
     static const double maxSleepNeeded = 0.5;
     static bool hasBeenReset = false;
     static unsigned long totalElapsedSamples = 0;
     static std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<double>> gameStartTime;
+    static std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<double>> gameStartTimeNonAdjusted;
     static int lastSpeedFactor = 100;
     static bool lastSpeedLimiterEnabledState = false;
     static bool busyWait = false;
@@ -349,6 +350,7 @@ EXPORT void CALL AiLenChanged(void) {
         lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled) {
         lastSpeedLimiterEnabledState = limiterEnabled;
         gameStartTime = currentTime;
+		gameStartTimeNonAdjusted = currentTime;
         totalElapsedSamples = 0;
         hasBeenReset = true;
         totalElapsedSamples = 0;
@@ -361,7 +363,8 @@ EXPORT void CALL AiLenChanged(void) {
 
     // Push data to the audio handler
     std::chrono::duration<double> timeSinceStart = currentTime - gameStartTime;
-	AudioHandler::get().pushData(reinterpret_cast<int16_t*>(inputAudio), LenReg/N64_SAMPLE_BYTES, timeSinceStart);
+    std::chrono::duration<double> timeSinceStartNonAdjusted = currentTime - gameStartTimeNonAdjusted;
+	AudioHandler::get().pushData(reinterpret_cast<int16_t*>(inputAudio), LenReg/N64_SAMPLE_BYTES, timeSinceStartNonAdjusted);
 
     //Calculate total ellapsed game time
     totalElapsedSamples += LenReg / N64_SAMPLE_BYTES;

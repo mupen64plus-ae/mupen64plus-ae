@@ -309,15 +309,15 @@ private:
 	// The number of valid bytes int the working buffer
 	int mWorkingBufferValidBytes = 0;
 
-	// This is the max window size used for performing game speed averaging for Audio time stretching
-	static const int maxWindowSize = 500;
+	// Window size used to figure out time average times
+	static const int windowSize = 15;
 
 	// This holds an array of time deltas between game samples
-	std::array<double, maxWindowSize> mFeedTimes;
+	std::array<double, windowSize> mFeedTimes;
 
 
 	// This holds an array of time deltas as provided by the game itself
-	std::array<double, maxWindowSize> mGameTimes;
+	std::array<double, windowSize> mGameTimes;
 
 	// Next index where a valid value will be injected in mFeedTimes and mGameTimes
 	int mFeedTimeIndex = 0;
