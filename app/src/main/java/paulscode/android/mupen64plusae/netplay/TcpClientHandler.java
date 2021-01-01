@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.netplay;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,6 +24,8 @@ public class TcpClientHandler {
 
     TcpClientHandler(TcpServer server, int _buffer_target, Socket socket)
     {
+        Log.e("TcpClientHandler", "NEW CLIENT!!!");
+
         mBufferTarget = _buffer_target;
         mSocket = socket;
         mServer = server;
@@ -30,7 +34,7 @@ public class TcpClientHandler {
             mSocketOutputStream = socket.getOutputStream();
             mSocketInputStream = socket.getInputStream();
             mMessageFactory = new MessageFactory(server, mSocketOutputStream);
-            mRunning = false;
+            mRunning = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,10 +47,17 @@ public class TcpClientHandler {
     {
         while (mRunning)
         {
+            Log.e("TcpClientHandler", "CLIENT THREAD IS RUNNING");
 
             // First read the whole message
             try {
                 int id = mSocketInputStream.read();
+                if (id == -1) {
+                    mRunning = false;
+                }
+
+                Log.e("TcpClientHandler", "GOT MESSAGE WITH ID=" + id);
+
 
                 if (id >= 0) {
                     TcpMessage message = mMessageFactory.getMessage(id);

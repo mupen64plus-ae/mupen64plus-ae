@@ -64,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
@@ -102,6 +103,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
          * Called when the service has been destroyed
          */
         void onCoreServiceDestroyed();
+
+        /**
+         * Provides the current state of netplay initialization
+         * @param success True if netplay initialized successfully
+         */
+        void onNetplayInitComplete(boolean success);
     }
 
     interface LoadingDataListener
@@ -147,7 +154,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private byte mRomCountryCode = 0;
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
+    private String mNetplayHost = "";
+    private int mNetplayPort = 0;
     private PixelBuffer mPixelBuffer = null;
+
+    private final Object mWaitForNetPlay = new Object();
+    private boolean mNetplayReady = false;
 
     //Service attributes
     private int mStartId;
@@ -443,6 +455,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.emuReset();
     }
 
+    void connectForNetplay(int player) {
+        Random rand = new Random();
+
+        mCoreInterface.netplaySetController(player, rand.nextInt());
+
+        synchronized (mWaitForNetPlay) {
+            mNetplayReady = true;
+            mWaitForNetPlay.notify();
+        }
+    }
+
     CoreTypes.m64p_emu_state getState()
     {
         return mCoreInterface.emuGetState();
@@ -584,33 +607,33 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mCoreInterface.emuSetFramelimiter(mGlobalPrefs.isFramelimiterEnabled);
 
-            boolean openSuccess;
+            boolean loadingSuccess;
 
             // Disk only games still require a ROM image, so use a dummy test ROM
             if (isNdd) {
-                openSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
+                loadingSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
 
                 InputStream inputStream ;
                 try {
                     inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
-                    openSuccess = openSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
+                    loadingSuccess = loadingSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
                 } catch (IOException e) {
-                    openSuccess = false;
+                    loadingSuccess = false;
                 }
             } else {
                 if (TextUtils.isEmpty(mZipPath))
                 {
-                    openSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
+                    loadingSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
                 }
                 else
                 {
-                    openSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+                    loadingSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
                 }
             }
 
             if (mLoadingDataListener != null) mLoadingDataListener.loadingFinished();
 
-            if (openSuccess)
+            if (loadingSuccess)
             {
                 for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())
                 {
@@ -637,44 +660,70 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                     mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
                 } catch (java.lang.IllegalArgumentException e) {
-                    openSuccess = false;
+                    loadingSuccess = false;
                 }
+            }
 
-                if (mListener != null) {
-                    mListener.onCoreServiceStarted();
+            if (mListener != null) {
+                mListener.onCoreServiceStarted();
+            }
+
+            if (loadingSuccess) {
+
+                if (mNetplayPort != 0) {
+                    boolean netplayInitSuccess = mCoreInterface.netplayInit(mNetplayHost, mNetplayPort);
+
+                    if (mListener != null) {
+                        mListener.onNetplayInitComplete(netplayInitSuccess);
+                    }
+
+                    Log.e("Netplay", "WAITING ON NETPLAY!!!");
+
+                    if (netplayInitSuccess) {
+                        synchronized (mWaitForNetPlay) {
+                            while (!mNetplayReady) {
+                                try {
+                                    mWaitForNetPlay.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (mListener != null) {
+                        mListener.onNetplayInitComplete(false);
+                    }
                 }
 
                 // This call blocks until emulation is stopped
-                if (openSuccess) {
-                    mCoreInterface.emuStart();
+                mCoreInterface.emuStart();
 
-                    // Detach all the plugins
-                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);
-                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
-                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
-                    mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
+                // Detach all the plugins
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO);
+                mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT);
 
-                    mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
-                }
+                mCoreInterface.writeGbRamData(getApplicationContext(), gbRamPaths);
             }
 
             // Clean up the working directory
-            FileUtil.deleteFolder(new File(mWorkingDir));
-            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+            cleanupEmulation();
 
-            mGameDataManager.clearOldest();
+            mIsRunning = false;
 
-            if (mGlobalPrefs.useExternalStorge) {
-                copyGameContentsToSdCard();
+            //Stop the service
+            forceExit();
+
+            // Clean up the working directory
+            if (!loadingSuccess) {
+                cleanupEmulation();
             }
-
-            mCoreInterface.closeRom();
-            // Don't do this for now, it causes memory corruption
-            // mCoreInterface.emuShutdown();
 
             if(mListener != null)
             {
-                if(!openSuccess)
+                if(!loadingSuccess)
                 {
                     mListener.onFailure(1);
                     try {
@@ -687,12 +736,24 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mListener.onFinish();
                 mListener = null;
             }
-
-            mIsRunning = false;
-
-            //Stop the service
-            forceExit();
         }
+    }
+
+    private void cleanupEmulation()
+    {
+        FileUtil.deleteFolder(new File(mWorkingDir));
+        FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+
+        mGameDataManager.clearOldest();
+
+        if (mGlobalPrefs.useExternalStorge) {
+            copyGameContentsToSdCard();
+        }
+
+        mCoreInterface.closeRom();
+        mCoreInterface.emuShutdown();
+
+        mCoreInterface.closeNetplay();
     }
 
     private void copyGameContentsFromSdCard()
@@ -868,6 +929,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT, mVideoRenderHeight );
+        notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_SERVER_HOST, mNetplayHost );
+        notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_SERVER_PORT, mNetplayPort );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -938,6 +1001,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
             mVideoRenderWidth = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_WIDTH );
             mVideoRenderHeight = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT );
+            mNetplayHost = extras.getString(ActivityHelper.Keys.NETPLAY_SERVER_HOST);
+            mNetplayPort =  extras.getInt( ActivityHelper.Keys.NETPLAY_SERVER_PORT );
 
             mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
                     CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );

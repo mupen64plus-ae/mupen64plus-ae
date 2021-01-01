@@ -77,6 +77,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
+import paulscode.android.mupen64plusae.netplay.NetplaySetupDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -130,7 +131,8 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
-        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener
+        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
+        NetplaySetupDialog.OnDialogActionListener
 {
     private static final String TAG = "GameActivity";
     // Activity and views
@@ -179,6 +181,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private static final String STATE_CURRENT_FPS = "STATE_CURRENT_FPS";
     private int currentFps = -1;
+
+    private static final String STATE_NETPLAY_DIALOG = "STATE_NETPLAY_DIALOG";
+    private NetplaySetupDialog mNetplayDialog = null;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -466,6 +471,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         });
 
         hideSystemBars();
+
+        mNetplayDialog = (NetplaySetupDialog) fm.findFragmentByTag(STATE_NETPLAY_DIALOG);
     }
 
     @Override
@@ -501,7 +508,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
-                        mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution));
+                        mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
+                        "172.172.1.74", 51136);
             }
 
             // Try running now in case the core service has already started
@@ -701,6 +709,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mDrawerLayout.closeDrawer( GravityCompat.START );
             mOverlay.requestFocus();
+        }
+    }
+
+    @Override
+    public void onNetplayInit(boolean success) {
+
+        if (mNetplayDialog == null && success) {
+            final FragmentManager fm = getSupportFragmentManager();
+            mNetplayDialog = NetplaySetupDialog.newInstance();
+            mNetplayDialog.show(fm, STATE_NETPLAY_DIALOG);
         }
     }
 
@@ -1251,5 +1269,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
             isControllerPlugged[player-1] = true;
         }
+    }
+
+    @Override
+    public void connect(int player) {
+        mCoreFragment.connectForNetplay(player);
+        mNetplayDialog.dismiss();
     }
 }

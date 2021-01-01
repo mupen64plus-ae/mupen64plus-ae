@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.netplay;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -21,22 +23,25 @@ public class TcpServer {
         public int mNoCompiledJump;
     }
 
-    HashMap<String, byte[]> mFiles;
+    HashMap<String, byte[]> mFiles = new HashMap<>();
     CoreSettings mSettings = new CoreSettings();
     String mGliden64Settings = "";
     HashMap<Integer, PlayerData> mReg = new HashMap<>();
 
-    int mClientNumber = 0;
     int mBufferTarget;
 
     ServerSocket mServerSocket;
     Thread mServerThread;
     boolean mRunning = true;
+
+    UdpServer mUdpServer;
+
     ArrayList<TcpClientHandler> mClients = new ArrayList<>();
 
-    TcpServer(int _buffer_target)
+    TcpServer(int _buffer_target, UdpServer udpServer)
     {
         mBufferTarget = _buffer_target;
+        mUdpServer = udpServer;
     }
 
     public void updateSettings(CoreSettings settings)
@@ -85,16 +90,19 @@ public class TcpServer {
     public void addPlayerData(int player, PlayerData playerData)
     {
         mReg.put(player, playerData);
-    }
 
-    public boolean newRegistration() {
-        return mReg.size() == mClientNumber;
+        mUdpServer.registerPlayer(playerData.mRegId, player, playerData.mPlugin);
     }
 
     void runTcpServer() {
+
+        Log.e("TcpServer", "STARTED TCP SERVER!!!");
+
         while (mRunning) {
             try {
+                Log.e("TcpServer", "WAITING FOR CLIENT");
                 mClients.add(new TcpClientHandler(this, mBufferTarget, mServerSocket.accept()));
+                Log.e("TcpServer", "GOT CLIENT");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -117,40 +125,20 @@ public class TcpServer {
         return mBufferTarget;
     }
 
-    void reg_player(int reg_id, int playerNum, int plugin)
-    {
-
-    }
-    void playerDisconnect(int reg_id)
-    {
-
-    }
-
-    void onNewConnection()
-    {
-
-    }
-
-    void setClientNumber(int size)
-    {
-        mClientNumber = size;
-    }
-
-    void register_player(int reg_id, int playerNum, int plugin)
-    {
-
-    }
-
-    void disconnect_player(int reg_id)
-    {
-
-    }
-
     void stopServer() {
         try {
             mRunning = false;
             mServerSocket.close();
-        } catch (IOException e) {
+            mServerThread.join();
+        } catch (IOException|InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void waitForServerToEnd() {
+        try {
+            mServerThread.join();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

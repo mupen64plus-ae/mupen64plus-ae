@@ -101,7 +101,11 @@ public class CoreTypes {
         M64CMD_READ_SCREEN,
         M64CMD_RESET,
         M64CMD_ADVANCE_FRAME,
-        M64CMD_SET_MEDIA_LOADER
+        M64CMD_SET_MEDIA_LOADER,
+        M64CMD_NETPLAY_INIT,
+        M64CMD_NETPLAY_CONTROL_PLAYER,
+        M64CMD_NETPLAY_GET_VERSION,
+        M64CMD_NETPLAY_CLOSE
     }
 
     enum m64p_msg_level {

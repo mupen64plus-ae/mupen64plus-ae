@@ -77,9 +77,6 @@ public class UdpServer {
 
     int mBufferTarget;
 
-    InetAddress[] mSenderAddress = new InetAddress[NUM_PLAYERS];
-    int[] mSenderPort = new int[NUM_PLAYERS];
-
     public UdpServer(int _buffer_target)
     {
         for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex)
@@ -88,20 +85,23 @@ public class UdpServer {
             mBufferSize[playerIndex] = 3;
             mBufferHealth[playerIndex] = -1;
             mInputDelay[playerIndex] = -1;
-            mSenderPort[playerIndex] = 0;
         }
         mStatus = 0;
         mBufferTarget = _buffer_target;
 
         mSendBuffer.order(ByteOrder.BIG_ENDIAN);
         mReceiveBuffer.order(ByteOrder.BIG_ENDIAN);
+
+        mReceiveBuffer.mark();
+        mSendBuffer.mark();
     }
 
     void handleKeyInfoMessage()
     {
         int playerNum = mReceiveBuffer.get();
-        mSenderAddress[playerNum] = mReceivePacket.getAddress();
-        mSenderPort[playerNum] = mReceivePacket.getPort();
+        mSendPackets[playerNum].setAddress(mReceivePacket.getAddress());
+        mSendPackets[playerNum].setPort(mReceivePacket.getPort());
+
         int count = mReceiveBuffer.getInt();
         int keys = mReceiveBuffer.getInt();
         int plugin = mReceiveBuffer.get();
@@ -113,9 +113,7 @@ public class UdpServer {
         }
 
         for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex) {
-            if (mSenderPort[playerIndex] != 0) {
-                sendInput(count, mSenderAddress[playerIndex], mSenderPort[playerIndex], playerNum, 1);
-            }
+            sendInput(count, playerNum, 1);
         }
     }
 
@@ -123,6 +121,8 @@ public class UdpServer {
     {
         int playerNum = mReceiveBuffer.get();
         int regi_id = mReceiveBuffer.getInt();
+        mSendPackets[playerNum].setAddress(mReceivePacket.getAddress());
+        mSendPackets[playerNum].setPort(mReceivePacket.getPort());
 
         if (mPlayerKeepAlive.containsKey(regi_id)) {
             KeepAlive playerKeepAlive = mPlayerKeepAlive.get(regi_id);
@@ -140,7 +140,7 @@ public class UdpServer {
             mLeadCount[playerNum] = count;
         }
 
-        sendInput(count, mReceivePacket.getAddress(), mReceivePacket.getPort(), playerNum, spectator);
+        sendInput(count, playerNum, spectator);
     }
 
     void handleCp0Message()
@@ -148,7 +148,7 @@ public class UdpServer {
         if ((mStatus & 1) == 0) {
 
             int vi_count = mReceiveBuffer.getInt();
-            mReceiveBuffer.get(mHashData, 5, mHashData.length);
+            mReceiveBuffer.get(mHashData, 0, mHashData.length);
 
             int hash = Arrays.hashCode(mHashData);
             Integer currentHash = mSyncHash.get(vi_count);
@@ -212,12 +212,6 @@ public class UdpServer {
         }
     }
 
-    public void close()
-    {
-        mRunning = false;
-        mUdpSocket.close();
-    }
-
     public void setInputDelay(int playerNum, int inputDelay)
     {
         mInputDelay[playerNum] = inputDelay;
@@ -252,12 +246,12 @@ public class UdpServer {
         }
     }
 
-    public void registerPlayer(int reg_id, int playerNum, int plugin, InetAddress address, int port)
+    public void registerPlayer(int reg_id, int playerNum, int plugin)
     {
         mPlayerKeepAlive.put(reg_id, new KeepAlive(0, playerNum));
         mInputs.get(playerNum).put(0, new Buttons(0, plugin));
 
-        mSendPackets[playerNum] = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length, address, port);
+        mSendPackets[playerNum] = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
     }
 
     public void disconnectPlayer(int reg_id)
@@ -277,7 +271,7 @@ public class UdpServer {
         }
     }
 
-    private void sendInput(int count, InetAddress address, int port, int playerNum, int spectator)
+    private void sendInput(int count, int playerNum, int spectator)
     {
         int count_lag = mLeadCount[playerNum] - count;
 
@@ -362,5 +356,24 @@ public class UdpServer {
          */
         if (previousCount == 0 || (previousCount > 0 && !mInputs.get(playerNum).containsKey(previousCount)))
             insertInput(playerNum, previousCount, button, plugin);
+    }
+
+    void stopServer() {
+        try {
+
+            mRunning = false;
+            mUdpSocket.close();
+            mUdpServerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void waitForServerToEnd() {
+        try {
+            mUdpServerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

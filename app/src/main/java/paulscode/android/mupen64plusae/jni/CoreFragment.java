@@ -87,6 +87,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          * Called when a game is saved or a save is loaded
          */
         void onSaveLoad();
+
+        /**
+         * Provides the current state of netplay initialization
+         * @param success True of initialization was complete
+         */
+        void onNetplayInit(boolean success);
     }
     
     private static final String TAG = "CoreFragment";
@@ -119,6 +125,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private boolean mUseRaphnetIfAvailable = false;
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
+    private String mNetplayHost = "";
+    private int mNetplayPort = 0;
 
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
@@ -221,6 +229,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     @Override
+    public void onNetplayInitComplete(boolean success) {
+        if(mCoreEventListener != null)
+        {
+            mCoreEventListener.onNetplayInit(success);
+        }
+    }
+
+    @Override
     public void loadingStarted()
     {
         try {
@@ -270,7 +286,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, String netplayHost, int netplayPort)
     {
         Log.i(TAG, "startCore");
 
@@ -288,6 +304,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mUseRaphnetIfAvailable = globalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
         mVideoRenderWidth = videoRenderWidth;
         mVideoRenderHeight = videoRenderHeight;
+        mNetplayHost = netplayHost;
+        mNetplayPort = netplayPort;
 
         if(!mIsRunning)
         {
@@ -342,6 +360,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
         params.setVideoRenderWidth(mVideoRenderWidth);
         params.setVideoRenderHeight(mVideoRenderHeight);
+        params.setNetplayHost(mNetplayHost);
+        params.setNetplayPort(mNetplayPort);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
@@ -817,6 +837,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.restart();
         }
     }
+
+    public void connectForNetplay(int player)
+    {
+        Log.i("CoreFragment", "connectForNetplay");
+
+        if (mCoreService != null)
+        {
+            mCoreService.connectForNetplay(player);
+        }
+    }
+
 
     public void shutdownEmulator()
     {

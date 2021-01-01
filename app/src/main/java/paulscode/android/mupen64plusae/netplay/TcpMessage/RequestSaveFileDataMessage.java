@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import paulscode.android.mupen64plusae.netplay.TcpServer;
 
@@ -17,6 +18,8 @@ public class RequestSaveFileDataMessage implements TcpMessage {
     public RequestSaveFileDataMessage(TcpServer tcpServer, OutputStream outputStream) {
         mTcpServer = tcpServer;
         mOutputStream = outputStream;
+        mReceiveBuffer.order(ByteOrder.BIG_ENDIAN);
+        mReceiveBuffer.mark();
     }
 
     @Override

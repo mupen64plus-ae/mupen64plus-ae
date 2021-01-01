@@ -782,11 +782,17 @@
     <!-- ROM preparation -->
     <string name="extractRomTask_title">Preparing game data…</string>
 
+    <!-- Netplay -->
+    <string name="startNetplay_title">Start Netplay</string>
+
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>
 
     <!-- Deleting Files -->
     <string name="pathDeletingFilesTask_title">Deleting files…</string>
+
+    <!-- Netplay Running-->
+    <string name="netplay_running_title">Netplay is running</string>
 
     <!-- ROM information calculation -->
     <string name="cacheRomInfo_searching">Searching…</string>

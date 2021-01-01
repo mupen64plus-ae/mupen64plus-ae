@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import paulscode.android.mupen64plusae.netplay.TcpServer;
 
@@ -16,6 +17,7 @@ public class PlayerRegistrationMessage implements TcpMessage {
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate(MESSAGE_SIZE);
     ByteBuffer mSendBuffer = ByteBuffer.allocate(2);
     OutputStream mOutputStream;
+    int mBufferTarget;
 
     int mPlayer;
     int mPlugin;
@@ -25,6 +27,11 @@ public class PlayerRegistrationMessage implements TcpMessage {
     public PlayerRegistrationMessage(TcpServer tcpServer, OutputStream outputStream) {
         mTcpServer = tcpServer;
         mOutputStream = outputStream;
+        mBufferTarget = tcpServer.getBufferTarget();
+        mReceiveBuffer.order(ByteOrder.BIG_ENDIAN);
+        mReceiveBuffer.mark();
+        mSendBuffer.order(ByteOrder.BIG_ENDIAN);
+        mSendBuffer.mark();
     }
 
     @Override
@@ -60,7 +67,9 @@ public class PlayerRegistrationMessage implements TcpMessage {
             playerData.mRaw = mRawInput;
             mTcpServer.addPlayerData(mPlayer, playerData);
 
-            Log.i("TcpServer", "Registered new player!");
+            mSendBuffer.put((byte)1);
+            mSendBuffer.put((byte)mBufferTarget);
+
         } else {
             if (playerData.mRegId == mRegistrationId) {
                 mSendBuffer.put((byte)1);

@@ -49,6 +49,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -554,6 +556,37 @@ class CoreInterface
         mAeBridgeLibrary.overrideAeVidExtFuncs();
         mAeBridgeLibrary.registerFpsCounterCallback(mFpsCounterCallback);
         return returnValue;
+    }
+
+    boolean netplayInit(String host, int port)
+    {
+        byte[] bytes = host.getBytes(Charset.defaultCharset());
+        Pointer parameterPointer = new Memory(bytes.length + 1);
+        parameterPointer.setString(0, host);
+
+        return mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_INIT.ordinal(), port, parameterPointer) ==
+                CoreTypes.m64p_error.M64ERR_SUCCESS.ordinal();
+    }
+
+    void netplaySetController(int controllerNum, int registration)
+    {
+        IntByReference parameter = new IntByReference(registration);
+
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CONTROL_PLAYER.ordinal(), controllerNum, parameter.getPointer());
+    }
+
+    boolean netplayGetVersion(int netplayVersion)
+    {
+        IntByReference parameter = new IntByReference(0);
+
+        return mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_GET_VERSION.ordinal(), netplayVersion, parameter.getPointer()) ==
+                CoreTypes.m64p_error.M64ERR_SUCCESS.ordinal();
+    }
+
+    void closeNetplay()
+    {
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CLOSE.ordinal(), 0, parameter);
     }
 
     /* coreAttachPlugin()

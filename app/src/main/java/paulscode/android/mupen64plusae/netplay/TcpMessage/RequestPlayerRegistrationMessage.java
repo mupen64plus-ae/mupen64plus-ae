@@ -1,9 +1,12 @@
 package paulscode.android.mupen64plusae.netplay.TcpMessage;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import paulscode.android.mupen64plusae.netplay.TcpServer;
 
@@ -18,6 +21,8 @@ public class RequestPlayerRegistrationMessage implements TcpMessage {
     public RequestPlayerRegistrationMessage(TcpServer tcpServer, OutputStream outputStream) {
         mTcpServer = tcpServer;
         mOutputStream = outputStream;
+        mSendBuffer.order(ByteOrder.BIG_ENDIAN);
+        mSendBuffer.mark();
     }
 
     @Override
@@ -27,32 +32,30 @@ public class RequestPlayerRegistrationMessage implements TcpMessage {
 
     @Override
     public void process() {
-        if (mTcpServer.newRegistration())
+
+        mSendBuffer.reset();
+
+        for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex)
         {
-            mSendBuffer.reset();
+            TcpServer.PlayerData playerData = mTcpServer.getPlayerData(playerIndex);
 
-            for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex)
+            if (playerData != null)
             {
-                TcpServer.PlayerData playerData = mTcpServer.getPlayerData(playerIndex);
-
-                if (playerData != null)
-                {
-                    mSendBuffer.putInt(playerData.mRegId);
-                    mSendBuffer.put((byte)playerData.mPlugin);
-                    mSendBuffer.put((byte)(playerData.mRaw ? 1 : 0));
-                }
-                else
-                {
-                    mSendBuffer.putInt(0);
-                    mSendBuffer.put((byte)0);
-                    mSendBuffer.put((byte)0);
-                }
+                mSendBuffer.putInt(playerData.mRegId);
+                mSendBuffer.put((byte)playerData.mPlugin);
+                mSendBuffer.put((byte)(playerData.mRaw ? 1 : 0));
             }
-            try {
-                mOutputStream.write(mSendBuffer.array());
-            } catch (IOException e) {
-                e.printStackTrace();
+            else
+            {
+                mSendBuffer.putInt(0);
+                mSendBuffer.put((byte)0);
+                mSendBuffer.put((byte)0);
             }
+        }
+        try {
+            mOutputStream.write(mSendBuffer.array());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -600,6 +600,9 @@
     <string name="importExportActivity_importTouchscreenGraphics">Importar graficos de pantalla tactil</string>
     <string name="importExportActivity_invalidCustomSkinFile">Archivo de graficos de pantalla tactil no es válido</string>
 
+    <!-- Netplay -->
+    <string name="startNetplay_title">Iniciar Netplay</string>
+
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>
 
@@ -608,6 +611,9 @@
 
     <!-- Deleting Files -->
     <string name="pathDeletingFilesTask_title">Borrando archivos…</string>
+
+    <!-- Netplay Running-->
+    <string name="netplay_running_title">Netplay se está ejecutando</string>
 
     <!--ROM information calculation-->
     <string name="cacheRomInfo_searching">Buscando…</string>

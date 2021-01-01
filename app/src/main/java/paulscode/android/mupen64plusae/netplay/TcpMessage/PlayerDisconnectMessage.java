@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import paulscode.android.mupen64plusae.netplay.TcpServer;
 
@@ -18,6 +19,8 @@ public class PlayerDisconnectMessage implements TcpMessage {
 
     public PlayerDisconnectMessage(TcpServer tcpServer) {
         mTcpServer = tcpServer;
+        mReceiveBuffer.order(ByteOrder.BIG_ENDIAN);
+        mReceiveBuffer.mark();
     }
 
     @Override

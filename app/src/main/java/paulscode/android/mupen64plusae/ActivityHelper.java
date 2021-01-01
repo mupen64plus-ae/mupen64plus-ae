@@ -111,6 +111,8 @@ public class ActivityHelper
         public static final String FORCE_EXIT_GAME      = NAMESPACE + "FORCE_EXIT_GAME";
         public static final String VIDEO_RENDER_WIDTH   = NAMESPACE + "VIDEO_RENDER_WIDTH";
         public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
+        public static final String NETPLAY_SERVER_HOST  = NAMESPACE + "NETPLAY_SERVER_HOST";
+        public static final String NETPLAY_SERVER_PORT  = NAMESPACE + "NETPLAY_SERVER_PORT";
 
 
         //@formatter:on
@@ -491,6 +493,8 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_ART_PATH, params.getRomArtPath());
         intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
         intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
+        intent.putExtra(Keys.NETPLAY_SERVER_HOST, params.getNetplayHost());
+        intent.putExtra(Keys.NETPLAY_SERVER_PORT, params.getNetplayPort());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
