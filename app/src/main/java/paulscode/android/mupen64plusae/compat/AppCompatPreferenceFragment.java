@@ -1,27 +1,21 @@
 package paulscode.android.mupen64plusae.compat;
 
 import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener;
-
-import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -49,6 +43,12 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
          * @param currentFragment Current fragment
          */
         void onFragmentCreation(AppCompatPreferenceFragment currentFragment);
+
+        /**
+         * Callback when the fragment views are created
+         * @param view Fragment main view
+         */
+        void onViewCreation(View view);
     }
 
     private static final String STATE_SHATED_PREFS_NAME = "STATE_SHATED_PREFS_NAME";
@@ -152,24 +152,10 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
             view.setBackgroundColor(ContextCompat.getColor(context, R.color.mupen_black));
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(getListView(), (v, insets) -> {
-
-            Resources r = getResources();
-            int topMargin = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    70,
-                    r.getDisplayMetrics()
-            );
-
-            getListView().setPadding(0, topMargin, 0, insets.getSystemWindowInsetBottom());
-
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE )
-            {
-                getListView().setPadding(0, topMargin, insets.getSystemWindowInsetRight(), 0);
-            }
-
-            return insets;
-        });
+        if (getActivity() instanceof OnFragmentCreationListener)
+        {
+            ((OnFragmentCreationListener) getActivity()).onViewCreation(getListView());
+        }
     }
     
     @Override

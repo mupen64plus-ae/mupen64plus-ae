@@ -23,7 +23,10 @@ package paulscode.android.mupen64plusae.compat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
+
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -38,6 +41,7 @@ import androidx.preference.PreferenceScreen;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
@@ -46,8 +50,8 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     {
         /**
          * Called while preparing the dialog builder
-         * @param context
-         * @param builder
+         * @param context Contextz
+         * @param builder dialog builder
          */
         void onPrepareDialogBuilder(Context context, Builder builder);
 
@@ -146,6 +150,9 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     private String mSharedPrefsName = null;
     private int mPreferencesResId;
 
+    private int mBottomInset = 0;
+    private int mRightInset = 0;
+
     // Preference fragment
     private AppCompatPreferenceFragment mPrefFrag = null;
 
@@ -223,7 +230,6 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     @Override
     public void onFragmentCreation(AppCompatPreferenceFragment currentFragment)
     {
-        //TODO: DIdn't fix it
         if(mPrefFrag != null)
         {
             View fragView = mPrefFrag.getView();
@@ -245,12 +251,37 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         
         OnPreferenceScreenChange(mPrefFrag.getTag());
     }
-    
+
+    @Override
+    public void onViewCreation(View view) {
+        final int topMarginDp = 70;
+        Resources r = getResources();
+        int topMargin = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                topMarginDp,
+                r.getDisplayMetrics()
+        );
+
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+
+            mBottomInset = insets.getSystemWindowInsetBottom();
+            mRightInset = insets.getSystemWindowInsetRight();
+
+            view.setPadding(0, topMargin, mRightInset, mBottomInset);
+            
+            return insets;
+        });
+
+        // Call this a second time since the callback only happens on the first screen
+        view.setPadding(0, topMargin, mRightInset, mBottomInset);
+    }
+
     protected Context getPreferenceManagerContext()
     {
         return mPrefFrag.getPreferenceManager().getContext();
     }
-    
+
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     protected AppCompatPreferenceFragment getPreferenceFragment()
     {
         return mPrefFrag;
