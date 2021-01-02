@@ -688,7 +688,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     computedMd5 = FileUtil.computeMd5(bufferedStream);
                 }
 
-            } catch (IOException | NoSuchAlgorithmException|IllegalArgumentException|SecurityException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

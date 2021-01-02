@@ -401,7 +401,7 @@ public final class FileUtil
                         bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                     }
 
-                } catch (IOException|IllegalArgumentException|SecurityException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -801,10 +801,6 @@ public final class FileUtil
         {
             Log.e( "unzipAll", "Exception: ", ze );
         }
-        catch (java.lang.OutOfMemoryError e)
-        {
-            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + fileUri.toString() );
-        }
     }
 
     /**
@@ -992,10 +988,6 @@ public final class FileUtil
         {
             Log.e( "unzipAll", "Exception: ", ze );
         }
-        catch (java.lang.OutOfMemoryError e)
-        {
-            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + zipPath.toString() );
-        }
 
         return null;
     }
@@ -1059,7 +1051,7 @@ public final class FileUtil
 
                 zipEntry = zipfile.getNextEntry();
             }
-        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|SecurityException|OutOfMemoryError e) {
+        } catch (Exception e) {
             Log.w("FileUtil", e);
             returnData = null;
         }
@@ -1103,7 +1095,7 @@ public final class FileUtil
 
                 zipFile.close();
             }
-        } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException|SecurityException|OutOfMemoryError e) {
+        } catch (Exception e) {
             Log.w("FileUtil", e);
             returnData = null;
         }

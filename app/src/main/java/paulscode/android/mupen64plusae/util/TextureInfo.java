@@ -251,10 +251,6 @@ public class TextureInfo
         {
             Log.e( "TextureInfo", "Exception: ", ze );
         }
-        catch (OutOfMemoryError e)
-        {
-            Log.w( "TextureInfo", "Out of memory while extracting 7zip entry: " + fileUri.toString() );
-        }
         finally
         {
             if( zipfile != null )

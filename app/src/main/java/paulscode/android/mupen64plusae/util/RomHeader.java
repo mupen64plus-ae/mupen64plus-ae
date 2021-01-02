@@ -289,7 +289,7 @@ public final class RomHeader
                     }
 
                 }
-            } catch (IOException|IllegalArgumentException|SecurityException|IllegalStateException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 buffer = null;
             }
