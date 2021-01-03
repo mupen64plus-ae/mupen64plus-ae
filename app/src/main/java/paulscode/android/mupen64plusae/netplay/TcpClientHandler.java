@@ -45,19 +45,20 @@ public class TcpClientHandler {
     
     void runClient()
     {
+        Log.e("TcpClientHandler", "Client thread started");
+
+
         while (mRunning)
         {
-            Log.e("TcpClientHandler", "CLIENT THREAD IS RUNNING");
-
             // First read the whole message
             try {
                 int id = mSocketInputStream.read();
-                if (id == -1) {
-                    mRunning = false;
-                }
 
                 Log.e("TcpClientHandler", "GOT MESSAGE WITH ID=" + id);
 
+                if (id == -1) {
+                    mRunning = false;
+                }
 
                 if (id >= 0) {
                     TcpMessage message = mMessageFactory.getMessage(id);

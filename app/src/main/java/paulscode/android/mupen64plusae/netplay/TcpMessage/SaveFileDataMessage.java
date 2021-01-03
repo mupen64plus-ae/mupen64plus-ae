@@ -14,7 +14,7 @@ public class SaveFileDataMessage implements TcpMessage {
 
     String mFileName = "";
     int mSizeOfFile;
-    byte[] mFileData = new byte[1024*1024];
+    byte[] mFileData = null;
 
     public SaveFileDataMessage(TcpServer tcpServer) {
         mTcpServer = tcpServer;
@@ -61,6 +61,7 @@ public class SaveFileDataMessage implements TcpMessage {
 
         }
 
+        mFileData = new byte[mSizeOfFile];
         mReceiveBuffer.get(mFileData, 0, mSizeOfFile);
     }
 

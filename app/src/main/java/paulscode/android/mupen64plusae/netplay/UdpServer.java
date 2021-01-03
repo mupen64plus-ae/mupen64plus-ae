@@ -48,6 +48,7 @@ public class UdpServer {
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate( 1024*512 );
 
     DatagramPacket[] mSendPackets = new DatagramPacket[NUM_PLAYERS];
+    DatagramPacket mRequestInfoSendPacket;
     DatagramPacket mReceivePacket;
 
     // Array of states per count
@@ -85,6 +86,7 @@ public class UdpServer {
             mBufferSize[playerIndex] = 3;
             mBufferHealth[playerIndex] = -1;
             mInputDelay[playerIndex] = -1;
+            mSendPackets[playerIndex] = null;
         }
         mStatus = 0;
         mBufferTarget = _buffer_target;
@@ -94,6 +96,8 @@ public class UdpServer {
 
         mReceiveBuffer.mark();
         mSendBuffer.mark();
+
+        mRequestInfoSendPacket = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
     }
 
     void handleKeyInfoMessage()
@@ -113,7 +117,9 @@ public class UdpServer {
         }
 
         for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex) {
-            sendInput(count, playerNum, 1);
+            if (mSendPackets[playerIndex] != null && mSendPackets[playerIndex].getPort() != -1) {
+                sendInput(count, playerNum, mSendPackets[playerIndex], 1);
+            }
         }
     }
 
@@ -121,8 +127,8 @@ public class UdpServer {
     {
         int playerNum = mReceiveBuffer.get();
         int regi_id = mReceiveBuffer.getInt();
-        mSendPackets[playerNum].setAddress(mReceivePacket.getAddress());
-        mSendPackets[playerNum].setPort(mReceivePacket.getPort());
+        mRequestInfoSendPacket.setAddress(mReceivePacket.getAddress());
+        mRequestInfoSendPacket.setPort(mReceivePacket.getPort());
 
         if (mPlayerKeepAlive.containsKey(regi_id)) {
             KeepAlive playerKeepAlive = mPlayerKeepAlive.get(regi_id);
@@ -135,12 +141,12 @@ public class UdpServer {
         int count = mReceiveBuffer.getInt();
         int spectator = mReceiveBuffer.get();
 
-        if (((count - mLeadCount[playerNum]) < (Integer.MAX_VALUE / 2)) && spectator == 0) {
+        if (((count - mLeadCount[playerNum]) >= 0) && spectator == 0) {
             mBufferHealth[playerNum] = mReceiveBuffer.get();
             mLeadCount[playerNum] = count;
         }
 
-        sendInput(count, playerNum, spectator);
+        sendInput(count, playerNum, mRequestInfoSendPacket, spectator);
     }
 
     void handleCp0Message()
@@ -174,6 +180,8 @@ public class UdpServer {
                 mUdpSocket.receive(mReceivePacket);
 
                 int messageId = mReceiveBuffer.get();
+
+                //Log.e("UdpServer", "GOT UDP MESSAGE: " + messageId);
 
                 if (messageId == KEY_INFO_MSG) {
                     handleKeyInfoMessage();
@@ -271,7 +279,7 @@ public class UdpServer {
         }
     }
 
-    private void sendInput(int count, int playerNum, int spectator)
+    private void sendInput(int count, int playerNum, DatagramPacket destPacket, int spectator)
     {
         int count_lag = mLeadCount[playerNum] - count;
 
@@ -283,9 +291,13 @@ public class UdpServer {
         mSendBuffer.put((byte)0);
         int start = count;
         int end = start + mBufferSize[playerNum];
-
-
-        while ( (mSendBuffer.position() < 500) && ( (spectator == 0 && count_lag == 0 && (count - end) > (Integer.MAX_VALUE / 2)) || mInputs.get(playerNum).containsKey(count) ) )
+/*
+        if (playerNum == 1)
+             Log.e("UdpServer", "GOT NEW DATA, count=" + count + " spectator=" + spectator + " lag=" + count_lag
+                + " end=" + end + " playerNum=" + playerNum + " containskey=" + mInputs.get(playerNum).containsKey(count)
+                + " size=" + mInputs.get(playerNum).size());
+*/
+        while ( (mSendBuffer.position() < 500) && ( (spectator == 0 && count_lag == 0 && (count - end) < 0) || mInputs.get(playerNum).containsKey(count) ) )
         {
             mSendBuffer.putInt(count);
             if (!checkIfExists(playerNum, count))
@@ -314,8 +326,10 @@ public class UdpServer {
 
         if (counts > 0) {
             try {
-                mSendPackets[playerNum].setData(mSendBuffer.array(), 0, mSendBuffer.position());
-                mUdpSocket.send(mSendPackets[playerNum]);
+                destPacket.setData(mSendBuffer.array(), 0, mSendBuffer.position());
+                mUdpSocket.send(destPacket);
+               // if (playerNum == 1)
+                //Log.e("UdpServer", "Sent data, player=" + playerNum + " counts=" + counts);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -325,6 +339,7 @@ public class UdpServer {
     private boolean checkIfExists(int playerNumber, int count)
     {
         boolean inputExists = mInputs.get(playerNumber).containsKey(count);
+
         mInputs.get(playerNumber).remove(count - 5000);
 
         if (mInputDelay[playerNumber] < 0 && !inputExists)
@@ -338,9 +353,10 @@ public class UdpServer {
             }
 
             return true;
-        } else
+        } else {
             // When using input delay, we must wait for inputs
             return inputExists;
+        }
     }
 
     private void insertInput(int playerNum, int count, int button, int plugin)

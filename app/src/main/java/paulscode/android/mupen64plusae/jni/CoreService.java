@@ -677,8 +677,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                         mListener.onNetplayInitComplete(netplayInitSuccess);
                     }
 
-                    Log.e("Netplay", "WAITING ON NETPLAY!!!");
-
                     if (netplayInitSuccess) {
                         synchronized (mWaitForNetPlay) {
                             while (!mNetplayReady) {
@@ -713,14 +711,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mIsRunning = false;
 
-            //Stop the service
-            forceExit();
-
-            // Clean up the working directory
-            if (!loadingSuccess) {
-                cleanupEmulation();
-            }
-
             if(mListener != null)
             {
                 if(!loadingSuccess)
@@ -736,6 +726,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mListener.onFinish();
                 mListener = null;
             }
+
+            //Stop the service
+            forceExit();
         }
     }
 

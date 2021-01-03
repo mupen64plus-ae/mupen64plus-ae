@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.netplay.TcpMessage;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,7 +37,7 @@ public class RequestSaveFileDataMessage implements TcpMessage {
             }
         }
 
-        mFileName = new String(mReceiveBuffer.array());
+        mFileName = new String(mReceiveBuffer.array(), 0, mReceiveBuffer.position() - 1);
     }
 
     @Override
@@ -44,10 +46,13 @@ public class RequestSaveFileDataMessage implements TcpMessage {
         if (fileContents != null)
         {
             try {
+                Log.e("Netplay", "Sending " + fileContents.length + " bytes");
                 mOutputStream.write(fileContents);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            Log.e("Netplay", "Save file contents are not present");
         }
     }
 }

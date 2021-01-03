@@ -723,6 +723,8 @@ SDL_WaitThread(SDL_Thread * thread, int *status)
 	void* statusData;
 	pthread_join(thread->threadId, &statusData);
 
+	*status = *((int*)statusData);
+
 	free(thread);
 }
 
