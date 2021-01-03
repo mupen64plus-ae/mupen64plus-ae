@@ -138,6 +138,7 @@ public class TcpServer {
     void waitForServerToEnd() {
         try {
             mServerThread.join();
+            Log.i("TcpServer", "Server thread finished");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

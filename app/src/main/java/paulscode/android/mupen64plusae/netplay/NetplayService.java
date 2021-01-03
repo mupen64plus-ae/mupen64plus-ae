@@ -24,8 +24,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -49,6 +51,7 @@ import java.io.File;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.ImportExportActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
+import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.task.CopyToSdService;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -56,20 +59,31 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
 {
+    public interface OnFinishListener
+    {
+        /**
+         * Will be called once extraction finishes
+         */
+        void onFinish();
+    }
+
     private static final String TAG = "NetplayService";
+
+    public static final String SERVICE_QUIT = "M64P_NETPLAY_SERVICE_QUIT";
 
     private int mPort = 0;
     
     private int mStartId;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
-    private boolean mRunning = true;
+    private boolean mRunning = false;
     private UdpServer mUdpServer;
     private TcpServer mTcpServer;
+    OnFinishListener mOnFinishListener;
 
     private final IBinder mBinder = new LocalBinder();
 
-    final static int ONGOING_NOTIFICATION_ID = 1;
+    final static int ONGOING_NOTIFICATION_ID = 5;
     final static String NOTIFICATION_CHANNEL_ID = "NetplayServiceChannel";
 
     /**
@@ -104,9 +118,10 @@ public class NetplayService extends Service
             mUdpServer.waitForServerToEnd();
             mTcpServer.waitForServerToEnd();
 
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            stopSelf(msg.arg1);
+            Log.i(TAG, "Netplay service finished");
+            mRunning = false;
+
+            mOnFinishListener.onFinish();
         }
     }
 
@@ -142,24 +157,39 @@ public class NetplayService extends Service
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
 
+        Intent stopIntent = new Intent(this, NetplayService.class);
+        stopIntent.setAction(SERVICE_QUIT);
+        PendingIntent stopPendingIntent = PendingIntent.getService(this, 1, stopIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
         //Show the notification
         initChannels(getApplicationContext());
-        Intent notificationIntent = new Intent(this, ImportExportActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         NotificationCompat.Builder builder =
           new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
           .setContentTitle(getString(R.string.netplay_running_title))
-          .setContentIntent(pendingIntent);
+                  .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .addAction(R.drawable.ic_box, getString(R.string.inputMapActivity_stop), stopPendingIntent);
         startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
 
-    @Override
+        @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.i("NetplayService", "onStartCommand");
+
         if(intent != null)
         {
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 mPort = extras.getInt(ActivityHelper.Keys.NETPLAY_SERVER_PORT);
+            }
+
+            String action = intent.getAction();
+            boolean quitMessage = action != null && action.equals(SERVICE_QUIT);
+
+            if (quitMessage) {
+                //Stop the service immediately
+                stopServers();
             }
         }
 
@@ -174,17 +204,35 @@ public class NetplayService extends Service
         return mBinder;
     }
 
-    public void startListening()
+    public void startListening(OnFinishListener onFinishListener)
     {
-        // For each start request, send a message to start a job and deliver the
-        // start ID so we know which request we're stopping when we finish the job
-        Message msg = mServiceHandler.obtainMessage();
-        msg.arg1 = mStartId;
-        mServiceHandler.sendMessage(msg);
+        mOnFinishListener = onFinishListener;
+
+        if (!mRunning) {
+            // For each start request, send a message to start a job and deliver the
+            // start ID so we know which request we're stopping when we finish the job
+            Message msg = mServiceHandler.obtainMessage();
+            msg.arg1 = mStartId;
+            mServiceHandler.sendMessage(msg);
+
+            mRunning = true;
+        }
     }
 
     public void stopServers() {
+        Log.i("NetplayService", "Stopping netplay service");
+
         mUdpServer.stopServer();
         mTcpServer.stopServer();
+    }
+
+
+    @Override
+    public void onDestroy()
+    {
+        // Stop the service using the startId, so that we don't stop
+        // the service in the middle of handling another job
+        stopForeground(true);
+        stopSelf();
     }
 }

@@ -85,6 +85,8 @@ public class NetplaySetupDialog extends DialogFragment
 
         AlertDialog dialog = builder.create();
         DisplayWrapper.setDialogToResizeWithKeyboard(dialog, dialogView);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
 
         return dialog;
     }

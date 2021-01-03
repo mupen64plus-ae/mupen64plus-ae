@@ -27,24 +27,18 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.CopyToSdFragment;
+import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.task.CopyToSdService;
 
 @SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
-public class NetplayFragment extends Fragment
+public class NetplayFragment extends Fragment implements NetplayService.OnFinishListener
 {
-    public interface OnFinishListener
-    {
-        /**
-         * Will be called once extraction finishes
-         */
-        void onFinish();
-    }
-    
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
     private NetplayService mNetPlayService;
@@ -66,11 +60,11 @@ public class NetplayFragment extends Fragment
         if(mServiceConnection != null)
         {
             try {
+                Activity activity = requireActivity();
+                Intent intent = new Intent(activity, NetplayService.class);
+                activity.unbindService(mServiceConnection);
+                activity.stopService(intent);
 
-                Intent intent = new Intent(requireActivity(), NetplayService.class);
-
-                requireActivity().startService(intent);
-                requireActivity().bindService(intent, mServiceConnection, 0);
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
@@ -91,7 +85,6 @@ public class NetplayFragment extends Fragment
     
     private void actuallyStartNetplayService(Activity activity)
     {
-
         /* Defines callbacks for service binding, passed to bindService() */
         mServiceConnection = new ServiceConnection() {
             
@@ -100,12 +93,13 @@ public class NetplayFragment extends Fragment
                 NetplayService.LocalBinder binder = (NetplayService.LocalBinder) service;
 
                 mNetPlayService = binder.getService();
-                mNetPlayService.startListening();
+                mNetPlayService.startListening(NetplayFragment.this);
             }
 
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
                 //Nothing to do here
+                Log.i("NetplayFragment", "Netplay servic has been unbound");
             }
         };
 
@@ -114,5 +108,21 @@ public class NetplayFragment extends Fragment
 
         activity.getApplicationContext().startService(intent);
         activity.getApplicationContext().bindService(intent, mServiceConnection, 0);
+    }
+
+    @Override
+    public void onFinish() {
+        if(mServiceConnection != null)
+        {
+            try {
+                Activity activity = requireActivity();
+                Intent intent = new Intent(activity.getApplicationContext(), NetplayService.class);
+                activity.stopService(intent);
+                mServiceConnection = null;
+
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

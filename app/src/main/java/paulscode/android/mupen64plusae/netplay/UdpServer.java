@@ -141,7 +141,7 @@ public class UdpServer {
         int count = mReceiveBuffer.getInt();
         int spectator = mReceiveBuffer.get();
 
-        if (((count - mLeadCount[playerNum]) >= 0) && spectator == 0) {
+        if (count >= mLeadCount[playerNum] && spectator == 0) {
             mBufferHealth[playerNum] = mReceiveBuffer.get();
             mLeadCount[playerNum] = count;
         }
@@ -291,13 +291,15 @@ public class UdpServer {
         mSendBuffer.put((byte)0);
         int start = count;
         int end = start + mBufferSize[playerNum];
-/*
-        if (playerNum == 1)
+
+        /*if (playerNum == 1)
              Log.e("UdpServer", "GOT NEW DATA, count=" + count + " spectator=" + spectator + " lag=" + count_lag
                 + " end=" + end + " playerNum=" + playerNum + " containskey=" + mInputs.get(playerNum).containsKey(count)
                 + " size=" + mInputs.get(playerNum).size());
-*/
-        while ( (mSendBuffer.position() < 500) && ( (spectator == 0 && count_lag == 0 && (count - end) < 0) || mInputs.get(playerNum).containsKey(count) ) )
+
+         */
+
+        while ( (mSendBuffer.position() < 500) && ( (spectator == 0 && count_lag == 0 && count < end) || mInputs.get(playerNum).containsKey(count) ) )
         {
             mSendBuffer.putInt(count);
             if (!checkIfExists(playerNum, count))
@@ -376,10 +378,10 @@ public class UdpServer {
 
     void stopServer() {
         try {
-
             mRunning = false;
             mUdpSocket.close();
             mUdpServerThread.join();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -388,6 +390,7 @@ public class UdpServer {
     void waitForServerToEnd() {
         try {
             mUdpServerThread.join();
+            Log.i("UdpServer", "Server thread finished");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
