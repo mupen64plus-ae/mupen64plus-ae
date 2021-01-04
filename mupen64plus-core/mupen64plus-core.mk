@@ -121,7 +121,7 @@ LOCAL_LDFLAGS :=                                                    \
 
 ASM_DEFINES_INCLUDE += -I$(SYSROOT_INC)/usr/include
 TARGET := ""
-MINIMUM_API_LEVEL := 19
+MINIMUM_API_LEVEL := 21
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
@@ -130,7 +130,7 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=3
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/arm-linux-androideabi
-    TARGET := -target armv7-none-linux-androideabi19
+    TARGET := -target armv7-none-linux-androideabi21
 else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
     # Use for ARM8a:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm64/linkage_arm64.S
@@ -138,7 +138,6 @@ else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
     LOCAL_CFLAGS += -DNEW_DYNAREC=4
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/aarch64-linux-android
     TARGET := -target aarch64-none-linux-android21
-    MINIMUM_API_LEVEL := 21
 else ifeq ($(TARGET_ARCH_ABI), x86)
     # Use for x86:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x86/linkage_x86.asm
@@ -146,7 +145,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
     LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/i686-linux-android
-    TARGET := -target i686-none-linux-android
+    TARGET := -target i686-none-linux-android21
 else ifeq ($(TARGET_ARCH_ABI), x86_64)
     # Use for x86_64:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x64/linkage_x64.asm
@@ -156,7 +155,6 @@ else ifeq ($(TARGET_ARCH_ABI), x86_64)
     LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/x86_64-linux-android
     TARGET := -target x86_64-none-linux-android21
-    MINIMUM_API_LEVEL := 21
 endif
 
 # Use gawk in linux
