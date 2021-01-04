@@ -1,11 +1,12 @@
 package paulscode.android.mupen64plusae.netplay;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -78,6 +79,9 @@ public class UdpServer {
 
     int mBufferTarget;
 
+
+    private Handler mCheckConnectionsTimer = new Handler(Looper.getMainLooper());
+
     public UdpServer(int _buffer_target)
     {
         for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex)
@@ -98,6 +102,8 @@ public class UdpServer {
         mSendBuffer.mark();
 
         mRequestInfoSendPacket = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
+
+        mCheckConnectionsTimer.postDelayed(this::checkConnctions, 500);
     }
 
     void handleKeyInfoMessage()
@@ -250,8 +256,10 @@ public class UdpServer {
         }
 
         if (should_delete != 0) {
-            Log.i("UdpServer", "Disconnect player " + should_delete);
+            disconnectPlayer(should_delete);
         }
+
+        mCheckConnectionsTimer.postDelayed(this::checkConnctions, 500);
     }
 
     public void registerPlayer(int reg_id, int playerNum, int plugin)
@@ -262,7 +270,7 @@ public class UdpServer {
         mSendPackets[playerNum] = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
     }
 
-    public void disconnectPlayer(int reg_id)
+    private void disconnectPlayer(int reg_id)
     {
         if (mPlayerKeepAlive.containsKey(reg_id)) {
             KeepAlive keepAliveData = mPlayerKeepAlive.get(reg_id);

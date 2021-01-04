@@ -42,17 +42,36 @@ public class RequestSaveFileDataMessage implements TcpMessage {
 
     @Override
     public void process() {
-        byte[] fileContents = mTcpServer.getFile(mFileName);
-        if (fileContents != null)
-        {
-            try {
-                Log.e("Netplay", "Sending " + fileContents.length + " bytes");
-                mOutputStream.write(fileContents);
-            } catch (IOException e) {
-                e.printStackTrace();
+        byte[] fileContents = null;
+
+        final int maxTries = 100;
+        int currentTry = 0;
+
+        while (fileContents == null && currentTry < maxTries) {
+
+            fileContents = mTcpServer.getFile(mFileName);
+
+            if (fileContents != null)
+            {
+                try {
+                    Log.i("Netplay", "Sending " + fileContents.length + " bytes");
+                    mOutputStream.write(fileContents);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            Log.e("Netplay", "Save file contents are not present");
+
+            ++currentTry;
+        }
+
+        if (currentTry == maxTries) {
+            Log.e("Netplay", "Unable to send file contents for " + mFileName);
         }
     }
 }

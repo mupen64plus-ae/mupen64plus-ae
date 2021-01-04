@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.netplay.TcpMessage;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,18 +27,46 @@ public class RequestSettingsMessage implements TcpMessage {
 
     @Override
     public void process() {
-        TcpServer.CoreSettings settings = mTcpServer.getSettings();
+        TcpServer.CoreSettings settings = null;
+        final int maxTries = 100;
+        int currentTry = 0;
 
-        mOutboundByteBuffer.putInt(settings.mCountPerOp);
-        mOutboundByteBuffer.putInt(settings.mDisableExtraMem);
-        mOutboundByteBuffer.putInt(settings.mSiDmADuration);
-        mOutboundByteBuffer.putInt(settings.mEmuMode);
-        mOutboundByteBuffer.putInt(settings.mNoCompiledJump);
+        while (settings == null && currentTry < maxTries) {
+            settings = mTcpServer.getSettings();
 
-        try {
-            mOutputStream.write(mOutboundByteBuffer.array());
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (settings != null) {
+                mOutboundByteBuffer.putInt(settings.mCountPerOp);
+                mOutboundByteBuffer.putInt(settings.mDisableExtraMem);
+                mOutboundByteBuffer.putInt(settings.mSiDmADuration);
+                mOutboundByteBuffer.putInt(settings.mEmuMode);
+                mOutboundByteBuffer.putInt(settings.mNoCompiledJump);
+
+                Log.e("Netplay", "count_per_op=" + settings.mCountPerOp +
+                        " disable_extra_mem=" + settings.mDisableExtraMem +
+                        " si_dma_duration=" + settings.mSiDmADuration +
+                                " emu_mode=" + settings.mEmuMode +
+                                " no_compiled_jump=" + settings.mNoCompiledJump
+
+                        );
+
+                try {
+                    mOutputStream.write(mOutboundByteBuffer.array());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            ++currentTry;
+        }
+
+        if (currentTry == maxTries) {
+            Log.e("Netplay", "Unable to send settings");
         }
     }
 }

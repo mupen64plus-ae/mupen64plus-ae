@@ -25,6 +25,7 @@ public class TcpServer {
 
     HashMap<String, byte[]> mFiles = new HashMap<>();
     CoreSettings mSettings = new CoreSettings();
+    boolean mCoreSettingsSet = false;
     String mGliden64Settings = "";
     HashMap<Integer, PlayerData> mReg = new HashMap<>();
 
@@ -44,9 +45,10 @@ public class TcpServer {
         mUdpServer = udpServer;
     }
 
-    public void updateSettings(CoreSettings settings)
+    synchronized public void updateSettings(CoreSettings settings)
     {
         mSettings = settings;
+        mCoreSettingsSet = true;
     }
 
     public void updateGliden64Settings(String settings)
@@ -54,8 +56,10 @@ public class TcpServer {
         mGliden64Settings = settings;
     }
 
-    public CoreSettings getSettings()
+    synchronized public CoreSettings getSettings()
     {
+        if (!mCoreSettingsSet)
+            return null;
         return mSettings;
     }
 
@@ -64,7 +68,7 @@ public class TcpServer {
         return mGliden64Settings;
     }
 
-    public byte[] getFile(String filename)
+    synchronized public byte[] getFile(String filename)
     {
         if (mFiles.containsKey(filename))
         {
@@ -73,12 +77,12 @@ public class TcpServer {
         return null;
     }
 
-    public void addFile(String filename, byte[] contents)
+    synchronized public void addFile(String filename, byte[] contents)
     {
         mFiles.put(filename, contents.clone());
     }
 
-    public PlayerData getPlayerData(int player)
+    synchronized public PlayerData getPlayerData(int player)
     {
         if (mReg.containsKey(player)) {
             return mReg.get(player);
@@ -87,7 +91,7 @@ public class TcpServer {
         return null;
     }
 
-    public void addPlayerData(int player, PlayerData playerData)
+    synchronized public void addPlayerData(int player, PlayerData playerData)
     {
         mReg.put(player, playerData);
 
