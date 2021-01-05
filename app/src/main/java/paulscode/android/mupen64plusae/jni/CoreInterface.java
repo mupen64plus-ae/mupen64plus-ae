@@ -260,7 +260,7 @@ class CoreInterface
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(romFileUri), "r")){
             InputStream is;
             romBuffer = IOUtils.toByteArray(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
-            success = true;
+            success = romBuffer.length > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -280,7 +280,7 @@ class CoreInterface
 
         try {
             romBuffer = IOUtils.toByteArray(inputStream);
-            success = true;
+            success = romBuffer.length > 0;
 
         } catch (IOException|OutOfMemoryError e) {
             e.printStackTrace();
