@@ -1,10 +1,10 @@
 
 android {
-    buildToolsVersion '30.0.2'
+    buildToolsVersion '30.0.3'
 
     compileSdkVersion 30
-	
-    ndkVersion '21.3.6528147'
+
+    ndkVersion "22.0.7026061"
 
     defaultConfig {
         minSdkVersion 21

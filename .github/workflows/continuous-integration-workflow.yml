@@ -35,7 +35,7 @@ jobs:
         
     - name: Set Environment
       run: |
-        echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/21.3.6528147" >> $GITHUB_ENV
+        echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/22.0.7026061" >> $GITHUB_ENV
 
     - name: Build
       run: ./gradlew assemble
