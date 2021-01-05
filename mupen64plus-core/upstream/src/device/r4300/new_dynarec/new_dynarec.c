@@ -7726,7 +7726,7 @@ int new_recompile_block(int addr)
   //DebugMessage(M64MSG_VERBOSE, "addr = %x source = %x %x", addr,source,source[0]);
   
   /* Pass 1 disassembly */
-
+#define strcpy(...) 
   for(i=0;!done;i++) {
     bt[i]=0;likely[i]=0;ooo[i]=0;op2=0;
     minimum_free_regs[i]=0;
