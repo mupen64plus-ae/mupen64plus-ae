@@ -104,6 +104,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );
         mupen64plus_cfg.put( "Core", "DisableExtraMem", boolToTF(game.disableExpansionPak) );
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );
+        mupen64plus_cfg.put( "Core", "EnableDebugger", String.valueOf(0) );
         mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + global.screenshotsDir + '"' );
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.getSlotSaveDir() + '"' );
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
@@ -113,6 +114,9 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "TlbHack", String.valueOf( game.ignoreTlbExceptions ? 1 : 0 ) );
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf(game.currentStateSlot));
         mupen64plus_cfg.put( "Core", "SaveDiskFormat", String.valueOf(0) );
+        mupen64plus_cfg.put( "Core", "RandomizeInterrupt", String.valueOf(1) );
+        mupen64plus_cfg.put( "Core", "SiDmaDuration", String.valueOf(-1) );
+        mupen64plus_cfg.put( "Core", "GbCameraVideoCaptureBackend1", "" );
 
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", EMPTY );
