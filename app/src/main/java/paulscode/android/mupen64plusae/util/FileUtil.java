@@ -171,9 +171,13 @@ public final class FileUtil
      * @param folder The folder to delete.
      */
     public static void deleteFolder(File folder) {
-        if (folder.exists() && folder.isDirectory() && folder.listFiles() != null)
-            for (File child : folder.listFiles())
-                deleteFolder(child);
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File child : files)
+                    deleteFolder(child);
+            }
+        }
 
         if (!folder.delete()) {
             Log.w("deleteFolder", "Couldn't delete " + folder.getPath());
@@ -186,10 +190,14 @@ public final class FileUtil
      * @param folder The folder to delete.
      */
     public static void deleteFileFilter(File folder, String filter) {
-        if (folder.exists() && folder.isDirectory() && folder.listFiles() != null) {
-            for (File child : folder.listFiles()) {
-                if (child.getName().contains(filter) && !child.delete()) {
-                    Log.w("deleteFileFilter", "Couldn't delete " + child.getPath());
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles();
+
+            if (files != null) {
+                for (File child : files) {
+                    if (child.getName().contains(filter) && !child.delete()) {
+                        Log.w("deleteFileFilter", "Couldn't delete " + child.getPath());
+                    }
                 }
             }
         }
