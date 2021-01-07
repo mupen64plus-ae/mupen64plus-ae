@@ -93,6 +93,7 @@ void AudioHandler::initializeAudio(int _freq) {
 	builder.setPerformanceMode(oboe::PerformanceMode::LowLatency);
 	builder.setChannelCount(numberOfChannels);
 	builder.setSampleRate(mOutputFreq);
+	//builder.setSampleRateConversionQuality(oboe::SampleRateConversionQuality::Fastest);
 
 	if (mForceSles != 0) {
 		builder.setAudioApi(oboe::AudioApi::OpenSLES);
@@ -200,7 +201,7 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 	int ranDry;
 
 	//adjustment used when a device running too slow
-	double slowAdjustment = 1.0;
+	double slowAdjustment;
 	double currAdjustment = 1.0;
 
 	//how quickly to return to original speed
@@ -225,7 +226,6 @@ bool AudioHandler::audioProviderStretch(void *outAudioData, int32_t outNumFrames
 
 		//Figure out how much to slow down by
 		double timeDiff = currQueueData.timeSinceStart - prevTime;
-		float temp = static_cast<float>(currQueueData.samples) / static_cast<float>(mInputFreq);
 
 		prevTime = currQueueData.timeSinceStart;
 

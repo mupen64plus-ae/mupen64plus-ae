@@ -261,6 +261,8 @@
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
     <string name="audioTimeStretch_title">Time stretch audio</string>
     <string name="audioTimeStretch_summary">Enable time stretch audio to reduce crackling, but introduces audio lag</string>
+    <string name="audioLowPerformanceMode_title">Low performance mode</string>
+    <string name="audioLowPerformanceMode_summary">Better performance at the cost of audio latency.</string>
     <string name="showRecentlyPlayed_title">Recently played</string>
     <string name="showRecentlyPlayed_summary">Show games played within the past week</string>
     <string name="showFullNames_title">Full names</string>

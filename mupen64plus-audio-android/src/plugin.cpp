@@ -65,6 +65,8 @@ static AUDIO_INFO AudioInfo;
 static int GameFreq = defaultFrequency;
 /* SpeedFactor is used to increase/decrease game playback speed */
 static unsigned int speed_factor = 100;
+static int samplingRateSelection = 0;
+
 
 /* Definitions of pointers to Core config functions */
 ptr_ConfigOpenSection ConfigOpenSection = nullptr;
@@ -105,7 +107,7 @@ static void ReadConfig() {
     int hardwareBufferSize = ConfigGetParamInt(l_ConfigAudio, "HARDWARE_BUFFER_SIZE");
     int audioBuffersMs = ConfigGetParamInt(l_ConfigAudio, "AUDIO_BUFFER_SIZE_MS");
     int volume = ConfigGetParamInt(l_ConfigAudio, "VOLUME");
-    int samplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+    samplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
     int samplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
     int timeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
     int forceSles = ConfigGetParamBool(l_ConfigAudio, "FORCE_SLES");
@@ -392,7 +394,9 @@ EXPORT void CALL AiLenChanged(void) {
             busyWaitEnableCount = 0;
         }
 
-        if (busyWaitEnableCount == busyWaitCheck) {
+        // Don't busy wait until threshold is reached OR the sampling rate selection is set to "Game frequency" since
+        // that corresponds to the low performance mode
+        if (busyWaitEnableCount >= busyWaitCheck && samplingRateSelection != 0) {
             busyWait = true;
             busyWaitEnableCount = 0;
             busyWaitDisableCount = 0;
@@ -415,7 +419,9 @@ EXPORT void CALL AiLenChanged(void) {
             auto endTime = currentTime + std::chrono::duration<double>(sleepNeeded);
 
             if (busyWait) {
-                while (std::chrono::steady_clock::now() < endTime);
+                while (std::chrono::steady_clock::now() < endTime) {
+                    std::this_thread::yield();
+                }
             }
             else {
                 std::this_thread::sleep_until(endTime);

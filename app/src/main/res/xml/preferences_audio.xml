@@ -97,5 +97,10 @@
         android:key="audioSwapChannels"
         android:summary="@string/audioSwapChannels_summary"
         android:title="@string/audioSwapChannels_title" />
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="lowPerformanceMode"
+        android:summary="@string/audioLowPerformanceMode_summary"
+        android:title="@string/audioLowPerformanceMode_title" />
 
 </androidx.preference.PreferenceScreen>

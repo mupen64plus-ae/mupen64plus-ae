@@ -319,6 +319,9 @@ public class GlobalPrefs
     /** Use audio floating point samples */
     public final boolean audioFloatingPoint;
 
+    /** Use low performance audio mode, for slow devices */
+    public final boolean lowPerformanceAudio;
+
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
 
@@ -396,6 +399,9 @@ public class GlobalPrefs
     public static final String GAME_DATA_STORAGE_TYPE = "gameDataStorageType";
     public static final String PATH_GAME_SAVES = "gameDataStoragePath";
     public static final String PATH_JAPAN_IPL_ROM = "japanIdlPath64dd";
+
+    public static final String AUDIO_SAMPLING_TYPE = "audioSamplingType";
+    public static final String AUDIO_LOW_PERFORMANCE_MODE = "lowPerformanceMode";
     // ... add more as needed
 
     // Shared preferences default values
@@ -614,13 +620,27 @@ public class GlobalPrefs
         audioFloatingPoint = mPreferences.getBoolean( "audioFloatingPoint", false );
         audioSamplingType = getSafeInt( mPreferences, "audioSamplingType", 0 );
 
+        // Say that any device that only has OpenGL ES 2.0 is a low end device by default, this works
+        // 90% of the time and the user can still modify it if they want to
+        String openGlVersion = AppData.getOpenGlEsVersion(context);
+        lowPerformanceAudio = mPreferences.getBoolean( AUDIO_LOW_PERFORMANCE_MODE, openGlVersion.equals("2.0") );
+
+        // Give this an initial value so that the correct value shows up under settings when audio
+        // settings is first shown
+        if (!mPreferences.contains(AUDIO_LOW_PERFORMANCE_MODE)) {
+            mPreferences.edit().putBoolean(AUDIO_LOW_PERFORMANCE_MODE, lowPerformanceAudio).apply();
+        }
+
         int tempAudioSamplingRate = 0;
 
-        // Automatically determine best sampling rate
-        try {
-            tempAudioSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
-        } catch (java.lang.NumberFormatException e) {
-            Log.e("GlobalPrefs", "Invalid sampling rate number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+        // Don't change the game sample rate for low end devices since this can cut performance by up to 25%!
+        if (!lowPerformanceAudio) {
+            // Automatically determine best sampling rate for devices that can handle it
+            try {
+                tempAudioSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+            } catch (java.lang.NumberFormatException e) {
+                Log.e("GlobalPrefs", "Invalid sampling rate number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+            }
         }
 
         audioSamplingRate = tempAudioSamplingRate;

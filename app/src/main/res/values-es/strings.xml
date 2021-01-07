@@ -216,6 +216,8 @@
     <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
     <string name="audioTimeStretch_title">Estirar el audio</string>
     <string name="audioTimeStretch_summary">Habilitar estirar el audio para mejorar la calidad pero causa un retraso</string>
+    <string name="audioLowPerformanceMode_title">Mode de bajo rendimiento</string>
+    <string name="audioLowPerformanceMode_summary">Mejor rendimiento a costa de la latencia del audio.</string>
     <string name="showRecentlyPlayed_title">Recientes Jugados</string>
     <string name="showRecentlyPlayed_summary">Mostrar juegos jugados en los últimos 7 días</string>
     <string name="showFullNames_title">Nombres completos</string>

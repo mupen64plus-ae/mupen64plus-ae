@@ -24,16 +24,25 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+
+import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.AUDIO_SAMPLING_TYPE;
 
 public class AudioPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
+    // App data and user preferences
+    private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
+
     // User preferences
     private SharedPreferences mPrefs = null;
 
@@ -54,6 +63,10 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     {
         super.onCreate(savedInstanceState);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Get app data and user preferences
+        mAppData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_audio);
@@ -78,11 +91,22 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
+        // Just refresh the preference screens in place
+        refreshViews();
+    }
 
+    private void refreshViews()
+    {
+        // Refresh the preferences object
+        mGlobalPrefs = new GlobalPrefs(this, mAppData);
+
+        // Enable audio prefs if audio is enabled
+        PrefUtil.enablePreference(this, AUDIO_SAMPLING_TYPE, !mGlobalPrefs.enableAudioTimeSretching);
     }
 
     @Override
     protected void OnPreferenceScreenChange(String key)
     {
+        refreshViews();
     }
 }
