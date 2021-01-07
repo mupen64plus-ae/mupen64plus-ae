@@ -22,7 +22,11 @@ package paulscode.android.mupen64plusae.profile;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
@@ -87,5 +91,17 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     protected String getBuiltinVisibilityKey()
     {
         return SHOW_BUILT_IN_PREF_KEY;
+    }
+
+    @Override
+    protected List<Profile> getHiddenProfileList() {
+        ArrayList<Profile> profileList = new ArrayList<>();
+
+        String openGlVersion = AppData.getOpenGlEsVersion(this);
+        if (openGlVersion.equals("2.0")) {
+            profileList.add(new Profile(true, "Software-Renderer", ""));
+        }
+
+        return profileList;
     }
 }

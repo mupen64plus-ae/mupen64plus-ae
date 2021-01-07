@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -32,7 +32,7 @@ import android.text.TextUtils;
 /**
  * The base class for configuration profiles. Extend this class to encapsulate groups of settings.
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "RedundantSuppression"})
 public class Profile implements Comparable<Profile>
 {
     /** The name of the profile, displayed in the UI and used as a unique identifier. */
@@ -264,7 +264,7 @@ public class Profile implements Comparable<Profile>
     
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (!(obj instanceof Profile)) {
             return false;
         }
 

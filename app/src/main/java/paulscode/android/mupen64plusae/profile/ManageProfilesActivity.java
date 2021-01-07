@@ -466,6 +466,10 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
      * Key to use when showing builtin profiles
      */
     abstract protected String getBuiltinVisibilityKey();
+
+    protected List<Profile> getHiddenProfileList() {
+        return new ArrayList<>();
+    }
     
     protected void refreshList()
     {
@@ -475,6 +479,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         if( getBuiltinVisibility() )
             mProfileList.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
         Collections.sort( mProfileList );
+
+        List<Profile> hiddenProfiles = getHiddenProfileList();
+        mProfileList.removeAll(hiddenProfiles);
         
         if(mProfileListAdapter == null)
         {
