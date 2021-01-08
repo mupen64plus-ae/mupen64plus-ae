@@ -57,9 +57,9 @@ MY_LOCAL_CFLAGS :=         \
     -DNOSSE             \
     -DNO_ASM            \
     -fsigned-char       \
-    -Wformat
+    -Wno-format -Wno-macro-redefined
     
-MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11
+MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11 -Wno-format -Wno-macro-redefined
     
 MY_LOCAL_CPP_FEATURES := exceptions
 

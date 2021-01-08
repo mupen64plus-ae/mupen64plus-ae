@@ -33,7 +33,7 @@ android {
                 arguments "-DANDROID=1", "-DMUPENPLUSAPI=1", "-DCMAKE_BUILD_TYPE=Release", "-DUNIX=1",
                     "-DANDROID_LIB_PATH=$projectDir/../ndkLibs",
                     "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
-                cppFlags "-fexceptions"
+                cppFlags "-fexceptions -ffast-math -ftree-vectorize"
                 abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
