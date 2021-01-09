@@ -160,7 +160,7 @@ public class TextureInfo
                 }
             }
         }
-        catch( Exception ze )
+        catch( Exception|OutOfMemoryError ze )
         {
             Log.e( "TextureInfo", "ZipException: ", ze );
             return null;
@@ -247,7 +247,7 @@ public class TextureInfo
                 return getTexturePackNameFromSevenZ(zipfile);
             }
         }
-        catch( Exception ze )
+        catch( Exception|OutOfMemoryError ze )
         {
             Log.e( "TextureInfo", "Exception: ", ze );
         }

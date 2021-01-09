@@ -261,7 +261,7 @@ class CoreInterface
             InputStream is;
             romBuffer = IOUtils.toByteArray(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
             success = romBuffer.length > 0;
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             e.printStackTrace();
         }
 
@@ -332,7 +332,7 @@ class CoreInterface
 
                 zipEntry = zipfile.getNextEntry();
             }
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             Log.w(TAG, e);
             returnData = null;
         }
@@ -383,7 +383,7 @@ class CoreInterface
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             Log.w(TAG, e);
             returnData = null;
         }

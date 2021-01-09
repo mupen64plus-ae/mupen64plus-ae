@@ -336,7 +336,7 @@ public class CacheRomInfoService extends Service
                 zipfile.close();
             }
         }
-        catch( Exception e )
+        catch (Exception|OutOfMemoryError e )
         {
             Log.w( "CacheRomInfoService", e );
         }
@@ -387,7 +387,7 @@ public class CacheRomInfoService extends Service
                 zipFile.close();
                 fileInputStream.close();
             }
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
         }
     }
@@ -432,7 +432,7 @@ public class CacheRomInfoService extends Service
                 fileInputStream.close();
 
             }
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
         }
     }
@@ -502,7 +502,7 @@ public class CacheRomInfoService extends Service
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             e.printStackTrace();
         }
     }

@@ -289,7 +289,7 @@ public final class RomHeader
                     }
 
                 }
-            } catch (Exception e) {
+            } catch (Exception|OutOfMemoryError e) {
                 e.printStackTrace();
                 buffer = null;
             }

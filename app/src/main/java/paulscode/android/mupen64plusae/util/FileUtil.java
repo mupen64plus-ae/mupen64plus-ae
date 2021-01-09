@@ -359,7 +359,7 @@ public final class FileUtil
                     bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                 }
 
-            } catch (Exception e) {
+            } catch (Exception|OutOfMemoryError e) {
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
         }
@@ -409,7 +409,7 @@ public final class FileUtil
                         bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                     }
 
-                } catch (Exception e) {
+                } catch (Exception|OutOfMemoryError e) {
                     e.printStackTrace();
                 }
             }
@@ -468,7 +468,7 @@ public final class FileUtil
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
-        } catch (IOException|IllegalArgumentException|SecurityException e) {
+        } catch (Exception|OutOfMemoryError e) {
             e.printStackTrace();
         }
 
@@ -564,7 +564,7 @@ public final class FileUtil
                     bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                 }
 
-            } catch (Exception e) {
+            } catch (Exception|OutOfMemoryError e) {
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
         }
@@ -622,7 +622,7 @@ public final class FileUtil
                         bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
                     }
 
-                } catch (Exception e) {
+                } catch (Exception|OutOfMemoryError e) {
                     Log.e("copyFile", "Exception: " + e.getMessage());
                 }
             }
@@ -671,7 +671,7 @@ public final class FileUtil
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
 
-        } catch (IOException|IllegalArgumentException|SecurityException e) {
+        } catch (Exception|OutOfMemoryError e) {
             e.printStackTrace();
         }
 
@@ -746,7 +746,7 @@ public final class FileUtil
                 }
                 entry = zipfile.getNextEntry();
             }
-        } catch (Exception ze) {
+        } catch (Exception|OutOfMemoryError ze) {
             Log.e("unzipAll", "Exception: ", ze);
         }
     }
@@ -805,7 +805,7 @@ public final class FileUtil
                 }
             }
         }
-        catch( Exception ze )
+        catch( Exception|OutOfMemoryError ze )
         {
             Log.e( "unzipAll", "Exception: ", ze );
         }
@@ -959,7 +959,7 @@ public final class FileUtil
 
                 entry = zipfile.getNextEntry();
             }
-        } catch (Exception ze) {
+        } catch (Exception|OutOfMemoryError ze) {
             Log.e("ExtractFirst", "Exception: ", ze);
         }
 
@@ -992,7 +992,7 @@ public final class FileUtil
                 }
             }
         }
-        catch( Exception ze )
+        catch( Exception|OutOfMemoryError ze )
         {
             Log.e( "unzipAll", "Exception: ", ze );
         }
@@ -1059,7 +1059,7 @@ public final class FileUtil
 
                 zipEntry = zipfile.getNextEntry();
             }
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             Log.w("FileUtil", e);
             returnData = null;
         }
@@ -1103,7 +1103,7 @@ public final class FileUtil
 
                 zipFile.close();
             }
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             Log.w("FileUtil", e);
             returnData = null;
         }
@@ -1199,7 +1199,7 @@ public final class FileUtil
             options.inJustDecodeBounds = true;
             Bitmap bitmap = BitmapFactory.decodeStream(in, null, options);
             return options.outWidth != -1 && options.outHeight != -1;
-        } catch (Exception e) {
+        } catch (Exception|OutOfMemoryError e) {
             e.printStackTrace();
             return false;
         }

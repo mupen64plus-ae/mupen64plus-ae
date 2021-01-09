@@ -225,7 +225,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
                 zipfile.close();
             }
         }
-        catch( Exception e )
+        catch( Exception|OutOfMemoryError e )
         {
             Log.w(TAG, e);
         }
