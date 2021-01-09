@@ -254,7 +254,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
 
     @Override
     public void onViewCreation(View view) {
-        final int topMarginDp = 70;
+        final int topMarginDp = 90;
         Resources r = getResources();
         int topMargin = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
