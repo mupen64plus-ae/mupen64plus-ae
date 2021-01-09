@@ -33,7 +33,7 @@ android {
                         "-DANDROID_LIB_PATH=$projectDir/../ndkLibs",
                         "-DM64API_INCLUDE_PATH=$projectDir/../mupen64plus-core/upstream/src/api/",
                         "-DANDROID_STL=c++_shared"
-                cppFlags "-fexceptions -ffast-math -ftree-vectorize"
+                cppFlags "-fexceptions", "-ffast-math", "-ftree-vectorize"
                 abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
