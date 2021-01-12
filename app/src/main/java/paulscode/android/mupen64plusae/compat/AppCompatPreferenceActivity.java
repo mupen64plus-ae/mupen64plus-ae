@@ -152,6 +152,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
 
     private int mBottomInset = 0;
     private int mRightInset = 0;
+    private int mTopInset = 0;
 
     // Preference fragment
     private AppCompatPreferenceFragment mPrefFrag = null;
@@ -254,26 +255,19 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
 
     @Override
     public void onViewCreation(View view) {
-        final int topMarginDp = 90;
-        Resources r = getResources();
-        int topMargin = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                topMarginDp,
-                r.getDisplayMetrics()
-        );
-
         ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
 
             mBottomInset = insets.getSystemWindowInsetBottom();
             mRightInset = insets.getSystemWindowInsetRight();
+            mTopInset = insets.getSystemWindowInsetTop();
 
-            view.setPadding(0, topMargin, mRightInset, mBottomInset);
+            view.setPadding(0, mTopInset, mRightInset, mBottomInset);
             
             return insets;
         });
 
         // Call this a second time since the callback only happens on the first screen
-        view.setPadding(0, topMargin, mRightInset, mBottomInset);
+        view.setPadding(0, mTopInset, mRightInset, mBottomInset);
     }
 
     protected Context getPreferenceManagerContext()
