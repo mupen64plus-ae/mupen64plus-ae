@@ -134,6 +134,12 @@ static void fb_uc2_movemem()
     wxUint32 a = segoffset(rdp.cmd1) >> 1;
     short scale_x = ((short*)gfx.RDRAM)[SHORTADDR(a+0)] >> 2;
     short trans_x = ((short*)gfx.RDRAM)[SHORTADDR(a+4)] >> 2;
+
+
+    if (rdp.ci_count > NUMTEXBUF) {
+      return;
+    }
+    
     COLOR_IMAGE & cur_fb = rdp.frame_buffers[rdp.ci_count-1];
     if ( abs((int)(scale_x + trans_x - cur_fb.width)) < 3)
     {
