@@ -244,14 +244,26 @@ public class GamePrefs
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
 
+    /** Use default count per op setting */
+    public final boolean useDefaultCountPerOp;
+
     /** Core CountPerOp setting */
     public final int countPerOp;
+
+    /** Use default VI refresh rate */
+    public final boolean useDefaultViRefreshRate;
+
+    /** Core VI refresh reate setting */
+    public final int viRefreshRate;
 
     /** Force alignment of PI DMA */
     public final int forceAlignmentOfPiDma;
 
     /** True if we should ignore TLB exceptions */
     public final boolean ignoreTlbExceptions;
+
+    /** True if we should randomize interrupts in the core */
+    public final boolean randomizeInterrupts;
 
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
@@ -588,11 +600,14 @@ public class GamePrefs
         isPlugged[2] = isControllerEnabled[2] && (playerMap.isPlayerAvailable(3) || isControllerShared || globalPrefs.allEmulatedControllersPlugged);
         isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared || globalPrefs.allEmulatedControllersPlugged);
 
-        //A value of zero means default for the game as specified in mupen64plus.ini
-        countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+        useDefaultCountPerOp = mPreferences.getBoolean( "screenAdvancedUseDefaultCountPerOp", true );
+        countPerOp = useDefaultCountPerOp ? 0 : mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+        useDefaultViRefreshRate = mPreferences.getBoolean( "screenAdvancedUseDefaultViRefresh", true );
+        viRefreshRate = useDefaultViRefreshRate ? 0 : mPreferences.getInt( "screenAdvancedViRefreshRate", 1542 );
 
         forceAlignmentOfPiDma = mPreferences.getBoolean( "screenAdvancedforceAlignmentOfPiDma", true ) ? -1 : 0;
         ignoreTlbExceptions = headerName.toLowerCase().contains("zelda") || mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
+        randomizeInterrupts = mPreferences.getBoolean( "screenAdvancedRandomizeInterrupts", true );
     }
 
     private void actionReloadAssets(Context context)

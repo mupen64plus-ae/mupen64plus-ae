@@ -76,6 +76,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private static final String SCREEN_ROOT = "screenRoot";
     private static final String SCREEN_CHEATS = "screenCheats";
     private static final String CATEGORY_CHEATS = "categoryCheats";
+    private static final String COUNT_PER_OP = "screenAdvancedCountPerOp";
+    private static final String VI_REFRESH = "screenAdvancedViRefreshRate";
 
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
@@ -518,6 +520,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             // Set the initial value
             playerPref.setValue( mGamePrefs.playerMap.serialize() );
         }
+
+        PrefUtil.enablePreference( this, COUNT_PER_OP, !mGamePrefs.useDefaultCountPerOp );
+        PrefUtil.enablePreference( this, VI_REFRESH, !mGamePrefs.useDefaultViRefreshRate );
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
     }

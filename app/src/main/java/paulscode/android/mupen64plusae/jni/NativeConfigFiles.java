@@ -114,8 +114,9 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "TlbHack", String.valueOf( game.ignoreTlbExceptions ? 1 : 0 ) );
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf(game.currentStateSlot));
         mupen64plus_cfg.put( "Core", "SaveDiskFormat", String.valueOf(0) );
-        mupen64plus_cfg.put( "Core", "RandomizeInterrupt", String.valueOf(1) );
         mupen64plus_cfg.put( "Core", "SiDmaDuration", String.valueOf(-1) );
+        mupen64plus_cfg.put( "Core", "RandomizeInterrupt", String.valueOf(game.randomizeInterrupts ? 1 : 0) );
+        mupen64plus_cfg.put( "Core", "CountPerScanlineOverride", String.valueOf( game.viRefreshRate ) );
         mupen64plus_cfg.put( "Core", "GbCameraVideoCaptureBackend1", "" );
 
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );

@@ -150,11 +150,18 @@
     <string name="screenCheats_summaryEnabled">Habilitado</string>
     <string name="screenCheats_summaryDisabled">Deshabilitado</string>
     <string name="screenAdvanced_title">Avanzado</string>
-    <string name="screenAdvanced_CountPerOpTitle">Cuenta por operación</string>
+    <string name="screenAdvanced_CountPerOpDefault_title">Cuenta por operación</string>
+    <string name="screenAdvanced_CountPerOpDefault_summary">Modificar esto cambia el tiempo del juego, los valores más bajos pueden hacer overclock en el juego pero pueden causar inestabilidad.</string>
+    <string name="screenAdvanced_CountPerOp_title">Cuenta por operación</string>
+    <string name="screenAdvanced_ViRefreshRateDefault_title">Frecuencia de actualización de VI</string>
+    <string name="screenAdvanced_ViRefreshRateDefault_summary">Modificar esto cambia el tiempo del juego, esto puede afectar algunos relojes del juego, es necesario reiniciar el juego para que esto tome efecto.</string>
+    <string name="screenAdvanced_ViRefreshRate_title">Frecuencia de actualización de VI</string>
     <string name="screenAdvanced_ForceAlignmentOfPiDma_title">Forzar alineación de PI DMA</string>
     <string name="screenAdvanced_ForceAlignmentOfPiDma_summary">Necesario para algunos hacks, déjelo habilitado para usar la opction predeterminada del juego.</string>
     <string name="screenAdvanced_IgnoreTlbExceptions_title">Ignorar las excepciones de TLB</string>
     <string name="screenAdvanced_IgnoreTlbExceptions_summary">Needed for some ROM hacks or Zelda games. Leave disabled otherwise.</string>
+    <string name="screenAdvanced_RandomizeInterrupts_title">Interrupciones aleatorias</string>
+    <string name="screenAdvanced_RandomizeInterrupts_summary">Aleatoriza las interrupciones para que los juegos que tengan elementos aleatorios funcionen correctamente.</string>
 
     <!--Preference Categories-->
     <string name="categoryCheats_title">Ajustes de trucos (mantén oprimido para mostrar notas)</string>

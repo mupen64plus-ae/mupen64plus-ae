@@ -191,11 +191,18 @@
     <string name="screenCheats_summaryEnabled">Enabled</string>
     <string name="screenCheats_summaryDisabled">Disabled</string>
     <string name="screenAdvanced_title">Advanced</string>
-    <string name="screenAdvanced_CountPerOpTitle">Count per operation</string>
+    <string name="screenAdvanced_CountPerOpDefault_title">Use default count per operation</string>
+    <string name="screenAdvanced_CountPerOpDefault_summary">Modifying this changes game timing, lower values can overclock the game but can cause instability.</string>
+    <string name="screenAdvanced_CountPerOp_title">Count per operation</string>
+    <string name="screenAdvanced_ViRefreshRateDefault_title">Use default VI refresh rate</string>
+    <string name="screenAdvanced_ViRefreshRateDefault_summary">Modifying this changes game timing, this can affect some in-game clocks, restarting the game is required for this to take effect.</string>
+    <string name="screenAdvanced_ViRefreshRate_title">VI refresh rate</string>
     <string name="screenAdvanced_ForceAlignmentOfPiDma_title">Force Alignment of PI DMA</string>
-    <string name="screenAdvanced_ForceAlignmentOfPiDma_summary">Needed for some ROM hacks, leave enabled to use game default</string>
+    <string name="screenAdvanced_ForceAlignmentOfPiDma_summary">Needed for some ROM hacks, leave enabled to use game default.</string>
     <string name="screenAdvanced_IgnoreTlbExceptions_title">Ignore TLB exceptions</string>
     <string name="screenAdvanced_IgnoreTlbExceptions_summary">Needed for some ROM hacks or Zelda games. Leave disabled otherwise.</string>
+    <string name="screenAdvanced_RandomizeInterrupts_title">Randomize Interrupts</string>
+    <string name="screenAdvanced_RandomizeInterrupts_summary">Randomizes interrupts so that games that have random elements work correctly.</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>

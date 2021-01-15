@@ -256,27 +256,47 @@
         android:icon="@drawable/ic_settings"
         android:key="screenAdvanced"
         android:title="@string/screenAdvanced_title" >
-
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedUseDefaultCountPerOp"
+            android:summary="@string/screenAdvanced_CountPerOpDefault_summary"
+            android:title="@string/screenAdvanced_CountPerOpDefault_title" />
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="0"
+            android:defaultValue="2"
             android:key="screenAdvancedCountPerOp"
-            android:title="@string/screenAdvanced_CountPerOpTitle"
-            mupen64:maximumValue="4"
-            mupen64:minimumValue="0"
+            android:title="@string/screenAdvanced_CountPerOp_title"
+            mupen64:maximumValue="3"
+            mupen64:minimumValue="1"
             mupen64:stepSize="1"
             mupen64:units=""/>
         <androidx.preference.CheckBoxPreference
-            android:icon="@drawable/ic_display"
+            android:defaultValue="true"
+            android:key="screenAdvancedUseDefaultViRefresh"
+            android:summary="@string/screenAdvanced_ViRefreshRateDefault_summary"
+            android:title="@string/screenAdvanced_ViRefreshRateDefault_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="1542"
+            android:key="screenAdvancedViRefreshRate"
+            android:title="@string/screenAdvanced_ViRefreshRate_title"
+            mupen64:maximumValue="2200"
+            mupen64:minimumValue="1300"
+            mupen64:stepSize="1"
+            mupen64:units="" />
+        <androidx.preference.CheckBoxPreference
             android:defaultValue="true"
             android:key="screenAdvancedforceAlignmentOfPiDma"
             android:summary="@string/screenAdvanced_ForceAlignmentOfPiDma_summary"
             android:title="@string/screenAdvanced_ForceAlignmentOfPiDma_title" />
         <androidx.preference.CheckBoxPreference
-            android:icon="@drawable/ic_display"
             android:defaultValue="false"
             android:key="screenAdvancedignoreTlbExceptions"
             android:summary="@string/screenAdvanced_IgnoreTlbExceptions_summary"
             android:title="@string/screenAdvanced_IgnoreTlbExceptions_title" />
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="screenAdvancedRandomizeInterrupts"
+            android:summary="@string/screenAdvanced_RandomizeInterrupts_summary"
+            android:title="@string/screenAdvanced_RandomizeInterrupts_title" />
     </androidx.preference.PreferenceScreen>
 
     <androidx.preference.PreferenceCategory>
