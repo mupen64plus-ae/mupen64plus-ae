@@ -306,6 +306,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isRiceFogEnabled ) );
 
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "Parallel", boolToTF( game.angrylionPlusPrefs.parallel ) );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "BusyLoop", boolToTF( false ) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "NumWorkers", String.valueOf(game.angrylionPlusPrefs.numWorkers));
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViMode", String.valueOf(game.angrylionPlusPrefs.viMode) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViInterpolation", String.valueOf(game.angrylionPlusPrefs.viInterpolation) );
