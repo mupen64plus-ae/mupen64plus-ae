@@ -321,7 +321,7 @@
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
             android:theme="@style/Theme.Mupen64plusaeTheme.Game"
-            android:process="paulscode.android.mupen64plusae.GameActivity"/>
+            android:process=":EmulationProcess"/>
         <activity
             android:name="paulscode.android.mupen64plusae.ImportExportActivity"
             android:exported="false"
@@ -342,7 +342,7 @@
         <service
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
             android:exported="false"
-            android:process="paulscode.android.mupen64plusae.GameActivity"/>
+            android:process=":EmulationProcess"/>
         <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService"

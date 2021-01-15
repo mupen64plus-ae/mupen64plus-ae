@@ -94,6 +94,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         void onFinish();
 
         /**
+         * Called when the service has been started
+         */
+        void onCoreServiceStarted();
+
+        /**
          * Called when the service has been destroyed
          */
         void onCoreServiceDestroyed();
@@ -577,10 +582,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.emuLoadFile(latestSave);
             }
 
-            if (!mGlobalPrefs.isFramelimiterEnabled)
-            {
-                mCoreInterface.emuSetFramelimiter(false);
-            }
+            mCoreInterface.emuSetFramelimiter(mGlobalPrefs.isFramelimiterEnabled);
 
             boolean openSuccess;
 
@@ -636,6 +638,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
                 } catch (java.lang.IllegalArgumentException e) {
                     openSuccess = false;
+                }
+
+                if (mListener != null) {
+                    mListener.onCoreServiceStarted();
                 }
 
                 // This call blocks until emulation is stopped

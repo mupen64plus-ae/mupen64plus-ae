@@ -132,6 +132,7 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener
 {
+    private static final String TAG = "GameActivity";
     // Activity and views
     private GameOverlay mOverlay;
     private FpsOverlay mFpsOverlay;
@@ -201,7 +202,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     protected void onNewIntent( Intent intent )
     {
-        Log.i("GameActivity", "onNewIntent");
+        Log.i(TAG, "onNewIntent");
         // If the activity is already running and is launched again (e.g. from a file manager app),
         // the existing instance will be reused rather than a new one created. This behavior is
         // specified in the manifest (launchMode = singleTask). In that situation, any activities
@@ -218,10 +219,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
 
-            Log.i("GameActivity", "mShouldExit=" + mShouldExit);
+            Log.i(TAG, "mShouldExit=" + mShouldExit);
 
             mForceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
-            Log.i("GameActivity", "forceExit=" + mForceExit);
+            Log.i(TAG, "forceExit=" + mForceExit);
 
             if(mShouldExit && mCoreFragment != null)
             {
@@ -233,7 +234,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i("GameActivity", "onCreate");
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         super.setTheme( androidx.appcompat.R.style.Theme_AppCompat_NoActionBar );
 
@@ -260,10 +261,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
-        Log.i("GameActivity", "mShouldExit=" + mShouldExit);
+        Log.i(TAG, "mShouldExit=" + mShouldExit);
 
         mForceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
-        Log.i("GameActivity", "forceExit=" + mForceExit);
+        Log.i(TAG, "forceExit=" + mForceExit);
 
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
@@ -488,7 +489,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onStart()
     {
         super.onStart();
-        Log.i("GameActivity", "onStart");
+        Log.i(TAG, "onStart");
 
         if(mCoreFragment != null)
         {
@@ -512,7 +513,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onResume()
     {
         super.onResume();
-        Log.i("GameActivity", "onResume");
+        Log.i(TAG, "onResume");
 
         if (mSensorController != null) {
             mSensorController.onResume();
@@ -537,7 +538,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onPause() {
         super.onPause();
-        Log.i("GameActivity", "onPause");
+        Log.i(TAG, "onPause");
     }
 
     @Override
@@ -554,7 +555,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         super.onStop();
 
-        Log.i( "GameActivity", "onStop" );
+        Log.i( TAG, "onStop" );
 
         //Don't pause emulation when rotating the screen or the core fragment has been set to null
         //on a shutdown
@@ -579,7 +580,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onDestroy()
     {
-        Log.i( "GameActivity", "onDestroy" );
+        Log.i( TAG, "onDestroy" );
 
         super.onDestroy();
 
@@ -603,7 +604,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onWindowFocusChanged( boolean hasFocus )
     {
         // Only try to run; don't try to pause. User may just be touching the in-game menu.
-        Log.i( "GameActivity", "onWindowFocusChanged: " + hasFocus );
+        Log.i( TAG, "onWindowFocusChanged: " + hasFocus );
         if( hasFocus )
         {
             hideSystemBars();
@@ -888,7 +889,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onCoreServiceStarted()
     {
-        Log.i("GameActivity", "onCoreServiceStarted");
+        Log.i(TAG, "onCoreServiceStarted");
 
         if(mCoreFragment == null) return;
 
@@ -912,7 +913,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(mCoreFragment.isShuttingDown())
         {
-            Log.i("GameActivity", "Shutting down because previous instance hasn't finished");
+            Log.i(TAG, "Shutting down because previous instance hasn't finished");
 
             runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_not_done_shutting_down ));
 
@@ -928,7 +929,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onExitRequested(boolean shouldExit)
     {
-        Log.i( "GameActivity", "onExitRequested" );
+        Log.i( TAG, "onExitRequested" );
         if(shouldExit)
         {
             shutdownEmulator();
@@ -1130,7 +1131,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(p != null) {
            new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider);
-            Log.i("GameActivity", "Player " + player + " controller has been enabled");
+            Log.i(TAG, "Player " + player + " controller has been enabled");
         }
     }
 
@@ -1144,7 +1145,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private void shutdownEmulator()
     {
-        Log.i( "GameActivity", "shutdownEmulator" );
+        Log.i( TAG, "shutdownEmulator" );
 
         if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
         {
@@ -1187,7 +1188,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         }
                         isControllerPlugged[index] = false;
 
-                        Log.i("GameActivity", "controller " + index + " was unplugged");
+                        Log.i(TAG, "controller " + index + " was unplugged");
                     }
                 }
             }
@@ -1195,7 +1196,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mHandler.postDelayed(mPeriodicChecker, 500);
 
             if (mForceExit) {
-                Log.w("GameActivity", "Exit forced");
+                Log.w(TAG, "Exit forced");
 
                 if (mCoreFragment != null) {
                     mCoreFragment.forceExit();
