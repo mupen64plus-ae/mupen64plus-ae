@@ -296,22 +296,34 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( game.isRiceFastTextureLoadingEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( game.isRiceAutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", boolToTF( game.isRiceHiResTexturesEnabled ) );
-        if( game.isRiceForceTextureFilterEnabled )
-            mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
-        else
-            mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
+        mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", game.isRiceForceTextureFilterEnabled ? "2" : "0");
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", game.riceTextureEnhancement );
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );
         mupen64plus_cfg.put( "Video-Rice", "Mipmapping", "0" );
         mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isRiceFogEnabled ) );
 
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "Parallel", boolToTF( game.angrylionPlusPrefs.parallel ) );
-        mupen64plus_cfg.put( "Video-Angrylion-Plus", "BusyLoop", boolToTF( false ) );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "BusyLoop", boolToTF( game.angrylionPlusPrefs.busyLoop ) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "NumWorkers", String.valueOf(game.angrylionPlusPrefs.numWorkers));
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViMode", String.valueOf(game.angrylionPlusPrefs.viMode) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViInterpolation", String.valueOf(game.angrylionPlusPrefs.viInterpolation) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViWidescreen", boolToTF( game.angrylionPlusPrefs.viWidescreen ) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViHideOverscan", boolToTF( game.angrylionPlusPrefs.viHideOverscan ) );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViIntegerScaling", boolToTF( game.angrylionPlusPrefs.viIntegerScaling ) );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "DpCompat", String.valueOf(game.angrylionPlusPrefs.dpCompatibilityMode) );
+
+        /*
+
+        #define KEY_BUSY_LOOP "BusyLoop"
+
+#define KEY_VI_MODE "ViMode"
+#define KEY_VI_INTERP "ViInterpolation"
+#define KEY_VI_WIDESCREEN "ViWidescreen"
+#define KEY_VI_HIDE_OVERSCAN "ViHideOverscan"
+#define KEY_VI_INTEGER_SCALING "ViIntegerScaling"
+
+#define KEY_DP_COMPAT "DpCompat"
+         */
 
         gln64_conf.save();
         glide64_conf.save();

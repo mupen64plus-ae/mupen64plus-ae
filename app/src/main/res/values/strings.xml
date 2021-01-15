@@ -496,6 +496,7 @@
 
     <string name="angrylion_parallel_mode_title">Threaded mode</string>
     <string name="angrylion_num_workers_title">Number of worker threads</string>
+    <string name="angrylion_busyloop_title">Busy loop while waiting for work</string>
     <string name="angrylion_vi_mode_title">VI Mode</string>
     <string name="angrylion_vi_mode_entry_filtered">Filtered</string>
     <string name="angrylion_vi_mode_entry_unfiltered">Unfiltered</string>
@@ -505,6 +506,11 @@
     <string name="angrylion_vi_interpolation_entry_nearest_neighbor">Nearest Neighbor</string>
     <string name="angrylion_vi_interpolation_entry_linear">Linear</string>
     <string name="angrylion_hide_overscan_title">Hide overscan</string>
+    <string name="angrylion_vi_integer_scaling_title">Integer scaling</string>
+    <string name="angrylion_compatibility_mode_title">Compatiblity mode</string>
+    <string name="angrylion_compatibility_mode_fast">Fast</string>
+    <string name="angrylion_compatibility_mode_moderate">Moderate</string>
+    <string name="angrylion_compatibility_mode_slow">Slow</string>
 
     <string name="glide64mk2_game_default">Game default</string>
     <string name="glide64mk2_disable">Disable</string>

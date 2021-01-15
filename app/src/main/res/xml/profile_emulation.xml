@@ -653,6 +653,10 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="BusyLoop"
+            android:title="@string/angrylion_busyloop_title" />
         <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/angrylion_vi_mode_default"
             android:entries="@array/angrylion_vi_mode_entries"
@@ -671,6 +675,17 @@
             android:defaultValue="False"
             android:key="viHideOverscan"
             android:title="@string/angrylion_hide_overscan_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="viIntegerScaling"
+            android:title="@string/angrylion_vi_integer_scaling_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/angrylion_compatibility_mode_default"
+            android:entries="@array/angrylion_compatibility_mode_entries"
+            android:entryValues="@array/angrylion_compatibility_mode_values"
+            android:key="DpCompat"
+            android:summary="@string/selectedValue"
+            android:title="@string/angrylion_compatibility_mode_title" />
     </androidx.preference.PreferenceCategory>
        
 </androidx.preference.PreferenceScreen>

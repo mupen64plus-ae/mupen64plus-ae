@@ -1130,6 +1130,19 @@
     </string-array>
     <string name="angrylion_vi_interpolation_default" translatable="false">0</string>
 
+    <!-- Angrylion RDP Plus DP compatiblity mode-->
+    <string-array name="angrylion_compatibility_mode_entries">
+        <item>@string/angrylion_compatibility_mode_fast</item>
+        <item>@string/angrylion_compatibility_mode_moderate</item>
+        <item>@string/angrylion_compatibility_mode_slow</item>
+    </string-array>
+    <string-array name="angrylion_compatibility_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="angrylion_compatibility_mode_default" translatable="false">0</string>
+
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>
