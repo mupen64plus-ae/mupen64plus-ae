@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/ata4/angrylion-rdp-plus.git
 	branch = master
-	commit = 4039a559eefa0d060c76ec37b2c77d848262dd43
-	parent = 8440a7f958e17909787d165f44367fc96259f67f
+	commit = 3744ec766ed8d2c15fd5cbb4ac3c241b852b6e69
+	parent = 6fcde57786d8c5dab54a74def53f8a8a218e68b4
 	method = merge
 	cmdver = 0.4.0
