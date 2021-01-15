@@ -353,6 +353,7 @@ int main_set_core_defaults(void)
     ConfigSetDefaultInt(g_CoreConfig, "CountPerOp", 0, "Force number of cycles per emulated instruction");
     ConfigSetDefaultInt(g_CoreConfig, "ForceAlignmentOfPiDma", -1, "Force alignment of Pi DMA, set to 0 to allow some ROM hacks to work, -1 for game default");
     ConfigSetDefaultInt(g_CoreConfig, "TlbHack", 0, "Ignore TLB exception, set to 1 to allow some rom hacks to work");
+    ConfigSetDefaultInt(g_CoreConfig, "CountPerScanlineOverride", 0, "Count per scanline override, 0 for game default");
 
     ConfigSetDefaultBool(g_CoreConfig, "RandomizeInterrupt", 1, "Randomize PI/SI Interrupt Timing");
     ConfigSetDefaultInt(g_CoreConfig, "SiDmaDuration", -1, "Duration of SI DMA (-1: use per game settings)");
@@ -1402,8 +1403,9 @@ m64p_error main_run(void)
     uint32_t count_per_op;
     uint32_t emumode;
     uint32_t disable_extra_mem;
-    uint32_t force_alignment_pi_dma;
+    int32_t force_alignment_pi_dma;
     uint32_t tlb_hack;
+    int32_t count_per_scanline_override;
     int32_t si_dma_duration;
     int32_t no_compiled_jump;
     int32_t randomize_interrupt;
@@ -1437,6 +1439,7 @@ m64p_error main_run(void)
     randomize_interrupt = !netplay_is_init() ? ConfigGetParamBool(g_CoreConfig, "RandomizeInterrupt") : 0;
     count_per_op = ConfigGetParamInt(g_CoreConfig, "CountPerOp");
     force_alignment_pi_dma = ConfigGetParamInt(g_CoreConfig, "ForceAlignmentOfPiDma");
+    count_per_scanline_override = ConfigGetParamInt(g_CoreConfig, "CountPerScanlineOverride");
     tlb_hack = ConfigGetParamInt(g_CoreConfig, "TlbHack");
 
     if (ROM_PARAMS.disableextramem)
@@ -1447,6 +1450,11 @@ m64p_error main_run(void)
     if (force_alignment_pi_dma == -1) {
         force_alignment_pi_dma = ROM_PARAMS.forcealignmentofpidma;
     }
+
+    if (count_per_scanline_override <= 0) {
+        count_per_scanline_override = ROM_PARAMS.countPerScanlineOverride;
+    }
+
     rdram_size = (disable_extra_mem == 0) ? RDRAM_8MB_SIZE : RDRAM_4MB_SIZE;
 
     if (count_per_op <= 0)
@@ -1684,7 +1692,9 @@ m64p_error main_run(void)
                 si_dma_duration,
                 rdram_size,
                 joybus_devices, ijoybus_devices,
-                vi_clock_from_tv_standard(ROM_PARAMS.systemtype), vi_expected_refresh_rate_from_tv_standard(ROM_PARAMS.systemtype),
+                vi_clock_from_tv_standard(ROM_PARAMS.systemtype),
+                vi_expected_refresh_rate_from_tv_standard(ROM_PARAMS.systemtype),
+                count_per_scanline_override,
                 NULL, &g_iclock_ctime_plus_delta,
                 g_rom_size,
                 (ROM_SETTINGS.savetype != EEPROM_16KB) ? JDT_EEPROM_4K : JDT_EEPROM_16K,

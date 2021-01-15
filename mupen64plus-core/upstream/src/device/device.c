@@ -98,7 +98,7 @@ void init_device(struct device* dev,
     void* jbds[PIF_CHANNELS_COUNT],
     const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
     /* vi */
-    unsigned int vi_clock, unsigned int expected_refresh_rate,
+    unsigned int vi_clock, unsigned int expected_refresh_rate, int count_per_scanline_override,
     /* cart */
     void* af_rtc_clock, const struct clock_backend_interface* iaf_rtc_clock,
     size_t rom_size,
@@ -190,7 +190,7 @@ void init_device(struct device* dev,
             &dev->mi, &dev->ri, &dev->dp, forceAlignmentOfPiDma);
     init_ri(&dev->ri, &dev->rdram);
     init_si(&dev->si, si_dma_duration, &dev->mi, &dev->pif, &dev->ri);
-    init_vi(&dev->vi, vi_clock, expected_refresh_rate, &dev->mi, &dev->dp);
+    init_vi(&dev->vi, vi_clock, expected_refresh_rate, count_per_scanline_override, &dev->mi, &dev->dp);
 
     /* FIXME: should boot on cart, unless only a disk is present, but having no cart is not yet supported by ui/core,
      * so use another way of selecting boot device:

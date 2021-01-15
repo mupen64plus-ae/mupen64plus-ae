@@ -72,7 +72,7 @@ unsigned int vi_clock_from_tv_standard(m64p_system_type tv_standard);
 unsigned int vi_expected_refresh_rate_from_tv_standard(m64p_system_type tv_standard);
 void set_vi_vertical_interrupt(struct vi_controller* vi);
 
-void init_vi(struct vi_controller* vi, unsigned int clock, unsigned int expected_refresh_rate,
+void init_vi(struct vi_controller* vi, unsigned int clock, unsigned int expected_refresh_rate, int count_per_scanline_override,
              struct mi_controller* mi, struct rdp_core* dp);
 
 void poweron_vi(struct vi_controller* vi);

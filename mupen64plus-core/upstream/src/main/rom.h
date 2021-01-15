@@ -52,6 +52,7 @@ typedef struct _rom_params
    int disableextramem;
    unsigned int sidmaduration;
    unsigned int forcealignmentofpidma;
+   unsigned int countPerScanlineOverride;
 } rom_params;
 
 extern m64p_rom_header   ROM_HEADER;
@@ -129,6 +130,7 @@ typedef struct
    unsigned char biopak; /* 0 - No, 1 - Yes boolean for biopak support. */
    unsigned int sidmaduration;
    unsigned int forcealignmentofpidma;
+   unsigned int countPerScanlineOverride;
    uint32_t set_flags;
 } romdatabase_entry;
 
@@ -147,6 +149,7 @@ typedef struct
 #define ROMDATABASE_ENTRY_BIOPAK        BIT(11)
 #define ROMDATABASE_ENTRY_SIDMADURATION BIT(12)
 #define ROMDATABASE_ENTRY_FORCEALIGNMENTOFPIDMA BIT(13)
+#define ROMDATABASE_ENTRY_COUNTPERSCANLINEOVERRIDE BIT(14)
 
 typedef struct _romdatabase_search
 {

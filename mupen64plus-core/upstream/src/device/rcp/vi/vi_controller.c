@@ -30,6 +30,9 @@
 #include "main/main.h"
 #include "plugin/plugin.h"
 
+/** static (local) variables **/
+static uint32_t   l_countPerScanlineOverride = 0;
+
 unsigned int vi_clock_from_tv_standard(m64p_system_type tv_standard)
 {
     switch(tv_standard)
@@ -66,11 +69,12 @@ void set_vi_vertical_interrupt(struct vi_controller* vi)
     }
 }
 
-void init_vi(struct vi_controller* vi, unsigned int clock, unsigned int expected_refresh_rate,
+void init_vi(struct vi_controller* vi, unsigned int clock, unsigned int expected_refresh_rate, int count_per_scanline_override,
              struct mi_controller* mi, struct rdp_core* dp)
 {
     vi->clock = clock;
     vi->expected_refresh_rate = expected_refresh_rate;
+    l_countPerScanlineOverride = count_per_scanline_override;
     vi->mi = mi;
     vi->dp = dp;
 }
@@ -141,8 +145,13 @@ void write_vi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
             masked_write(&vi->regs[VI_V_SYNC_REG], value, mask);
             vi->count_per_scanline = (vi->clock / vi->expected_refresh_rate) / (vi->regs[VI_V_SYNC_REG] + 1);
 
+            if (l_countPerScanlineOverride > 0)
+            {
+                vi->count_per_scanline = l_countPerScanlineOverride;
+            }
+
             //Workaround for ROM hacks like Last impack
-            if(vi->count_per_scanline  < 1300)
+            if(vi->count_per_scanline  < 1300 || vi->count_per_scanline > 3000)
             {
                 vi->count_per_scanline = 1542;
             }
