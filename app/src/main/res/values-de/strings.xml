@@ -155,7 +155,7 @@
     <string name="screenCheats_summaryEnabled">Aktiviert</string>
     <string name="screenCheats_summaryDisabled">Deaktiviert</string>
     <string name="screenAdvanced_title">Erweitert</string>
-    <string name="screenAdvanced_CountPerOpTitle">Anzahl pro Arbeitsvorgang</string>
+    <string name="screenAdvanced_CountPerOp_title">Anzahl pro Arbeitsvorgang</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheatoptionen (lange drücken für Anmerkungen)</string>

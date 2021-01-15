@@ -179,7 +179,7 @@
     <string name="screenCheats_summaryEnabled">Enaouet</string>
     <string name="screenCheats_summaryDisabled">Lazhet</string>
     <string name="screenAdvanced_title">Araokaet</string>
-    <string name="screenAdvanced_CountPerOpTitle">Kont dre oberiadenn</string>
+    <string name="screenAdvanced_CountPerOp_title">Kont dre oberiadenn</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Dibarzhioù an truchadurioù (hirbouezit evit an notennoù)</string>

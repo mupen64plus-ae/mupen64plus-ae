@@ -150,7 +150,7 @@
     <string name="screenCheats_summaryEnabled">Включено</string>
     <string name="screenCheats_summaryDisabled">Отключено</string>
     <string name="screenAdvanced_title">Продвинутые</string>
-    <string name="screenAdvanced_CountPerOpTitle">Количество на операцию</string>
+    <string name="screenAdvanced_CountPerOp_title">Количество на операцию</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Настройки читов (долгое нажатие для заметок)</string>
