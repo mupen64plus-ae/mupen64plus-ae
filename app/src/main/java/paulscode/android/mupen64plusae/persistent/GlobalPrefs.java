@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
 
@@ -455,6 +456,8 @@ public class GlobalPrefs
             }
         }
         entries[0] = context.getString( R.string.localeOverride_entrySystemDefault );
+        values[0] = Resources.getSystem().getConfiguration().locale.getLanguage();
+
         mLocaleNames = entries;
         mLocaleCodes = values;
 
