@@ -221,7 +221,7 @@ CombinerProgramImpl * _readCombinerProgramFromStream(std::istream & _is,
 	const bool isRect = _cmbKey.isRectKey();
 	glsl::Utils::locateAttributes(program, isRect, cmbInputs.usesTexture());
 	glProgramBinary(program, binaryFormat, binary.data(), binaryLength);
-	if (!glsl::Utils::checkProgramLinkStatus(program)) {
+	if (!glsl::Utils::checkProgramLinkStatusRequired(program)) {
 		return nullptr;
 	}
 
