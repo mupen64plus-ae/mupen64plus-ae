@@ -771,8 +771,8 @@
     <string name="importExportActivity_importTouchscreenGraphics">Import Touchscreen Graphics</string>
     <string name="importExportActivity_invalidCustomSkinFile">Invalid touchscreen graphics skin file</string>
 
-    <!-- ROM unzipping -->
-    <string name="extractRomTask_title">Extracting ROM…</string>
+    <!-- ROM preparation -->
+    <string name="extractRomTask_title">Preparing game data…</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

@@ -599,7 +599,7 @@
     <string name="importExportActivity_invalidCustomSkinFile">Archivo de graficos de pantalla tactil no es válido</string>
 
     <!-- ROM unzipping -->
-    <string name="extractRomTask_title">Extracción de ROM…</string>
+    <string name="extractRomTask_title">Preparando datos del juego…</string>
 
     <!--ROM Scanning-->
     <string name="scanning_title">Escaneando…</string>
