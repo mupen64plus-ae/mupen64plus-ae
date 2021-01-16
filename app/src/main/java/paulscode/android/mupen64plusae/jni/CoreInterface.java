@@ -727,6 +727,14 @@ class CoreInterface
         }
     }
 
+    void usingNetplay(boolean isUsingNetplay) {
+        if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID) {
+            mAndroidAudioLibrary.usingNetplay(isUsingNetplay ? 1 : 0);
+        } else if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID_FP) {
+            mAndroidAudioLibraryFp.usingNetplay(isUsingNetplay ? 1 : 0);
+        }
+    }
+
     void emuAdvanceFrame()
     {
         mAeBridgeLibrary.resumeEmulator();

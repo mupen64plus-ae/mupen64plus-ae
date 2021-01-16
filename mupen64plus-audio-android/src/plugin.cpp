@@ -66,6 +66,7 @@ static int GameFreq = defaultFrequency;
 /* SpeedFactor is used to increase/decrease game playback speed */
 static unsigned int speed_factor = 100;
 static int samplingRateSelection = 0;
+static bool isUsingNetplay = 0;
 
 
 /* Definitions of pointers to Core config functions */
@@ -343,7 +344,7 @@ EXPORT void CALL AiLenChanged(void) {
     if (!l_PluginInit)
         return;
 
-    bool limiterEnabled = isSpeedLimiterEnabled();
+    bool limiterEnabled = isUsingNetplay || isSpeedLimiterEnabled();
 
     auto currentTime = std::chrono::steady_clock::now();
 
@@ -500,4 +501,8 @@ extern "C" EXPORT void CALL resumeEmulator(void) {
 
 extern "C" EXPORT void CALL setVolume(int volume) {
 	AudioHandler::get().setVolume(volume);
+}
+
+extern "C" EXPORT void CALL usingNetplay(int netplay) {
+    isUsingNetplay = netplay != 0;
 }

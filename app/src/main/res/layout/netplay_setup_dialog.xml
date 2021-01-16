@@ -25,6 +25,14 @@
             android:layout_height="wrap_content"
             android:contentDescription=""
             android:text="Connect Player 2" />
+
+        <Button
+            android:id="@+id/startEmulation"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription=""
+            android:text="Start Emulation" />
     </LinearLayout>
 
 </ScrollView>

@@ -509,7 +509,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
-                        "172.172.1.74", 51136);
+                        "172.172.1.22", 51136);
             }
 
             // Try running now in case the core service has already started
@@ -1274,6 +1274,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void connect(int player) {
         mCoreFragment.connectForNetplay(player);
+    }
+
+    @Override
+    public void start() {
+        mCoreFragment.startNetplay();
         mNetplayDialog.dismiss();
     }
 }

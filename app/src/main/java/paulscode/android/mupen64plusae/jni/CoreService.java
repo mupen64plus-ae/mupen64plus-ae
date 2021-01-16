@@ -160,6 +160,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     private final Object mWaitForNetPlay = new Object();
     private boolean mNetplayReady = false;
+    private boolean mUsingNetplay = false;
 
     //Service attributes
     private int mStartId;
@@ -362,8 +363,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void toggleFramelimiter()
     {
-        boolean state = mCoreInterface.emuGetFramelimiter();
-        mCoreInterface.emuSetFramelimiter( !state );
+        if (!mUsingNetplay) {
+            boolean state = mCoreInterface.emuGetFramelimiter();
+            mCoreInterface.emuSetFramelimiter( !state );
+        }
     }
 
     boolean getFramelimiter()
@@ -459,7 +462,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         Random rand = new Random();
 
         mCoreInterface.netplaySetController(player, rand.nextInt());
+    }
 
+    void startNetplay() {
         synchronized (mWaitForNetPlay) {
             mNetplayReady = true;
             mWaitForNetPlay.notify();
@@ -678,6 +683,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     }
 
                     if (netplayInitSuccess) {
+                        mUsingNetplay = true;
+                        mCoreInterface.emuSetFramelimiter(true);
+                        mCoreInterface.usingNetplay(true);
+
                         synchronized (mWaitForNetPlay) {
                             while (!mNetplayReady) {
                                 try {
@@ -744,7 +753,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
 
         mCoreInterface.closeRom();
-        mCoreInterface.emuShutdown();
+        //mCoreInterface.emuShutdown();
 
         mCoreInterface.closeNetplay();
     }

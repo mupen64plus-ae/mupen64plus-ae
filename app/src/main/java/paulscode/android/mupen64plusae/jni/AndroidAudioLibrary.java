@@ -16,4 +16,7 @@ public interface AndroidAudioLibrary extends Library {
 
     // Change volume
     void setVolume(int volume);
+
+    // Change volume
+    void usingNetplay(int volume);
 }

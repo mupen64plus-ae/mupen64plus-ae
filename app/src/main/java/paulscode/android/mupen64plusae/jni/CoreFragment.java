@@ -848,6 +848,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
+    public void startNetplay()
+    {
+        Log.i("CoreFragment", "startNetplay");
+
+        if (mCoreService != null)
+        {
+            mCoreService.startNetplay();
+        }
+    }
 
     public void shutdownEmulator()
     {

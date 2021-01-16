@@ -341,10 +341,7 @@ static uint32_t netplay_get_input(uint8_t control_id)
     uint32_t keys;
     netplay_process();
     netplay_request_input(control_id);
-/*
-	DebugMessage(M64MSG_ERROR, "Netplay: player=%d lag=%d buffer_size=%d target=%d",
-				 control_id, l_player_lag[control_id], buffer_size(control_id), l_buffer_target);
-*/
+
 	//l_buffer_target is set by the server upon registration
     //l_player_lag is how far behind we are from the lead player
     //buffer_size is the local buffer size

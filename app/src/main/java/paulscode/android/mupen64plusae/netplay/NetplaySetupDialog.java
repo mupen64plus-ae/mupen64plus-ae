@@ -20,12 +20,19 @@ public class NetplaySetupDialog extends DialogFragment
     public interface OnDialogActionListener {
         /**
          * Called when asked to connet
+         * @param player Player number, 1-4
          */
         void connect(int player);
+
+        /**
+         * Called when memulation is started
+         */
+        void start();
     }
     Button mConnectButtonPlayer1;
     Button mConnectButtonPlayer2;
-    
+    Button mStartEmulationButton;
+
     /**
      *
      * @return A cheat dialog
@@ -51,6 +58,7 @@ public class NetplaySetupDialog extends DialogFragment
 
         mConnectButtonPlayer1 = dialogView.findViewById(R.id.connectButtonPlayer1);
         mConnectButtonPlayer2 = dialogView.findViewById(R.id.connectButtonPlayer2);
+        mStartEmulationButton = dialogView.findViewById(R.id.startEmulation);
 
         //Time to create the dialog
         Builder builder = new Builder(requireActivity());
@@ -74,6 +82,17 @@ public class NetplaySetupDialog extends DialogFragment
             if (getActivity() instanceof OnDialogActionListener)
             {
                 ((OnDialogActionListener) getActivity()).connect(2);
+            }
+            else
+            {
+                Log.e("NetplaySetupDialog", "Activity doesn't implement onDialogActionListener");
+            }
+        });
+
+        mStartEmulationButton.setOnClickListener(v -> {
+            if (getActivity() instanceof OnDialogActionListener)
+            {
+                ((OnDialogActionListener) getActivity()).start();
             }
             else
             {
