@@ -568,7 +568,7 @@
     <string name="cheatNotes_title">Notas</string>
     <string name="cheatNotes_none">(no hay notas disponibles para este truco)</string>
     <!--Cheat Editor-->
-    <string name="menuItem_cheatEditor">Editor de trucos</string>cheatEditor_empty
+    <string name="menuItem_cheatEditor">Editor de trucos</string>
     <string name="cheatEditor_delete">Borrar truco</string>
     <string name="cheatEditor_confirm">¿Estás seguro?</string>
     <!--Hi-Res Texture Unpacking-->
