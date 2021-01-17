@@ -417,6 +417,10 @@ class NativeConfigFiles
     private static void putGLideN64Setting(ConfigFile mupenConfigFile, ConfigFile glideN64ConfigFile,
         GamePrefs game, String setting, String value)
     {
+        if (game.videoPluginLib != AppData.VideoPlugin.GLIDEN64) {
+            return;
+        }
+
         String headerNameURL = game.gameHeaderName;
 
         try {
@@ -439,10 +443,18 @@ class NativeConfigFiles
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
 
             // Use interpreter when FB Info API is enabled
-            if (game.videoPluginLib == AppData.VideoPlugin.GLIDEN64 && setting.equals("DisableFBInfo"))
+            if (setting.equals("DisableFBInfo"))
             {
                 mupenConfigFile.put( "Core", "R4300Emulator", "1" );
                 Log.i("NativeConfigFile", "Using interpreter due to FBInfo");
+            }
+
+            // If the config file requests native resolution factor, honor it unless
+            // the user has their own native resolution factor value s
+            if (setting.equals("UseNativeResolutionFactor")) {
+                if (!value.equals("0")) {
+                    mupenConfigFile.put( "Video-GLideN64", setting, value);
+                }
             }
 
             Log.i("NativeConfigFile", headerNameURL + " param(override)=" + setting + " value=" + glideN64settingValue);
