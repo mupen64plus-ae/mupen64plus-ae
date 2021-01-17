@@ -483,7 +483,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         mDrawerLayout.setOnHoverListener((v, event) -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mHandler.post(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW)));
+                mHandler.postDelayed(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GalleryActivity.this, PointerIcon.TYPE_ARROW)), 100);
             }
             return false;
         });

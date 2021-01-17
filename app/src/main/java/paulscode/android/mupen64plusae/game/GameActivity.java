@@ -456,7 +456,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mDrawerLayout.setOnHoverListener((v, event) -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mHandler.post(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GameActivity.this, PointerIcon.TYPE_ARROW)));
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mHandler.postDelayed(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GameActivity.this, PointerIcon.TYPE_ARROW)), 100);
+                } else {
+                    mHandler.postDelayed(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GameActivity.this, PointerIcon.TYPE_NULL)), 100);
+                }
             }
             return false;
         });
