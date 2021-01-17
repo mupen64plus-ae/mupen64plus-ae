@@ -287,9 +287,6 @@ public class GlobalPrefs
     /** The polygon offset to use. */
     public final float videoPolygonOffset;
 
-    /** Enable hack to fix up upside down screen in GLideN64 GLES 3.0 for some devices */
-    public final boolean enableBlitScreenWorkaround;
-
     /** Enable threading in GLideN64*/
     public final boolean threadedGLideN64;
 
@@ -610,7 +607,6 @@ public class GlobalPrefs
                 break;
         }
 
-        enableBlitScreenWorkaround = false;
         threadedGLideN64 = mPreferences.getBoolean( "threadedGLideN64", true );
         hybridTextureFilterGLideN64 = mPreferences.getBoolean( "hybridTextureFilter_v2", true );
 
