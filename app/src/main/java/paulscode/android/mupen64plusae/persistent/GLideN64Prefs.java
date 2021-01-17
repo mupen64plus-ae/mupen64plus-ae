@@ -172,7 +172,7 @@ public class GLideN64Prefs {
 
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
-        bilinearMode = emulationProfile.get( "bilinearMode", "True" ).equals( "False" );
+        bilinearMode = emulationProfile.get( "bilinearMode", "False" ).equals( "True" );
         enableHalosRemoval = emulationProfile.get( "enableHalosRemoval", "False" ).equals( "True" );
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         enableDitheringPattern = emulationProfile.get( "EnableDitheringPattern", "False" ).equals( "True" );
