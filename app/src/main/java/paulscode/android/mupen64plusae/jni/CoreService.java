@@ -669,7 +669,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             mCoreInterface.closeRom();
-            mCoreInterface.emuShutdown();
+            // Don't do this for now, it causes memory corruption
+            // mCoreInterface.emuShutdown();
 
             if(mListener != null)
             {
