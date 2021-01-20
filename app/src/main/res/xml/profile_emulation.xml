@@ -462,6 +462,11 @@
             android:summary="@string/gliden64_enable_coverage_summary"/>
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
+            android:key="EnableClipping"
+            android:title="@string/gliden64_enable_softclip_title"
+            android:summary="@string/gliden64_enable_softclip_summary"/>
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
             android:key="EnableLegacyBlending"
             android:summary="@string/gliden64_enable_legacy_blending_summary"
             android:title="@string/gliden64_enable_legacy_blending_title" />

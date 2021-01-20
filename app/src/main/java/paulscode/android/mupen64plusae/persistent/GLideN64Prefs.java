@@ -49,6 +49,9 @@ public class GLideN64Prefs {
     /** Enable pixel coverage calculation. Used for better blending emulation and wire-frame mode. Needs fast GPU. */
     public final boolean enableCoverage;
 
+    /** Enable software vertices clipping. Brings various benefits. */
+    public final boolean enableSoftClipping;
+
     /** Do not use shaders to emulate N64 blending modes. Works faster on slow GPU. Can cause glitches. */
     public final boolean enableLegacyBlending;
 
@@ -182,6 +185,7 @@ public class GLideN64Prefs {
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         enableCoverage = emulationProfile.get( "EnableCoverage", "False" ).equals( "True" );
+        enableSoftClipping = emulationProfile.get( "EnableClipping", "True" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
         backgroundMode = getSafeInt( emulationProfile, "BackgroundsMode", 0);
 
