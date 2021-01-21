@@ -961,6 +961,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         finish();
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK);
+        event.setSource(InputDevice.SOURCE_KEYBOARD);
+        onKey(mOverlay, KeyEvent.KEYCODE_BACK, event);
+    }
+
     /**
      * Handle view onKey callbacks
      * @param view If view is NULL then this keycode will not be handled by the key provider. This is to avoid
