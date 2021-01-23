@@ -106,7 +106,7 @@ void AudioHandler::initializeAudio(int _freq) {
 #endif
 
 	builder.setCallback(this);
-	if (builder.openManagedStream(mOutStream) == oboe::Result::OK) {
+	if (builder.openStream(mOutStream) == oboe::Result::OK) {
 
 		if (mOutStream->getAudioApi() == oboe::AudioApi::AAudio) {
 			mOutputFreq = mOutStream->getSampleRate();
@@ -114,8 +114,6 @@ void AudioHandler::initializeAudio(int _freq) {
 		}
 		DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz and buffer size %d", mOutputFreq,
 					 mOutStream->getFramesPerBurst());
-	} else {
-		mOutStream.reset(nullptr);
 	}
 
 	/* Create working buffer */

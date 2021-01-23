@@ -291,7 +291,7 @@ private:
 	soundtouch::SoundTouch mSoundTouch;
 
 	// Oboe audio stream
-	oboe::ManagedStream mOutStream;
+	std::shared_ptr<oboe::AudioStream> mOutStream;
 
 	// Memory pool used to store samples until they are processed by the
 	// sound processing thread
