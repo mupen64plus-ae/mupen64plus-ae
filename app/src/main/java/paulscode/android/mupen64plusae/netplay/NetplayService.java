@@ -24,11 +24,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,23 +35,17 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.documentfile.provider.DocumentFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.ImportExportActivity;
-import paulscode.android.mupen64plusae.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae.game.GameActivity;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.task.CopyToSdService;
-import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.netplay.room.NetplayRoomServer;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
@@ -71,15 +62,16 @@ public class NetplayService extends Service
 
     public static final String SERVICE_QUIT = "M64P_NETPLAY_SERVICE_QUIT";
 
-    private int mPort = 0;
-    
     private int mStartId;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private boolean mRunning = false;
     private UdpServer mUdpServer;
     private TcpServer mTcpServer;
+    private NetplayRoomServer mNetplayRoomService;
     OnFinishListener mOnFinishListener;
+
+    private String mRomMd5;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -112,8 +104,11 @@ public class NetplayService extends Service
 
             Log.i(TAG, "Netplay service started");
 
-            mUdpServer.setPort(mPort);
-            mTcpServer.setPort(mPort);
+            String deviceName = DeviceUtil.getDeviceName(getContentResolver());
+
+            mTcpServer.setPort(0);
+            mUdpServer.setPort(mTcpServer.getPort());
+            mNetplayRoomService = new NetplayRoomServer(getApplicationContext(), deviceName, mRomMd5, mTcpServer.getPort());
 
             mUdpServer.waitForServerToEnd();
             mTcpServer.waitForServerToEnd();
@@ -181,7 +176,7 @@ public class NetplayService extends Service
         {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                mPort = extras.getInt(ActivityHelper.Keys.NETPLAY_SERVER_PORT);
+                mRomMd5 = extras.getString(ActivityHelper.Keys.ROM_MD5);
             }
 
             String action = intent.getAction();

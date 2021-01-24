@@ -22,8 +22,11 @@ package paulscode.android.mupen64plusae.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.InputDevice;
@@ -66,6 +69,29 @@ public final class DeviceUtil
         result += "Model: " + Build.MODEL + "\n";
         result += "Product: " + Build.PRODUCT + "\n";
         return result;
+    }
+
+    public static String getDeviceName(ContentResolver resolver)
+    {
+        String deviceName = Settings.System.getString(resolver, "device_name");
+
+        if (deviceName == null) {
+            deviceName = Settings.Secure.getString(resolver, "bluetooth_name");
+        }
+
+        if (deviceName == null) {
+            deviceName = BluetoothAdapter.getDefaultAdapter().getName();
+        }
+
+        if (deviceName == null) {
+            deviceName = android.os.Build.MODEL;
+        }
+
+        if (deviceName == null) {
+            deviceName = "Unknown device";
+        }
+
+        return deviceName;
     }
     
     public static String getLogCat()

@@ -39,8 +39,7 @@ public class StartCoreServiceParams
     private boolean useRaphnetDevicesIfAvailable;
     private int videoRenderWidth;
     private int videoRenderHeight;
-    private String netplayHost;
-    private int netplayPort;
+    private boolean usingNetplay;
 
     public String getRomGoodName() {
         return romGoodName;
@@ -146,20 +145,12 @@ public class StartCoreServiceParams
         this.videoRenderHeight = videoRenderHeight;
     }
 
-    public String getNetplayHost() {
-        return netplayHost;
+    public void setUsingNetplay(boolean usingNetplay) {
+        this.usingNetplay = usingNetplay;
     }
 
-    public void setNetplayHost(String netplayHost) {
-        this.netplayHost = netplayHost;
-    }
-
-    public int getNetplayPort() {
-        return netplayPort;
-    }
-
-    public void setNetplayPort(int netplayHost) {
-        this.netplayPort = netplayHost;
+    public boolean isUsingNetplay() {
+        return this.usingNetplay;
     }
 
 }

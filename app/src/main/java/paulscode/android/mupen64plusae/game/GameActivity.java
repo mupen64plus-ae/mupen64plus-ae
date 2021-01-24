@@ -58,6 +58,7 @@ import android.widget.FrameLayout;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
@@ -77,7 +78,8 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
-import paulscode.android.mupen64plusae.netplay.NetplaySetupDialog;
+import paulscode.android.mupen64plusae.netplay.NetplayFragment;
+import paulscode.android.mupen64plusae.netplay.NetplayClientSetupDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -132,7 +134,7 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
-        NetplaySetupDialog.OnDialogActionListener
+        NetplayClientSetupDialog.OnDialogActionListener
 {
     private static final String TAG = "GameActivity";
     // Activity and views
@@ -163,6 +165,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
     private boolean mDoRestart = false;
+    private boolean mIsNetplayEnabled = false;
+    private boolean mIsNetplayServer = false;
     private boolean mForceExit = false;
 
     // App data and user preferences
@@ -177,13 +181,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
 
+    private static final String STATE_NETPLAY_FRAGMENT = "STATE_NETPLAY_FRAGMENT";
+    private NetplayFragment mNetplayFragment = null;
+
     private final boolean[] isControllerPlugged = new boolean[4];
 
     private static final String STATE_CURRENT_FPS = "STATE_CURRENT_FPS";
     private int currentFps = -1;
 
     private static final String STATE_NETPLAY_DIALOG = "STATE_NETPLAY_DIALOG";
-    private NetplaySetupDialog mNetplayDialog = null;
+    private NetplayClientSetupDialog mNetplayDialog = null;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -281,6 +288,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
         mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+        mIsNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
+        mIsNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
+
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             finish();
 
@@ -472,7 +482,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         hideSystemBars();
 
-        mNetplayDialog = (NetplaySetupDialog) fm.findFragmentByTag(STATE_NETPLAY_DIALOG);
+        mNetplayDialog = (NetplayClientSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_DIALOG);
     }
 
     @Override
@@ -502,6 +512,24 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onStart();
         Log.i(TAG, "onStart");
 
+        final FragmentManager fm = this.getSupportFragmentManager();
+
+        if (mIsNetplayEnabled && mIsNetplayServer) {
+            mNetplayFragment = (NetplayFragment) fm.findFragmentByTag(STATE_NETPLAY_FRAGMENT);
+
+            if(mNetplayFragment == null)
+            {
+                mNetplayFragment = new NetplayFragment();
+                fm.beginTransaction().add(mNetplayFragment, STATE_NETPLAY_FRAGMENT).commit();
+                mNetplayFragment.setRomMd5(mRomMd5);
+            }
+        }
+
+        if (mIsNetplayEnabled) {
+            mNetplayDialog = NetplayClientSetupDialog.newInstance(mRomMd5);
+            mNetplayDialog.show(fm, STATE_NETPLAY_DIALOG);
+        }
+
         if(mCoreFragment != null)
         {
             if (!mCoreFragment.IsInProgress()) {
@@ -509,7 +537,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
-                        "172.172.1.22", 51136);
+                        mIsNetplayEnabled);
             }
 
             // Try running now in case the core service has already started
@@ -709,16 +737,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mDrawerLayout.closeDrawer( GravityCompat.START );
             mOverlay.requestFocus();
-        }
-    }
-
-    @Override
-    public void onNetplayInit(boolean success) {
-
-        if (mNetplayDialog == null && success) {
-            final FragmentManager fm = getSupportFragmentManager();
-            mNetplayDialog = NetplaySetupDialog.newInstance();
-            mNetplayDialog.show(fm, STATE_NETPLAY_DIALOG);
         }
     }
 
@@ -1272,13 +1290,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    public void connect(int player) {
-        mCoreFragment.connectForNetplay(player);
+    public void connect(int regId, int player, InetAddress address, int port) {
+        mCoreFragment.connectForNetplay(regId, player, address, port);
+        mNetplayDialog.dismiss();
     }
 
     @Override
     public void start() {
         mCoreFragment.startNetplay();
-        mNetplayDialog.dismiss();
     }
 }

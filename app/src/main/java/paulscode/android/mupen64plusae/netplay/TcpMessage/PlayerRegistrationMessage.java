@@ -54,6 +54,7 @@ public class PlayerRegistrationMessage implements TcpMessage {
     public void process() throws IOException {
 
         TcpServer.PlayerData playerData = mTcpServer.getPlayerData(mPlayer);
+        mSendBuffer.reset();
 
         if (playerData == null) {
             //Only P1 can use mempak

@@ -12,6 +12,16 @@
         android:title="@string/actionStart_title"
         android:titleCondensed="@string/actionStart_summary"/>
     <item
+        android:id="@+id/menuItem_connectNetplayServer"
+        android:icon="@drawable/ic_users"
+        android:title="@string/actionConnectNetplay_title"
+        android:titleCondensed="@string/actionConnectNetplay_summary"/>
+    <item
+        android:id="@+id/menuItem_startNetplayServer"
+        android:icon="@drawable/ic_users"
+        android:title="@string/actionStartNetplay_title"
+        android:titleCondensed="@string/actionStartNetplay_summary"/>
+    <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menuItem_settings"/>

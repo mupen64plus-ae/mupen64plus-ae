@@ -160,6 +160,10 @@
     <string name="actionResume_summary">Start from last automatic save</string>
     <string name="actionStart_title">Start</string>
     <string name="actionStart_summary">Reset the game</string>
+    <string name="actionConnectNetplay_title">Connect netplay</string>
+    <string name="actionConnectNetplay_summary">Connect to a netplay server with this game.</string>
+    <string name="actionStartNetplay_title">Netplay server</string>
+    <string name="actionStartNetplay_summary">Start netplay server with this game.</string>
     <string name="actionRemove_title">Remove</string>
     <string name="actionRemove_summary">Remove from library</string>
     <string name="actionCreateShortcut_title">Create shortcut</string>
@@ -784,6 +788,7 @@
 
     <!-- Netplay -->
     <string name="startNetplay_title">Start Netplay</string>
+    <string name="netplayServers_title">Netplay Servers</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

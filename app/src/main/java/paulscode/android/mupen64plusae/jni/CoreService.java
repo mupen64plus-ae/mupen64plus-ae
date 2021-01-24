@@ -63,6 +63,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -103,12 +104,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
          * Called when the service has been destroyed
          */
         void onCoreServiceDestroyed();
-
-        /**
-         * Provides the current state of netplay initialization
-         * @param success True if netplay initialized successfully
-         */
-        void onNetplayInitComplete(boolean success);
     }
 
     interface LoadingDataListener
@@ -154,8 +149,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private byte mRomCountryCode = 0;
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
-    private String mNetplayHost = "";
-    private int mNetplayPort = 0;
     private PixelBuffer mPixelBuffer = null;
 
     private final Object mWaitForNetPlay = new Object();
@@ -458,10 +451,20 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.emuReset();
     }
 
-    void connectForNetplay(int player) {
-        Random rand = new Random();
+    void connectForNetplay(int regId, int player, InetAddress address, int port) {
 
-        mCoreInterface.netplaySetController(player, rand.nextInt());
+        boolean netplayInitSuccess = mCoreInterface.netplayInit(address.getHostAddress(), port);
+
+        if (netplayInitSuccess)
+        {
+            mCoreInterface.netplaySetController(player, regId);
+
+            mUsingNetplay = true;
+            mCoreInterface.emuSetFramelimiter(true);
+            mCoreInterface.usingNetplay(true);
+        }
+
+        Log.e(TAG, "Netplay init success=" + netplayInitSuccess);
     }
 
     void startNetplay() {
@@ -675,31 +678,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (loadingSuccess) {
 
-                if (mNetplayPort != 0) {
-                    boolean netplayInitSuccess = mCoreInterface.netplayInit(mNetplayHost, mNetplayPort);
+                if (mUsingNetplay) {
 
-                    if (mListener != null) {
-                        mListener.onNetplayInitComplete(netplayInitSuccess);
-                    }
-
-                    if (netplayInitSuccess) {
-                        mUsingNetplay = true;
-                        mCoreInterface.emuSetFramelimiter(true);
-                        mCoreInterface.usingNetplay(true);
-
-                        synchronized (mWaitForNetPlay) {
-                            while (!mNetplayReady) {
-                                try {
-                                    mWaitForNetPlay.wait();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                    synchronized (mWaitForNetPlay) {
+                        while (!mNetplayReady) {
+                            try {
+                                mWaitForNetPlay.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
                         }
-                    }
-                } else {
-                    if (mListener != null) {
-                        mListener.onNetplayInitComplete(false);
                     }
                 }
 
@@ -931,8 +919,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT, mVideoRenderHeight );
-        notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_SERVER_HOST, mNetplayHost );
-        notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_SERVER_PORT, mNetplayPort );
+        notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_ENABLED, mUsingNetplay );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -1003,8 +990,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
             mVideoRenderWidth = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_WIDTH );
             mVideoRenderHeight = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT );
-            mNetplayHost = extras.getString(ActivityHelper.Keys.NETPLAY_SERVER_HOST);
-            mNetplayPort =  extras.getInt( ActivityHelper.Keys.NETPLAY_SERVER_PORT );
+            mUsingNetplay = extras.getBoolean(ActivityHelper.Keys.NETPLAY_ENABLED);
 
             mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
                     CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );

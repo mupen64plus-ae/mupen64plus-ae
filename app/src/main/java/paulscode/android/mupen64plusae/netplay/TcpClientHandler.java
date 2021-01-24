@@ -12,23 +12,19 @@ import paulscode.android.mupen64plusae.netplay.TcpMessage.TcpMessage;
 
 public class TcpClientHandler {
 
-    Socket mSocket;
     Thread mClientThread;
     boolean mRunning = true;
     OutputStream mSocketOutputStream;
     InputStream mSocketInputStream;
     MessageFactory mMessageFactory;
 
-    TcpServer mServer;
     int mBufferTarget;
 
     TcpClientHandler(TcpServer server, int _buffer_target, Socket socket)
     {
-        Log.e("TcpClientHandler", "NEW CLIENT!!!");
+        Log.i("TcpClientHandler", "New client connected");
 
         mBufferTarget = _buffer_target;
-        mSocket = socket;
-        mServer = server;
 
         try {
             mSocketOutputStream = socket.getOutputStream();
@@ -45,16 +41,13 @@ public class TcpClientHandler {
     
     void runClient()
     {
-        Log.e("TcpClientHandler", "Client thread started");
-
-
         while (mRunning)
         {
             // First read the whole message
             try {
                 int id = mSocketInputStream.read();
 
-                Log.e("TcpClientHandler", "GOT MESSAGE WITH ID=" + id);
+                Log.i("TcpClientHandler", "Received message id=" + id);
 
                 if (id == -1) {
                     mRunning = false;

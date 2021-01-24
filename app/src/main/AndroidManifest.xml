@@ -9,11 +9,17 @@
     <uses-feature android:name="android.hardware.gamepad" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
@@ -348,6 +354,7 @@
         <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.netplay.NetplayService"
+            android:process=":EmulationProcess"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"

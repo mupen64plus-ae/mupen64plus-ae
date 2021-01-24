@@ -119,6 +119,10 @@
     <string name="actionResume_summary">Reanundar desde la ultima guarda automatica</string>
     <string name="actionStart_title">Iniciar</string>
     <string name="actionStart_summary">Iniciar el juego desde el comienzo</string>
+    <string name="actionConnectNetplay_title">Conectar netplay</string>
+    <string name="actionConnectNetplay_summary">Conectarse a un servidor de netplay con este juego.</string>
+    <string name="actionStartNetplay_title">Servidor de netplay</string>
+    <string name="actionStartNetplay_summary">Inicie un servidor de netplay con este juego.</string>
     <string name="actionRemove_title">Eliminar</string>
     <string name="actionRemove_summary">Eliminar de la librería</string>
     <string name="actionCreateShortcut_title">Crear acesso directo</string>
@@ -602,6 +606,7 @@
 
     <!-- Netplay -->
     <string name="startNetplay_title">Iniciar Netplay</string>
+    <string name="netplayServers_title">Servidores de Netplay</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

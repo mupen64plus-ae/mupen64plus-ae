@@ -81,7 +81,6 @@ import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.jni.CoreService;
-import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -106,7 +105,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_SIDEBAR = "STATE_SIDEBAR";
     private static final String STATE_FILE_TO_DELETE = "STATE_FILE_TO_DELETE";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT = "STATE_CACHE_ROM_INFO_FRAGMENT";
-    private static final String STATE_NETPLAY_FRAGMENT = "STATE_NETPLAY_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED = "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_SCROLL_TO_POSITION = "STATE_SCROLL_TO_POSITION";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
@@ -147,7 +145,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private boolean mDragging = false;
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
-    private NetplayFragment mNetplayFragment = null;
 
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
@@ -222,7 +219,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     displayName = goodName;
                 }
 
-                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, true );
+                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, true,
+                        false, false);
                 getIntent().replaceExtras((Bundle)null);
             }
         } else {
@@ -447,14 +445,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mCacheRomInfoFragment = new ScanRomsFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
-        }
-
-        mNetplayFragment = (NetplayFragment) fm.findFragmentByTag(STATE_NETPLAY_FRAGMENT);
-
-        if(mNetplayFragment == null)
-        {
-            mNetplayFragment = new NetplayFragment();
-            fm.beginTransaction().add(mNetplayFragment, STATE_NETPLAY_FRAGMENT).commit();
         }
 
         // Don't call the async version otherwise the scroll position is lost
@@ -718,7 +708,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, romDocFile == null ? "" : romDocFile.getName(), header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
                 launchGameActivity( romPathUri.toString(), null, computedMd5, header.crc, header.name,
-                        header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false );
+                        header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false,
+                        false, false);
             }
         }
 
@@ -730,10 +721,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
-        if (item.getItemId() == R.id.menuItem_startNetplay) {
-            mNetplayFragment.startNetplayServer(51136);
-            return true;
-        } else if (item.getItemId() == R.id.menuItem_refreshRoms) {
+        if (item.getItemId() == R.id.menuItem_refreshRoms) {
             Intent intent = new Intent(this, ScanRomsActivity.class);
             startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
             return true;
@@ -883,13 +871,29 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             launchGameActivity( item.romUri,
                     item.zipUri,
                     item.md5, item.crc, item.headerName,
-                    item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false );
+                    item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false,
+                    false, false);
         } else if (menuItem.getItemId() == R.id.menuItem_start) {
-            launchGameActivity( item.romUri,
+            launchGameActivity(item.romUri,
                     item.zipUri,
                     item.md5, item.crc,
                     item.headerName, item.countryCode.getValue(), item.artPath,
-                    item.goodName, item.displayName, true );
+                    item.goodName, item.displayName, true,
+                    false, false);
+        } else if (menuItem.getItemId() == R.id.menuItem_connectNetplayServer) {
+            launchGameActivity(item.romUri,
+                    item.zipUri,
+                    item.md5, item.crc,
+                    item.headerName, item.countryCode.getValue(), item.artPath,
+                    item.goodName, item.displayName, true,
+                    true, false);
+        } else if (menuItem.getItemId() == R.id.menuItem_startNetplayServer) {
+            launchGameActivity(item.romUri,
+                    item.zipUri,
+                    item.md5, item.crc,
+                    item.headerName, item.countryCode.getValue(), item.artPath,
+                    item.goodName, item.displayName, true,
+                    true, true);
         } else if (menuItem.getItemId() == R.id.menuItem_settings) {
             tagForRefreshNeeded();
             ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
@@ -1037,7 +1041,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         launchGameActivity( item.romUri, item.zipUri,
             item.md5, item.crc, item.headerName, item.countryCode.getValue(),
-            item.artPath, item.goodName, item.displayName, false );
+            item.artPath, item.goodName, item.displayName, false, false, false );
         return true;
     }
 
@@ -1240,7 +1244,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-            boolean isRestarting)
+            boolean isRestarting, boolean isNetplayEnabled, boolean isNetplayServer)
     {
         Log.i( "GalleryActivity", "launchGameActivity" );
 
@@ -1273,7 +1277,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mSelectedItem = null;
         // Launch the game activity
         ActivityHelper.startGameActivity(this, romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                romArtPath, romGoodName, romDisplayName, isRestarting);
+                romArtPath, romGoodName, romDisplayName, isRestarting, isNetplayEnabled, isNetplayServer);
     }
 
     @Override

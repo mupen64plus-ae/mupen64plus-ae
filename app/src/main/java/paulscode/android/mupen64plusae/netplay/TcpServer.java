@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@SuppressWarnings("SameParameterValue")
 public class TcpServer {
 
     public static class PlayerData {
@@ -100,15 +101,12 @@ public class TcpServer {
 
     void runTcpServer() {
 
-        Log.e("TcpServer", "STARTED TCP SERVER!!!");
-
         while (mRunning) {
             try {
-                Log.e("TcpServer", "WAITING FOR CLIENT");
                 mClients.add(new TcpClientHandler(this, mBufferTarget, mServerSocket.accept()));
-                Log.e("TcpServer", "GOT CLIENT");
             } catch (IOException e) {
                 e.printStackTrace();
+                mRunning = false;
             }
         }
     }
@@ -122,6 +120,11 @@ public class TcpServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    int getPort()
+    {
+        return mServerSocket.getLocalPort();
     }
 
     public int getBufferTarget()

@@ -41,6 +41,7 @@ import android.util.Log;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.net.InetAddress;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
@@ -87,12 +88,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          * Called when a game is saved or a save is loaded
          */
         void onSaveLoad();
-
-        /**
-         * Provides the current state of netplay initialization
-         * @param success True of initialization was complete
-         */
-        void onNetplayInit(boolean success);
     }
     
     private static final String TAG = "CoreFragment";
@@ -125,8 +120,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private boolean mUseRaphnetIfAvailable = false;
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
-    private String mNetplayHost = "";
-    private int mNetplayPort = 0;
+    private boolean mUsingNetplay = false;
 
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
@@ -229,14 +223,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     @Override
-    public void onNetplayInitComplete(boolean success) {
-        if(mCoreEventListener != null)
-        {
-            mCoreEventListener.onNetplayInit(success);
-        }
-    }
-
-    @Override
     public void loadingStarted()
     {
         try {
@@ -286,7 +272,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, String netplayHost, int netplayPort)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay)
     {
         Log.i(TAG, "startCore");
 
@@ -304,8 +290,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mUseRaphnetIfAvailable = globalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
         mVideoRenderWidth = videoRenderWidth;
         mVideoRenderHeight = videoRenderHeight;
-        mNetplayHost = netplayHost;
-        mNetplayPort = netplayPort;
+        mUsingNetplay = usingNetplay;
 
         if(!mIsRunning)
         {
@@ -330,7 +315,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                Log.e(TAG, service.getClass().getCanonicalName());
                 LocalBinder binder = (LocalBinder) service;
                 mCoreService = binder.getService();
 
@@ -360,8 +344,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
         params.setVideoRenderWidth(mVideoRenderWidth);
         params.setVideoRenderHeight(mVideoRenderHeight);
-        params.setNetplayHost(mNetplayHost);
-        params.setNetplayPort(mNetplayPort);
+        params.setUsingNetplay(mUsingNetplay);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
@@ -838,13 +821,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void connectForNetplay(int player)
+    public void connectForNetplay(int regId, int player, InetAddress address, int port)
     {
         Log.i("CoreFragment", "connectForNetplay");
 
         if (mCoreService != null)
         {
-            mCoreService.connectForNetplay(player);
+            mCoreService.connectForNetplay(regId, player, address, port);
         }
     }
 

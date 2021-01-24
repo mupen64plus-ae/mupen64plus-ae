@@ -23,18 +23,17 @@ package paulscode.android.mupen64plusae.netplay;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.CopyToSdFragment;
-import paulscode.android.mupen64plusae.jni.CoreService;
-import paulscode.android.mupen64plusae.task.CopyToSdService;
 
 @SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
 public class NetplayFragment extends Fragment implements NetplayService.OnFinishListener
@@ -43,7 +42,9 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
     private ServiceConnection mServiceConnection;
     private NetplayService mNetPlayService;
 
-    private int mServerPort = 0;
+    private String mRomMd5 = "";
+
+    private boolean mIsNetplayRunning = false;
 
     // this method is only called once for this fragment
     @Override
@@ -62,7 +63,6 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
             try {
                 Activity activity = requireActivity();
                 Intent intent = new Intent(activity, NetplayService.class);
-                activity.unbindService(mServiceConnection);
                 activity.stopService(intent);
 
             } catch (IllegalStateException e) {
@@ -73,14 +73,23 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
         super.onDestroy();
     }
 
-    public void startNetplayServer(int port )
+    public void setRomMd5(String romMd5)
     {
-        this.mServerPort = port;
+        mRomMd5 = romMd5;
+    }
+
+    public void startNetplayServer()
+    {
         try {
             actuallyStartNetplayService(requireActivity());
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isNetplayStarted()
+    {
+        return mIsNetplayRunning;
     }
     
     private void actuallyStartNetplayService(Activity activity)
@@ -104,10 +113,12 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
         };
 
         Intent intent = new Intent(activity.getApplicationContext(), NetplayService.class);
-        intent.putExtra(ActivityHelper.Keys.NETPLAY_SERVER_PORT, mServerPort);
+        intent.putExtra(ActivityHelper.Keys.ROM_MD5, mRomMd5);
 
         activity.getApplicationContext().startService(intent);
         activity.getApplicationContext().bindService(intent, mServiceConnection, 0);
+
+        mIsNetplayRunning = true;
     }
 
     @Override
@@ -124,5 +135,12 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        startNetplayServer();
     }
 }

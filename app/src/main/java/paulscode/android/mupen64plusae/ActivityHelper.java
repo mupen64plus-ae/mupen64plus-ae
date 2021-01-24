@@ -111,8 +111,8 @@ public class ActivityHelper
         public static final String FORCE_EXIT_GAME      = NAMESPACE + "FORCE_EXIT_GAME";
         public static final String VIDEO_RENDER_WIDTH   = NAMESPACE + "VIDEO_RENDER_WIDTH";
         public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
-        public static final String NETPLAY_SERVER_HOST  = NAMESPACE + "NETPLAY_SERVER_HOST";
-        public static final String NETPLAY_SERVER_PORT  = NAMESPACE + "NETPLAY_SERVER_PORT";
+        public static final String NETPLAY_ENABLED      = NAMESPACE + "NETPLAY_ENABLED";
+        public static final String NETPLAY_SERVER       = NAMESPACE + "NETPLAY_SERVER";
 
 
         //@formatter:on
@@ -192,7 +192,7 @@ public class ActivityHelper
         {
             Intent intent = new Intent( context, GalleryActivity.class );
             if( !TextUtils.isEmpty( data.getData().getPath() ) )
-                intent.putExtra( ActivityHelper.Keys.ROM_PATH, data.getData().getPath() );
+                intent.putExtra( Keys.ROM_PATH, data.getData().getPath() );
             context.startActivity( intent );
         }
         else
@@ -206,18 +206,20 @@ public class ActivityHelper
 
     static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                  boolean doRestart) {
+                                  boolean doRestart, boolean isNetplayEnabled, boolean isNetplayServer) {
         Intent intent = new Intent(activity, GameActivity.class);
-        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
-        intent.putExtra( ActivityHelper.Keys.ZIP_PATH, zipPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
-        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
-        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
-        intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
-        intent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, romDisplayName );
-        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
+        intent.putExtra( Keys.ROM_PATH, romPath );
+        intent.putExtra( Keys.ZIP_PATH, zipPath );
+        intent.putExtra( Keys.ROM_MD5, romMd5 );
+        intent.putExtra( Keys.ROM_CRC, romCrc );
+        intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( Keys.ROM_ART_PATH, romArtPath );
+        intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( Keys.ROM_DISPLAY_NAME, romDisplayName );
+        intent.putExtra( Keys.DO_RESTART, doRestart );
+        intent.putExtra( Keys.NETPLAY_ENABLED, isNetplayEnabled );
+        intent.putExtra( Keys.NETPLAY_SERVER, isNetplayServer );
         activity.startActivityForResult(intent, GAME_ACTIVITY_CODE);
     }
 
@@ -226,17 +228,19 @@ public class ActivityHelper
          boolean doRestart)
     {
         Intent intent = new Intent( context, GameActivity.class );
-        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
-        intent.putExtra( ActivityHelper.Keys.ZIP_PATH, zipPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
-        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
-        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
-        intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
-        intent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, romDisplayName );
-        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
+        intent.putExtra( Keys.ROM_PATH, romPath );
+        intent.putExtra( Keys.ZIP_PATH, zipPath );
+        intent.putExtra( Keys.ROM_MD5, romMd5 );
+        intent.putExtra( Keys.ROM_CRC, romCrc );
+        intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( Keys.ROM_ART_PATH, romArtPath );
+        intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( Keys.ROM_DISPLAY_NAME, romDisplayName );
+        intent.putExtra( Keys.DO_RESTART, doRestart );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra( Keys.NETPLAY_ENABLED, false );
+        intent.putExtra( Keys.NETPLAY_SERVER, false );
         context.startActivity( intent );
     }
     
@@ -293,7 +297,7 @@ public class ActivityHelper
         byte romCountryCode)
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
-        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( Keys.ROM_PATH, romPath );
         intent.putExtra( Keys.ROM_MD5, romMd5 );
         intent.putExtra( Keys.ROM_CRC, romCrc );
         intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
@@ -493,8 +497,7 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_ART_PATH, params.getRomArtPath());
         intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
         intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
-        intent.putExtra(Keys.NETPLAY_SERVER_HOST, params.getNetplayHost());
-        intent.putExtra(Keys.NETPLAY_SERVER_PORT, params.getNetplayPort());
+        intent.putExtra(Keys.NETPLAY_ENABLED, params.isUsingNetplay());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
