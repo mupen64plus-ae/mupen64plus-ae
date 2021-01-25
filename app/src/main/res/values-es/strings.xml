@@ -607,6 +607,7 @@
     <!-- Netplay -->
     <string name="startNetplay_title">Iniciar Netplay</string>
     <string name="netplayServers_title">Servidores de Netplay</string>
+    <string name="netplayClients_title">Jugadores</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

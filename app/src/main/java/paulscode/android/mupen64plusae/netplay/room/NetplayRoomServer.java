@@ -3,11 +3,9 @@ package paulscode.android.mupen64plusae.netplay.room;
 import android.content.Context;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import java.io.IOException;
@@ -21,9 +19,21 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.util.DeviceUtil;
+
 import static android.content.Context.WIFI_SERVICE;
 
 public class NetplayRoomServer {
+
+    public interface OnClientFound {
+
+        /**
+         * Called when a player registers
+         * @param playerNumber Player number
+         * @param deviceName Device name
+         */
+        void onClientRegistration(int playerNumber, String deviceName );
+    }
 
     static final String TAG = "NetplayRoomServer";
 
@@ -62,6 +72,9 @@ public class NetplayRoomServer {
     // Context for creating NSD service
     Context mContext;
 
+    // Called when a client is found
+    OnClientFound mOnClientFound;
+
     // List of clients
     ArrayList<NetplayRoomClientHandler> mClients = new ArrayList<>();
 
@@ -69,18 +82,19 @@ public class NetplayRoomServer {
     Set<Integer> mRegistrationIds = new HashSet<>();
 
     // Handler for registering for the NSD service repeatedly
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Constructor
      * @param serverPort Port in which the netplay server is listening on
      */
-    public NetplayRoomServer(Context context, String deviceName, String romMd5, int serverPort)
+    public NetplayRoomServer(Context context, String deviceName, String romMd5, int serverPort, OnClientFound onClientFound)
     {
         mContext = context;
         mDeviceName = deviceName;
         mRomMd5 = romMd5;
         mServerPort = serverPort;
+        mOnClientFound = onClientFound;
         mNsdServiceName = DEFAULT_SERVICE_NAME;
 
         NetplayRoomClientHandler.resetPlayers();
@@ -134,7 +148,7 @@ public class NetplayRoomServer {
         serviceInfo.setServiceName(mNsdServiceName);
         serviceInfo.setServiceType(DEFAULT_SERVICE_TYPE);
         serviceInfo.setPort(mServerSocket.getLocalPort());
-        serviceInfo.setHost(wifiIpAddress(mContext));
+        serviceInfo.setHost(DeviceUtil.wifiIpAddress(mContext));
         serviceInfo.setAttribute("dummy", "dummy");
 
         Log.i(TAG, "NS registering: " + serviceInfo.toString());
@@ -153,29 +167,7 @@ public class NetplayRoomServer {
         }
     }
 
-    private static InetAddress wifiIpAddress(Context context) {
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
-        int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
-
-        // Convert little-endian to big-endianif needed
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ipAddress = Integer.reverseBytes(ipAddress);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-
-        InetAddress ipInetAddress;
-        try {
-            ipInetAddress = InetAddress.getByAddress(ipByteArray);
-        } catch (UnknownHostException ex) {
-            Log.e(TAG, "Unable to get host address.");
-            ipInetAddress = null;
-        }
-
-        return ipInetAddress;
-    }
-
-    void runTcpServer() {
+    private void runTcpServer() {
 
         Log.i(TAG, "Started Room TCP server");
         Random rand = new Random();
@@ -190,7 +182,8 @@ public class NetplayRoomServer {
 
                 mRegistrationIds.add(regId);
 
-                mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, regId, mServerPort, mServerSocket.accept()));
+                mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, regId, mServerPort, mServerSocket.accept(),
+                        (playerNumber, deviceName) -> mOnClientFound.onClientRegistration(playerNumber, deviceName)));
             } catch (IOException e) {
                 e.printStackTrace();
                 mRunning = false;
@@ -198,16 +191,26 @@ public class NetplayRoomServer {
         }
     }
 
-    void start()
+    public int registerPlayerOne()
+    {
+        Random rand = new Random();
+
+        int regId = rand.nextInt();
+        mRegistrationIds.add(regId);
+
+        return regId;
+    }
+
+    public void start()
     {
         for (NetplayRoomClientHandler client : mClients) {
-            client.sendStart();
+            client.sendStartAsync();
         }
 
         stopServer();
     }
 
-    void stopServer()
+    public void stopServer()
     {
         mRunning = false;
         try {

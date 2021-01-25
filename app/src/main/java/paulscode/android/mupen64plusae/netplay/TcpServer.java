@@ -103,6 +103,7 @@ public class TcpServer {
 
         while (mRunning) {
             try {
+                Log.e("TcpServer", "Listening for messages in port " + mServerSocket.getLocalPort());
                 mClients.add(new TcpClientHandler(this, mBufferTarget, mServerSocket.accept()));
             } catch (IOException e) {
                 e.printStackTrace();

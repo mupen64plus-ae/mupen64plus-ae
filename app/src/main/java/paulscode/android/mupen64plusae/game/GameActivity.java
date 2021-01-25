@@ -80,6 +80,7 @@ import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.netplay.NetplayClientSetupDialog;
+import paulscode.android.mupen64plusae.netplay.NetplayServerSetupDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -134,7 +135,8 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
-        NetplayClientSetupDialog.OnDialogActionListener
+        NetplayClientSetupDialog.OnServerDialogActionListener,
+        NetplayServerSetupDialog.OnClientDialogActionListener, NetplayFragment.NetplayListener
 {
     private static final String TAG = "GameActivity";
     // Activity and views
@@ -168,6 +170,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private boolean mIsNetplayEnabled = false;
     private boolean mIsNetplayServer = false;
     private boolean mForceExit = false;
+    private int mServerPort = 0;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -189,8 +192,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_CURRENT_FPS = "STATE_CURRENT_FPS";
     private int currentFps = -1;
 
-    private static final String STATE_NETPLAY_DIALOG = "STATE_NETPLAY_DIALOG";
-    private NetplayClientSetupDialog mNetplayDialog = null;
+    private static final String STATE_NETPLAY_CLIENT_DIALOG = "STATE_NETPLAY_CLIENT_DIALOG";
+    private NetplayClientSetupDialog mNetplayClientDialog = null;
+
+    private static final String STATE_NETPLAY_SERVER_DIALOG = "STATE_NETPLAY_SERVER_DIALOG";
+    private NetplayServerSetupDialog mNetplayServerDialog = null;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -482,7 +488,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         hideSystemBars();
 
-        mNetplayDialog = (NetplayClientSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_DIALOG);
+        mNetplayClientDialog = (NetplayClientSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_CLIENT_DIALOG);
+        mNetplayServerDialog = (NetplayServerSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_SERVER_DIALOG);
     }
 
     @Override
@@ -521,13 +528,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             {
                 mNetplayFragment = new NetplayFragment();
                 fm.beginTransaction().add(mNetplayFragment, STATE_NETPLAY_FRAGMENT).commit();
-                mNetplayFragment.setRomMd5(mRomMd5);
             }
-        }
-
-        if (mIsNetplayEnabled) {
-            mNetplayDialog = NetplayClientSetupDialog.newInstance(mRomMd5);
-            mNetplayDialog.show(fm, STATE_NETPLAY_DIALOG);
         }
 
         if(mCoreFragment != null)
@@ -945,6 +946,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mOverlay.requestFocus();
         mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
 
+        if (mIsNetplayEnabled) {
+            final FragmentManager fm = this.getSupportFragmentManager();
+
+            if (mIsNetplayServer && mNetplayServerDialog == null) {
+
+                mNetplayServerDialog = NetplayServerSetupDialog.newInstance(mRomMd5, mServerPort);
+                mNetplayServerDialog.show(fm, STATE_NETPLAY_SERVER_DIALOG);
+            }
+
+            if (!mIsNetplayServer && mNetplayClientDialog == null) {
+                mNetplayClientDialog = NetplayClientSetupDialog.newInstance(mRomMd5);
+                mNetplayClientDialog.show(fm, STATE_NETPLAY_CLIENT_DIALOG);
+            }
+        }
+
         if(mShouldExit)
         {
             mCoreFragment.shutdownEmulator();
@@ -1292,11 +1308,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void connect(int regId, int player, InetAddress address, int port) {
         mCoreFragment.connectForNetplay(regId, player, address, port);
-        mNetplayDialog.dismiss();
     }
 
     @Override
     public void start() {
         mCoreFragment.startNetplay();
+
+        if (mIsNetplayServer && mNetplayServerDialog != null) {
+            mNetplayServerDialog.dismiss();
+        }
+
+        if (!mIsNetplayServer && mNetplayClientDialog != null) {
+            mNetplayClientDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onPortObtained(int port) {
+        mServerPort = port;
     }
 }

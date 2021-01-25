@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.netplay.TcpMessage;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -35,6 +37,14 @@ public class SettingsUpdateMessage implements TcpMessage {
         mSettings.mSiDmADuration = mReceiveBuffer.getInt();
         mSettings.mEmuMode = mReceiveBuffer.getInt();
         mSettings.mNoCompiledJump = mReceiveBuffer.getInt();
+
+        Log.e("Netplay", "GOT SETTINGS: count_per_op=" + mSettings.mCountPerOp +
+                " disable_extra_mem=" + mSettings.mDisableExtraMem +
+                " si_dma_duration=" + mSettings.mSiDmADuration +
+                " emu_mode=" + mSettings.mEmuMode +
+                " no_compiled_jump=" + mSettings.mNoCompiledJump
+
+        );
     }
 
     @Override

@@ -25,20 +25,28 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.input.map.AxisMap;
+
+import static android.content.Context.WIFI_SERVICE;
 
 public final class DeviceUtil
 {
@@ -92,6 +100,28 @@ public final class DeviceUtil
         }
 
         return deviceName;
+    }
+
+    public static InetAddress wifiIpAddress(Context context) {
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
+        int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+
+        // Convert little-endian to big-endianif needed
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ipAddress = Integer.reverseBytes(ipAddress);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
+
+        InetAddress ipInetAddress;
+        try {
+            ipInetAddress = InetAddress.getByAddress(ipByteArray);
+        } catch (UnknownHostException ex) {
+            Log.e("DeviceInfo", "Unable to get host address.");
+            ipInetAddress = null;
+        }
+
+        return ipInetAddress;
     }
     
     public static String getLogCat()

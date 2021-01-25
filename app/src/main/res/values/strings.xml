@@ -789,6 +789,7 @@
     <!-- Netplay -->
     <string name="startNetplay_title">Start Netplay</string>
     <string name="netplayServers_title">Netplay Servers</string>
+    <string name="netplayClients_title">Players</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

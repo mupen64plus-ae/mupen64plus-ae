@@ -13,6 +13,16 @@ import java.util.Arrays;
 
 class NetplayRoomClientHandler
 {
+    public interface OnClientRegistered {
+
+        /**
+         * Called when a player registers
+         * @param playerNumber Player number
+         * @param deviceName Device name
+         */
+        void onClientRegistration(int playerNumber, String deviceName );
+    }
+
     static final String TAG = "ClientHandler";
 
     static final int ID_GET_ROOM_DATA = 0;
@@ -28,27 +38,33 @@ class NetplayRoomClientHandler
     static final int DEVICE_NAME_MAX = 30;
     static final int ROM_MD5_MAX = 33;
 
+    static final int MAX_PLAYERS = 4;
+
     String mDeviceName;
+    String mClientDeviceName = "";
     String mRomMd5;
     int mRegId;
     static int mPlayerNumber = 0;
     int mServerPort;
-    String mClientDeviceName;
+
+    OnClientRegistered mOnClientRegistered;
+
     Thread mClientThread;
     boolean mRunning = true;
+    final Object mSocketOutputSync = new Object();
     OutputStream mSocketOutputStream;
     InputStream mSocketInputStream;
 
     ByteBuffer mSendBuffer = ByteBuffer.allocate(100);
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate(100);
 
-    NetplayRoomClientHandler(String deviceName, String romMd5, int regId, int serverPort, Socket socket)
+    NetplayRoomClientHandler(String deviceName, String romMd5, int regId, int serverPort, Socket socket, OnClientRegistered onClientRegistered)
     {
         mDeviceName = deviceName;
         mRomMd5 = romMd5;
         mRegId = regId;
         mServerPort = serverPort;
-        mClientDeviceName = "";
+        mOnClientRegistered = onClientRegistered;
 
         mSendBuffer.order(ByteOrder.BIG_ENDIAN);
         mSendBuffer.mark();
@@ -69,31 +85,34 @@ class NetplayRoomClientHandler
 
     private void handleGetRoomData() throws IOException
     {
-        mSendBuffer.reset();
-        // Message id
-        mSendBuffer.putInt(ID_SEND_ROOM_DATA);
+        synchronized (mSocketOutputSync) {
+            mSendBuffer.reset();
+            // Message id
+            mSendBuffer.putInt(ID_SEND_ROOM_DATA);
 
-        // Device name, 30 bytes
-        byte[] deviceNameBytes = mDeviceName.getBytes(StandardCharsets.ISO_8859_1);
-        byte[] sendDeviceNameBytes = new byte[DEVICE_NAME_MAX];
-        Arrays.fill(sendDeviceNameBytes, (byte)0);
-        System.arraycopy(deviceNameBytes, 0, sendDeviceNameBytes, 0, Math.min(deviceNameBytes.length, sendDeviceNameBytes.length));
-        sendDeviceNameBytes[sendDeviceNameBytes.length-1] = 0;
-        mSendBuffer.put(sendDeviceNameBytes, 0, sendDeviceNameBytes.length);
+            // Device name, 30 bytes
+            byte[] deviceNameBytes = mDeviceName.getBytes(StandardCharsets.ISO_8859_1);
+            byte[] sendDeviceNameBytes = new byte[DEVICE_NAME_MAX];
+            Arrays.fill(sendDeviceNameBytes, (byte)0);
+            System.arraycopy(deviceNameBytes, 0, sendDeviceNameBytes, 0, Math.min(deviceNameBytes.length, sendDeviceNameBytes.length));
+            sendDeviceNameBytes[sendDeviceNameBytes.length-1] = 0;
+            mSendBuffer.put(sendDeviceNameBytes, 0, sendDeviceNameBytes.length);
 
-        // Rom MD5, 33 bytes
-        byte[] romMd5Bytes = mRomMd5.getBytes(StandardCharsets.ISO_8859_1);
-        byte[] sendRomMd5Bytes = new byte[ROM_MD5_MAX];
-        System.arraycopy(romMd5Bytes, 0, sendRomMd5Bytes, 0, Math.min(romMd5Bytes.length, sendRomMd5Bytes.length));
-        sendRomMd5Bytes[sendRomMd5Bytes.length-1] = 0;
-        mSendBuffer.put(sendRomMd5Bytes, 0, sendRomMd5Bytes.length);
+            // Rom MD5, 33 bytes
+            byte[] romMd5Bytes = mRomMd5.getBytes(StandardCharsets.ISO_8859_1);
+            byte[] sendRomMd5Bytes = new byte[ROM_MD5_MAX];
+            System.arraycopy(romMd5Bytes, 0, sendRomMd5Bytes, 0, Math.min(romMd5Bytes.length, sendRomMd5Bytes.length));
+            sendRomMd5Bytes[sendRomMd5Bytes.length-1] = 0;
+            mSendBuffer.put(sendRomMd5Bytes, 0, sendRomMd5Bytes.length);
 
-        mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+            mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+        }
     }
 
     public synchronized static void resetPlayers()
     {
-        mPlayerNumber = 0;
+        // First player is reserved for server
+        mPlayerNumber = 1;
     }
 
     private synchronized static int getNextPlayer()
@@ -114,30 +133,63 @@ class NetplayRoomClientHandler
             offset += bytesRead != -1 ? bytesRead : 0;
         }
 
-        mClientDeviceName = new String(receiveDeviceNameBytes);
+        int deviceNameEnd = 0;
+        while (deviceNameEnd < receiveDeviceNameBytes.length && receiveDeviceNameBytes[deviceNameEnd] != 0) {
+            ++deviceNameEnd;
+        }
 
-        mSendBuffer.reset();
-        // Message id
-        mSendBuffer.putInt(ID_SEND_REGISTRATION_DATA);
-        // Registration id
-        mSendBuffer.putInt(mRegId);
-        // Player number
-        int playerNumber = getNextPlayer();
-        mSendBuffer.putInt(playerNumber);
-        // Server port
-        mSendBuffer.putInt(mServerPort);
-        mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+        mClientDeviceName = new String(receiveDeviceNameBytes, 0, deviceNameEnd, StandardCharsets.ISO_8859_1);
+
+        synchronized (mSocketOutputSync) {
+
+            // Player number
+            int playerNumber = getNextPlayer();
+
+            if (playerNumber <= MAX_PLAYERS) {
+                mSendBuffer.reset();
+                // Message id
+                mSendBuffer.putInt(ID_SEND_REGISTRATION_DATA);
+                // Registration id
+                mSendBuffer.putInt(mRegId);
+                mSendBuffer.putInt(playerNumber);
+                // Server port
+                mSendBuffer.putInt(mServerPort);
+
+                mOnClientRegistered.onClientRegistration(playerNumber, mClientDeviceName);
+            } else {
+                // Stop accepting registrations
+                mSendBuffer.reset();
+                // Message id
+                mSendBuffer.putInt(0);
+                // Registration id
+                mSendBuffer.putInt(0);
+                mSendBuffer.putInt(0);
+                // Server port
+                mSendBuffer.putInt(0);
+            }
+            mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+        }
     }
 
-    public void sendStart()
-    {
-        mSendBuffer.reset();
-        mSendBuffer.putInt(ID_SEND_START_PLAY);
+    public void sendStartAsync() {
+        // Must run on a separate thread, running network operation on the main
+        // thread leads to NetworkOnMainThreadException exceptions
+        Thread registerThread = new Thread(this::sendStart);
+        registerThread.setDaemon(true);
+        registerThread.start();
+    }
 
-        try {
-            mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void sendStart()
+    {
+        synchronized (mSocketOutputSync) {
+            mSendBuffer.reset();
+            mSendBuffer.putInt(ID_SEND_START_PLAY);
+
+            try {
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -178,5 +230,8 @@ class NetplayRoomClientHandler
                 break;
             }
         }
+
+
+        Log.i(TAG, "Socket has been closed");
     }
 }

@@ -464,7 +464,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mCoreInterface.usingNetplay(true);
         }
 
-        Log.e(TAG, "Netplay init success=" + netplayInitSuccess);
+        if (!netplayInitSuccess) {
+            Log.e(TAG, "Netplay init success=" + netplayInitSuccess + " host=" + address.getHostAddress() + " port=" + port);
+        }
     }
 
     void startNetplay() {
@@ -741,9 +743,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
 
         mCoreInterface.closeRom();
-        //mCoreInterface.emuShutdown();
 
-        mCoreInterface.closeNetplay();
+        // Both of these commands cause crashes in the core
+        //mCoreInterface.emuShutdown();
+        //mCoreInterface.closeNetplay();
     }
 
     private void copyGameContentsFromSdCard()

@@ -4,5 +4,5 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:longClickable="true"
+    android:longClickable="false"
     xmlns:android="http://schemas.android.com/apk/res/android" />

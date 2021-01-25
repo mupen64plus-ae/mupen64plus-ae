@@ -33,16 +33,19 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
-
 @SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
-public class NetplayFragment extends Fragment implements NetplayService.OnFinishListener
+public class NetplayFragment extends Fragment implements NetplayService.NetplayServiceListener
 {
+    public interface NetplayListener {
+        /**
+         * Called once a port is obtained
+         * @param port Obtained port number
+         */
+        void onPortObtained(int port);
+    }
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
     private NetplayService mNetPlayService;
-
-    private String mRomMd5 = "";
 
     private boolean mIsNetplayRunning = false;
 
@@ -71,11 +74,6 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
         }
         
         super.onDestroy();
-    }
-
-    public void setRomMd5(String romMd5)
-    {
-        mRomMd5 = romMd5;
     }
 
     public void startNetplayServer()
@@ -113,12 +111,25 @@ public class NetplayFragment extends Fragment implements NetplayService.OnFinish
         };
 
         Intent intent = new Intent(activity.getApplicationContext(), NetplayService.class);
-        intent.putExtra(ActivityHelper.Keys.ROM_MD5, mRomMd5);
-
         activity.getApplicationContext().startService(intent);
         activity.getApplicationContext().bindService(intent, mServiceConnection, 0);
 
         mIsNetplayRunning = true;
+    }
+
+    @Override
+    public void onPortObtained(int port) {
+
+        try {
+            Activity activity = requireActivity();
+
+            if (activity instanceof NetplayListener) {
+                NetplayListener listner = (NetplayListener)activity;
+                listner.onPortObtained(port);
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

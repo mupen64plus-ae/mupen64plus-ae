@@ -28,14 +28,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -43,17 +41,19 @@ import androidx.core.app.NotificationCompat;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.netplay.room.NetplayRoomServer;
-import paulscode.android.mupen64plusae.util.DeviceUtil;
-
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
 {
-    public interface OnFinishListener
+    public interface NetplayServiceListener
     {
         /**
-         * Will be called once extraction finishes
+         * Will be called once a tcp server port is obtained
+         * @param port The port that was obtained
+         */
+        void onPortObtained(int port);
+
+        /**
+         * Will be called once the service finishes
          */
         void onFinish();
     }
@@ -68,10 +68,7 @@ public class NetplayService extends Service
     private boolean mRunning = false;
     private UdpServer mUdpServer;
     private TcpServer mTcpServer;
-    private NetplayRoomServer mNetplayRoomService;
-    OnFinishListener mOnFinishListener;
-
-    private String mRomMd5;
+    NetplayServiceListener mNetplayServiceListener;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -104,11 +101,9 @@ public class NetplayService extends Service
 
             Log.i(TAG, "Netplay service started");
 
-            String deviceName = DeviceUtil.getDeviceName(getContentResolver());
-
             mTcpServer.setPort(0);
+            mNetplayServiceListener.onPortObtained(mTcpServer.getPort());
             mUdpServer.setPort(mTcpServer.getPort());
-            mNetplayRoomService = new NetplayRoomServer(getApplicationContext(), deviceName, mRomMd5, mTcpServer.getPort());
 
             mUdpServer.waitForServerToEnd();
             mTcpServer.waitForServerToEnd();
@@ -116,7 +111,7 @@ public class NetplayService extends Service
             Log.i(TAG, "Netplay service finished");
             mRunning = false;
 
-            mOnFinishListener.onFinish();
+            mNetplayServiceListener.onFinish();
         }
     }
 
@@ -174,11 +169,6 @@ public class NetplayService extends Service
 
         if(intent != null)
         {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                mRomMd5 = extras.getString(ActivityHelper.Keys.ROM_MD5);
-            }
-
             String action = intent.getAction();
             boolean quitMessage = action != null && action.equals(SERVICE_QUIT);
 
@@ -199,9 +189,9 @@ public class NetplayService extends Service
         return mBinder;
     }
 
-    public void startListening(OnFinishListener onFinishListener)
+    public void startListening(NetplayServiceListener netplayServiceListener)
     {
-        mOnFinishListener = onFinishListener;
+        mNetplayServiceListener = netplayServiceListener;
 
         if (!mRunning) {
             // For each start request, send a message to start a job and deliver the

@@ -68,6 +68,9 @@ public class NetplayRoomServerHandler {
     // Output socket stream
     OutputStream mSocketOutputStream;
 
+    // Output socket synchronization object
+    final Object mSocketOutputSync = new Object();
+
     // Input socket stream
     InputStream mSocketInputStream;
 
@@ -170,7 +173,7 @@ public class NetplayRoomServerHandler {
         mOnServerRoomData.onServerRegistration(regId, playerNumber, mClientSocket.getInetAddress(), serverPort);
     }
 
-    private void handleStart() throws IOException
+    private void handleStart()
     {
         if (mRegisteredToRoom) {
             mOnServerRoomData.onServerStartGame();
@@ -181,13 +184,15 @@ public class NetplayRoomServerHandler {
     {
         Log.i(TAG, "Requesting room data");
 
-        if (mSocketOutputStream != null) {
-            try {
-                mSendBuffer.reset();
-                mSendBuffer.putInt(NetplayRoomClientHandler.ID_GET_ROOM_DATA);
-                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-            } catch (IOException e) {
-                e.printStackTrace();
+        synchronized (mSocketOutputSync) {
+            if (mSocketOutputStream != null) {
+                try {
+                    mSendBuffer.reset();
+                    mSendBuffer.putInt(NetplayRoomClientHandler.ID_GET_ROOM_DATA);
+                    mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -200,26 +205,29 @@ public class NetplayRoomServerHandler {
         registerThread.start();
     }
 
-    synchronized private void registerToRoom()
+    private void registerToRoom()
     {
         Log.i(TAG, "Requesting room registration");
 
-        try {
-            mRegisteredToRoom = true;
-            mSendBuffer.reset();
-            mSendBuffer.putInt(NetplayRoomClientHandler.ID_REGISTER_TO_ROOM);
+        synchronized (mSocketOutputSync) {
 
-            // Device name, 30 bytes
-            byte[] deviceNameBytes = mDeviceName.getBytes(StandardCharsets.ISO_8859_1);
-            byte[] sendDeviceNameBytes = new byte[NetplayRoomClientHandler.DEVICE_NAME_MAX];
-            Arrays.fill(sendDeviceNameBytes, (byte)0);
-            System.arraycopy(deviceNameBytes, 0, sendDeviceNameBytes, 0, Math.min(deviceNameBytes.length, sendDeviceNameBytes.length));
-            sendDeviceNameBytes[sendDeviceNameBytes.length-1] = 0;
-            mSendBuffer.put(sendDeviceNameBytes, 0, sendDeviceNameBytes.length);
+            try {
+                mRegisteredToRoom = true;
+                mSendBuffer.reset();
+                mSendBuffer.putInt(NetplayRoomClientHandler.ID_REGISTER_TO_ROOM);
 
-            mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-        } catch (IOException e) {
-            e.printStackTrace();
+                // Device name, 30 bytes
+                byte[] deviceNameBytes = mDeviceName.getBytes(StandardCharsets.ISO_8859_1);
+                byte[] sendDeviceNameBytes = new byte[NetplayRoomClientHandler.DEVICE_NAME_MAX];
+                Arrays.fill(sendDeviceNameBytes, (byte) 0);
+                System.arraycopy(deviceNameBytes, 0, sendDeviceNameBytes, 0, Math.min(deviceNameBytes.length, sendDeviceNameBytes.length));
+                sendDeviceNameBytes[sendDeviceNameBytes.length - 1] = 0;
+                mSendBuffer.put(sendDeviceNameBytes, 0, sendDeviceNameBytes.length);
+
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
