@@ -185,7 +185,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private CoreFragment mCoreFragment = null;
 
     private static final String STATE_NETPLAY_FRAGMENT = "STATE_NETPLAY_FRAGMENT";
-    private NetplayFragment mNetplayFragment = null;
 
     private final boolean[] isControllerPlugged = new boolean[4];
 
@@ -522,12 +521,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final FragmentManager fm = this.getSupportFragmentManager();
 
         if (mIsNetplayEnabled && mIsNetplayServer) {
-            mNetplayFragment = (NetplayFragment) fm.findFragmentByTag(STATE_NETPLAY_FRAGMENT);
+            NetplayFragment netplayFragment = (NetplayFragment) fm.findFragmentByTag(STATE_NETPLAY_FRAGMENT);
 
-            if(mNetplayFragment == null)
+            if(netplayFragment == null)
             {
-                mNetplayFragment = new NetplayFragment();
-                fm.beginTransaction().add(mNetplayFragment, STATE_NETPLAY_FRAGMENT).commit();
+                netplayFragment = new NetplayFragment();
+                fm.beginTransaction().add(netplayFragment, STATE_NETPLAY_FRAGMENT).commit();
             }
         }
 

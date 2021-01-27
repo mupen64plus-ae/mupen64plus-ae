@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -51,7 +52,11 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     private final ArrayList<NetplayServer> mServers = new ArrayList<>();
 
-    NetplayRoomClient roomClient;
+    private NetplayRoomClient mRoomClient;
+
+    private LinearLayout mLinearLayoutWaiting;
+
+    ListView mServerListView;
 
     /**
      *
@@ -67,6 +72,13 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.Theme_Mupen64plusaeTheme);
+    }
+
+    @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
@@ -76,11 +88,13 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
         View dialogView = View.inflate(getActivity(), R.layout.netplay_client_setup_dialog, null);
 
-        ListView serverListView = dialogView.findViewById(R.id.serverList);
+        mServerListView = dialogView.findViewById(R.id.serverList);
+        mLinearLayoutWaiting = dialogView.findViewById(R.id.linearLayoutWaiting);
+        mLinearLayoutWaiting.setVisibility(View.GONE);
 
         mServerListAdapter = new ServerListAdapter(getActivity(), mServers);
-        serverListView.setAdapter(mServerListAdapter);
-        serverListView.setOnItemClickListener(this);
+        mServerListView.setAdapter(mServerListAdapter);
+        mServerListView.setOnItemClickListener(this);
 
         //Time to create the dialog
         Builder builder = new Builder(requireActivity());
@@ -98,7 +112,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
 
         String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
-        roomClient = new NetplayRoomClient(getActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
+        mRoomClient = new NetplayRoomClient(getActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
             @Override
             public void onValidServerFound(int serverId, String serverName) {
                 getActivity().runOnUiThread(() -> {
@@ -111,7 +125,15 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             public void onServerRegistration(int regId, int player, InetAddress address, int port) {
                 if (getActivity() instanceof OnServerDialogActionListener)
                 {
-                    getActivity().runOnUiThread(() -> ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port);
+                            mServerListView.setVisibility(View.GONE);
+                            mLinearLayoutWaiting.setVisibility(View.VISIBLE);
+                        }
+                    });
+
                 }
                 else
                 {
@@ -148,7 +170,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        roomClient.registerServer(mServers.get(position).mServerId);
+        mRoomClient.registerServer(mServers.get(position).mServerId);
     }
 
     static class NetplayServer implements Comparable<NetplayServer>

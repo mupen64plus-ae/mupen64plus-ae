@@ -608,6 +608,7 @@
     <string name="startNetplay_title">Iniciar Netplay</string>
     <string name="netplayServers_title">Servidores de Netplay</string>
     <string name="netplayClients_title">Jugadores</string>
+    <string name="netplayWaitingOnServer_title">Esperando que el servidor inicie el juego.</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

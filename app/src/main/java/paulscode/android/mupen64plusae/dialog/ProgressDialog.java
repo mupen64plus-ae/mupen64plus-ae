@@ -26,8 +26,8 @@ public class ProgressDialog implements OnClickListener
     private final TextView mTextSubprogress;
     private final TextView mTextMessage;
     private final ProgressBar mProgressTotal;
-    private AlertDialog mDialog;
-    private AlertDialog mAbortDialog;
+    private final AlertDialog mDialog;
+    private final AlertDialog mAbortDialog;
     
     private long mMaxProgress = -1;
     private long mProgress = 0;
