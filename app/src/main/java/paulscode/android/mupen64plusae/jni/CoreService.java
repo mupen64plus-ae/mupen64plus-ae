@@ -328,25 +328,28 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void pauseEmulator()
     {
-        mIsPaused = true;
-        mCoreInterface.emuPause();
+        if (!mUsingNetplay) {
+            mIsPaused = true;
+            mCoreInterface.emuPause();
 
-        updateNotification();
+            updateNotification();
+        }
     }
 
     void togglePause()
     {
-        CoreTypes.m64p_emu_state state = mCoreInterface.emuGetState();
-        if( state == CoreTypes.m64p_emu_state.M64EMU_PAUSED ) {
-            mIsPaused = false;
-            mCoreInterface.emuResume();
-        }
-        else if( state == CoreTypes.m64p_emu_state.M64EMU_RUNNING ){
-            mIsPaused = true;
-            mCoreInterface.emuPause();
-        }
+        if (!mUsingNetplay) {
+            CoreTypes.m64p_emu_state state = mCoreInterface.emuGetState();
+            if (state == CoreTypes.m64p_emu_state.M64EMU_PAUSED) {
+                mIsPaused = false;
+                mCoreInterface.emuResume();
+            } else if (state == CoreTypes.m64p_emu_state.M64EMU_RUNNING) {
+                mIsPaused = true;
+                mCoreInterface.emuPause();
+            }
 
-        updateNotification();
+            updateNotification();
+        }
     }
 
     boolean isPaused()
