@@ -251,7 +251,10 @@ public class NetplayRoomServerHandler {
                 mRegisteredToRoom = true;
                 mSendBuffer.reset();
                 mSendBuffer.putInt(NetplayRoomClientHandler.ID_LEAVE_ROOM);
-                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+
+                if (mSocketOutputStream != null) {
+                    mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
