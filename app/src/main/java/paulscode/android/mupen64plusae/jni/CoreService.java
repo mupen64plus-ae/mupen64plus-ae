@@ -461,10 +461,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         if (netplayInitSuccess)
         {
             mCoreInterface.netplaySetController(player, regId);
-
-            mUsingNetplay = true;
-            mCoreInterface.emuSetFramelimiter(true);
-            mCoreInterface.usingNetplay(true);
         }
 
         if (!netplayInitSuccess) {
@@ -618,8 +614,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.emuLoadFile(latestSave);
             }
 
-            mCoreInterface.emuSetFramelimiter(mGlobalPrefs.isFramelimiterEnabled);
-
             boolean loadingSuccess;
 
             // Disk only games still require a ROM image, so use a dummy test ROM
@@ -694,6 +688,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                             }
                         }
                     }
+
+                    mCoreInterface.emuSetFramelimiter(true);
+                    mCoreInterface.usingNetplay(true);
+                } else {
+                    mCoreInterface.emuSetFramelimiter(mGlobalPrefs.isFramelimiterEnabled);
                 }
 
                 // This call blocks until emulation is stopped
