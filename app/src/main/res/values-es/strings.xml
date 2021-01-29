@@ -609,6 +609,7 @@
     <string name="netplayServers_title">Servidores de Netplay</string>
     <string name="netplayClients_title">Jugadores</string>
     <string name="netplayWaitingOnServer_title">Esperando que el servidor inicie el juego.</string>
+    <string name="netplay_toastDesyncDetected">¡Los jugadores se han desincronizado! Salgase del juego si ve problemas.</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

@@ -53,6 +53,12 @@ public class NetplayService extends Service
         void onPortObtained(int port);
 
         /**
+         * Called when a desync is detected
+         * @param vi VI in which de-sync occurred
+         */
+        void onDesync(int vi);
+
+        /**
          * Will be called once the service finishes
          */
         void onFinish();
@@ -96,7 +102,12 @@ public class NetplayService extends Service
         public void handleMessage(@NonNull Message msg) {
 
             final int bufferTarget = 2;
-            mUdpServer = new UdpServer(bufferTarget);
+            mUdpServer = new UdpServer(bufferTarget, new UdpServer.OnDesync() {
+                @Override
+                public void onDesync(int vi) {
+                    mNetplayServiceListener.onDesync(vi);
+                }
+            });
             mTcpServer = new TcpServer(bufferTarget, mUdpServer);
 
             Log.i(TAG, "Netplay service started");

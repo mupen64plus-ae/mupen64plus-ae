@@ -33,6 +33,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.util.Notifier;
+
 @SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
 public class NetplayFragment extends Fragment implements NetplayService.NetplayServiceListener
 {
@@ -127,6 +131,17 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
                 NetplayListener listner = (NetplayListener)activity;
                 listner.onPortObtained(port);
             }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDesync(int vi) {
+        try {
+            Activity activity = requireActivity();
+            activity.runOnUiThread(() -> Notifier.showToast(activity, R.string.netplay_toastDesyncDetected));
+
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }

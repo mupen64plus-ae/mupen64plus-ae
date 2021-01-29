@@ -36,6 +36,15 @@ public class UdpServer {
         public int mPlugin;
     }
 
+    public interface OnDesync
+    {
+        /**
+         * Called when a desync is detected
+         * @param vi VI in which de-sync occurred
+         */
+        void onDesync(int vi);
+    }
+
     static final int NUM_PLAYERS = 4;
 
     static final int KEY_INFO_MSG = 0;
@@ -79,10 +88,11 @@ public class UdpServer {
 
     int mBufferTarget;
 
+    OnDesync mOnDesync;
 
-    private Handler mCheckConnectionsTimer = new Handler(Looper.getMainLooper());
+    private final Handler mCheckConnectionsTimer = new Handler(Looper.getMainLooper());
 
-    public UdpServer(int _buffer_target)
+    public UdpServer(int _buffer_target, OnDesync _onDesync)
     {
         for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex)
         {
@@ -94,6 +104,7 @@ public class UdpServer {
         }
         mStatus = 0;
         mBufferTarget = _buffer_target;
+        mOnDesync = _onDesync;
 
         mSendBuffer.order(ByteOrder.BIG_ENDIAN);
         mReceiveBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -173,6 +184,7 @@ public class UdpServer {
             } else if (currentHash != hash) {
                 mStatus |= 1;
                 Log.w("UdpServer", "We have desynced!!!");
+                mOnDesync.onDesync(vi_count);
             }
         }
     }
