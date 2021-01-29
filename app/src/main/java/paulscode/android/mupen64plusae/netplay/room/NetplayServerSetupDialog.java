@@ -1,4 +1,4 @@
-package paulscode.android.mupen64plusae.netplay;
+package paulscode.android.mupen64plusae.netplay.room;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -24,8 +24,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.netplay.room.NetplayRoomClient;
-import paulscode.android.mupen64plusae.netplay.room.NetplayRoomServer;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
@@ -125,10 +123,29 @@ public class NetplayServerSetupDialog extends DialogFragment
         mClients.add(new NetplayClient(1, deviceName));
         mServerListAdapter.notifyDataSetChanged();
 
-        mNetplayRoomService = new NetplayRoomServer(getActivity().getApplicationContext(), deviceName, romMd5, serverPort, (playerNumber, deviceName1) -> getActivity().runOnUiThread(() -> {
-            mClients.add(new NetplayClient(playerNumber, deviceName1));
-            mServerListAdapter.notifyDataSetChanged();
-        }));
+        mNetplayRoomService = new NetplayRoomServer(getActivity().getApplicationContext(), deviceName, romMd5, serverPort,
+                new NetplayRoomServer.OnClientFound() {
+                    @Override
+                    public void onClientRegistration(int playerNumber, String deviceName) {
+                        getActivity().runOnUiThread(() -> {
+                            mClients.add(new NetplayClient(playerNumber, deviceName));
+                            mServerListAdapter.notifyDataSetChanged();
+                        });
+                    }
+
+                    @Override
+                    public void onClienLeave(int playerNumber) {
+                        getActivity().runOnUiThread(() -> {
+                            for (NetplayClient client : mClients) {
+                                if (client.mPlayerNumer == playerNumber) {
+                                    mClients.remove(client);
+                                }
+                            }
+
+                            mServerListAdapter.notifyDataSetChanged();
+                        });
+                    }
+                });
 
         int registrationId = mNetplayRoomService.registerPlayerOne();
 

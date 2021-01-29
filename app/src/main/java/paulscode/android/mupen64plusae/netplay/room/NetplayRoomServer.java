@@ -9,11 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.UnknownHostException;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -33,6 +29,12 @@ public class NetplayRoomServer {
          * @param deviceName Device name
          */
         void onClientRegistration(int playerNumber, String deviceName );
+
+        /**
+         * Called when a player leaves
+         * @param playerNumber Player number
+         */
+        void onClienLeave(int playerNumber);
     }
 
     static final String TAG = "NetplayRoomServer";
@@ -183,7 +185,17 @@ public class NetplayRoomServer {
                 mRegistrationIds.add(regId);
 
                 mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, regId, mServerPort, mServerSocket.accept(),
-                        (playerNumber, deviceName) -> mOnClientFound.onClientRegistration(playerNumber, deviceName)));
+                        new NetplayRoomClientHandler.OnClientRegistered() {
+                            @Override
+                            public void onClientRegistration(int playerNumber, String deviceName) {
+                                mOnClientFound.onClientRegistration(playerNumber, deviceName);
+                            }
+
+                            @Override
+                            public void onClientLeave(int playerNumber) {
+                                mOnClientFound.onClienLeave(playerNumber);
+                            }
+                        }));
             } catch (IOException e) {
                 e.printStackTrace();
                 mRunning = false;

@@ -90,6 +90,7 @@ public class NetplayRoomClient {
                         @Override
                         public void onServerStartGame() {
                             mOnServerData.onServerStart();
+                            stopListening();
                         }
                     });
 
@@ -176,6 +177,14 @@ public class NetplayRoomClient {
 
     public void stopListening()
     {
+        mMulticastLock.release();
+    }
+
+    public void leaveServer() {
+        for (NetplayRoomServerHandler serverHandler : mClients) {
+            serverHandler.leaveRoomAsync();
+        }
+
         mMulticastLock.release();
     }
 }

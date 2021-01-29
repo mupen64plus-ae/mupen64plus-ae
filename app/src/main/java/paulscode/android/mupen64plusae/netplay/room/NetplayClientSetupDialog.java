@@ -1,4 +1,4 @@
-package paulscode.android.mupen64plusae.netplay;
+package paulscode.android.mupen64plusae.netplay.room;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -26,7 +26,6 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.netplay.room.NetplayRoomClient;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
@@ -118,12 +117,6 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         dialog.setCancelable(false);
         setCancelable(false);
 
-        cancelButton.setOnClickListener(v -> {
-            if (getActivity() instanceof OnServerDialogActionListener) {
-                ((OnServerDialogActionListener) getActivity()).cancel();
-            }
-        });
-
         String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
         mRoomClient = new NetplayRoomClient(getActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
             @Override
@@ -138,13 +131,10 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             public void onServerRegistration(int regId, int player, InetAddress address, int port) {
                 if (getActivity() instanceof OnServerDialogActionListener)
                 {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port);
-                            mServerListView.setVisibility(View.GONE);
-                            mLinearLayoutWaiting.setVisibility(View.VISIBLE);
-                        }
+                    getActivity().runOnUiThread(() -> {
+                        ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port);
+                        mServerListView.setVisibility(View.GONE);
+                        mLinearLayoutWaiting.setVisibility(View.VISIBLE);
                     });
                 }
                 else
@@ -163,6 +153,14 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                 {
                     Log.e(TAG, "Activity doesn't implement OnServerDialogActionListener");
                 }
+            }
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            mRoomClient.leaveServer();
+
+            if (getActivity() instanceof OnServerDialogActionListener) {
+                ((OnServerDialogActionListener) getActivity()).cancel();
             }
         });
 

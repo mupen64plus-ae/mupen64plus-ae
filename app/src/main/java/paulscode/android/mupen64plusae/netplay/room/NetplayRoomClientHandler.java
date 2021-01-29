@@ -21,15 +21,22 @@ class NetplayRoomClientHandler
          * @param deviceName Device name
          */
         void onClientRegistration(int playerNumber, String deviceName );
+
+        /**
+         * Called when a client leaves
+         * @param playerNumber Player number
+         */
+        void onClientLeave(int playerNumber);
     }
 
     static final String TAG = "ClientHandler";
 
     static final int ID_GET_ROOM_DATA = 0;
     static final int ID_REGISTER_TO_ROOM = 1;
-    static final int ID_SEND_ROOM_DATA = 2;
-    static final int ID_SEND_REGISTRATION_DATA = 3;
-    static final int ID_SEND_START_PLAY = 4;
+    static final int ID_LEAVE_ROOM = 2;
+    static final int ID_SEND_ROOM_DATA = 3;
+    static final int ID_SEND_REGISTRATION_DATA = 4;
+    static final int ID_SEND_START_PLAY = 5;
 
     static final int SIZE_SEND_ROOM_DATA = 63;
     static final int SIZE_SEND_REGISTRATION_DATA = 12;
@@ -57,6 +64,9 @@ class NetplayRoomClientHandler
 
     ByteBuffer mSendBuffer = ByteBuffer.allocate(100);
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate(100);
+
+    private int mCurrentPlayerNumber = -1;
+    private boolean mClientRegistered = false;
 
     NetplayRoomClientHandler(String deviceName, String romMd5, int regId, int serverPort, Socket socket, OnClientRegistered onClientRegistered)
     {
@@ -143,19 +153,21 @@ class NetplayRoomClientHandler
         synchronized (mSocketOutputSync) {
 
             // Player number
-            int playerNumber = getNextPlayer();
+            mCurrentPlayerNumber = getNextPlayer();
 
-            if (playerNumber <= MAX_PLAYERS) {
+            if (mCurrentPlayerNumber <= MAX_PLAYERS) {
+                mClientRegistered = true;
+
                 mSendBuffer.reset();
                 // Message id
                 mSendBuffer.putInt(ID_SEND_REGISTRATION_DATA);
                 // Registration id
                 mSendBuffer.putInt(mRegId);
-                mSendBuffer.putInt(playerNumber);
+                mSendBuffer.putInt(mCurrentPlayerNumber);
                 // Server port
                 mSendBuffer.putInt(mServerPort);
 
-                mOnClientRegistered.onClientRegistration(playerNumber, mClientDeviceName);
+                mOnClientRegistered.onClientRegistration(mCurrentPlayerNumber, mClientDeviceName);
             } else {
                 // Stop accepting registrations
                 mSendBuffer.reset();
@@ -171,7 +183,22 @@ class NetplayRoomClientHandler
         }
     }
 
-    public void sendStartAsync() {
+    private synchronized static void removePlayer()
+    {
+        --mPlayerNumber;
+    }
+
+    private void handleLeaveRoom()
+    {
+        if (mClientRegistered) {
+            mOnClientRegistered.onClientLeave(mCurrentPlayerNumber);
+            mClientRegistered = false;
+            removePlayer();
+        }
+    }
+
+    public void sendStartAsync()
+    {
         // Must run on a separate thread, running network operation on the main
         // thread leads to NetworkOnMainThreadException exceptions
         Thread registerThread = new Thread(this::sendStart);
@@ -221,7 +248,9 @@ class NetplayRoomClientHandler
                 else if (id == ID_REGISTER_TO_ROOM) {
                     handleRegisterToRoom();
                 }
-                else {
+                else if (id == ID_LEAVE_ROOM) {
+                    handleLeaveRoom();
+                } else {
                     mRunning = false;
                 }
             } catch (IOException e) {

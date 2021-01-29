@@ -154,6 +154,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private final Object mWaitForNetPlay = new Object();
     private boolean mNetplayReady = false;
     private boolean mUsingNetplay = false;
+    private boolean mNetplayInitSuccess = false;
 
     //Service attributes
     private int mStartId;
@@ -461,15 +462,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void connectForNetplay(int regId, int player, InetAddress address, int port) {
 
-        boolean netplayInitSuccess = mCoreInterface.netplayInit(address.getHostAddress(), port);
+        mNetplayInitSuccess = mCoreInterface.netplayInit(address.getHostAddress(), port);
 
-        if (netplayInitSuccess)
+        if (mNetplayInitSuccess)
         {
             mCoreInterface.netplaySetController(player, regId);
         }
 
-        if (!netplayInitSuccess) {
-            Log.e(TAG, "Netplay init success=" + netplayInitSuccess + " host=" + address.getHostAddress() + " port=" + port);
+        if (!mNetplayInitSuccess) {
+            Log.e(TAG, "Netplay init success=" + mNetplayInitSuccess + " host=" + address.getHostAddress() + " port=" + port);
         }
     }
 
@@ -705,6 +706,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     mCoreInterface.emuStart();
                 }
 
+                if (mNetplayInitSuccess) {
+                    mCoreInterface.closeNetplay();
+                }
+
                 // Detach all the plugins
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP);
@@ -753,9 +758,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         mCoreInterface.closeRom();
 
-        // Both of these commands cause crashes in the core
+        // This commands cause crashes in the core
         //mCoreInterface.emuShutdown();
-        //mCoreInterface.closeNetplay();
     }
 
     private void copyGameContentsFromSdCard()

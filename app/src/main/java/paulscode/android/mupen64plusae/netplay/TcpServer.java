@@ -99,7 +99,19 @@ public class TcpServer {
         mUdpServer.registerPlayer(playerData.mRegId, player, playerData.mPlugin);
     }
 
-    void runTcpServer() {
+    synchronized public void removePlayer(int regId)
+    {
+        for (Integer player : mReg.keySet()) {
+            if (mReg.get(player).mRegId == regId) {
+                mReg.remove(player);
+                break;
+            }
+        }
+
+        mUdpServer.disconnectPlayer(regId);
+    }
+
+    private void runTcpServer() {
 
         while (mRunning) {
             try {
@@ -112,7 +124,7 @@ public class TcpServer {
         }
     }
 
-    void setPort(int port)
+    public void setPort(int port)
     {
         try {
             mServerSocket = new ServerSocket(port);
@@ -123,7 +135,7 @@ public class TcpServer {
         }
     }
 
-    int getPort()
+    public int getPort()
     {
         return mServerSocket.getLocalPort();
     }
@@ -133,7 +145,7 @@ public class TcpServer {
         return mBufferTarget;
     }
 
-    void stopServer() {
+    public void stopServer() {
         try {
             mRunning = false;
             mServerSocket.close();
@@ -143,7 +155,7 @@ public class TcpServer {
         }
     }
 
-    void waitForServerToEnd() {
+    public void waitForServerToEnd() {
         try {
             mServerThread.join();
             Log.i("TcpServer", "Server thread finished");

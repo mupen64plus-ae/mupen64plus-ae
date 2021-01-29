@@ -207,8 +207,13 @@ public class NetplayService extends Service
     public void stopServers() {
         Log.i("NetplayService", "Stopping netplay service");
 
-        mUdpServer.stopServer();
-        mTcpServer.stopServer();
+        if (mUdpServer != null) {
+            mUdpServer.stopServer();
+        }
+
+        if (mTcpServer != null) {
+            mTcpServer.stopServer();
+        }
     }
 
 

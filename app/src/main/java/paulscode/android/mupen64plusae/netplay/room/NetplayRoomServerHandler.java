@@ -197,7 +197,8 @@ public class NetplayRoomServerHandler {
         }
     }
 
-    public void registerToRoomAsync() {
+    public void registerToRoomAsync()
+    {
         // Must run on a separate thread, running network operation on the main
         // thread leads to NetworkOnMainThreadException exceptions
         Thread registerThread = new Thread(this::registerToRoom);
@@ -229,6 +230,34 @@ public class NetplayRoomServerHandler {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void leaveRoomAsync()
+    {
+        // Must run on a separate thread, running network operation on the main
+        // thread leads to NetworkOnMainThreadException exceptions
+        Thread registerThread = new Thread(this::leaveRoom);
+        registerThread.setDaemon(true);
+        registerThread.start();
+    }
+
+    private void leaveRoom()
+    {
+        Log.i(TAG, "Leaving room");
+
+        synchronized (mSocketOutputSync) {
+
+            try {
+                mRegisteredToRoom = true;
+                mSendBuffer.reset();
+                mSendBuffer.putInt(NetplayRoomClientHandler.ID_LEAVE_ROOM);
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        disconnect();
     }
 
     private void runTcpClient()
@@ -271,6 +300,19 @@ public class NetplayRoomServerHandler {
                 e.printStackTrace();
                 mRunning = false;
                 break;
+            }
+        }
+    }
+
+    public void disconnect()
+    {
+        mRunning = false;
+
+        if (mClientSocket != null) {
+            try {
+                mClientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

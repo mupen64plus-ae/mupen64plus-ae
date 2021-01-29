@@ -39,5 +39,7 @@ public class PlayerDisconnectMessage implements TcpMessage {
     @Override
     public void process() {
         Log.i("TcpServer", "Player disconnected: " + mPlayerRegistrationId);
+
+        mTcpServer.removePlayer(mPlayerRegistrationId);
     }
 }

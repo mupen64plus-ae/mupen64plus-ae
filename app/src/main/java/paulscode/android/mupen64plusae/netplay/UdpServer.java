@@ -103,10 +103,10 @@ public class UdpServer {
 
         mRequestInfoSendPacket = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
 
-        mCheckConnectionsTimer.postDelayed(this::checkConnctions, 500);
+        mCheckConnectionsTimer.postDelayed(this::checkConnections, 500);
     }
 
-    void handleKeyInfoMessage()
+    private void handleKeyInfoMessage()
     {
         int playerNum = mReceiveBuffer.get();
         mSendPackets[playerNum].setAddress(mReceivePacket.getAddress());
@@ -129,7 +129,7 @@ public class UdpServer {
         }
     }
 
-    void handleRequestDataMessage()
+    private void handleRequestDataMessage()
     {
         int playerNum = mReceiveBuffer.get();
         int regi_id = mReceiveBuffer.getInt();
@@ -177,7 +177,7 @@ public class UdpServer {
         }
     }
 
-    public void runUdpServer()
+    private void runUdpServer()
     {
         while (mRunning) {
 
@@ -231,7 +231,7 @@ public class UdpServer {
         mInputDelay[playerNum] = inputDelay;
     }
 
-    void checkConnctions()
+    void checkConnections()
     {
         for (int playerIndex = 0; playerIndex < NUM_PLAYERS; ++playerIndex)
         {
@@ -259,10 +259,10 @@ public class UdpServer {
             disconnectPlayer(should_delete);
         }
 
-        mCheckConnectionsTimer.postDelayed(this::checkConnctions, 500);
+        mCheckConnectionsTimer.postDelayed(this::checkConnections, 500);
     }
 
-    public void registerPlayer(int reg_id, int playerNum, int plugin)
+    public synchronized void registerPlayer(int reg_id, int playerNum, int plugin)
     {
         mPlayerKeepAlive.put(reg_id, new KeepAlive(0, playerNum));
         mInputs.get(playerNum).put(0, new Buttons(0, plugin));
@@ -270,7 +270,7 @@ public class UdpServer {
         mSendPackets[playerNum] = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
     }
 
-    private void disconnectPlayer(int reg_id)
+    public synchronized void disconnectPlayer(int reg_id)
     {
         if (mPlayerKeepAlive.containsKey(reg_id)) {
             KeepAlive keepAliveData = mPlayerKeepAlive.get(reg_id);
@@ -299,13 +299,6 @@ public class UdpServer {
         mSendBuffer.put((byte)0);
         int start = count;
         int end = start + mBufferSize[playerNum];
-
-        /*if (playerNum == 1)
-             Log.e("UdpServer", "GOT NEW DATA, count=" + count + " spectator=" + spectator + " lag=" + count_lag
-                + " end=" + end + " playerNum=" + playerNum + " containskey=" + mInputs.get(playerNum).containsKey(count)
-                + " size=" + mInputs.get(playerNum).size());
-
-         */
 
         while ( (mSendBuffer.position() < 500) && ( (spectator == 0 && count_lag == 0 && count < end) || mInputs.get(playerNum).containsKey(count) ) )
         {
