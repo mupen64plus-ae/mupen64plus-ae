@@ -1323,6 +1323,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
+    public void cancel() {
+        if (mIsNetplayServer && mNetplayServerDialog != null) {
+            mNetplayServerDialog.dismiss();
+        }
+
+        if (!mIsNetplayServer && mNetplayClientDialog != null) {
+            mNetplayClientDialog.dismiss();
+        }
+
+        mCoreFragment.shutdownEmulator();
+    }
+
+    @Override
     public void onPortObtained(int port) {
         mServerPort = port;
     }

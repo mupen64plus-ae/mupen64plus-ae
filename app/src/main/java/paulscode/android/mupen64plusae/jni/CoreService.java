@@ -232,6 +232,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
         tryShutdown();
+
+        synchronized (mWaitForNetPlay) {
+            mNetplayReady = true;
+            mWaitForNetPlay.notify();
+        }
     }
 
     private void tryShutdown()
@@ -695,8 +700,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     mCoreInterface.emuSetFramelimiter(mGlobalPrefs.isFramelimiterEnabled);
                 }
 
-                // This call blocks until emulation is stopped
-                mCoreInterface.emuStart();
+                if (!mIsShuttingDown) {
+                    // This call blocks until emulation is stopped
+                    mCoreInterface.emuStart();
+                }
 
                 // Detach all the plugins
                 mCoreInterface.coreDetachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX);

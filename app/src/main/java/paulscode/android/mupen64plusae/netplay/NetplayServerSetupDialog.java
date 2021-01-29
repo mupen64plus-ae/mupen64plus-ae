@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -45,6 +44,11 @@ public class NetplayServerSetupDialog extends DialogFragment
          * Called when emulation is started
          */
         void start();
+
+        /**
+         * Called when netplay is cancelled
+         */
+        void cancel();
     }
 
     private static final String ROM_MD5 = "ROM_MD5";
@@ -94,19 +98,26 @@ public class NetplayServerSetupDialog extends DialogFragment
         mServerListAdapter = new ClientListAdapter(getActivity(), mClients);
         serverListView.setAdapter(mServerListAdapter);
 
+        Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
+
         //Time to create the dialog
         Builder builder = new Builder(requireActivity());
         builder.setTitle(getString(R.string.netplayClients_title));
-
         builder.setNegativeButton(null, null);
         builder.setPositiveButton(null, null);
-
         builder.setView(dialogView);
 
         AlertDialog dialog = builder.create();
         DisplayWrapper.setDialogToResizeWithKeyboard(dialog, dialogView);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
+        setCancelable(false);
+
+        cancelButton.setOnClickListener(v -> {
+            if (getActivity() instanceof OnClientDialogActionListener) {
+                ((OnClientDialogActionListener) getActivity()).cancel();
+            }
+        });
 
         String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
 
