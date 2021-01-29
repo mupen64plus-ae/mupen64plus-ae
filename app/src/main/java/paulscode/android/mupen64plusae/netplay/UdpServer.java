@@ -45,52 +45,54 @@ public class UdpServer {
         void onDesync(int vi);
     }
 
-    static final int NUM_PLAYERS = 4;
+    private static final int NUM_PLAYERS = 4;
 
-    static final int KEY_INFO_MSG = 0;
-    static final int REQUEST_DATA_MSG = 2;
-    static final int CP0_DATA_MSG = 4;
+    private static final int KEY_INFO_MSG = 0;
+    private static final int REQUEST_DATA_MSG = 2;
+    private static final int CP0_DATA_MSG = 4;
 
-    DatagramSocket mUdpSocket;
-    Thread mUdpServerThread;
-    boolean mRunning = true;
-    ByteBuffer mSendBuffer = ByteBuffer.allocate( 512 );
-    ByteBuffer mReceiveBuffer = ByteBuffer.allocate( 1024*512 );
+    private DatagramSocket mUdpSocket;
+    private Thread mUdpServerThread;
+    private boolean mRunning = true;
+    private final ByteBuffer mSendBuffer = ByteBuffer.allocate( 512 );
+    private final ByteBuffer mReceiveBuffer = ByteBuffer.allocate( 1024*512 );
 
-    DatagramPacket[] mSendPackets = new DatagramPacket[NUM_PLAYERS];
-    DatagramPacket mRequestInfoSendPacket;
-    DatagramPacket mReceivePacket;
+    private final DatagramPacket[] mSendPackets = new DatagramPacket[NUM_PLAYERS];
+    private final DatagramPacket mRequestInfoSendPacket;
+    private DatagramPacket mReceivePacket;
 
     // Array of states per count
-    ArrayList<HashMap<Integer, Buttons>> mInputs = new ArrayList<>(Arrays.asList(
+    private final ArrayList<HashMap<Integer, Buttons>> mInputs = new ArrayList<>(Arrays.asList(
             new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
 
     // Hash used to determine if we are in sync by using cp0
-    HashMap<Integer, Integer> mSyncHash = new HashMap<>();
+    private final HashMap<Integer, Integer> mSyncHash = new HashMap<>();
 
     // Temporary byte array used for hashing
-    byte[] mHashData = new byte[128];
+    private final byte[] mHashData = new byte[128];
 
     //reg_id, <keepalive, playernumber>
-    HashMap<Integer, KeepAlive> mPlayerKeepAlive = new HashMap<>();
+    private final HashMap<Integer, KeepAlive> mPlayerKeepAlive = new HashMap<>();
 
     // Buttons
-    ArrayList<LinkedList<Buttons>> mButtons = new ArrayList<>(Arrays.asList( new LinkedList<>(),
+    private final ArrayList<LinkedList<Buttons>> mButtons = new ArrayList<>(Arrays.asList( new LinkedList<>(),
             new LinkedList<>(), new LinkedList<>(), new LinkedList<>()));
 
-    int[] mLeadCount = new int[NUM_PLAYERS];
-    int[] mBufferSize = new int[NUM_PLAYERS];
-    int[] mBufferHealth = new int[NUM_PLAYERS];
-    int[] mInputDelay = new int[NUM_PLAYERS];
+    private final int[] mLeadCount = new int[NUM_PLAYERS];
+    private final int[] mBufferSize = new int[NUM_PLAYERS];
+    private final int[] mBufferHealth = new int[NUM_PLAYERS];
+    private final int[] mInputDelay = new int[NUM_PLAYERS];
 
-    int mPort;
-    int mStatus;
+    private int mPort;
+    private int mStatus;
 
-    int mBufferTarget;
+    private final int mBufferTarget;
 
-    OnDesync mOnDesync;
+    private final OnDesync mOnDesync;
 
     private final Handler mCheckConnectionsTimer = new Handler(Looper.getMainLooper());
+
+    private boolean mCheckConnectionTimerStarted = false;
 
     public UdpServer(int _buffer_target, OnDesync _onDesync)
     {
@@ -113,8 +115,6 @@ public class UdpServer {
         mSendBuffer.mark();
 
         mRequestInfoSendPacket = new DatagramPacket(mSendBuffer.array(), mSendBuffer.array().length);
-
-        mCheckConnectionsTimer.postDelayed(this::checkConnections, 500);
     }
 
     private void handleKeyInfoMessage()
@@ -168,6 +168,12 @@ public class UdpServer {
 
     void handleCp0Message()
     {
+        // On first receipt of this message, start checking connection status
+        if (!mCheckConnectionTimerStarted) {
+            mCheckConnectionTimerStarted = true;
+            mCheckConnectionsTimer.postDelayed(this::checkConnections, 500);
+        }
+
         if ((mStatus & 1) == 0) {
 
             int vi_count = mReceiveBuffer.getInt();
