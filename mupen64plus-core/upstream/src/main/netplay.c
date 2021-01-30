@@ -137,19 +137,19 @@ m64p_error netplay_stop()
         return M64ERR_INVALID_STATE;
     else
     {
-        /*
-        for (int i = 0; i < 4; ++i)
-        {
-            struct netplay_event* current = l_cin_compats[i].event_first;
-            struct netplay_event* next;
-            while (current != NULL)
+        if (l_cin_compats != NULL) {
+            for (int i = 0; i < 4; ++i)
             {
-                next = current->next;
-                free(current);
-                current = next;
+                struct netplay_event* current = l_cin_compats[i].event_first;
+                struct netplay_event* next;
+                while (current != NULL)
+                {
+                    next = current->next;
+                    free(current);
+                    current = next;
+                }
             }
         }
-         */
 
         char output_data[5];
         output_data[0] = TCP_DISCONNECT_NOTICE;
