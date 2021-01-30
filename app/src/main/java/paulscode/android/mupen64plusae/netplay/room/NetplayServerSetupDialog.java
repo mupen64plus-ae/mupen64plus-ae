@@ -120,40 +120,42 @@ public class NetplayServerSetupDialog extends DialogFragment
         String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
 
         // Add ourselves
-        mClients.add(new NetplayClient(1, deviceName));
-        mServerListAdapter.notifyDataSetChanged();
+        if (mClients.size() == 0) {
+            mClients.add(new NetplayClient(1, deviceName));
+            mServerListAdapter.notifyDataSetChanged();
 
-        mNetplayRoomService = new NetplayRoomServer(getActivity().getApplicationContext(), deviceName, romMd5, serverPort,
-                new NetplayRoomServer.OnClientFound() {
-                    @Override
-                    public void onClientRegistration(int playerNumber, String deviceName) {
-                        getActivity().runOnUiThread(() -> {
-                            mClients.add(new NetplayClient(playerNumber, deviceName));
-                            mServerListAdapter.notifyDataSetChanged();
-                        });
-                    }
+            mNetplayRoomService = new NetplayRoomServer(getActivity().getApplicationContext(), deviceName, romMd5, serverPort,
+                    new NetplayRoomServer.OnClientFound() {
+                        @Override
+                        public void onClientRegistration(int playerNumber, String deviceName) {
+                            getActivity().runOnUiThread(() -> {
+                                mClients.add(new NetplayClient(playerNumber, deviceName));
+                                mServerListAdapter.notifyDataSetChanged();
+                            });
+                        }
 
-                    @Override
-                    public void onClienLeave(int playerNumber) {
-                        getActivity().runOnUiThread(() -> {
-                            for (NetplayClient client : mClients) {
-                                if (client.mPlayerNumer == playerNumber) {
-                                    mClients.remove(client);
+                        @Override
+                        public void onClienLeave(int playerNumber) {
+                            getActivity().runOnUiThread(() -> {
+                                for (NetplayClient client : mClients) {
+                                    if (client.mPlayerNumer == playerNumber) {
+                                        mClients.remove(client);
+                                    }
                                 }
-                            }
 
-                            mServerListAdapter.notifyDataSetChanged();
-                        });
-                    }
-                });
+                                mServerListAdapter.notifyDataSetChanged();
+                            });
+                        }
+                    });
 
-        int registrationId = mNetplayRoomService.registerPlayerOne();
+            int registrationId = mNetplayRoomService.registerPlayerOne();
 
-        if (getActivity() instanceof OnClientDialogActionListener) {
-            OnClientDialogActionListener listener = (OnClientDialogActionListener)getActivity();
-            listener.connect(registrationId, 1, DeviceUtil.wifiIpAddress(getActivity()), serverPort);
-        } else {
-            Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
+            if (getActivity() instanceof OnClientDialogActionListener) {
+                OnClientDialogActionListener listener = (OnClientDialogActionListener)getActivity();
+                listener.connect(registrationId, 1, DeviceUtil.wifiIpAddress(getActivity()), serverPort);
+            } else {
+                Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
+            }
         }
 
         startButton.setOnClickListener(v -> {

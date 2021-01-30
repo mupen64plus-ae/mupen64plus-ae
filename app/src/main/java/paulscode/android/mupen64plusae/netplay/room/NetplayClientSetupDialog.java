@@ -57,11 +57,13 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     private final ArrayList<NetplayServer> mServers = new ArrayList<>();
 
-    private NetplayRoomClient mRoomClient;
+    private NetplayRoomClient mRoomClient = null;
 
     private LinearLayout mLinearLayoutWaiting;
 
-    ListView mServerListView;
+    private boolean mWaiting = false;
+
+    private ListView mServerListView;
 
     /**
      *
@@ -95,11 +97,18 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
         mServerListView = dialogView.findViewById(R.id.serverList);
         mLinearLayoutWaiting = dialogView.findViewById(R.id.linearLayoutWaiting);
-        mLinearLayoutWaiting.setVisibility(View.GONE);
 
-        mServerListAdapter = new ServerListAdapter(getActivity(), mServers);
-        mServerListView.setAdapter(mServerListAdapter);
-        mServerListView.setOnItemClickListener(this);
+        if (mWaiting) {
+            mServerListView.setVisibility(View.GONE);
+        } else {
+            mLinearLayoutWaiting.setVisibility(View.GONE);
+        }
+
+        if (mServerListAdapter == null) {
+            mServerListAdapter = new ServerListAdapter(getActivity(), mServers);
+            mServerListView.setAdapter(mServerListAdapter);
+            mServerListView.setOnItemClickListener(this);
+        }
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
 
@@ -118,43 +127,47 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         setCancelable(false);
 
         String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
-        mRoomClient = new NetplayRoomClient(getActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
-            @Override
-            public void onValidServerFound(int serverId, String serverName) {
-                getActivity().runOnUiThread(() -> {
-                    mServers.add(new NetplayServer(serverId, serverName));
-                    mServerListAdapter.notifyDataSetChanged();
-                });
-            }
 
-            @Override
-            public void onServerRegistration(int regId, int player, InetAddress address, int port) {
-                if (getActivity() instanceof OnServerDialogActionListener)
-                {
+        if (mRoomClient == null) {
+            mRoomClient = new NetplayRoomClient(getActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
+                @Override
+                public void onValidServerFound(int serverId, String serverName) {
                     getActivity().runOnUiThread(() -> {
-                        ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port);
-                        mServerListView.setVisibility(View.GONE);
-                        mLinearLayoutWaiting.setVisibility(View.VISIBLE);
+                        mServers.add(new NetplayServer(serverId, serverName));
+                        mServerListAdapter.notifyDataSetChanged();
                     });
                 }
-                else
-                {
-                    Log.e(TAG, "Activity doesn't implement OnServerDialogActionListener");
-                }
-            }
 
-            @Override
-            public void onServerStart() {
-                if (getActivity() instanceof OnServerDialogActionListener)
-                {
-                    getActivity().runOnUiThread(() -> ((OnServerDialogActionListener) getActivity()).start());
+                @Override
+                public void onServerRegistration(int regId, int player, InetAddress address, int port) {
+                    if (getActivity() instanceof OnServerDialogActionListener)
+                    {
+                        getActivity().runOnUiThread(() -> {
+                            ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port);
+                            mServerListView.setVisibility(View.GONE);
+                            mLinearLayoutWaiting.setVisibility(View.VISIBLE);
+                            mWaiting = true;
+                        });
+                    }
+                    else
+                    {
+                        Log.e(TAG, "Activity doesn't implement OnServerDialogActionListener");
+                    }
                 }
-                else
-                {
-                    Log.e(TAG, "Activity doesn't implement OnServerDialogActionListener");
+
+                @Override
+                public void onServerStart() {
+                    if (getActivity() instanceof OnServerDialogActionListener)
+                    {
+                        getActivity().runOnUiThread(() -> ((OnServerDialogActionListener) getActivity()).start());
+                    }
+                    else
+                    {
+                        Log.e(TAG, "Activity doesn't implement OnServerDialogActionListener");
+                    }
                 }
-            }
-        });
+            });
+        }
 
         cancelButton.setOnClickListener(v -> {
             mRoomClient.leaveServer();

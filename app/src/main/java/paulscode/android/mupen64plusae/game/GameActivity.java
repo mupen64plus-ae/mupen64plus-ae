@@ -949,7 +949,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             final FragmentManager fm = this.getSupportFragmentManager();
 
             if (mIsNetplayServer && mNetplayServerDialog == null) {
-
                 mNetplayServerDialog = NetplayServerSetupDialog.newInstance(mRomMd5, mServerPort);
                 mNetplayServerDialog.show(fm, STATE_NETPLAY_SERVER_DIALOG);
             }
