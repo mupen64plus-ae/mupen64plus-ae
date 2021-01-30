@@ -225,6 +225,9 @@ public class NetplayService extends Service
         if (mTcpServer != null) {
             mTcpServer.stopServer();
         }
+
+        stopForeground(true);
+        stopSelf();
     }
 
 

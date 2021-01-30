@@ -185,6 +185,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private CoreFragment mCoreFragment = null;
 
     private static final String STATE_NETPLAY_FRAGMENT = "STATE_NETPLAY_FRAGMENT";
+    private NetplayFragment mNetplayFragment = null;
 
     private final boolean[] isControllerPlugged = new boolean[4];
 
@@ -521,12 +522,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final FragmentManager fm = this.getSupportFragmentManager();
 
         if (mIsNetplayEnabled && mIsNetplayServer) {
-            NetplayFragment netplayFragment = (NetplayFragment) fm.findFragmentByTag(STATE_NETPLAY_FRAGMENT);
+            mNetplayFragment = (NetplayFragment) fm.findFragmentByTag(STATE_NETPLAY_FRAGMENT);
 
-            if(netplayFragment == null)
+            if(mNetplayFragment == null)
             {
-                netplayFragment = new NetplayFragment();
-                fm.beginTransaction().add(netplayFragment, STATE_NETPLAY_FRAGMENT).commit();
+                mNetplayFragment = new NetplayFragment();
+                fm.beginTransaction().add(mNetplayFragment, STATE_NETPLAY_FRAGMENT).commit();
             }
         }
 
@@ -1211,8 +1212,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
         {
+            if (mNetplayFragment != null) {
+                mNetplayFragment.onFinish();
+            }
+
             //Generate auto save file
-            if(mGlobalPrefs.maxAutoSaves != 0)
+            if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled)
             {
                 mCoreFragment.autoSaveState(true);
             }
@@ -1331,6 +1336,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mNetplayClientDialog.dismiss();
         }
 
+        mNetplayFragment.onFinish();
         mCoreFragment.shutdownEmulator();
     }
 

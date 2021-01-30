@@ -152,6 +152,10 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
         if(mServiceConnection != null)
         {
             try {
+                if (mNetPlayService != null) {
+                    mNetPlayService.stopServers();
+                }
+
                 Activity activity = requireActivity();
                 Intent intent = new Intent(activity.getApplicationContext(), NetplayService.class);
                 activity.stopService(intent);
