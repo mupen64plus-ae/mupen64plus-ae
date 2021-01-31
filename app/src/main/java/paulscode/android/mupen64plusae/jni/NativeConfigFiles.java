@@ -319,19 +319,6 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViIntegerScaling", boolToTF( game.angrylionPlusPrefs.viIntegerScaling ) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "DpCompat", String.valueOf(game.angrylionPlusPrefs.dpCompatibilityMode) );
 
-        /*
-
-        #define KEY_BUSY_LOOP "BusyLoop"
-
-#define KEY_VI_MODE "ViMode"
-#define KEY_VI_INTERP "ViInterpolation"
-#define KEY_VI_WIDESCREEN "ViWidescreen"
-#define KEY_VI_HIDE_OVERSCAN "ViHideOverscan"
-#define KEY_VI_INTEGER_SCALING "ViIntegerScaling"
-
-#define KEY_DP_COMPAT "DpCompat"
-         */
-
         gln64_conf.save();
         glide64_conf.save();
         return mupen64plus_cfg.save();
