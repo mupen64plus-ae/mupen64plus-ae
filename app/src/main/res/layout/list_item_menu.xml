@@ -39,6 +39,7 @@
             android:layout_alignStart="@id/text1"
             android:layout_below="@id/text1"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="14sp"
             android:textColor="?android:attr/textColorSecondary"
             android:textIsSelectable="false" />
     </RelativeLayout>
