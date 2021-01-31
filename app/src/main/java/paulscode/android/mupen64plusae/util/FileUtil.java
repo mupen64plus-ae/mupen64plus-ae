@@ -396,8 +396,14 @@ public final class FileUtil
 
         for (DocumentFile file : files) {
 
-            File destFile = new File(dest.getAbsolutePath() + "/" + file.getName());
-            if (!file.isDirectory() && file.getName().startsWith(startsWith)) {
+            String fileName = file.getName();
+
+            if (fileName == null) {
+                continue;
+            }
+
+            File destFile = new File(dest.getAbsolutePath() + "/" + fileName);
+            if (!file.isDirectory() && fileName.startsWith(startsWith)) {
 
                 try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file.getUri(), "r");
                      FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
