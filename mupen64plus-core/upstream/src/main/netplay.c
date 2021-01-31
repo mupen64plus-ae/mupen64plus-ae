@@ -137,7 +137,8 @@ m64p_error netplay_stop()
         return M64ERR_INVALID_STATE;
     else
     {
-        if (l_cin_compats != NULL) {
+        if (l_cin_compats != NULL)
+        {
             for (int i = 0; i < 4; ++i)
             {
                 struct netplay_event* current = l_cin_compats[i].event_first;
@@ -154,7 +155,6 @@ m64p_error netplay_stop()
         char output_data[5];
         output_data[0] = TCP_DISCONNECT_NOTICE;
         SDLNet_Write32(l_reg_id, &output_data[1]);
-        DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_DISCONNECT_NOTICE);
         SDLNet_TCP_Send(l_tcpSocket, &output_data[0], 5);
 
         SDLNet_UDP_Unbind(l_udpSocket, l_udpChannel);
@@ -344,7 +344,7 @@ static uint32_t netplay_get_input(uint8_t control_id)
     netplay_process();
     netplay_request_input(control_id);
 
-	//l_buffer_target is set by the server upon registration
+    //l_buffer_target is set by the server upon registration
     //l_player_lag is how far behind we are from the lead player
     //buffer_size is the local buffer size
     if (l_player_lag[control_id] > 0 && buffer_size(control_id) > l_buffer_target)
@@ -403,16 +403,12 @@ uint8_t netplay_register_player(uint8_t player, uint8_t plugin, uint8_t rawdata,
     output_data[3] = rawdata; //whether we are using a RawData input plugin
     SDLNet_Write32(l_reg_id, &output_data[4]);
 
-    DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_REGISTER_PLAYER);
     SDLNet_TCP_Send(l_tcpSocket, &output_data[0], 8);
 
     uint8_t response[2];
     size_t recv = 0;
     while (recv < 2)
         recv += SDLNet_TCP_Recv(l_tcpSocket, &response[recv], 2 - recv);
-
-    DebugMessage(M64MSG_ERROR, "Netplay: Finished receiving register response");
-
     l_buffer_target = response[1]; //local buffer size target
     return response[0];
 }
@@ -471,7 +467,6 @@ file_status_t netplay_read_storage(const char *filename, void *data, size_t size
         memcpy(&output_data[buffer_pos], data, size); //file data
         buffer_pos += size;
 
-        DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_SEND_SAVE);
         SDLNet_TCP_Send(l_tcpSocket, &output_data[0], buffer_pos);
     }
     else
@@ -484,14 +479,11 @@ file_status_t netplay_read_storage(const char *filename, void *data, size_t size
         memcpy(&output_data[buffer_pos], short_filename, strlen(short_filename) + 1);
         buffer_pos += strlen(short_filename) + 1;
 
-        DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_RECEIVE_SAVE);
         SDLNet_TCP_Send(l_tcpSocket, &output_data[0], buffer_pos);
         size_t recv = 0;
         char *data_array = data;
         while (recv < size)
             recv += SDLNet_TCP_Recv(l_tcpSocket, data_array + recv, size - recv);
-
-        DebugMessage(M64MSG_ERROR, "Netplay: Finished receiving save data");
 
         int sum = 0;
         for (int i = 0; i < size; ++i)
@@ -522,34 +514,22 @@ void netplay_sync_settings(uint32_t *count_per_op, uint32_t *disable_extra_mem, 
         SDLNet_Write32(*si_dma_duration, &output_data[9]);
         SDLNet_Write32(*emumode, &output_data[13]);
         SDLNet_Write32(*no_compiled_jump, &output_data[17]);
-
-        DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_SEND_SETTINGS);
         SDLNet_TCP_Send(l_tcpSocket, &output_data[0], 21);
     }
     else
     {
         request = TCP_RECEIVE_SETTINGS;
         memcpy(&output_data[0], &request, 1);
-        DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_RECEIVE_SETTINGS);
-
         SDLNet_TCP_Send(l_tcpSocket, &output_data[0], 1);
         int32_t recv = 0;
         while (recv < 20)
             recv += SDLNet_TCP_Recv(l_tcpSocket, &output_data[recv], 20 - recv);
-
-        DebugMessage(M64MSG_ERROR, "Netplay: Finished receiving settings");
-
         *count_per_op = SDLNet_Read32(&output_data[0]);
         *disable_extra_mem = SDLNet_Read32(&output_data[4]);
         *si_dma_duration = SDLNet_Read32(&output_data[8]);
         *emumode = SDLNet_Read32(&output_data[12]);
         *no_compiled_jump = SDLNet_Read32(&output_data[16]);
-
-		DebugMessage(M64MSG_ERROR,
-				"Netplay: Got settings --  count_per_op=%d, disable_extra_mem=%d, si_dma_duration=%d, emumode=%d, no_compiled_jump=%d",
-					 *count_per_op, *disable_extra_mem, *si_dma_duration, *emumode, *no_compiled_jump);
-
-	}
+    }
 }
 
 void netplay_check_sync(struct cp0* cp0)
@@ -591,14 +571,10 @@ void netplay_read_registration(struct controller_input_compat* cin_compats)
     uint32_t reg_id;
     char output_data = TCP_GET_REGISTRATION;
     char input_data[24];
-    DebugMessage(M64MSG_ERROR, "Netplay: Sending TCP message id=%d", TCP_GET_REGISTRATION);
     SDLNet_TCP_Send(l_tcpSocket, &output_data, 1);
     size_t recv = 0;
     while (recv < 24)
         recv += SDLNet_TCP_Recv(l_tcpSocket, &input_data[recv], 24 - recv);
-
-    DebugMessage(M64MSG_ERROR, "Netplay: Finished receiving registration");
-
     uint32_t curr = 0;
     for (int i = 0; i < 4; ++i)
     {
