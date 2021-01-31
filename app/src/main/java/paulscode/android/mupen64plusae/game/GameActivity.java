@@ -950,7 +950,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             final FragmentManager fm = this.getSupportFragmentManager();
 
             if (mIsNetplayServer && mNetplayServerDialog == null) {
-                mNetplayServerDialog = NetplayServerSetupDialog.newInstance(mRomMd5, mServerPort);
+                mNetplayServerDialog = NetplayServerSetupDialog.newInstance(mRomMd5,
+                        mGamePrefs.videoPluginLib.getPluginLib(),
+                        mGamePrefs.rspPluginLib.getPluginLib(),
+                        mServerPort);
                 mNetplayServerDialog.show(fm, STATE_NETPLAY_SERVER_DIALOG);
             }
 
@@ -1309,8 +1312,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    public void connect(int regId, int player, InetAddress address, int port) {
-        mCoreFragment.connectForNetplay(regId, player, address, port);
+    public void connect(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port) {
+        mCoreFragment.connectForNetplay(regId, player, videoPlugin, rspPlugin, address, port);
     }
 
     @Override
@@ -1336,7 +1339,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mNetplayClientDialog.dismiss();
         }
 
-        mNetplayFragment.onFinish();
+        if (mNetplayFragment != null) {
+            mNetplayFragment.onFinish();
+        }
         mCoreFragment.shutdownEmulator();
     }
 

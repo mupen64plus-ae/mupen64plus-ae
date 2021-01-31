@@ -821,13 +821,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void connectForNetplay(int regId, int player, InetAddress address, int port)
+    public void connectForNetplay(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port)
     {
         Log.i("CoreFragment", "connectForNetplay");
 
         if (mCoreService != null)
         {
-            mCoreService.connectForNetplay(regId, player, address, port);
+            mCoreService.connectForNetplay(regId, player, videoPlugin, rspPlugin, address, port);
         }
     }
 

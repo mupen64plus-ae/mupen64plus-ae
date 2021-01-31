@@ -460,7 +460,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.emuReset();
     }
 
-    void connectForNetplay(int regId, int player, InetAddress address, int port) {
+    void connectForNetplay(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port) {
+
+        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, videoPlugin, true);
+        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, rspPlugin, false);
 
         mNetplayInitSuccess = mCoreInterface.netplayInit(address.getHostAddress(), port);
 
@@ -661,7 +664,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                 // Attach all the plugins
                 try {
-                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
                     mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
                     mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
 
@@ -671,8 +673,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
                     }
 
-                    mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
-                } catch (java.lang.IllegalArgumentException e) {
+                    // When using netplay, these plugins will be set when the server tell us what they are
+                    if (!mUsingNetplay) {
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
+                    }
+                } catch (IllegalArgumentException e) {
                     loadingSuccess = false;
                 }
             }
@@ -1213,7 +1219,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             try {
                 uri = resolver.insert(contentUri, contentValues);
-            } catch (java.lang.IllegalStateException e) {
+            } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
 

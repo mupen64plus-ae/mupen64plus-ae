@@ -39,10 +39,12 @@ class NetplayRoomClientHandler
     static final int ID_SEND_START_PLAY = 5;
 
     static final int SIZE_SEND_ROOM_DATA = 63;
-    static final int SIZE_SEND_REGISTRATION_DATA = 12;
+    static final int SIZE_SEND_REGISTRATION_DATA = 132;
     static final int ID_SIZE = 4;
 
     static final int DEVICE_NAME_MAX = 30;
+    static final int VIDEO_PLUGIN_MAX = 60;
+    static final int RSP_PLUGIN_MAX = 60;
     static final int ROM_MD5_MAX = 33;
 
     static final int MAX_PLAYERS = 4;
@@ -50,6 +52,8 @@ class NetplayRoomClientHandler
     String mDeviceName;
     String mClientDeviceName = "";
     String mRomMd5;
+    String mVideoPlugin;
+    String mRspPlugin;
     int mRegId;
     static int mPlayerNumber = 0;
     int mServerPort;
@@ -62,16 +66,19 @@ class NetplayRoomClientHandler
     OutputStream mSocketOutputStream;
     InputStream mSocketInputStream;
 
-    ByteBuffer mSendBuffer = ByteBuffer.allocate(100);
+    ByteBuffer mSendBuffer = ByteBuffer.allocate(300);
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate(100);
 
     private int mCurrentPlayerNumber = -1;
     private boolean mClientRegistered = false;
 
-    NetplayRoomClientHandler(String deviceName, String romMd5, int regId, int serverPort, Socket socket, OnClientRegistered onClientRegistered)
+    NetplayRoomClientHandler(String deviceName, String romMd5, String videoPlugin, String rspPlugin,
+                             int regId, int serverPort, Socket socket, OnClientRegistered onClientRegistered)
     {
         mDeviceName = deviceName;
         mRomMd5 = romMd5;
+        mVideoPlugin = videoPlugin;
+        mRspPlugin = rspPlugin;
         mRegId = regId;
         mServerPort = serverPort;
         mOnClientRegistered = onClientRegistered;
@@ -93,6 +100,17 @@ class NetplayRoomClientHandler
         mClientThread.start();
     }
 
+    private void putString(String theString, int maxSize)
+    {
+        byte[] stringBytes = theString.getBytes(StandardCharsets.ISO_8859_1);
+        byte[] sendStringBytes = new byte[maxSize];
+        Arrays.fill(sendStringBytes, (byte)0);
+        System.arraycopy(stringBytes, 0, sendStringBytes, 0, Math.min(stringBytes.length,
+                sendStringBytes.length));
+        sendStringBytes[sendStringBytes.length-1] = 0;
+        mSendBuffer.put(sendStringBytes, 0, sendStringBytes.length);
+    }
+
     private void handleGetRoomData() throws IOException
     {
         synchronized (mSocketOutputSync) {
@@ -101,19 +119,10 @@ class NetplayRoomClientHandler
             mSendBuffer.putInt(ID_SEND_ROOM_DATA);
 
             // Device name, 30 bytes
-            byte[] deviceNameBytes = mDeviceName.getBytes(StandardCharsets.ISO_8859_1);
-            byte[] sendDeviceNameBytes = new byte[DEVICE_NAME_MAX];
-            Arrays.fill(sendDeviceNameBytes, (byte)0);
-            System.arraycopy(deviceNameBytes, 0, sendDeviceNameBytes, 0, Math.min(deviceNameBytes.length, sendDeviceNameBytes.length));
-            sendDeviceNameBytes[sendDeviceNameBytes.length-1] = 0;
-            mSendBuffer.put(sendDeviceNameBytes, 0, sendDeviceNameBytes.length);
+            putString(mDeviceName, DEVICE_NAME_MAX);
 
             // Rom MD5, 33 bytes
-            byte[] romMd5Bytes = mRomMd5.getBytes(StandardCharsets.ISO_8859_1);
-            byte[] sendRomMd5Bytes = new byte[ROM_MD5_MAX];
-            System.arraycopy(romMd5Bytes, 0, sendRomMd5Bytes, 0, Math.min(romMd5Bytes.length, sendRomMd5Bytes.length));
-            sendRomMd5Bytes[sendRomMd5Bytes.length-1] = 0;
-            mSendBuffer.put(sendRomMd5Bytes, 0, sendRomMd5Bytes.length);
+            putString(mRomMd5, ROM_MD5_MAX);
 
             mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
         }
@@ -167,17 +176,28 @@ class NetplayRoomClientHandler
                 // Server port
                 mSendBuffer.putInt(mServerPort);
 
+                // Video plugin, 60 bytes
+                putString(mVideoPlugin, VIDEO_PLUGIN_MAX);
+
+                // RSP plugin 60 bytes
+                putString(mRspPlugin, RSP_PLUGIN_MAX);
+
                 mOnClientRegistered.onClientRegistration(mCurrentPlayerNumber, mClientDeviceName);
             } else {
                 // Stop accepting registrations
                 mSendBuffer.reset();
                 // Message id
-                mSendBuffer.putInt(0);
+                mSendBuffer.putInt(ID_SEND_REGISTRATION_DATA);
                 // Registration id
                 mSendBuffer.putInt(0);
                 mSendBuffer.putInt(0);
                 // Server port
                 mSendBuffer.putInt(0);
+                // Video plugin, 60 bytes
+                putString("dummy", VIDEO_PLUGIN_MAX);
+
+                // RSP plugin 60 bytes
+                putString("dummy", RSP_PLUGIN_MAX);
             }
             mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
         }

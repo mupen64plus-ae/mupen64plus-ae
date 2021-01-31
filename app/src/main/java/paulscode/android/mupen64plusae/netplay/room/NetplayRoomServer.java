@@ -71,6 +71,12 @@ public class NetplayRoomServer {
     // ROM MD5
     String mRomMd5;
 
+    // Video plugin
+    String mVideoPlugin;
+
+    // RSP plugin
+    String mRspPlugin;
+
     // Context for creating NSD service
     Context mContext;
 
@@ -90,11 +96,14 @@ public class NetplayRoomServer {
      * Constructor
      * @param serverPort Port in which the netplay server is listening on
      */
-    public NetplayRoomServer(Context context, String deviceName, String romMd5, int serverPort, OnClientFound onClientFound)
+    public NetplayRoomServer(Context context, String deviceName, String romMd5, String videoPlugin, String rspPlugin,
+                             int serverPort, OnClientFound onClientFound)
     {
         mContext = context;
         mDeviceName = deviceName;
         mRomMd5 = romMd5;
+        mVideoPlugin = videoPlugin;
+        mRspPlugin = rspPlugin;
         mServerPort = serverPort;
         mOnClientFound = onClientFound;
         mNsdServiceName = DEFAULT_SERVICE_NAME;
@@ -184,7 +193,8 @@ public class NetplayRoomServer {
 
                 mRegistrationIds.add(regId);
 
-                mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, regId, mServerPort, mServerSocket.accept(),
+                mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, mVideoPlugin, mRspPlugin,
+                        regId, mServerPort, mServerSocket.accept(),
                         new NetplayRoomClientHandler.OnClientRegistered() {
                             @Override
                             public void onClientRegistration(int playerNumber, String deviceName) {

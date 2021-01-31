@@ -26,10 +26,12 @@ public class NetplayRoomClient {
          * Called when server responds with registration information
          * @param regId Registration id
          * @param player Player number
+         * @param videoPlugin Video plugin
+         * @param rspPlugin RSP plugin
          * @param address Host address
          * @param port Host port
          */
-        void onServerRegistration(int regId, int player, InetAddress address, int port);
+        void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port);
 
         /**
          * Called when the server starts the game
@@ -83,8 +85,9 @@ public class NetplayRoomClient {
                         }
 
                         @Override
-                        public void onServerRegistration(int regId, int player, InetAddress address, int port) {
-                            mOnServerData.onServerRegistration(regId, player, address, port);
+                        public void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin,
+                                                         InetAddress address, int port) {
+                            mOnServerData.onServerRegistration(regId, player, videoPlugin, rspPlugin, address, port);
                         }
 
                         @Override
@@ -100,7 +103,7 @@ public class NetplayRoomClient {
                 mClients.add(roomClient);
             }
         }
-    };
+    }
 
     /**
      * Constructor

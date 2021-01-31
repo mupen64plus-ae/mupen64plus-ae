@@ -36,9 +36,14 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     public interface OnServerDialogActionListener {
         /**
          * Called when asked to connet
+         * @param regId Registration id
          * @param player Player number, 1-4
+         * @param videoPlugin Video plugin
+         * @param rspPlugin RSP plugin
+         * @param address Server address
+         * @param port Server port
          */
-        void connect(int regId, int player, InetAddress address, int port);
+        void connect(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port);
 
         /**
          * Called when memulation is started
@@ -90,10 +95,16 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         setRetainInstance(true);
+        
+        Bundle args = getArguments();
+        
+        if (args == null) {
+            args = new Bundle();
+        }
 
-        final String romMd5 = getArguments().getString(ROM_MD5);
+        final String romMd5 = args.getString(ROM_MD5);
 
-        View dialogView = View.inflate(getActivity(), R.layout.netplay_client_setup_dialog, null);
+        View dialogView = View.inflate(requireActivity(), R.layout.netplay_client_setup_dialog, null);
 
         mServerListView = dialogView.findViewById(R.id.serverList);
         mLinearLayoutWaiting = dialogView.findViewById(R.id.linearLayoutWaiting);
@@ -105,7 +116,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         }
 
         if (mServerListAdapter == null) {
-            mServerListAdapter = new ServerListAdapter(getActivity(), mServers);
+            mServerListAdapter = new ServerListAdapter(requireActivity(), mServers);
             mServerListView.setAdapter(mServerListAdapter);
             mServerListView.setOnItemClickListener(this);
         }
@@ -126,24 +137,25 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         dialog.setCancelable(false);
         setCancelable(false);
 
-        String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
+        String deviceName = DeviceUtil.getDeviceName(requireActivity().getContentResolver());
 
         if (mRoomClient == null) {
-            mRoomClient = new NetplayRoomClient(getActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
+            mRoomClient = new NetplayRoomClient(requireActivity(), deviceName, romMd5, new NetplayRoomClient.OnServerFound() {
                 @Override
                 public void onValidServerFound(int serverId, String serverName) {
-                    getActivity().runOnUiThread(() -> {
+                    requireActivity().runOnUiThread(() -> {
                         mServers.add(new NetplayServer(serverId, serverName));
                         mServerListAdapter.notifyDataSetChanged();
                     });
                 }
 
                 @Override
-                public void onServerRegistration(int regId, int player, InetAddress address, int port) {
-                    if (getActivity() instanceof OnServerDialogActionListener)
+                public void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin,
+                                                 InetAddress address, int port) {
+                    if (requireActivity() instanceof OnServerDialogActionListener)
                     {
-                        getActivity().runOnUiThread(() -> {
-                            ((OnServerDialogActionListener) getActivity()).connect(regId, player, address, port);
+                        requireActivity().runOnUiThread(() -> {
+                            ((OnServerDialogActionListener) requireActivity()).connect(regId, player, videoPlugin, rspPlugin, address, port);
                             mServerListView.setVisibility(View.GONE);
                             mLinearLayoutWaiting.setVisibility(View.VISIBLE);
                             mWaiting = true;
@@ -157,9 +169,9 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
                 @Override
                 public void onServerStart() {
-                    if (getActivity() instanceof OnServerDialogActionListener)
+                    if (requireActivity() instanceof OnServerDialogActionListener)
                     {
-                        getActivity().runOnUiThread(() -> ((OnServerDialogActionListener) getActivity()).start());
+                        requireActivity().runOnUiThread(() -> ((OnServerDialogActionListener) requireActivity()).start());
                     }
                     else
                     {
@@ -172,8 +184,8 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         cancelButton.setOnClickListener(v -> {
             mRoomClient.leaveServer();
 
-            if (getActivity() instanceof OnServerDialogActionListener) {
-                ((OnServerDialogActionListener) getActivity()).cancel();
+            if (requireActivity() instanceof OnServerDialogActionListener) {
+                ((OnServerDialogActionListener) requireActivity()).cancel();
             }
         });
 

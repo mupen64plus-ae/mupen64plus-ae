@@ -28,10 +28,12 @@ public class NetplayRoomServerHandler {
          * Called when server responds with registration information
          * @param regId Registration id
          * @param player Player number
+         * @param videoPlugin Video plugin
+         * @param rspPlugin RSP plugin
          * @param address Host address
          * @param port Host port
          */
-        void onServerRegistration(int regId, int player, InetAddress address, int port);
+        void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port);
 
         /**
          * Called when the server wants to start the game
@@ -76,7 +78,7 @@ public class NetplayRoomServerHandler {
 
     // Send and receive buffers
     ByteBuffer mSendBuffer = ByteBuffer.allocate(100);
-    ByteBuffer mReceiveBuffer = ByteBuffer.allocate(100);
+    ByteBuffer mReceiveBuffer = ByteBuffer.allocate(300);
 
     public NetplayRoomServerHandler(String deviceName, InetAddress address, int port, OnServerRoomData onServerRoomData)
     {
@@ -119,6 +121,19 @@ public class NetplayRoomServerHandler {
         return false;
     }
 
+    private String getStringFromBuffer(int maxSize)
+    {
+        byte[] stringBytes = new byte[maxSize];
+
+        mReceiveBuffer.get(stringBytes);
+        int stringEndIndex = 0;
+        while (stringEndIndex < stringBytes.length && stringBytes[stringEndIndex] != 0) {
+            ++stringEndIndex;
+        }
+
+        return new String(stringBytes, 0, stringEndIndex, StandardCharsets.ISO_8859_1);
+    }
+
     private void handleRoomData() throws IOException
     {
         int offset = 0;
@@ -129,23 +144,8 @@ public class NetplayRoomServerHandler {
             offset += bytesRead != -1 ? bytesRead : 0;
         }
 
-        byte[] deviceName = new byte[NetplayRoomClientHandler.DEVICE_NAME_MAX];
-        byte[] romMd5 = new byte[NetplayRoomClientHandler.ROM_MD5_MAX];
-
-        mReceiveBuffer.get(deviceName);
-        int deviceNameEnd = 0;
-        while (deviceNameEnd < deviceName.length && deviceName[deviceNameEnd] != 0) {
-            ++deviceNameEnd;
-        }
-
-        mReceiveBuffer.get(romMd5);
-        int romMd5End = 0;
-        while (romMd5End < romMd5.length && romMd5[romMd5End] != 0) {
-            ++romMd5End;
-        }
-
-        String serverDeviceName = new String(deviceName, 0, deviceNameEnd, StandardCharsets.ISO_8859_1);
-        String serverRomMd5 = new String(romMd5, 0, romMd5End, StandardCharsets.ISO_8859_1);
+        String serverDeviceName = getStringFromBuffer(NetplayRoomClientHandler.DEVICE_NAME_MAX);
+        String serverRomMd5 = getStringFromBuffer(NetplayRoomClientHandler.ROM_MD5_MAX);
 
         Log.i(TAG, "Device name=" + serverDeviceName + " md5=" + serverRomMd5);
 
@@ -167,10 +167,16 @@ public class NetplayRoomServerHandler {
         int regId = mReceiveBuffer.getInt();
         int playerNumber = mReceiveBuffer.getInt();
         int serverPort = mReceiveBuffer.getInt();
+        String videoPlugin = getStringFromBuffer(NetplayRoomClientHandler.VIDEO_PLUGIN_MAX);
+        String rspPlugin = getStringFromBuffer(NetplayRoomClientHandler.RSP_PLUGIN_MAX);
 
-        Log.i(TAG, "Registration id =" + regId + " player #=" + playerNumber + " port=" + serverPort);
+        Log.i(TAG, "Registration id =" + regId + " player =" + playerNumber +
+                " port=" + serverPort + " video plugin = " + videoPlugin + " RSP plugin =" + rspPlugin);
 
-        mOnServerRoomData.onServerRegistration(regId, playerNumber, mClientSocket.getInetAddress(), serverPort);
+        if (serverPort != 0) {
+            mOnServerRoomData.onServerRegistration(regId, playerNumber, videoPlugin, rspPlugin,
+                    mClientSocket.getInetAddress(), serverPort);
+        }
     }
 
     private void handleStart()

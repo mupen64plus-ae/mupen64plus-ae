@@ -34,9 +34,14 @@ public class NetplayServerSetupDialog extends DialogFragment
     public interface OnClientDialogActionListener {
         /**
          * Called when asked to connet
+         * @param regId Registration id
          * @param player Player number, 1-4
+         * @param videoPlugin Video plugin
+         * @param rspPlugin RSP plugin
+         * @param address Server address
+         * @param port Server port
          */
-        void connect(int regId, int player, InetAddress address, int port);
+        void connect(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port);
 
         /**
          * Called when emulation is started
@@ -50,6 +55,8 @@ public class NetplayServerSetupDialog extends DialogFragment
     }
 
     private static final String ROM_MD5 = "ROM_MD5";
+    private static final String VIDEO_PLUGIN = "VIDEO_PLUGIN";
+    private static final String RSP_PLUGIN = "RSP_PLUGIN";
     private static final String SERVER_PORT = "SERVER_PORT";
 
     private ClientListAdapter mServerListAdapter = null;
@@ -62,11 +69,13 @@ public class NetplayServerSetupDialog extends DialogFragment
      *
      * @return A cheat dialog
      */
-    public static NetplayServerSetupDialog newInstance(String romMd5, int serverPort)
+    public static NetplayServerSetupDialog newInstance(String romMd5, String videoPlugin, String rspPlugin, int serverPort)
     {
         NetplayServerSetupDialog frag = new NetplayServerSetupDialog();
         Bundle args = new Bundle();
         args.putString(ROM_MD5, romMd5);
+        args.putString(VIDEO_PLUGIN, videoPlugin);
+        args.putString(RSP_PLUGIN, rspPlugin);
         args.putInt(SERVER_PORT, serverPort);
         frag.setArguments(args);
         return frag;
@@ -85,7 +94,16 @@ public class NetplayServerSetupDialog extends DialogFragment
     {
         setRetainInstance(true);
 
-        final String romMd5 = getArguments().getString(ROM_MD5);
+        Bundle args = getArguments();
+
+        if (args == null) {
+            args = new Bundle();
+        }
+
+        final String romMd5 = args.getString(ROM_MD5);
+        final String videoPlugin = args.getString(VIDEO_PLUGIN);
+        final String rspPlugin = args.getString(RSP_PLUGIN);
+
         final int serverPort = getArguments().getInt(SERVER_PORT);
 
         View dialogView = View.inflate(getActivity(), R.layout.netplay_server_setup_dialog, null);
@@ -117,18 +135,19 @@ public class NetplayServerSetupDialog extends DialogFragment
             }
         });
 
-        String deviceName = DeviceUtil.getDeviceName(getActivity().getContentResolver());
+        String deviceName = DeviceUtil.getDeviceName(requireActivity().getContentResolver());
 
         // Add ourselves
         if (mClients.size() == 0) {
             mClients.add(new NetplayClient(1, deviceName));
             mServerListAdapter.notifyDataSetChanged();
 
-            mNetplayRoomService = new NetplayRoomServer(getActivity().getApplicationContext(), deviceName, romMd5, serverPort,
+            mNetplayRoomService = new NetplayRoomServer(requireActivity().getApplicationContext(),
+                    deviceName, romMd5, videoPlugin, rspPlugin, serverPort,
                     new NetplayRoomServer.OnClientFound() {
                         @Override
                         public void onClientRegistration(int playerNumber, String deviceName) {
-                            getActivity().runOnUiThread(() -> {
+                            requireActivity().runOnUiThread(() -> {
                                 mClients.add(new NetplayClient(playerNumber, deviceName));
                                 mServerListAdapter.notifyDataSetChanged();
                             });
@@ -136,7 +155,7 @@ public class NetplayServerSetupDialog extends DialogFragment
 
                         @Override
                         public void onClienLeave(int playerNumber) {
-                            getActivity().runOnUiThread(() -> {
+                            requireActivity().runOnUiThread(() -> {
                                 for (NetplayClient client : mClients) {
                                     if (client.mPlayerNumer == playerNumber) {
                                         mClients.remove(client);
@@ -152,7 +171,8 @@ public class NetplayServerSetupDialog extends DialogFragment
 
             if (getActivity() instanceof OnClientDialogActionListener) {
                 OnClientDialogActionListener listener = (OnClientDialogActionListener)getActivity();
-                listener.connect(registrationId, 1, DeviceUtil.wifiIpAddress(getActivity()), serverPort);
+                listener.connect(registrationId, 1, videoPlugin, rspPlugin,
+                        DeviceUtil.wifiIpAddress(getActivity()), serverPort);
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
