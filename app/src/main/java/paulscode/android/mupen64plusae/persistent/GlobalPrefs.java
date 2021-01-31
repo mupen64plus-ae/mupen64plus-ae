@@ -737,7 +737,7 @@ public class GlobalPrefs
         showBuiltInTouchscreenProfiles = mPreferences.getBoolean(ManageTouchscreenProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
         showBuiltInControllerProfiles = mPreferences.getBoolean(ManageControllerProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
 
-        useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread", false );
+        useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread_v2", true );
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);

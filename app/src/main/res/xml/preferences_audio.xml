@@ -103,8 +103,8 @@
         android:summary="@string/audioLowPerformanceMode_summary"
         android:title="@string/audioLowPerformanceMode_title" />
     <androidx.preference.CheckBoxPreference
-        android:defaultValue="false"
-        android:key="useHighPriorityThread"
+        android:defaultValue="true"
+        android:key="useHighPriorityThread_v2"
         android:summary="@string/useHighPriorityThread_summary"
         android:title="@string/useHighPriorityThread_title" />
 
