@@ -726,7 +726,21 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             // Clean up the working directory
-            cleanupEmulation();
+            FileUtil.deleteFolder(new File(mWorkingDir));
+            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+
+            mGameDataManager.clearOldest();
+
+            if (mGlobalPrefs.useExternalStorge) {
+                copyGameContentsToSdCard();
+            }
+
+            if (loadingSuccess) {
+                mCoreInterface.closeRom();
+            }
+
+            // This commands cause crashes in the core
+            //mCoreInterface.emuShutdown();
 
             mIsRunning = false;
 
@@ -749,23 +763,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             //Stop the service
             forceExit();
         }
-    }
-
-    private void cleanupEmulation()
-    {
-        FileUtil.deleteFolder(new File(mWorkingDir));
-        FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
-
-        mGameDataManager.clearOldest();
-
-        if (mGlobalPrefs.useExternalStorge) {
-            copyGameContentsToSdCard();
-        }
-
-        mCoreInterface.closeRom();
-
-        // This commands cause crashes in the core
-        //mCoreInterface.emuShutdown();
     }
 
     private void copyGameContentsFromSdCard()
