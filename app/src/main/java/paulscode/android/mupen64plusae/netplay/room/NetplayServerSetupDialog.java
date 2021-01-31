@@ -2,7 +2,11 @@ package paulscode.android.mupen64plusae.netplay.room;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,8 +123,8 @@ public class NetplayServerSetupDialog extends DialogFragment
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
         TextView serverAddress = dialogView.findViewById(R.id.textHostAddress);
-        TextView port1 = dialogView.findViewById(R.id.textPort1);;
-        TextView port2 = dialogView.findViewById(R.id.textPort2);;
+        TextView port1 = dialogView.findViewById(R.id.textPort1);
+        TextView port2 = dialogView.findViewById(R.id.textPort2);
 
         //Time to create the dialog
         Builder builder = new Builder(requireActivity());
@@ -143,8 +147,13 @@ public class NetplayServerSetupDialog extends DialogFragment
         InetAddress address = DeviceUtil.wifiIpAddress(requireActivity());
 
         if (address != null) {
-            String serverInfoText = " " + address.getHostAddress();
-            serverAddress.setText(serverInfoText);
+            String serverInfoText = "" + address.getHostAddress();
+
+            SpannableString spanString = new SpannableString(serverInfoText);
+            spanString.setSpan(new UnderlineSpan(), 0, spanString.length(), 0);
+            spanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, spanString.length(), 0);
+
+            serverAddress.setText(spanString);
         }
 
         String deviceName = DeviceUtil.getDeviceName(requireActivity().getContentResolver());
@@ -203,9 +212,17 @@ public class NetplayServerSetupDialog extends DialogFragment
         }
 
         if (mNetplayRoomService != null) {
-            port1.setText(String.format(Locale.getDefault(), " %d", mNetplayRoomService.getServerPort()));
+            SpannableString port1SpanString = new SpannableString(String.format(Locale.getDefault(), "%d", mNetplayRoomService.getServerPort()));
+            port1SpanString.setSpan(new UnderlineSpan(), 0, port1SpanString.length(), 0);
+            port1SpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, port1SpanString.length(), 0);
+
+            port1.setText(port1SpanString);
         }
-        port2.setText(String.format(Locale.getDefault(), " %d", serverPort));
+
+        SpannableString port2SpanString = new SpannableString(String.format(Locale.getDefault(), "%d", serverPort));
+        port2SpanString.setSpan(new UnderlineSpan(), 0, port2SpanString.length(), 0);
+        port2SpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, port2SpanString.length(), 0);
+        port2.setText(port2SpanString);
 
         startButton.setOnClickListener(v -> {
             if (requireActivity() instanceof OnClientDialogActionListener) {

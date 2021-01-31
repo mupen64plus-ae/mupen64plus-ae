@@ -88,7 +88,16 @@ public class NetplayRoomServerHandler {
         mOnServerRoomData = onServerRoomData;
     }
 
-    public void connect()
+    public void connectAsync()
+    {
+        // Must run on a separate thread, running network operation on the main
+        // thread leads to NetworkOnMainThreadException exceptions
+        Thread connectThread = new Thread(this::connect);
+        connectThread.setDaemon(true);
+        connectThread.start();
+    }
+
+    private void connect()
     {
         mSendBuffer.order(ByteOrder.BIG_ENDIAN);
         mSendBuffer.mark();
@@ -108,6 +117,8 @@ public class NetplayRoomServerHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        getRoomData();
     }
 
     @Override
@@ -186,7 +197,7 @@ public class NetplayRoomServerHandler {
         }
     }
 
-    synchronized public void getRoomData()
+    synchronized private void getRoomData()
     {
         Log.i(TAG, "Requesting room data");
 

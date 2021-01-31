@@ -47,6 +47,7 @@
                     android:id="@+id/textHostAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_toEndOf="@id/textIpView"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -68,6 +69,7 @@
                     android:id="@+id/textPort1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_toEndOf="@id/textPort1View"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -89,6 +91,7 @@
                     android:id="@+id/textPort2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_toEndOf="@id/textPort2View"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>

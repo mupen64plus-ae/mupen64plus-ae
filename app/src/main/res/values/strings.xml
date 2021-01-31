@@ -788,14 +788,17 @@
 
     <!-- Netplay -->
     <string name="startNetplay_title">Start Netplay</string>
+    <string name="netplay_enterIp">Enter IP</string>
     <string name="netplayServers_title">Netplay Servers</string>
     <string name="netplayServerInfo_title">Server Info</string>
     <string name="netplayPlayers_title">Players</string>
     <string name="netplayWaitingOnServer_title">Waiting on host to start game</string>
     <string name="netplay_toastDesyncDetected">Players have de-synced! Please exit game if you see issues.</string>
-    <string name="netplay_hostAddress">Address:</string>
-    <string name="netplay_hostPort1">Port 1:</string>
-    <string name="netplay_hostPort2">Port 2:</string>
+    <string name="netplay_romMd5Mismatch">Server game does not match!</string>
+    <string name="netplay_hostAddress">Address</string>
+    <string name="netplay_hostPort1">Port 1</string>
+    <string name="netplay_hostPort2">Port 2</string>
+    <string name="netplay_connect">Connect</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

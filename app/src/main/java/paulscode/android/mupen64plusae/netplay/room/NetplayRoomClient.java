@@ -19,8 +19,9 @@ public class NetplayRoomClient {
          * Called when a valid server is found
          * @param serverId Server ID
          * @param serverName Server name
+         * @param romMd5 Rom MD5
          */
-        void onValidServerFound(int serverId, String serverName);
+        void onValidServerFound(int serverId, String serverName, String romMd5);
 
         /**
          * Called when server responds with registration information
@@ -50,9 +51,6 @@ public class NetplayRoomClient {
     // Device name
     String mDeviceName;
 
-    // ROM MD5
-    String mRomMd5;
-
     // Context for creating NSD service
     Context mContext;
 
@@ -74,45 +72,45 @@ public class NetplayRoomClient {
         public void onServiceResolved(NsdServiceInfo serviceInfo) {
             Log.i(TAG, "Resolve Succeeded. host=" + serviceInfo.getHost().getHostAddress() +
                     " port=" + serviceInfo.getPort());
+            connectToServer(serviceInfo.getHost(), serviceInfo.getPort());
+        }
+    }
 
-            NetplayRoomServerHandler roomClient = new NetplayRoomServerHandler(mDeviceName, serviceInfo.getHost(), serviceInfo.getPort(),
-                    new NetplayRoomServerHandler.OnServerRoomData() {
-                        @Override
-                        public void onServerRoomData(String serverName, String romMd5) {
-                            if (romMd5.equals(mRomMd5)) {
-                                mOnServerData.onValidServerFound(mClients.size() - 1, serverName);
-                            }
-                        }
+    public void connectToServer(InetAddress address, int port)
+    {
+        NetplayRoomServerHandler roomClient = new NetplayRoomServerHandler(mDeviceName, address, port,
+                new NetplayRoomServerHandler.OnServerRoomData() {
+                    @Override
+                    public void onServerRoomData(String serverName, String romMd5) {
+                        mOnServerData.onValidServerFound(mClients.size() - 1, serverName, romMd5);
+                    }
 
-                        @Override
-                        public void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin,
-                                                         InetAddress address, int port) {
-                            mOnServerData.onServerRegistration(regId, player, videoPlugin, rspPlugin, address, port);
-                        }
+                    @Override
+                    public void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin,
+                                                     InetAddress address, int port) {
+                        mOnServerData.onServerRegistration(regId, player, videoPlugin, rspPlugin, address, port);
+                    }
 
-                        @Override
-                        public void onServerStartGame() {
-                            mOnServerData.onServerStart();
-                            stopListening();
-                        }
-                    });
+                    @Override
+                    public void onServerStartGame() {
+                        mOnServerData.onServerStart();
+                        stopListening();
+                    }
+                });
 
-            if (!mClients.contains(roomClient)) {
-                roomClient.connect();
-                roomClient.getRoomData();
-                mClients.add(roomClient);
-            }
+        if (!mClients.contains(roomClient)) {
+            roomClient.connectAsync();
+            mClients.add(roomClient);
         }
     }
 
     /**
      * Constructor
      */
-    public NetplayRoomClient(Context context, String deviceName, String romMd5, OnServerFound onServerData)
+    public NetplayRoomClient(Context context, String deviceName, OnServerFound onServerData)
     {
         mContext = context;
         mDeviceName = deviceName;
-        mRomMd5 = romMd5;
         mOnServerData = onServerData;
 
         WifiManager wifi = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);

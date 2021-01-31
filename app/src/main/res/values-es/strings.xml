@@ -606,14 +606,17 @@
 
     <!-- Netplay -->
     <string name="startNetplay_title">Iniciar Netplay</string>
+    <string name="netplay_enterIp">Entrar Dirección</string>
     <string name="netplayServers_title">Servidores de Netplay</string>
     <string name="netplayServerInfo_title">Servidor</string>
     <string name="netplayPlayers_title">Jugadores</string>
     <string name="netplayWaitingOnServer_title">Esperando que el servidor inicie el juego.</string>
     <string name="netplay_toastDesyncDetected">¡Los jugadores se han desincronizado! Salgase del juego si ve problemas.</string>
-    <string name="netplay_hostAddress">Address:</string>
+    <string name="netplay_romMd5Mismatch">¡El juego del servidor no coincide!</string>
+    <string name="netplay_hostAddress">Dirección:</string>
     <string name="netplay_hostPort1">Port 1:</string>
     <string name="netplay_hostPort2">Port 2:</string>
+    <string name="netplay_connect">Conectar</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>
