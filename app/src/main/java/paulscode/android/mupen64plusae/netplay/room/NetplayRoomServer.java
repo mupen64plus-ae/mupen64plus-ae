@@ -43,51 +43,48 @@ public class NetplayRoomServer {
     static final String DEFAULT_SERVICE_TYPE = "_m64plusae._tcp.";
 
     // Port where the netplay server is listening
-    int mServerPort;
+    private final int mServerPort;
 
     // TCP server used to communicate game data
-    ServerSocket mServerSocket;
+    private ServerSocket mServerSocket;
 
     // Broadcast service through NSD
-    NsdManager mNsdManager;
+    private NsdManager mNsdManager;
 
     // NSD registration listener
-    NsdManager.RegistrationListener mRegistrationListener;
+    private NsdManager.RegistrationListener mRegistrationListener;
 
-    WifiManager.MulticastLock mMulticastLock;
+    private final WifiManager.MulticastLock mMulticastLock;
 
     // Service name used for NSD
-    String mNsdServiceName;
-
-    // Thread used to listen for new connections
-    Thread mServerThread;
+    private String mNsdServiceName;
 
     // True if we are running
-    boolean mRunning = true;
+    private boolean mRunning = true;
 
     // Device name
-    String mDeviceName;
+    private final String mDeviceName;
 
     // ROM MD5
-    String mRomMd5;
+    private final String mRomMd5;
 
     // Video plugin
-    String mVideoPlugin;
+    private final String mVideoPlugin;
 
     // RSP plugin
-    String mRspPlugin;
+    private final String mRspPlugin;
 
     // Context for creating NSD service
-    Context mContext;
+    private final Context mContext;
 
     // Called when a client is found
-    OnClientFound mOnClientFound;
+    private final OnClientFound mOnClientFound;
 
     // List of clients
-    ArrayList<NetplayRoomClientHandler> mClients = new ArrayList<>();
+    private final ArrayList<NetplayRoomClientHandler> mClients = new ArrayList<>();
 
     // List of registration ids
-    Set<Integer> mRegistrationIds = new HashSet<>();
+    private final Set<Integer> mRegistrationIds = new HashSet<>();
 
     // Handler for registering for the NSD service repeatedly
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -117,14 +114,21 @@ public class NetplayRoomServer {
 
         try {
             mServerSocket = new ServerSocket(0);
-            mServerThread = new Thread(this::runTcpServer);
-            mServerThread.start();
+
+            // Thread used to listen for new connections
+            Thread serverThread = new Thread(this::runTcpServer);
+            serverThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // Register/Unregister in a loop to workaround issues with NSD in Android
         mHandler.postDelayed(this::registerService, 500);
+    }
+
+    public int getServerPort()
+    {
+        return mServerSocket.getLocalPort();
     }
 
     public void registerService() {

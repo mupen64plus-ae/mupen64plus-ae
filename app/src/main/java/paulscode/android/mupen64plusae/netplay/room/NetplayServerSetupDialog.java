@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -21,8 +22,10 @@ import androidx.fragment.app.DialogFragment;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
@@ -106,19 +109,21 @@ public class NetplayServerSetupDialog extends DialogFragment
 
         final int serverPort = getArguments().getInt(SERVER_PORT);
 
-        View dialogView = View.inflate(getActivity(), R.layout.netplay_server_setup_dialog, null);
+        View dialogView = View.inflate(requireActivity(), R.layout.netplay_server_setup_dialog, null);
 
         ListView serverListView = dialogView.findViewById(R.id.clientList);
         Button startButton = dialogView.findViewById(R.id.buttonStart);
 
-        mServerListAdapter = new ClientListAdapter(getActivity(), mClients);
+        mServerListAdapter = new ClientListAdapter(requireActivity(), mClients);
         serverListView.setAdapter(mServerListAdapter);
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
+        TextView serverAddress = dialogView.findViewById(R.id.textHostAddress);
+        TextView port1 = dialogView.findViewById(R.id.textPort1);;
+        TextView port2 = dialogView.findViewById(R.id.textPort2);;
 
         //Time to create the dialog
         Builder builder = new Builder(requireActivity());
-        builder.setTitle(getString(R.string.netplayClients_title));
         builder.setNegativeButton(null, null);
         builder.setPositiveButton(null, null);
         builder.setView(dialogView);
@@ -130,10 +135,17 @@ public class NetplayServerSetupDialog extends DialogFragment
         setCancelable(false);
 
         cancelButton.setOnClickListener(v -> {
-            if (getActivity() instanceof OnClientDialogActionListener) {
-                ((OnClientDialogActionListener) getActivity()).cancel();
+            if (requireActivity() instanceof OnClientDialogActionListener) {
+                ((OnClientDialogActionListener) requireActivity()).cancel();
             }
         });
+
+        InetAddress address = DeviceUtil.wifiIpAddress(requireActivity());
+
+        if (address != null) {
+            String serverInfoText = " " + address.getHostAddress();
+            serverAddress.setText(serverInfoText);
+        }
 
         String deviceName = DeviceUtil.getDeviceName(requireActivity().getContentResolver());
 
@@ -169,24 +181,44 @@ public class NetplayServerSetupDialog extends DialogFragment
 
             int registrationId = mNetplayRoomService.registerPlayerOne();
 
-            if (getActivity() instanceof OnClientDialogActionListener) {
-                OnClientDialogActionListener listener = (OnClientDialogActionListener)getActivity();
-                listener.connect(registrationId, 1, videoPlugin, rspPlugin,
-                        DeviceUtil.wifiIpAddress(getActivity()), serverPort);
+            if (requireActivity() instanceof OnClientDialogActionListener) {
+
+                if (address == null) {
+                    byte[] ipAddr = new byte[]{127, 0, 0, 1};
+                    try {
+                        address = InetAddress.getByAddress(ipAddr);
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (address != null) {
+                    OnClientDialogActionListener listener = (OnClientDialogActionListener)requireActivity();
+                    listener.connect(registrationId, 1, videoPlugin, rspPlugin,
+                            address, serverPort);
+                }
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
         }
 
+        if (mNetplayRoomService != null) {
+            port1.setText(String.format(Locale.getDefault(), " %d", mNetplayRoomService.getServerPort()));
+        }
+        port2.setText(String.format(Locale.getDefault(), " %d", serverPort));
+
         startButton.setOnClickListener(v -> {
-            if (getActivity() instanceof OnClientDialogActionListener) {
-                OnClientDialogActionListener listener = (OnClientDialogActionListener)getActivity();
+            if (requireActivity() instanceof OnClientDialogActionListener) {
+                OnClientDialogActionListener listener = (OnClientDialogActionListener)requireActivity();
                 mNetplayRoomService.start();
                 listener.start();
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
         });
+
+
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return dialog;
     }
