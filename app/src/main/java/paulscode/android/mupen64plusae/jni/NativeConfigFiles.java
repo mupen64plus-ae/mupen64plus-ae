@@ -59,7 +59,7 @@ class NativeConfigFiles
      * Populates the core configuration files with the user preferences.
      */
     static boolean syncConfigFiles(Context context, GamePrefs game, GlobalPrefs global, AppData appData,
-                                   int renderWidth, int renderHeight, boolean isNdd)
+                                   int renderWidth, int renderHeight, boolean isNdd, boolean usingNetplay)
     {
         //@formatter:off
 
@@ -288,6 +288,13 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceGammaCorrection", boolToTF( game.glideN64Prefs.forceGammaCorrection ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "GammaCorrectionLevel", String.valueOf( game.glideN64Prefs.gammaCorrectionLevel ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "DisableFBInfo", String.valueOf( true ) );
+
+        // Override certain settings when using netplay
+        if (usingNetplay) {
+            mupen64plus_cfg.put("Video-GLideN64", "EnableCopyColorToRDRAM", String.valueOf(0));
+            mupen64plus_cfg.put("Video-GLideN64", "EnableCopyAuxiliaryToRDRAM", boolToTF(false));
+            mupen64plus_cfg.put("Video-GLideN64", "EnableCopyDepthToRDRAM", String.valueOf(2));
+        }
 
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );

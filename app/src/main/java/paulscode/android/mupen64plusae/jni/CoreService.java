@@ -592,7 +592,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             if(!NativeConfigFiles.syncConfigFiles( getApplicationContext(), mGamePrefs, mGlobalPrefs, mAppData,
-                    mVideoRenderWidth, mVideoRenderHeight, isNdd || !TextUtils.isEmpty(mGamePrefs.diskPath64Dd))) {
+                    mVideoRenderWidth, mVideoRenderHeight, isNdd || !TextUtils.isEmpty(mGamePrefs.diskPath64Dd), mUsingNetplay)) {
                 //Stop the service
                 forceExit();
                 return;
