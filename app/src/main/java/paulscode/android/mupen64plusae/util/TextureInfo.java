@@ -147,11 +147,11 @@ public class TextureInfo
                                 romHeaderCount.put(info.romName, 1);
                             }
 
-                            //Find the first ROM header that shows 10 times
-                            for (Map.Entry<String, Integer> mapEntry : romHeaderCount.entrySet()) {
-                                if (mapEntry.getValue() == 10) {
-                                    return mapEntry.getKey();
-                                }
+                            Integer currentCount = romHeaderCount.get(info.romName);
+
+                            //Return the first ROM header that shows 10 times
+                            if (currentCount != null && currentCount >= 10) {
+                                return info.romName;
                             }
                         }
                     }
@@ -178,7 +178,18 @@ public class TextureInfo
             }
         }
         Log.e( "TextureInfo", "No compatible textures found in .zip archive" );
-        return null;
+
+        // If nothing reaching a count of 10, the pick the highest count
+        String headerNameHighestCount = "";
+        Integer highestCount = 0;
+        for (Map.Entry<String, Integer> mapEntry : romHeaderCount.entrySet()) {
+            if (mapEntry.getValue() > highestCount) {
+                headerNameHighestCount = mapEntry.getKey();
+                highestCount = mapEntry.getValue();
+            }
+        }
+
+        return TextUtils.isEmpty(headerNameHighestCount) ? null : headerNameHighestCount;
     }
 
     /**
@@ -284,16 +295,26 @@ public class TextureInfo
                         romHeaderCount.put(info.romName, 1);
                     }
 
-                    //Find the first ROM header that shows 10 times
-                    for (Map.Entry<String, Integer> entry : romHeaderCount.entrySet()) {
-                        if (entry.getValue() == 10) {
-                            return entry.getKey();
-                        }
+                    Integer currentCount = romHeaderCount.get(info.romName);
+
+                    //Return the first ROM header that shows 10 times
+                    if (currentCount != null && currentCount >= 10) {
+                        return info.romName;
                     }
                 }
             }
         }
 
-        return null;
+        // If nothing reaching a count of 10, the pick the highest count
+        String headerNameHighestCount = "";
+        Integer highestCount = 0;
+        for (Map.Entry<String, Integer> mapEntry : romHeaderCount.entrySet()) {
+            if (mapEntry.getValue() > highestCount) {
+                headerNameHighestCount = mapEntry.getKey();
+                highestCount = mapEntry.getValue();
+            }
+        }
+
+        return TextUtils.isEmpty(headerNameHighestCount) ? null : headerNameHighestCount;
     }
 }
