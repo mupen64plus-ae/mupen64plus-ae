@@ -254,6 +254,13 @@
     <string name="touchscreenStyle_entryOutline">Líneas de borde</string>
     <string name="touchscreenStyle_entryShaded">Sombreado</string>
     <string name="touchscreenStyle_entryJoshaGibs">JoshaGibs Estilo</string>
+    <string name="touchscreenStyle_entryFlat">Plano</string>
+    <string name="touchscreenStyle_entryHiRes">HiRes</string>
+    <string name="touchscreenStyle_entryNewd">NewD</string>
+    <string name="touchscreenStyle_entry3DSXL">3DS XL Estilo</string>
+    <string name="touchscreenStyle_entryGameCube">Gamecube Estilo</string>
+    <string name="touchscreenStyle_entrySwitch">Switch Estilo</string>
+    <string name="touchscreenStyle_entryWiiU">WiiU Estilo</string>
     <string name="displayOrientation_title">Orientación de la pantalla</string>
     <string name="displayOrientation_entryLandscape">Paisaje</string>
     <string name="displayOrientation_entryReverseLandscape">Paisaje invertido</string>

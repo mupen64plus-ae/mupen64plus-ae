@@ -513,7 +513,7 @@ public class GlobalPrefs
         isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated_v2", true );
         isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative_global", false );
         // Determine the touchscreen layout
-        touchscreenSkin = mPreferences.getString( "touchscreenSkin", "JoshaGibs" );
+        touchscreenSkin = mPreferences.getString( "touchscreenSkin_v2", "WiiU" );
         isCustomTouchscreenSkin = touchscreenSkin.equals( "Custom" );
         if(isCustomTouchscreenSkin)
             touchscreenSkinPath = touchscreenCustomSkinsDir;

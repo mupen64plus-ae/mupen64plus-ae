@@ -77,7 +77,7 @@
         android:defaultValue="@string/touchscreenButtonStyle_default"
         android:entries="@array/touchscreenButtonStyle_entries"
         android:entryValues="@array/touchscreenButtonStyle_values"
-        android:key="touchscreenSkin"
+        android:key="touchscreenSkin_v2"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenStyle_title" />
     <androidx.preference.Preference

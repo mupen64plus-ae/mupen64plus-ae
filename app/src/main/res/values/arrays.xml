@@ -95,15 +95,29 @@
         <item>@string/touchscreenStyle_entryOutline</item>
         <item>@string/touchscreenStyle_entryShaded</item>
         <item>@string/touchscreenStyle_entryJoshaGibs</item>
+        <item>@string/touchscreenStyle_entryFlat</item>
+        <item>@string/touchscreenStyle_entryHiRes</item>
+        <item>@string/touchscreenStyle_entryNewd</item>
+        <item>@string/touchscreenStyle_entry3DSXL</item>
+        <item>@string/touchscreenStyle_entryGameCube</item>
+        <item>@string/touchscreenStyle_entrySwitch</item>
+        <item>@string/touchscreenStyle_entryWiiU</item>
         <item>@string/touchscreenStyle_entryCustom</item>
     </string-array>
     <string-array name="touchscreenButtonStyle_values" translatable="false">
         <item>Outline</item>
         <item>Shaded</item>
         <item>JoshaGibs</item>
+        <item>Flat</item>
+        <item>Hires</item>
+        <item>Newd</item>
+        <item>3DSXL</item>
+        <item>GameCube</item>
+        <item>Switch</item>
+        <item>WiiU</item>
         <item>Custom</item>
     </string-array>
-    <string name="touchscreenButtonStyle_default" translatable="false">JoshaGibs</string>
+    <string name="touchscreenButtonStyle_default" translatable="false">WiiU</string>
 
     <!-- Sensor configuration axis List -->
     <string-array name="sensorConfig_axis_entries" translatable="false">

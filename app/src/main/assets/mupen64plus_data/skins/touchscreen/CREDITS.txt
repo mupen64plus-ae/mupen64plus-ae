@@ -1,0 +1,29 @@
+HiRes:
+
+The textures used for numbers in this skin are from The Legend Of Zelda-Majora's Mask texture pack from Nerrel.
+
+http://www.emutalk.net/threads/56677-Majora-s-Mask-N64HD-Project
+
+
+The  L,R and Z buttons are from Federellis texture pack for The legend Of Zelda Ocarina Of Time.
+
+http://www.emutalk.net/threads/26320-Federelli-s-Retexture-Pack-for-Zelda-OOT-and-MQ
+
+
+all credits for them, I only take the time to port thats textures for the skin
+
+---------------------------------------------------------------------------------
+
+Gamecube: KRAID FFF
+
+---------------------------------------------------------------------------------
+
+JoshaGibs: JoshaGibs
+
+---------------------------------------------------------------------------------
+
+Outline, Shaded: Can't find contributors
+
+---------------------------------------------------------------------------------
+
+3DSXL, Flat, Newd, Switch, WiiU: Juan Jesus Tovar
