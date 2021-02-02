@@ -26,6 +26,7 @@ import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
+import android.opengl.EGLExt;
 import android.opengl.EGLSurface;
 import android.opengl.GLES10;
 import android.os.Build;
@@ -336,6 +337,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         try
         {
+            // Some devices don't support disabling VSYNC so do this instead
+            EGLExt.eglPresentationTimeANDROID(mEglDisplay, mEglSurface, System.nanoTime() - 4000);
             EGL14.eglSwapBuffers( mEglDisplay, mEglSurface );
         }
         catch(final IllegalArgumentException exception)
