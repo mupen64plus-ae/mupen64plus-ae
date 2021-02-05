@@ -44,41 +44,38 @@ public class NetplayRoomServerHandler {
     static final String TAG = "ServerHandler";
 
     // Client device name
-    String mDeviceName;
+    private final String mDeviceName;
 
     // Callback for when server room data arrives
-    OnServerRoomData mOnServerRoomData;
+    private final OnServerRoomData mOnServerRoomData;
 
     // True if we registered to this room
-    boolean mRegisteredToRoom = false;
+    private boolean mRegisteredToRoom = false;
 
     // True if we are running
-    boolean mRunning = true;
+    private boolean mRunning = true;
 
     // Server address
-    InetAddress mAddress;
+    private final InetAddress mAddress;
 
     // Server port
-    int mPort;
-
-    // Thread used to list for messages
-    Thread mClientThread;
+    private final int mPort;
 
     // Client socket
-    Socket mClientSocket;
+    private Socket mClientSocket;
 
     // Output socket stream
-    OutputStream mSocketOutputStream;
+    private OutputStream mSocketOutputStream;
 
     // Output socket synchronization object
-    final Object mSocketOutputSync = new Object();
+    private final Object mSocketOutputSync = new Object();
 
     // Input socket stream
-    InputStream mSocketInputStream;
+    private InputStream mSocketInputStream;
 
     // Send and receive buffers
-    ByteBuffer mSendBuffer = ByteBuffer.allocate(100);
-    ByteBuffer mReceiveBuffer = ByteBuffer.allocate(300);
+    private final ByteBuffer mSendBuffer = ByteBuffer.allocate(100);
+    private final ByteBuffer mReceiveBuffer = ByteBuffer.allocate(300);
 
     public NetplayRoomServerHandler(String deviceName, InetAddress address, int port, OnServerRoomData onServerRoomData)
     {
@@ -111,8 +108,9 @@ public class NetplayRoomServerHandler {
             mSocketInputStream = mClientSocket.getInputStream();
             mRunning = true;
 
-            mClientThread = new Thread(this::runTcpClient);
-            mClientThread.start();
+            // Thread used to list for messages
+            Thread clientThread = new Thread(this::runTcpClient);
+            clientThread.start();
 
         } catch (IOException e) {
             e.printStackTrace();

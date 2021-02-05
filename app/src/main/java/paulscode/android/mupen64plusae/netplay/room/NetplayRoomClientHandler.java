@@ -49,25 +49,23 @@ class NetplayRoomClientHandler
 
     static final int MAX_PLAYERS = 4;
 
-    String mDeviceName;
-    String mClientDeviceName = "";
-    String mRomMd5;
-    String mVideoPlugin;
-    String mRspPlugin;
-    int mRegId;
-    static int mPlayerNumber = 0;
-    int mServerPort;
+    private final String mDeviceName;
+    private final String mRomMd5;
+    private final String mVideoPlugin;
+    private final String mRspPlugin;
+    private final int mRegId;
+    private static int mPlayerNumber = 0;
+    private final int mServerPort;
 
-    OnClientRegistered mOnClientRegistered;
+    private final OnClientRegistered mOnClientRegistered;
 
-    Thread mClientThread;
-    boolean mRunning = true;
-    final Object mSocketOutputSync = new Object();
-    OutputStream mSocketOutputStream;
-    InputStream mSocketInputStream;
+    private boolean mRunning = true;
+    private final Object mSocketOutputSync = new Object();
+    private OutputStream mSocketOutputStream;
+    private InputStream mSocketInputStream;
 
-    ByteBuffer mSendBuffer = ByteBuffer.allocate(300);
-    ByteBuffer mReceiveBuffer = ByteBuffer.allocate(100);
+    private final ByteBuffer mSendBuffer = ByteBuffer.allocate(300);
+    private final ByteBuffer mReceiveBuffer = ByteBuffer.allocate(100);
 
     private int mCurrentPlayerNumber = -1;
     private boolean mClientRegistered = false;
@@ -96,8 +94,8 @@ class NetplayRoomClientHandler
             e.printStackTrace();
         }
 
-        mClientThread = new Thread(this::runClient);
-        mClientThread.start();
+        Thread clientThread = new Thread(this::runClient);
+        clientThread.start();
     }
 
     private void putString(String theString, int maxSize)
@@ -157,7 +155,7 @@ class NetplayRoomClientHandler
             ++deviceNameEnd;
         }
 
-        mClientDeviceName = new String(receiveDeviceNameBytes, 0, deviceNameEnd, StandardCharsets.ISO_8859_1);
+        String clientDeviceName = new String(receiveDeviceNameBytes, 0, deviceNameEnd, StandardCharsets.ISO_8859_1);
 
         synchronized (mSocketOutputSync) {
 
@@ -182,7 +180,7 @@ class NetplayRoomClientHandler
                 // RSP plugin 60 bytes
                 putString(mRspPlugin, RSP_PLUGIN_MAX);
 
-                mOnClientRegistered.onClientRegistration(mCurrentPlayerNumber, mClientDeviceName);
+                mOnClientRegistered.onClientRegistration(mCurrentPlayerNumber, clientDeviceName);
             } else {
                 // Stop accepting registrations
                 mSendBuffer.reset();

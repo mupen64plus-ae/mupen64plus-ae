@@ -41,24 +41,20 @@ public class NetplayRoomClient {
     }
 
     // Broadcast service through NSD
-    NsdManager mNsdManager;
+    private final NsdManager mNsdManager;
 
     // NSD discovery listener
-    NsdManager.DiscoveryListener mDiscoveryListener;
+    private NsdManager.DiscoveryListener mDiscoveryListener;
 
-    WifiManager.MulticastLock mMulticastLock;
+    private final WifiManager.MulticastLock mMulticastLock;
 
     // Device name
-    String mDeviceName;
-
-    // Context for creating NSD service
-    Context mContext;
+    private final String mDeviceName;
 
     // List of found servers
-    ArrayList<NetplayRoomServerHandler> mClients = new ArrayList<>();
+    private final ArrayList<NetplayRoomServerHandler> mClients = new ArrayList<>();
 
-    OnServerFound mOnServerData;
-
+    private final OnServerFound mOnServerData;
 
     class ResolveListener implements NsdManager.ResolveListener {
 
@@ -109,18 +105,18 @@ public class NetplayRoomClient {
      */
     public NetplayRoomClient(Context context, String deviceName, OnServerFound onServerData)
     {
-        mContext = context;
+        // Context for creating NSD service
         mDeviceName = deviceName;
         mOnServerData = onServerData;
 
-        WifiManager wifi = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mMulticastLock = wifi.createMulticastLock("multicastLock");
         mMulticastLock.setReferenceCounted(true);
         mMulticastLock.acquire();
 
         initializeDiscoveryListener();
 
-        mNsdManager = (NsdManager) mContext.getSystemService(Context.NSD_SERVICE);
+        mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
         mNsdManager.discoverServices(NetplayRoomServer.DEFAULT_SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
     }
 
