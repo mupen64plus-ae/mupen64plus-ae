@@ -260,14 +260,14 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mServers.get(position).mRomMd5.equals(mRomMd5)) {
-            if (mServers.get(position).mNetplayVersion == NetplayRoomClientHandler.NETPLAY_VERSION) {
+        if (mServers.get(position).mNetplayVersion == NetplayRoomClientHandler.NETPLAY_VERSION) {
+            if (mServers.get(position).mRomMd5.equals(mRomMd5)) {
                 mRoomClient.registerServer(mServers.get(position).mServerId);
             } else {
-                Notifier.showToast(requireActivity(), R.string.netplay_serverVersionMismatch);
+                Notifier.showToast(requireActivity(), R.string.netplay_romMd5Mismatch);
             }
         } else {
-            Notifier.showToast(requireActivity(), R.string.netplay_romMd5Mismatch);
+            Notifier.showToast(requireActivity(), R.string.netplay_serverVersionMismatch);
         }
     }
 
