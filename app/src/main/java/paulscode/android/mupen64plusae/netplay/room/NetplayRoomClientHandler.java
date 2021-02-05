@@ -38,7 +38,7 @@ class NetplayRoomClientHandler
     static final int ID_SEND_REGISTRATION_DATA = 4;
     static final int ID_SEND_START_PLAY = 5;
 
-    static final int SIZE_SEND_ROOM_DATA = 63;
+    static final int SIZE_SEND_ROOM_DATA = 67;
     static final int SIZE_SEND_REGISTRATION_DATA = 132;
     static final int ID_SIZE = 4;
 
@@ -48,6 +48,8 @@ class NetplayRoomClientHandler
     static final int ROM_MD5_MAX = 33;
 
     static final int MAX_PLAYERS = 4;
+
+    static final int NETPLAY_VERSION = 1;
 
     private final String mDeviceName;
     private final String mRomMd5;
@@ -115,6 +117,9 @@ class NetplayRoomClientHandler
             mSendBuffer.reset();
             // Message id
             mSendBuffer.putInt(ID_SEND_ROOM_DATA);
+
+            // Netplay version
+            mSendBuffer.putInt(NETPLAY_VERSION);
 
             // Device name, 30 bytes
             putString(mDeviceName, DEVICE_NAME_MAX);

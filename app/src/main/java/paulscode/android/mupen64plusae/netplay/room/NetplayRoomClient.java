@@ -16,12 +16,13 @@ public class NetplayRoomClient {
     public interface OnServerFound
     {
         /**
-         * Called when a valid server is found
+         * Called when a valid server is
+         * @param netplayVersion Server netplay version
          * @param serverId Server ID
          * @param serverName Server name
          * @param romMd5 Rom MD5
          */
-        void onValidServerFound(int serverId, String serverName, String romMd5);
+        void onValidServerFound(int netplayVersion, int serverId, String serverName, String romMd5);
 
         /**
          * Called when server responds with registration information
@@ -77,8 +78,8 @@ public class NetplayRoomClient {
         NetplayRoomServerHandler roomClient = new NetplayRoomServerHandler(mDeviceName, address, port,
                 new NetplayRoomServerHandler.OnServerRoomData() {
                     @Override
-                    public void onServerRoomData(String serverName, String romMd5) {
-                        mOnServerData.onValidServerFound(mClients.size() - 1, serverName, romMd5);
+                    public void onServerRoomData(int netplayVersion, String serverName, String romMd5) {
+                        mOnServerData.onValidServerFound(netplayVersion, mClients.size() - 1, serverName, romMd5);
                     }
 
                     @Override

@@ -19,10 +19,11 @@ public class NetplayRoomServerHandler {
     interface OnServerRoomData {
         /**
          * Called when room data is provided by the server
+         * @param netplayVersion Netplay server version
          * @param serverName Server name
          * @param romMd5 ROM MD5
          */
-        void onServerRoomData(String serverName, String romMd5);
+        void onServerRoomData(int netplayVersion, String serverName, String romMd5);
 
         /**
          * Called when server responds with registration information
@@ -153,12 +154,13 @@ public class NetplayRoomServerHandler {
             offset += bytesRead != -1 ? bytesRead : 0;
         }
 
+        int netplayVersion = mReceiveBuffer.getInt();
         String serverDeviceName = getStringFromBuffer(NetplayRoomClientHandler.DEVICE_NAME_MAX);
         String serverRomMd5 = getStringFromBuffer(NetplayRoomClientHandler.ROM_MD5_MAX);
 
-        Log.i(TAG, "Device name=" + serverDeviceName + " md5=" + serverRomMd5);
+        Log.i(TAG, "Netplay version=" + netplayVersion + " Device name=" + serverDeviceName + " md5=" + serverRomMd5);
 
-        mOnServerRoomData.onServerRoomData(serverDeviceName, serverRomMd5);
+        mOnServerRoomData.onServerRoomData(netplayVersion, serverDeviceName, serverRomMd5);
     }
 
     private void handlerRegistrationData() throws IOException

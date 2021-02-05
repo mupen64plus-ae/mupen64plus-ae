@@ -164,9 +164,9 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             mRoomClient = new NetplayRoomClient(requireActivity(), deviceName, new NetplayRoomClient.OnServerFound() {
 
                 @Override
-                public void onValidServerFound(int serverId, String serverName, String romMd5) {
+                public void onValidServerFound(int netplayVersion, int serverId, String serverName, String romMd5) {
                     requireActivity().runOnUiThread(() -> {
-                        mServers.add(new NetplayServer(serverId, serverName, romMd5));
+                        mServers.add(new NetplayServer(netplayVersion, serverId, serverName, romMd5));
                         mServerListAdapter.notifyDataSetChanged();
                     });
                 }
@@ -261,7 +261,11 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mServers.get(position).mRomMd5.equals(mRomMd5)) {
-            mRoomClient.registerServer(mServers.get(position).mServerId);
+            if (mServers.get(position).mNetplayVersion == NetplayRoomClientHandler.NETPLAY_VERSION) {
+                mRoomClient.registerServer(mServers.get(position).mServerId);
+            } else {
+                Notifier.showToast(requireActivity(), R.string.netplay_serverVersionMismatch);
+            }
         } else {
             Notifier.showToast(requireActivity(), R.string.netplay_romMd5Mismatch);
         }
@@ -269,12 +273,14 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     static class NetplayServer implements Comparable<NetplayServer>
     {
+        private final int mNetplayVersion;
         private final int mServerId;
         private final String mServerName;
         private final String mRomMd5;
 
-        NetplayServer(int serverId, String serverName, String romMd5)
+        NetplayServer(int netplayVersion, int serverId, String serverName, String romMd5)
         {
+            mNetplayVersion = netplayVersion;
             mServerId = serverId;
             mServerName = serverName;
             mRomMd5 = romMd5;
@@ -288,7 +294,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         @Override
         @NonNull
         public String toString() {
-            return "" + mServerId + ": " + mServerName + " md5=" + mRomMd5;
+            return "" + "version=" + mNetplayVersion + " id=" + mServerId + ": " + mServerName + " md5=" + mRomMd5;
         }
     }
 
