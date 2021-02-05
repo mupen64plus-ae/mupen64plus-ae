@@ -995,12 +995,17 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     item.goodName, item.displayName, true,
                     true, false);
         } else if (menuItem.getItemId() == R.id.menuItem_startNetplayServer) {
-            launchGameActivity(item.romUri,
-                    item.zipUri,
-                    item.md5, item.crc,
-                    item.headerName, item.countryCode.getValue(), item.artPath,
-                    item.goodName, item.displayName, true,
-                    true, true);
+            if (mAppData.isPro) {
+                launchGameActivity(item.romUri,
+                        item.zipUri,
+                        item.md5, item.crc,
+                        item.headerName, item.countryCode.getValue(), item.artPath,
+                        item.goodName, item.displayName, true,
+                        true, true);
+            } else {
+                Notifier.showToast( this, R.string.netplay_serverProOnly );
+            }
+
         } else if (menuItem.getItemId() == R.id.menuItem_settings) {
             tagForRefreshNeeded();
             ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
