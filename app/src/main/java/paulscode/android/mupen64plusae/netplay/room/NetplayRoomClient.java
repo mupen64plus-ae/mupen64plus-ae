@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.util.Utility;
@@ -75,7 +76,23 @@ public class NetplayRoomClient {
         }
     }
 
-    public void connectToServer(InetAddress address, int port)
+    public void connectToServer(String hostname, int port)
+    {
+        // Must run on a separate thread, running network operation on the main
+        // thread leads to NetworkOnMainThreadException exceptions
+        Thread connectThread = new Thread(() -> {
+            try {
+                InetAddress address = InetAddress.getByName(hostname);
+                connectToServer(address, port);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        });
+        connectThread.setDaemon(true);
+        connectThread.start();
+    }
+
+    private synchronized void connectToServer(InetAddress address, int port)
     {
         // Execute a ping command to wake up the local wifi interface, not sure why this is needed
         // but it works

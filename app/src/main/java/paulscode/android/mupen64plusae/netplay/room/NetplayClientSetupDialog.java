@@ -233,11 +233,10 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                         String portString = manualPort.getText().toString();
 
                         if (!TextUtils.isEmpty(hostnameString) && !TextUtils.isEmpty(portString)) {
-                            InetAddress address = InetAddress.getByName(hostnameString);
                             int port = Integer.parseInt(portString);
-                            mRoomClient.connectToServer(address, port);
+                            mRoomClient.connectToServer(hostnameString, port);
                         }
-                    } catch (UnknownHostException|NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                 }
