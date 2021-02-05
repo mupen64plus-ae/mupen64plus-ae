@@ -185,9 +185,14 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
     private void syncPrograms(long channelId, List<GalleryItem> galleryItems) {
         Log.d(TAG, "Sync programs for channel: " + channelId);
         // Clear out the programs first
-        getApplicationContext().getContentResolver().delete(
-                TvContractCompat.buildPreviewProgramsUriForChannel(mChannelId),
-                null, null);
+        try {
+            getApplicationContext().getContentResolver().delete(
+                    TvContractCompat.buildPreviewProgramsUriForChannel(mChannelId),
+                    null, null);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
 
         createPrograms(mChannelId, galleryItems);
 
