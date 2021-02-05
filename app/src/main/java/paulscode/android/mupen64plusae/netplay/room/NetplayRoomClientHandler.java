@@ -249,32 +249,33 @@ class NetplayRoomClientHandler
         {
             // First read the whole message
             try {
-
                 int offset = 0;
                 mReceiveBuffer.reset();
-                while (offset < ID_SIZE) {
+                int id = -1;
+                while (offset < ID_SIZE && mRunning) {
                     int bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset, ID_SIZE - offset);
                     offset += bytesRead != -1 ? bytesRead : 0;
+                    if (bytesRead == -1) {
+                        mRunning = false;
+                    }
                 }
 
-                int id = mReceiveBuffer.getInt();
+                if (mRunning) {
+                    id = mReceiveBuffer.getInt();
 
-                Log.i(TAG, "Got message with id=" + id);
+                    Log.i(TAG, "Got message with id=" + id);
 
-                if (id == -1) {
-                    mRunning = false;
-                }
-
-                if (id == ID_GET_ROOM_DATA) {
-                    handleGetRoomData();
-                }
-                else if (id == ID_REGISTER_TO_ROOM) {
-                    handleRegisterToRoom();
-                }
-                else if (id == ID_LEAVE_ROOM) {
-                    handleLeaveRoom();
-                } else {
-                    mRunning = false;
+                    if (id == ID_GET_ROOM_DATA) {
+                        handleGetRoomData();
+                    }
+                    else if (id == ID_REGISTER_TO_ROOM) {
+                        handleRegisterToRoom();
+                    }
+                    else if (id == ID_LEAVE_ROOM) {
+                        handleLeaveRoom();
+                    } else {
+                        mRunning = false;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -283,6 +284,7 @@ class NetplayRoomClientHandler
             }
         }
 
+        handleLeaveRoom();
 
         Log.i(TAG, "Socket has been closed");
     }
