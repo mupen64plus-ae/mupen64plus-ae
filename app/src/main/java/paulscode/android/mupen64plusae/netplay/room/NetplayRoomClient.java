@@ -9,6 +9,8 @@ import android.util.Log;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.util.Utility;
+
 public class NetplayRoomClient {
 
     static final String TAG = "NetplayRoomClient";
@@ -75,6 +77,10 @@ public class NetplayRoomClient {
 
     public void connectToServer(InetAddress address, int port)
     {
+        // Execute a ping command to wake up the local wifi interface, not sure why this is needed
+        // but it works
+        Utility.executeShellCommand( "ping", "-c", "-1", address.getHostAddress() );
+
         NetplayRoomServerHandler roomClient = new NetplayRoomServerHandler(mDeviceName, address, port,
                 new NetplayRoomServerHandler.OnServerRoomData() {
                     @Override
