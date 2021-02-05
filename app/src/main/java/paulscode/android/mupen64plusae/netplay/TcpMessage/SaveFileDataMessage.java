@@ -44,8 +44,9 @@ public class SaveFileDataMessage implements TcpMessage {
         int fileSizeBytes = 4;
         mReceiveBuffer.reset();
 
-        while (offset < fileSizeBytes) {
-            int bytesRead = stream.read(mReceiveBuffer.array(), offset, fileSizeBytes - offset);
+        int bytesRead = 0;
+        while (offset < fileSizeBytes && bytesRead != -1) {
+            bytesRead = stream.read(mReceiveBuffer.array(), offset, fileSizeBytes - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
         }
 
@@ -55,8 +56,8 @@ public class SaveFileDataMessage implements TcpMessage {
         mReceiveBuffer.reset();
 
         offset = 0;
-        while (offset < mSizeOfFile) {
-            int bytesRead = stream.read(mReceiveBuffer.array(), offset, mSizeOfFile - offset);
+        while (offset < mSizeOfFile && bytesRead != -1) {
+            bytesRead = stream.read(mReceiveBuffer.array(), offset, mSizeOfFile - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
 
         }

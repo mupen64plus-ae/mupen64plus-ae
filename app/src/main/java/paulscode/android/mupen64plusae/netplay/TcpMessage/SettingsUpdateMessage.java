@@ -28,8 +28,9 @@ public class SettingsUpdateMessage implements TcpMessage {
 
         int offset = 0;
         mReceiveBuffer.reset();
-        while (offset < MESSAGE_SIZE) {
-            int bytesRead = stream.read(mReceiveBuffer.array(), offset, MESSAGE_SIZE - offset);
+        int bytesRead = 0;
+        while (offset < MESSAGE_SIZE && bytesRead != -1) {
+            bytesRead = stream.read(mReceiveBuffer.array(), offset, MESSAGE_SIZE - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
         }
         mSettings.mCountPerOp = mReceiveBuffer.getInt();
@@ -38,7 +39,7 @@ public class SettingsUpdateMessage implements TcpMessage {
         mSettings.mEmuMode = mReceiveBuffer.getInt();
         mSettings.mNoCompiledJump = mReceiveBuffer.getInt();
 
-        Log.e("Netplay", "GOT SETTINGS: count_per_op=" + mSettings.mCountPerOp +
+        Log.i("Netplay", "GOT SETTINGS: count_per_op=" + mSettings.mCountPerOp +
                 " disable_extra_mem=" + mSettings.mDisableExtraMem +
                 " si_dma_duration=" + mSettings.mSiDmADuration +
                 " emu_mode=" + mSettings.mEmuMode +

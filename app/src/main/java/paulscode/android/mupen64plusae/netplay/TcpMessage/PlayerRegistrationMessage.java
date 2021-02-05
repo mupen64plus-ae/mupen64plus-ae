@@ -39,8 +39,9 @@ public class PlayerRegistrationMessage implements TcpMessage {
 
         int offset = 0;
         mReceiveBuffer.reset();
-        while (offset < MESSAGE_SIZE) {
-            int bytesRead = stream.read(mReceiveBuffer.array(), offset, MESSAGE_SIZE - offset);
+        int bytesRead = 0;
+        while (offset < MESSAGE_SIZE && bytesRead != -1) {
+            bytesRead = stream.read(mReceiveBuffer.array(), offset, MESSAGE_SIZE - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
         }
 

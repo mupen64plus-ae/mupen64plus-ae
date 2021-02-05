@@ -148,8 +148,9 @@ public class NetplayRoomServerHandler {
     {
         int offset = 0;
         mReceiveBuffer.reset();
-        while (offset < NetplayRoomClientHandler.SIZE_SEND_ROOM_DATA) {
-            int bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
+        int bytesRead = 0;
+        while (offset < NetplayRoomClientHandler.SIZE_SEND_ROOM_DATA && bytesRead != -1) {
+            bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
                     NetplayRoomClientHandler.SIZE_SEND_ROOM_DATA - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
         }
@@ -169,8 +170,9 @@ public class NetplayRoomServerHandler {
 
         int offset = 0;
         mReceiveBuffer.reset();
-        while (offset < NetplayRoomClientHandler.SIZE_SEND_REGISTRATION_DATA) {
-            int bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
+        int bytesRead = 0;
+        while (offset < NetplayRoomClientHandler.SIZE_SEND_REGISTRATION_DATA && bytesRead != -1) {
+            bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
                     NetplayRoomClientHandler.SIZE_SEND_REGISTRATION_DATA - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
         }
@@ -290,8 +292,9 @@ public class NetplayRoomServerHandler {
             try {
                 int offset = 0;
                 mReceiveBuffer.reset();
-                while (offset < NetplayRoomClientHandler.ID_SIZE) {
-                    int bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
+                int bytesRead = 0;
+                while (offset < NetplayRoomClientHandler.ID_SIZE && bytesRead != -1) {
+                    bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
                             NetplayRoomClientHandler.ID_SIZE - offset);
                     offset += bytesRead != -1 ? bytesRead : 0;
                 }
@@ -300,21 +303,21 @@ public class NetplayRoomServerHandler {
 
                 Log.i(TAG, "Got message with id=" + id);
 
-                if (id == -1) {
+                if (bytesRead == -1) {
                     mRunning = false;
-                }
-
-                if (id == NetplayRoomClientHandler.ID_SEND_ROOM_DATA) {
-                    handleRoomData();
-                }
-                else if (id == NetplayRoomClientHandler.ID_SEND_REGISTRATION_DATA) {
-                    handlerRegistrationData();
-                }
-                else if (id == NetplayRoomClientHandler.ID_SEND_START_PLAY) {
-                    handleStart();
-                }
-                else {
-                    mRunning = false;
+                } else {
+                    if (id == NetplayRoomClientHandler.ID_SEND_ROOM_DATA) {
+                        handleRoomData();
+                    }
+                    else if (id == NetplayRoomClientHandler.ID_SEND_REGISTRATION_DATA) {
+                        handlerRegistrationData();
+                    }
+                    else if (id == NetplayRoomClientHandler.ID_SEND_START_PLAY) {
+                        handleStart();
+                    }
+                    else {
+                        mRunning = false;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

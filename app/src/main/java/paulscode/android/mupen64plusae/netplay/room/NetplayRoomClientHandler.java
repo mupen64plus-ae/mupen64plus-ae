@@ -150,8 +150,9 @@ class NetplayRoomClientHandler
         byte[] receiveDeviceNameBytes = new byte[DEVICE_NAME_MAX];
 
         int offset = 0;
-        while (offset < DEVICE_NAME_MAX) {
-            int bytesRead = mSocketInputStream.read(receiveDeviceNameBytes, offset, DEVICE_NAME_MAX - offset);
+        int bytesRead = 0;
+        while (offset < DEVICE_NAME_MAX && bytesRead != -1) {
+            bytesRead = mSocketInputStream.read(receiveDeviceNameBytes, offset, DEVICE_NAME_MAX - offset);
             offset += bytesRead != -1 ? bytesRead : 0;
         }
 
