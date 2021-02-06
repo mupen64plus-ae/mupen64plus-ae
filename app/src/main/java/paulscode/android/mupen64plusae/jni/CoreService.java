@@ -740,7 +740,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mGameDataManager.clearOldest();
 
-            if (mGlobalPrefs.useExternalStorge) {
+            if (mGlobalPrefs.useExternalStorge && loadingSuccess) {
                 copyGameContentsToSdCard();
             }
 
@@ -753,7 +753,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mIsRunning = false;
 
-            if(mListener != null)
+            if(mListener != null && !mIsShuttingDown)
             {
                 if(!loadingSuccess)
                 {
