@@ -53,6 +53,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:inputType="numberDecimal"
+            android:maxLength="5"
             android:hint="@string/netplay_hostPort1" />
 
     </LinearLayout>

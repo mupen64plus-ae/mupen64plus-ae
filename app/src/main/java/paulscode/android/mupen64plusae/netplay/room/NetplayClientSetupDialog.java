@@ -234,7 +234,10 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
                         if (!TextUtils.isEmpty(hostnameString) && !TextUtils.isEmpty(portString)) {
                             int port = Integer.parseInt(portString);
-                            mRoomClient.connectToServer(hostnameString, port);
+
+                            if (port < 65536) {
+                                mRoomClient.connectToServer(hostnameString, port);
+                            }
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
