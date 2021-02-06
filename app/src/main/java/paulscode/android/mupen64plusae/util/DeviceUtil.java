@@ -88,7 +88,11 @@ public final class DeviceUtil
         }
 
         if (deviceName == null) {
-            deviceName = BluetoothAdapter.getDefaultAdapter().getName();
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
+            if (adapter != null) {
+                deviceName = adapter.getName();
+            }
         }
 
         if (deviceName == null) {
