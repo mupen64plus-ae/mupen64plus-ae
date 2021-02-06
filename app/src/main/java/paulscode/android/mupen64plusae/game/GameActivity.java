@@ -954,12 +954,22 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mGamePrefs.videoPluginLib.getPluginLib(),
                         mGamePrefs.rspPluginLib.getPluginLib(),
                         mServerPort);
-                mNetplayServerDialog.show(fm, STATE_NETPLAY_SERVER_DIALOG);
+
+                try {
+                    mNetplayServerDialog.show(fm, STATE_NETPLAY_SERVER_DIALOG);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
             }
 
             if (!mIsNetplayServer && mNetplayClientDialog == null) {
                 mNetplayClientDialog = NetplayClientSetupDialog.newInstance(mRomMd5);
-                mNetplayClientDialog.show(fm, STATE_NETPLAY_CLIENT_DIALOG);
+
+                try {
+                    mNetplayClientDialog.show(fm, STATE_NETPLAY_CLIENT_DIALOG);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
