@@ -658,17 +658,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             if (loadingSuccess)
             {
-                for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())
-                {
-                    if (selection.getIndex() < mCheats.size()) {
-                        CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
-                        ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
-                        if (!cheats.isEmpty()) {
-                            mCoreInterface.coreAddCheat(cheatText.name, cheats);
-                        }
-                    }
-                }
-
                 // Attach all the plugins
                 try {
                     // When using netplay, these plugins will be set when the server tell us what they are
@@ -714,6 +703,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     mCoreInterface.usingNetplay(true);
                 } else {
                     mCoreInterface.emuSetFramelimiter(mGlobalPrefs.isFramelimiterEnabled);
+
+                    for (GamePrefs.CheatSelection selection : mGamePrefs.getEnabledCheats())
+                    {
+                        if (selection.getIndex() < mCheats.size()) {
+                            CheatUtils.Cheat cheatText = mCheats.get(selection.getIndex());
+                            ArrayList<CoreTypes.m64p_cheat_code> cheats = getCheat(cheatText, selection.getOption());
+                            if (!cheats.isEmpty()) {
+                                mCoreInterface.coreAddCheat(cheatText.name, cheats);
+                            }
+                        }
+                    }
                 }
 
                 if (!mIsShuttingDown) {
