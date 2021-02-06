@@ -168,23 +168,32 @@ public class NetplayServerSetupDialog extends DialogFragment
                     new NetplayRoomServer.OnClientFound() {
                         @Override
                         public void onClientRegistration(int playerNumber, String deviceName) {
-                            requireActivity().runOnUiThread(() -> {
+                            try {
                                 mClients.add(new NetplayClient(playerNumber, deviceName));
-                                mServerListAdapter.notifyDataSetChanged();
-                            });
+
+                                requireActivity().runOnUiThread(() -> {
+                                    mServerListAdapter.notifyDataSetChanged();
+                                });
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         @Override
                         public void onClienLeave(int playerNumber) {
-                            requireActivity().runOnUiThread(() -> {
+                            try {
                                 for (NetplayClient client : mClients) {
                                     if (client.mPlayerNumer == playerNumber) {
                                         mClients.remove(client);
                                     }
                                 }
 
-                                mServerListAdapter.notifyDataSetChanged();
-                            });
+                                requireActivity().runOnUiThread(() -> {
+                                    mServerListAdapter.notifyDataSetChanged();
+                                });
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
 
