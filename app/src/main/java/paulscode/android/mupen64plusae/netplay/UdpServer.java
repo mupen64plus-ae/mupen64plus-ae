@@ -398,8 +398,14 @@ public class UdpServer {
     void stopServer() {
         try {
             mRunning = false;
-            mUdpSocket.close();
-            mUdpServerThread.join();
+
+            if (mUdpSocket != null) {
+                mUdpSocket.close();
+            }
+
+            if (mUdpServerThread != null) {
+                mUdpServerThread.join();
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -408,7 +414,10 @@ public class UdpServer {
 
     void waitForServerToEnd() {
         try {
-            mUdpServerThread.join();
+            if (mUdpServerThread != null) {
+                mUdpServerThread.join();
+            }
+
             Log.i("UdpServer", "Server thread finished");
         } catch (InterruptedException e) {
             e.printStackTrace();
