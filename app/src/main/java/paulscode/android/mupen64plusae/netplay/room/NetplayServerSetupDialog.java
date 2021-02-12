@@ -171,9 +171,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                             try {
                                 mClients.add(new NetplayClient(playerNumber, deviceName));
 
-                                requireActivity().runOnUiThread(() -> {
-                                    mServerListAdapter.notifyDataSetChanged();
-                                });
+                                requireActivity().runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
                             } catch (IllegalStateException e) {
                                 e.printStackTrace();
                             }
@@ -182,15 +180,9 @@ public class NetplayServerSetupDialog extends DialogFragment
                         @Override
                         public void onClienLeave(int playerNumber) {
                             try {
-                                for (NetplayClient client : mClients) {
-                                    if (client.mPlayerNumer == playerNumber) {
-                                        mClients.remove(client);
-                                    }
-                                }
+                                mClients.removeIf(client -> client.mPlayerNumer == playerNumber);
 
-                                requireActivity().runOnUiThread(() -> {
-                                    mServerListAdapter.notifyDataSetChanged();
-                                });
+                                requireActivity().runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
                             } catch (IllegalStateException e) {
                                 e.printStackTrace();
                             }
