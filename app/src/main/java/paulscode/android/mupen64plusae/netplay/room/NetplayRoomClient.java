@@ -94,6 +94,10 @@ public class NetplayRoomClient {
 
     private synchronized void connectToServer(InetAddress address, int port)
     {
+
+        if (port >= 65536) {
+            return;
+        }
         // Execute a ping command to wake up the local wifi interface, not sure why this is needed
         // but it works
         Utility.executeShellCommand( "ping", "-c", "-1", address.getHostAddress() );
