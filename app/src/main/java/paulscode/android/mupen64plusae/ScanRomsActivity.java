@@ -101,11 +101,23 @@ public class ScanRomsActivity extends AppCompatActivity
     {
         AppData appData = new AppData( this );
         if (appData.useLegacyFileBrowser) {
-            Intent intent = new Intent(this, LegacyFilePicker.class);
-            intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
-            intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+            startLegacyFilePicker();
         } else {
+            startSafFilePicker();
+        }
+    }
+
+    private void startLegacyFilePicker()
+    {
+        Intent intent = new Intent(this, LegacyFilePicker.class);
+        intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
+        intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
+        startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+    }
+
+    private void startSafFilePicker()
+    {
+        try {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -113,6 +125,8 @@ public class ScanRomsActivity extends AppCompatActivity
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             intent = Intent.createChooser(intent, getString(R.string.scanRomsDialog_selectRom));
             startActivityForResult(intent, PICK_FOLDER_REQUEST_CODE);
+        } catch (android.content.ActivityNotFoundException e) {
+            startLegacyFilePicker();
         }
     }
 
