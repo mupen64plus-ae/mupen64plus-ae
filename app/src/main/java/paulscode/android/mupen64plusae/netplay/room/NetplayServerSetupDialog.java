@@ -1,5 +1,6 @@
 package paulscode.android.mupen64plusae.netplay.room;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -72,6 +73,9 @@ public class NetplayServerSetupDialog extends DialogFragment
 
     private NetplayRoomServer mNetplayRoomService;
 
+    // Activity holding this fragment
+    private Activity mActivity;
+
     /**
      *
      * @return A cheat dialog
@@ -107,18 +111,20 @@ public class NetplayServerSetupDialog extends DialogFragment
             args = new Bundle();
         }
 
+        mActivity = requireActivity();
+
         final String romMd5 = args.getString(ROM_MD5);
         final String videoPlugin = args.getString(VIDEO_PLUGIN);
         final String rspPlugin = args.getString(RSP_PLUGIN);
 
         final int serverPort = getArguments().getInt(SERVER_PORT);
 
-        View dialogView = View.inflate(requireActivity(), R.layout.netplay_server_setup_dialog, null);
+        View dialogView = View.inflate(mActivity, R.layout.netplay_server_setup_dialog, null);
 
         ListView serverListView = dialogView.findViewById(R.id.clientList);
         Button startButton = dialogView.findViewById(R.id.buttonStart);
 
-        mServerListAdapter = new ClientListAdapter(requireActivity(), mClients);
+        mServerListAdapter = new ClientListAdapter(mActivity, mClients);
         serverListView.setAdapter(mServerListAdapter);
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
@@ -127,7 +133,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         TextView port2 = dialogView.findViewById(R.id.textPort2);
 
         //Time to create the dialog
-        Builder builder = new Builder(requireActivity());
+        Builder builder = new Builder(mActivity);
         builder.setNegativeButton(null, null);
         builder.setPositiveButton(null, null);
         builder.setView(dialogView);
@@ -139,12 +145,12 @@ public class NetplayServerSetupDialog extends DialogFragment
         setCancelable(false);
 
         cancelButton.setOnClickListener(v -> {
-            if (requireActivity() instanceof OnClientDialogActionListener) {
-                ((OnClientDialogActionListener) requireActivity()).cancel();
+            if (mActivity instanceof OnClientDialogActionListener) {
+                ((OnClientDialogActionListener) mActivity).cancel();
             }
         });
 
-        InetAddress address = DeviceUtil.wifiIpAddress(requireActivity());
+        InetAddress address = DeviceUtil.wifiIpAddress(mActivity);
 
         if (address != null) {
             String serverInfoText = "" + address.getHostAddress();
@@ -156,14 +162,14 @@ public class NetplayServerSetupDialog extends DialogFragment
             serverAddress.setText(spanString);
         }
 
-        String deviceName = DeviceUtil.getDeviceName(requireActivity().getContentResolver());
+        String deviceName = DeviceUtil.getDeviceName(mActivity.getContentResolver());
 
         // Add ourselves
         if (mClients.size() == 0) {
             mClients.add(new NetplayClient(1, deviceName));
             mServerListAdapter.notifyDataSetChanged();
 
-            mNetplayRoomService = new NetplayRoomServer(requireActivity().getApplicationContext(),
+            mNetplayRoomService = new NetplayRoomServer(mActivity.getApplicationContext(),
                     deviceName, romMd5, videoPlugin, rspPlugin, serverPort,
                     new NetplayRoomServer.OnClientFound() {
                         @Override
@@ -171,7 +177,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                             try {
                                 mClients.add(new NetplayClient(playerNumber, deviceName));
 
-                                requireActivity().runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
+                                mActivity.runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
                             } catch (IllegalStateException e) {
                                 e.printStackTrace();
                             }
@@ -182,7 +188,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                             try {
                                 mClients.removeIf(client -> client.mPlayerNumer == playerNumber);
 
-                                requireActivity().runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
+                                mActivity.runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
                             } catch (IllegalStateException e) {
                                 e.printStackTrace();
                             }
@@ -191,7 +197,7 @@ public class NetplayServerSetupDialog extends DialogFragment
 
             int registrationId = mNetplayRoomService.registerPlayerOne();
 
-            if (requireActivity() instanceof OnClientDialogActionListener) {
+            if (mActivity instanceof OnClientDialogActionListener) {
 
                 if (address == null) {
                     byte[] ipAddr = new byte[]{127, 0, 0, 1};
@@ -203,9 +209,8 @@ public class NetplayServerSetupDialog extends DialogFragment
                 }
 
                 if (address != null) {
-                    OnClientDialogActionListener listener = (OnClientDialogActionListener)requireActivity();
-                    listener.connect(registrationId, 1, videoPlugin, rspPlugin,
-                            address, serverPort);
+                    OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
+                    listener.connect(registrationId, 1, videoPlugin, rspPlugin, address, serverPort);
                 }
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
@@ -226,8 +231,8 @@ public class NetplayServerSetupDialog extends DialogFragment
         port2.setText(port2SpanString);
 
         startButton.setOnClickListener(v -> {
-            if (requireActivity() instanceof OnClientDialogActionListener) {
-                OnClientDialogActionListener listener = (OnClientDialogActionListener)requireActivity();
+            if (mActivity instanceof OnClientDialogActionListener) {
+                OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
                 mNetplayRoomService.start();
                 listener.start();
             } else {

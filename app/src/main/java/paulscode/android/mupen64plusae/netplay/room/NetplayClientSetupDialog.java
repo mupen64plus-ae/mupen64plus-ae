@@ -1,5 +1,6 @@
 package paulscode.android.mupen64plusae.netplay.room;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -25,7 +26,6 @@ import androidx.fragment.app.DialogFragment;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +79,9 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     private String mRomMd5 = "";
 
+    // Activity holding this fragment
+    private Activity mActivity;
+
     /**
      *
      * @return A cheat dialog
@@ -111,9 +114,11 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             args = new Bundle();
         }
 
+        mActivity = requireActivity();
+
         mRomMd5 = args.getString(ROM_MD5);
 
-        View dialogView = View.inflate(requireActivity(), R.layout.netplay_client_setup_dialog, null);
+        View dialogView = View.inflate(mActivity, R.layout.netplay_client_setup_dialog, null);
 
         mServerListView = dialogView.findViewById(R.id.serverList);
         mLinearLayoutWaiting = dialogView.findViewById(R.id.linearLayoutWaiting);
@@ -132,11 +137,9 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             }
         }
 
-        if (mServerListAdapter == null) {
-            mServerListAdapter = new ServerListAdapter(requireActivity(), mServers);
-            mServerListView.setAdapter(mServerListAdapter);
-            mServerListView.setOnItemClickListener(this);
-        }
+        mServerListAdapter = new ServerListAdapter(mActivity, mServers);
+        mServerListView.setAdapter(mServerListAdapter);
+        mServerListView.setOnItemClickListener(this);
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
         Button enterIp = dialogView.findViewById(R.id.buttonEnterIp);
@@ -145,7 +148,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         EditText manualPort = dialogView.findViewById(R.id.portEditText);
 
         //Time to create the dialog
-        Builder builder = new Builder(requireActivity());
+        Builder builder = new Builder(mActivity);
         builder.setTitle(getString(R.string.netplayServers_title));
 
         builder.setNegativeButton(null, null);
@@ -158,14 +161,14 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         dialog.setCancelable(false);
         setCancelable(false);
 
-        String deviceName = DeviceUtil.getDeviceName(requireActivity().getContentResolver());
+        String deviceName = DeviceUtil.getDeviceName(mActivity.getContentResolver());
 
         if (mRoomClient == null) {
-            mRoomClient = new NetplayRoomClient(requireActivity(), deviceName, new NetplayRoomClient.OnServerFound() {
+            mRoomClient = new NetplayRoomClient(mActivity, deviceName, new NetplayRoomClient.OnServerFound() {
 
                 @Override
                 public void onValidServerFound(int netplayVersion, int serverId, String serverName, String romMd5) {
-                    requireActivity().runOnUiThread(() -> {
+                    mActivity.runOnUiThread(() -> {
                         mServers.add(new NetplayServer(netplayVersion, serverId, serverName, romMd5));
                         mServerListAdapter.notifyDataSetChanged();
                     });
@@ -174,10 +177,10 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                 @Override
                 public void onServerRegistration(int regId, int player, String videoPlugin, String rspPlugin,
                                                  InetAddress address, int port) {
-                    if (requireActivity() instanceof OnServerDialogActionListener)
+                    if (mActivity instanceof OnServerDialogActionListener)
                     {
-                        requireActivity().runOnUiThread(() -> {
-                            ((OnServerDialogActionListener) requireActivity()).connect(regId, player, videoPlugin, rspPlugin, address, port);
+                        mActivity.runOnUiThread(() -> {
+                            ((OnServerDialogActionListener) mActivity).connect(regId, player, videoPlugin, rspPlugin, address, port);
                             mServerListView.setVisibility(View.GONE);
                             mLinearLayoutWaiting.setVisibility(View.VISIBLE);
                             enterIp.setVisibility(View.GONE);
@@ -192,9 +195,9 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
                 @Override
                 public void onServerStart() {
-                    if (requireActivity() instanceof OnServerDialogActionListener)
+                    if (mActivity instanceof OnServerDialogActionListener)
                     {
-                        requireActivity().runOnUiThread(() -> ((OnServerDialogActionListener) requireActivity()).start());
+                        mActivity.runOnUiThread(() -> ((OnServerDialogActionListener) mActivity).start());
                     }
                     else
                     {
@@ -207,8 +210,8 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         cancelButton.setOnClickListener(v -> {
             mRoomClient.leaveServer();
 
-            if (requireActivity() instanceof OnServerDialogActionListener) {
-                ((OnServerDialogActionListener) requireActivity()).cancel();
+            if (mActivity instanceof OnServerDialogActionListener) {
+                ((OnServerDialogActionListener) mActivity).cancel();
             }
         });
 
@@ -263,10 +266,10 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             if (mServers.get(position).mRomMd5.equals(mRomMd5)) {
                 mRoomClient.registerServer(mServers.get(position).mServerId);
             } else {
-                Notifier.showToast(requireActivity(), R.string.netplay_romMd5Mismatch);
+                Notifier.showToast(mActivity, R.string.netplay_romMd5Mismatch);
             }
         } else {
-            Notifier.showToast(requireActivity(), R.string.netplay_serverVersionMismatch);
+            Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch);
         }
     }
 
