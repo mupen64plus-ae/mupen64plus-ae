@@ -748,8 +748,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.closeRom();
             }
 
-            // This commands cause crashes in the core
-            //mCoreInterface.emuShutdown();
+            mCoreInterface.emuShutdown();
 
             mIsRunning = false;
 
