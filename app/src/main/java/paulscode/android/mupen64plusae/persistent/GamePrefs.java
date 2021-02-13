@@ -381,6 +381,21 @@ public class GamePrefs
             tempEmulationProfile = new Profile(true, "None", "Profile not found");
         }
 
+        // Some plugins can't even play these games, so if they are selected, choose a different emulation
+        // profile instead
+        if (headerName.toLowerCase().contains("indiana jones") ||
+                headerName.toLowerCase().contains("rogue squadron") ||
+                headerName.toLowerCase().contains("battle for naboo")) {
+            Plugin tempVideoPlugin = new Plugin( tempEmulationProfile, "videoPlugin" );
+
+            if (tempVideoPlugin.name.toLowerCase().contains("glide64mk2") ||
+                    tempVideoPlugin.name.toLowerCase().contains("rice") ||
+                    tempVideoPlugin.name.toLowerCase().contains("gln64")) {
+                tempEmulationProfile = new Profile( true, appData.GetEmulationProfilesConfig().get("GlideN64-Fast"));
+            }
+
+        }
+
         emulationProfile = tempEmulationProfile;
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
