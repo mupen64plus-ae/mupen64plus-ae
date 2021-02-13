@@ -738,13 +738,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             FileUtil.deleteFolder(new File(mWorkingDir));
             FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
 
-            mGameDataManager.clearOldest();
-
-            if (mGlobalPrefs.useExternalStorge && loadingSuccess) {
-                copyGameContentsToSdCard();
-            }
-
             if (loadingSuccess) {
+                if (mGlobalPrefs.useExternalStorge) {
+                    copyGameContentsToSdCard();
+                }
+
+                mGameDataManager.clearOldest();
+
                 mCoreInterface.closeRom();
             }
 
