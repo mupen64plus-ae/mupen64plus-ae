@@ -25,6 +25,8 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import androidx.preference.PreferenceManager;
 
@@ -39,6 +41,8 @@ import org.apache.commons.text.WordUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -514,11 +518,39 @@ public class GlobalPrefs
         isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative_global", false );
         // Determine the touchscreen layout
         touchscreenSkin = mPreferences.getString( "touchscreenSkin_v2", "WiiU" );
-        isCustomTouchscreenSkin = touchscreenSkin.equals( "Custom" );
-        if(isCustomTouchscreenSkin)
-            touchscreenSkinPath = touchscreenCustomSkinsDir;
+        boolean tempIsCustomTouchscreenSkin = touchscreenSkin.equals( "Custom" );
+
+        String tempTouchscreenPath;
+        if(tempIsCustomTouchscreenSkin)
+            tempTouchscreenPath = touchscreenCustomSkinsDir;
         else
-            touchscreenSkinPath = appData.touchscreenSkinsDir + touchscreenSkin;
+            tempTouchscreenPath = appData.touchscreenSkinsDir + touchscreenSkin;
+
+        // Verify that at least a single image exists for the touchscreen style,
+        // and if not, then revert to the Outline style
+        try {
+            Bitmap bitmap;
+
+            if(tempIsCustomTouchscreenSkin) {
+                bitmap = BitmapFactory.decodeFile( tempTouchscreenPath + "/analog-fore.png" );
+            } else {
+                InputStream inputStream = context.getAssets().open(tempTouchscreenPath + "/analog-fore.png");
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            }
+
+            if (bitmap != null) {
+                Log.i("GlobalPrefs", bitmap.toString());
+            } else {
+                tempIsCustomTouchscreenSkin = false;
+                tempTouchscreenPath = appData.touchscreenSkinsDir + "Outline";
+            }
+
+        }
+        catch(IOException ex) {
+            tempTouchscreenPath = appData.touchscreenSkinsDir + "Outline";
+        }
+        isCustomTouchscreenSkin = tempIsCustomTouchscreenSkin;
+        touchscreenSkinPath = tempTouchscreenPath;
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, "displayResolution", 480 );
