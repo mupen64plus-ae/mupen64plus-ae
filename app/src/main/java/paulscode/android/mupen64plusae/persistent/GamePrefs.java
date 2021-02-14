@@ -648,6 +648,7 @@ public class GamePrefs
                 headerNameLowerCase.equals("DUKE".toLowerCase()) ||
                 headerNameLowerCase.contains("F1 POLE POSITION 64".toLowerCase()) ||
                 headerNameLowerCase.equals("Forsaken".toLowerCase()) ||
+                headerNameLowerCase.equals("HEXEN".toLowerCase()) ||
                 headerNameLowerCase.contains("I.S.S.".toLowerCase()) ||
                 headerNameLowerCase.contains("I S S".toLowerCase()) ||
                 headerNameLowerCase.equals("Kirby64".toLowerCase()) ||
