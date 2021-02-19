@@ -30,6 +30,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
@@ -186,7 +187,12 @@ public class NetplayServerSetupDialog extends DialogFragment
                         @Override
                         public void onClienLeave(int playerNumber) {
                             try {
-                                mClients.removeIf(client -> client.mPlayerNumer == playerNumber);
+                                ListIterator<NetplayClient> iter = mClients.listIterator();
+                                while(iter.hasNext()){
+                                    if(iter.next().mPlayerNumer == playerNumber){
+                                        iter.remove();
+                                    }
+                                }
 
                                 mActivity.runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
                             } catch (IllegalStateException e) {
