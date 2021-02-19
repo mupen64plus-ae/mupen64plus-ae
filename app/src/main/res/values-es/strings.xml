@@ -628,6 +628,7 @@
     <string name="netplay_hostPort1">Port 1:</string>
     <string name="netplay_hostPort2">Port 2:</string>
     <string name="netplay_connect">Conectar</string>
+    <string name="netplay_getCode">Obtener código</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

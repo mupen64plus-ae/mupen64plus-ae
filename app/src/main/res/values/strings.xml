@@ -810,6 +810,7 @@
     <string name="netplay_hostPort1">Port 1</string>
     <string name="netplay_hostPort2">Port 2</string>
     <string name="netplay_connect">Connect</string>
+    <string name="netplay_getCode">Get Code</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

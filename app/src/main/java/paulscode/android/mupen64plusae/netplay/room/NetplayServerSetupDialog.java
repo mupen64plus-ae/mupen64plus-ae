@@ -61,6 +61,13 @@ public class NetplayServerSetupDialog extends DialogFragment
          * Called when netplay is cancelled
          */
         void cancel();
+
+        /**
+         * Called when we want to use port forwarding in the router to map the room port
+         * as well as whatever port the netplay server is using
+         * @param roomPort Port number being used by the room
+         */
+        void mapPorts(int roomPort);
     }
 
     private static final String ROM_MD5 = "ROM_MD5";
@@ -129,6 +136,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         serverListView.setAdapter(mServerListAdapter);
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
+        Button getCodeButton = dialogView.findViewById(R.id.buttonGetCode);
         TextView serverAddress = dialogView.findViewById(R.id.textHostAddress);
         TextView port1 = dialogView.findViewById(R.id.textPort1);
         TextView port2 = dialogView.findViewById(R.id.textPort2);
@@ -148,6 +156,8 @@ public class NetplayServerSetupDialog extends DialogFragment
         cancelButton.setOnClickListener(v -> {
             if (mActivity instanceof OnClientDialogActionListener) {
                 ((OnClientDialogActionListener) mActivity).cancel();
+            } else {
+                Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
         });
 
@@ -246,6 +256,14 @@ public class NetplayServerSetupDialog extends DialogFragment
             }
         });
 
+        getCodeButton.setOnClickListener(v -> {
+            if (mActivity instanceof OnClientDialogActionListener) {
+                OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
+                listener.mapPorts(mNetplayRoomService.getServerPort());
+            } else {
+                Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
+            }
+        });
 
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 

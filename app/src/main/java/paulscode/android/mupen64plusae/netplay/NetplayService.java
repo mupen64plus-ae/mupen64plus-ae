@@ -39,7 +39,23 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import org.fourthline.cling.android.AndroidUpnpServiceConfiguration;
+import org.fourthline.cling.binding.xml.ServiceDescriptorBinder;
+import org.fourthline.cling.binding.xml.UDA10ServiceDescriptorBinderImpl;
+import org.fourthline.cling.registry.RegistryListener;
+import org.fourthline.cling.support.igd.PortMappingListener;
+import org.fourthline.cling.support.model.PortMapping;
 import org.mupen64plusae.v3.alpha.R;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
+import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.UpnpServiceImpl;
+
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
@@ -74,40 +90,45 @@ public class NetplayService extends Service
     private boolean mRunning = false;
     private UdpServer mUdpServer;
     private TcpServer mTcpServer;
-    NetplayServiceListener mNetplayServiceListener;
+    private NetplayServiceListener mNetplayServiceListener;
+    private boolean mPortMappingEnabled = false;
+    private int mRoomPort = -1;
+    private UpnpService mUpnpService = null;
+    private final Object mUpnpSyncObject = new Object();
+    private boolean mShuttingDown = false;
 
     private final IBinder mBinder = new LocalBinder();
 
-    final static int ONGOING_NOTIFICATION_ID = 5;
-    final static String NOTIFICATION_CHANNEL_ID = "NetplayServiceChannel";
+    private final static int ONGOING_NOTIFICATION_ID = 5;
+    private final static String NOTIFICATION_CHANNEL_ID = "NetplayServiceChannel";
 
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    public class LocalBinder extends Binder {
-        public NetplayService getService() {
+    public class LocalBinder extends Binder
+    {
+        public NetplayService getService()
+        {
             // Return this instance of this class so clients can call public methods
             return NetplayService.this;
         }
     }
 
     // Handler that receives messages from the thread
-    private final class ServiceHandler extends Handler {
-        ServiceHandler(Looper looper) {
+    private final class ServiceHandler extends Handler
+    {
+        ServiceHandler(Looper looper)
+        {
             super(looper);
         }
         
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(@NonNull Message msg)
+        {
 
             final int bufferTarget = 2;
-            mUdpServer = new UdpServer(bufferTarget, new UdpServer.OnDesync() {
-                @Override
-                public void onDesync(int vi) {
-                    mNetplayServiceListener.onDesync(vi);
-                }
-            });
+            mUdpServer = new UdpServer(bufferTarget, vi -> mNetplayServiceListener.onDesync(vi));
             mTcpServer = new TcpServer(bufferTarget, mUdpServer);
 
             Log.i(TAG, "Netplay service started");
@@ -123,10 +144,19 @@ public class NetplayService extends Service
             mRunning = false;
 
             mNetplayServiceListener.onFinish();
+
+            synchronized (mUpnpSyncObject) {
+                mShuttingDown = true;
+
+                if (mUpnpService != null) {
+                    mUpnpService.shutdown();
+                }
+            }
         }
     }
 
-    public void initChannels(Context context) {
+    public void initChannels(Context context)
+    {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
@@ -145,7 +175,8 @@ public class NetplayService extends Service
     }
 
     @Override
-    public void onCreate() {
+    public void onCreate()
+    {
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
@@ -174,7 +205,8 @@ public class NetplayService extends Service
     }
 
         @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
 
         Log.i("NetplayService", "onStartCommand");
 
@@ -215,7 +247,8 @@ public class NetplayService extends Service
         }
     }
 
-    public void stopServers() {
+    public void stopServers()
+    {
         Log.i("NetplayService", "Stopping netplay service");
 
         if (mUdpServer != null) {
@@ -230,6 +263,49 @@ public class NetplayService extends Service
         stopSelf();
     }
 
+    public void mapPorts(int roomPort)
+    {
+        if (!mPortMappingEnabled) {
+            mPortMappingEnabled = true;
+            mRoomPort = roomPort;
+
+            Thread mappingThread = new Thread(this::mapPorts);
+            mappingThread.setDaemon(true);
+            mappingThread.start();
+        }
+    }
+
+    private void mapPorts()
+    {
+        synchronized (mUpnpSyncObject) {
+            if (mShuttingDown) {
+                return;
+            }
+
+            String myIp = DeviceUtil.wifiIpAddress(getApplicationContext()).getHostAddress();
+
+            //creates a port mapping configuration with the external/internal port, an internal host IP, the protocol and an optional description
+            PortMapping[] desiredMapping = new PortMapping[3];
+            desiredMapping[0] = new PortMapping(mRoomPort,myIp, PortMapping.Protocol.TCP, "M64Plus FZ port1");
+            desiredMapping[1] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.TCP, "M64Plus FZ port2");
+            desiredMapping[2] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.UDP, "M64Plus FZ port2");
+
+            //starting the UPnP service
+            //UpnpService upnpService = new UpnpServiceImpl(new AndroidUpnpServiceConfiguration());
+            mUpnpService = new UpnpServiceImpl(
+                    new AndroidUpnpServiceConfiguration() {
+                        @Override
+                        public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
+                            return new UDA10ServiceDescriptorBinderImpl();
+                        }
+                    }
+            );
+
+            RegistryListener registryListener = new PortMappingListener(desiredMapping);
+            mUpnpService.getRegistry().addListener(registryListener);
+            mUpnpService.getControlPoint().search();
+        }
+    }
 
     @Override
     public void onDestroy()

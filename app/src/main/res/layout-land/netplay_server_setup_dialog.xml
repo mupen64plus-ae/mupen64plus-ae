@@ -134,8 +134,15 @@
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/buttonStart"
+            android:layout_toStartOf="@id/buttonGetCode"
             android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/buttonGetCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/buttonStart"
+            android:text="@string/netplay_getCode" />
 
         <Button
             android:id="@+id/buttonStart"

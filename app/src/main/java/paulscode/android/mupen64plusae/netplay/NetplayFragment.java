@@ -89,6 +89,13 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
         }
     }
 
+    public void mapPorts(int roomPort)
+    {
+        if (mNetPlayService != null) {
+            mNetPlayService.mapPorts(roomPort);
+        }
+    }
+
     public boolean isNetplayStarted()
     {
         return mIsNetplayRunning;

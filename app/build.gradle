@@ -12,6 +12,7 @@ android {
         repositories {
             jcenter()
             google()
+            maven { url 'http://4thline.org/m2' }
         }
     }
 
@@ -69,6 +70,7 @@ android {
     packagingOptions {
         exclude 'META-INF/AL2.0'
         exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/beans.xml'
         doNotStrip "*/armeabi/*.so"
         doNotStrip "*/armeabi-v7a/*.so"
         doNotStrip "*/x86/*.so"
@@ -93,6 +95,15 @@ dependencies {
     implementation 'org.apache.commons:commons-io:1.3.2'
     implementation 'org.apache.commons:commons-compress:1.19'
     implementation 'org.tukaani:xz:1.8'
+    implementation 'org.fourthline.cling:cling-core:2.1.2'
+    implementation 'org.fourthline.cling:cling-support:2.1.2'
+
+    //Other dependencies required by Cling
+    compile 'org.eclipse.jetty:jetty-server:8.1.22.v20160922'
+    compile 'org.eclipse.jetty:jetty-servlet:8.1.22.v20160922'
+    compile 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
+    compile 'org.slf4j:slf4j-jdk14:1.7.14'
+
     implementation ('net.java.dev.jna:jna-platform:5.6.0') {
         exclude group: 'net.java.dev.jna', module: 'jna'
     }

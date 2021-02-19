@@ -1327,7 +1327,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    public void start() {
+    public void start()
+    {
         mCoreFragment.startNetplay();
 
         if (mIsNetplayServer && mNetplayServerDialog != null) {
@@ -1340,7 +1341,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    public void cancel() {
+    public void cancel()
+    {
         if (mIsNetplayServer && mNetplayServerDialog != null) {
             mNetplayServerDialog.dismiss();
         }
@@ -1353,6 +1355,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mNetplayFragment.onFinish();
         }
         mCoreFragment.shutdownEmulator();
+    }
+
+    @Override
+    public void mapPorts(int roomPort)
+    {
+        if (mNetplayFragment != null) {
+            mNetplayFragment.mapPorts(roomPort);
+        }
     }
 
     @Override
