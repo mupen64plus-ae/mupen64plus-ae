@@ -179,7 +179,7 @@ void GLInfo::init() {
 #ifdef OS_ANDROID
 	eglImage = eglImage &&
 	        ( (isGLES2 && GraphicBufferWrapper::isSupportAvailable()) || (isGLESX && GraphicBufferWrapper::isPublicSupportAvailable()) ) &&
-		    (renderer != Renderer::PowerVR) && (renderer != Renderer::Tegra);
+		    (renderer != Renderer::PowerVR);
 #endif
 
 	if (renderer == Renderer::Intel) {
