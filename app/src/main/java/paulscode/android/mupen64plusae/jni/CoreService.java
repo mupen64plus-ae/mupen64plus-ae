@@ -624,12 +624,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir);
 
-            if (!mIsRestarting)
-            {
-                final String latestSave = mGameDataManager.getLatestAutoSave();
-                mCoreInterface.emuLoadFile(latestSave);
-            }
-
             boolean loadingSuccess;
 
             // Disk only games still require a ROM image, so use a dummy test ROM
@@ -717,6 +711,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
 
                 if (!mIsShuttingDown) {
+                    if (!mIsRestarting)
+                    {
+                        final String latestSave = mGameDataManager.getLatestAutoSave();
+                        mCoreInterface.emuLoadFile(latestSave);
+                    }
+
                     // This call blocks until emulation is stopped
                     mCoreInterface.emuStart();
                 }
