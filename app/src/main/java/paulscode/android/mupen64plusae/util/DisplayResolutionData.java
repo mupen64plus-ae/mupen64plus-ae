@@ -42,17 +42,7 @@ public class DisplayResolutionData {
         Point fullscreenSize = new Point(0,0);
         DisplayWrapper.getRealSize(activity, fullscreenSize);
 
-        boolean inMultiWindow = false;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            inMultiWindow = activity.isInMultiWindowMode();
-        }
-
-        if(mGlobalPrefs.isImmersiveModeEnabled && !inMultiWindow) {
-            DisplayWrapper.getRealSize(activity, dimensions);
-        } else {
-            dimensions.set(parentView.getWidth(), parentView.getHeight());
-        }
+        dimensions.set(parentView.getWidth(), parentView.getHeight());
 
         switch (scaling) {
             case ORIGINAL:
