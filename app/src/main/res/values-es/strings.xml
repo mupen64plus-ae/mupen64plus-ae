@@ -261,6 +261,9 @@
     <string name="touchscreenStyle_entryGameCube">Gamecube Estilo</string>
     <string name="touchscreenStyle_entrySwitch">Switch Estilo</string>
     <string name="touchscreenStyle_entryWiiU">WiiU Estilo</string>
+    <string name="touchscreenStyle_entryColored">Colorado</string>
+    <string name="touchscreenStyle_entryBlack">Negro</string>
+    <string name="touchscreenStyle_entryWhite">Blanco</string>
     <string name="displayOrientation_title">Orientación de la pantalla</string>
     <string name="displayOrientation_entryLandscape">Paisaje</string>
     <string name="displayOrientation_entryReverseLandscape">Paisaje invertido</string>

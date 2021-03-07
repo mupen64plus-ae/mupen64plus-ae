@@ -102,6 +102,9 @@
         <item>@string/touchscreenStyle_entryGameCube</item>
         <item>@string/touchscreenStyle_entrySwitch</item>
         <item>@string/touchscreenStyle_entryWiiU</item>
+        <item>@string/touchscreenStyle_entryColored</item>
+        <item>@string/touchscreenStyle_entryBlack</item>
+        <item>@string/touchscreenStyle_entryWhite</item>
         <item>@string/touchscreenStyle_entryCustom</item>
     </string-array>
     <string-array name="touchscreenButtonStyle_values" translatable="false">
@@ -115,6 +118,9 @@
         <item>GameCube</item>
         <item>Switch</item>
         <item>WiiU</item>
+        <item>Colored</item>
+        <item>Black</item>
+        <item>White</item>
         <item>Custom</item>
     </string-array>
     <string name="touchscreenButtonStyle_default" translatable="false">WiiU</string>
