@@ -94,7 +94,6 @@ public class NetplayRoomClient {
 
     private synchronized void connectToServer(InetAddress address, int port)
     {
-
         if (port >= 65536) {
             return;
         }
