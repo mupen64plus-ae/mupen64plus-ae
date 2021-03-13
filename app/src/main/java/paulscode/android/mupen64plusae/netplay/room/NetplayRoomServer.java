@@ -35,6 +35,12 @@ public class NetplayRoomServer {
          * @param playerNumber Player number
          */
         void onClienLeave(int playerNumber);
+
+        /**
+         * Called when we a get a room code
+         * @param roomCode Room code
+         */
+        void onRoomCode(long roomCode);
     }
 
     static final String TAG = "NetplayRoomServer";
@@ -208,6 +214,11 @@ public class NetplayRoomServer {
                             @Override
                             public void onClientLeave(int playerNumber) {
                                 mOnClientFound.onClienLeave(playerNumber);
+                            }
+
+                            @Override
+                            public void onRoomCode(long roomCode) {
+                                mOnClientFound.onRoomCode(roomCode);
                             }
                         }));
             } catch (IOException e) {

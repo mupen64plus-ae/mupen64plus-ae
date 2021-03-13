@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,7 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
+import paulscode.android.mupen64plusae.util.Notifier;
 
 public class NetplayServerSetupDialog extends DialogFragment
 {
@@ -81,9 +84,18 @@ public class NetplayServerSetupDialog extends DialogFragment
 
     private NetplayRoomServer mNetplayRoomService;
 
+    private OnlineNetplayHandler mOnlineNetplayHandler;
+
+    private Button mAdvancedButton;
+    private LinearLayout mServerLayout;
+    private TextView mCodeTextView;
+    private RelativeLayout mCodeLayout;
+
     // Activity holding this fragment
     private Activity mActivity;
 
+    private boolean mShowingAdvanced = false;
+    private boolean mShowingCode = false;
     /**
      *
      * @return A cheat dialog
@@ -137,6 +149,16 @@ public class NetplayServerSetupDialog extends DialogFragment
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
         Button getCodeButton = dialogView.findViewById(R.id.buttonGetCode);
+        mAdvancedButton = dialogView.findViewById(R.id.buttonAdvanced);
+
+        mServerLayout = dialogView.findViewById(R.id.serverLayout);
+        mCodeLayout = dialogView.findViewById(R.id.codeLayout);
+        mCodeTextView = dialogView.findViewById(R.id.textCodeValue);
+
+        mServerLayout.setVisibility(mShowingAdvanced ? View.VISIBLE : View.GONE);
+        mAdvancedButton.setVisibility(mShowingAdvanced ? View.GONE : View.VISIBLE);
+        mCodeLayout.setVisibility(mShowingCode ? View.VISIBLE : View.GONE);
+
         TextView serverAddress = dialogView.findViewById(R.id.textHostAddress);
         TextView port1 = dialogView.findViewById(R.id.textPort1);
         TextView port2 = dialogView.findViewById(R.id.textPort2);
@@ -209,6 +231,20 @@ public class NetplayServerSetupDialog extends DialogFragment
                                 e.printStackTrace();
                             }
                         }
+
+                        @Override
+                        public void onRoomCode(long roomCode) {
+                            mShowingCode = true;
+
+                            mActivity.runOnUiThread(() -> {
+                                mCodeLayout.setVisibility(View.VISIBLE);
+                                String roomCodeText = "";
+                                roomCodeText += roomCode;
+                                mCodeTextView.setText(roomCodeText);
+                            });
+
+                            Log.e(TAG, "GOT CODE: " + roomCode);
+                        }
                     });
 
             int registrationId = mNetplayRoomService.registerPlayerOne();
@@ -260,9 +296,41 @@ public class NetplayServerSetupDialog extends DialogFragment
             if (mActivity instanceof OnClientDialogActionListener) {
                 OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
                 listener.mapPorts(mNetplayRoomService.getServerPort());
+
+                try {
+                    if (mOnlineNetplayHandler == null) {
+                        mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("172.172.1.126"),
+                                37520, mNetplayRoomService.getServerPort(), -1,
+                                new OnlineNetplayHandler.OnOnlineNetplayData() {
+
+                                    @Override
+                                    public void onInitSessionResponse(boolean success) {
+                                        if (!success) {
+                                            Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRoomData(InetAddress address, int port) {
+                                        // Nothing to do here
+                                    }
+                                });
+
+                        mOnlineNetplayHandler.connectAsyncAndRequestCode();
+                    }
+
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
+        });
+
+        mAdvancedButton.setOnClickListener(v -> {
+            mShowingAdvanced = true;
+            mServerLayout.setVisibility(View.VISIBLE);
+            mAdvancedButton.setVisibility(View.GONE);
         });
 
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);

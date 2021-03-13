@@ -615,7 +615,7 @@
     <string name="importExportActivity_invalidCustomSkinFile">Archivo de graficos de pantalla tactil no es válido</string>
 
     <!-- Netplay -->
-    <string name="startNetplay_title">Iniciar Netplay</string>
+    <string name="startNetplay_title">Iniciar</string>
     <string name="netplay_enterIp">Entrar Dirección</string>
     <string name="netplayServers_title">Servidores de Netplay</string>
     <string name="netplayServerInfo_title">Servidor</string>
@@ -628,7 +628,9 @@
     <string name="netplay_hostPort1">Port 1:</string>
     <string name="netplay_hostPort2">Port 2:</string>
     <string name="netplay_connect">Conectar</string>
-    <string name="netplay_getCode">Obtener código</string>
+    <string name="netplay_getCode">Obtener Código</string>
+    <string name="netplay_code">Código</string>
+    <string name="netplay_advanced">Avanzado</string>
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>

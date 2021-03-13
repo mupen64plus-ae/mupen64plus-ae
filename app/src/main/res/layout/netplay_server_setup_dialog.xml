@@ -97,11 +97,40 @@
             </RelativeLayout>
         </LinearLayout>
 
+        <Button
+            android:id="@+id/buttonAdvanced"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/serverLayout"
+            android:text="@string/netplay_advanced" />
+
+        <RelativeLayout
+            android:id="@+id/codeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonAdvanced"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textCodeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_margin="10dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/netplay_code" />
+            <TextView
+                android:id="@+id/textCodeValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_toEndOf="@id/textCodeTitle"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/serverLayout"
+            android:layout_below="@id/codeLayout"
             android:orientation="vertical" >
 
             <TextView
@@ -109,8 +138,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:layout_margin="10dp"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_marginStart="10dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/netplayPlayers_title" />
 
             <ListView android:id="@+id/clientList"

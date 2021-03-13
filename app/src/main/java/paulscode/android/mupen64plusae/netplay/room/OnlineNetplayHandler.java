@@ -95,17 +95,42 @@ public class OnlineNetplayHandler {
         mRoomId = roomId;
     }
 
-    public void connectAsync()
+    public void connectAsyncAndGetDataFromCode()
     {
         // Must run on a separate thread, running network operation on the main
         // thread leads to NetworkOnMainThreadException exceptions
-        Thread connectThread = new Thread(this::connect);
+        Thread connectThread = new Thread(this::connectAndGetDataFromCode);
         connectThread.setDaemon(true);
         connectThread.start();
     }
 
+    public void connectAsyncAndRequestCode()
+    {
+        // Must run on a separate thread, running network operation on the main
+        // thread leads to NetworkOnMainThreadException exceptions
+        Thread connectThread = new Thread(this::connectAndRequestCode);
+        connectThread.setDaemon(true);
+        connectThread.start();
+    }
+
+    private void connectAndGetDataFromCode()
+    {
+        connect();
+        initSession();
+    }
+
+    private void connectAndRequestCode()
+    {
+        connect();
+        initSession();
+        registerNetplayServer();
+    }
+
     private void connect()
     {
+
+        Log.e(TAG, "CONNECTING!!");
+
         mSendBuffer.order(ByteOrder.BIG_ENDIAN);
         mSendBuffer.mark();
 
@@ -127,74 +152,9 @@ public class OnlineNetplayHandler {
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private String getStringFromBuffer(int maxSize)
-    {
-        byte[] stringBytes = new byte[maxSize];
-
-        mReceiveBuffer.get(stringBytes);
-        int stringEndIndex = 0;
-        while (stringEndIndex < stringBytes.length && stringBytes[stringEndIndex] != 0) {
-            ++stringEndIndex;
-        }
-
-        return new String(stringBytes, 0, stringEndIndex, StandardCharsets.ISO_8859_1);
-    }
-
-    private void handleInitSessionResponse() throws IOException
-    {
-        int offset = 0;
-        mReceiveBuffer.reset();
-        int bytesRead = 0;
-        while (offset < INIT_SESSION_RESPONSE_SIZE && bytesRead != -1) {
-            bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
-                    NetplayRoomClientHandler.SIZE_SEND_ROOM_DATA - offset);
-            offset += bytesRead != -1 ? bytesRead : 0;
-        }
-
-        boolean success = mReceiveBuffer.getInt() != 0;
-
-        Log.i(TAG, "Init session response, success=" + success);
-
-        mOnOnlineNetplayData.onInitSessionResponse(success);
-
-        if (!success) {
-            disconnect();
-        }
-    }
-
-    private void handleRequestRegistrationDataResponse() throws IOException
-    {
-        Log.i(TAG, "handle registration data response");
-
-        int offset = 0;
-        mReceiveBuffer.reset();
-        int bytesRead = 0;
-        while (offset < NP_CLIENT_REQUEST_REGISTRATION_RESPONSE_SIZE && bytesRead != -1) {
-            bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
-                    NetplayRoomClientHandler.SIZE_SEND_REGISTRATION_DATA - offset);
-            offset += bytesRead != -1 ? bytesRead : 0;
-        }
-
-        final int numIpAddressChars = 46;
-        String hostname = getStringFromBuffer(numIpAddressChars);
-        int port = mReceiveBuffer.getInt();
-        InetAddress address = InetAddress.getByName(hostname);
-        mOnOnlineNetplayData.onRoomData(address, port);
-    }
-
-    public void initSessionAsync()
-    {
-        // Must run on a separate thread, running network operation on the main
-        // thread leads to NetworkOnMainThreadException exceptions
-        Thread registerThread = new Thread(this::initSession);
-        registerThread.setDaemon(true);
-        registerThread.start();
-    }
-
     private void initSession()
     {
-        Log.i(TAG, "Initializing session");
+        Log.e(TAG, "Initializing session");
 
         synchronized (mSocketOutputSync) {
 
@@ -207,15 +167,6 @@ public class OnlineNetplayHandler {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void registerNetplayServerAsync()
-    {
-        // Must run on a separate thread, running network operation on the main
-        // thread leads to NetworkOnMainThreadException exceptions
-        Thread registerThread = new Thread(this::registerNetplayServer);
-        registerThread.setDaemon(true);
-        registerThread.start();
     }
 
     private void registerNetplayServer()
@@ -295,6 +246,62 @@ public class OnlineNetplayHandler {
         }
 
         disconnect();
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String getStringFromBuffer(int maxSize)
+    {
+        byte[] stringBytes = new byte[maxSize];
+
+        mReceiveBuffer.get(stringBytes);
+        int stringEndIndex = 0;
+        while (stringEndIndex < stringBytes.length && stringBytes[stringEndIndex] != 0) {
+            ++stringEndIndex;
+        }
+
+        return new String(stringBytes, 0, stringEndIndex, StandardCharsets.ISO_8859_1);
+    }
+
+    private void handleInitSessionResponse() throws IOException
+    {
+        int offset = 0;
+        mReceiveBuffer.reset();
+        int bytesRead = 0;
+        while (offset < INIT_SESSION_RESPONSE_SIZE && bytesRead != -1) {
+            bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
+                    NetplayRoomClientHandler.SIZE_SEND_ROOM_DATA - offset);
+            offset += bytesRead != -1 ? bytesRead : 0;
+        }
+
+        boolean success = mReceiveBuffer.getInt() != 0;
+
+        Log.e(TAG, "Init session response, success=" + success);
+
+        mOnOnlineNetplayData.onInitSessionResponse(success);
+
+        if (!success) {
+            disconnect();
+        }
+    }
+
+    private void handleRequestRegistrationDataResponse() throws IOException
+    {
+        Log.i(TAG, "handle registration data response");
+
+        int offset = 0;
+        mReceiveBuffer.reset();
+        int bytesRead = 0;
+        while (offset < NP_CLIENT_REQUEST_REGISTRATION_RESPONSE_SIZE && bytesRead != -1) {
+            bytesRead = mSocketInputStream.read(mReceiveBuffer.array(), offset,
+                    NetplayRoomClientHandler.SIZE_SEND_REGISTRATION_DATA - offset);
+            offset += bytesRead != -1 ? bytesRead : 0;
+        }
+
+        final int numIpAddressChars = 46;
+        String hostname = getStringFromBuffer(numIpAddressChars);
+        int port = mReceiveBuffer.getInt();
+        InetAddress address = InetAddress.getByName(hostname);
+        mOnOnlineNetplayData.onRoomData(address, port);
     }
 
     private void runTcpClient()

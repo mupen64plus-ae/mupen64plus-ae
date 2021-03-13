@@ -797,7 +797,7 @@
     <string name="extractRomTask_title">Preparing game data…</string>
 
     <!-- Netplay -->
-    <string name="startNetplay_title">Start Netplay</string>
+    <string name="startNetplay_title">Start</string>
     <string name="netplay_enterIp">Enter IP</string>
     <string name="netplayServers_title">Netplay Servers</string>
     <string name="netplayServerInfo_title">Server Info</string>
@@ -811,6 +811,8 @@
     <string name="netplay_hostPort2">Port 2</string>
     <string name="netplay_connect">Connect</string>
     <string name="netplay_getCode">Get Code</string>
+    <string name="netplay_code">Code</string>
+    <string name="netplay_advanced">Advanced</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>
