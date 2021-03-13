@@ -517,8 +517,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void popupDialog( final String assetName, String title, final int holdableIndex )
     {
         //Prevent more than one pop at a time
-        if(mPopupBeingShown)
-        {
+        if(mPopupBeingShown) {
+            return;
+        }
+
+        // Don't allow a null asset name
+        if (assetName == null) {
             return;
         }
 
