@@ -629,6 +629,7 @@
     <string name="netplay_hostPort2">Port 2:</string>
     <string name="netplay_connect">Conectar</string>
     <string name="netplay_getCode">Obtener Código</string>
+    <string name="netplay_enterCode">Entrar Código</string>
     <string name="netplay_code">Código</string>
     <string name="netplay_advanced">Avanzado</string>
 

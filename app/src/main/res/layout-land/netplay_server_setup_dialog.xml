@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:layout_margin="10dp"
+                android:layout_margin="0dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/netplayServerInfo_title" />
 
@@ -106,6 +106,7 @@
 
             <Button
                 android:id="@+id/buttonAdvanced"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/netplay_advanced" />
@@ -160,6 +161,7 @@
 
         <Button
             android:id="@+id/buttonCancel"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/buttonGetCode"
@@ -167,6 +169,7 @@
 
         <Button
             android:id="@+id/buttonGetCode"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/buttonStart"
@@ -174,6 +177,7 @@
 
         <Button
             android:id="@+id/buttonStart"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"

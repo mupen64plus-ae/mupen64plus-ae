@@ -58,6 +58,25 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linearLayoutCodeEntry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1">
+
+        <EditText
+            android:id="@+id/codeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:inputType="numberDecimal"
+            android:maxLength="10"
+            android:hint="@string/netplay_code" />
+
+    </LinearLayout>
+
     <ListView android:id="@+id/serverList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,7 +84,7 @@
         android:layout_weight="1"
         android:longClickable="false" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,18 +95,24 @@
 
         <Button
             android:id="@+id/buttonCancel"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/buttonEnterIp"
             android:text="@android:string/cancel" />
 
         <Button
-            android:id="@+id/buttonEnterIp"
+            android:id="@+id/buttonEnterCode"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_alignParentEnd="true"
+            android:text="@string/netplay_enterCode" />
+
+        <Button
+            android:id="@+id/buttonEnterIp"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/netplay_enterIp" />
 
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

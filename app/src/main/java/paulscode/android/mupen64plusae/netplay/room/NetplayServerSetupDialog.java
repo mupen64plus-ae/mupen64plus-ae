@@ -82,9 +82,9 @@ public class NetplayServerSetupDialog extends DialogFragment
 
     private final ArrayList<NetplayClient> mClients = new ArrayList<>();
 
-    private NetplayRoomServer mNetplayRoomService;
+    private NetplayRoomServer mNetplayRoomService = null;
 
-    private OnlineNetplayHandler mOnlineNetplayHandler;
+    private OnlineNetplayHandler mOnlineNetplayHandler = null;
 
     private Button mAdvancedButton;
     private LinearLayout mServerLayout;
@@ -286,6 +286,10 @@ public class NetplayServerSetupDialog extends DialogFragment
             if (mActivity instanceof OnClientDialogActionListener) {
                 OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
                 mNetplayRoomService.start();
+
+                if (mOnlineNetplayHandler != null) {
+                    mOnlineNetplayHandler.notifyGameStartedAsync();
+                }
                 listener.start();
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
@@ -297,8 +301,10 @@ public class NetplayServerSetupDialog extends DialogFragment
                 OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
                 listener.mapPorts(mNetplayRoomService.getServerPort());
 
-                try {
-                    if (mOnlineNetplayHandler == null) {
+                if (mOnlineNetplayHandler == null) {
+                    Thread onlineNetplayThread = new Thread(() -> {
+
+                        try {
                         mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("172.172.1.126"),
                                 37520, mNetplayRoomService.getServerPort(), -1,
                                 new OnlineNetplayHandler.OnOnlineNetplayData() {
@@ -311,16 +317,19 @@ public class NetplayServerSetupDialog extends DialogFragment
                                     }
 
                                     @Override
-                                    public void onRoomData(InetAddress address, int port) {
+                                    public void onRoomData(InetAddress address1, int port) {
                                         // Nothing to do here
                                     }
                                 });
 
-                        mOnlineNetplayHandler.connectAsyncAndRequestCode();
-                    }
+                        mOnlineNetplayHandler.connectAndRequestCode();
 
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
+                        } catch (UnknownHostException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    onlineNetplayThread.setDaemon(true);
+                    onlineNetplayThread.start();
                 }
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");

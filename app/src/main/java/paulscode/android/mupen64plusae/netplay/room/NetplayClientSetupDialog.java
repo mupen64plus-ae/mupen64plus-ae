@@ -26,6 +26,7 @@ import androidx.fragment.app.DialogFragment;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,14 +67,19 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
     private final ArrayList<NetplayServer> mServers = new ArrayList<>();
 
+    private OnlineNetplayHandler mOnlineNetplayHandler = null;
+
     private NetplayRoomClient mRoomClient = null;
 
     private LinearLayout mLinearLayoutWaiting;
 
     private LinearLayout mLinearLayoutManualEntry;
 
+    private LinearLayout mLinearLayoutCodeEntry;
+
     private boolean mWaiting = false;
     private boolean mManualEntry = false;
+    private boolean mCodeEntry = false;
 
     private ListView mServerListView;
 
@@ -123,17 +129,28 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         mServerListView = dialogView.findViewById(R.id.serverList);
         mLinearLayoutWaiting = dialogView.findViewById(R.id.linearLayoutWaiting);
         mLinearLayoutManualEntry = dialogView.findViewById(R.id.linearLayoutManualEntry);
+        mLinearLayoutCodeEntry = dialogView.findViewById(R.id.linearLayoutCodeEntry);
 
         if (mWaiting) {
+            mLinearLayoutWaiting.setVisibility(View.VISIBLE);
             mServerListView.setVisibility(View.GONE);
             mLinearLayoutManualEntry.setVisibility(View.GONE);
+            mLinearLayoutCodeEntry.setVisibility(View.GONE);
         } else {
             mLinearLayoutWaiting.setVisibility(View.GONE);
 
             if (mManualEntry) {
+                mLinearLayoutManualEntry.setVisibility(View.VISIBLE);
                 mServerListView.setVisibility(View.GONE);
-            } else {
+                mLinearLayoutCodeEntry.setVisibility(View.GONE);
+            } else if (mCodeEntry){
+                mLinearLayoutCodeEntry.setVisibility(View.VISIBLE);
+                mServerListView.setVisibility(View.GONE);
                 mLinearLayoutManualEntry.setVisibility(View.GONE);
+            } else {
+                mServerListView.setVisibility(View.VISIBLE);
+                mLinearLayoutManualEntry.setVisibility(View.GONE);
+                mLinearLayoutCodeEntry.setVisibility(View.GONE);
             }
         }
 
@@ -143,9 +160,11 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
         Button enterIp = dialogView.findViewById(R.id.buttonEnterIp);
+        Button enterCode = dialogView.findViewById(R.id.buttonEnterCode);
 
         EditText manualIp = dialogView.findViewById(R.id.ipAddressEditText);
         EditText manualPort = dialogView.findViewById(R.id.portEditText);
+        EditText manualCode = dialogView.findViewById(R.id.codeEditText);
 
         //Time to create the dialog
         Builder builder = new Builder(mActivity);
@@ -198,6 +217,10 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                     if (mActivity instanceof OnServerDialogActionListener)
                     {
                         mActivity.runOnUiThread(() -> ((OnServerDialogActionListener) mActivity).start());
+
+                        if (mOnlineNetplayHandler != null) {
+                            mOnlineNetplayHandler.notifyGameStartedAsync();
+                        }
                     }
                     else
                     {
@@ -221,11 +244,13 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             if (!mManualEntry) {
                 mManualEntry = true;
                 mServerListView.setVisibility(View.GONE);
+                enterCode.setVisibility(View.GONE);
                 mLinearLayoutManualEntry.setVisibility(View.VISIBLE);
                 enterIp.setText(R.string.netplay_connect);
             } else {
                 mManualEntry = false;
                 mServerListView.setVisibility(View.VISIBLE);
+                enterCode.setVisibility(View.VISIBLE);
                 mLinearLayoutManualEntry.setVisibility(View.GONE);
                 enterIp.setText(R.string.netplay_enterIp);
 
@@ -238,6 +263,70 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                         if (!TextUtils.isEmpty(hostnameString) && !TextUtils.isEmpty(portString)) {
                             int port = Integer.parseInt(portString);
                             mRoomClient.connectToServer(hostnameString, port);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        enterCode.setOnClickListener(v -> {
+
+            // Turn this button into a connect button when it's pressed
+            if (!mCodeEntry) {
+                mCodeEntry = true;
+                mServerListView.setVisibility(View.GONE);
+                enterIp.setVisibility(View.GONE);
+                mLinearLayoutCodeEntry.setVisibility(View.VISIBLE);
+                enterCode.setText(R.string.netplay_connect);
+            } else {
+                mCodeEntry = false;
+                mServerListView.setVisibility(View.VISIBLE);
+                enterIp.setVisibility(View.VISIBLE);
+                mLinearLayoutCodeEntry.setVisibility(View.GONE);
+                enterCode.setText(R.string.netplay_enterCode);
+
+                if (mRoomClient != null) {
+
+                    try {
+                        String codeString = manualCode.getText().toString();
+
+                        if (!TextUtils.isEmpty(codeString)) {
+                            int code = Integer.parseInt(codeString);
+
+                            if (mOnlineNetplayHandler == null) {
+                                Thread onlineNetplayThread = new Thread(() -> {
+
+                                    try {
+                                        mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("172.172.1.126"),
+                                                37520, -1, code,
+                                                new OnlineNetplayHandler.OnOnlineNetplayData() {
+
+                                                    @Override
+                                                    public void onInitSessionResponse(boolean success) {
+                                                        if (!success) {
+                                                            Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onRoomData(InetAddress address, int port) {
+                                                        if (mRoomClient != null) {
+                                                            mRoomClient.connectToServer(address.getHostName(), port);
+                                                        }
+                                                    }
+                                                });
+
+                                        mOnlineNetplayHandler.connectAndRequestCode();
+
+                                    } catch (UnknownHostException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                                onlineNetplayThread.setDaemon(true);
+                                onlineNetplayThread.start();
+                            }
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();

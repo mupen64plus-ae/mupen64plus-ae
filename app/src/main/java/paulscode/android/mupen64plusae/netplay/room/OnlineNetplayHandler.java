@@ -95,31 +95,14 @@ public class OnlineNetplayHandler {
         mRoomId = roomId;
     }
 
-    public void connectAsyncAndGetDataFromCode()
-    {
-        // Must run on a separate thread, running network operation on the main
-        // thread leads to NetworkOnMainThreadException exceptions
-        Thread connectThread = new Thread(this::connectAndGetDataFromCode);
-        connectThread.setDaemon(true);
-        connectThread.start();
-    }
-
-    public void connectAsyncAndRequestCode()
-    {
-        // Must run on a separate thread, running network operation on the main
-        // thread leads to NetworkOnMainThreadException exceptions
-        Thread connectThread = new Thread(this::connectAndRequestCode);
-        connectThread.setDaemon(true);
-        connectThread.start();
-    }
-
-    private void connectAndGetDataFromCode()
+    public void connectAndGetDataFromCode()
     {
         connect();
         initSession();
+        requestRegistrationData();
     }
 
-    private void connectAndRequestCode()
+    public void connectAndRequestCode()
     {
         connect();
         initSession();
@@ -128,9 +111,6 @@ public class OnlineNetplayHandler {
 
     private void connect()
     {
-
-        Log.e(TAG, "CONNECTING!!");
-
         mSendBuffer.order(ByteOrder.BIG_ENDIAN);
         mSendBuffer.mark();
 
@@ -154,7 +134,9 @@ public class OnlineNetplayHandler {
 
     private void initSession()
     {
-        Log.e(TAG, "Initializing session");
+        if (mSocketOutputStream == null) {
+            return;
+        }
 
         synchronized (mSocketOutputSync) {
 
@@ -187,16 +169,7 @@ public class OnlineNetplayHandler {
         }
     }
 
-    public void requestRegistrationDataAsync(long roomNumber)
-    {
-        // Must run on a separate thread, running network operation on the main
-        // thread leads to NetworkOnMainThreadException exceptions
-        Thread registerThread = new Thread(() -> requestRegistrationData(roomNumber));
-        registerThread.setDaemon(true);
-        registerThread.start();
-    }
-
-    private void requestRegistrationData(long roomNumber)
+    private void requestRegistrationData()
     {
         Log.i(TAG, "Requesting registration data");
 
@@ -214,8 +187,6 @@ public class OnlineNetplayHandler {
                 e.printStackTrace();
             }
         }
-
-        disconnect();
     }
 
     public void notifyGameStartedAsync()
