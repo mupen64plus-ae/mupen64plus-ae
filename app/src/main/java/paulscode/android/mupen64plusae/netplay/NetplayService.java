@@ -281,29 +281,32 @@ public class NetplayService extends Service
             if (mShuttingDown) {
                 return;
             }
+            InetAddress wifiAddress = DeviceUtil.wifiIpAddress(getApplicationContext());
 
-            String myIp = DeviceUtil.wifiIpAddress(getApplicationContext()).getHostAddress();
+            if (wifiAddress != null) {
+                String myIp = wifiAddress.getHostAddress();
 
-            //creates a port mapping configuration with the external/internal port, an internal host IP, the protocol and an optional description
-            PortMapping[] desiredMapping = new PortMapping[3];
-            desiredMapping[0] = new PortMapping(mRoomPort,myIp, PortMapping.Protocol.TCP, "M64Plus FZ port1");
-            desiredMapping[1] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.TCP, "M64Plus FZ port2");
-            desiredMapping[2] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.UDP, "M64Plus FZ port2");
+                //creates a port mapping configuration with the external/internal port, an internal host IP, the protocol and an optional description
+                PortMapping[] desiredMapping = new PortMapping[3];
+                desiredMapping[0] = new PortMapping(mRoomPort,myIp, PortMapping.Protocol.TCP, "M64Plus FZ port1");
+                desiredMapping[1] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.TCP, "M64Plus FZ port2");
+                desiredMapping[2] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.UDP, "M64Plus FZ port2");
 
-            //starting the UPnP service
-            //UpnpService upnpService = new UpnpServiceImpl(new AndroidUpnpServiceConfiguration());
-            mUpnpService = new UpnpServiceImpl(
-                    new AndroidUpnpServiceConfiguration() {
-                        @Override
-                        public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
-                            return new UDA10ServiceDescriptorBinderImpl();
+                //starting the UPnP service
+                //UpnpService upnpService = new UpnpServiceImpl(new AndroidUpnpServiceConfiguration());
+                mUpnpService = new UpnpServiceImpl(
+                        new AndroidUpnpServiceConfiguration() {
+                            @Override
+                            public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
+                                return new UDA10ServiceDescriptorBinderImpl();
+                            }
                         }
-                    }
-            );
+                );
 
-            RegistryListener registryListener = new PortMappingListener(desiredMapping);
-            mUpnpService.getRegistry().addListener(registryListener);
-            mUpnpService.getControlPoint().search();
+                RegistryListener registryListener = new PortMappingListener(desiredMapping);
+                mUpnpService.getRegistry().addListener(registryListener);
+                mUpnpService.getControlPoint().search();
+            }
         }
     }
 

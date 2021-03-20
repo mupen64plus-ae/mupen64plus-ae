@@ -155,16 +155,18 @@ public class OnlineNetplayHandler {
     {
         Log.i(TAG, "Registering netplay server");
 
+        if (mSocketOutputStream == null) {
+            return;
+        }
+
         synchronized (mSocketOutputSync) {
-            if (mSocketOutputStream != null) {
-                try {
-                    mSendBuffer.reset();
-                    mSendBuffer.putInt(REGISTER_NP_SERVER);
-                    mSendBuffer.putInt(mLocalServerRoomPort);
-                    mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                mSendBuffer.reset();
+                mSendBuffer.putInt(REGISTER_NP_SERVER);
+                mSendBuffer.putInt(mLocalServerRoomPort);
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -172,6 +174,9 @@ public class OnlineNetplayHandler {
     private void requestRegistrationData()
     {
         Log.i(TAG, "Requesting registration data");
+        if (mSocketOutputStream == null) {
+            return;
+        }
 
         synchronized (mSocketOutputSync) {
 
@@ -179,10 +184,7 @@ public class OnlineNetplayHandler {
                 mSendBuffer.reset();
                 mSendBuffer.putInt(NP_CLIENT_REQUEST_REGISTRATION);
                 mSendBuffer.putInt(Long.valueOf(mRoomId).intValue());
-
-                if (mSocketOutputStream != null) {
-                    mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-                }
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -246,7 +248,7 @@ public class OnlineNetplayHandler {
 
         boolean success = mReceiveBuffer.getInt() != 0;
 
-        Log.e(TAG, "Init session response, success=" + success);
+        Log.i(TAG, "Init session response, success=" + success);
 
         mOnOnlineNetplayData.onInitSessionResponse(success);
 
@@ -271,7 +273,8 @@ public class OnlineNetplayHandler {
         final int numIpAddressChars = 46;
         String hostname = getStringFromBuffer(numIpAddressChars);
         int port = mReceiveBuffer.getInt();
-        InetAddress address = InetAddress.getByName(hostname);
+        Log.i(TAG, "Got room data, ip=" + hostname + " port=" + port);
+        InetAddress address = port != -1 ? InetAddress.getByName(hostname) : null;
         mOnOnlineNetplayData.onRoomData(address, port);
     }
 

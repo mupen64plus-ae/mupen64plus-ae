@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -86,6 +87,8 @@ public class NetplayServerSetupDialog extends DialogFragment
 
     private OnlineNetplayHandler mOnlineNetplayHandler = null;
 
+    private String mNetplayCode = "";
+
     private Button mAdvancedButton;
     private LinearLayout mServerLayout;
     private TextView mCodeTextView;
@@ -154,6 +157,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         mServerLayout = dialogView.findViewById(R.id.serverLayout);
         mCodeLayout = dialogView.findViewById(R.id.codeLayout);
         mCodeTextView = dialogView.findViewById(R.id.textCodeValue);
+        mCodeTextView.setText(mNetplayCode);
 
         mServerLayout.setVisibility(mShowingAdvanced ? View.VISIBLE : View.GONE);
         mAdvancedButton.setVisibility(mShowingAdvanced ? View.GONE : View.VISIBLE);
@@ -238,9 +242,11 @@ public class NetplayServerSetupDialog extends DialogFragment
 
                             mActivity.runOnUiThread(() -> {
                                 mCodeLayout.setVisibility(View.VISIBLE);
-                                String roomCodeText = "";
-                                roomCodeText += roomCode;
-                                mCodeTextView.setText(roomCodeText);
+
+                                if (TextUtils.isEmpty(mNetplayCode)) {
+                                    mNetplayCode += roomCode;
+                                }
+                                mCodeTextView.setText(mNetplayCode);
                             });
 
                             Log.e(TAG, "GOT CODE: " + roomCode);
@@ -305,7 +311,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                     Thread onlineNetplayThread = new Thread(() -> {
 
                         try {
-                        mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("172.172.1.126"),
+                            mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
                                 37520, mNetplayRoomService.getServerPort(), -1,
                                 new OnlineNetplayHandler.OnOnlineNetplayData() {
 
@@ -321,8 +327,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                                         // Nothing to do here
                                     }
                                 });
-
-                        mOnlineNetplayHandler.connectAndRequestCode();
+                            mOnlineNetplayHandler.connectAndRequestCode();
 
                         } catch (UnknownHostException e) {
                             e.printStackTrace();

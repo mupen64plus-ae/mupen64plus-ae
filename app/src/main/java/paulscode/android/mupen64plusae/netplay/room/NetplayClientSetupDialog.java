@@ -293,40 +293,47 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                         String codeString = manualCode.getText().toString();
 
                         if (!TextUtils.isEmpty(codeString)) {
-                            int code = Integer.parseInt(codeString);
+                            long code = Long.parseLong(codeString);
 
-                            if (mOnlineNetplayHandler == null) {
-                                Thread onlineNetplayThread = new Thread(() -> {
+                            Thread onlineNetplayThread = new Thread(() -> {
 
-                                    try {
-                                        mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("172.172.1.126"),
-                                                37520, -1, code,
-                                                new OnlineNetplayHandler.OnOnlineNetplayData() {
-
-                                                    @Override
-                                                    public void onInitSessionResponse(boolean success) {
-                                                        if (!success) {
-                                                            Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch);
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onRoomData(InetAddress address, int port) {
-                                                        if (mRoomClient != null) {
-                                                            mRoomClient.connectToServer(address.getHostName(), port);
-                                                        }
-                                                    }
-                                                });
-
-                                        mOnlineNetplayHandler.connectAndRequestCode();
-
-                                    } catch (UnknownHostException e) {
-                                        e.printStackTrace();
+                                try {
+                                    if (mOnlineNetplayHandler != null) {
+                                        mOnlineNetplayHandler.disconnect();
                                     }
-                                });
-                                onlineNetplayThread.setDaemon(true);
-                                onlineNetplayThread.start();
-                            }
+                                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
+                                            37520, -1, code,
+                                            new OnlineNetplayHandler.OnOnlineNetplayData() {
+
+                                                @Override
+                                                public void onInitSessionResponse(boolean success) {
+                                                    if (!success) {
+                                                        mActivity.runOnUiThread(() -> Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch));
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onRoomData(InetAddress address, int port) {
+                                                    if (mRoomClient != null && port != -1) {
+                                                        mRoomClient.connectToServer(address.getHostName(), port);
+                                                    }
+
+                                                    if (port == -1) {
+                                                        mActivity.runOnUiThread(() -> Notifier.showToast(mActivity, R.string.netplay_codeNotFound));
+                                                    }
+
+                                                    mOnlineNetplayHandler.disconnect();
+                                                }
+                                            });
+
+                                    mOnlineNetplayHandler.connectAndGetDataFromCode();
+
+                                } catch (UnknownHostException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            onlineNetplayThread.setDaemon(true);
+                            onlineNetplayThread.start();
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
