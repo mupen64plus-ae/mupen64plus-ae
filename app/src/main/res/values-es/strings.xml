@@ -632,6 +632,7 @@
     <string name="netplay_enterCode">Entrar Código</string>
     <string name="netplay_code">Código</string>
     <string name="netplay_codeNotFound">¡El código no fue encontrado!</string>
+    <string name="netplay_codeRetrieveFailure">¡El código no se pudo conseguir!</string>
     <string name="netplay_advanced">Avanzado</string>
 
     <!-- ROM unzipping -->

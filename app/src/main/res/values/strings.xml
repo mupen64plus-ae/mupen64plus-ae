@@ -814,6 +814,7 @@
     <string name="netplay_enterCode">Enter Code</string>
     <string name="netplay_code">Code</string>
     <string name="netplay_codeNotFound">Code was not found!</string>
+    <string name="netplay_codeRetrieveFailure">Unable to get code!</string>
     <string name="netplay_advanced">Advanced</string>
 
     <!-- ROM Scanning -->

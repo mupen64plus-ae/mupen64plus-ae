@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
@@ -99,6 +101,8 @@ public class NetplayServerSetupDialog extends DialogFragment
 
     private boolean mShowingAdvanced = false;
     private boolean mShowingCode = false;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     /**
      *
      * @return A cheat dialog
@@ -249,7 +253,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                                 mCodeTextView.setText(mNetplayCode);
                             });
 
-                            Log.e(TAG, "GOT CODE: " + roomCode);
+                            Log.i(TAG, "Received room code: " + roomCode);
                         }
                     });
 
@@ -307,35 +311,45 @@ public class NetplayServerSetupDialog extends DialogFragment
                 OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
                 listener.mapPorts(mNetplayRoomService.getServerPort());
 
-                if (mOnlineNetplayHandler == null) {
-                    Thread onlineNetplayThread = new Thread(() -> {
+                // Show an error if it takes too long to get a code
+                mHandler.postDelayed(() -> {
+                    if (TextUtils.isEmpty(mNetplayCode)) {
+                        Notifier.showToast(mActivity, R.string.netplay_codeRetrieveFailure);
+                    }
+                }, 5000);
+
+                Thread onlineNetplayThread = new Thread(() -> {
+
+                    if (mOnlineNetplayHandler == null) {
 
                         try {
                             mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
-                                37520, mNetplayRoomService.getServerPort(), -1,
-                                new OnlineNetplayHandler.OnOnlineNetplayData() {
+                                    37520, mNetplayRoomService.getServerPort(), -1,
+                                    new OnlineNetplayHandler.OnOnlineNetplayData() {
 
-                                    @Override
-                                    public void onInitSessionResponse(boolean success) {
-                                        if (!success) {
-                                            Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch);
+                                        @Override
+                                        public void onInitSessionResponse(boolean success) {
+                                            if (!success) {
+                                                mActivity.runOnUiThread(() ->Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch));
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onRoomData(InetAddress address1, int port) {
-                                        // Nothing to do here
-                                    }
-                                });
+                                        @Override
+                                        public void onRoomData(InetAddress address1, int port) {
+                                            // Nothing to do here
+                                        }
+                                    });
                             mOnlineNetplayHandler.connectAndRequestCode();
 
                         } catch (UnknownHostException e) {
                             e.printStackTrace();
                         }
-                    });
-                    onlineNetplayThread.setDaemon(true);
-                    onlineNetplayThread.start();
-                }
+                    }
+                });
+
+                onlineNetplayThread.setDaemon(true);
+                onlineNetplayThread.start();
+
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
