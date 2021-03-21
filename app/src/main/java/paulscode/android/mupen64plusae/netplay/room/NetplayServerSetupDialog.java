@@ -187,7 +187,7 @@ public class NetplayServerSetupDialog extends DialogFragment
             }
         });
 
-        InetAddress address = DeviceUtil.wifiIpAddress(mActivity);
+        InetAddress address = DeviceUtil.getIPAddress();
 
         if (address != null) {
             String serverInfoText = "" + address.getHostAddress();

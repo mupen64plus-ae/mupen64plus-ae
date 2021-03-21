@@ -281,7 +281,7 @@ public class NetplayService extends Service
             if (mShuttingDown) {
                 return;
             }
-            InetAddress wifiAddress = DeviceUtil.wifiIpAddress(getApplicationContext());
+            InetAddress wifiAddress = DeviceUtil.getIPAddress();
 
             if (wifiAddress != null) {
                 String myIp = wifiAddress.getHostAddress();

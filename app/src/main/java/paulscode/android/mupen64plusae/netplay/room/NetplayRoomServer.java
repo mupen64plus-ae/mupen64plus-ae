@@ -169,7 +169,7 @@ public class NetplayRoomServer {
         serviceInfo.setServiceName(mNsdServiceName);
         serviceInfo.setServiceType(DEFAULT_SERVICE_TYPE);
         serviceInfo.setPort(mServerSocket.getLocalPort());
-        serviceInfo.setHost(DeviceUtil.wifiIpAddress(mContext));
+        serviceInfo.setHost(DeviceUtil.getIPAddress());
         serviceInfo.setAttribute("dummy", "dummy");
 
         Log.i(TAG, "NS registering: " + serviceInfo.toString());
