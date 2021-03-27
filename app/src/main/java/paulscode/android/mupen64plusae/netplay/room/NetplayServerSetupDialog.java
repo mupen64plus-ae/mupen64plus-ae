@@ -91,6 +91,7 @@ public class NetplayServerSetupDialog extends DialogFragment
 
     private String mNetplayCode = "";
 
+    private Button mGetCodeButton;
     private Button mAdvancedButton;
     private LinearLayout mServerLayout;
     private TextView mCodeTextView;
@@ -102,7 +103,7 @@ public class NetplayServerSetupDialog extends DialogFragment
     private boolean mShowingAdvanced = false;
     private boolean mShowingCode = false;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     /**
      *
      * @return A cheat dialog
@@ -155,7 +156,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         serverListView.setAdapter(mServerListAdapter);
 
         Button cancelButton = dialogView.findViewById(R.id.buttonCancel);
-        Button getCodeButton = dialogView.findViewById(R.id.buttonGetCode);
+        mGetCodeButton = dialogView.findViewById(R.id.buttonGetCode);
         mAdvancedButton = dialogView.findViewById(R.id.buttonAdvanced);
 
         mServerLayout = dialogView.findViewById(R.id.serverLayout);
@@ -166,6 +167,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         mServerLayout.setVisibility(mShowingAdvanced ? View.VISIBLE : View.GONE);
         mAdvancedButton.setVisibility(mShowingAdvanced ? View.GONE : View.VISIBLE);
         mCodeLayout.setVisibility(mShowingCode ? View.VISIBLE : View.GONE);
+        mGetCodeButton.setVisibility(mShowingCode ? View.GONE : View.VISIBLE);
 
         TextView serverAddress = dialogView.findViewById(R.id.textHostAddress);
         TextView port1 = dialogView.findViewById(R.id.textPort1);
@@ -251,6 +253,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                                     mNetplayCode += roomCode;
                                 }
                                 mCodeTextView.setText(mNetplayCode);
+                                mGetCodeButton.setVisibility(View.GONE);
                             });
 
                             Log.i(TAG, "Received room code: " + roomCode);
@@ -306,7 +309,7 @@ public class NetplayServerSetupDialog extends DialogFragment
             }
         });
 
-        getCodeButton.setOnClickListener(v -> {
+        mGetCodeButton.setOnClickListener(v -> {
             if (mActivity instanceof OnClientDialogActionListener) {
                 OnClientDialogActionListener listener = (OnClientDialogActionListener)mActivity;
                 listener.mapPorts(mNetplayRoomService.getServerPort());
