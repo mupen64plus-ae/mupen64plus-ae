@@ -119,13 +119,16 @@
                 android:layout_margin="10dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/netplay_code" />
-            <TextView
+            <EditText
                 android:id="@+id/textCodeValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:padding="10dp"
                 android:layout_toEndOf="@id/textCodeTitle"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="none"
+                android:textIsSelectable="true"
+                android:hint="@string/netplay_code" />
         </RelativeLayout>
 
         <LinearLayout

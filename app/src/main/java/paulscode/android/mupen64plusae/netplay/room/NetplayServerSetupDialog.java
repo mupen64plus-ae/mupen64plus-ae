@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -94,7 +96,7 @@ public class NetplayServerSetupDialog extends DialogFragment
     private Button mGetCodeButton;
     private Button mAdvancedButton;
     private LinearLayout mServerLayout;
-    private TextView mCodeTextView;
+    private EditText mCodeTextView;
     private RelativeLayout mCodeLayout;
 
     // Activity holding this fragment
@@ -163,6 +165,9 @@ public class NetplayServerSetupDialog extends DialogFragment
         mCodeLayout = dialogView.findViewById(R.id.codeLayout);
         mCodeTextView = dialogView.findViewById(R.id.textCodeValue);
         mCodeTextView.setText(mNetplayCode);
+        mCodeTextView.setInputType(InputType.TYPE_NULL);
+        mCodeTextView.setTextIsSelectable(true);
+        mCodeTextView.setKeyListener(null);
 
         mServerLayout.setVisibility(mShowingAdvanced ? View.VISIBLE : View.GONE);
         mAdvancedButton.setVisibility(mShowingAdvanced ? View.GONE : View.VISIBLE);
