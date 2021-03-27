@@ -223,9 +223,10 @@ public class NetplayServerSetupDialog extends DialogFragment
                         @Override
                         public void onClientRegistration(int playerNumber, String deviceName) {
                             try {
-                                mClients.add(new NetplayClient(playerNumber, deviceName));
-
-                                mActivity.runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
+                                mActivity.runOnUiThread(() -> {
+                                    mClients.add(new NetplayClient(playerNumber, deviceName));
+                                    mServerListAdapter.notifyDataSetChanged();
+                                });
                             } catch (IllegalStateException e) {
                                 e.printStackTrace();
                             }
@@ -234,14 +235,16 @@ public class NetplayServerSetupDialog extends DialogFragment
                         @Override
                         public void onClienLeave(int playerNumber) {
                             try {
-                                ListIterator<NetplayClient> iter = mClients.listIterator();
-                                while(iter.hasNext()){
-                                    if(iter.next().mPlayerNumer == playerNumber){
-                                        iter.remove();
-                                    }
-                                }
 
-                                mActivity.runOnUiThread(() -> mServerListAdapter.notifyDataSetChanged());
+                                mActivity.runOnUiThread(() -> {
+                                    ListIterator<NetplayClient> iter = mClients.listIterator();
+                                    while(iter.hasNext()){
+                                        if(iter.next().mPlayerNumer == playerNumber){
+                                            iter.remove();
+                                        }
+                                    }
+                                    mServerListAdapter.notifyDataSetChanged();
+                                });
                             } catch (IllegalStateException e) {
                                 e.printStackTrace();
                             }
