@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import android.os.Build;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
@@ -77,21 +78,24 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         // A joystick at rest does not always report an absolute position of
         // (0,0). Use the getFlat() method to determine the range of values
         // bounding the joystick axis center.
+        float flat = FLAT_OVERRIDE;
+
         if (range != null) {
-            float flat = range.getFlat();
-            final float value = event.getAxisValue(axis);
+            flat = range.getFlat();
+        }
 
-            //Some devices with bad drivers report invalid flat regions
-            if(flat > MAX_FLAT || flat < 0.0)
-            {
-                flat = FLAT_OVERRIDE;
-            }
+        final float value = event.getAxisValue(axis);
 
-            // Ignore axis values that are within the 'flat' region of the
-            // joystick axis center.
-            if (Math.abs(value) > flat) {
-                return value;
-            }
+        //Some devices with bad drivers report invalid flat regions
+        if(flat > MAX_FLAT || flat < 0.0)
+        {
+            flat = FLAT_OVERRIDE;
+        }
+
+        // Ignore axis values that are within the 'flat' region of the
+        // joystick axis center.
+        if (Math.abs(value) > flat) {
+            return value;
         }
 
         return 0;
