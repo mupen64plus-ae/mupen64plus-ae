@@ -203,6 +203,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                             mServerListView.setVisibility(View.GONE);
                             mLinearLayoutWaiting.setVisibility(View.VISIBLE);
                             enterIp.setVisibility(View.GONE);
+                            enterCode.setVisibility(View.GONE);
                             mWaiting = true;
                         });
                     }
