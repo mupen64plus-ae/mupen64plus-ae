@@ -111,6 +111,11 @@ public:
 	void pushData(const int16_t* _data, int _samples, std::chrono::duration<double> _timeSinceStart);
 
 	/**
+	 * Waits for the sound playback buffer to be reduced to the expected size
+	 */
+	void waitForBufferToClear();
+
+	/**
 	 * Oboe audio callback
 	 * @param oboeStream Oboe stream
 	 * @param audioData Buffer used to copy data to
@@ -330,5 +335,14 @@ private:
 
 	// Average actual time increment used for time stretching
 	double mAverageFeedTimeMs = 0.016;
+
+	// Mutex used while waiting for the buffer to clear
+	std::mutex mWaitForBufferToClearMutex;
+
+	// Condition variable used while waiting for the buffer to clear
+	std::condition_variable mWaitForBufferToClearCv;
+
+	// Number of samples waiting to be played back
+	std::atomic_int mSamplesWaiting;
 };
 

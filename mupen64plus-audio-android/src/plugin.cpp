@@ -66,7 +66,8 @@ static int GameFreq = defaultFrequency;
 /* SpeedFactor is used to increase/decrease game playback speed */
 static unsigned int speed_factor = 100;
 static int samplingRateSelection = 0;
-static bool isUsingNetplay = 0;
+static bool isUsingNetplay = false;
+static bool timeStretchEnabled = false;
 
 
 /* Definitions of pointers to Core config functions */
@@ -110,7 +111,7 @@ static void ReadConfig() {
     int volume = ConfigGetParamInt(l_ConfigAudio, "VOLUME");
     samplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
     int samplingType = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_TYPE");
-    int timeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
+    timeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED") != 0;
     int forceSles = ConfigGetParamBool(l_ConfigAudio, "FORCE_SLES");
 
     AudioHandler::get().setSwapChannels(swapChannels);
@@ -118,7 +119,7 @@ static void ReadConfig() {
     AudioHandler::get().setTargetPrimingBuffersMs(audioBuffersMs);
     AudioHandler::get().setSamplingRateSelection(samplingRateSelection);
     AudioHandler::get().setSamplingType(samplingType);
-    AudioHandler::get().setTimeStretchEnabled(timeStretchEnabled);
+    AudioHandler::get().setTimeStretchEnabled(isUsingNetplay || timeStretchEnabled);
     AudioHandler::get().setVolume(volume);
     AudioHandler::get().forceSles(forceSles);
 }
@@ -344,14 +345,14 @@ EXPORT void CALL AiLenChanged(void) {
     if (!l_PluginInit)
         return;
 
-    bool limiterEnabled = isUsingNetplay || isSpeedLimiterEnabled();
+    bool coreLimiterEnabled = isUsingNetplay || isSpeedLimiterEnabled();
 
     auto currentTime = std::chrono::steady_clock::now();
 
     //if this is the first time or we are resuming from pause
     if (gameStartTime.time_since_epoch().count() == 0 || !hasBeenReset ||
-        lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled) {
-        lastSpeedLimiterEnabledState = limiterEnabled;
+        lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != coreLimiterEnabled) {
+        lastSpeedLimiterEnabledState = coreLimiterEnabled;
         gameStartTime = currentTime;
 		gameStartTimeNonAdjusted = currentTime;
         totalElapsedSamples = 0;
@@ -375,7 +376,7 @@ EXPORT void CALL AiLenChanged(void) {
     double totalElapsedGameTime = ((double) totalElapsedSamples) / (double) GameFreq / speedFactor;
 
     //Slow the game down if sync game to audio is enabled
-    if (!limiterEnabled) {
+    if (!coreLimiterEnabled) {
         double sleepNeeded = totalElapsedGameTime - timeSinceStart.count();
 
         if (sleepNeeded < minSleepNeededForReset || sleepNeeded > (maxSleepNeeded / speedFactor)) {
@@ -427,6 +428,21 @@ EXPORT void CALL AiLenChanged(void) {
             else {
                 std::this_thread::sleep_until(endTime);
             }
+        }
+    }
+
+    // Don't let the queue size get too big, this can happen
+    // if the time stretching is not regulating the queue size and
+    // audio playback rate and time elapse don't match up exactly
+    if (!coreLimiterEnabled && !timeStretchEnabled) {
+
+        auto timeStart = std::chrono::steady_clock::now();
+        AudioHandler::get().waitForBufferToClear();
+        auto timeEnd = std::chrono::steady_clock::now();
+        std::chrono::duration<double> sleepTime = timeEnd - timeStart;
+        if (sleepTime.count() > 0.050) {
+            DebugMessage(M64MSG_ERROR, "Slept for too long: %f seconds, resetting", sleepTime.count());
+            hasBeenReset = false;
         }
     }
 }
@@ -505,4 +521,7 @@ extern "C" EXPORT void CALL setVolume(int volume) {
 
 extern "C" EXPORT void CALL usingNetplay(int netplay) {
     isUsingNetplay = netplay != 0;
+
+    // Always force time stretching to be enabled when using netplay
+    AudioHandler::get().setTimeStretchEnabled(isUsingNetplay || timeStretchEnabled);
 }

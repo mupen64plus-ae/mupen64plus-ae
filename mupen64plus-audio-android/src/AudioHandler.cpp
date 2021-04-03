@@ -26,7 +26,9 @@ AudioHandler::AudioHandler() :
 		mSoundBufferPool(1024 * 1024 * 50),
 		mPlaybackPaused(false),
 		mFeedTimes{},
-		mGameTimes{}{
+		mGameTimes{},
+		mSamplesWaiting(0)
+{
 	reset();
 
 	mSoundTouch.setSampleRate(mInputFreq);
@@ -164,6 +166,18 @@ void AudioHandler::pushData(const int16_t *_data, int _samples,
 	theQueueData.timeSinceStart = timeSinceStart.count();
 
 	mAudioConsumerQueue.enqueue(theQueueData);
+}
+
+void AudioHandler::waitForBufferToClear()
+{
+	std::unique_lock<std::mutex> lock(mWaitForBufferToClearMutex);
+
+	mWaitForBufferToClearCv.wait(lock, [this]
+	{
+		int queueSizeMs = static_cast<int>(static_cast<double>(mSamplesWaiting) / mOutputFreq * 1000);
+		return queueSizeMs < mTargetBuffersMs + 50;
+	}
+	);
 }
 
 oboe::DataCallbackResult
@@ -419,6 +433,13 @@ bool AudioHandler::processAudioSoundTouch(int& validBytes, void *outAudioData, i
 				reinterpret_cast<soundtouch::SAMPLETYPE *>(outAudioData),
 				static_cast<unsigned int>(outNumFrames));
 		bytesWritten = true;
+
+		mSamplesWaiting = mSoundTouch.numSamples();
+
+		{
+			std::unique_lock<std::mutex> lock(mWaitForBufferToClearMutex);
+			mWaitForBufferToClearCv.notify_one();
+		}
 	}
 
 	validBytes = 0;
@@ -431,8 +452,7 @@ void AudioHandler::processAudioSoundTouchNoOutput(int& validBytes)
 	mSoundTouch.putSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(mWorkingBuffer), validBytes / hwSamplesBytes);
 }
 
-int
-AudioHandler::resample(const unsigned char *input, int bytesPerSample, int oldsamplerate, unsigned char *output,
+int AudioHandler::resample(const unsigned char *input, int bytesPerSample, int oldsamplerate, unsigned char *output,
 		 int output_needed, int newsamplerate) {
 	int consumedSamples = 0;
 
@@ -480,6 +500,13 @@ bool AudioHandler::processAudioTrivial(int& validBytes, void *outAudioData, int3
 		memmove(mWorkingBuffer, &mWorkingBuffer[input_used], validBytes - input_used);
 		validBytes -= input_used;
 		dataWritten = true;
+
+		mSamplesWaiting = validBytes / hwSamplesBytes;
+
+		{
+			std::unique_lock<std::mutex> lock(mWaitForBufferToClearMutex);
+			mWaitForBufferToClearCv.notify_one();
+		}
 	}
 
 	return dataWritten;
@@ -589,5 +616,12 @@ void AudioHandler::reset()
 	QueueData currQueueData;
 	while (mAudioConsumerQueue.try_dequeue(currQueueData)) {
 		mSoundBufferPool.removeBufferFromPool(currQueueData.data);
+	}
+
+	mSamplesWaiting = 0;
+
+	{
+		std::unique_lock<std::mutex> lock(mWaitForBufferToClearMutex);
+		mWaitForBufferToClearCv.notify_one();
 	}
 }
