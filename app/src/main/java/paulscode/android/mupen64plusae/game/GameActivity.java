@@ -742,6 +742,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
+    public void onExitFinished()
+    {
+        finishAndRemoveTask();
+    }
+
+    @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
         if(mCoreFragment == null) return;

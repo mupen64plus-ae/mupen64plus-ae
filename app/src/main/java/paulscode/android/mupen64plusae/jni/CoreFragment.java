@@ -88,6 +88,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          * Called when a game is saved or a save is loaded
          */
         void onSaveLoad();
+
+        /**
+         * Called when we should exit the application
+         */
+        void onExitFinished();
     }
     
     private static final String TAG = "CoreFragment";
@@ -195,6 +200,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void onFinish()
     {
         Log.i(TAG, "onFinish");
+
+        try {
+            requireActivity().runOnUiThread(() -> {
+                if (mCoreEventListener != null) {
+                    mCoreEventListener.onExitFinished();
+                }
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
 
         mCoreService = null;
     }

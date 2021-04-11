@@ -769,7 +769,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             //Stop the service
-            forceExit();
+            exitGracefully();
         }
     }
 
@@ -1085,6 +1085,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     public void forceExit()
     {
+        exitGracefully();
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    public void exitGracefully()
+    {
         if (mUseRaphnetDevicesIfAvailable) {
             mRaphnetHandler.shutdownAccess();
         }
@@ -1092,8 +1098,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         //Stop the service
         stopForeground(true);
         stopSelf();
-
-        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     @Override
