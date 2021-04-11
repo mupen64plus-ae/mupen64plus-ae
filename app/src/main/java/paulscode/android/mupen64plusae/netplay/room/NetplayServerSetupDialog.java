@@ -329,38 +329,6 @@ public class NetplayServerSetupDialog extends DialogFragment
                     }
                 }, 5000);
 
-                Thread onlineNetplayThread = new Thread(() -> {
-
-                    if (mOnlineNetplayHandler == null) {
-
-                        try {
-                            mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
-                                    37520, mNetplayRoomService.getServerPort(), -1,
-                                    new OnlineNetplayHandler.OnOnlineNetplayData() {
-
-                                        @Override
-                                        public void onInitSessionResponse(boolean success) {
-                                            if (!success) {
-                                                mActivity.runOnUiThread(() ->Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch));
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onRoomData(InetAddress address1, int port) {
-                                            // Nothing to do here
-                                        }
-                                    });
-                            mOnlineNetplayHandler.connectAndRequestCode();
-
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                onlineNetplayThread.setDaemon(true);
-                onlineNetplayThread.start();
-
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
             }
@@ -439,6 +407,54 @@ public class NetplayServerSetupDialog extends DialogFragment
                 text1.setText(player);
             }
             return view;
+        }
+    }
+
+    /**
+     * Callback when a UDP port has been mapped
+     * @param tcpPort1 Port for room server
+     * @param tcpPort2 Port for TCP netplay server
+     * @param udpPort2 Port for UDP netplay server
+     */
+    public void onUpnpPortsObtained(int tcpPort1, int tcpPort2, int udpPort2)
+    {
+        Log.i(TAG, "Mapped ports through UPnP: " + tcpPort1 + " " + tcpPort2 + " " + udpPort2);
+
+        // Run on a separate thread since the UPNP service doesn't work right if we block
+        if (mOnlineNetplayHandler == null && tcpPort1 != -1) {
+            Thread onlineNetplayThread = new Thread(() -> {
+                try {
+                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
+                            37520, tcpPort1, -1,
+                            new OnlineNetplayHandler.OnOnlineNetplayData() {
+
+                                @Override
+                                public void onInitSessionResponse(boolean success) {
+                                    if (!success) {
+                                        mActivity.runOnUiThread(() ->Notifier.showToast(mActivity, R.string.netplay_serverVersionMismatch));
+                                    }
+                                }
+
+                                @Override
+                                public void onRoomData(InetAddress address1, int port) {
+                                    // Nothing to do here
+                                }
+                            });
+                    mOnlineNetplayHandler.connectAndRequestCode();
+
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            });
+            onlineNetplayThread.setDaemon(true);
+            onlineNetplayThread.start();
+
+            mNetplayRoomService.updateServerPort(tcpPort2);
+        }
+
+        if (tcpPort1 == -1)
+        {
+            mActivity.runOnUiThread(() -> Notifier.showToast(mActivity, R.string.netplay_codeRetrieveFailure));
         }
     }
 }

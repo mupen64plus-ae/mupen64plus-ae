@@ -49,7 +49,7 @@ public class NetplayRoomServer {
     static final String DEFAULT_SERVICE_TYPE = "_m64plusae._tcp.";
 
     // Port where the netplay server is listening
-    private final int mServerPort;
+    private int mServerPort;
 
     // TCP server used to communicate game data
     private ServerSocket mServerSocket;
@@ -94,6 +94,8 @@ public class NetplayRoomServer {
 
     // Handler for registering for the NSD service repeatedly
     private final Handler mHandler = new Handler(Looper.getMainLooper());
+
+    private final Object mClientSyncObject = new Object();
 
     /**
      * Constructor
@@ -203,24 +205,26 @@ public class NetplayRoomServer {
 
                 mRegistrationIds.add(regId);
 
-                mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, mVideoPlugin, mRspPlugin,
-                        regId, mServerPort, mServerSocket.accept(),
-                        new NetplayRoomClientHandler.OnClientRegistered() {
-                            @Override
-                            public void onClientRegistration(int playerNumber, String deviceName) {
-                                mOnClientFound.onClientRegistration(playerNumber, deviceName);
-                            }
+                synchronized (mClientSyncObject) {
+                    mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, mVideoPlugin, mRspPlugin,
+                            regId, mServerPort, mServerSocket.accept(),
+                            new NetplayRoomClientHandler.OnClientRegistered() {
+                                @Override
+                                public void onClientRegistration(int playerNumber, String deviceName) {
+                                    mOnClientFound.onClientRegistration(playerNumber, deviceName);
+                                }
 
-                            @Override
-                            public void onClientLeave(int playerNumber) {
-                                mOnClientFound.onClienLeave(playerNumber);
-                            }
+                                @Override
+                                public void onClientLeave(int playerNumber) {
+                                    mOnClientFound.onClienLeave(playerNumber);
+                                }
 
-                            @Override
-                            public void onRoomCode(long roomCode) {
-                                mOnClientFound.onRoomCode(roomCode);
-                            }
-                        }));
+                                @Override
+                                public void onRoomCode(long roomCode) {
+                                    mOnClientFound.onRoomCode(roomCode);
+                                }
+                            }));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 mRunning = false;
@@ -259,4 +263,14 @@ public class NetplayRoomServer {
         mMulticastLock.release();
     }
 
+    public void updateServerPort(int serverPort)
+    {
+        mServerPort = serverPort;
+
+        synchronized (mClientSyncObject) {
+            for (NetplayRoomClientHandler client : mClients) {
+                client.updateServerPort(serverPort);
+            }
+        }
+    }
 }

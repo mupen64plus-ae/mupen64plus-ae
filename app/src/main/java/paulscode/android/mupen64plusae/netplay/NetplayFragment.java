@@ -46,6 +46,14 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
          * @param port Obtained port number
          */
         void onPortObtained(int port);
+
+        /**
+         * Callback when a UDP port has been mapped
+         * @param tcpPort1 Port for room server
+         * @param tcpPort2 Port for TCP netplay server
+         * @param udpPort2 Port for UDP netplay server
+         */
+        void onUpnpPortsObtained(int tcpPort1, int tcpPort2, int udpPort2);
     }
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
@@ -171,6 +179,27 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    /**
+     * Callback when a UDP port has been mapped
+     * @param tcpPort1 Port for room server
+     * @param tcpPort2 Port for TCP netplay server
+     * @param udpPort2 Port for UDP netplay server
+     */
+    public void onUpnpPortsObtained(int tcpPort1, int tcpPort2, int udpPort2)
+    {
+        try {
+            Activity activity = requireActivity();
+
+            if (activity instanceof NetplayListener) {
+                NetplayListener listner = (NetplayListener)activity;
+                listner.onUpnpPortsObtained(tcpPort1, tcpPort2, udpPort2);
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 

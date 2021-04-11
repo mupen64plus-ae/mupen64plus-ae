@@ -1375,4 +1375,18 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onPortObtained(int port) {
         mServerPort = port;
     }
+
+    /**
+     * Callback when a UDP port has been mapped
+     * @param tcpPort1 Port for room server
+     * @param tcpPort2 Port for TCP netplay server
+     * @param udpPort2 Port for UDP netplay server
+     */
+    @Override
+    public void onUpnpPortsObtained(int tcpPort1, int tcpPort2, int udpPort2)
+    {
+        if (mIsNetplayServer && mNetplayServerDialog != null) {
+            mNetplayServerDialog.onUpnpPortsObtained(tcpPort1, tcpPort2, udpPort2);
+        }
+    }
 }

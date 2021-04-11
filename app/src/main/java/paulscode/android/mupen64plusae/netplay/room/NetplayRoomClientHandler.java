@@ -64,7 +64,7 @@ class NetplayRoomClientHandler
     private final String mRspPlugin;
     private final int mRegId;
     private static int mPlayerNumber = 0;
-    private final int mServerPort;
+    private int mServerPort;
 
     private final OnClientRegistered mOnClientRegistered;
 
@@ -314,5 +314,10 @@ class NetplayRoomClientHandler
         handleLeaveRoom();
 
         Log.i(TAG, "Socket has been closed");
+    }
+
+    public void updateServerPort(int serverPort)
+    {
+        mServerPort = serverPort;
     }
 }

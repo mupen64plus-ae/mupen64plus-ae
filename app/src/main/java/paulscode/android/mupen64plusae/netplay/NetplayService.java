@@ -42,15 +42,14 @@ import androidx.core.app.NotificationCompat;
 import org.fourthline.cling.android.AndroidUpnpServiceConfiguration;
 import org.fourthline.cling.binding.xml.ServiceDescriptorBinder;
 import org.fourthline.cling.binding.xml.UDA10ServiceDescriptorBinderImpl;
+import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.registry.Registry;
 import org.fourthline.cling.registry.RegistryListener;
 import org.fourthline.cling.support.igd.PortMappingListener;
 import org.fourthline.cling.support.model.PortMapping;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
@@ -78,6 +77,14 @@ public class NetplayService extends Service
          * Will be called once the service finishes
          */
         void onFinish();
+
+        /**
+         * Callback when a UDP port has been mapped
+         * @param tcpPort1 Port for room server
+         * @param tcpPort2 Port for TCP netplay server
+         * @param udpPort2 Port for UDP netplay server
+         */
+        void onUpnpPortsObtained(int tcpPort1, int tcpPort2, int udpPort2);
     }
 
     private static final String TAG = "NetplayService";
@@ -151,6 +158,13 @@ public class NetplayService extends Service
                 if (mUpnpService != null) {
                     mUpnpService.shutdown();
                 }
+            }
+
+            // Sleep for a bit to let the UPnP service close all the ports since it runs async
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -281,7 +295,7 @@ public class NetplayService extends Service
             if (mShuttingDown) {
                 return;
             }
-            InetAddress wifiAddress = DeviceUtil.getIPAddress();
+            InetAddress wifiAddress = DeviceUtil.wifiIpAddress(getApplicationContext());
 
             if (wifiAddress != null) {
                 String myIp = wifiAddress.getHostAddress();
@@ -303,9 +317,30 @@ public class NetplayService extends Service
                         }
                 );
 
-                RegistryListener registryListener = new PortMappingListener(desiredMapping);
+                RegistryListener registryListener = new PortMappingListener(desiredMapping) {
+                    @Override
+                    public synchronized void deviceAdded(Registry registry, Device device) {
+                        super.deviceAdded(registry, device);
+                        mNetplayServiceListener.onUpnpPortsObtained(desiredMapping[0].getExternalPort().getValue().intValue(),
+                                desiredMapping[1].getExternalPort().getValue().intValue(),
+                                desiredMapping[2].getExternalPort().getValue().intValue());
+                    }
+
+                    @Override
+                    protected void handleFailureMessage(String s) {
+                        super.handleFailureMessage(s);
+
+                        // Failure
+                        mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
+                    }
+                };
+
+
                 mUpnpService.getRegistry().addListener(registryListener);
                 mUpnpService.getControlPoint().search();
+
+                desiredMapping[0].getExternalPort();
+
             }
         }
     }
