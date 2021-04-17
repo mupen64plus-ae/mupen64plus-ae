@@ -92,9 +92,6 @@ public class GamePrefs
     /** Game header name */
     public final String gameHeaderName;
 
-    /** Game header name */
-    private final String gameCountrySymbol;
-
     /** Game good name */
     public final String gameGoodName;
 
@@ -334,7 +331,6 @@ public class GamePrefs
         mGlobalPrefs = globalPrefs;
         gameHeaderName = headerName;
         gameGoodName = goodName;
-        gameCountrySymbol = countrySymbol;
         romMd5 = md5;
         gameCrc = crc;
         mSharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
@@ -351,11 +347,6 @@ public class GamePrefs
         if( !new File(getGameDataDir()).exists()) {
             useAlternateGameDataDir();
             FileUtil.makeDirs(getGameDataDir());
-        }
-
-        //If the above didn't work, go with 2nd alternative name, which is just the md5
-        if( !new File(getGameDataDir()).exists()) {
-            useSecondAlternateGameDataDir();
         }
 
         isDpadGame = isDpadGame(headerName, goodName);
@@ -722,13 +713,7 @@ public class GamePrefs
 
     public void useAlternateGameDataDir()
     {
-        gameDataDir = getAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol);
-        setGameDirs(mAppData, mGlobalPrefs, getGameDataDir());
-    }
-
-    public void useSecondAlternateGameDataDir()
-    {
-        gameDataDir = getSecondAlternateGameDataPath( romMd5);
+        gameDataDir = getAlternateGameDataPath(romMd5);
         setGameDirs(mAppData, mGlobalPrefs, getGameDataDir());
     }
 
@@ -788,15 +773,19 @@ public class GamePrefs
     public static String getGameDataPath( String romMd5, String headerName, String countrySymbol)
     {
         headerName = TextUtils.isEmpty(headerName) ? "" : headerName;
-        return String.format( "%s %s %s", headerName.replace("/", ""), countrySymbol, romMd5 );
+        headerName = headerName.replace("/", "");
+        headerName = headerName.replace("\\", "");
+        headerName = headerName.replace("*", "");
+        headerName = headerName.replace("?", "");
+        headerName = headerName.replace("|", "");
+        headerName = headerName.replace("<", "");
+        headerName = headerName.replace(">", "");
+        headerName = headerName.replace("\"", "");
+
+        return String.format( "%s %s %s", headerName, countrySymbol, romMd5 );
     }
 
-    public static String getAlternateGameDataPath( String romMd5, String headerName, String countrySymbol)
-    {
-        return String.format( "%s %s %s", headerName, countrySymbol, romMd5 ).replace(":", "");
-    }
-
-    public static String getSecondAlternateGameDataPath( String romMd5)
+    public static String getAlternateGameDataPath( String romMd5)
     {
         return String.format( "%s", romMd5 );
     }
