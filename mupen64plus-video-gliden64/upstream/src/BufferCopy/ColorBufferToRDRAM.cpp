@@ -115,7 +115,7 @@ bool ColorBufferToRDRAM::_prepareCopy(u32& _startAddress)
 	blitParams.dstY1 = bufferHeight;
 	blitParams.dstWidth = colorBufferTexture->width;
 	blitParams.dstHeight = colorBufferTexture->height;
-	blitParams.filter = textureParameters::FILTER_LINEAR;
+	blitParams.filter = m_pCurFrameBuffer->m_scale == 1.0f ? textureParameters::FILTER_NEAREST : textureParameters::FILTER_LINEAR;
 	blitParams.tex[0] = pInputTexture;
 	blitParams.combiner = CombinerInfo::get().getTexrectDownscaleCopyProgram();
 	blitParams.readBuffer = readBuffer;

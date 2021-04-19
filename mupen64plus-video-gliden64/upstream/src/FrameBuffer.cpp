@@ -578,8 +578,6 @@ void FrameBuffer::_initColorFBTexture(int _width)
 	m_pColorBufferTexture->maskT = 0;
 	m_pColorBufferTexture->mirrorS = 0;
 	m_pColorBufferTexture->mirrorT = 0;
-	//The actual VI width is not used for texture width because most texture widths
-	//cause slowdowns in the glReadPixels call, at least on Android
 	m_pColorBufferTexture->width = _width;
 	m_pColorBufferTexture->height = VI_GetMaxBufferHeight(_width);
 	m_pColorBufferTexture->textureBytes = m_pColorBufferTexture->width * m_pColorBufferTexture->height * fbTexFormat.colorFormatBytes;

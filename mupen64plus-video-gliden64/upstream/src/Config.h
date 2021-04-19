@@ -90,6 +90,7 @@ struct Config
 		u32 correctTexrectCoords;
 		u32 enableNativeResTexrects;
 		u32 bgMode;
+		u32 enableTexCoordBounds;
 	} graphics2D;
 
 	enum Aspect {
@@ -219,6 +220,8 @@ struct Config
 		hkTexDump = 0,
 		hkHdTexReload,
 		hkHdTexToggle,
+		hkTexCoordBounds,
+		hkNativeResTexrects,
 		hkVsync,
 		hkFBEmulation,
 		hkN64DepthCompare,
