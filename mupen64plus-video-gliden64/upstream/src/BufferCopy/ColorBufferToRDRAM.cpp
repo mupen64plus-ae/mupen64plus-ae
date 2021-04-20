@@ -56,10 +56,7 @@ bool ColorBufferToRDRAM::_prepareCopy(u32& _startAddress)
 	_startAddress &= ~0xfff;
 	if (_startAddress < pBuffer->m_startAddress)
 		_startAddress = pBuffer->m_startAddress;
-
-	if (m_frameCount == curFrame && pBuffer == m_pCurFrameBuffer && m_startAddress != _startAddress)
-		return true;
-
+	
 	const u32 numPixels = pBuffer->m_width * pBuffer->m_height;
 	if (numPixels == 0)
 		return false;
