@@ -28,6 +28,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDiskIOException;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.PersistableBundle;
@@ -189,7 +190,7 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
             getApplicationContext().getContentResolver().delete(
                     TvContractCompat.buildPreviewProgramsUriForChannel(mChannelId),
                     null, null);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException|SQLiteDiskIOException e) {
             e.printStackTrace();
         }
 
