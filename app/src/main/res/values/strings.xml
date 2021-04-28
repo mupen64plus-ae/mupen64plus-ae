@@ -444,6 +444,8 @@
     <string name="gliden64_render_backgrounds_mode_title">Render backgrounds mode (HLE only)</string>
     <string name="gliden64_render_backgrounds_mode_one_piece">One piece (fast)</string>
     <string name="gliden64_render_backgrounds_mode_stripped">Stripped (precise)</string>
+    <string name="gliden64_bound_texture_rectangle_coordinates_title">Bound textured rectangle coordinates</string>
+    <string name="gliden64_bound_texture_rectangle_coordinates_summary">Bound textured rectangle coordinates to the values they take in native resolutions. It prevents garbage due to fetching out of texture bounds, but can result in hard edges.</string>
     <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
     <string name="gliden64_enable_fb_emulation_title">Frame and/or depth buffer emulation</string>
     <string name="gliden64_swap_frame_buffers_title">Swap frame buffers</string>

@@ -385,6 +385,8 @@
     <string name="gliden64_render_backgrounds_mode_title">Modo de renderizar fondos (solo HLE)</string>
     <string name="gliden64_render_backgrounds_mode_one_piece">Una pieza (rápido)</string>
     <string name="gliden64_render_backgrounds_mode_stripped">Despojado (preciso)</string>
+    <string name="gliden64_bound_texture_rectangle_coordinates_title">Coordenadas de rectángulo texturizado limitado</string>
+    <string name="gliden64_bound_texture_rectangle_coordinates_summary">Coordenadas de rectángulo texturizado enlazado a los valores que toman en resoluciones nativas. Evita la basura debido a que se sale de los límites de la textura, pero puede resultar en bordes duros.</string>
     <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
     <string name="gliden64_enable_fb_emulation_title">Habilitar emulación de buffer de marco</string>
     <string name="gliden64_swap_frame_buffers_title">Marcos de memoria de intercambio</string>

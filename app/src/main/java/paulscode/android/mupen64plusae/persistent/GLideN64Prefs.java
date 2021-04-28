@@ -70,6 +70,12 @@ public class GLideN64Prefs {
     /** Render backgrounds mode (HLE only). (0=One piece (fast), 1=Stripped (precise)) */
     public final int backgroundMode;
 
+    /** Bound texture rectangle texture coordinates to the values they take in native resolutions.
+     * It prevents garbage due to fetching out of texture bounds, but can result in hard edges.
+     * 0=Off
+     * 1=On */
+    public final boolean enableTexCoordBounds;
+
     /** Enable frame and|or depth buffer emulation. */
     public final boolean enableFBEmulation;
 
@@ -188,6 +194,7 @@ public class GLideN64Prefs {
         enableSoftClipping = emulationProfile.get( "EnableClipping", "True" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
         backgroundMode = getSafeInt( emulationProfile, "BackgroundsMode", 0);
+        enableTexCoordBounds = emulationProfile.get( "EnableTexCoordBounds", "True" ).equals( "True" );
 
         enableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         enableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );
