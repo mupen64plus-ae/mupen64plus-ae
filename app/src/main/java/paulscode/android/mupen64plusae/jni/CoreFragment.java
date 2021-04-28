@@ -999,6 +999,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     public PixelBuffer.SurfaceTextureWithSize getSurfaceTexture() {
-        return mCoreService.getSurfaceTexture();
+        return mCoreService != null ? mCoreService.getSurfaceTexture() : null;
     }
 }
