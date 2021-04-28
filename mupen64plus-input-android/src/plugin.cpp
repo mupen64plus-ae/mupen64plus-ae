@@ -101,7 +101,6 @@ static jmethodID _jniRumble = NULL;
 static int _androidPluggedState[4];
 static int _androidPakType[4];
 static unsigned char _androidButtonState[4][16];
-static unsigned char _androidButtonStateToClear[4][16];
 static signed char _androidAnalogX[4];
 static signed char _androidAnalogY[4];
 static bool _isKeyboard[4];
@@ -191,13 +190,11 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
         jint mp64pXAxis, jint mp64pYAxis, jboolean isKeyboard)
 {
     jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, NULL);
-    for (int b = 0; b < 16; b++)
+    int b;
+    for (b = 0; b < 16; b++)
     {
-        _androidButtonState[controllerNum][b] |= elements[b];
-        _androidButtonStateToClear[controllerNum][b] |= !elements[b];
+        _androidButtonState[controllerNum][b] = elements[b];
     }
-
-
     env->ReleaseBooleanArrayElements(mp64pButtons, elements, 0);
 
     _androidAnalogX[controllerNum] = (signed char) ((int) mp64pXAxis);
@@ -319,15 +316,11 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
     keys->Value = 0;
 
     // Set the button bits
-    for (int b = 0; b < 16; b++)
+    int b;
+    for (b = 0; b < 16; b++)
     {
         if (_androidButtonState[controllerNum][b])
             keys->Value |= BUTTON_BITS[b];
-
-        if(_androidButtonStateToClear[controllerNum][b]) {
-            _androidButtonState[controllerNum][b] = 0;
-            _androidButtonStateToClear[controllerNum][b] = 0;
-        }
     }
 
     // Limit the speed of the analog stick under certain circumstances
