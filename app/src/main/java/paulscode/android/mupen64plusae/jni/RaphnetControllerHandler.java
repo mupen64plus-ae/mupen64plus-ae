@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+@SuppressWarnings("unused")
 class RaphnetControllerHandler
 {
     static
@@ -56,13 +57,13 @@ class RaphnetControllerHandler
     private static final String ACTION_USB_PERMISSION = "org.mupen64plusae.v3.alpha.USB_PERMISSION";
     private static final int RAPHNET_VENDOR_ID = 0x289b;
 
-    private Context mContext;
+    private final Context mContext;
     private boolean mDevicesFound = false;
-    private DeviceReadyListener mDeviceReadyListener;
-    private UsbManager mUsbManager;
+    private final DeviceReadyListener mDeviceReadyListener;
+    private final UsbManager mUsbManager;
     private UsbDeviceConnection mDeviceConnection;
     private boolean mIsConnected = false;
-    private ArrayList<UsbDevice> mWaitingOnConnection = new ArrayList<>();
+    private final ArrayList<UsbDevice> mWaitingOnConnection = new ArrayList<>();
 
     /**
      * Initialize input-raphnet plugin.
@@ -158,7 +159,11 @@ class RaphnetControllerHandler
             mDeviceConnection.close();
         }
 
-        mContext.unregisterReceiver(mUsbReceiver);
+        try {
+            mContext.unregisterReceiver(mUsbReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     static boolean raphnetDevicesPresent(@Nullable Context context)
