@@ -313,7 +313,7 @@
    <string name="gliden64_enable_copy_depth_to_RDRAM_title">Tiefenpuffer in RDRAM kopieren</string>
    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Nicht kopieren</string>
    <string name="gliden64_enable_color_buffer_from_RDRAM_title">Farbpuffer aus RDRAM kopieren aktivieren</string>
-   <string name="gliden64_enable_n64_depth_compare_title">N64-Tiefe vergleichen aktivieren (experimentell)</string>
+   <string name="gliden64_enable_n64_depth_compare_title">N64-Tiefe vergleichen aktivieren</string>
    <string name="gliden64_use_native_resolution_factor_title">Nativen Auflösungsfaktor verwenden</string>
    <string name="gliden64_use_native_resolution_factor_off">Aus</string>
    <string name="gliden64_use_native_resolution_factor_1x">1 x</string>

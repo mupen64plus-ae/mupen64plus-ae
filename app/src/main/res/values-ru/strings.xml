@@ -324,7 +324,7 @@
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Не копировать</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Программный рендер</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">Включить копию цветового буфера из  RDRAM</string>
-    <string name="gliden64_enable_n64_depth_compare_title">Включить N64 сравнение глубины (експерементальное)</string>
+    <string name="gliden64_enable_n64_depth_compare_title">Включить N64 сравнение глубины</string>
     <string name="gliden64_use_native_resolution_factor_title">Использовать родной фактор разрешения </string>
     <string name="gliden64_use_native_resolution_factor_off">Выключено</string>
     <string name="gliden64_use_native_resolution_factor_1x">1x</string>

@@ -395,7 +395,7 @@
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Keflusker renter periant</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Meziant rentañ</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">Enaouiñ an eilañ skurzer liv adalek RDRAM</string>
-    <string name="gliden64_enable_n64_depth_compare_title">Enaouiñ ar c\'heñveriañ donded N64 (Taol-esae)</string>
+    <string name="gliden64_enable_n64_depth_compare_title">Enaouiñ ar c\'heñveriañ donded N64</string>
     <string name="gliden64_enable_force_depth_buffer_clear">Rediañ ar skurzer donded sklaer</string>
     <string name="gliden64_use_native_resolution_factor_title">Implijout ur faktor spister genidik</string>
     <string name="gliden64_use_native_resolution_factor_off">Off</string>
