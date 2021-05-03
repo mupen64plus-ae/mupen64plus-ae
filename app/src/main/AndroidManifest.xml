@@ -49,6 +49,7 @@
         android:theme="@style/appTheme"
         android:supportsRtl="true"
         android:requestLegacyExternalStorage="true"
+        android:hasFragileUserData="true"
         tools:ignore="UnusedAttribute"
         android:fullBackupContent="@xml/backup_descriptor"
         android:extractNativeLibs="true">
