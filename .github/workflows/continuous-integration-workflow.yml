@@ -31,7 +31,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y file
         sudo apt-get install -y gawk
-        echo y | sdkmanager "cmake;3.10.2.4988404"
+        echo y | sdkmanager "cmake;3.18.1"
         
     - name: Set Environment
       run: |

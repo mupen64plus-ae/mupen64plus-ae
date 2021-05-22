@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply from: '../build_common/version_common.gradle'
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 android {
 
     buildTypes {
@@ -30,8 +32,11 @@ android {
     defaultConfig {
         externalNativeBuild {
             ndkBuild {
-                arguments "NDK_APPLICATION_MK:=Application.mk"
-                arguments "-j11"
+                arguments.add("NDK_APPLICATION_MK:=Application.mk")
+                arguments.add("-j11")
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    arguments.add('--output-sync=none')
+                }
                 cppFlags "-fexceptions"
                 abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }

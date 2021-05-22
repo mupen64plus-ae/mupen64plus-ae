@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.18)
 
 if( CMAKE_BUILD_TYPE STREQUAL "Debug")
     set( BUILD_VARIANT "debug" )
@@ -38,13 +38,6 @@ include_directories(
 # Find the Oboe package
 find_package (oboe REQUIRED CONFIG)
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT result)
-if(result)
-    message("Interprocedural optimizations enabled")
-    set_property(TARGET ${GLideN64_DLL_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3")
-endif()
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -ffast-math")
 
 add_library (mupen64plus-audio-android SHARED
