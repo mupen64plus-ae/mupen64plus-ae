@@ -59,7 +59,7 @@ public class Shader {
         mVertexCode = vertexCode;
 
         if (firstPass) {
-            fragmentCode = fragmentCode.replaceAll("#version 100\n",
+            fragmentCode = fragmentCode.replaceAll("#version 100",
                     "#version 100\n" +
                             "#extension GL_OES_EGL_image_external : require\n");
             fragmentCode = fragmentCode.replace("sampler2D ", "samplerExternalOES ");
