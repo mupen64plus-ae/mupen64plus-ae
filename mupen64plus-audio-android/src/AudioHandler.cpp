@@ -580,7 +580,7 @@ void AudioHandler::pausePlayback() {
 void AudioHandler::resumePlayback() {
 	if (mPlaybackPaused) {
 		if (mOutStream != nullptr) {
-			mOutStream->start();
+			mOutStream->requestStart();
 		}
 		mPlaybackPaused = false;
 	}
