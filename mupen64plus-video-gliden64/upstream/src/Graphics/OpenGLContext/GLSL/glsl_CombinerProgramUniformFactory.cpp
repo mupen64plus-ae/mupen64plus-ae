@@ -231,7 +231,7 @@ public:
 	void update(bool _force) override {
 		const bool isNativeRes = config.frameBufferEmulation.nativeResFactor == 1 && config.video.multisampling == 0;
 		const bool isTexRect = dwnd().getDrawer().getDrawingState() == DrawingState::TexRect;
-		const bool useTexCoordBounds = isTexRect && !isNativeRes && config.graphics2D.enableTexCoordBounds;
+		bool useTexCoordBounds = isTexRect && !isNativeRes && config.graphics2D.enableTexCoordBounds;
 		/* At rasterization stage, the N64 places samples on the top left of the fragment while OpenGL		*/
 		/* places them in the fragment center. As a result, a normal approach results in shifted texture	*/
 		/* coordinates. In native resolution, this difference can be negated by shifting vertices by 0.5.	*/
@@ -300,6 +300,9 @@ public:
 					tcbounds[t][1] = (fmin(ult, lrt) - _pTile->fult) * _pTexture->hdRatioT;
 					tcbounds[t][2] = (fmax(uls, lrs) - _pTile->fuls) * _pTexture->hdRatioS;
 					tcbounds[t][3] = (fmax(ult, lrt) - _pTile->fult) * _pTexture->hdRatioT;
+
+					useTexCoordBounds = useTexCoordBounds && (tcbounds[t][0] != 0 || tcbounds[t][1] != 0 || tcbounds[t][2] != 0 || tcbounds[t][3]);
+
 					if (_pTexture->frameBufferTexture != CachedTexture::fbNone) {
 						tcbounds[t][0] += _pTexture->offsetS * _pTexture->hdRatioS;
 						tcbounds[t][1] += _pTexture->offsetT * _pTexture->hdRatioT;
