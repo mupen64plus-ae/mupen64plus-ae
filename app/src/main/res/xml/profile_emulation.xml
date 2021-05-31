@@ -500,8 +500,8 @@
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_render_backgrounds_mode_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="False"
-            android:key="EnableTexCoordBounds"
+            android:defaultValue="True"
+            android:key="EnableTexCoordBounds_v2"
             android:summary="@string/gliden64_bound_texture_rectangle_coordinates_summary"
             android:title="@string/gliden64_bound_texture_rectangle_coordinates_title" />
 
