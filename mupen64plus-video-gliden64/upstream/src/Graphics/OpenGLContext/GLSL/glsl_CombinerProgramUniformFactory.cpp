@@ -231,7 +231,7 @@ public:
 	void update(bool _force) override {
 		const bool isNativeRes = config.frameBufferEmulation.nativeResFactor == 1 && config.video.multisampling == 0;
 		const bool isTexRect = dwnd().getDrawer().getDrawingState() == DrawingState::TexRect;
-		bool useTexCoordBounds = isTexRect && !isNativeRes && config.graphics2D.enableTexCoordBounds;
+		const bool useTexCoordBounds = isTexRect && !isNativeRes && config.graphics2D.enableTexCoordBounds;
 		/* At rasterization stage, the N64 places samples on the top left of the fragment while OpenGL		*/
 		/* places them in the fragment center. As a result, a normal approach results in shifted texture	*/
 		/* coordinates. In native resolution, this difference can be negated by shifting vertices by 0.5.	*/
@@ -242,7 +242,7 @@ public:
 		float texCoordOffset[2][2] = { 0.0f, 0.0f };
 		if (isTexRect && !isNativeRes) {
 			float scale[2] = { 0.0f, 0.0f };
-			if (config.graphics2D.enableNativeResTexrects != 0) {
+			if (config.graphics2D.enableNativeResTexrects != 0 && gDP.otherMode.textureFilter != G_TF_POINT) {
 				scale[0] = scale[1] = 1.0f;
 			} else {
 				scale[0] = scale[1] = static_cast<float>(config.frameBufferEmulation.nativeResFactor);
@@ -257,6 +257,10 @@ public:
 					} else {
 						texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
 						texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
+						if (gDP.otherMode.textureFilter != G_TF_POINT) {
+							texCoordOffset[t][0] -= 0.5f;
+							texCoordOffset[t][1] -= 0.5f;
+						}
 					}
 				}
 			}
@@ -300,9 +304,6 @@ public:
 					tcbounds[t][1] = (fmin(ult, lrt) - _pTile->fult) * _pTexture->hdRatioT;
 					tcbounds[t][2] = (fmax(uls, lrs) - _pTile->fuls) * _pTexture->hdRatioS;
 					tcbounds[t][3] = (fmax(ult, lrt) - _pTile->fult) * _pTexture->hdRatioT;
-
-					useTexCoordBounds = useTexCoordBounds && (tcbounds[t][0] != 0 || tcbounds[t][1] != 0 || tcbounds[t][2] != 0 || tcbounds[t][3]);
-
 					if (_pTexture->frameBufferTexture != CachedTexture::fbNone) {
 						tcbounds[t][0] += _pTexture->offsetS * _pTexture->hdRatioS;
 						tcbounds[t][1] += _pTexture->offsetT * _pTexture->hdRatioT;
