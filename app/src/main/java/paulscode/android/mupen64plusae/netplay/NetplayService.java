@@ -133,6 +133,8 @@ public class NetplayService extends Service
         @Override
         public void handleMessage(@NonNull Message msg)
         {
+            // Run at higher priority to try to prevent skips
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 
             final int bufferTarget = 2;
             mUdpServer = new UdpServer(bufferTarget, vi -> mNetplayServiceListener.onDesync(vi));
