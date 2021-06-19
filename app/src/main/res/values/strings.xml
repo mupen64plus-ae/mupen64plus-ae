@@ -215,6 +215,7 @@
     <string name="categoryGlide64_title">Glide64 settings</string>
     <string name="categoryGlide64Advanced_title">Glide64 advanced settings</string>
     <string name="categoryAngrylion_title">Angrylion RDP Plus settings</string>
+    <string name="categoryParallel_title">Parallel RDP settings</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
     <string name="categoryShaders_title">Shaders</string>
@@ -357,6 +358,7 @@
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryAngrylion">angrylion-rdp-plus\n<small>(angrylion-rdp-plus software renderer)</small></string>
+    <string name="videoPlugin_entryParallel">Parallel\n<small>(Parallel vulkan renderer)</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
     <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
     <string name="videoHardwareType_title">Flicker reduction</string>
@@ -529,6 +531,35 @@
     <string name="angrylion_compatibility_mode_fast">Fast</string>
     <string name="angrylion_compatibility_mode_moderate">Moderate</string>
     <string name="angrylion_compatibility_mode_slow">Slow</string>
+
+    <string name="parallel_upscaling_title">Upscaling</string>
+    <string name="parallel_upscaling_entry_None">None</string>
+    <string name="parallel_upscaling_entry_2x">2x</string>
+    <string name="parallel_upscaling_entry_4x">4x</string>
+    <string name="parallel_upscaling_entry_8x">8x</string>
+    <string name="parallel_superscaling_readbacks_title">Superscaling of readbacks when upsampling</string>
+    <string name="parallel_superscaling_dithering_title">Superscaling of dithering when upsampling</string>
+    <string name="parallel_synchronous_title">Synchronize RDP and CPU (slow)</string>
+    <string name="parallel_deinterlacing_title">Deinterlacing method</string>
+    <string name="parallel_deinterlacing_entry_bob">Bob</string>
+    <string name="parallel_deinterlacing_entry_weave">Weave</string>
+    <string name="parallel_overscan_crop_title">Amount of overscan pixels to crop</string>
+    <string name="parallel_vi_antialiasing_title">VI anti-aliasing</string>
+    <string name="parallel_vi_antialiasing_summary">Smooths polygon edges</string>
+    <string name="parallel_vi_divot_filter_title">VI divot filter</string>
+    <string name="parallel_vi_divot_filter_summary">Cleans up stray black pixels</string>
+    <string name="parallel_vi_gamma_dither_title">VI gamma dither</string>
+    <string name="parallel_vi_bilinear_scaling_title">VI bilinear scaling</string>
+    <string name="parallel_vi_dedither_title">VI dedither</string>
+    <string name="parallel_downscale_title">Downsampling factor, Downscales output after VI, equivalent to SSAA</string>
+    <string name="parallel_downscale_entry_disabled">Disabled</string>
+    <string name="parallel_downscale_entry_half">1/2</string>
+    <string name="parallel_downscale_entry_fourth">1/4</string>
+    <string name="parallel_downscale_entry_eight">1/8</string>
+    <string name="parallel_native_texture_lod_title">Native texture LOD</string>
+    <string name="parallel_native_texture_lod_summary">Use native texture LOD computation when upscaling, effectively a LOD bias</string>
+    <string name="parallel_native_res_text_rect_title">Native resolution TEX_RECT</string>
+    <string name="parallel_native_res_text_rect_summary">TEX_RECT primitives should generally be rendered at native resolution to avoid seams</string>
 
     <string name="glide64mk2_game_default">Game default</string>
     <string name="glide64mk2_disable">Disable</string>

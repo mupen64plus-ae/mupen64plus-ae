@@ -21,7 +21,9 @@
 package paulscode.android.mupen64plusae.profile;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -63,6 +65,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBRICE_SO = "rice";
     private static final String LIBGLN64_SO = "gln64";
     private static final String LIBANGRYLION_SO = "angrylion-plus";
+    private static final String LIBPARALLEL_SO = "parallel";
 
     private String mCurrentVideoPlugin = null;
     
@@ -126,7 +129,6 @@ public class EmulationProfileActivity extends ProfileActivity
         PreferenceCategory categoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
         PreferenceCategory categoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
 
-
         CompatListPreference preferenceRspPlugin = (CompatListPreference) findPreference( RSP_PLUGIN );
         CompatListPreference preferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
 
@@ -154,7 +156,32 @@ public class EmulationProfileActivity extends ProfileActivity
                 preferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[0]));
             }
         }
-        
+
+        //Remove or add options depending on whether vulkan is supported
+        boolean supportsParallel = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            PackageManager pm = getPackageManager();
+            if (pm != null && pm.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION, 0x401000)) {
+                supportsParallel = true;
+            }
+        }
+
+        if (!supportsParallel && preferenceVideoPlugin != null) {
+            //Don't allow parallel RDP
+            ArrayList<CharSequence> videoEntriesArray = new ArrayList<>(Arrays.asList(preferenceVideoPlugin.getEntries()));
+            ArrayList<CharSequence> videoValuesArray = new ArrayList<>(Arrays.asList(preferenceVideoPlugin.getEntryValues()));
+
+            int parallelIndex = videoEntriesArray.indexOf(getText(R.string.videoPlugin_entryParallel));
+            if(parallelIndex != -1)
+            {
+                videoEntriesArray.remove(parallelIndex);
+                videoValuesArray.remove("parallel");
+            }
+
+            preferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[0]));
+            preferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[0]));
+        }
+
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
@@ -259,6 +286,14 @@ public class EmulationProfileActivity extends ProfileActivity
                 values.add("rsp-cxd4-lle");
                 values.add("rsp-parallel");
             }
+            else if(LIBPARALLEL_SO.equals( videoPlugin ))
+            {
+                //Don't allow HLE
+                entries.add(getString(R.string.rsp_cxd4_lle));
+                entries.add(getString(R.string.rsp_parallel));
+                values.add("rsp-cxd4-lle");
+                values.add("rsp-parallel");
+            }
             else
             {
                 //All options available
@@ -333,6 +368,11 @@ public class EmulationProfileActivity extends ProfileActivity
                 if(value.toLowerCase().contains("angrylion"))
                 {
                     value = LIBANGRYLION_SO;
+                }
+
+                if(value.toLowerCase().contains("parallel"))
+                {
+                    value = LIBPARALLEL_SO;
                 }
             }
         }

@@ -181,6 +181,8 @@ public class GamePrefs
 
     public final AngrylionPlusPrefs angrylionPlusPrefs;
 
+    public final ParallelRdpPrefs parallelRdpPrefs;
+
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
 
@@ -484,6 +486,9 @@ public class GamePrefs
 
         //Video preferences for angrylion
         angrylionPlusPrefs = new AngrylionPlusPrefs(context, emulationProfile);
+
+        //Video preferences for Parallel RDP
+        parallelRdpPrefs = new ParallelRdpPrefs(context, emulationProfile);
 
         boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && videoPluginLib == AppData.VideoPlugin.GLIDEN64;
 

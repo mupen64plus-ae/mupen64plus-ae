@@ -320,6 +320,24 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViIntegerScaling", boolToTF( game.angrylionPlusPrefs.viIntegerScaling ) );
         mupen64plus_cfg.put( "Video-Angrylion-Plus", "DpCompat", String.valueOf(game.angrylionPlusPrefs.dpCompatibilityMode) );
 
+        mupen64plus_cfg.put( "Video-Parallel", "ScreenWidth", String.valueOf( renderWidth ) );
+        mupen64plus_cfg.put( "Video-Parallel", "ScreenHeight", String.valueOf( renderHeight ) );
+        mupen64plus_cfg.put( "Video-Parallel", "Fullscreen", boolToNum(game.parallelRdpPrefs.fullscreen) );
+        mupen64plus_cfg.put( "Video-Parallel", "Upscaling", String.valueOf(game.parallelRdpPrefs.upscaling));
+        mupen64plus_cfg.put( "Video-Parallel", "SuperscaledReads", boolToNum(game.parallelRdpPrefs.ssReadbacks));
+        mupen64plus_cfg.put( "Video-Parallel", "SuperscaledDither", boolToNum(game.parallelRdpPrefs.ssDither));
+        mupen64plus_cfg.put( "Video-Parallel", "SynchronousRDP", boolToNum(game.parallelRdpPrefs.synchronous));
+        mupen64plus_cfg.put( "Video-Parallel", "DeinterlaceMode", String.valueOf(game.parallelRdpPrefs.deinterlace));
+        mupen64plus_cfg.put( "Video-Parallel", "CropOverscan", String.valueOf(game.parallelRdpPrefs.overscanCrop));
+        mupen64plus_cfg.put( "Video-Parallel", "VIAA", boolToNum(game.parallelRdpPrefs.viAntiAliasing));
+        mupen64plus_cfg.put( "Video-Parallel", "Divot", boolToNum(game.parallelRdpPrefs.viDivotFilter));
+        mupen64plus_cfg.put( "Video-Parallel", "GammaDither", boolToNum(game.parallelRdpPrefs.viGammaDither));
+        mupen64plus_cfg.put( "Video-Parallel", "VIBilerp", boolToNum(game.parallelRdpPrefs.viBilinearScaling));
+        mupen64plus_cfg.put( "Video-Parallel", "VIDither", boolToNum(game.parallelRdpPrefs.viDeDither));
+        mupen64plus_cfg.put( "Video-Parallel", "DownScale", String.valueOf(game.parallelRdpPrefs.downscale));
+        mupen64plus_cfg.put( "Video-Parallel", "NativeTextLOD", boolToNum(game.parallelRdpPrefs.nativeTextLod));
+        mupen64plus_cfg.put( "Video-Parallel", "NativeTextRECT", boolToNum(game.parallelRdpPrefs.nativeResTextRect));
+
         gln64_conf.save();
         glide64_conf.save();
         return mupen64plus_cfg.save();

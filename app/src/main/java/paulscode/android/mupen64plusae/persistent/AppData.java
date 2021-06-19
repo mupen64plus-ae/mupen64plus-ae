@@ -96,7 +96,8 @@ public class AppData
         GLIDEN64("mupen64plus-video-GLideN64"),
         RICE("mupen64plus-video-rice"),
         GLN64("mupen64plus-video-gln64"),
-        ANGRYLION("mupen64plus-video-angrylion-plus");
+        ANGRYLION("mupen64plus-video-angrylion-plus"),
+        PARALLEL("mupen64plus-video-parallel");
 
         String mPlugingLib;
 
@@ -135,6 +136,10 @@ public class AppData
             else if (pluginText.toLowerCase().contains("angrylion"))
             {
                 return ANGRYLION;
+            }
+            else if (pluginText.toLowerCase().contains("parallel"))
+            {
+                return PARALLEL;
             }
             else if (TextUtils.isEmpty(pluginText) || pluginText.toLowerCase().contains("dummy"))
             {

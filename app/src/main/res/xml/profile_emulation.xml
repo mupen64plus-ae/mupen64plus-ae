@@ -697,5 +697,85 @@
             android:summary="@string/selectedValue"
             android:title="@string/angrylion_compatibility_mode_title" />
     </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="categoryParallel"
+        android:title="@string/categoryParallel_title" >
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/parallel_upscaling_default"
+            android:entries="@array/parallel_upscaling_entries"
+            android:entryValues="@array/parallel_upscaling_values"
+            android:key="parallelUpscaling"
+            android:summary="@string/selectedValue"
+            android:title="@string/parallel_upscaling_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="parallelSuperscaledReads"
+            android:title="@string/parallel_superscaling_readbacks_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelSuperscaledDither"
+            android:title="@string/parallel_superscaling_dithering_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="parallelSynchronousRDP"
+            android:title="@string/parallel_synchronous_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/parallel_deinterlacing_default"
+            android:entries="@array/parallel_deinterlacing_entries"
+            android:entryValues="@array/parallel_deinterlacing_values"
+            android:key="parallelDeinterlaceMode"
+            android:summary="@string/selectedValue"
+            android:title="@string/parallel_deinterlacing_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="parallelCropOverscan"
+            android:title="@string/parallel_overscan_crop_title"
+            mupen64:maximumValue="200"
+            mupen64:minimumValue="0"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelVIAA"
+            android:title="@string/parallel_vi_antialiasing_title"
+            android:summary="@string/parallel_vi_antialiasing_summary" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelDivot"
+            android:title="@string/parallel_vi_divot_filter_title"
+            android:summary="@string/parallel_vi_divot_filter_summary" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelGammaDither"
+            android:title="@string/parallel_vi_gamma_dither_title"/>
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelVIBilerp"
+            android:title="@string/parallel_vi_bilinear_scaling_title"/>
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelVIDither"
+            android:title="@string/parallel_vi_dedither_title"/>
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/parallel_downscale_default"
+            android:entries="@array/parallel_downscale_entries"
+            android:entryValues="@array/parallel_downscale_values"
+            android:key="parallelDownScale"
+            android:summary="@string/selectedValue"
+            android:title="@string/parallel_downscale_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="parallelNativeTextLOD"
+            android:title="@string/parallel_native_texture_lod_title"
+            android:summary="@string/parallel_native_texture_lod_summary"/>
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="parallelNativeTextRECT"
+            android:title="@string/parallel_native_res_text_rect_title"
+            android:summary="@string/parallel_native_res_text_rect_summary"/>
+
+    </androidx.preference.PreferenceCategory>
        
 </androidx.preference.PreferenceScreen>

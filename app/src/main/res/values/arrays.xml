@@ -1163,6 +1163,47 @@
     </string-array>
     <string name="angrylion_compatibility_mode_default" translatable="false">0</string>
 
+    <!-- Parallel RDP Upscaling-->
+    <string-array name="parallel_upscaling_entries">
+        <item>@string/parallel_upscaling_entry_None</item>
+        <item>@string/parallel_upscaling_entry_2x</item>
+        <item>@string/parallel_upscaling_entry_4x</item>
+        <item>@string/parallel_upscaling_entry_8x</item>
+    </string-array>
+    <string-array name="parallel_upscaling_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+    </string-array>
+    <string name="parallel_upscaling_default" translatable="false">1</string>
+
+    <!-- Parallel RDP de-interlacing method-->
+    <string-array name="parallel_deinterlacing_entries">
+        <item>@string/parallel_deinterlacing_entry_bob</item>
+        <item>@string/parallel_deinterlacing_entry_weave</item>
+    </string-array>
+    <string-array name="parallel_deinterlacing_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="parallel_deinterlacing_default" translatable="false">0</string>
+
+    <!-- Parallel RDP downscale-->
+    <string-array name="parallel_downscale_entries">
+        <item>@string/parallel_downscale_entry_disabled</item>
+        <item>@string/parallel_downscale_entry_half</item>
+        <item>@string/parallel_downscale_entry_fourth</item>
+        <item>@string/parallel_downscale_entry_eight</item>
+    </string-array>
+    <string-array name="parallel_downscale_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="parallel_downscale_default" translatable="false">0</string>
+
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>
@@ -1171,6 +1212,7 @@
         <item>@string/videoPlugin_entryGln64</item>
         <item>@string/videoPlugin_entryRice</item>
         <item>@string/videoPlugin_entryAngrylion</item>
+        <item>@string/videoPlugin_entryParallel</item>
     </string-array>
     <string-array name="videoPlugin_values" translatable="false">
         <item>dummy</item>
@@ -1179,6 +1221,7 @@
         <item>gln64</item>
         <item>rice</item>
         <item>angrylion-plus</item>
+        <item>parallel</item>
     </string-array>
 
     <string name="videoPlugin_default" translatable="false">glide64mk2</string>
