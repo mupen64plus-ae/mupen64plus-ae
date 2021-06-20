@@ -122,5 +122,6 @@ dependencies {
     implementation project(':mupen64plus-input-raphnet')
     implementation project(':mupen64plus-video-rice')
     implementation project(':mupen64plus-video-angrylion-plus')
+    implementation project(':mupen64plus-video-parallel')
 }
 
