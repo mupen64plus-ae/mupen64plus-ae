@@ -203,9 +203,13 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
         for (GalleryItem galleryItem : galleryItems) {
             PreviewProgram previewProgram = buildProgram(channelId, galleryItem);
 
-            getContentResolver().insert(
-                TvContractCompat.PreviewPrograms.CONTENT_URI,
-                previewProgram.toContentValues());
+            try {
+                getContentResolver().insert(
+                        TvContractCompat.PreviewPrograms.CONTENT_URI,
+                        previewProgram.toContentValues());
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
         }
     }
 
