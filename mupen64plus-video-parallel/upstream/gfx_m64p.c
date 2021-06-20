@@ -241,9 +241,8 @@ EXPORT int CALL RomOpen(void)
     vk_synchronous = ConfigGetParamBool(configVideoParallel, KEY_SYNCHRONOUS);
 
     plugin_init();
-    vk_init();
 
-    return 1;
+    return vk_init() ? 1 : 0;
 }
 
 EXPORT void CALL RomClosed(void)
