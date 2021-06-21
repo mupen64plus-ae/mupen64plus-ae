@@ -569,9 +569,12 @@ void AudioHandler::pausePlayback() {
 
 		mPlaybackPaused = true;
 
-		if (mOutStream != nullptr) {
-			mOutStream->stop();
-		}
+		std::thread asyncCall( [this] {
+			if (mOutStream != nullptr) {
+				mOutStream->requestStop();
+			}
+		});
+		asyncCall.detach();
 
 		reset();
 	}
@@ -579,13 +582,15 @@ void AudioHandler::pausePlayback() {
 
 void AudioHandler::resumePlayback() {
 	if (mPlaybackPaused) {
+
+		mPlaybackPaused = false;
+
 		std::thread asyncCall( [this] {
 			if (mOutStream != nullptr) {
 				mOutStream->requestStart();
-			}		});
+			}
+		});
 		asyncCall.detach();
-
-		mPlaybackPaused = false;
 	}
 }
 
