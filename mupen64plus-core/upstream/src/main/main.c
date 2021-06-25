@@ -343,18 +343,17 @@ int main_set_core_defaults(void)
 #endif
     ConfigSetDefaultBool(g_CoreConfig, "NoCompiledJump", 0, "Disable compiled jump commands in dynamic recompiler (should be set to False) ");
     ConfigSetDefaultBool(g_CoreConfig, "DisableExtraMem", 0, "Disable 4MB expansion RAM pack. May be necessary for some games");
+    ConfigSetDefaultInt(g_CoreConfig, "CountPerOp", 0, "Force number of cycles per emulated instruction");
     ConfigSetDefaultBool(g_CoreConfig, "AutoStateSlotIncrement", 0, "Increment the save state slot after each save operation");
-    ConfigSetDefaultBool(g_CoreConfig, "EnableDebugger", 0, "Activate the R4300 debugger when ROM execution begins, if core was built with Debugger support");
     ConfigSetDefaultInt(g_CoreConfig, "CurrentStateSlot", 0, "Save state slot (0-9) to use when saving/loading the emulator state");
+    ConfigSetDefaultBool(g_CoreConfig, "EnableDebugger", 0, "Activate the R4300 debugger when ROM execution begins, if core was built with Debugger support");
     ConfigSetDefaultString(g_CoreConfig, "ScreenshotPath", "", "Path to directory where screenshots are saved. If this is blank, the default value of ${UserDataPath}/screenshot will be used");
     ConfigSetDefaultString(g_CoreConfig, "SaveStatePath", "", "Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserDataPath}/save will be used");
     ConfigSetDefaultString(g_CoreConfig, "SaveSRAMPath", "", "Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserDataPath}/save will be used");
     ConfigSetDefaultString(g_CoreConfig, "SharedDataPath", "", "Path to a directory to search when looking for shared data files");
-    ConfigSetDefaultInt(g_CoreConfig, "CountPerOp", 0, "Force number of cycles per emulated instruction");
     ConfigSetDefaultInt(g_CoreConfig, "ForceAlignmentOfPiDma", -1, "Force alignment of Pi DMA, set to 0 to allow some ROM hacks to work, -1 for game default");
     ConfigSetDefaultInt(g_CoreConfig, "TlbHack", 0, "Ignore TLB exception, set to 1 to allow some rom hacks to work");
     ConfigSetDefaultInt(g_CoreConfig, "CountPerScanlineOverride", 0, "Count per scanline override, 0 for game default");
-
     ConfigSetDefaultBool(g_CoreConfig, "RandomizeInterrupt", 1, "Randomize PI/SI Interrupt Timing");
     ConfigSetDefaultInt(g_CoreConfig, "SiDmaDuration", -1, "Duration of SI DMA (-1: use per game settings)");
     ConfigSetDefaultString(g_CoreConfig, "GbCameraVideoCaptureBackend1", DEFAULT_VIDEO_CAPTURE_BACKEND, "Gameboy Camera Video Capture backend");
@@ -854,7 +853,6 @@ void new_frame(void)
     }
 }
 
-#define SAMPLE_COUNT 3
 static void apply_speed_limiter(void)
 {
     static unsigned long totalVIs = 0;
@@ -907,7 +905,7 @@ static void apply_speed_limiter(void)
         totalVIs += (unsigned long)(minSleepNeeded/AdjustedLimit);
     }
 
-    if(sleepTime > 0 && sleepTime < maxSleepNeeded*SpeedFactorMultiple && l_MainSpeedLimit)
+    if(l_MainSpeedLimit && sleepTime > 0 && sleepTime < maxSleepNeeded*SpeedFactorMultiple)
     {
         while(sleepTime >= 0) {
             SDL_Delay((unsigned int) sleepTime);

@@ -239,10 +239,6 @@ static void cache_flush(char* start, char* end)
 static void set_jump_target(int addr,u_int target)
 {
   u_char *ptr=(u_char *)addr;
-
-  if(!ptr) // Indiana Jones is weird
-    return;
-    
   u_int *ptr2=(u_int *)ptr;
   if(ptr[3]==0xe2) {
     assert((target-(u_int)ptr2-8)<1024);
