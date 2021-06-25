@@ -445,11 +445,8 @@ public class GamePrefs
 
         playerMap = new PlayerMap( globalPrefs.autoPlayerMapping, playerMapString );
 
-        boolean forceCachedInterpreter = headerName.toLowerCase().contains("world driver champ") ||
-                headerName.toLowerCase().contains("stunt racer 64");
-
         // Emulation prefs
-        r4300Emulator = forceCachedInterpreter ? "1" : emulationProfile.get( "r4300Emulator", "2" );
+        r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );
         disableExpansionPak = emulationProfile.get( "DisableExtraMem", "False" ).equals( "True" );
         String rspSetting = emulationProfile.get( "rspSetting", "rsp-hle" );
 
@@ -620,7 +617,7 @@ public class GamePrefs
         viRefreshRate = useDefaultViRefreshRate ? 0 : mPreferences.getInt( "screenAdvancedViRefreshRate", 1542 );
 
         forceAlignmentOfPiDma = mPreferences.getBoolean( "screenAdvancedforceAlignmentOfPiDma", true ) ? -1 : 0;
-        ignoreTlbExceptions = headerName.toLowerCase().contains("zelda") || mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
+        ignoreTlbExceptions = mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
         randomizeInterrupts = mPreferences.getBoolean( "screenAdvancedRandomizeInterrupts", true );
     }
 
