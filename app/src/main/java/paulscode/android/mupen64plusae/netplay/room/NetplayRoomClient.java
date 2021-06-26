@@ -183,7 +183,12 @@ public class NetplayRoomClient {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 Log.e(TAG, "NSD Discovery failed: Error code:" + errorCode);
-                mNsdManager.stopServiceDiscovery(this);
+
+                try {
+                    mNsdManager.stopServiceDiscovery(this);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
