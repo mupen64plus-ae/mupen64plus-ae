@@ -783,6 +783,7 @@ public class GamePrefs
         headerName = headerName.replace("<", "");
         headerName = headerName.replace(">", "");
         headerName = headerName.replace("\"", "");
+        headerName = headerName.replace(":", "");
 
         return String.format( "%s %s %s", headerName, countrySymbol, romMd5 );
     }
