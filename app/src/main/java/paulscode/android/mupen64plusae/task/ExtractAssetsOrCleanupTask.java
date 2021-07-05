@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
@@ -123,6 +124,37 @@ public class ExtractAssetsOrCleanupTask
         refreshThread.setDaemon(true);
         refreshThread.start();
     }
+
+    private void cleanupInvalidCharacters()
+    {
+        File gameDataDirFile = new File(mAppData.gameDataDir);
+
+
+        File[] files = gameDataDirFile.listFiles();
+
+        if (files != null) {
+
+            for( File file : files )
+            {
+                if (file.isDirectory()) {
+                    String origFolderName = file.getName();
+                    String newFolderName = GamePrefs.removeInvalidCharacters(origFolderName);
+
+                    if (!TextUtils.isEmpty(origFolderName) && !origFolderName.equals(newFolderName)) {
+                        try {
+                            File srcFile = new File(gameDataDirFile, origFolderName);
+                            File dstFile = new File(gameDataDirFile, newFolderName);
+                            Log.i(TAG, "Moving path with invalid characters from " + srcFile.getCanonicalPath()
+                               + " to " + dstFile.getCanonicalPath());
+                            FileUtil.copyFile(srcFile, dstFile, true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     protected List<Failure> startExtractionAndCleanup()
     {
@@ -131,6 +163,8 @@ public class ExtractAssetsOrCleanupTask
         mTotalAssets += 5;
         FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
         FileUtil.deleteFolder(new File(mGlobalPrefs.legacyCoreConfigDir));
+
+        cleanupInvalidCharacters();
 
         // Don't move data from the legacy folders if a user selects to use external storage. This is because a use could select
         // to use external sorage and use the same folder as the legacy data folder.

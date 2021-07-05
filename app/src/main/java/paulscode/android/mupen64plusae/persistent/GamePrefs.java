@@ -772,7 +772,7 @@ public class GamePrefs
         return cheatSelection;
     }
 
-    public static String getGameDataPath( String romMd5, String headerName, String countrySymbol)
+    public static String removeInvalidCharacters(String headerName)
     {
         headerName = TextUtils.isEmpty(headerName) ? "" : headerName;
         headerName = headerName.replace("/", "");
@@ -784,6 +784,13 @@ public class GamePrefs
         headerName = headerName.replace(">", "");
         headerName = headerName.replace("\"", "");
         headerName = headerName.replace(":", "");
+
+        return headerName;
+    }
+
+    public static String getGameDataPath( String romMd5, String headerName, String countrySymbol)
+    {
+        headerName = removeInvalidCharacters(headerName);
 
         return String.format( "%s %s %s", headerName, countrySymbol, romMd5 );
     }
