@@ -94,7 +94,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "ConstantConditions"})
 public class RomDatabase
 {
-    private static final String ART_URL_TEMPLATE = "http://www.zurita.me/CoverArt/%s";
+    private static final String ART_URL_TEMPLATE = "http://coverart.zurita.me/CoverArt/%s";
     private static final String WIKI_URL_TEMPLATE = "https://github.com/mupen64plus-ae/mupen64plus-ae-meta/wiki/%s";
     
     private ConfigFile mConfigFile = null;

@@ -550,7 +550,7 @@ public class CacheRomInfoService extends Service
                 outStream.write( buffer, 0, n );
             }
 
-            // Check if downloaded file is valud
+            // Check if downloaded file is valid
             if (!FileUtil.isFileImage(destFile))
             {
                 if (destFile.delete())
@@ -558,6 +558,8 @@ public class CacheRomInfoService extends Service
                     Log.w( "CacheRomInfoService", "Deleting invalid image " + destFile.getName());
                 }
             }
+
+
         }
         catch( Throwable e )
         {
