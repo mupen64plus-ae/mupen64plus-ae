@@ -55,6 +55,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/cart/af_rtc.c                              \
     $(SRCDIR)/device/cart/cart.c                                \
     $(SRCDIR)/device/cart/eeprom.c                              \
+    $(SRCDIR)/device/cart/is_viewer.c                           \
     $(SRCDIR)/device/controllers/paks/mempak.c                  \
     $(SRCDIR)/device/controllers/paks/rumblepak.c               \
     $(SRCDIR)/device/controllers/paks/transferpak.c             \
