@@ -60,9 +60,9 @@ public class DisplayResolutionData {
         int maxDimension = Math.max(dimensions.x, dimensions.y);
         int minDimension = Math.min(dimensions.x, dimensions.y);
 
-        int fullscreenMaxDimension = Math.max(fullscreenSize.x, fullscreenSize.y);
-        videoRenderWidthNative = fullscreenMaxDimension;
-        videoRenderHeightNative =  Math.round( fullscreenMaxDimension*aspect );
+        int fullscreenMinDimension = Math.min(fullscreenSize.x, fullscreenSize.y);
+        videoRenderHeightNative =  fullscreenMinDimension;
+        videoRenderWidthNative =  Math.round( fullscreenMinDimension/aspect );
 
         // Assume we are are in portrait mode if height is greater than the width
         boolean screenPortrait = dimensions.y > (float)dimensions.x;
@@ -85,6 +85,7 @@ public class DisplayResolutionData {
         Log.i("resolutionData", "result=(" + videoSurfaceWidthOriginal + "," + videoSurfaceHeightOriginal + ")" +
                 " full=(" + fullscreenSize.x + "," + fullscreenSize.y + ")" +
                 " view=(" + dimensions.x + "," + dimensions.y + ")" +
+                " native=(" + videoRenderWidthNative + "," + videoRenderHeightNative + ")" +
                 " aspect=" + aspect);
     }
 
