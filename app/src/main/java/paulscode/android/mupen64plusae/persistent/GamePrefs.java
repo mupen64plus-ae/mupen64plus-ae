@@ -354,6 +354,7 @@ public class GamePrefs
         isDpadGame = isDpadGame(headerName, goodName);
         is64DdGame = is64ddGame(headerName);
 
+
         // Emulation profile
         Profile tempEmulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
                 globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
@@ -612,7 +613,16 @@ public class GamePrefs
         isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared || globalPrefs.allEmulatedControllersPlugged);
 
         useDefaultCountPerOp = mPreferences.getBoolean( "screenAdvancedUseDefaultCountPerOp", true );
-        countPerOp = useDefaultCountPerOp ? 0 : mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+
+        // All NDD games have this CRC (CRC uses the first 64 bytes of each game)
+        boolean isNdd = gameCrc.equals("6C788490 9CA8B4C0");
+        boolean useNddCountPerOp = isNdd || !TextUtils.isEmpty(diskPath64Dd);
+
+        if (useNddCountPerOp) {
+            countPerOp = useDefaultCountPerOp ? 1 : mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+        } else {
+            countPerOp = useDefaultCountPerOp ? 0 : mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+        }
         useDefaultViRefreshRate = mPreferences.getBoolean( "screenAdvancedUseDefaultViRefresh", true );
         viRefreshRate = useDefaultViRefreshRate ? 0 : mPreferences.getInt( "screenAdvancedViRefreshRate", 1542 );
 
