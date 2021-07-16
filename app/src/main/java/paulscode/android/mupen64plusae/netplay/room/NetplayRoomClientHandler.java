@@ -56,7 +56,7 @@ class NetplayRoomClientHandler
 
     static final int MAX_PLAYERS = 4;
 
-    static final int NETPLAY_VERSION = 1;
+    static final int NETPLAY_VERSION = 2;
 
     private final String mDeviceName;
     private final String mRomMd5;
