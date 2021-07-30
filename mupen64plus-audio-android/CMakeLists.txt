@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 
+project( Audio-Android )
+
 if( CMAKE_BUILD_TYPE STREQUAL "Debug")
     set( BUILD_VARIANT "debug" )
 else()
