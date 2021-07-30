@@ -2,13 +2,10 @@ apply from: '../build_common/native_common.gradle'
 
 android {
 
-    task deleteAsmDefTask (type: Delete) {
-        delete 'upstream/src/asm_defines/armeabi-v7a', 'upstream/src/asm_defines/arm64-v8a', 'upstream/src/asm_defines/x86', 'upstream/src/asm_defines/x86_64'
-    }
-
-    tasks.whenTaskAdded { task ->
-        if (task.name == 'externalNativeBuildRelease' || task.name == 'externalNativeBuildDebug') {
-            task.dependsOn deleteAsmDefTask
-        }
+    packagingOptions {
+        exclude 'lib/x86/libc++_shared.so'
+        exclude 'lib/x86_64/libc++_shared.so'
+        exclude 'lib/armeabi-v7a/libc++_shared.so'
+        exclude 'lib/arm64-v8a/libc++_shared.so'
     }
 }
