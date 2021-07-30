@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/mupen64plus-ae/parallel-rdp-standalone.git
 	branch = master
-	commit = 69a4edb507c609f9834c0fa2879f54c2fd1e2690
-	parent = dbf617d52417c56639414af3a34717b5d2fc3504
+	commit = 85a34b1377af29d498eb867285f812dd5dd17717
+	parent = 7ee7f1ac4e50ad28b3298aea166bdf38d33f9482
 	method = merge
 	cmdver = 0.4.0

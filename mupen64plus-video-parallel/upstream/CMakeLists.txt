@@ -20,6 +20,7 @@ if((${CMAKE_VERSION} VERSION_EQUAL 3.9) OR (${CMAKE_VERSION} VERSION_GREATER 3.9
     check_ipo_supported(RESULT ENABLE_IPO)
     if(ENABLE_IPO)
         message("Interprocedural optimizations enabled")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3")
     endif(ENABLE_IPO)
 endif()
 
