@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -257,9 +258,9 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     public void onViewCreation(View view) {
         ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
 
-            mBottomInset = insets.getSystemWindowInsetBottom();
-            mRightInset = insets.getSystemWindowInsetRight();
-            mTopInset = insets.getSystemWindowInsetTop();
+            mBottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            mRightInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).right;
+            mTopInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
 
             view.setPadding(0, mTopInset, mRightInset, mBottomInset);
             

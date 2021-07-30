@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import android.content.Context;
+import android.os.Vibrator;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
@@ -139,6 +141,7 @@ public class PeripheralController extends AbstractController implements
      * float, int)
      */
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard )
     {
         // Process user inputs from keyboard, gamepad, etc.
@@ -146,8 +149,13 @@ public class PeripheralController extends AbstractController implements
         {
             // Update the registered vibrator for this player
             InputDevice device = InputDevice.getDevice( hardwareId );
-            if( device != null )
-                mCoreFragment.registerVibrator( mPlayerNumber, device.getVibrator() );
+            if( device != null ) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    mCoreFragment.registerVibrator(mPlayerNumber, device.getVibratorManager().getDefaultVibrator());
+                } else {
+                    mCoreFragment.registerVibrator(mPlayerNumber, device.getVibrator());
+                }
+            }
             
             // Apply user changes to the controller state
             apply( inputCode, strength );

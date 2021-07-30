@@ -111,9 +111,8 @@ dependencies {
         exclude group: 'net.java.dev.jna', module: 'jna'
     }
     implementation 'net.java.dev.jna:jna:5.8.0@aar'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.1'
     implementation project(':mupen64plus-audio-android')
-    implementation project(':mupen64plus-core')
     implementation project(':mupen64plus-video-gliden64')
     implementation project(':mupen64plus-video-glide64mk2')
     implementation project(':ae-bridge')
@@ -126,5 +125,6 @@ dependencies {
     implementation project(':mupen64plus-video-rice')
     implementation project(':mupen64plus-video-angrylion-plus')
     implementation project(':mupen64plus-video-parallel')
+    implementation project(':mupen64plus-core')
 }
 

@@ -180,7 +180,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         dialog.setCancelable(false);
         setCancelable(false);
 
-        String deviceName = DeviceUtil.getDeviceName(mActivity.getContentResolver());
+        String deviceName = DeviceUtil.getDeviceName(getContext(), mActivity.getContentResolver());
 
         if (mRoomClient == null) {
             mRoomClient = new NetplayRoomClient(mActivity, deviceName, new NetplayRoomClient.OnServerFound() {

@@ -41,6 +41,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+
+import android.os.VibratorManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -934,13 +936,20 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onCoreServiceStarted()
     {
         Log.i(TAG, "onCoreServiceStarted");
 
         if(mCoreFragment == null) return;
 
-        final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        }
 
         if (vibrator != null) {
             mCoreFragment.registerVibrator(1, vibrator);
@@ -1150,10 +1159,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @SuppressLint( "InlinedApi" )
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private void initControllers( View inputSource )
     {
         // By default, send Player 1 rumbles through phone vibrator
-        final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        }
 
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )

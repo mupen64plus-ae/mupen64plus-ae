@@ -23,8 +23,14 @@ package paulscode.android.mupen64plusae.util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
@@ -81,7 +87,7 @@ public final class DeviceUtil
         return result;
     }
 
-    public static String getDeviceName(ContentResolver resolver)
+    public static String getDeviceName(Context context, ContentResolver resolver)
     {
         String deviceName = Settings.System.getString(resolver, "device_name");
 
@@ -90,10 +96,13 @@ public final class DeviceUtil
         }
 
         if (deviceName == null) {
-            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothManager manager = (BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE);
 
-            if (adapter != null) {
-                deviceName = adapter.getName();
+            if (manager != null) {
+                BluetoothAdapter adapter = manager.getAdapter();
+                if (adapter != null) {
+                    deviceName = adapter.getName();
+                }
             }
         }
 
@@ -106,28 +115,6 @@ public final class DeviceUtil
         }
 
         return deviceName;
-    }
-
-    public static InetAddress wifiIpAddress(Context context) {
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
-        int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
-
-        // Convert little-endian to big-endianif needed
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ipAddress = Integer.reverseBytes(ipAddress);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-
-        InetAddress ipInetAddress;
-        try {
-            ipInetAddress = InetAddress.getByAddress(ipByteArray);
-        } catch (UnknownHostException ex) {
-            Log.e("DeviceInfo", "Unable to get host address.");
-            ipInetAddress = null;
-        }
-
-        return ipInetAddress;
     }
 
     /**
@@ -227,6 +214,7 @@ public final class DeviceUtil
      * 
      * @return The peripheral info string.
      */
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public static String getPeripheralInfo()
     {
         StringBuilder builder = new StringBuilder();
@@ -240,8 +228,16 @@ public final class DeviceUtil
                     builder.append("Id: ").append(device.getId()).append("\n");
 
                     builder.append("Descriptor: ").append(device.getDescriptor()).append("\n");
-                    if (device.getVibrator().hasVibrator())
-                        builder.append("Vibrator: true\n");
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        if (device.getVibratorManager().getDefaultVibrator().hasVibrator())
+                            builder.append("Vibrator: true\n");
+                    } else {
+                        if (device.getVibrator().hasVibrator())
+                            builder.append("Vibrator: true\n");
+                    }
+
+
 
                     builder.append("Class: ").append(getSourceClassesString(device.getSources())).append("\n");
 

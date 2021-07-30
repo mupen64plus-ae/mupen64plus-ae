@@ -37,7 +37,6 @@ import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.PointerIcon;
@@ -56,6 +55,7 @@ import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -69,9 +69,7 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,7 +81,6 @@ import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
@@ -468,16 +465,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             if (floatingActionButton != null) {
                 CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)floatingActionButton.getLayoutParams();
-                params.bottomMargin = insets.getSystemWindowInsetBottom() + margin;
+                params.bottomMargin = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom + margin;
                 floatingActionButton.setLayoutParams(params);
             }
 
-            if (coordLayout != null) {
-                DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
-                params.topMargin = insets.getSystemWindowInsetTop();
-                params.rightMargin = insets.getSystemWindowInsetRight();
-                coordLayout.setLayoutParams(params);
-            }
+            DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams)coordLayout.getLayoutParams();
+            params.topMargin = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            params.rightMargin = insets.getInsets(WindowInsetsCompat.Type.systemBars()).right;
+            coordLayout.setLayoutParams(params);
 
             return insets;
         });

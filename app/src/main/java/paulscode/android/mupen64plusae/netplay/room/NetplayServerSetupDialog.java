@@ -210,7 +210,7 @@ public class NetplayServerSetupDialog extends DialogFragment
             serverAddress.setText(spanString);
         }
 
-        String deviceName = DeviceUtil.getDeviceName(mActivity.getContentResolver());
+        String deviceName = DeviceUtil.getDeviceName(getContext(), mActivity.getContentResolver());
 
         // Add ourselves
         if (mClients.size() == 0) {
