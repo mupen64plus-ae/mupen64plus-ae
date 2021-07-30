@@ -208,9 +208,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gecachete interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamische hercompileerder (dynarec)</string>
-  <string name="audioPlugin_title">Audioplugin</string>
-  <string name="audioPlugin_entryNone">Geen (geluid uitgeschakeld)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">Geen-debug (audio uitgeschakeld, geen snelheidslimiet)</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knoptransparantie</string>

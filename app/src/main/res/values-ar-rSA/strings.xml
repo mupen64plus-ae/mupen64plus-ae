@@ -207,8 +207,6 @@
   <string name="riceTextureEnhancement_entrySharpen">محدد</string>
   <string name="navigationMode_entryStandard">الوضع الاعتيادي</string>
   <string name="r4300Emulator_title">المحاكي R4300</string>
-  <string name="audioPlugin_title">اضافات الصوت</string>
-  <string name="audioPlugin_entryNone">بدون (الغاء الصوت)</string>
   <string name="localeOverride_entrySystemDefault">اعدادات النظام الافتراضية</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <!--Path Preferences (selected path will become the summary)-->

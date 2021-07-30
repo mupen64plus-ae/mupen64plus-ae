@@ -238,9 +238,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Puhdas tulkitsija</string>
   <string name="r4300Emulator_entryCachedInterpreter">Välimuistillinen tulkitsija</string>
   <string name="r4300Emulator_entryDynarec">Dynaaminen kääntäjä (dynarec)</string>
-  <string name="audioPlugin_title">Audioliitännäinen</string>
-  <string name="audioPlugin_entryNone">Ei mitään (audio pois käytöstä)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">Ei mitään-debug (audio pois käytöstä, ei nopeusrajaa)</string>
   <string name="localeOverride_entrySystemDefault">Järjestelmän oletus</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Painike läpinäkyvyys</string>

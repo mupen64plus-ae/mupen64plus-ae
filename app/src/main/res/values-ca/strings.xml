@@ -186,7 +186,6 @@ Perfil T</string>
   <string name="r4300Emulator_entryPureInterpreter">Intèrpret pur</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>
   <string name="r4300Emulator_entryDynarec">Recompilador dinàmic (dynarec)</string>
-  <string name="audioPlugin_entryNone">Cap (àudio deshabilitat)</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>

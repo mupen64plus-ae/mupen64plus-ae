@@ -236,9 +236,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
-  <string name="audioPlugin_title">Audio plugin</string>
-  <string name="audioPlugin_entryNone">None (audio disabled)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
   <string name="localeOverride_entrySystemDefault">System default</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Button opacity</string>

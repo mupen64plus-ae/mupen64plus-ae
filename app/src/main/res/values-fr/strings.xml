@@ -241,9 +241,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Interpréteur pur</string>
   <string name="r4300Emulator_entryCachedInterpreter">Interpréteur en cache</string>
   <string name="r4300Emulator_entryDynarec">Recompileur dynamique (dynarec)</string>
-  <string name="audioPlugin_title">Plugin audio</string>
-  <string name="audioPlugin_entryNone">Sans (audio désactivé)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">Aucun-debug (désactive l\'audio, pas de limite de vitesse)</string>
   <string name="localeOverride_entrySystemDefault">Système par défaut</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>

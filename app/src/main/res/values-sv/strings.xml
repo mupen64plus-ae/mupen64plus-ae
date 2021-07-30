@@ -193,8 +193,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Ren interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
-  <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">Ingen-felsökning (ljud inaktiverat, ingen hastighetsbegränsning)</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knapp opacitet</string>

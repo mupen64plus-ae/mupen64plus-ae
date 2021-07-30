@@ -156,7 +156,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Tiszta interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dinamikus újrafordító (dynarec)</string>
-  <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
   <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Érintőkijelző átlátszóság</string>

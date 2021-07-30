@@ -18,8 +18,6 @@
     <string name="actionWiki_summary">这个游戏的社区帮助</string>
     <string name="actionWiki_title">维基百科</string>
     <string name="assetExtractor_initializing">初始化</string>
-    <string name="audioPlugin_entryNone">无（禁用音频）</string>
-    <string name="audioPlugin_title">音频插件</string>
     <string name="audioSwapChannels_summary">交换左/右声道</string>
     <string name="audioSwapChannels_title">交换音频声道</string>
     <string name="audioSynchronize_summary">尽量减少延迟，但可能会导致某些游戏/设备出现爆裂声</string>
@@ -298,7 +296,6 @@
     <string name="videoPolygonOffset_summary">自定义闪烁减少偏差</string>
     <string name="videoPolygonOffset_title">多边形位移</string>
     <string name="assetExtractor_failed">"提取应用数据时出错。"</string>
-    <string name="audioPlugin_entryNoneNoSpeedLimit">无-调试 （音频被禁用，没有速度限制）</string>
     <string name="cacheRomInfo_computingMD5">计算 MD5...</string>
     <string name="cacheRomInfo_downloadingArt">正在下载封面...</string>
     <string name="cacheRomInfo_extractingZip">正在解压 zip 项...</string>

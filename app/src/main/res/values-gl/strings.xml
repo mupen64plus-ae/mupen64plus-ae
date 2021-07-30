@@ -208,9 +208,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intérprete cacheado</string>
   <string name="r4300Emulator_entryDynarec">Recompilador dinámico (dynarec)</string>
-  <string name="audioPlugin_title">Complemento de son</string>
-  <string name="audioPlugin_entryNone">Nada (son desactivado)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">Sen depuración (son desactivado, sen límite de velocidade)</string>
   <string name="localeOverride_entrySystemDefault">Predefinido do sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia da pantalla táctil</string>

@@ -238,9 +238,6 @@
   <string name="r4300Emulator_entryPureInterpreter">Čisti interpretator</string>
   <string name="r4300Emulator_entryCachedInterpreter">Priručni interpretator</string>
   <string name="r4300Emulator_entryDynarec">Dinamički interpretator (dynarec)</string>
-  <string name="audioPlugin_title">Zvučni dodatak</string>
-  <string name="audioPlugin_entryNone">Nema (zvuk isključen)</string>
-  <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (zvuk isključen, bez ograničenja brzine)</string>
   <string name="localeOverride_entrySystemDefault">Zadano</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Prozirnost</string>
