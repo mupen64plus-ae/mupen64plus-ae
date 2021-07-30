@@ -804,7 +804,7 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 
 	if (m_toggleDumpTex &&
 		config.textureFilter.txHiresEnable != 0 &&
-		config.hotkeys.keys[Config::HotKey::hkTexDump] != 0) {
+		config.hotkeys.enabledKeys[Config::HotKey::hkTexDump] != 0) {
 		txfilter_dmptx((u8*)pDest, pTexture->width, pTexture->height,
 			pTexture->width, (u16)u32(glInternalFormat),
 			(unsigned short)(pTexture->format << 8 | pTexture->size),
@@ -1216,7 +1216,7 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 
 		if (m_toggleDumpTex &&
 			config.textureFilter.txHiresEnable != 0 &&
-			config.hotkeys.keys[Config::HotKey::hkTexDump] != 0) {
+			config.hotkeys.enabledKeys[Config::HotKey::hkTexDump] != 0) {
 			txfilter_dmptx((u8*)texData.get(), tmptex.width, tmptex.height,
 					tmptex.width, (u16)u32(glInternalFormat),
 					(unsigned short)(_pTexture->format << 8 | _pTexture->size),
@@ -1404,11 +1404,11 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 		params.wrapT = _pTexture->clampT ? textureParameters::WRAP_CLAMP_TO_EDGE :
 			_pTexture->mirrorT ? textureParameters::WRAP_MIRRORED_REPEAT : textureParameters::WRAP_REPEAT;
 
-		if (config.texture.maxAnisotropyF > 0.0f) {
+		if (config.texture.anisotropy != 0) {
 			switch (dwnd().getDrawer().getDrawingState()) {
 				case DrawingState::Triangle:
 				case DrawingState::ScreenSpaceTriangle:
-					params.maxAnisotropy = Parameter(config.texture.maxAnisotropyF);
+					params.maxAnisotropy = Parameter(static_cast<f32>(config.texture.anisotropy));
 					break;
 				default:
 					break;

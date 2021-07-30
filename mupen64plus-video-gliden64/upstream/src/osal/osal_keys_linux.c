@@ -47,36 +47,6 @@ static const unsigned char LINUX_HID_TO_NATIVE[256] = {
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255
 };
 
-static const char* LINUX_HID_NAME[256] = {
-	0, 0, 0, 0, "A", "B", "C", "D", "E", 
-	"F", "G", "H", "I", "J", "K", "L", "M", 
-	"N", "O", "P", "Q", "R", "S", "T", "U", 
-	"V", "W", "X", "Y", "Z", "1", "2", "3",
-	"4", "5", "6", "7", "8", "9", "0", 0,
-	"Escape", "Delete", "Tab", "Space", "-", "=",
-	"[", "]", "Backslash", 0, ";",
-	"'", "Grave", ",", ".", "/", "Capslock", 
-	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
-	"F10", "F11", "F12", "Print", "Scrolllock", "Pause",
-	"Insert", "Home", "Page Up", "Delete", "End", "Page Down",
-	"Right", "Left", "Down", "Up", "Numlock", "/", "*", "-", "+", 
-	"Enter", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".",
-	"\\", "=", "F13", "F14", "F15", "F16", "F17", "F18", "F19", "F20",
-	"F21", "F22", "F23", "F24", 0, "Help", "Menu", 0, 0, 0, 0, 0, 0, 
-	0, 0, "Mute", "Sysrq", "Enter", "Clear", ",", "Left Control", "Left Shift",
-	"Left Alt", "Left Meta", "Right Control", "Right Shift", "Right Alt", "Right Meta",
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
 typedef struct {
 	FILE* file;
 	char key_map[KEY_MAX/8 + 1];
@@ -147,7 +117,6 @@ EXPORT void CALL osal_keys_quit()
 
 EXPORT void CALL osal_keys_update_state()
 {
-#ifdef OS_LINUX
 	keyboard_t* keyboard;
 	for (int i = 0; i < l_KeyBoardCount; i++) {
 		keyboard = &l_Keyboards[i];
@@ -157,7 +126,6 @@ EXPORT void CALL osal_keys_update_state()
 		// query keyboard state
 		ioctl(fileno(keyboard->file), EVIOCGKEY(sizeof(keyboard->key_map)), keyboard->key_map);
 	}
-#endif // OS_LINUX
 }
 
 EXPORT unsigned int CALL osal_is_key_pressed(unsigned int _key, unsigned int _mask)
@@ -191,11 +159,6 @@ EXPORT unsigned int CALL osal_is_key_pressed(unsigned int _key, unsigned int _ma
 	}
 
 	return 0;
-}
-
-EXPORT const char * CALL osal_keycode_name(unsigned int _hidCode)
-{
-	return LINUX_HID_NAME[_hidCode];
 }
 
 #ifdef __cplusplus

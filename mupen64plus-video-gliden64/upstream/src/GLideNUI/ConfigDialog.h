@@ -15,7 +15,10 @@ class ConfigDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ConfigDialog(QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags(), unsigned int _maxMsaaLevel = 8);
+	explicit ConfigDialog(QWidget *parent = Q_NULLPTR,
+						Qt::WindowFlags f = Qt::WindowFlags(),
+						unsigned int _maxMsaaLevel = 8,
+						unsigned int _maxAnisotropy = 16);
 	~ConfigDialog();
 
 	void setIniPath(const QString & _strIniPath);
@@ -63,6 +66,8 @@ private slots:
 
 	void on_tabWidget_currentChanged(int tab);
 
+	void on_anisotropicSlider_valueChanged(int value);
+
 	void on_texPackPathButton_clicked();
 
 	void on_texCachePathButton_clicked();
@@ -98,6 +103,7 @@ private:
 	QString m_strIniPath;
 	const char * m_romName;
 	unsigned int m_maxMSAA;
+	unsigned int m_maxAnisotropy;
 };
 
 #endif // CONFIGDIALOG_H

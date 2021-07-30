@@ -7,9 +7,10 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QCursor>
-#include <QRegExpValidator>
+#include <QRegularExpression>
 #include <QInputDialog>
 #include <QDirIterator>
+#include <qnamespace.h>
 
 #include "../Config.h"
 #include "../DebugDump.h"
@@ -18,8 +19,8 @@
 #include "ConfigDialog.h"
 #include "FullscreenResolutions.h"
 #include "qevent.h"
-#include "osal_keys.h"
 #include "QtKeyToHID.h"
+#include "HIDKeyToName.h"
 
 static
 struct
@@ -149,8 +150,8 @@ void ConfigDialog::_init(bool reInit, bool blockCustomSettings)
 		);
 
 	// matches w x h where w is 300-7999 and h is 200-3999, spaces around x optional
-	QRegExp windowedRegExp("([3-9][0-9]{2}|[1-7][0-9]{3}) ?x ?([2-9][0-9]{2}|[1-3][0-9]{3})");
-	QValidator *windowedValidator = new QRegExpValidator(windowedRegExp, this);
+	QRegularExpression windowedRegExp("([3-9][0-9]{2}|[1-7][0-9]{3}) ?x ?([2-9][0-9]{2}|[1-3][0-9]{3})");
+	QValidator *windowedValidator = new QRegularExpressionValidator(windowedRegExp, this);
 	ui->windowedResolutionComboBox->setValidator(windowedValidator);
 
 	ui->overscanCheckBox->toggle();
@@ -182,17 +183,27 @@ void ConfigDialog::_init(bool reInit, bool blockCustomSettings)
 		// assign cached value
 		config.video.maxMultiSampling = m_maxMSAA;
 	}
+	const unsigned int multisampling = std::min(config.video.multisampling, m_maxMSAA);
 
-	const unsigned int multisampling = config.video.fxaa == 0 && config.video.multisampling > 0
-		? std::min(config.video.multisampling, m_maxMSAA)
-		: m_maxMSAA;
+	if (m_maxAnisotropy == 0 && config.texture.maxAnisotropy == 0) {
+		// default value
+		m_maxAnisotropy = 16;
+	} else if (m_maxAnisotropy == 0 && config.texture.maxAnisotropy != 0) {
+		// use cached value
+		m_maxAnisotropy = config.texture.maxAnisotropy;
+	} else {
+		// assign cached value
+		config.texture.maxAnisotropy = m_maxAnisotropy;
+	}
+	const unsigned int anisotropy = std::min(config.texture.anisotropy, m_maxAnisotropy);
 
 	ui->aliasingSlider->blockSignals(true);
 	ui->aliasingSlider->setMaximum(powof(m_maxMSAA));
 	ui->aliasingSlider->setValue(powof(multisampling));
 	ui->aliasingSlider->blockSignals(false);
 	ui->aliasingLabelVal->setText(QString::number(multisampling));
-	ui->anisotropicSlider->setValue(config.texture.maxAnisotropy);
+	ui->anisotropicSlider->setMaximum(m_maxAnisotropy);
+	ui->anisotropicSlider->setValue(anisotropy);
 	ui->vSyncCheckBox->setChecked(config.video.verticalSync != 0);
 	ui->threadedVideoCheckBox->setChecked(config.video.threadedVideo != 0);
 
@@ -418,8 +429,10 @@ void ConfigDialog::_init(bool reInit, bool blockCustomSettings)
 
 			if (config.hotkeys.keys[idx] != 0) {
 				pWgt->setHidCode(config.hotkeys.keys[idx]);
-				pBtn->setText(osal_keycode_name(config.hotkeys.keys[idx]));
-				pItem->setCheckState(Qt::Checked);
+				pBtn->setText(HIDKeyToName(config.hotkeys.keys[idx]));
+				if (config.hotkeys.enabledKeys[idx] != 0) {
+					pItem->setCheckState(Qt::Checked);
+				}
 			}
 		}
 	}
@@ -489,13 +502,14 @@ void ConfigDialog::setRomName(const char * _romName)
 	this->on_customSettingsCheckBox_toggled(ui->customSettingsCheckBox->isChecked());
 }
 
-ConfigDialog::ConfigDialog(QWidget *parent, Qt::WindowFlags f, unsigned int _maxMsaaLevel) :
+ConfigDialog::ConfigDialog(QWidget *parent, Qt::WindowFlags f, unsigned int _maxMsaaLevel, unsigned int _maxAnisotropy) :
 QDialog(parent, f),
 ui(new Ui::ConfigDialog),
-m_maxMSAA(_maxMsaaLevel),
 m_accepted(false),
 m_fontsInited(false),
-m_blockReInit(false)
+m_blockReInit(false),
+m_maxMSAA(_maxMsaaLevel),
+m_maxAnisotropy(_maxAnisotropy)
 {
 	ui->setupUi(this);
 	_init();
@@ -530,7 +544,7 @@ void ConfigDialog::accept(bool justSave) {
 			|| ui->noaaRadioButton->isChecked()
 		) ? 0
 		: pow2(ui->aliasingSlider->value());
-	config.texture.maxAnisotropy = ui->anisotropicSlider->value();
+	config.texture.anisotropy = ui->anisotropicSlider->value();
 
 	if (ui->blnrStandardRadioButton->isChecked())
 		config.texture.bilinearMode = BILINEAR_STANDARD;
@@ -681,7 +695,7 @@ void ConfigDialog::accept(bool justSave) {
 	if (!txDumpPath.exists() &&
 		!txDumpPath.mkdir(txDumpPath.absolutePath()) &&
 		config.textureFilter.txHiresEnable != 0 &&
-		config.hotkeys.keys[Config::HotKey::hkTexDump] != 0) {
+		config.hotkeys.enabledKeys[Config::HotKey::hkTexDump] != 0) {
 		QMessageBox msgBox;
 		msgBox.setStandardButtons(QMessageBox::Close);
 		msgBox.setWindowTitle("GLideN64");
@@ -732,11 +746,12 @@ void ConfigDialog::accept(bool justSave) {
 	config.onScreenDisplay.statistics = ui->statisticsCheckBox->isChecked() ? 1 : 0;
 
 	for (quint32 idx = 0; idx < Config::HotKey::hkTotal; ++idx) {
-		config.hotkeys.keys[idx] = 0;
+		config.hotkeys.keys[idx] = config.hotkeys.enabledKeys[idx] = 0;
 		QListWidgetItem * pItem = ui->hotkeyListWidget->item(idx);
+		HotkeyItemWidget* pWgt = (HotkeyItemWidget*)ui->hotkeyListWidget->itemWidget(pItem);
+		config.hotkeys.keys[idx] = pWgt->hidCode();
 		if (pItem->checkState() == Qt::Checked) {
-			HotkeyItemWidget* pWgt = (HotkeyItemWidget*)ui->hotkeyListWidget->itemWidget(pItem);
-			config.hotkeys.keys[idx] = pWgt->hidCode();
+			config.hotkeys.enabledKeys[idx] = pWgt->hidCode();
 		}
 	}
 
@@ -821,7 +836,7 @@ void ConfigDialog::on_fullScreenResolutionComboBox_currentIndexChanged(int index
 
 void ConfigDialog::on_texPackPathButton_clicked()
 {
-	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
+	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
 	QString directory = QFileDialog::getExistingDirectory(this,
 		"",
 		ui->texPackPathLineEdit->text(),
@@ -832,7 +847,7 @@ void ConfigDialog::on_texPackPathButton_clicked()
 
 void ConfigDialog::on_texCachePathButton_clicked()
 {
-	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
+	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
 	QString directory = QFileDialog::getExistingDirectory(this,
 		"",
 		ui->texCachePathLineEdit->text(),
@@ -843,7 +858,7 @@ void ConfigDialog::on_texCachePathButton_clicked()
 
 void ConfigDialog::on_texDumpPathButton_clicked()
 {
-	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
+	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
 	QString directory = QFileDialog::getExistingDirectory(this,
 		"",
 		ui->texDumpPathLineEdit->text(),
@@ -997,6 +1012,11 @@ void ConfigDialog::on_tabWidget_currentChanged(int tab)
 	ui->frameBufferCheckBox->setStyleSheet("");
 }
 
+void ConfigDialog::on_anisotropicSlider_valueChanged(int value)
+{
+	this->ui->anisotropicLabelVal->setNum(value);
+}
+
 void ConfigDialog::setTitle()
 {
 	setWindowTitle(tr("GLideN64 Settings"));
@@ -1140,7 +1160,10 @@ void ConfigDialog::on_btn_clicked() {
 			HotkeyMessageBox msgBox(this);
 			msgBox.setInformativeText(QString("Press a key for ") + pLabel->text());
 			msgBox.exec();
-			if (msgBox.m_Key != Qt::Key::Key_unknown) {
+			const unsigned int hidCode = QtKeyToHID(msgBox.m_Key);
+			if (hidCode == 0) {
+				pBtn->setText("Invalid Key");
+			} else {
 				const unsigned int hidCode = QtKeyToHID(msgBox.m_Key);
 				for (quint32 idx = 0; idx < Config::HotKey::hkTotal; ++idx) {
 					QListWidgetItem * pItem = ui->hotkeyListWidget->item(idx);
@@ -1153,7 +1176,7 @@ void ConfigDialog::on_btn_clicked() {
 						break;
 					}
 				}
-				pBtn->setText(osal_keycode_name(hidCode));
+				pBtn->setText(HIDKeyToName(hidCode));
 				((HotkeyItemWidget*)pBtn->parent())->setHidCode(hidCode);
 			}
 		}
