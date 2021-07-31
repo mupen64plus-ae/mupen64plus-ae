@@ -1230,7 +1230,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             try {
                 uri = resolver.insert(contentUri, contentValues);
-            } catch (IllegalStateException e) {
+            } catch (IllegalStateException|IllegalArgumentException e) {
                 e.printStackTrace();
             }
 
