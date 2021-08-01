@@ -472,7 +472,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, rspPlugin, false);
 
-        mNetplayInitSuccess = mCoreInterface.netplayInit(address.getHostAddress(), port);
+        mNetplayInitSuccess = address.getHostAddress() != null && mCoreInterface.netplayInit(address.getHostAddress(), port);
 
         if (mNetplayInitSuccess)
         {
@@ -480,7 +480,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
 
         if (!mNetplayInitSuccess) {
-            Log.e(TAG, "Netplay init success=" + mNetplayInitSuccess + " host=" + address.getHostAddress() + " port=" + port);
+            Log.e(TAG, "Netplay init unsuccessful host=" + address.getHostAddress() + " port=" + port);
         }
     }
 
@@ -948,17 +948,23 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT, mVideoRenderHeight );
         notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_ENABLED, mUsingNetplay );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT |
+                PendingIntent.FLAG_IMMUTABLE);
 
         //Intent for closing the game
         Intent exitIntent = (Intent)notificationIntent.clone();
         exitIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, true );
-        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 1, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 1, exitIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT |
+                PendingIntent.FLAG_IMMUTABLE);
 
         //Intent for force closing the game
         Intent forceExitIntent = (Intent)notificationIntent.clone();
         forceExitIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, true );
-        PendingIntent pendingForceExitIntent = PendingIntent.getActivity(this, 2, forceExitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingForceExitIntent = PendingIntent.getActivity(this, 2, forceExitIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT |
+                        PendingIntent.FLAG_IMMUTABLE);
 
         initChannels(getBaseContext());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2)

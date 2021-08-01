@@ -269,7 +269,7 @@ public class CacheRomInfoService extends Service
       //Show the notification
       initChannels(getApplicationContext());
       Intent notificationIntent = new Intent(this, GalleryActivity.class);
-      PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+      PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2).setSmallIcon(R.drawable.icon)
           .setContentTitle(getString(R.string.scanning_title))

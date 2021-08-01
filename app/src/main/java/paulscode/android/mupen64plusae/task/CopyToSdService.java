@@ -168,7 +168,7 @@ public class CopyToSdService extends Service
       //Show the notification
       initChannels(getApplicationContext());
       Intent notificationIntent = new Intent(this, ImportExportActivity.class);
-      PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+      PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
           .setContentTitle(getString(R.string.importExportActivity_exportDialogTitle))
