@@ -122,7 +122,7 @@ LOCAL_LDFLAGS :=                                                    \
 
 ASM_DEFINES_INCLUDE += -I$(SYSROOT_INC)/usr/include
 TARGET := ""
-MINIMUM_API_LEVEL := 21
+MINIMUM_API_LEVEL := 23
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
