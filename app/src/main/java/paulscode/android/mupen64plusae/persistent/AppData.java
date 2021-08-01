@@ -242,9 +242,6 @@ public class AppData
             return name().toLowerCase().contains("hle");
         }
     }
-    
-    /** True if device is running marshmallow or later (23 - Android 6.0.x) */
-    public static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
 
     /** True if device is running marshmallow or later (24 - Android 7.0.x) */
     public static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
@@ -725,7 +722,7 @@ public class AppData
         // Check for x86, older versions of AndroidX86 report GL support, but it doesn't work
         boolean itsX86 = arch != null && arch.equals( "i686" );
 
-        boolean supportsFullGl = (itsX86 && IS_MARSHMELLOW && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API)) ||
+        boolean supportsFullGl = (itsX86 && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API)) ||
                 (!itsX86 && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API));
 
         //Return back to the original after we determine that full GL is supported
