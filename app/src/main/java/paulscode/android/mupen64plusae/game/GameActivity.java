@@ -203,19 +203,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     protected void attachBaseContext(Context newBase) {
 
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( newBase );
-
-        // Locale
-        String localeCode = preferences.getString( GlobalPrefs.KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
-
-        if(TextUtils.isEmpty(localeCode))
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
         {
             super.attachBaseContext(newBase);
         }
         else
         {
-            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,localeCode));
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
         }
     }
 
