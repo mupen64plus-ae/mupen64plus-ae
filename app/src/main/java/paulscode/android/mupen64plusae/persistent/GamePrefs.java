@@ -264,6 +264,9 @@ public class GamePrefs
     /** True if we should randomize interrupts in the core */
     public final boolean randomizeInterrupts;
 
+    /** This is true if we want to display built-in cheat codes */
+    public final boolean showBuiltInCheatCodes;
+
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
@@ -629,6 +632,7 @@ public class GamePrefs
         forceAlignmentOfPiDma = mPreferences.getBoolean( "screenAdvancedforceAlignmentOfPiDma", true ) ? -1 : 0;
         ignoreTlbExceptions = mPreferences.getBoolean( "screenAdvancedignoreTlbExceptions", false );
         randomizeInterrupts = mPreferences.getBoolean( "screenAdvancedRandomizeInterrupts", true );
+        showBuiltInCheatCodes = mPreferences.getBoolean( "showBuiltInCheatCodes", true );
     }
 
     private void actionReloadAssets(Context context)
