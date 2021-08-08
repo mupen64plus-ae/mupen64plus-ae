@@ -46,7 +46,9 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DeleteFilesFragment;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
+import paulscode.android.mupen64plusae.cheat.CheatFile;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
+import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
@@ -532,16 +534,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         if (mCategoryCheats != null)
         {
-            ExtractCheatsTask cheatsTask;
-            
-            // If we need to display all cheat codes. (built-in & custom cheat codes)
-            if(mGamePrefs.showBuiltInCheatCodes)
-                cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt, mRomCrc, mRomCountryCode);
-            
-            // Only custom cheat codes.
-            else
-                cheatsTask = new ExtractCheatsTask(this, this, mGlobalPrefs.customCheats_txt, mRomCrc, mRomCountryCode);
-            
+            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt, mRomCrc, mRomCountryCode);
             cheatsTask.doInBackground();
         }
         else
@@ -559,6 +552,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
             if (mCategoryCheats.getPreferenceCount() == 0 || mClearCheats)
             {
+                //We don't extract user cheats in a separate task since there aren't as many
+                CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
+
+                // This list will be used to check if the cheat is in the custom cheat list.
+                ArrayList<Cheat> custom_cheats = CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, this );
+
                 // Layout the menu, populating it with appropriate cheat options
                 for (final Cheat cheat : cheats)
                 {
@@ -590,8 +589,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     final String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
                     pref.setKey( key );
 
-                    // Add the preference menu item to the cheats category
-                    mCategoryCheats.addPreference( pref );
+                    // Check if we need to display this cheat code (built-in / custom cheat codes)
+                    boolean isBuiltin = cheat.containsCheat(custom_cheats);
+                    if(mGamePrefs.showBuiltInCheatCodes || isBuiltin)
+                        // Add the preference menu item to the cheats category
+                        mCategoryCheats.addPreference( pref );
 
                     // We reset if the list was changed by the user
                     if (mClearCheats)
