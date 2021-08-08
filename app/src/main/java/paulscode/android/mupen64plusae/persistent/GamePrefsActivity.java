@@ -591,7 +591,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
                     // Check if we need to display this cheat code (built-in / custom cheat codes)
                     boolean isBuiltin = !cheat.isInArrayList(custom_cheats);
-                    if(mGamePrefs.showBuiltInCheatCodes || isBuiltin)
+                    if(mGamePrefs.showBuiltInCheatCodes || !isBuiltin)
                         // Add the preference menu item to the cheats category
                         mCategoryCheats.addPreference( pref );
 
