@@ -590,8 +590,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     pref.setKey( key );
 
                     // Check if we need to display this cheat code (built-in / custom cheat codes)
-                    boolean isBuiltin = !cheat.isInArrayList(custom_cheats);
-                    if(mGamePrefs.showBuiltInCheatCodes || !isBuiltin)
+                    if(mClearCheats || mGamePrefs.showBuiltInCheatCodes || cheat.isInArrayList(custom_cheats))
                         // Add the preference menu item to the cheats category
                         mCategoryCheats.addPreference( pref );
 
@@ -612,6 +611,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     mPrefs.edit().apply();
 
                     mClearCheats = false;
+
+                    // We need to refresh cheat code to display only the custom one.
+                    if(!mGamePrefs.showBuiltInCheatCodes)
+                        refreshCheatsCategory();
                 }
             }
         });
