@@ -73,7 +73,7 @@ public class CheatUtils
                     '}';
         }
 
-        public boolean isInArray(ArrayList<Cheat> list)
+        public boolean isInArrayList(ArrayList<Cheat> list)
         {
             // For each cheat in the list.
             for(Cheat cheat : list)
