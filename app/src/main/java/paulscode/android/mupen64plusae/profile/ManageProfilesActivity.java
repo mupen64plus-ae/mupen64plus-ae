@@ -299,9 +299,13 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
             
             MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(0,
                 getString( stringId, profile.name ), resId);
-            
-            FragmentManager fm = getSupportFragmentManager();
-            menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
+
+            try {
+                FragmentManager fm = getSupportFragmentManager();
+                menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         super.onListItemClick( l, v, position, id );
     }
