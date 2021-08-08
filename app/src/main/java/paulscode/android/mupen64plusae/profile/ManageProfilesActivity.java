@@ -315,6 +315,11 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     @Override
     public void onDialogMenuItemSelected( int dialogId, MenuItem item)
     {
+        if (getListView().getAdapter() == null ||
+                mListViewPosition >= getListView().getAdapter().getCount()) {
+            return;
+        }
+
         //We can only get here if mListViewPosition is valid, so profile shouldn't be null
         final Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
         
