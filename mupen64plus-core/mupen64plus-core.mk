@@ -117,12 +117,10 @@ LOCAL_LDFLAGS :=                                                    \
     $(COMMON_LDFLAGS)                                               \
     -Wl,-Bsymbolic                                                  \
     -Wl,-export-dynamic                                             \
-    -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver  \
-
+    -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver
 
 ASM_DEFINES_INCLUDE += -I$(SYSROOT_INC)/usr/include
 TARGET := ""
-MINIMUM_API_LEVEL := 23
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
@@ -131,14 +129,14 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=3
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/arm-linux-androideabi
-    TARGET := -target armv7-none-linux-androideabi21
+    TARGET := -target armv7-none-linux-androideabi23
 else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
     # Use for ARM8a:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm64/linkage_arm64.S
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=4
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/aarch64-linux-android
-    TARGET := -target aarch64-none-linux-android21
+    TARGET := -target aarch64-none-linux-android23
 else ifeq ($(TARGET_ARCH_ABI), x86)
     # Use for x86:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x86/linkage_x86.asm
@@ -146,7 +144,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
     LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/i686-linux-android
-    TARGET := -target i686-none-linux-android21
+    TARGET := -target i686-none-linux-android23
 else ifeq ($(TARGET_ARCH_ABI), x86_64)
     # Use for x86_64:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x64/linkage_x64.asm
@@ -155,7 +153,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86_64)
     LOCAL_CFLAGS += -fPIC
     LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/x86_64-linux-android
-    TARGET := -target x86_64-none-linux-android21
+    TARGET := -target x86_64-none-linux-android23
 endif
 
 # Use gawk in linux
@@ -177,7 +175,7 @@ ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))","")
 endif
 
 $(info Compiling asm_defines.c)
-$(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/upstream/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=$(MINIMUM_API_LEVEL) -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+$(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/upstream/src $(ASM_DEFINES_INCLUDE) -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
 $(info Generating asm_defines_nasm.h and asm_defines_gas.h)
 $(shell $(AWK_CMD) -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/upstream/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
 
