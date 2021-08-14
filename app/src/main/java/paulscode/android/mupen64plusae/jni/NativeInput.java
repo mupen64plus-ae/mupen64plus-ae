@@ -56,7 +56,7 @@ public class NativeInput
      * @param axisY The analog value of the y-axis, in the range [-80,80].
      * @param isKeyboard True if input cones frim a keyboard
      */
-    static native void setState( int controllerNum, boolean[] buttons, int axisX, int axisY, boolean isKeyboard );
+    static native void setState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isKeyboard );
     
     /**
      * Set the plugged state and pak type of a controller.

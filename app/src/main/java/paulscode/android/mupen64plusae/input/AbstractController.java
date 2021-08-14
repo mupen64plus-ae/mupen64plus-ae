@@ -128,9 +128,6 @@ public abstract class AbstractController
 
     private CoreFragment mCoreFragment;
     
-    /** The factor by which the axis fractions are scaled before going to the core. */
-    private static final float AXIS_SCALE = 80;
-    
     static
     {
         sStates.add( new State() );
@@ -153,9 +150,7 @@ public abstract class AbstractController
      */
     void notifyChanged(boolean isKeyboard)
     {
-        int axisX = Math.round( AXIS_SCALE * mState.axisFractionX );
-        int axisY = Math.round( AXIS_SCALE * mState.axisFractionY );
-        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY, isKeyboard );
+        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, mState.axisFractionX, mState.axisFractionY, isKeyboard );
     }
     
     /**
