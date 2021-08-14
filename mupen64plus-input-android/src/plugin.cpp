@@ -310,6 +310,40 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
     }
 }
 
+// Credit: MerryMage
+void simulateOctagon(int inputX, int inputY, int& outputX, int& outputY)
+{
+    //scale to {-84 ... +84}
+    double ax = inputX * 85.0;
+    double ay = inputY * 85.0;
+
+    double len = std::sqrt(ax*ax+ay*ay);
+    if (len < 16.0) {
+        len = 0;
+    } else if (len > 85.0) {
+        len = 85.0 / len;
+    } else {
+        len = (len - 16.0) * 85.0 / (85.0 - 16.0) / len;
+    }
+    ax *= len;
+    ay *= len;
+
+    //bound diagonals to an octagonal range {-68 ... +68}
+    if(ax != 0.0 && ay != 0.0) {
+        double slope = ay / ax;
+        double edgex = copysign(85.0 / (std::abs(slope) + 16.0 / 69.0), ax);
+        double edgey = copysign(std::min(std::abs(edgex * slope), 85.0 / (1.0 / std::abs(slope) + 16.0 / 69.0)), ay);
+        edgex = edgey / slope;
+
+        double scale = std::sqrt(edgex*edgex+edgey*edgey) / 85.0;
+        ax *= scale;
+        ay *= scale;
+    }
+
+    outputX = static_cast<int>(ax);
+    outputY = static_cast<int>(ay);
+}
+
 extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
 {
     // Reset the controller state
@@ -344,12 +378,20 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
                                      actualYAxis[controllerNum] + static_cast<int>(copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff)));
 
         // Set the analog bytes
-        keys->X_AXIS = actualXAxis[controllerNum];
-        keys->Y_AXIS = actualYAxis[controllerNum];
+        int outputX;
+        int outputY;
+        simulateOctagon(actualXAxis[controllerNum], actualYAxis[controllerNum], outputX, outputY);
+
+        keys->X_AXIS = outputX;
+        keys->Y_AXIS = outputY;
     } else {
         // Set the analog bytes
-        keys->X_AXIS = _androidAnalogX[controllerNum];
-        keys->Y_AXIS = _androidAnalogY[controllerNum];
+        int outputX;
+        int outputY;
+        simulateOctagon(_androidAnalogX[controllerNum], _androidAnalogY[controllerNum], outputX, outputY);
+
+        keys->X_AXIS = outputX;
+        keys->Y_AXIS = outputY;
     }
 }
 
