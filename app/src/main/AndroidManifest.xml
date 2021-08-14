@@ -72,6 +72,7 @@
 
                 <data android:host="*" />
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.n64" />
                 <data android:pathPattern=".*\\.N64" />
