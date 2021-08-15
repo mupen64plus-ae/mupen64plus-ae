@@ -603,6 +603,34 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             int slot = mCoreService.getSlot();
             mCoreService.setSlot( slot + 1 );
+
+            try {
+                Notifier.showToast( requireActivity(), R.string.toast_movingSlot, mCoreService.getSlot() );
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void decrementSlot()
+    {
+        Log.i(TAG, "decrementSlot");
+
+        if (mCoreService != null)
+        {
+            int slot = mCoreService.getSlot();
+
+            // If we are currently at slot 0 then we need to go back to the last slot.
+            if(slot == 0)
+                slot = mCoreService.getSlotQuantity();
+
+            mCoreService.setSlot( slot - 1 );
+
+            try {
+                Notifier.showToast( requireActivity(), R.string.toast_movingSlot, mCoreService.getSlot() );
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
 

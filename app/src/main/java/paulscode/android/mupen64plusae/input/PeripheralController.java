@@ -264,6 +264,10 @@ public class PeripheralController extends AbstractController implements
                         Log.v("PeripheralController", "FUNC_INCREMENT_SLOT");
                         mCoreFragment.incrementSlot();
                         break;
+                    case InputMap.FUNC_DECREMENT_SLOT:
+                        Log.v("PeripheralController", "FUNC_DECREMENT_SLOT");
+                        mCoreFragment.decrementSlot();
+                        break;
                     case InputMap.FUNC_SAVE_SLOT:
                         Log.v("PeripheralController", "FUNC_SAVE_SLOT");
                         mCoreFragment.saveSlot();

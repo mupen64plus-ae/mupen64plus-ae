@@ -386,6 +386,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mCoreInterface.emuGetSlot();
     }
 
+    int getSlotQuantity()
+    {
+        return NUM_SLOTS;
+    }
+
     void saveSlot()
     {
         mCoreInterface.emuSaveSlot();
