@@ -60,6 +60,11 @@
         android:key="screenCheats"
         android:title="@string/screenCheats_title" >
 
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showBuiltInCheatCodes"
+            android:title="@string/menuItem_showBuiltins" />
+
         <androidx.preference.Preference
             android:key="actionCheatEditor"
             android:summary="@string/actionCheatEditor_summary"

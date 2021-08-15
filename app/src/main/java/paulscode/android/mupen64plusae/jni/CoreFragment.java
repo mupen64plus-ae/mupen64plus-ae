@@ -438,7 +438,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY, boolean isKeyboard )
+    public void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isKeyboard )
     {
         if(mCoreService != null)
         {
