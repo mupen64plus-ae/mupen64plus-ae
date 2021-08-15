@@ -72,6 +72,18 @@ public class CheatUtils
                     ", cheatIndex=" + cheatIndex +
                     '}';
         }
+
+        public boolean isInArrayList(ArrayList<Cheat> list)
+        {
+            // For each cheat in the list.
+            for(Cheat cheat : list)
+            {
+                // If the cheat is the same.
+                if(this.compareTo(cheat) == 0)
+                    return true;
+            }
+            return false;
+        }
     }
     
     public static void mergeCheatFiles( String defaultpath, String userpath, String volatilepath )
