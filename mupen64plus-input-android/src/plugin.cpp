@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  *
- * Authors: littleguy77, Paul Lamb
+ * Authors: littleguy77, Paul Lamb, fzurita
  */
 
 #include <cstring>
@@ -101,8 +101,8 @@ static jmethodID _jniRumble = NULL;
 static int _androidPluggedState[4];
 static int _androidPakType[4];
 static unsigned char _androidButtonState[4][16];
-static signed char _androidAnalogX[4];
-static signed char _androidAnalogY[4];
+static double _androidAnalogX[4];
+static double _androidAnalogY[4];
 static bool _isKeyboard[4];
 static int _pluginInitialized = 0;
 static CONTROL* _controllerInfos = NULL;
@@ -187,7 +187,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
 }
 
 extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
-        jint mp64pXAxis, jint mp64pYAxis, jboolean isKeyboard)
+        jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isKeyboard)
 {
     jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, NULL);
     int b;
@@ -197,8 +197,8 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
     }
     env->ReleaseBooleanArrayElements(mp64pButtons, elements, 0);
 
-    _androidAnalogX[controllerNum] = (signed char) ((int) mp64pXAxis);
-    _androidAnalogY[controllerNum] = (signed char) ((int) mp64pYAxis);
+    _androidAnalogX[controllerNum] = mp64pXAxis;
+    _androidAnalogY[controllerNum] = mp64pYAxis;
     _isKeyboard[controllerNum] = isKeyboard;
 }
 
@@ -310,6 +310,40 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
     }
 }
 
+// Credit: MerryMage
+void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
+{
+    //scale to {-84 ... +84}
+    double ax = inputX * 85.0;
+    double ay = inputY * 85.0;
+
+    double len = std::sqrt(ax*ax+ay*ay);
+    if (len < 16.0) {
+        len = 0;
+    } else if (len > 85.0) {
+        len = 85.0 / len;
+    } else {
+        len = (len - 16.0) * 85.0 / (85.0 - 16.0) / len;
+    }
+    ax *= len;
+    ay *= len;
+
+    //bound diagonals to an octagonal range {-68 ... +68}
+    if(ax != 0.0 && ay != 0.0) {
+        double slope = ay / ax;
+        double edgex = copysign(85.0 / (std::abs(slope) + 16.0 / 69.0), ax);
+        double edgey = copysign(std::min(std::abs(edgex * slope), 85.0 / (1.0 / std::abs(slope) + 16.0 / 69.0)), ay);
+        edgex = edgey / slope;
+
+        double scale = std::sqrt(edgex*edgex+edgey*edgey) / 85.0;
+        ax *= scale;
+        ay *= scale;
+    }
+
+    outputX = static_cast<int>(ax);
+    outputY = static_cast<int>(ay);
+}
+
 extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
 {
     // Reset the controller state
@@ -325,10 +359,10 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
 
     // Limit the speed of the analog stick under certain circumstances
     if (_isKeyboard[controllerNum]) {
-        static int actualXAxis[4] = {0};
-        static int actualYAxis[4] = {0};
-        static const int maxChange = 30;
-        static const double distanceForInstantChange = 115.0;
+        static double actualXAxis[4] = {0};
+        static double actualYAxis[4] = {0};
+        static const double maxChange = 0.375;
+        static const double distanceForInstantChange = 1.4375;
 
         double distance = sqrt(pow(actualXAxis[controllerNum] - _androidAnalogX[controllerNum],2) +
                                pow(actualYAxis[controllerNum] - _androidAnalogY[controllerNum],2));
@@ -344,12 +378,20 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
                                      actualYAxis[controllerNum] + static_cast<int>(copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff)));
 
         // Set the analog bytes
-        keys->X_AXIS = actualXAxis[controllerNum];
-        keys->Y_AXIS = actualYAxis[controllerNum];
+        int outputX;
+        int outputY;
+        simulateOctagon(actualXAxis[controllerNum], actualYAxis[controllerNum], outputX, outputY);
+
+        keys->X_AXIS = outputX;
+        keys->Y_AXIS = outputY;
     } else {
         // Set the analog bytes
-        keys->X_AXIS = _androidAnalogX[controllerNum];
-        keys->Y_AXIS = _androidAnalogY[controllerNum];
+        int outputX;
+        int outputY;
+        simulateOctagon(_androidAnalogX[controllerNum], _androidAnalogY[controllerNum], outputX, outputY);
+
+        keys->X_AXIS = outputX;
+        keys->Y_AXIS = outputY;
     }
 }
 

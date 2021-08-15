@@ -299,9 +299,13 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
             
             MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(0,
                 getString( stringId, profile.name ), resId);
-            
-            FragmentManager fm = getSupportFragmentManager();
-            menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
+
+            try {
+                FragmentManager fm = getSupportFragmentManager();
+                menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         super.onListItemClick( l, v, position, id );
     }
@@ -315,6 +319,11 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     @Override
     public void onDialogMenuItemSelected( int dialogId, MenuItem item)
     {
+        if (getListView().getAdapter() == null ||
+                mListViewPosition >= getListView().getAdapter().getCount()) {
+            return;
+        }
+
         //We can only get here if mListViewPosition is valid, so profile shouldn't be null
         final Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
         
