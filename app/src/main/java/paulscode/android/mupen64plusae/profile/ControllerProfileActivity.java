@@ -79,6 +79,7 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
         setupButton( R.id.buttonAD,            InputMap.AXIS_D );
         setupButton( R.id.buttonAU,            InputMap.AXIS_U );
         setupButton( R.id.buttonIncrementSlot, InputMap.FUNC_INCREMENT_SLOT );
+        setupButton( R.id.buttonDecrementSlot, InputMap.FUNC_DECREMENT_SLOT );
         setupButton( R.id.buttonSaveSlot,      InputMap.FUNC_SAVE_SLOT );
         setupButton( R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
         setupButton( R.id.buttonPause,         InputMap.FUNC_PAUSE );

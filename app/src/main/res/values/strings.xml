@@ -133,6 +133,7 @@
     <!-- Something happening (typically use '-ing' and '…') -->
     <string name="toast_loadingSlot">Loading slot %1$d…</string>
     <string name="toast_savingSlot">Saving slot %1$d…</string>
+    <string name="toast_movingSlot">Moving to slot %1$d…</string>
     <string name="toast_loadingFile">Loading %1$s…</string>
     <string name="toast_savingFile">Saving %1$s…</string>
     <string name="toast_overwritingFile">Overwriting %1$s…</string>
@@ -944,6 +945,7 @@
     <string name="inputMapActivity_btnAD">Analog ↓</string>
     <string name="inputMapActivity_btnAU">Analog ↑</string>
     <string name="inputMapActivity_incrementSlot">Increment slot</string>
+    <string name="inputMapActivity_decrementSlot">Decrement slot</string>
     <string name="inputMapActivity_reset">Reset</string>
     <string name="inputMapActivity_pause">Pause</string>
     <string name="inputMapActivity_stop">Stop</string>

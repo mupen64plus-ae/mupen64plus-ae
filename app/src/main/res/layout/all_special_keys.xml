@@ -16,10 +16,28 @@
             android:text="@string/inputMapActivity_gameshark" />
 
         <Button
+            android:id="@+id/buttonSensorToggle"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapActivity_toggle_sensor" />
+    </TableRow>
+	
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
             android:id="@+id/buttonIncrementSlot"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
             android:text="@string/inputMapActivity_incrementSlot"
+            tools:ignore="RtlHardcoded" />
+
+        <Button
+            android:id="@+id/buttonDecrementSlot"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapActivity_decrementSlot"
             tools:ignore="RtlHardcoded" />
     </TableRow>
 
@@ -126,17 +144,6 @@
             android:id="@+id/buttonReset"
             style="@style/btnSpecialMappable"
             android:text="@string/inputMapActivity_reset" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
-
-        <Button
-            android:id="@+id/buttonSensorToggle"
-            style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_toggle_sensor" />
     </TableRow>
 
 </TableLayout>
