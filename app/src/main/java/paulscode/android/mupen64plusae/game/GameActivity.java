@@ -1069,7 +1069,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
-        boolean isKeyboard = (event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD;
+        boolean isKeyboard = (event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD &&
+                (event.getSource() & InputDevice.SOURCE_JOYSTICK) != InputDevice.SOURCE_JOYSTICK;
         final boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
 
         boolean handled = false;

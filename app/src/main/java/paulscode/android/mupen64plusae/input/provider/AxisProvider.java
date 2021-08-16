@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
-import android.os.Build;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
@@ -34,7 +33,7 @@ import paulscode.android.mupen64plusae.input.map.AxisMap;
 public class AxisProvider extends AbstractProvider implements View.OnGenericMotionListener
 {
     /** The input codes to listen for. */
-    private int[] mInputCodes;
+    private final int[] mInputCodes;
     
     /** The default number of input codes to listen for. */
     private static final int DEFAULT_NUM_INPUTS = 128;
@@ -150,9 +149,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                 strengths[i] = 0;
         }
 
-        // Notify listeners about new input data
-        boolean isKeyboard = (event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD;
-        notifyListeners( mInputCodes, strengths, getHardwareId(event), isKeyboard );
+        notifyListeners( mInputCodes, strengths, getHardwareId(event) );
 
         return true;
     }
@@ -187,7 +184,6 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                     {
                         case AxisMap.AXIS_CLASS_NORMAL:
                             // Normalize
-                            //strength = ( strength - motionRange.getMin() ) / motionRange.getRange() * 2f - 1f;
                             tempStrengh = (Math.abs(strength) - flat) / (1.0f - flat);
                             //Restore sign
                             strength = tempStrengh * Math.signum(strength);

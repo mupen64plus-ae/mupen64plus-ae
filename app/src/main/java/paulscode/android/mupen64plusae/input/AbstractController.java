@@ -148,9 +148,9 @@ public abstract class AbstractController
     /**
      * Notifies the core that the N64 controller state has changed.
      */
-    void notifyChanged(boolean isKeyboard)
+    void notifyChanged(boolean isDigital)
     {
-        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, mState.axisFractionX, mState.axisFractionY, isKeyboard );
+        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, mState.axisFractionX, mState.axisFractionY, isDigital );
     }
     
     /**

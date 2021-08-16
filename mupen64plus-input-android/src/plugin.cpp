@@ -28,6 +28,10 @@
 
 #include "m64p_plugin.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "UnusedLocalVariable"
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #ifndef DECLSPEC
 # if defined(__BEOS__) || defined(__HAIKU__)
 #  if defined(__GNUC__)
@@ -96,16 +100,16 @@ static const unsigned short BUTTON_BITS[] =
 // Internal variables
 JavaVM* mJavaVM;
 static jclass mActivityClass;
-static jmethodID _jniRumble = NULL;
+static jmethodID jniRumble = nullptr;
 
-static int _androidPluggedState[4];
-static int _androidPakType[4];
-static unsigned char _androidButtonState[4][16];
-static double _androidAnalogX[4];
-static double _androidAnalogY[4];
-static bool _isKeyboard[4];
-static int _pluginInitialized = 0;
-static CONTROL* _controllerInfos = NULL;
+static int androidPluggedState[4];
+static int androidPakType[4];
+static unsigned char androidButtonState[4][16];
+static double androidAnalogX[4];
+static double androidAnalogY[4];
+static bool isAnalogDigital[4];
+static int pluginInitialized = 0;
+static CONTROL* controllerInfos = nullptr;
 
 // Function declarations
 static void DebugMessage(int level, const char *message, ...);
@@ -114,7 +118,7 @@ static void DebugMessage(int level, const char *message, ...);
  Functions called internally
  *******************************************************************************/
 
-static unsigned char DataCRC(unsigned char* data, int length)
+static unsigned char DataCRC(const unsigned char* data, int length)
 {
     unsigned char remainder = data[0];
 
@@ -157,12 +161,12 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_i
     DebugMessage(M64MSG_INFO, "init()");
 
     // Discard stale pointer
-    _controllerInfos = NULL;
+    controllerInfos = nullptr;
 
     mActivityClass = (jclass) env->NewGlobalRef(cls);
-    _jniRumble = env->GetStaticMethodID(cls, "rumble", "(IZ)V");
+    jniRumble = env->GetStaticMethodID(cls, "rumble", "(IZ)V");
 
-    if (!_jniRumble)
+    if (!jniRumble)
     {
         DebugMessage(M64MSG_WARNING, "Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -174,32 +178,32 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
     if (controllerNum < 4 && controllerNum > -1)
     {
         // Cache the values if called before InitiateControllers
-        _androidPluggedState[controllerNum] = (plugged == JNI_TRUE ? 1 : 0);
-        _androidPakType[controllerNum] = (int) pakType;
+        androidPluggedState[controllerNum] = (plugged == JNI_TRUE ? 1 : 0);
+        androidPakType[controllerNum] = (int) pakType;
 
         // Update the values if called after InitiateControllers
-        if (_controllerInfos != NULL)
+        if (controllerInfos != nullptr)
         {
-            _controllerInfos[controllerNum].Present = _androidPluggedState[controllerNum];
-            _controllerInfos[controllerNum].Plugin = _androidPakType[controllerNum];
+            controllerInfos[controllerNum].Present = androidPluggedState[controllerNum];
+            controllerInfos[controllerNum].Plugin = androidPakType[controllerNum];
         }
     }
 }
 
 extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
-        jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isKeyboard)
+        jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isDigital)
 {
-    jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, NULL);
+    jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, nullptr);
     int b;
     for (b = 0; b < 16; b++)
     {
-        _androidButtonState[controllerNum][b] = elements[b];
+        androidButtonState[controllerNum][b] = elements[b];
     }
     env->ReleaseBooleanArrayElements(mp64pButtons, elements, 0);
 
-    _androidAnalogX[controllerNum] = mp64pXAxis;
-    _androidAnalogY[controllerNum] = mp64pYAxis;
-    _isKeyboard[controllerNum] = isKeyboard;
+    androidAnalogX[controllerNum] = mp64pXAxis;
+    androidAnalogY[controllerNum] = mp64pYAxis;
+    isAnalogDigital[controllerNum] = isDigital;
 }
 
 //*****************************************************************************
@@ -213,7 +217,7 @@ extern "C" JNIEXPORT void JNI_Rumble(int controllerNum, int active)
         return;
 
     jboolean a = active == 0 ? JNI_FALSE : JNI_TRUE;
-    env->CallStaticVoidMethod(mActivityClass, _jniRumble, controllerNum, a);
+    env->CallStaticVoidMethod(mActivityClass, jniRumble, controllerNum, a);
 }
 
 //*****************************************************************************
@@ -256,19 +260,19 @@ static void DebugMessage(int level, const char* message, ...)
 
 extern "C" EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType, int* pluginVersion, int* apiVersion, const char** pluginNamePtr, int* capabilities)
 {
-    if (pluginType != NULL)
+    if (pluginType != nullptr)
         *pluginType = M64PLUGIN_INPUT;
 
-    if (pluginVersion != NULL)
+    if (pluginVersion != nullptr)
         *pluginVersion = PLUGIN_VERSION;
 
-    if (apiVersion != NULL)
+    if (apiVersion != nullptr)
         *apiVersion = INPUT_PLUGIN_API_VERSION;
 
-    if (pluginNamePtr != NULL)
+    if (pluginNamePtr != nullptr)
         *pluginNamePtr = PLUGIN_NAME;
 
-    if (capabilities != NULL)
+    if (capabilities != nullptr)
         *capabilities = 0;
 
     return M64ERR_SUCCESS;
@@ -276,19 +280,19 @@ extern "C" EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType,
 
 extern "C" EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle coreLibHandle, void* context, void (*DebugCallback)(void*, int, const char*))
 {
-    if (_pluginInitialized)
+    if (pluginInitialized)
         return M64ERR_ALREADY_INIT;
 
-    _pluginInitialized = 1;
+    pluginInitialized = 1;
     return M64ERR_SUCCESS;
 }
 
 extern "C" EXPORT m64p_error CALL PluginShutdown()
 {
-    if (!_pluginInitialized)
+    if (!pluginInitialized)
         return M64ERR_NOT_INIT;
 
-    _pluginInitialized = 0;
+    pluginInitialized = 0;
     return M64ERR_SUCCESS;
 }
 
@@ -298,15 +302,15 @@ extern "C" EXPORT m64p_error CALL PluginShutdown()
 
 extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
 {
-    _controllerInfos = controlInfo.Controls;
+    controllerInfos = controlInfo.Controls;
 
     int i;
     for (i = 0; i < 4; i++)
     {
         // Configure each controller
-        _controllerInfos[i].Present = _androidPluggedState[i];
-        _controllerInfos[i].Plugin = _androidPakType[i];
-        _controllerInfos[i].RawData = 0;
+        controllerInfos[i].Present = androidPluggedState[i];
+        controllerInfos[i].Plugin = androidPakType[i];
+        controllerInfos[i].RawData = 0;
     }
 }
 
@@ -353,46 +357,45 @@ extern "C" EXPORT void CALL GetKeys(int controllerNum, BUTTONS* keys)
     int b;
     for (b = 0; b < 16; b++)
     {
-        if (_androidButtonState[controllerNum][b])
+        if (androidButtonState[controllerNum][b])
             keys->Value |= BUTTON_BITS[b];
     }
 
+    double inputX;
+    double inputY;
+    int outputX;
+    int outputY;
+
     // Limit the speed of the analog stick under certain circumstances
-    if (_isKeyboard[controllerNum]) {
+    if (isAnalogDigital[controllerNum]) {
         static double actualXAxis[4] = {0};
         static double actualYAxis[4] = {0};
         static const double maxChange = 0.375;
         static const double distanceForInstantChange = 1.4375;
 
-        double distance = sqrt(pow(actualXAxis[controllerNum] - _androidAnalogX[controllerNum],2) +
-                               pow(actualYAxis[controllerNum] - _androidAnalogY[controllerNum],2));
+        double distance = sqrt(pow(actualXAxis[controllerNum] - androidAnalogX[controllerNum],2) +
+                               pow(actualYAxis[controllerNum] - androidAnalogY[controllerNum],2));
         bool instantChange = distance > distanceForInstantChange || distance < maxChange ||
-                             (_androidAnalogX[controllerNum] == 0 && _androidAnalogY[controllerNum] == 0);
+                             (androidAnalogX[controllerNum] == 0 && androidAnalogY[controllerNum] == 0);
 
-        double xDiff = _androidAnalogX[controllerNum] - actualXAxis[controllerNum];
-        double yDiff = _androidAnalogY[controllerNum] - actualYAxis[controllerNum];
+        double xDiff = androidAnalogX[controllerNum] - actualXAxis[controllerNum];
+        double yDiff = androidAnalogY[controllerNum] - actualYAxis[controllerNum];
 
-        actualXAxis[controllerNum] = instantChange ? _androidAnalogX[controllerNum] :
-                                     actualXAxis[controllerNum] + static_cast<int>(copysign(1.0, xDiff)*std::min(static_cast<double>(maxChange), abs(xDiff)));
-        actualYAxis[controllerNum] = instantChange ? _androidAnalogY[controllerNum] :
-                                     actualYAxis[controllerNum] + static_cast<int>(copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff)));
+        actualXAxis[controllerNum] = instantChange ? androidAnalogX[controllerNum] :
+                                     actualXAxis[controllerNum] + copysign(1.0, xDiff)*std::min(static_cast<double>(maxChange), abs(xDiff));
+        actualYAxis[controllerNum] = instantChange ? androidAnalogY[controllerNum] :
+                                     actualYAxis[controllerNum] + copysign(1.0, yDiff)*std::min(static_cast<double>(maxChange), abs(yDiff));
 
-        // Set the analog bytes
-        int outputX;
-        int outputY;
-        simulateOctagon(actualXAxis[controllerNum], actualYAxis[controllerNum], outputX, outputY);
-
-        keys->X_AXIS = outputX;
-        keys->Y_AXIS = outputY;
+        inputX = actualXAxis[controllerNum];
+        inputY = actualYAxis[controllerNum];
     } else {
-        // Set the analog bytes
-        int outputX;
-        int outputY;
-        simulateOctagon(_androidAnalogX[controllerNum], _androidAnalogY[controllerNum], outputX, outputY);
-
-        keys->X_AXIS = outputX;
-        keys->Y_AXIS = outputY;
+        inputX = androidAnalogX[controllerNum];
+        inputY = androidAnalogY[controllerNum];
     }
+
+    simulateOctagon(inputX, inputY, outputX, outputY);
+    keys->X_AXIS = outputX;
+    keys->Y_AXIS = outputY;
 }
 
 extern "C" EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)
@@ -451,3 +454,5 @@ extern "C" EXPORT void CALL RenderCallback(void)
 {
 
 }
+
+#pragma clang diagnostic pop

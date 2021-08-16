@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -20,15 +20,11 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import android.content.Context;
-import android.os.Vibrator;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.View;
-
-import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -47,7 +43,7 @@ public class PeripheralController extends AbstractController implements
     /**
      * Pointer to core fragment
      */
-    private CoreFragment mCoreFragment = null;
+    private final CoreFragment mCoreFragment;
 
     /** The map from hardware identifiers to players. */
     private final PlayerMap mPlayerMap;
@@ -65,11 +61,8 @@ public class PeripheralController extends AbstractController implements
     /** The state change listener. */
     private final OnStateChangedListener mListener;
 
-    /** The sensor provider, which is also added on {@link #mProviders} */
-    private SensorController mSensorController;
-    
-    /** The user input providers. */
-    private final ArrayList<AbstractProvider> mProviders;
+    /** The sensor provider */
+    private final SensorController mSensorController;
     
     /** The calculator for the strength of an input. */
     private final InputStrengthCalculator mStrengthCalculator;
@@ -87,7 +80,10 @@ public class PeripheralController extends AbstractController implements
     private float mStrengthYneg;
 
     /** Called for menu and back keys */
-    private View.OnKeyListener mKeyListener;
+    private final View.OnKeyListener mKeyListener;
+
+    /** True if the N64 analog is being controlled by a digital input */
+    private boolean mIsAnalogDigitalInput = false;
     
     /**
      * Instantiates a new peripheral controller.
@@ -123,12 +119,10 @@ public class PeripheralController extends AbstractController implements
         mStrengthCalculator = new InputStrengthCalculator( inputMap, mEntryMap );
         
         // Assign the non-null input providers
-        mProviders = new ArrayList<>();
         for( AbstractProvider provider : providers )
         {
             if( provider != null )
             {
-                mProviders.add( provider );
                 provider.registerListener( this );
             }
         }
@@ -142,7 +136,7 @@ public class PeripheralController extends AbstractController implements
      */
     @Override
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    public void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard )
+    public void onInput( int inputCode, float strength, int hardwareId )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
@@ -158,10 +152,10 @@ public class PeripheralController extends AbstractController implements
             }
             
             // Apply user changes to the controller state
-            apply( inputCode, strength );
+            apply( inputCode, strength, false );
             
             // Notify the core that controller state has changed
-            notifyChanged(isKeyboard);
+            notifyChanged(mIsAnalogDigitalInput);
         }
     }
     
@@ -172,17 +166,17 @@ public class PeripheralController extends AbstractController implements
      * float[], int)
      */
     @Override
-    public void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
         // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
             // Apply user changes to the controller state
             for( int i = 0; i < inputCodes.length; i++ )
-                apply( inputCodes[i], strengths[i] );
+                apply( inputCodes[i], strengths[i], true );
             
             // Notify the core that controller state has changed
-            notifyChanged(isKeyboard);
+            notifyChanged(mIsAnalogDigitalInput);
         }
     }
     
@@ -191,15 +185,15 @@ public class PeripheralController extends AbstractController implements
      * 
      * @param inputCode The universal input code that was dispatched.
      * @param strength  The input strength, between 0 and 1, inclusive.
-     * 
-     * @return True, if controller state changed.
+     * @param isAxis True if the input comes from an axis
+     *
      */
-    private boolean apply( int inputCode, float strength )
+    private void apply(int inputCode, float strength, boolean isAxis )
     {
         InputEntry entry = mEntryMap.get( inputCode );
         
         if( entry == null )
-            return false;
+            return;
         
         // Evaluate the strengths of the inputs that map to the control.
         entry.getStrength().set( strength );
@@ -212,25 +206,29 @@ public class PeripheralController extends AbstractController implements
             if( n64Index < NUM_N64_BUTTONS )
             {
                 mState.buttons[n64Index] = strength > AbstractProvider.STRENGTH_THRESHOLD;
-                return true;
+                return;
             }
             
             switch( n64Index )
             {
                 case InputMap.AXIS_R:
                     mStrengthXpos = strength;
+                    mIsAnalogDigitalInput = mIsAnalogDigitalInput || !isAxis;
                     break;
                 case InputMap.AXIS_L:
                     mStrengthXneg = strength;
+                    mIsAnalogDigitalInput = mIsAnalogDigitalInput || !isAxis;
                     break;
                 case InputMap.AXIS_D:
                     mStrengthYneg = strength;
+                    mIsAnalogDigitalInput = mIsAnalogDigitalInput || !isAxis;
                     break;
                 case InputMap.AXIS_U:
                     mStrengthYpos = strength;
+                    mIsAnalogDigitalInput = mIsAnalogDigitalInput || !isAxis;
                     break;
                 default:
-                    return false;
+                    return;
             }
             
             // Calculate the net position of the analog stick
@@ -340,7 +338,6 @@ public class PeripheralController extends AbstractController implements
                         }
                         break;
                     default:
-                        return false;
                 }
             } else // keyUp
             {
@@ -354,10 +351,8 @@ public class PeripheralController extends AbstractController implements
                         mCoreFragment.emuGameShark(false);
                         break;
                     default:
-                        return false;
                 }
             }
         }
-        return true;
     }
 }

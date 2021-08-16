@@ -24,6 +24,8 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import java.util.Locale;
+
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 
@@ -54,9 +56,8 @@ public abstract class AbstractProvider
          * @param inputCode  The universal input code that was dispatched.
          * @param strength   The input strength, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
-         * @param isKeyboard True if the input comes from a keyboard
          */
-        void onInput( int inputCode, float strength, int hardwareId, boolean isKeyboard );
+        void onInput( int inputCode, float strength, int hardwareId );
         
         /**
          * Called when multiple inputs have been dispatched simultaneously.
@@ -64,9 +65,8 @@ public abstract class AbstractProvider
          * @param inputCodes The universal input codes that were dispatched.
          * @param strengths  The input strengths, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
-         * @param isKeyboard True if the input comes from a keyboard
          */
-        void onInput( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard );
+        void onInput( int[] inputCodes, float[] strengths, int hardwareId );
     }
     
     /** The strength threshold above which an input is said to be "on". */
@@ -279,7 +279,7 @@ public abstract class AbstractProvider
     {
         return getInputName( inputCode ) + ( inputCode == 0
                 ? ""
-                : String.format( " %4.2f", strength ) );
+                : String.format(Locale.US, " %4.2f", strength ) );
     }    
     
     /**
@@ -328,12 +328,11 @@ public abstract class AbstractProvider
      * @param inputCode  The universal input code that was dispatched.
      * @param strength   The input strength, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
-     * @param isKeyboard True if the input comes from a keyboard
      */
-    void notifyListeners( int inputCode, float strength, int hardwareId, boolean isKeyboard )
+    void notifyListeners( int inputCode, float strength, int hardwareId)
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCode, strength, hardwareId, isKeyboard );
+            listener.onInput( inputCode, strength, hardwareId );
     }
     
     /**
@@ -343,11 +342,10 @@ public abstract class AbstractProvider
      * @param inputCodes The universal input codes that were dispatched.
      * @param strengths  The input strengths, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
-     * @param isKeyboard True if the input comes from a keyboard
      */
-    void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId, boolean isKeyboard )
+    void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId )
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId, isKeyboard );
+            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId );
     }
 }
