@@ -56,8 +56,9 @@ public abstract class AbstractProvider
          * @param inputCode  The universal input code that was dispatched.
          * @param strength   The input strength, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
+         * @param repeatCount How many intervales the button has been pressed for
          */
-        void onInput( int inputCode, float strength, int hardwareId );
+        void onInput( int inputCode, float strength, int hardwareId, int repeatCount );
         
         /**
          * Called when multiple inputs have been dispatched simultaneously.
@@ -328,11 +329,12 @@ public abstract class AbstractProvider
      * @param inputCode  The universal input code that was dispatched.
      * @param strength   The input strength, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
+     * @param repeatCount How many intervales the button has been pressed for
      */
-    void notifyListeners( int inputCode, float strength, int hardwareId)
+    void notifyListeners( int inputCode, float strength, int hardwareId, int repeatCount)
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCode, strength, hardwareId );
+            listener.onInput( inputCode, strength, hardwareId, repeatCount );
     }
     
     /**

@@ -136,7 +136,7 @@ public class PeripheralController extends AbstractController implements
      */
     @Override
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    public void onInput( int inputCode, float strength, int hardwareId )
+    public void onInput( int inputCode, float strength, int hardwareId, int repeatCount )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
@@ -152,7 +152,7 @@ public class PeripheralController extends AbstractController implements
             }
             
             // Apply user changes to the controller state
-            apply( inputCode, strength, false );
+            apply( inputCode, strength, false, repeatCount );
             
             // Notify the core that controller state has changed
             notifyChanged(mIsAnalogDigitalInput);
@@ -173,7 +173,7 @@ public class PeripheralController extends AbstractController implements
         {
             // Apply user changes to the controller state
             for( int i = 0; i < inputCodes.length; i++ )
-                apply( inputCodes[i], strengths[i], true );
+                apply( inputCodes[i], strengths[i], true, 0 );
             
             // Notify the core that controller state has changed
             notifyChanged(mIsAnalogDigitalInput);
@@ -186,15 +186,15 @@ public class PeripheralController extends AbstractController implements
      * @param inputCode The universal input code that was dispatched.
      * @param strength  The input strength, between 0 and 1, inclusive.
      * @param isAxis True if the input comes from an axis
-     *
+     * @param repeatCount How many intervals the button has been held for
      */
-    private void apply(int inputCode, float strength, boolean isAxis )
+    private void apply(int inputCode, float strength, boolean isAxis, int repeatCount )
     {
         InputEntry entry = mEntryMap.get( inputCode );
-        
+
         if( entry == null )
             return;
-        
+
         // Evaluate the strengths of the inputs that map to the control.
         entry.getStrength().set( strength );
         int n64Index = entry.mN64Index;
@@ -256,6 +256,9 @@ public class PeripheralController extends AbstractController implements
                 mState.axisFractionY = 0;
             }
         } else if(mPlayerNumber == 1) {
+            // Button must be held for some inputs to prevent accidental presses
+            boolean ignoreInput = !isAxis && repeatCount < 10;
+
             if (keyDown) {
                 switch (n64Index) {
                     case InputMap.FUNC_INCREMENT_SLOT:
@@ -271,16 +274,22 @@ public class PeripheralController extends AbstractController implements
                         mCoreFragment.saveSlot();
                         break;
                     case InputMap.FUNC_LOAD_SLOT:
-                        Log.v("PeripheralController", "FUNC_LOAD_SLOT");
-                        mCoreFragment.loadSlot();
+                        if (!ignoreInput) {
+                            Log.v("PeripheralController", "FUNC_LOAD_SLOT");
+                            mCoreFragment.loadSlot();
+                        }
                         break;
                     case InputMap.FUNC_RESET:
-                        Log.v("PeripheralController", "FUNC_RESET");
-                        mCoreFragment.restartEmulator();
+                        if (!ignoreInput) {
+                            Log.v("PeripheralController", "FUNC_RESET");
+                            mCoreFragment.restartEmulator();
+                        }
                         break;
                     case InputMap.FUNC_STOP:
-                        Log.v("PeripheralController", "FUNC_STOP");
-                        mCoreFragment.shutdownEmulator();
+                        if (!ignoreInput) {
+                            Log.v("PeripheralController", "FUNC_STOP");
+                            mCoreFragment.shutdownEmulator();
+                        }
                         break;
                     case InputMap.FUNC_PAUSE:
                         Log.v("PeripheralController", "FUNC_PAUSE");
@@ -306,16 +315,18 @@ public class PeripheralController extends AbstractController implements
                         Log.v("PeripheralController", "FUNC_GAMESHARK");
                         mCoreFragment.emuGameShark(true);
                         break;
-                    case InputMap.FUNC_SIMULATE_BACK: {
-                        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
-                        mKeyListener.onKey(null, KeyEvent.KEYCODE_BACK, event);
+                    case InputMap.FUNC_SIMULATE_BACK:
+                        if (!ignoreInput) {
+                            KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
+                            mKeyListener.onKey(null, KeyEvent.KEYCODE_BACK, event);
+                        }
                         break;
-                    }
-                    case InputMap.FUNC_SIMULATE_MENU: {
-                        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
-                        mKeyListener.onKey(null, KeyEvent.KEYCODE_MENU, event);
+                    case InputMap.FUNC_SIMULATE_MENU:
+                        if (!ignoreInput) {
+                            KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
+                            mKeyListener.onKey(null, KeyEvent.KEYCODE_MENU, event);
+                        }
                         break;
-                    }
                     case InputMap.FUNC_SCREENSHOT:
                         Log.v("PeripheralController", "FUNC_SCREENSHOT");
                         mCoreFragment.screenshot();

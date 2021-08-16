@@ -170,14 +170,14 @@ public class PromptInputCodeDialog extends DialogFragment
                 if(mStrengths != null)
                 {
                     // Call the overloaded method with the strongest found
-                    onInput(strongestInputCode, maxStrength, hardwareId);
+                    onInput(strongestInputCode, maxStrength, hardwareId, 0);
                 }
 
                 mStrengths = strengths;
             }
 
             @Override
-            public void onInput(int inputCode, float strength, int hardwareId)
+            public void onInput(int inputCode, float strength, int hardwareId, int repeatCount)
             {
                 if (inputCode != 0)
                 {

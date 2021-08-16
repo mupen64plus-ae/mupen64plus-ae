@@ -312,7 +312,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     }
     
     @Override
-    public void onInput( int inputCode, float strength, int hardwareId )
+    public void onInput( int inputCode, float strength, int hardwareId, int repeatCount )
     {
         refreshButton( inputCode, strength );
         refreshFeedbackText( inputCode, strength );

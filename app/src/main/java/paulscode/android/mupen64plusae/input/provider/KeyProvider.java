@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.input.provider;
 import java.util.List;
 
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -158,7 +159,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
             strength = 0;
         
         // Notify listeners about new input data
-        notifyListeners( inputCode, strength, getHardwareId( event ) );
+        notifyListeners( inputCode, strength, getHardwareId( event ), event.getRepeatCount() );
         
         return true;
     }
