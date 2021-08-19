@@ -580,11 +580,6 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Compute the pythagorean displacement of the stick
             int dX = point.x;
             int dY = point.y;
-
-            // Limit range of motion to an octagon (like the real N64 controller)
-            point = mTouchMap.getConstrainedDisplacement( dX, dY );
-            dX = point.x;
-            dY = point.y;
             float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
             
             // Fraction of full-throttle, between 0 and 1, inclusive
