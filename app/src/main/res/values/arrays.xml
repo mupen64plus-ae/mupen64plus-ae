@@ -1314,6 +1314,7 @@
         <item>@string/inputMapActivity_btnAD</item>
         <item>@string/inputMapActivity_btnAU</item>
         <item>@string/inputMapActivity_incrementSlot</item>
+        <item>@string/inputMapActivity_decrementSlot</item>
         <item>@string/inputMapActivity_saveSlot</item>
         <item>@string/inputMapActivity_loadSlot</item>
         <item>@string/inputMapActivity_reset</item>
@@ -1349,6 +1350,7 @@
         <item>18</item>
         <item>19</item>
         <item>20</item>
+        <item>35</item>
         <item>21</item>
         <item>22</item>
         <item>23</item>
