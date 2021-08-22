@@ -107,10 +107,14 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
             bundle.putLong(TvContractCompat.EXTRA_CHANNEL_ID, channelId);
             builder.setExtras(bundle);
 
-            JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            if (scheduler != null) {
-                scheduler.cancel(getJobIdForChannelId(channelId));
-                scheduler.schedule(builder.build());
+            try {
+                JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                if (scheduler != null) {
+                    scheduler.cancel(getJobIdForChannelId(channelId));
+                    scheduler.schedule(builder.build());
+                }
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         }
     }
