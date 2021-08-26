@@ -111,6 +111,11 @@ static bool isAnalogDigital[4];
 static int pluginInitialized = 0;
 static CONTROL* controllerInfos = nullptr;
 
+
+static const double maxAxis = 85.0;
+static const double deadzone = 4.556;
+static const double axisRange = maxAxis - deadzone;
+
 // Function declarations
 static void DebugMessage(int level, const char *message, ...);
 
@@ -314,32 +319,47 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
     }
 }
 
+double simulateDeadZone(double n64InputAxis)
+{
+    double axisAbsolute = std::abs(n64InputAxis);
+
+    // Check X axis deadzone
+    if (axisAbsolute < deadzone) {
+        axisAbsolute = 0;
+    } else {
+        axisAbsolute = (axisAbsolute - deadzone) * maxAxis / (axisRange) / axisAbsolute;
+    }
+
+    return axisAbsolute;
+}
+
 // Credit: MerryMage
 void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
 {
     //scale to {-84 ... +84}
-    double ax = inputX * 85.0;
-    double ay = inputY * 85.0;
+    double ax = inputX * maxAxis;
+    double ay = inputY * maxAxis;
 
+    // Crop to a circle
     double len = std::sqrt(ax*ax+ay*ay);
-    if (len < 16.0) {
-        len = 0;
-    } else if (len > 85.0) {
-        len = 85.0 / len;
-    } else {
-        len = (len - 16.0) * 85.0 / (85.0 - 16.0) / len;
+    if (len > maxAxis) {
+        len = maxAxis / len;
+        ax *= len;
+        ay *= len;
     }
-    ax *= len;
-    ay *= len;
+
+    // Simulate a square deadzone
+    ax *= simulateDeadZone(ax);
+    ay *= simulateDeadZone(ay);
 
     //bound diagonals to an octagonal range {-68 ... +68}
     if(ax != 0.0 && ay != 0.0) {
         double slope = ay / ax;
-        double edgex = copysign(85.0 / (std::abs(slope) + 16.0 / 69.0), ax);
-        double edgey = copysign(std::min(std::abs(edgex * slope), 85.0 / (1.0 / std::abs(slope) + 16.0 / 69.0)), ay);
+        double edgex = copysign(maxAxis / (std::abs(slope) + 16.0 / 69.0), ax);
+        double edgey = copysign(std::min(std::abs(edgex * slope), maxAxis / (1.0 / std::abs(slope) + 16.0 / 69.0)), ay);
         edgex = edgey / slope;
 
-        double scale = std::sqrt(edgex*edgex+edgey*edgey) / 85.0;
+        double scale = std::sqrt(edgex*edgex+edgey*edgey) / maxAxis;
         ax *= scale;
         ay *= scale;
     }
