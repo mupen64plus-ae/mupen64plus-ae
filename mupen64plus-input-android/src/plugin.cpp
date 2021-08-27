@@ -353,9 +353,8 @@ void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
     //bound diagonals to an octagonal range {-68 ... +68}
     if(ax != 0.0 && ay != 0.0) {
         double slope = ay / ax;
-        double edgex = copysign(maxAxis / (std::abs(slope) + deadzone / axisRange), ax);
-        double edgey = copysign(std::min(std::abs(edgex * slope), maxAxis / (1.0 / std::abs(slope) +
-            deadzone / axisRange)), ay);
+        double edgex = copysign(maxAxis / (std::abs(slope) + 16.0 / 69.0), ax);
+        double edgey = copysign(std::min(std::abs(edgex * slope), maxAxis / (1.0 / std::abs(slope) + 16.0 / 69.0)), ay);
         edgex = edgey / slope;
 
         double scale = std::sqrt(edgex*edgex+edgey*edgey) / maxAxis;
