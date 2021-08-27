@@ -321,14 +321,16 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
 
 double simulateDeadZone(double n64InputAxis)
 {
+    double axisAbsolute = std::abs(n64InputAxis);
+
     // Check X axis deadzone
-    if (n64InputAxis < deadzone) {
-        n64InputAxis = 0;
+    if (axisAbsolute < deadzone) {
+        axisAbsolute = 0;
     } else {
-        n64InputAxis = (n64InputAxis - deadzone) * maxAxis / (axisRange) / n64InputAxis;
+        axisAbsolute = (axisAbsolute - deadzone) * maxAxis / (axisRange) / axisAbsolute;
     }
 
-    return n64InputAxis;
+    return axisAbsolute;
 }
 
 // Credit: MerryMage
@@ -347,8 +349,8 @@ void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
     }
 
     // Simulate a square deadzone
-    ax = simulateDeadZone(ax);
-    ay = simulateDeadZone(ay);
+    ax *= simulateDeadZone(ax);
+    ay *= simulateDeadZone(ay);
 
     //bound diagonals to an octagonal range {-68 ... +68}
     if(ax != 0.0 && ay != 0.0) {
