@@ -55,6 +55,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLIDEN64_TEXTURE_FILTERING = "categoryGliden64TextureFiltering";
     private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
     private static final String CATEGORY_ANGRYLION = "categoryAngrylion";
+    private static final String CATEGORY_PARALLEL = "categoryParallel";
 
     private static final String RSP_PLUGIN = "rspSetting";
     private static final String VIDEO_PLUGIN = "videoPlugin";
@@ -128,6 +129,7 @@ public class EmulationProfileActivity extends ProfileActivity
         PreferenceCategory categoryGliden64TextureFiltering = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE_FILTERING );
         PreferenceCategory categoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
         PreferenceCategory categoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
+        PreferenceCategory categoryParallel = (PreferenceCategory) findPreference( CATEGORY_PARALLEL );
 
         CompatListPreference preferenceRspPlugin = (CompatListPreference) findPreference( RSP_PLUGIN );
         CompatListPreference preferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
@@ -234,6 +236,18 @@ public class EmulationProfileActivity extends ProfileActivity
             else
             {
                 screenRoot.removePreference( categoryAngrylion );
+            }
+        }
+
+        if(categoryParallel != null)
+        {
+            if( LIBPARALLEL_SO.equals( videoPlugin ) )
+            {
+                screenRoot.addPreference( categoryParallel );
+            }
+            else
+            {
+                screenRoot.removePreference( categoryParallel );
             }
         }
 
