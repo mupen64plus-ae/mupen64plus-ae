@@ -41,8 +41,8 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     /** Max flat value to determine if we should override it */
     private static final float MAX_FLAT = 0.5f;
 
-    /** Flat value override if the os privided one is above MAX_FLAT */
-    private static final float FLAT_OVERRIDE = 0.25f;
+    /** Minimum flat value to determine if we should override it */
+    private static final float MIN_FLAT = 0.15f;
 
     /**
      * Instantiates a new axis provider.
@@ -77,7 +77,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         // A joystick at rest does not always report an absolute position of
         // (0,0). Use the getFlat() method to determine the range of values
         // bounding the joystick axis center.
-        float flat = FLAT_OVERRIDE;
+        float flat = MIN_FLAT;
 
         if (range != null) {
             flat = range.getFlat();
@@ -86,9 +86,9 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         final float value = event.getAxisValue(axis);
 
         //Some devices with bad drivers report invalid flat regions
-        if(flat > MAX_FLAT || flat < 0.0)
+        if(flat > MAX_FLAT || flat < MIN_FLAT)
         {
-            flat = FLAT_OVERRIDE;
+            flat = MIN_FLAT;
         }
 
         // Ignore axis values that are within the 'flat' region of the
@@ -175,9 +175,9 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                 {
                     float flat = motionRange.getFlat();
                     //Some devices with bad drivers report invalid flat regions
-                    if(flat > MAX_FLAT || flat < 0.0)
+                    if(flat > MAX_FLAT || flat < MIN_FLAT)
                     {
-                        flat = FLAT_OVERRIDE;
+                        flat = MIN_FLAT;
                     }
 
                     switch( axisClass )
