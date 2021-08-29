@@ -29,9 +29,6 @@ import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListe
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.util.Utility;
 
-import android.util.Log;
-
-
 /**
  * Emulates a joystick using accelerometer sensor
  */
@@ -93,6 +90,7 @@ public class SensorController extends AbstractController implements SensorEventL
         this.sensitivityY = sensorSensitivityY / 100f;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isSensorEnabled() {
         return mSensorEnabled;
     }
