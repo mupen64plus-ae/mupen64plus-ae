@@ -27,6 +27,10 @@ import android.hardware.SensorManager;
 
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
+import paulscode.android.mupen64plusae.util.Utility;
+
+import android.util.Log;
+
 
 /**
  * Emulates a joystick using accelerometer sensor
@@ -46,6 +50,7 @@ public class SensorController extends AbstractController implements SensorEventL
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
     private boolean mSensorAngleSet = false;
+    private static final float mDeadZone = 0.2f;
 
     /**
      * Constructor
@@ -146,9 +151,30 @@ public class SensorController extends AbstractController implements SensorEventL
         rawY *= sensitivityY;
 
         float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
-        float factor = magnitude > 1 ? magnitude : 1;
-        mState.axisFractionX = rawX / factor;
-        mState.axisFractionY = rawY / factor;
+
+        // If a specific axis is exagerated, the reduce the other axis
+        float factor = Math.max(magnitude, 1.0f);
+        rawX = rawX / factor;
+        rawY = rawY / factor;
+
+        // Rescale strength to account for deadzone
+        magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
+
+        if( magnitude > mDeadZone )
+        {
+            // Normalize the vector
+            float normalizedX = rawX / magnitude;
+            float normalizedY = rawY / magnitude;
+            magnitude = ( magnitude - mDeadZone ) / ( 1f - mDeadZone );
+            magnitude = Utility.clamp( magnitude, 0f, 1f );
+            mState.axisFractionX = normalizedX * magnitude;
+            mState.axisFractionY = normalizedY * magnitude;
+        } else {
+            // In the deadzone
+            mState.axisFractionX = 0;
+            mState.axisFractionY = 0;
+        }
+
         notifyChanged(false);
         mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
     }
