@@ -150,7 +150,7 @@ public class SensorController extends AbstractController implements SensorEventL
 
         float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
 
-        // If a specific axis is exagerated, the reduce the other axis
+        // If a specific axis is exagerated, then reduce the other axis
         float factor = Math.max(magnitude, 1.0f);
         rawX = rawX / factor;
         rawY = rawY / factor;
