@@ -386,6 +386,10 @@ public class GlobalPrefs
     /** True if we should use Raphnet devices if available */
     public final boolean useRaphnetDevicesIfAvailable;
 
+    /** True if we should hold controller buttons for a certain amount of time for
+     * some functions to take effect */
+    public final boolean holdControllerBottons;
+
     // Shared preferences keys and key templates
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -771,6 +775,7 @@ public class GlobalPrefs
 
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread_v2", true );
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
+        holdControllerBottons = mPreferences.getBoolean( "holdButtonForMenu", true );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
         gpuRenderer = AppData.getOpenGlEsRenderer();

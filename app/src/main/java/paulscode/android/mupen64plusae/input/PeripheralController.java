@@ -84,6 +84,10 @@ public class PeripheralController extends AbstractController implements
 
     /** True if the N64 analog is being controlled by a digital input */
     private boolean mIsAnalogDigitalInput = false;
+
+    /** True if we should hold controller buttons for a certain amount of time for
+     * some functions to take effect */
+    private boolean mHoldControllerBottons;
     
     /**
      * Instantiates a new peripheral controller.
@@ -98,8 +102,8 @@ public class PeripheralController extends AbstractController implements
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController(CoreFragment coreFragment, int player, PlayerMap playerMap, InputMap inputMap,
-                                int inputDeadzone, int inputSensitivityX, int inputSensitivityY, OnStateChangedListener listener,
-                                View.OnKeyListener keyListener, SensorController sensorController, AbstractProvider... providers )
+                                int inputDeadzone, int inputSensitivityX, int inputSensitivityY, boolean holdForFunctions,
+                                OnStateChangedListener listener, View.OnKeyListener keyListener, SensorController sensorController, AbstractProvider... providers )
     {
         super(coreFragment);
 
@@ -110,6 +114,7 @@ public class PeripheralController extends AbstractController implements
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
         mSensitivityFractionX = ( (float) inputSensitivityX ) / 100f;
         mSensitivityFractionY = ( (float) inputSensitivityY ) / 100f;
+        mHoldControllerBottons = holdForFunctions;
         mListener = listener;
         mKeyListener = keyListener;
         mSensorController = sensorController;
@@ -257,7 +262,7 @@ public class PeripheralController extends AbstractController implements
             }
         } else if(mPlayerNumber == 1) {
             // Button must be held for some inputs to prevent accidental presses
-            boolean ignoreInput = !isAxis && repeatCount < 10;
+            boolean ignoreInput = !isAxis && repeatCount < 10 && mHoldControllerBottons;
 
             if (keyDown) {
                 switch (n64Index) {

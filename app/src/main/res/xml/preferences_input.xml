@@ -106,6 +106,12 @@
         android:title="@string/inputMenuMappable_title" />
 
     <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="holdButtonForMenu"
+        android:summary="@string/inputHoldControllerMenuKey_summary"
+        android:title="@string/inputHoldControllerMenuKey_title" />
+
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="false"
         android:key="useRaphnetAdapter"
         android:summary="@string/inputUseRaphnetAdapter_summary"
