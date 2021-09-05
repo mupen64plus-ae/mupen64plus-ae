@@ -10,15 +10,14 @@ MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES :=                          \
     $(LOCAL_PATH)/$(SRCDIR)/Glitch64/inc        \
+    $(LOCAL_PATH)/$(SRCDIR)/                    \
     $(LOCAL_PATH)/../ndkLibs/SDL2_stub          \
     $(M64P_API_INCLUDES)                        \
 
 MY_LOCAL_SRC_FILES :=                           \
     $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \
-    $(SRCDIR)/Glide64/3dmath.cpp                \
     $(SRCDIR)/Glide64/Combine.cpp               \
     $(SRCDIR)/Glide64/Config.cpp                \
-    $(SRCDIR)/Glide64/CRC.cpp                   \
     $(SRCDIR)/Glide64/Debugger.cpp              \
     $(SRCDIR)/Glide64/DepthBufferRender.cpp     \
     $(SRCDIR)/Glide64/FBtoScreen.cpp            \
@@ -58,6 +57,16 @@ MY_LOCAL_CFLAGS :=         \
     -DNO_ASM            \
     -fsigned-char       \
     -Wno-format -Wno-macro-redefined
+
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+    MY_LOCAL_SRC_FILES += $(SRCDIR)/Neon/3DMathNeon.cpp $(SRCDIR)/Neon/CRC_OPT_NEON.cpp
+    MY_LOCAL_CFLAGS += -DNEON
+else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+    MY_LOCAL_SRC_FILES += $(SRCDIR)/Neon/3DMathNeon.cpp $(SRCDIR)/Neon/CRC_OPT_NEON.cpp
+    MY_LOCAL_CFLAGS += -DNEON
+else
+    MY_LOCAL_SRC_FILES += $(SRCDIR)/Glide64/3dmath.cpp $(SRCDIR)/Glide64/CRC.cpp
+endif
     
 MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11 -Wno-format -Wno-macro-redefined
     
