@@ -300,7 +300,6 @@ namespace graphics {
 		static bool ShaderProgramBinary;
 		static bool ImageTextures;
 		static bool IntegerTextures;
-		static bool ClipControl;
 		static bool FramebufferFetchDepth;
 		static bool FramebufferFetchColor;
 		static bool TextureBarrier;
