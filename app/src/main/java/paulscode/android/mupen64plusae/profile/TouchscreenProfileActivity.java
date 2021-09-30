@@ -253,21 +253,15 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         setCheckState( menu, R.id.menuItem_analog, ANALOG );
         setCheckState( menu, R.id.menuItem_dpad, DPAD );
 
-        if(mTouchscreenMap.isABSplit())
-        {
-            UpdateButtonMenu(listView, R.id.menuItem_groupAB);
-        }
-        else
+        // Disable A/B buttons to be separated if the skin is not supporting it.
+        if(!mTouchscreenMap.isSplitABSkin())
         {
             UpdateButtonMenu(listView, R.id.menuItem_buttonA);
             UpdateButtonMenu(listView, R.id.menuItem_buttonB);
         }
 
-        if(mTouchscreenMap.isCSplit())
-        {
-            UpdateButtonMenu(listView, R.id.menuItem_groupC);
-        }
-        else
+        // Disable C buttons to be separated if the skin is not supporting it.
+        if(!mTouchscreenMap.isSplitCSkin())
         {
             UpdateButtonMenu(listView, R.id.menuItem_buttonCR);
             UpdateButtonMenu(listView, R.id.menuItem_buttonCL);
@@ -314,20 +308,32 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         } else if (item.getItemId() == R.id.menuItem_dpad) {
             toggleAsset( DPAD );
         } else if (item.getItemId() == R.id.menuItem_groupAB) {
+            disableAssetNoRefresh( BUTTON_A );
+            disableAssetNoRefresh( BUTTON_B );
             toggleAsset( GROUP_AB );
         } else if (item.getItemId() == R.id.menuItem_buttonA) {
+            disableAssetNoRefresh( GROUP_AB );
             toggleAsset( BUTTON_A );
         } else if (item.getItemId() == R.id.menuItem_buttonB) {
+            disableAssetNoRefresh( GROUP_AB );
             toggleAsset( BUTTON_B );
         } else if (item.getItemId() == R.id.menuItem_groupC) {
+            disableAssetNoRefresh( BUTTON_CR );
+            disableAssetNoRefresh( BUTTON_CL );
+            disableAssetNoRefresh( BUTTON_CD );
+            disableAssetNoRefresh( BUTTON_CU );
             toggleAsset( GROUP_C );
         } else if (item.getItemId() == R.id.menuItem_buttonCR) {
+            disableAssetNoRefresh( GROUP_C );
             toggleAsset( BUTTON_CR );
         } else if (item.getItemId() == R.id.menuItem_buttonCL) {
+            disableAssetNoRefresh( GROUP_C );
             toggleAsset( BUTTON_CL );
         } else if (item.getItemId() == R.id.menuItem_buttonCD) {
+            disableAssetNoRefresh( GROUP_C );
             toggleAsset( BUTTON_CD );
         } else if (item.getItemId() == R.id.menuItem_buttonCU) {
+            disableAssetNoRefresh( GROUP_C );
             toggleAsset( BUTTON_CU );
         } else if (item.getItemId() == R.id.menuItem_buttonL) {
             toggleAsset( BUTTON_L );
@@ -356,7 +362,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         int y = mProfile.getInt( assetName + TAG_Y, DISABLED_ASSET_POS );
         return ( x > DISABLED_ASSET_POS ) && ( y > DISABLED_ASSET_POS );
     }
-    
+
     private void toggleAsset( String assetName )
     {
         // Change the position of the asset to show/hide
@@ -364,6 +370,14 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mProfile.putInt( assetName + TAG_X, newPosition );
         mProfile.putInt( assetName + TAG_Y, newPosition );
         refresh();
+    }
+
+    private void disableAssetNoRefresh( String assetName )
+    {
+        // Change the position of the asset to hide
+        int newPosition = DISABLED_ASSET_POS;
+        mProfile.putInt( assetName + TAG_X, newPosition );
+        mProfile.putInt( assetName + TAG_Y, newPosition );
     }
     
     private void setNotHoldable( int n64Index, boolean holdable )
