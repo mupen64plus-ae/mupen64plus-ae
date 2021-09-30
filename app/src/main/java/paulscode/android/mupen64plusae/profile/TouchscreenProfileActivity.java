@@ -375,9 +375,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void disableAssetNoRefresh( String assetName )
     {
         // Change the position of the asset to hide
-        int newPosition = DISABLED_ASSET_POS;
-        mProfile.putInt( assetName + TAG_X, newPosition );
-        mProfile.putInt( assetName + TAG_Y, newPosition );
+        mProfile.putInt( assetName + TAG_X, DISABLED_ASSET_POS );
+        mProfile.putInt( assetName + TAG_Y, DISABLED_ASSET_POS );
     }
     
     private void setNotHoldable( int n64Index, boolean holdable )
