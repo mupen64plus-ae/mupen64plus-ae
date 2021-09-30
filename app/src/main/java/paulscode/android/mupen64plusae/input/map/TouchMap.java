@@ -149,11 +149,16 @@ public class TouchMap
     /** The error in RGB (256x256x256) space that we tolerate when matching mask colors. */
     private static final int MATCH_TOLERANCE = 10;
 
-    /** True if A/B buttons are split */
-    boolean mSplitAB;
+    /** True if separated A/B buttons is supported in that skin */
+    boolean mSplitABSkin;
 
-    /** True if C buttons are split */
-    boolean mSplitC;
+    /** True if separated C buttons is supported in that skin */
+    boolean mSplitCSkin;
+
+    // The inital or disabled x/y position of an asset
+    private static final String TAG_X = "-x";
+    private static final String TAG_Y = "-y";
+    private static final int DISABLED_ASSET_POS = -1;
     
     static
     {
@@ -474,9 +479,9 @@ public class TouchMap
     
     /**
      * Gets the analog strength, accounting for deadzone and motion limits.
-     * 
+     *
      * @param displacement The Pythagorean displacement of the analog stick, in pixels.
-     * 
+     *
      * @return The analog strength, between 0 and 1, inclusive.
      */
     public float getAnalogStrength( float displacement )
@@ -485,12 +490,12 @@ public class TouchMap
         float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
         return Utility.clamp( p, 0.0f, 1.0f );
     }
-    
+
     /**
      * Checks if a touch is within capture range of the analog stick.
-     * 
+     *
      * @param point Point location
-     * 
+     *
      * @return True, if the touch is in capture range of the stick.
      */
     public boolean isInCaptureRange( Point point )
@@ -503,10 +508,10 @@ public class TouchMap
         displacement /= ( analogBackScaling * scale );
         return ( displacement >= analogDeadzone ) && ( displacement < analogMaximum + analogPadding );
     }
-    
+
     /**
      * Loads all touch map data from the filesystem.
-     * 
+     *
      * @param skinDir The directory containing the skin.ini and image files.
      * @param profile  The name of the layout profile.
      * @param animated True to load the analog assets in two parts for animation.
@@ -515,21 +520,22 @@ public class TouchMap
     {
         // Clear any old assets and map data
         clear();
-        
+
         // Load the configuration files
         skinFolder = skinDir;
 
-        mSplitAB = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-AB" ), false);
-        mSplitC = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-C" ), false);
+        mSplitABSkin = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-AB" ), false);
+        mSplitCSkin = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-C" ), false);
 
         // Look up the mask colors
         loadMaskColors( skin_ini );
-        
+
         // Loop through all the configuration sections
         loadAllAssets( context, profile, animated );
 
 
-        if( mSplitAB )
+        // If we need to load separated A/B Buttons.
+        if(mSplitABSkin && !hasAsset(profile, "groupAB"))
         {
             ASSET_NAMES.setValueAt( AbstractController.BTN_B, "buttonB" );
             ASSET_NAMES.setValueAt( AbstractController.BTN_A, "buttonA" );
@@ -539,7 +545,8 @@ public class TouchMap
             ASSET_NAMES.setValueAt( AbstractController.BTN_B, "groupAB" );
             ASSET_NAMES.setValueAt( AbstractController.BTN_A, "groupAB" );
         }
-        if( mSplitC )
+        // If we need to load separated C Buttons.
+        if(mSplitCSkin && !hasAsset(profile, "groupC"))
         {
             ASSET_NAMES.setValueAt( AbstractController.CPD_R, "buttonCr" );
             ASSET_NAMES.setValueAt( AbstractController.CPD_L, "buttonCl" );
@@ -554,10 +561,10 @@ public class TouchMap
             ASSET_NAMES.setValueAt( AbstractController.CPD_U, "groupC" );
         }
     }
-    
+
     /**
      * Update the position of a button.
-     * 
+     *
      * @param profile  The name of the layout profile.
      * @param name     The name of the button.
      */
@@ -566,10 +573,10 @@ public class TouchMap
         if (name == null) {
             return;
         }
-        
+
         int x = profile.getInt( name + "-x", 0 );
         int y = profile.getInt( name + "-y", 95 );
-        
+
         if( x >= 0 && y >= 0 )
         {
             if( name.equals( "analog" ) )
@@ -583,7 +590,7 @@ public class TouchMap
 
                 originalAnalogX = analogBackImage.x;
                 originalAnalogY = analogBackImage.y;
-                
+
                 if( analogForeImage != null )
                 {
                     int cX = currentAnalogX + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
@@ -607,14 +614,14 @@ public class TouchMap
             }
         }
     }
-    
+
     public void setAnalogEnabled(boolean enabled) {
         isAnalogEnabled = enabled;
     }
 
     /**
      * Loads the mask colors from a configuration file.
-     * 
+     *
      * @param skin_ini The configuration file containing mask info.
      */
     private void loadMaskColors( ConfigFile skin_ini )
@@ -642,10 +649,25 @@ public class TouchMap
             }
         }
     }
-    
+
+    /**
+     *  Check if the asset is enabled in the touchscreen profile.
+     *
+     * @param profile  The touchscreen profile.
+     * @param assetName The asset name
+     * @return Return true if the asset is enabled in the touchscreen profile.
+     */
+    protected boolean hasAsset( Profile profile, String assetName )
+    {
+        // Get the asset position from the profile and see if it's valid
+        int x = profile.getInt( assetName + TAG_X, DISABLED_ASSET_POS );
+        int y = profile.getInt( assetName + TAG_Y, DISABLED_ASSET_POS );
+        return ( x > DISABLED_ASSET_POS ) && ( y > DISABLED_ASSET_POS );
+    }
+
     /**
      * Loads all assets and properties specified in a profile.
-     * 
+     *
      * @param profile  The touchscreen profile.
      * @param animated True to load the analog assets in two parts for animation.
      */
@@ -655,14 +677,18 @@ public class TouchMap
         {
             loadAnalog(context, profile, animated );
             loadButton(context, profile, "dpad" );
-            if( mSplitAB )
+
+            // If we need to load separated A/B Buttons.
+            if(mSplitABSkin && !hasAsset(profile, "groupAB"))
             {
                 loadButton(context, profile, "buttonA" );
                 loadButton(context, profile, "buttonB" );
             }
             else
                 loadButton(context, profile, "groupAB" );
-            if( mSplitC )
+
+            // If we need to load separated C Buttons.
+            if(mSplitCSkin && !hasAsset(profile, "groupC"))
             {
                 loadButton(context, profile, "buttonCr");
                 loadButton(context, profile, "buttonCl" );
@@ -671,6 +697,7 @@ public class TouchMap
             }
             else
                 loadButton(context, profile, "groupC" );
+
             loadButton(context, profile, "buttonL" );
             loadButton(context, profile, "buttonR" );
             loadButton(context, profile, "buttonZ" );
@@ -678,10 +705,10 @@ public class TouchMap
             loadButton(context, profile, "buttonSen" );
         }
     }
-    
+
     /**
      * Loads analog assets and properties from the filesystem.
-     * 
+     *
      * @param profile  The touchscreen profile containing the analog properties.
      * @param animated True to load the assets in two parts for animation.
      */
@@ -690,13 +717,13 @@ public class TouchMap
         int x = profile.getInt( "analog-x", -1 );
         int y = profile.getInt( "analog-y", -1 );
         int scaling = profile.getInt("analog-scale", 100);
-        
+
         if( x >= 0 && y >= 0 )
         {
             // Position (percentages of the digitizer dimensions)
             analogBackX = x;
             analogBackY = y;
-            
+
             // The images (used by touchscreens) are in PNG image format.
             if( animated )
             {
@@ -707,7 +734,7 @@ public class TouchMap
             {
                 analogBackImage = new Image( context, mResources, skinFolder + "/analog.png" );
             }
-            
+
             // Sensitivity (percentages of the radius, i.e. half the image width)
             analogDeadzone = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-min", 1 ) / 100.0f ) );
             analogMaximum = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-max", 55 ) / 100.0f ) );
@@ -715,10 +742,10 @@ public class TouchMap
             analogBackScaling = (float) scaling / 100.f;
         }
     }
-    
+
     /**
      * Loads button assets and properties from the filesystem.
-     * 
+     *
      * @param profile The touchscreen profile containing the button properties.
      * @param name    The name of the button/group to load.
      */
@@ -727,14 +754,14 @@ public class TouchMap
         int x = profile.getInt( name + "-x", -1 );
         int y = profile.getInt( name + "-y", -1 );
         int scaling = profile.getInt( name + "-scale", 100);
-        
+
          if( x >= 0 && y >= 0 )
         {
             // Position (percentages of the digitizer dimensions)
             buttonX.add( x );
             buttonY.add( y );
             buttonNames.add( name );
-            
+
             // Load the displayed and mask images
             buttonImages.add( new Image( context, mResources, skinFolder + "/" + name + ".png" ) );
             buttonMasks.add( new Image( context, mResources, skinFolder + "/" + name + "-mask.png" ) );

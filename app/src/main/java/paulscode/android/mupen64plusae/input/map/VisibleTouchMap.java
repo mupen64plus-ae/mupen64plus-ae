@@ -126,21 +126,21 @@ public class VisibleTouchMap extends TouchMap
     }
     
     /**
-     * Returns true if A/B buttons are split
+     * Returns true if A/B buttons are split in the skin
      * 
      */
-    public boolean isABSplit()
+    public boolean isSplitABSkin()
     {
-        return mSplitAB;
+        return mSplitABSkin;
     }
 
     /**
-     * Returns true if C buttons are split
+     * Returns true if C buttons are split in the skin
      *
      */
-    public boolean isCSplit()
+    public boolean isSplitCSkin()
     {
-        return mSplitC;
+        return mSplitCSkin;
     }
     
     /*
@@ -352,7 +352,8 @@ public class VisibleTouchMap extends TouchMap
 
         if( profile != null )
         {
-            if( mSplitAB )
+            // If we need to load separated A/B Buttons.
+            if(mSplitABSkin && !hasAsset(profile, "groupAB"))
             {
                 loadAutoHoldImages(context, profile, "buttonA-holdA");
                 loadAutoHoldImages(context, profile, "buttonB-holdB");
@@ -362,7 +363,8 @@ public class VisibleTouchMap extends TouchMap
                 loadAutoHoldImages(context, profile, "groupAB-holdA");
                 loadAutoHoldImages(context, profile, "groupAB-holdB");
             }
-            if( mSplitC )
+            // If we need to load separated C Buttons.
+            if(mSplitCSkin && !hasAsset(profile, "groupC"))
             {
                 loadAutoHoldImages(context, profile, "buttonCr-holdCr");
                 loadAutoHoldImages(context, profile, "buttonCl-holdCl");
