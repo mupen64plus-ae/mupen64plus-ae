@@ -76,6 +76,10 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String BUTTON_A = "buttonA";
     private static final String BUTTON_B = "buttonB";
     private static final String GROUP_C = "groupC";
+    private static final String BUTTON_CR = "buttonCr";
+    private static final String BUTTON_CL = "buttonCl";
+    private static final String BUTTON_CD = "buttonCd";
+    private static final String BUTTON_CU = "buttonCu";
     private static final String BUTTON_L = "buttonL";
     private static final String BUTTON_R = "buttonR";
     private static final String BUTTON_Z = "buttonZ";
@@ -248,7 +252,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         Menu menu = listView.getMenu();
         setCheckState( menu, R.id.menuItem_analog, ANALOG );
         setCheckState( menu, R.id.menuItem_dpad, DPAD );
-        
+
         if(mTouchscreenMap.isABSplit())
         {
             UpdateButtonMenu(listView, R.id.menuItem_groupAB);
@@ -257,11 +261,27 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         {
             UpdateButtonMenu(listView, R.id.menuItem_buttonA);
             UpdateButtonMenu(listView, R.id.menuItem_buttonB);
-        }        
-        
+        }
+
+        if(mTouchscreenMap.isCSplit())
+        {
+            UpdateButtonMenu(listView, R.id.menuItem_groupC);
+        }
+        else
+        {
+            UpdateButtonMenu(listView, R.id.menuItem_buttonCR);
+            UpdateButtonMenu(listView, R.id.menuItem_buttonCL);
+            UpdateButtonMenu(listView, R.id.menuItem_buttonCD);
+            UpdateButtonMenu(listView, R.id.menuItem_buttonCU);
+        }
+
         setCheckState( menu, R.id.menuItem_buttonA, BUTTON_A );
         setCheckState( menu, R.id.menuItem_buttonB, BUTTON_B );
         setCheckState( menu, R.id.menuItem_groupAB, GROUP_AB );
+        setCheckState( menu, R.id.menuItem_buttonCR, BUTTON_CR );
+        setCheckState( menu, R.id.menuItem_buttonCL, BUTTON_CL );
+        setCheckState( menu, R.id.menuItem_buttonCD, BUTTON_CD );
+        setCheckState( menu, R.id.menuItem_buttonCU, BUTTON_CU );
         setCheckState( menu, R.id.menuItem_groupC, GROUP_C );
         setCheckState( menu, R.id.menuItem_buttonL, BUTTON_L );
         setCheckState( menu, R.id.menuItem_buttonR, BUTTON_R );
@@ -301,6 +321,14 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             toggleAsset( BUTTON_B );
         } else if (item.getItemId() == R.id.menuItem_groupC) {
             toggleAsset( GROUP_C );
+        } else if (item.getItemId() == R.id.menuItem_buttonCR) {
+            toggleAsset( BUTTON_CR );
+        } else if (item.getItemId() == R.id.menuItem_buttonCL) {
+            toggleAsset( BUTTON_CL );
+        } else if (item.getItemId() == R.id.menuItem_buttonCD) {
+            toggleAsset( BUTTON_CD );
+        } else if (item.getItemId() == R.id.menuItem_buttonCU) {
+            toggleAsset( BUTTON_CU );
         } else if (item.getItemId() == R.id.menuItem_buttonL) {
             toggleAsset( BUTTON_L );
         } else if (item.getItemId() == R.id.menuItem_buttonR) {
