@@ -148,9 +148,12 @@ public class TouchMap
     
     /** The error in RGB (256x256x256) space that we tolerate when matching mask colors. */
     private static final int MATCH_TOLERANCE = 10;
-    
+
     /** True if A/B buttons are split */
     boolean mSplitAB;
+
+    /** True if C buttons are split */
+    boolean mSplitC;
     
     static
     {
@@ -186,10 +189,10 @@ public class TouchMap
         ASSET_NAMES.put( AbstractController.BTN_Z, "buttonZ" );
         ASSET_NAMES.put( AbstractController.BTN_B, "" );
         ASSET_NAMES.put( AbstractController.BTN_A, "" );
-        ASSET_NAMES.put( AbstractController.CPD_R, "groupC" );
-        ASSET_NAMES.put( AbstractController.CPD_L, "groupC" );
-        ASSET_NAMES.put( AbstractController.CPD_D, "groupC" );
-        ASSET_NAMES.put( AbstractController.CPD_U, "groupC" );
+        ASSET_NAMES.put( AbstractController.CPD_R, "" );
+        ASSET_NAMES.put( AbstractController.CPD_L, "" );
+        ASSET_NAMES.put( AbstractController.CPD_D, "" );
+        ASSET_NAMES.put( AbstractController.CPD_U, "" );
         ASSET_NAMES.put( AbstractController.BTN_R, "buttonR" );
         ASSET_NAMES.put( AbstractController.BTN_L, "buttonL" );
         ASSET_NAMES.put( DPD_LU, "dpad" );
@@ -517,14 +520,15 @@ public class TouchMap
         skinFolder = skinDir;
 
         mSplitAB = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-AB" ), false);
-        
+        mSplitC = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-C" ), false);
+
         // Look up the mask colors
         loadMaskColors( skin_ini );
         
         // Loop through all the configuration sections
         loadAllAssets( context, profile, animated );
 
-        
+
         if( mSplitAB )
         {
             ASSET_NAMES.setValueAt( AbstractController.BTN_B, "buttonB" );
@@ -534,6 +538,20 @@ public class TouchMap
         {
             ASSET_NAMES.setValueAt( AbstractController.BTN_B, "groupAB" );
             ASSET_NAMES.setValueAt( AbstractController.BTN_A, "groupAB" );
+        }
+        if( mSplitC )
+        {
+            ASSET_NAMES.setValueAt( AbstractController.CPD_R, "buttonCr" );
+            ASSET_NAMES.setValueAt( AbstractController.CPD_L, "buttonCl" );
+            ASSET_NAMES.setValueAt( AbstractController.CPD_D, "buttonCd" );
+            ASSET_NAMES.setValueAt( AbstractController.CPD_U, "buttonCu" );
+        }
+        else
+        {
+            ASSET_NAMES.setValueAt( AbstractController.CPD_R, "groupC" );
+            ASSET_NAMES.setValueAt( AbstractController.CPD_L, "groupC" );
+            ASSET_NAMES.setValueAt( AbstractController.CPD_D, "groupC" );
+            ASSET_NAMES.setValueAt( AbstractController.CPD_U, "groupC" );
         }
     }
     
@@ -644,7 +662,15 @@ public class TouchMap
             }
             else
                 loadButton(context, profile, "groupAB" );
-            loadButton(context, profile, "groupC" );
+            if( mSplitC )
+            {
+                loadButton(context, profile, "buttonCr");
+                loadButton(context, profile, "buttonCl" );
+                loadButton(context, profile, "buttonCd" );
+                loadButton(context, profile, "buttonCu" );
+            }
+            else
+                loadButton(context, profile, "groupC" );
             loadButton(context, profile, "buttonL" );
             loadButton(context, profile, "buttonR" );
             loadButton(context, profile, "buttonZ" );
