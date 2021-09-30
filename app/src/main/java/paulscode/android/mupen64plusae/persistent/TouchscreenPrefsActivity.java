@@ -127,12 +127,30 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         mValidSkinFiles.add("groupAB-holdB.png");
         mValidSkinFiles.add("groupAB-mask.png");
         mValidSkinFiles.add("groupAB.png");
+        mValidSkinFiles.add("buttonA-holdA.png");
+        mValidSkinFiles.add("buttonA-mask.png");
+        mValidSkinFiles.add("buttonA.png");
+        mValidSkinFiles.add("buttonB-holdB.png");
+        mValidSkinFiles.add("buttonB-mask.png");
+        mValidSkinFiles.add("buttonB.png");
         mValidSkinFiles.add("groupC-holdCd.png");
         mValidSkinFiles.add("groupC-holdCl.png");
         mValidSkinFiles.add("groupC-holdCr.png");
         mValidSkinFiles.add("groupC-holdCu.png");
         mValidSkinFiles.add("groupC-mask.png");
         mValidSkinFiles.add("groupC.png");
+        mValidSkinFiles.add("buttonCr-holdCr.png");
+        mValidSkinFiles.add("buttonCr-mask.png");
+        mValidSkinFiles.add("buttonCr.png");
+        mValidSkinFiles.add("buttonCl-holdCl.png");
+        mValidSkinFiles.add("buttonCl-mask.png");
+        mValidSkinFiles.add("buttonCl.png");
+        mValidSkinFiles.add("buttonCd-holdCd.png");
+        mValidSkinFiles.add("buttonCd-mask.png");
+        mValidSkinFiles.add("buttonCd.png");
+        mValidSkinFiles.add("buttonCu-holdCu.png");
+        mValidSkinFiles.add("buttonCu-mask.png");
+        mValidSkinFiles.add("buttonCu.png");
         mValidSkinFiles.add("skin.ini");
     }
 

@@ -34,6 +34,18 @@
                     android:id="@+id/menuItem_groupC"
                     android:title="@string/controller_groupC"/>
                 <item
+                    android:id="@+id/menuItem_buttonCR"
+                    android:title="@string/controller_buttonCr"/>
+                <item
+                    android:id="@+id/menuItem_buttonCL"
+                    android:title="@string/controller_buttonCl"/>
+                <item
+                    android:id="@+id/menuItem_buttonCD"
+                    android:title="@string/controller_buttonCd"/>
+                <item
+                    android:id="@+id/menuItem_buttonCU"
+                    android:title="@string/controller_buttonCu"/>
+                <item
                     android:id="@+id/menuItem_buttonL"
                     android:title="@string/controller_buttonL"/>
                 <item

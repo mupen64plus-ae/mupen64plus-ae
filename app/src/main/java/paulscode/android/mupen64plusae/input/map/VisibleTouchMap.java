@@ -133,6 +133,15 @@ public class VisibleTouchMap extends TouchMap
     {
         return mSplitAB;
     }
+
+    /**
+     * Returns true if C buttons are split
+     *
+     */
+    public boolean isCSplit()
+    {
+        return mSplitC;
+    }
     
     /*
      * (non-Javadoc)
@@ -343,7 +352,7 @@ public class VisibleTouchMap extends TouchMap
 
         if( profile != null )
         {
-            if( mSplitAB  )
+            if( mSplitAB )
             {
                 loadAutoHoldImages(context, profile, "buttonA-holdA");
                 loadAutoHoldImages(context, profile, "buttonB-holdB");
@@ -353,10 +362,21 @@ public class VisibleTouchMap extends TouchMap
                 loadAutoHoldImages(context, profile, "groupAB-holdA");
                 loadAutoHoldImages(context, profile, "groupAB-holdB");
             }
-            loadAutoHoldImages(context, profile, "groupC-holdCu");
-            loadAutoHoldImages(context, profile, "groupC-holdCd");
-            loadAutoHoldImages(context, profile, "groupC-holdCl");
-            loadAutoHoldImages(context, profile, "groupC-holdCr");
+            if( mSplitC )
+            {
+                loadAutoHoldImages(context, profile, "buttonCr-holdCr");
+                loadAutoHoldImages(context, profile, "buttonCl-holdCl");
+                loadAutoHoldImages(context, profile, "buttonCd-holdCd");
+                loadAutoHoldImages(context, profile, "buttonCu-holdCu");
+            }
+            else
+            {
+                loadAutoHoldImages(context, profile, "groupC-holdCu");
+                loadAutoHoldImages(context, profile, "groupC-holdCd");
+                loadAutoHoldImages(context, profile, "groupC-holdCl");
+                loadAutoHoldImages(context, profile, "groupC-holdCr");
+            }
+
             loadAutoHoldImages(context, profile, "buttonL-holdL");
             loadAutoHoldImages(context, profile, "buttonR-holdR");
             loadAutoHoldImages(context, profile, "buttonZ-holdZ");
