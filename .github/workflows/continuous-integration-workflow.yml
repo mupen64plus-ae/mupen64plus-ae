@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: ubuntu-20.04
+    name: Build Mupen64Plus-AE
     runs-on: ubuntu-20.04
     container: cirrusci/android-sdk:30-ndk
 
