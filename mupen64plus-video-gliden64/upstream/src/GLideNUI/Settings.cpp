@@ -1,5 +1,6 @@
 #include <QSettings>
 #include <QColor>
+#include <QFile>
 
 #ifdef OS_WINDOWS
 #include <windows.h>
@@ -12,6 +13,7 @@
 #include "Settings.h"
 
 static const char * strIniFileName = "GLideN64.ini";
+static const char * strDefaultIniFileName = "GLideN64.default.ini";
 static const char * strCustomSettingsFileName = "GLideN64.custom.ini";
 static QString strUserProfile("User");
 
@@ -38,7 +40,6 @@ void _loadSettings(QSettings & settings)
 	config.texture.maxAnisotropy = settings.value("maxAnisotropy", config.texture.maxAnisotropy).toInt();
 	config.texture.bilinearMode = settings.value("bilinearMode", config.texture.bilinearMode).toInt();
 	config.texture.enableHalosRemoval = settings.value("enableHalosRemoval", config.texture.enableHalosRemoval).toInt();
-	config.texture.screenShotFormat = settings.value("screenShotFormat", config.texture.screenShotFormat).toInt();
 	settings.endGroup();
 
 	settings.beginGroup("generalEmulation");
@@ -103,6 +104,7 @@ void _loadSettings(QSettings & settings)
 	config.textureFilter.txSaveCache = settings.value("txSaveCache", config.textureFilter.txSaveCache).toInt();
 	config.textureFilter.txEnhancedTextureFileStorage = settings.value("txEnhancedTextureFileStorage", config.textureFilter.txEnhancedTextureFileStorage).toInt();
 	config.textureFilter.txHiresTextureFileStorage = settings.value("txHiresTextureFileStorage", config.textureFilter.txHiresTextureFileStorage).toInt();
+	config.textureFilter.txNoTextureFileStorage = settings.value("txNoTextureFileStorage", config.textureFilter.txNoTextureFileStorage).toInt();
 	QString txPath = QString::fromWCharArray(config.textureFilter.txPath);
 	config.textureFilter.txPath[settings.value("txPath", txPath).toString().toWCharArray(config.textureFilter.txPath)] = L'\0';
 	QString txCachePath = QString::fromWCharArray(config.textureFilter.txCachePath);
@@ -144,7 +146,7 @@ void _loadSettings(QSettings & settings)
 	settings.beginGroup("hotkeys");
 	for (u32 idx = 0; idx < Config::HotKey::hkTotal; ++idx) {
 		config.hotkeys.keys[idx] = settings.value(Config::hotkeyIniName(idx), config.hotkeys.keys[idx]).toInt();
-		config.hotkeys.enabledKeys[idx] = settings.value(Config::enabledHotkeyIniName(idx), config.hotkeys.keys[idx]).toInt();
+		config.hotkeys.enabledKeys[idx] = settings.value(Config::enabledHotkeyIniName(idx), config.hotkeys.enabledKeys[idx]).toInt();
 	}
 	settings.endGroup();
 
@@ -153,54 +155,11 @@ void _loadSettings(QSettings & settings)
 	settings.endGroup();
 }
 
-void loadSettings(const QString & _strIniFolder)
-{
-	bool rewriteSettings = false;
-	{
-		const u32 hacks = config.generalEmulation.hacks;
-		QSettings settings(_strIniFolder + "/" + strIniFileName, QSettings::IniFormat);
-		const u32 configVersion = settings.value("version", 0).toInt();
-		QString configTranslationFile = settings.value("translation", config.translationFile.c_str()).toString();
-		config.resetToDefaults();
-		config.generalEmulation.hacks = hacks;
-		config.translationFile = configTranslationFile.toLocal8Bit().constData();
-		if (configVersion < CONFIG_WITH_PROFILES) {
-			_loadSettings(settings);
-			config.version = CONFIG_VERSION_CURRENT;
-			settings.clear();
-			settings.setValue("version", CONFIG_VERSION_CURRENT);
-			settings.setValue("profile", strUserProfile);
-			settings.setValue("translation", config.translationFile.c_str());
-			settings.beginGroup(strUserProfile);
-			writeSettings(_strIniFolder);
-			settings.endGroup();
-		}
-		QString profile = settings.value("profile", strUserProfile).toString();
-		if (settings.childGroups().indexOf(profile) >= 0) {
-			settings.beginGroup(profile);
-			_loadSettings(settings);
-			settings.endGroup();
-		} else
-			rewriteSettings = true;
-		if (config.version != CONFIG_VERSION_CURRENT)
-			rewriteSettings = true;
-	}
-	if (rewriteSettings) {
-		// Keep settings up-to-date
-		{
-			QSettings settings(_strIniFolder + "/" + strIniFileName, QSettings::IniFormat);
-			QString profile = settings.value("profile", strUserProfile).toString();
-			settings.remove(profile);
-		}
-		config.version = CONFIG_VERSION_CURRENT;
-		writeSettings(_strIniFolder);
-	}
-}
-
-void writeSettings(const QString & _strIniFolder)
+static
+void _writeSettingsToFile(const QString & filename)
 {
 //	QSettings settings("Emulation", "GLideN64");
-	QSettings settings(_strIniFolder + "/" + strIniFileName, QSettings::IniFormat);
+	QSettings settings(filename, QSettings::IniFormat);
 	settings.setValue("version", config.version);
 	settings.setValue("translation", config.translationFile.c_str());
 	QString profile = settings.value("profile", strUserProfile).toString();
@@ -226,7 +185,6 @@ void writeSettings(const QString & _strIniFolder)
 	settings.setValue("maxAnisotropy", config.texture.maxAnisotropy);
 	settings.setValue("bilinearMode", config.texture.bilinearMode);
 	settings.setValue("enableHalosRemoval", config.texture.enableHalosRemoval);
-	settings.setValue("screenShotFormat", config.texture.screenShotFormat);
 	settings.endGroup();
 
 	settings.beginGroup("generalEmulation");
@@ -291,6 +249,7 @@ void writeSettings(const QString & _strIniFolder)
 	settings.setValue("txSaveCache", config.textureFilter.txSaveCache);
 	settings.setValue("txEnhancedTextureFileStorage", config.textureFilter.txEnhancedTextureFileStorage);
 	settings.setValue("txHiresTextureFileStorage", config.textureFilter.txHiresTextureFileStorage);
+	settings.setValue("txNoTextureFileStorage", config.textureFilter.txNoTextureFileStorage);
 	settings.setValue("txPath", QString::fromWCharArray(config.textureFilter.txPath));
 	settings.setValue("txCachePath", QString::fromWCharArray(config.textureFilter.txCachePath));
 	settings.setValue("txDumpPath", QString::fromWCharArray(config.textureFilter.txDumpPath));
@@ -329,6 +288,72 @@ void writeSettings(const QString & _strIniFolder)
 	settings.endGroup();
 
 	settings.endGroup();
+}
+
+static
+void _loadSettingsFromFile(const QString & filename)
+{
+	bool rewriteSettings = false;
+	{
+		const u32 hacks = config.generalEmulation.hacks;
+		QSettings settings(filename, QSettings::IniFormat);
+		const u32 configVersion = settings.value("version", 0).toInt();
+		QString configTranslationFile = settings.value("translation", config.translationFile.c_str()).toString();
+		config.resetToDefaults();
+		config.generalEmulation.hacks = hacks;
+		config.translationFile = configTranslationFile.toLocal8Bit().constData();
+		if (configVersion < CONFIG_WITH_PROFILES) {
+			_loadSettings(settings);
+			config.version = CONFIG_VERSION_CURRENT;
+			settings.clear();
+			settings.setValue("version", CONFIG_VERSION_CURRENT);
+			settings.setValue("profile", strUserProfile);
+			settings.setValue("translation", config.translationFile.c_str());
+			settings.beginGroup(strUserProfile);
+			_writeSettingsToFile(filename);
+			settings.endGroup();
+		}
+		QString profile = settings.value("profile", strUserProfile).toString();
+		if (settings.childGroups().indexOf(profile) >= 0) {
+			settings.beginGroup(profile);
+			_loadSettings(settings);
+			settings.endGroup();
+		} else
+			rewriteSettings = true;
+		if (config.version != CONFIG_VERSION_CURRENT)
+			rewriteSettings = true;
+	}
+	if (rewriteSettings) {
+		// Keep settings up-to-date
+		{
+			QSettings settings(filename, QSettings::IniFormat);
+			QString profile = settings.value("profile", strUserProfile).toString();
+			settings.remove(profile);
+		}
+		config.version = CONFIG_VERSION_CURRENT;
+		_writeSettingsToFile(filename);
+	}
+}
+
+void loadSettings(const QString & _strIniFolder)
+{
+	_loadSettingsFromFile(_strIniFolder + "/" + strIniFileName);
+}
+
+void writeSettings(const QString & _strIniFolder)
+{
+	_writeSettingsToFile(_strIniFolder + "/" + strIniFileName);
+}
+
+void resetSettings(const QString & _strIniFolder)
+{
+	QString defaultSettingsFilename = _strIniFolder + "/" + strDefaultIniFileName;
+	QFile defaultFile(defaultSettingsFilename);
+	if (defaultFile.exists()) {
+		_loadSettingsFromFile(defaultSettingsFilename);
+	} else {
+		config.resetToDefaults();
+	}
 }
 
 static
@@ -432,7 +457,6 @@ void saveCustomRomSettings(const QString & _strIniFolder, const char * _strRomNa
 	WriteCustomSetting(texture, maxAnisotropy);
 	WriteCustomSetting(texture, bilinearMode);
 	WriteCustomSetting(texture, enableHalosRemoval);
-	WriteCustomSetting(texture, screenShotFormat);
 	settings.endGroup();
 
 	settings.beginGroup("generalEmulation");
@@ -487,6 +511,7 @@ void saveCustomRomSettings(const QString & _strIniFolder, const char * _strRomNa
 	WriteCustomSetting(textureFilter, txCacheSize);
 	WriteCustomSetting(textureFilter, txEnhancedTextureFileStorage);
 	WriteCustomSetting(textureFilter, txHiresTextureFileStorage);
+	WriteCustomSetting(textureFilter, txNoTextureFileStorage);
 	WriteCustomSetting(textureFilter, txHiresEnable);
 	WriteCustomSetting(textureFilter, txHiresFullAlphaChannel);
 	WriteCustomSetting(textureFilter, txHresAltCRC);
@@ -511,6 +536,19 @@ void saveCustomRomSettings(const QString & _strIniFolder, const char * _strRomNa
 	WriteCustomSetting2(onScreenDisplay, showRenderingResolution, renderingResolution);
 	WriteCustomSetting2(onScreenDisplay, showStatistics, statistics);
 	WriteCustomSetting2(onScreenDisplay, osdPos, pos);
+	settings.endGroup();
+
+	settings.beginGroup("hotkeys");
+	for (u32 idx = 0; idx < Config::HotKey::hkTotal; ++idx) {
+		if (origConfig.hotkeys.keys[idx] != config.hotkeys.keys[idx] || 
+			origConfig.hotkeys.keys[idx] != settings.value(Config::hotkeyIniName(idx), config.hotkeys.keys[idx]).toInt()) {
+			settings.setValue(Config::hotkeyIniName(idx), config.hotkeys.keys[idx]);
+		}
+		if (origConfig.hotkeys.enabledKeys[idx] != config.hotkeys.enabledKeys[idx] || 
+			origConfig.hotkeys.enabledKeys[idx] != settings.value(Config::enabledHotkeyIniName(idx), config.hotkeys.enabledKeys[idx]).toInt()) {
+			settings.setValue(Config::enabledHotkeyIniName(idx), config.hotkeys.enabledKeys[idx]);
+		}
+	}
 	settings.endGroup();
 
 	settings.endGroup();

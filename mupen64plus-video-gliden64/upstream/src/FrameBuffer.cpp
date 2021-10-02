@@ -394,6 +394,11 @@ CachedTexture * FrameBuffer::_getSubTexture(u32 _t)
 		copyHeight = m_pTexture->height - y0;
 
 	ObjectHandle readFBO = m_FBO;
+	if (Context::WeakBlitFramebuffer &&
+			m_pTexture->frameBufferTexture == CachedTexture::fbMultiSample) {
+		resolveMultisampledTexture(true);
+		readFBO = m_resolveFBO;
+	}
 
 	Context::BlitFramebuffersParams blitParams;
 	blitParams.readBuffer = readFBO;
@@ -485,6 +490,8 @@ CachedTexture * FrameBuffer::getTexture(u32 _t)
 		pTexture->offsetS = static_cast<f32>(shift % factor);
 		pTexture->offsetT = static_cast<f32>(shift / factor);
 	}
+	pTexture->hdRatioS = m_pTexture->hdRatioS;
+	pTexture->hdRatioT = m_pTexture->hdRatioT;
 
 	if (!getDepthTexture && (gSP.textureTile[_t]->clamps == 0 || gSP.textureTile[_t]->clampt == 0))
 		pTexture = _getSubTexture(_t);
@@ -1015,8 +1022,11 @@ void FrameBufferList::attachDepthBuffer()
 
 		bool goodDepthBufferTexture = false;
 		if (Context::DepthFramebufferTextures) {
-			goodDepthBufferTexture = pDepthBuffer->m_pDepthBufferTexture->width >= pCurrent->m_pTexture->width ||
-					std::abs(static_cast<s32>(pCurrent->m_width) - static_cast<s32>(pDepthBuffer->m_width)) < 2;
+			if (Context::WeakBlitFramebuffer)
+				goodDepthBufferTexture = pDepthBuffer->m_pDepthBufferTexture->width == pCurrent->m_pTexture->width;
+			else
+				goodDepthBufferTexture = pDepthBuffer->m_pDepthBufferTexture->width >= pCurrent->m_pTexture->width ||
+											std::abs(static_cast<s32>(pCurrent->m_width) - static_cast<s32>(pDepthBuffer->m_width)) < 2;
 		} else {
 			goodDepthBufferTexture = pDepthBuffer->m_depthRenderbufferWidth == pCurrent->m_pTexture->width;
 		}

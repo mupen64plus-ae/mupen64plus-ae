@@ -221,15 +221,6 @@ void ConfigDialog::_init(bool reInit, bool blockCustomSettings)
 	ui->hiresNoiseDitheringCheckBox->setChecked(config.generalEmulation.enableHiresNoiseDithering);
 	ui->ditheringPatternCheckBox->setChecked(config.generalEmulation.enableDitheringPattern);
 
-	switch (config.texture.screenShotFormat) {
-	case 0:
-		ui->pngRadioButton->setChecked(true);
-		break;
-	case 1:
-		ui->jpegRadioButton->setChecked(true);
-		break;
-	}
-
 	// Emulation settings
 	ui->emulateLodCheckBox->setChecked(config.generalEmulation.enableLOD != 0);
 	ui->enableHWLightingCheckBox->setChecked(config.generalEmulation.enableHWLighting != 0);
@@ -349,6 +340,7 @@ void ConfigDialog::_init(bool reInit, bool blockCustomSettings)
 	ui->saveTextureCacheCheckBox->setChecked(config.textureFilter.txSaveCache != 0);
 	ui->enhancedTexFileStorageCheckBox->setChecked(config.textureFilter.txEnhancedTextureFileStorage != 0);
 	ui->hiresTexFileStorageCheckBox->setChecked(config.textureFilter.txHiresTextureFileStorage != 0);
+	ui->noTexFileStorageCheckBox->setChecked(config.textureFilter.txNoTextureFileStorage != 0);
 
 	ui->texPackPathLineEdit->setText(QString::fromWCharArray(config.textureFilter.txPath));
 	ui->texCachePathLineEdit->setText(QString::fromWCharArray(config.textureFilter.txCachePath));
@@ -556,11 +548,6 @@ void ConfigDialog::accept(bool justSave) {
 	config.generalEmulation.enableHiresNoiseDithering = ui->hiresNoiseDitheringCheckBox->isChecked() ? 1 : 0;
 	config.generalEmulation.enableDitheringPattern = ui->ditheringPatternCheckBox->isChecked() ? 1 : 0;
 
-	if (ui->pngRadioButton->isChecked())
-		config.texture.screenShotFormat = 0;
-	else if (ui->jpegRadioButton->isChecked())
-		config.texture.screenShotFormat = 1;
-
 	const int lanuageIndex = ui->translationsComboBox->currentIndex();
 	if (lanuageIndex == 0) // English
 		config.translationFile.clear();
@@ -658,6 +645,7 @@ void ConfigDialog::accept(bool justSave) {
 	config.textureFilter.txSaveCache = ui->saveTextureCacheCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txEnhancedTextureFileStorage = ui->enhancedTexFileStorageCheckBox->isChecked() ? 1 : 0;
 	config.textureFilter.txHiresTextureFileStorage = ui->hiresTexFileStorageCheckBox->isChecked() ? 1 : 0;
+	config.textureFilter.txNoTextureFileStorage = ui->noTexFileStorageCheckBox->isChecked() ? 1 : 0;
 
 	QDir txPath(ui->texPackPathLineEdit->text());
 	if (!txPath.exists() &&
@@ -811,7 +799,7 @@ void ConfigDialog::on_buttonBox_clicked(QAbstractButton *button)
 		msgBox.setButtonText(QMessageBox::Cancel, tr("Cancel"));
 		if (msgBox.exec() == QMessageBox::RestoreDefaults) {
 			const u32 enableCustomSettings = config.generalEmulation.enableCustomSettings;
-			config.resetToDefaults();
+			resetSettings(m_strIniPath);
 			config.generalEmulation.enableCustomSettings = enableCustomSettings;
 			setTitle();
 			setRomName(m_romName);
@@ -865,6 +853,11 @@ void ConfigDialog::on_texDumpPathButton_clicked()
 		options);
 	if (!directory.isEmpty())
 		ui->texDumpPathLineEdit->setText(directory);
+}
+
+void ConfigDialog::on_noTexFileStorageCheckBox_toggled(bool checked)
+{
+	ui->hiresTexFileStorageCheckBox->setEnabled(!checked);
 }
 
 void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)

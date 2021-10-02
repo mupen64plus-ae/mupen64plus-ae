@@ -38,7 +38,6 @@ void Config::resetToDefaults()
 	texture.maxAnisotropy = 0;
 	texture.bilinearMode = BILINEAR_STANDARD;
 	texture.enableHalosRemoval = 0;
-	texture.screenShotFormat = 0;
 
 	generalEmulation.enableLOD = 1;
 	generalEmulation.enableHiresNoiseDithering = 0;
@@ -103,6 +102,7 @@ void Config::resetToDefaults()
 
 	textureFilter.txEnhancedTextureFileStorage = 0;
 	textureFilter.txHiresTextureFileStorage = 0;
+	textureFilter.txNoTextureFileStorage = 0;
 
 	api().GetUserDataPath(textureFilter.txPath);
 	gln_wcscat(textureFilter.txPath, wst("/hires_texture"));

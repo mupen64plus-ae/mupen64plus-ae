@@ -18,6 +18,7 @@ namespace graphics {
 	enum class SpecialFeatures {
 		Multisampling,
 		BlitFramebuffer,
+		WeakBlitFramebuffer,
 		DepthFramebufferTextures,
 		ShaderProgramBinary,
 		ImageTextures,
@@ -293,6 +294,7 @@ namespace graphics {
 
 		static bool Multisampling;
 		static bool BlitFramebuffer;
+		static bool WeakBlitFramebuffer;
 		static bool DepthFramebufferTextures;
 		static bool ShaderProgramBinary;
 		static bool ImageTextures;

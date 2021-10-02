@@ -40,6 +40,8 @@ struct CachedTexture
 
 	u32		address;
 	u8		max_level;
+	u16		mipmapAtlasWidth{ 0 };
+	u16		mipmapAtlasHeight{ 0 };
 	enum {
 		fbNone = 0,
 		fbOneSample = 1,
@@ -47,7 +49,6 @@ struct CachedTexture
 	} frameBufferTexture;
 	bool bHDTexture;
 };
-
 
 struct TextureCache
 {
@@ -111,9 +112,6 @@ private:
 };
 
 void getTextureShiftScale(u32 tile, const TextureCache & cache, f32 & shiftScaleS, f32 & shiftScaleT);
-
-// Check for situation when Tex0 is used instead of Tex1
-bool needReplaceTex1ByTex0();
 
 inline TextureCache & textureCache()
 {

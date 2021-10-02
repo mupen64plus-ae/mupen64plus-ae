@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <Config.h>
 #include "glsl_CombinerProgramUniformFactory.h"
@@ -14,6 +15,10 @@
 #include <gSP.h>
 #include <gDP.h>
 #include <VI.h>
+
+#ifdef min
+#undef min
+#endif
 
 namespace glsl {
 
@@ -577,41 +582,32 @@ private:
 	fv2Uniform uScreenScale;
 };
 
-class UMipmap1 : public UniformGroup
+class UMipmap : public UniformGroup
 {
 public:
-	UMipmap1(GLuint _program) {
+	UMipmap(GLuint _program) {
 		LocateUniform(uMinLod);
 		LocateUniform(uMaxTile);
-	}
-
-	void update(bool _force) override
-	{
-		uMinLod.set(gDP.primColor.m, _force);
-		uMaxTile.set(gSP.texture.level, _force);
-	}
-
-private:
-	fUniform uMinLod;
-	iUniform uMaxTile;
-};
-
-class UMipmap2 : public UniformGroup
-{
-public:
-	UMipmap2(GLuint _program) {
 		LocateUniform(uEnableLod);
 		LocateUniform(uTextureDetail);
 	}
 
 	void update(bool _force) override
 	{
+		uMinLod.set(gDP.primColor.m, _force);
+		const CachedTexture * _pTexture = textureCache().current[1];
+		if (_pTexture == nullptr)
+			uMaxTile.set(gSP.texture.level, _force);
+		else
+			uMaxTile.set(_pTexture->max_level > 0 ? gSP.texture.level : std::min(gSP.texture.level, 1u), _force);
 		const int uCalcLOD = (gDP.otherMode.textureLOD == G_TL_LOD) ? 1 : 0;
 		uEnableLod.set(uCalcLOD, _force);
 		uTextureDetail.set(gDP.otherMode.textureDetail, _force);
 	}
 
 private:
+	fUniform uMinLod;
+	iUniform uMaxTile;
 	iUniform uEnableLod;
 	iUniform uTextureDetail;
 };
@@ -980,10 +976,18 @@ public:
 	void update(bool _force) override
 	{
 		TextureCache & cache = textureCache();
-		if (m_useT0 && cache.current[0] != NULL)
-			uTextureSize[0].set((float)cache.current[0]->width, (float)cache.current[0]->height, _force);
-		if (m_useT1 && cache.current[1] != NULL)
-			uTextureSize[1].set((float)cache.current[1]->width, (float)cache.current[1]->height, _force);
+		if (m_useT0 && cache.current[0] != nullptr)
+			uTextureSize[0].set(static_cast<float>(cache.current[0]->width),
+				static_cast<float>(cache.current[0]->height), _force);
+		if (m_useT1 && cache.current[1] != nullptr) {
+			CachedTexture * pTexture = cache.current[1];
+			if (pTexture->max_level == 0)
+				uTextureSize[1].set(static_cast<float>(pTexture->width),
+					static_cast<float>(pTexture->height), _force);
+			else
+				uTextureSize[1].set(static_cast<float>(pTexture->mipmapAtlasWidth),
+					static_cast<float>(pTexture->mipmapAtlasHeight), _force);
+		}
 	}
 
 private:
@@ -1075,14 +1079,12 @@ public:
 		uBilinearOffset.set(bilinearOffset, bilinearOffset, _force);
 
 		TextureCache & cache = textureCache();
-		const bool replaceTex1ByTex0 = needReplaceTex1ByTex0();
 		for (u32 t = 0; t < 2; ++t) {
 			if (!m_useTile[t])
 				continue;
 
-			const u32 tile = replaceTex1ByTex0 ? 0 : t;
-			const gDPTile * pTile = gSP.textureTile[tile];
-			CachedTexture * pTexture = cache.current[tile];
+			const gDPTile * pTile = gSP.textureTile[t];
+			CachedTexture * pTexture = cache.current[t];
 			if (pTile == nullptr || pTexture == nullptr)
 				continue;
 
@@ -1216,9 +1218,7 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 		_uniforms.emplace_back(new UFrameBufferInfo(_program));
 
 		if (_inputs.usesLOD()) {
-			_uniforms.emplace_back(new UMipmap1(_program));
-			if (config.generalEmulation.enableLOD != 0)
-				_uniforms.emplace_back(new UMipmap2(_program));
+			_uniforms.emplace_back(new UMipmap(_program));
 		} else if (_key.getCycleType() < G_CYC_COPY) {
 			_uniforms.emplace_back(new UTextureFetchMode(_program));
 		}

@@ -37,7 +37,6 @@ struct Config
 		u32 maxAnisotropy;
 		u32 bilinearMode;
 		u32 enableHalosRemoval;
-		u32 screenShotFormat;
 	} texture;
 
 	enum TexrectCorrectionMode {
@@ -176,6 +175,7 @@ struct Config
 
 		u32 txEnhancedTextureFileStorage;	// Use file storage instead of memory cache for enhanced textures.
 		u32 txHiresTextureFileStorage;		// Use file storage instead of memory cache for hires textures.
+		u32 txNoTextureFileStorage;			// Use no file storage or cache for hires textures.
 
 		wchar_t txPath[PLUGIN_PATH_SIZE]; // Path to texture packs
 		wchar_t txCachePath[PLUGIN_PATH_SIZE]; // Path to store texture cache, that is .htc files
