@@ -439,6 +439,8 @@
     <string name="gliden64_enable_legacy_blending_summary">Disabling this produces more correct lighting and fog, but it is slower on some devices.</string>
     <string name="gliden64_enable_fragment_depth_write_title">Fragment based depth</string>
     <string name="gliden64_enable_fragment_depth_write_summary">Enable writing of fragment depth. Some devices are not compatible.</string>
+    <string name="gliden64_enable_fast_inaccurate_shaders_title">Use faster shaders</string>
+    <string name="gliden64_enable_fast_inaccurate_shaders_summary">Enabling this will improve performance, specially in 2D rendering, but may have slightly inaccuracies when rendering textures.</string>
     <string name="gliden64_category_2d_title">2D Settings</string>
     <string name="gliden64_correct_texrect_coords_title">Make texrect coordinates continuous</string>
     <string name="gliden64_correct_texrect_coords_off">Off</string>

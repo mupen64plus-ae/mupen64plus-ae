@@ -58,6 +58,9 @@ public class GLideN64Prefs {
     /** Enable writing of fragment depth. Some mobile GPUs do not support it, thus it made optional. Leave enabled. */
     public final boolean enableFragmentDepthWrite;
 
+    /** Use fast but less accurate shaders. Can help with low-end GPUs. */
+    public final boolean enableInaccurateTextureCoordinates;
+
     /** Make texrect coordinates continuous to avoid black lines between them
      * 0=Off
      * 1=Auto
@@ -198,6 +201,7 @@ public class GLideN64Prefs {
 
         enableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         enableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );
+        enableInaccurateTextureCoordinates = emulationProfile.get( "EnableInaccurateTextureCoordinates", "True" ).equals( "True" );
         enableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         bufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
         enableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 0);

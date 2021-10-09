@@ -243,6 +243,7 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableClipping", boolToTF( game.glideN64Prefs.enableSoftClipping ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLegacyBlending", boolToTF( game.glideN64Prefs.enableLegacyBlending) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFragmentDepthWrite", boolToTF( game.glideN64Prefs.enableFragmentDepthWrite) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableInaccurateTextureCoordinates", boolToTF( game.glideN64Prefs.enableInaccurateTextureCoordinates) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CorrectTexrectCoords", String.valueOf( game.glideN64Prefs.correctTexrectCoords ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNativeResTexrects", boolToTF( game.glideN64Prefs.enableNativeResTexrects) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "BackgroundsMode", String.valueOf( game.glideN64Prefs.backgroundMode ) );

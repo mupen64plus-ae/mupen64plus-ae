@@ -475,6 +475,11 @@
             android:key="EnableFragmentDepthWrite"
             android:summary="@string/gliden64_enable_fragment_depth_write_summary"
             android:title="@string/gliden64_enable_fragment_depth_write_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="EnableInaccurateTextureCoordinates"
+            android:summary="@string/gliden64_enable_fast_inaccurate_shaders_summary"
+            android:title="@string/gliden64_enable_fast_inaccurate_shaders_title" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
