@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <Config.h>
-#include "glsl_CombinerProgramUniformFactory.h"
+#include "glsl_CombinerProgramUniformFactoryAccurate.h"
 #include <Graphics/Parameters.h>
 #include <Graphics/Context.h>
 
@@ -20,7 +20,9 @@
 #undef min
 #endif
 
-namespace glsl {
+using namespace glsl;
+
+namespace glsl::Accurate {
 
 /*---------------Uniform-------------*/
 
@@ -276,12 +278,14 @@ public:
 			}
 		}
 		/* Hack for framebuffer textures. See #519 and #2112 */
-		for (int t = 0; t < 2; t++) {
-			const CachedTexture* _pTexture = textureCache().current[t];
-			if (_pTexture != nullptr) {
-				if (gDP.otherMode.textureFilter != G_TF_POINT && _pTexture->frameBufferTexture != CachedTexture::fbNone) {
-					texCoordOffset[t][0] -= 1.0f;
-					texCoordOffset[t][1] -= 1.0f;
+		if ((config.generalEmulation.hacks & hack_fbTextureOffset) != 0) {
+			for (int t = 0; t < 2; t++) {
+				const CachedTexture* _pTexture = textureCache().current[t];
+				if (_pTexture != nullptr) {
+					if (gDP.otherMode.textureFilter != G_TF_POINT && _pTexture->frameBufferTexture != CachedTexture::fbNone) {
+						texCoordOffset[t][0] -= 1.0f;
+						texCoordOffset[t][1] -= 1.0f;
+					}
 				}
 			}
 		}

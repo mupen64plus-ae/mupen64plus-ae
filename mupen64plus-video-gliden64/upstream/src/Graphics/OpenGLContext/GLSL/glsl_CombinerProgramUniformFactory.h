@@ -7,15 +7,11 @@ namespace glsl {
 	class CombinerProgramUniformFactory
 	{
 	public:
-		CombinerProgramUniformFactory(const opengl::GLInfo & _glInfo);
 
-		void buildUniforms(GLuint _program,
+		virtual void buildUniforms(GLuint _program,
 							const CombinerInputs & _inputs,
 							const CombinerKey & _key,
-							UniformGroups & _uniforms);
-
-	private:
-		const opengl::GLInfo & m_glInfo;
+							UniformGroups & _uniforms) = 0;
 	};
 
 }

@@ -163,6 +163,8 @@ bool Config_SetDefault()
 	assert(res == M64ERR_SUCCESS);
 	res = ConfigSetDefaultBool(g_configVideoGliden64, "EnableHybridFilter", config.generalEmulation.enableHybridFilter, "Enable hybrid integer scaling filter. Can be slow with low-end GPUs.");
 	assert(res == M64ERR_SUCCESS);
+	res = ConfigSetDefaultBool(g_configVideoGliden64, "EnableFastInaccurateShaders", config.generalEmulation.enableFastInaccurateShaders, "Use fast but less accurate shaders. Can help with low-end GPUs.");
+	assert(res == M64ERR_SUCCESS);
 	res = ConfigSetDefaultBool(g_configVideoGliden64, "EnableFragmentDepthWrite", config.generalEmulation.enableFragmentDepthWrite, "Enable writing of fragment depth. Some mobile GPUs do not support it, thus made optional. Leave enabled.");
 	assert(res == M64ERR_SUCCESS);
 	res = ConfigSetDefaultBool(g_configVideoGliden64, "EnableCustomSettings", config.generalEmulation.enableCustomSettings, "Use GLideN64 per-game settings.");
@@ -508,6 +510,7 @@ void Config_LoadConfig()
 	config.generalEmulation.enableShadersStorage = ConfigGetParamBool(g_configVideoGliden64, "EnableShadersStorage");
 	config.generalEmulation.enableLegacyBlending = ConfigGetParamBool(g_configVideoGliden64, "EnableLegacyBlending");
 	config.generalEmulation.enableHybridFilter = ConfigGetParamBool(g_configVideoGliden64, "EnableHybridFilter");
+	config.generalEmulation.enableFastInaccurateShaders = ConfigGetParamBool(g_configVideoGliden64, "EnableFastInaccurateShaders");
 	config.generalEmulation.enableFragmentDepthWrite = ConfigGetParamBool(g_configVideoGliden64, "EnableFragmentDepthWrite");
 	config.generalEmulation.enableCustomSettings = ConfigGetParamBool(g_configVideoGliden64, "EnableCustomSettings");
 #if defined(OS_ANDROID) || defined(OS_IOS)
