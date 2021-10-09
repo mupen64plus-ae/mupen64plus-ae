@@ -377,6 +377,8 @@
     <string name="gliden64_enable_legacy_blending_summary">Al desactivar esta opción produce iluminación y niebla más correcta, pero es más lento en algunos dispositivos.</string>
     <string name="gliden64_enable_fragment_depth_write_title">Habilitar profundidad basado en fragment</string>
     <string name="gliden64_enable_fragment_depth_write_summary">Ocupa un fragment shader para actualizar profundidad, pero algunos dispostivos no son compatibles.</string>
+    <string name="gliden64_enable_fast_inaccurate_shaders_title">Usa shaders más rápidos</string>
+    <string name="gliden64_enable_fast_inaccurate_shaders_summary">Habilitar esto mejorará el rendimiento, especialmente en el renderizado 2D, pero puede tener ligeras imprecisiones al renderizar texturas.</string>
     <string name="gliden64_category_2d_title">2D Settings</string>
     <string name="gliden64_correct_texrect_coords_title">Hacer que el textrect coordina continua</string>
     <string name="gliden64_correct_texrect_coords_off">Activado</string>
