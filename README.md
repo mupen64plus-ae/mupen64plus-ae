@@ -23,7 +23,7 @@ Please visit [the official forum](http://www.paulscode.com/forum/index.php) for 
 1. Download and install the prerequisites
    - [Android Studio](https://developer.android.com/studio/index.html)
    - During the installation, make sure the latest SDK and NDK
-   - If running Windows, make sure you install Git, Python, awk and Microsoft Visual C++ Redistributable (i.e. cmake 3.18.1 needs Microsoft Visual C++ Redistributable 2015) and that the binaries are in your path environment variable.
+   - If running Windows, make sure you install Git, Python, awk and required Microsoft Visual C++ Redistributable (i.e. cmake 3.18.1 requires Microsoft Visual C++ Redistributable 2015) and that the binaries are in your path environment variable.
 2. Clone the mupen64plus-ae repository and initialize the working copy
    - `git clone https://github.com/mupen64plus-ae/mupen64plus-ae.git`
 3. Open the project using Android Studio
