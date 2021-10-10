@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphics/OpenGLContext/opengl_GLInfo.h>
+#include "glsl_ShaderPart.h"
 
 namespace graphics {
 	class ShaderProgram;
@@ -10,8 +11,6 @@ namespace opengl {
 }
 
 namespace glsl {
-
-	class ShaderPart;
 
 	class SpecialShadersFactory
 	{

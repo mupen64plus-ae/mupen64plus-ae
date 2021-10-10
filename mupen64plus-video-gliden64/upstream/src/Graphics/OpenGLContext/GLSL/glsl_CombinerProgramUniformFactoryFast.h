@@ -1,19 +1,27 @@
 #pragma once
 #include <Graphics/OpenGLContext/opengl_GLInfo.h>
 #include "glsl_CombinerProgramImpl.h"
-#include "glsl_CombinerProgramUniformFactory.h"
+#include "glsl_CombinerProgramUniformFactoryCommon.h"
 
-namespace glsl::Fast {
-class CombinerProgramUniformFactory : public glsl::CombinerProgramUniformFactory {
+namespace glsl {
+	class CombinerProgramUniformFactoryFast : public CombinerProgramUniformFactoryCommon {
+
 	public:
-		CombinerProgramUniformFactory(const opengl::GLInfo &_glInfo);
-
-		void buildUniforms(GLuint _program,
-						   const CombinerInputs &_inputs,
-						   const CombinerKey &_key,
-						   UniformGroups &_uniforms) override;
-
+		CombinerProgramUniformFactoryFast(const opengl::GLInfo & _glInfo);
 	private:
+
+		virtual void _addRasterInfo(GLuint _program, UniformGroups &_uniforms) const override;
+
+		virtual void _addMipmap(GLuint _program, UniformGroups &_uniforms) const override;
+
+		virtual void _addMipmap2(GLuint _program, UniformGroups &_uniforms) const override;
+
+		virtual void _addTextureSize(GLuint _program, UniformGroups &_uniforms, bool _usesTile0, bool _usesTile1) const override;
+
+		virtual void _addTextureParams(GLuint _program, UniformGroups &_uniforms, bool _usesTile0, bool _usesTile1) const override;
+
+		virtual void _addClampWrapMirrorEngine(GLuint _program, UniformGroups &_uniforms, bool _usesTile0, bool _usesTile1) const override;
+
 		const opengl::GLInfo &m_glInfo;
 	};
 }

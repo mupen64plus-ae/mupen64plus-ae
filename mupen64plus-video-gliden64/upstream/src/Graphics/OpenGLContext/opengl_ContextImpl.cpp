@@ -411,9 +411,9 @@ void ContextImpl::resetCombinerProgramBuilder()
 		return;
 
 	if (config.generalEmulation.enableFastInaccurateShaders) {
-		m_combinerProgramBuilder = std::make_unique<glsl::Fast::CombinerProgramBuilder>(m_glInfo, m_cachedFunctions->getCachedUseProgram());
+		m_combinerProgramBuilder = std::make_unique<glsl::CombinerProgramBuilderFast>(m_glInfo, m_cachedFunctions->getCachedUseProgram());
 	} else {
-		m_combinerProgramBuilder = std::make_unique<glsl::Accurate::CombinerProgramBuilder>(m_glInfo, m_cachedFunctions->getCachedUseProgram());
+		m_combinerProgramBuilder = std::make_unique<glsl::CombinerProgramBuilderAccurate>(m_glInfo, m_cachedFunctions->getCachedUseProgram());
 	}
 
 	m_specialShadersFactory.reset(new glsl::SpecialShadersFactory(m_glInfo,

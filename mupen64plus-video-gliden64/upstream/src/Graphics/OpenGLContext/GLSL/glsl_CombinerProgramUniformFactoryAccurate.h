@@ -1,22 +1,28 @@
 #pragma once
 #include <Graphics/OpenGLContext/opengl_GLInfo.h>
 #include "glsl_CombinerProgramImpl.h"
-#include "glsl_CombinerProgramUniformFactory.h"
+#include "glsl_CombinerProgramUniformFactoryCommon.h"
 
-namespace glsl::Accurate {
+namespace glsl {
+	class CombinerProgramUniformFactoryAccurate : public CombinerProgramUniformFactoryCommon {
 
-	class CombinerProgramUniformFactory : public glsl::CombinerProgramUniformFactory
-	{
 	public:
-		CombinerProgramUniformFactory(const opengl::GLInfo & _glInfo);
-
-		void buildUniforms(GLuint _program,
-							const CombinerInputs & _inputs,
-							const CombinerKey & _key,
-							UniformGroups & _uniforms) override;
-
+		CombinerProgramUniformFactoryAccurate(const opengl::GLInfo & _glInfo);
 	private:
-		const opengl::GLInfo & m_glInfo;
-	};
 
+		virtual void _addRasterInfo(GLuint _program, UniformGroups &_uniforms) const override;
+
+		virtual void _addMipmap(GLuint _program, UniformGroups &_uniforms) const override;
+
+		virtual void _addMipmap2(GLuint _program, UniformGroups &_uniforms) const override;
+
+		virtual void _addTextureSize(GLuint _program, UniformGroups &_uniforms, bool _usesTile0, bool _usesTile1) const override;
+
+		virtual void _addTextureParams(GLuint _program, UniformGroups &_uniforms, bool _usesTile0, bool _usesTile1) const override;
+
+		virtual void _addClampWrapMirrorEngine(GLuint _program, UniformGroups &_uniforms, bool _usesTile0, bool _usesTile1) const override;
+
+		const opengl::GLInfo &m_glInfo;
+	};
 }
+

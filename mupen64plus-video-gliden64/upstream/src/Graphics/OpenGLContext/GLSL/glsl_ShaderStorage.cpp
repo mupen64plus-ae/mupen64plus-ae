@@ -341,9 +341,9 @@ bool ShaderStorage::loadShadersStorage(graphics::Combiners & _combiners)
 		std::unique_ptr<CombinerProgramUniformFactory> uniformFactory;
 
 		if (config.generalEmulation.enableFastInaccurateShaders) {
-			uniformFactory = std::make_unique<Fast::CombinerProgramUniformFactory>(m_glinfo);
+			uniformFactory = std::make_unique<CombinerProgramUniformFactoryFast>(m_glinfo);
 		} else {
-			uniformFactory = std::make_unique<Accurate::CombinerProgramUniformFactory>(m_glinfo);
+			uniformFactory = std::make_unique<CombinerProgramUniformFactoryAccurate>(m_glinfo);
 		}
 
 		fin.read((char*)&len, sizeof(len));
