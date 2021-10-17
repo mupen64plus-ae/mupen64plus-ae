@@ -89,8 +89,14 @@ set(GLideN64_SOURCES
   Graphics/OpenGLContext/opengl_Utils.cpp
   Graphics/OpenGLContext/GLSL/glsl_CombinerInputs.cpp
   Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp
+  Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilderCommon.cpp
+  Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilderAccurate.cpp
+  Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilderFast.cpp
   Graphics/OpenGLContext/GLSL/glsl_CombinerProgramImpl.cpp
   Graphics/OpenGLContext/GLSL/glsl_CombinerProgramUniformFactory.cpp
+  Graphics/OpenGLContext/GLSL/glsl_CombinerProgramUniformFactoryCommon.cpp
+  Graphics/OpenGLContext/GLSL/glsl_CombinerProgramUniformFactoryAccurate.cpp
+  Graphics/OpenGLContext/GLSL/glsl_CombinerProgramUniformFactoryFast.cpp
   Graphics/OpenGLContext/GLSL/glsl_FXAA.cpp
   Graphics/OpenGLContext/GLSL/glsl_ShaderStorage.cpp
   Graphics/OpenGLContext/GLSL/glsl_SpecialShadersFactory.cpp
@@ -489,7 +495,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
   set( CMAKE_SHARED_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_STATIC_LINK_FLAGS}" )
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES} ${PATH_REVISION})
 
