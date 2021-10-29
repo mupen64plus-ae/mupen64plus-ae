@@ -151,8 +151,7 @@ public class ScanRomsActivity extends AppCompatActivity
 
                 if (mFileUri != null) {
                     scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
-                    final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    getContentResolver().takePersistableUriPermission(mFileUri, takeFlags);
+                    getContentResolver().takePersistableUriPermission(mFileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                     ScanRomsActivity.this.setResult(RESULT_OK, scanData);
                     ScanRomsActivity.this.finish();

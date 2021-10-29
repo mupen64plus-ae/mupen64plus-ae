@@ -217,9 +217,8 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
                     Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
                     if (currentPreference != null && fileUri != null) {
 
-                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
                         DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
                         String summary = file.getName();
@@ -251,8 +250,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
                     Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
                     if (currentPreference != null && fileUri != null) {
 
-                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
+                        getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                         DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
                         String summary = file == null ? "" : file.getName();

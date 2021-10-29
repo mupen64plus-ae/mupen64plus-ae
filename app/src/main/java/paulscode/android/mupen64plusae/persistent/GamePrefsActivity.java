@@ -335,9 +335,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
                     Preference currentPreference = findPreference(mCurrentFilePickerKey);
                     if (currentPreference != null && fileUri != null) {
-                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
                         if (mCurrentFilePickerKey.equals(GamePrefs.CHANGE_COVERT_ART)) {
                             copyGalleryImageAndUpdateConfig(fileUri);
