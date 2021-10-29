@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.input.provider;
 
 import android.view.InputDevice;
-import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -70,36 +69,6 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         view.requestFocus();
     }
 
-    private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis)
-    {
-        final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
-
-        // A joystick at rest does not always report an absolute position of
-        // (0,0). Use the getFlat() method to determine the range of values
-        // bounding the joystick axis center.
-        float flat = MIN_FLAT;
-
-        if (range != null) {
-            flat = range.getFlat();
-        }
-
-        final float value = event.getAxisValue(axis);
-
-        //Some devices with bad drivers report invalid flat regions
-        if(flat > MAX_FLAT || flat < MIN_FLAT)
-        {
-            flat = MIN_FLAT;
-        }
-
-        // Ignore axis values that are within the 'flat' region of the
-        // joystick axis center.
-        if (Math.abs(value) > flat) {
-            return value;
-        }
-
-        return 0;
-    }
-
     /**
      * Manually dispatches a MotionEvent through the provider's listening chain.
      * 
@@ -135,10 +104,10 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             int axisCode = inputToAxisCode( inputCode );
 
             // Get the analog value using the Android API
-            float strength = getCenteredAxis(event, device, axisCode);
+            float strength = event.getAxisValue(axisCode);
 
             // Modify strength if necessary
-            strength = strength != 0 ? normalizeStrength( strength, axisInfo, device, axisCode ) : 0.0f;
+            strength = strength != 0.0f ? normalizeStrength( strength, axisInfo, axisCode ) : 0.0f;
 
             // If the strength points in the correct direction, record it
             boolean direction1 = inputToAxisDirection( inputCode );
@@ -149,64 +118,36 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                 strengths[i] = 0;
         }
 
-        notifyListeners( mInputCodes, strengths, getHardwareId(event) );
+        notifyListeners( mInputCodes, strengths, getHardwareId(event), event.getSource() );
 
         return true;
     }
 
-    private float normalizeStrength( float strength, AxisMap axisInfo, InputDevice device,
-                                     int axisCode )
+    private float normalizeStrength( float strength, AxisMap axisInfo, int axisCode )
     {
         if( axisInfo != null )
         {
             int axisClass = axisInfo.getClass( axisCode );
-            float tempStrengh;
 
-            if( axisClass == AxisMap.AXIS_CLASS_IGNORED )
+            if (axisClass == AxisMap.AXIS_CLASS_IGNORED)
             {
                 // We should ignore this axis
                 strength = 0;
             }
-            else if( device != null )
+            else if (axisClass == AxisMap.AXIS_CLASS_N64_USB_STICK)
             {
-                // We should normalize this axis
-                MotionRange motionRange = device.getMotionRange( axisCode, InputDevice.SOURCE_JOYSTICK );
-                if( motionRange != null )
-                {
-                    float flat = motionRange.getFlat();
-                    //Some devices with bad drivers report invalid flat regions
-                    if(flat > MAX_FLAT || flat < MIN_FLAT)
-                    {
-                        flat = MIN_FLAT;
-                    }
-
-                    switch( axisClass )
-                    {
-                        case AxisMap.AXIS_CLASS_NORMAL:
-                            // Normalize
-                            tempStrengh = (Math.abs(strength) - flat) / (1.0f - flat);
-                            //Restore sign
-                            strength = tempStrengh * Math.signum(strength);
-                            break;
-                        case AxisMap.AXIS_CLASS_N64_USB_STICK:
-                            // Normalize to [-1,1]
-                            // The Raphnet adapters through v2.x and some other USB adapters assume the N64
-                            // controller produces values in the range [-127,127].  However, the official N64 spec
-                            // says that raw values of +/- 80 indicate full strength.  Therefore we rescale by
-                            // multiplying by 127/80 (dividing by 0.63).
-                            // http://naesten.dyndns.org:8080/psyq/man/os/osContGetReadData.html
-                            // http://raphnet-tech.com/products/gc_n64_usb_adapters/
-                            // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/89
-                            // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/99
-                            // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/188
-                            // http://www.paulscode.com/forum/index.php?topic=1076
-                            strength = strength / 0.63f;
-                            break;
-                        case AxisMap.AXIS_CLASS_UNKNOWN:
-                        default:
-                            // Do nothing
-                    }
-                }
+                // Normalize to [-1,1]
+                // The Raphnet adapters through v2.x and some other USB adapters assume the N64
+                // controller produces values in the range [-127,127].  However, the official N64 spec
+                // says that raw values of +/- 80 indicate full strength.  Therefore we rescale by
+                // multiplying by 127/80 (dividing by 0.63).
+                // http://naesten.dyndns.org:8080/psyq/man/os/osContGetReadData.html
+                // http://raphnet-tech.com/products/gc_n64_usb_adapters/
+                // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/89
+                // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/99
+                // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/188
+                // http://www.paulscode.com/forum/index.php?topic=1076
+                strength = strength / 0.63f;
             }
         }
         return strength;

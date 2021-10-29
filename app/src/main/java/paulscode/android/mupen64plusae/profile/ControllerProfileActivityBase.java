@@ -66,7 +66,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
 
     // Slider limits
     protected static final int MIN_DEADZONE = 0;
-    protected static final int MAX_DEADZONE = 20;
+    protected static final int MAX_DEADZONE = 40;
     protected static final int MIN_SENSITIVITY = 50;
     protected static final int MAX_SENSITIVITY = 200;
     
@@ -246,10 +246,12 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     {
         final CharSequence title = getText( R.string.menuItem_deadzone );
         
-        Prompt.promptInteger( this, title, "%1$d %%", mProfile.getDeadzone(), MIN_DEADZONE,
-                MAX_DEADZONE, (value, which) -> {
+        Prompt.promptDeadzone( this, title, "%1$d %%", mProfile.getAutoDeadzone(),
+                mProfile.getDeadzone(), MIN_DEADZONE,
+                MAX_DEADZONE, (override, value, which) -> {
                     if( which == DialogInterface.BUTTON_POSITIVE )
                     {
+                        mProfile.putAutoDeadzone( override );
                         mProfile.putDeadzone( value );
                     }
                 });
@@ -312,14 +314,14 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     }
     
     @Override
-    public void onInput( int inputCode, float strength, int hardwareId, int repeatCount )
+    public void onInput( int inputCode, float strength, int hardwareId, int repeatCount, int source )
     {
         refreshButton( inputCode, strength );
         refreshFeedbackText( inputCode, strength );
     }
     
     @Override
-    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId, int source )
     {
         float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
         int strongestInputCode = 0;

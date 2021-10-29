@@ -64,6 +64,7 @@
 
     <!-- Input Mapping Activity -->
     <string name="menuItem_deadzone">Deadzone</string>
+    <string name="menuItem_auto">Auto</string>
     <string name="menuItem_sensitivity">Sensitivity</string>
     <string name="menuItem_sensitivity_x">X-axis Sensitivity</string>
     <string name="menuItem_sensitivity_y">Y-axis Sensitivity</string>

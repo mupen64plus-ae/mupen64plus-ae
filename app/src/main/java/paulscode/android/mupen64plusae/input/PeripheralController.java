@@ -24,6 +24,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
@@ -51,6 +52,9 @@ public class PeripheralController extends AbstractController implements
     /** The map from input codes to entries w/ the N64 command index. */
     private final SparseArray<InputEntry> mEntryMap = new SparseArray<>();
     
+    /** True if deadzone should be set automatically */
+    private final boolean mAutoDeadzone;
+
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
     
@@ -87,7 +91,13 @@ public class PeripheralController extends AbstractController implements
 
     /** True if we should hold controller buttons for a certain amount of time for
      * some functions to take effect */
-    private boolean mHoldControllerBottons;
+    private final boolean mHoldControllerBottons;
+
+    /** Max flat value to determine if we should override it */
+    private static final float MAX_FLAT = 0.5f;
+
+    /** Minimum flat value to determine if we should override it */
+    private static final float MIN_FLAT = 0.15f;
     
     /**
      * Instantiates a new peripheral controller.
@@ -96,13 +106,14 @@ public class PeripheralController extends AbstractController implements
      * @param player    The player number, between 1 and 4, inclusive.
      * @param playerMap The map from hardware identifiers to players.
      * @param inputMap  The map from input codes to N64/Mupen commands.
+     * @param autoDeadzone True if deadzone should be set automatically
      * @param inputDeadzone The analog deadzone in percent.
      * @param inputSensitivityX The analog X sensitivity in percent.
      * @param inputSensitivityY The analog X sensitivity in percent.
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController(CoreFragment coreFragment, int player, PlayerMap playerMap, InputMap inputMap,
-                                int inputDeadzone, int inputSensitivityX, int inputSensitivityY, boolean holdForFunctions,
+                                boolean autoDeadzone, int inputDeadzone, int inputSensitivityX, int inputSensitivityY, boolean holdForFunctions,
                                 OnStateChangedListener listener, View.OnKeyListener keyListener, SensorController sensorController, AbstractProvider... providers )
     {
         super(coreFragment);
@@ -111,6 +122,7 @@ public class PeripheralController extends AbstractController implements
         
         // Assign the maps
         mPlayerMap = playerMap;
+        mAutoDeadzone = autoDeadzone;
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
         mSensitivityFractionX = ( (float) inputSensitivityX ) / 100f;
         mSensitivityFractionY = ( (float) inputSensitivityY ) / 100f;
@@ -141,7 +153,7 @@ public class PeripheralController extends AbstractController implements
      */
     @Override
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    public void onInput( int inputCode, float strength, int hardwareId, int repeatCount )
+    public void onInput( int inputCode, float strength, int hardwareId, int repeatCount, int source )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
@@ -157,7 +169,7 @@ public class PeripheralController extends AbstractController implements
             }
             
             // Apply user changes to the controller state
-            apply( inputCode, strength, false, repeatCount );
+            apply( inputCode, strength, false, repeatCount, device, source );
             
             // Notify the core that controller state has changed
             notifyChanged(mIsAnalogDigitalInput);
@@ -171,14 +183,16 @@ public class PeripheralController extends AbstractController implements
      * float[], int)
      */
     @Override
-    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId, int source )
     {
         // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
+            InputDevice device = InputDevice.getDevice( hardwareId );
+
             // Apply user changes to the controller state
             for( int i = 0; i < inputCodes.length; i++ )
-                apply( inputCodes[i], strengths[i], true, 0 );
+                apply( inputCodes[i], strengths[i], true, 0, device, source );
             
             // Notify the core that controller state has changed
             notifyChanged(mIsAnalogDigitalInput);
@@ -192,8 +206,10 @@ public class PeripheralController extends AbstractController implements
      * @param strength  The input strength, between 0 and 1, inclusive.
      * @param isAxis True if the input comes from an axis
      * @param repeatCount How many intervals the button has been held for
+     * @param device Input device associated with the motion
+     * @param source Source of input
      */
-    private void apply(int inputCode, float strength, boolean isAxis, int repeatCount )
+    private void apply(int inputCode, float strength, boolean isAxis, int repeatCount, InputDevice device, int source )
     {
         InputEntry entry = mEntryMap.get( inputCode );
 
@@ -242,14 +258,22 @@ public class PeripheralController extends AbstractController implements
             float magnitude = (float) Math.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
             
             // Update controller state
-            if( magnitude > mDeadzoneFraction )
+            float deadzone = mDeadzoneFraction;
+
+            if (mAutoDeadzone)
+            {
+                int axisCode = inputToAxisCode( inputCode );
+                deadzone = getAutoDeadZone(source, device, axisCode);
+            }
+
+            if( magnitude > deadzone )
             {
                 // Normalize the vector
                 float normalizedX = rawX / magnitude;
                 float normalizedY = rawY / magnitude;
 
                 // Rescale strength to account for deadzone
-                magnitude = ( magnitude - mDeadzoneFraction ) / ( 1f - mDeadzoneFraction );
+                magnitude = ( magnitude - deadzone ) / ( 1f - deadzone );
                 magnitude = Utility.clamp( magnitude, 0f, 1f );
                 mState.axisFractionX = normalizedX * magnitude;
                 mState.axisFractionY = normalizedY * magnitude;
@@ -370,5 +394,39 @@ public class PeripheralController extends AbstractController implements
                 }
             }
         }
+    }
+
+    private static float getAutoDeadZone(int source, InputDevice device, int axis)
+    {
+        final InputDevice.MotionRange range = device.getMotionRange(axis, source);
+
+        // A joystick at rest does not always report an absolute position of
+        // (0,0). Use the getFlat() method to determine the range of values
+        // bounding the joystick axis center.
+        float flat = MIN_FLAT;
+
+        if (range != null) {
+            flat = range.getFlat();
+        }
+
+        //Some devices with bad drivers report invalid flat regions
+        if(flat > MAX_FLAT || flat < MIN_FLAT)
+        {
+            flat = MIN_FLAT;
+        }
+
+        return flat;
+    }
+
+    /**
+     * Utility for child classes. Converts a universal input code to an Android axis code.
+     *
+     * @param inputCode The universal input code.
+     *
+     * @return The corresponding Android axis code.
+     */
+    private static int inputToAxisCode( int inputCode )
+    {
+        return ( -inputCode - 1 ) / 2;
     }
 }

@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -130,6 +131,25 @@ public final class Prompt
          * @param which The DialogInterface button pressed by the user.
          */
         void onDialogClosed( Integer value, int which );
+    }
+
+    /**
+     * The listener interface for receiving an integer provided by the user.
+     *
+     * @see Prompt#promptInteger
+     */
+    public interface PromptDeadzoneListener
+    {
+        /**
+         * Called when the deadzone dialog is dismissed and should be used to process the integer
+         *  and override value provided by the user.
+         *
+         * @param override The override value provided by the user, or null if the user clicks the
+         * @param value The integer provided by the user, or null if the user clicks the
+         * dialog's negative button.
+         * @param which The DialogInterface button pressed by the user.
+         */
+        void onDialogClosed( Boolean override, Integer value, int which );
     }
     
     /**
@@ -533,6 +553,53 @@ public final class Prompt
         
         // Create and launch the dialog
         builder.create().show();
+    }
+
+    /**
+     * Open a dialog to prompt the user for an integer.
+     *
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param format   The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
+     * @param initial  The initial (default) value shown in the dialog.
+     * @param min      The minimum value permitted.
+     * @param max      The maximum value permitted.
+     * @param listener The listener to process the integer, when provided.
+     */
+    public static void promptDeadzone( Context context, CharSequence title, String format,
+        final boolean initialOverride, final int initial, final int min, final int max, final PromptDeadzoneListener listener )
+    {
+        final View layout = View.inflate( context, R.layout.deadzone_preference, null );
+        final SeekBar seek = layout.findViewById( R.id.seekbar );
+        final TextView text = layout.findViewById( R.id.textFeedback );
+        final String finalFormat = TextUtils.isEmpty( format ) ? "%1$d" : format;
+        final CheckBox override = layout.findViewById( R.id.checkBoxAuto);
+
+        override.setChecked(initialOverride);
+        text.setText( String.format( finalFormat, initial ) );
+        seek.setMax( max - min );
+        seek.setProgress( initial - min );
+        seek.setEnabled(!override.isChecked());
+        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
+        {
+            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
+            {
+                text.setText( String.format( finalFormat, progress + min ) );
+            }
+
+            public void onStartTrackingTouch( SeekBar seekBar )
+            {
+            }
+
+            public void onStopTrackingTouch( SeekBar seekBar )
+            {
+            }
+        } );
+
+        override.setOnCheckedChangeListener((buttonView, isChecked) -> seek.setEnabled(!isChecked));
+
+        prefillBuilder( context, title, null, (dialog, which) -> listener.onDialogClosed( override.isChecked(),
+                seek.getProgress() + min, which )).setView( layout ).create().show();
     }
     
     /**

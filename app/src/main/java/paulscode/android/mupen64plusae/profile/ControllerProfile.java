@@ -25,10 +25,12 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 
 public class ControllerProfile extends Profile
 {
-    private static final int DEFAULT_DEADZONE = 0;
+    private static final int DEFAULT_DEADZONE = 15;
+    private static final boolean DEFAULT_AUTO_DEADZONE = true;
     private static final int DEFAULT_SENSITIVITY = 100;
     
     private static final String KEY_MAP = "map";
+    private static final String KEY_AUTO_DEADZONE = "auto_deadzone";
     private static final String KEY_DEADZONE = "deadzone";
     private static final String KEY_SENSITIVITY_X = "sensitivity_x";
     private static final String KEY_SENSITIVITY_Y = "sensitivity_y";
@@ -42,7 +44,12 @@ public class ControllerProfile extends Profile
     {
         return getInt( KEY_DEADZONE, DEFAULT_DEADZONE );
     }
-    
+
+    public boolean getAutoDeadzone()
+    {
+        return getBoolean( KEY_AUTO_DEADZONE, DEFAULT_AUTO_DEADZONE );
+    }
+
     public int getSensitivityX()
     {
         return getInt( KEY_SENSITIVITY_X, DEFAULT_SENSITIVITY );
@@ -61,6 +68,11 @@ public class ControllerProfile extends Profile
     void putDeadzone( int deadzone )
     {
         putInt( KEY_DEADZONE, deadzone );
+    }
+
+    void putAutoDeadzone( boolean autoDeadzone )
+    {
+        putBoolean( KEY_AUTO_DEADZONE, autoDeadzone );
     }
     
     void putSensitivityX( int sensitivity )

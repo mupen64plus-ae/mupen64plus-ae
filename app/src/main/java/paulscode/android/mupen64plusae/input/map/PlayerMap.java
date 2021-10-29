@@ -82,7 +82,8 @@ public class PlayerMap extends SerializableMap
     
     public boolean testHardware( int hardwareId, int player )
     {
-        return mDisabled || getNumberOfMappedPlayers() == 0 || mMap.get( hardwareId, 0 ) == player;
+        return mDisabled || (getNumberOfMappedPlayers() == 0 && player == 1) ||
+                mMap.get( hardwareId, 0 ) == player;
     }
     
     public boolean isEnabled()

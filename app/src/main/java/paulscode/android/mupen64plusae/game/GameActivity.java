@@ -1238,8 +1238,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private void initSingleController(int player, ControllerProfile p)
     {
         if(p != null) {
-           new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                   p.getSensitivityX(), p.getSensitivityY(), mGlobalPrefs.holdControllerBottons,
+           new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getAutoDeadzone(),
+                   p.getDeadzone(), p.getSensitivityX(), p.getSensitivityY(), mGlobalPrefs.holdControllerBottons,
                    mOverlay, this, null, mKeyProvider, mAxisProvider);
             Log.i(TAG, "Player " + player + " controller has been enabled");
         }

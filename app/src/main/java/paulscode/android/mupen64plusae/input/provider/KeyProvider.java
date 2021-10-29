@@ -159,7 +159,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
             strength = 0;
         
         // Notify listeners about new input data
-        notifyListeners( inputCode, strength, getHardwareId( event ), event.getRepeatCount() );
+        notifyListeners( inputCode, strength, getHardwareId( event ), event.getRepeatCount(), event.getSource() );
         
         return true;
     }

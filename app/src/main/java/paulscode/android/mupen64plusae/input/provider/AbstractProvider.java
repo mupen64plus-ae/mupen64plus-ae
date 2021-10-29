@@ -57,8 +57,9 @@ public abstract class AbstractProvider
          * @param strength   The input strength, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
          * @param repeatCount How many intervales the button has been pressed for
+         * @param source Source of input
          */
-        void onInput( int inputCode, float strength, int hardwareId, int repeatCount );
+        void onInput( int inputCode, float strength, int hardwareId, int repeatCount, int source );
         
         /**
          * Called when multiple inputs have been dispatched simultaneously.
@@ -66,8 +67,9 @@ public abstract class AbstractProvider
          * @param inputCodes The universal input codes that were dispatched.
          * @param strengths  The input strengths, between 0 and 1, inclusive.
          * @param hardwareId The identifier of the source device.
+         * @param source Source of input
          */
-        void onInput( int[] inputCodes, float[] strengths, int hardwareId );
+        void onInput( int[] inputCodes, float[] strengths, int hardwareId, int source );
     }
     
     /** The strength threshold above which an input is said to be "on". */
@@ -330,11 +332,12 @@ public abstract class AbstractProvider
      * @param strength   The input strength, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
      * @param repeatCount How many intervales the button has been pressed for
+     * @param source Source of input
      */
-    void notifyListeners( int inputCode, float strength, int hardwareId, int repeatCount)
+    void notifyListeners( int inputCode, float strength, int hardwareId, int repeatCount, int source)
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCode, strength, hardwareId, repeatCount );
+            listener.onInput( inputCode, strength, hardwareId, repeatCount, source);
     }
     
     /**
@@ -344,10 +347,11 @@ public abstract class AbstractProvider
      * @param inputCodes The universal input codes that were dispatched.
      * @param strengths  The input strengths, between 0 and 1, inclusive.
      * @param hardwareId The identifier of the source device.
+     * @param source Source of input
      */
-    void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId )
+    void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId, int source )
     {
         for( OnInputListener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId );
+            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId, source );
     }
 }
