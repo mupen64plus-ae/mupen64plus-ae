@@ -111,10 +111,7 @@ static bool isAnalogDigital[4];
 static int pluginInitialized = 0;
 static CONTROL* controllerInfos = nullptr;
 
-
 static const double maxAxis = 85.0;
-static const double deadzone = 4.556;
-static const double axisRange = maxAxis - deadzone;
 
 // Function declarations
 static void DebugMessage(int level, const char *message, ...);
@@ -319,20 +316,6 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
     }
 }
 
-double simulateDeadZone(double n64InputAxis)
-{
-    double axisAbsolute = std::abs(n64InputAxis);
-
-    // Check X axis deadzone
-    if (axisAbsolute < deadzone) {
-        axisAbsolute = 0;
-    } else {
-        axisAbsolute = (axisAbsolute - deadzone) * maxAxis / (axisRange) / axisAbsolute;
-    }
-
-    return axisAbsolute;
-}
-
 // Credit: MerryMage
 void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
 {
@@ -347,10 +330,6 @@ void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
         ax *= len;
         ay *= len;
     }
-
-    // Simulate a square deadzone
-    ax *= simulateDeadZone(ax);
-    ay *= simulateDeadZone(ay);
 
     //bound diagonals to an octagonal range {-68 ... +68}
     if(ax != 0.0 && ay != 0.0) {

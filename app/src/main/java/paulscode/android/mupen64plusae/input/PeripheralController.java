@@ -265,25 +265,22 @@ public class PeripheralController extends AbstractController implements
                 int axisCode = inputToAxisCode( inputCode );
                 deadzone = getAutoDeadZone(source, device, axisCode);
             }
-
-            if( magnitude > deadzone )
-            {
-                // Normalize the vector
-                float normalizedX = rawX / magnitude;
-                float normalizedY = rawY / magnitude;
-
-                // Rescale strength to account for deadzone
-                magnitude = ( magnitude - deadzone ) / ( 1f - deadzone );
-                magnitude = Utility.clamp( magnitude, 0f, 1f );
-                mState.axisFractionX = normalizedX * magnitude;
-                mState.axisFractionY = normalizedY * magnitude;
+            
+            // Use a square deadzone to simulate original N64 controllers more closely
+            if (Math.abs(rawX) > deadzone) {
+                rawX = Math.signum(rawX)*(Math.abs(rawX) - deadzone) / (1.0f - deadzone);
+            } else {
+                rawX = 0;
             }
-            else
-            {
-                // In the deadzone 
-                mState.axisFractionX = 0;
-                mState.axisFractionY = 0;
+            if (Math.abs(rawY) > deadzone) {
+                rawY = Math.signum(rawY)*(Math.abs(rawY) - deadzone) / (1.0f - deadzone);
+            } else {
+                rawY = 0;
             }
+
+            mState.axisFractionX = rawX;
+            mState.axisFractionY = rawY;
+
         } else if(mPlayerNumber == 1) {
             // Button must be held for some inputs to prevent accidental presses
             boolean ignoreInput = !isAxis && repeatCount < 10 && mHoldControllerBottons;

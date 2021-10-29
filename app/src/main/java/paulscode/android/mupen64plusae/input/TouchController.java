@@ -592,6 +592,20 @@ public class TouchController extends AbstractController implements OnTouchListen
                 // Store the axis values in the super fields (screen y is inverted)
                 mState.axisFractionX = p * dX / displacement * (mInvertXAxis ? -1.0f:1.0f);
                 mState.axisFractionY = -p * dY / displacement * (mInvertYAxis ? -1.0f:1.0f);
+
+                // Scale to a square deadzone of 0.07 to simulate a real N64 controller
+                float deadzone = 0.07f;
+                // Use a square deadzone to simulate original N64 controllers more closely
+                if (Math.abs(mState.axisFractionX) > deadzone) {
+                    mState.axisFractionX = Math.signum(mState.axisFractionX)*(Math.abs(mState.axisFractionX) - deadzone) / (1.0f - deadzone);
+                } else {
+                    mState.axisFractionX = 0;
+                }
+                if (Math.abs(mState.axisFractionY) > deadzone) {
+                    mState.axisFractionY = Math.signum(mState.axisFractionY)*(Math.abs(mState.axisFractionY) - deadzone) / (1.0f - deadzone);
+                } else {
+                    mState.axisFractionY = 0;
+                }
             }
             
             // Analog state changed
