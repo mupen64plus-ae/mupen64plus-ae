@@ -5,8 +5,8 @@
 ;
 [subrepo]
 	remote = https://github.com/fzurita/GLideN64.git
-	branch = txMaximumAmountInVram
-	commit = 94e7988a742cd8a7e62818ae914ca216ecef2223
-	parent = 0300f244af63fc79b6b14934d137e1a12e6ee92c
+	branch = Rosalie241-txMaximumAmountInVram
+	commit = 8136e2e0b5a568f1fa69c84a7163a7e867c84933
+	parent = fbab3b4d3765e56fffeb495e42fc24d36fd5f9fc
 	method = merge
 	cmdver = 0.4.0
