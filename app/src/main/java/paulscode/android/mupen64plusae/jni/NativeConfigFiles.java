@@ -264,7 +264,7 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheSize", String.valueOf( game.glideN64Prefs.txCacheSize ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresEnable", boolToTF( game.glideN64Prefs.txHiresEnable ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txPath", global.hiResTextureDir);
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiResUploadLimit", String.valueOf(1000));
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresVramLimit", String.valueOf(1000));
 
         if(hiresTexHTCPresent && game.glideN64Prefs.txHiresEnable)
         {
