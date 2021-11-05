@@ -118,6 +118,16 @@ android {
                                     appIcon:"@mipmap/ic_launcher_pro",
                                     appIconRound:"@mipmap/ic_launcher_pro_round"]
         }
+        amazon {
+            dimension "version"
+            applicationIdSuffix ".amazon"
+            versionNameSuffix "-amazon"
+            manifestPlaceholders = [appLabel:"@string/app_name_pro",
+                                    appBanner:"@drawable/banner_pro",
+                                    appLogo:"@drawable/hireslogo_pro",
+                                    appIcon:"@mipmap/ic_launcher_pro",
+                                    appIconRound:"@mipmap/ic_launcher_pro_round"]
+        }
     }
 
     bundle {

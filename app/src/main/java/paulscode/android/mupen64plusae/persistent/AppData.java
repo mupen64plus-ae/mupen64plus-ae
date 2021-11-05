@@ -333,6 +333,9 @@ public class AppData
     /** True if this is the pro version of the app */
     public final boolean isPro;
 
+    /** True if this is the amazon version of the app */
+    public final boolean isAmazon;
+
     public static final String applicationPath = "mupen64plus-fz";
 
     /** Default legacy data path, needed for moving legacy data to internal storage */
@@ -429,6 +432,7 @@ public class AppData
 
         manufacturer = android.os.Build.MANUFACTURER;
         isPro = context.getPackageName().startsWith("org.mupen64plusae.v3.fzurita.pro");
+        isAmazon = context.getPackageName().startsWith("org.mupen64plusae.v3.fzurita.amazon");
     }
 
     /**

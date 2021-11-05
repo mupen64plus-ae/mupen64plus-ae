@@ -404,7 +404,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         final Toolbar toolbar = findViewById( R.id.toolbar );
 
-        if (mAppData.isPro) {
+        if (mAppData.isPro || mAppData.isAmazon) {
             toolbar.setTitle( R.string.app_name_pro );
         } else {
             toolbar.setTitle( R.string.app_name );
@@ -588,8 +588,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // If no game was launched on creation
-        if (getIntent() == null || getIntent().getExtras() == null) {
-
+        if ((getIntent() == null || getIntent().getExtras() == null) && !mAppData.isAmazon) {
             if(mAppData.getNumberOfSuccesfulLaunchesToTryPro() > 5 && mAppData.getTimeSinceFirstStartToTryPro() > 10 && !mAppData.shouldNag() && !mAppData.isPro) {
                 if (fm.findFragmentByTag(STATE_TRY_PRO_DIALOG) == null) {
                     final TryProDialog tryProDialog = TryProDialog.newInstance();
@@ -995,7 +994,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     item.goodName, item.displayName, true,
                     true, false);
         } else if (menuItem.getItemId() == R.id.menuItem_startNetplayServer) {
-            if (mAppData.isPro) {
+            if (mAppData.isPro || mAppData.isAmazon) {
                 launchGameActivity(item.romUri,
                         item.zipUri,
                         item.md5, item.crc,
