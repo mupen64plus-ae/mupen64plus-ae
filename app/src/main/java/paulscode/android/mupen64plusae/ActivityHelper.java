@@ -191,8 +191,7 @@ public class ActivityHelper
         if (data.getData() != null)
         {
             Intent intent = new Intent( context, GalleryActivity.class );
-            if( !TextUtils.isEmpty( data.getData().getPath() ) )
-                intent.putExtra( Keys.ROM_PATH, data.getData().getPath() );
+            intent.putExtra( Keys.ROM_PATH, data.getData().toString() );
             context.startActivity( intent );
         }
         else
