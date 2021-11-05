@@ -105,6 +105,8 @@ void Config::resetToDefaults()
 	textureFilter.txHiresTextureFileStorage = 0;
 	textureFilter.txNoTextureFileStorage = 0;
 
+	textureFilter.txHiresVramLimit = 0u;
+
 	api().GetUserDataPath(textureFilter.txPath);
 	gln_wcscat(textureFilter.txPath, wst("/hires_texture"));
 	api().GetUserCachePath(textureFilter.txCachePath);

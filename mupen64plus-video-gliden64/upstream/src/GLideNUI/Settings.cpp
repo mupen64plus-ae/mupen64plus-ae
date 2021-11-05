@@ -48,7 +48,7 @@ void _loadSettings(QSettings & settings)
 	config.generalEmulation.enableHiresNoiseDithering = settings.value("enableHiresNoiseDithering", config.generalEmulation.enableHiresNoiseDithering).toInt();
 	config.generalEmulation.rdramImageDitheringMode = settings.value("rdramImageDitheringMode", config.generalEmulation.rdramImageDitheringMode).toInt();
 	config.generalEmulation.enableLOD = settings.value("enableLOD", config.generalEmulation.enableLOD).toInt();
-	config.generalEmulation.enableInaccurateTextureCoordinates = settings.value("enableFastInaccurateShaders", config.generalEmulation.enableInaccurateTextureCoordinates).toInt();
+	config.generalEmulation.enableInaccurateTextureCoordinates = settings.value("enableInaccurateTextureCoordinates", config.generalEmulation.enableInaccurateTextureCoordinates).toInt();
 	config.generalEmulation.enableHWLighting = settings.value("enableHWLighting", config.generalEmulation.enableHWLighting).toInt();
 	config.generalEmulation.enableCoverage = settings.value("enableCoverage", config.generalEmulation.enableCoverage).toInt();
 	config.generalEmulation.enableShadersStorage = settings.value("enableShadersStorage", config.generalEmulation.enableShadersStorage).toInt();
@@ -106,6 +106,7 @@ void _loadSettings(QSettings & settings)
 	config.textureFilter.txEnhancedTextureFileStorage = settings.value("txEnhancedTextureFileStorage", config.textureFilter.txEnhancedTextureFileStorage).toInt();
 	config.textureFilter.txHiresTextureFileStorage = settings.value("txHiresTextureFileStorage", config.textureFilter.txHiresTextureFileStorage).toInt();
 	config.textureFilter.txNoTextureFileStorage = settings.value("txNoTextureFileStorage", config.textureFilter.txNoTextureFileStorage).toInt();
+	config.textureFilter.txHiresVramLimit = settings.value("txHiresVramLimit", config.textureFilter.txHiresVramLimit).toInt();
 	QString txPath = QString::fromWCharArray(config.textureFilter.txPath);
 	config.textureFilter.txPath[settings.value("txPath", txPath).toString().toWCharArray(config.textureFilter.txPath)] = L'\0';
 	QString txCachePath = QString::fromWCharArray(config.textureFilter.txCachePath);
@@ -194,7 +195,7 @@ void _writeSettingsToFile(const QString & filename)
 	settings.setValue("enableHiresNoiseDithering", config.generalEmulation.enableHiresNoiseDithering);
 	settings.setValue("rdramImageDitheringMode", config.generalEmulation.rdramImageDitheringMode);
 	settings.setValue("enableLOD", config.generalEmulation.enableLOD);
-	settings.setValue("enableFastInaccurateShaders", config.generalEmulation.enableInaccurateTextureCoordinates);
+	settings.setValue("enableInaccurateTextureCoordinates", config.generalEmulation.enableInaccurateTextureCoordinates);
 	settings.setValue("enableHWLighting", config.generalEmulation.enableHWLighting);
 	settings.setValue("enableCoverage", config.generalEmulation.enableCoverage);
 	settings.setValue("enableShadersStorage", config.generalEmulation.enableShadersStorage);
@@ -252,6 +253,7 @@ void _writeSettingsToFile(const QString & filename)
 	settings.setValue("txEnhancedTextureFileStorage", config.textureFilter.txEnhancedTextureFileStorage);
 	settings.setValue("txHiresTextureFileStorage", config.textureFilter.txHiresTextureFileStorage);
 	settings.setValue("txNoTextureFileStorage", config.textureFilter.txNoTextureFileStorage);
+	settings.setValue("txHiresVramLimit", config.textureFilter.txHiresVramLimit);
 	settings.setValue("txPath", QString::fromWCharArray(config.textureFilter.txPath));
 	settings.setValue("txCachePath", QString::fromWCharArray(config.textureFilter.txCachePath));
 	settings.setValue("txDumpPath", QString::fromWCharArray(config.textureFilter.txDumpPath));
@@ -515,6 +517,7 @@ void saveCustomRomSettings(const QString & _strIniFolder, const char * _strRomNa
 	WriteCustomSetting(textureFilter, txEnhancedTextureFileStorage);
 	WriteCustomSetting(textureFilter, txHiresTextureFileStorage);
 	WriteCustomSetting(textureFilter, txNoTextureFileStorage);
+	WriteCustomSetting(textureFilter, txHiresVramLimit);
 	WriteCustomSetting(textureFilter, txHiresEnable);
 	WriteCustomSetting(textureFilter, txHiresFullAlphaChannel);
 	WriteCustomSetting(textureFilter, txHresAltCRC);

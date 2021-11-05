@@ -24,8 +24,8 @@
 #ifndef __INTERNAL_H__
 #define __INTERNAL_H__
 
-#include "Ext_TxFilter.h"
-#include "txWidestringWrapper.h"
+#include "TxFilterExport.h"
+#include "txWidestringHelper.h"
 
 #include <Graphics/Parameters.h>
 
