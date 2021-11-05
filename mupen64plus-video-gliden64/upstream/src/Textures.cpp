@@ -14,7 +14,7 @@
 #include "convert.h"
 #include "FrameBuffer.h"
 #include "Config.h"
-#include "GLideNHQ/Ext_TxFilter.h"
+#include "GLideNHQ/TxFilterExport.h"
 #include "TextureFilterHandler.h"
 #include "DisplayLoadProgress.h"
 #include "Graphics/Context.h"
@@ -151,6 +151,26 @@ inline u32 GetI8_RGBA4444( u64 *src, u16 x, u16 i, u8 palette )
 	return I8_RGBA4444(((u8*)src)[x^(i<<1)]);
 }
 
+inline u32 GetI16_RGBA8888(u64 *src, u16 x, u16 i, u8 palette)
+{
+	const u16 tex = ((u16*)src)[x^i];
+	u32 r = tex >> 8;
+	u32 g = tex & 0xFF;
+	u32 b = r;
+	u32 a = g;
+	return (a << 24) | (b << 16) | (g << 8) | r;
+}
+
+inline u32 GetI16_RGBA4444(u64 *src, u16 x, u16 i, u8 palette)
+{
+	const u16 tex = ((u16*)src)[x^i];
+	u16 r = tex >> 12;
+	u16 g = tex & 0x0F;
+	u16 b = r;
+	u16 a = g;
+	return (a << 12) | (b << 8) | (g << 4) | r;
+}
+
 inline u32 GetCI16IA_RGBA8888(u64 *src, u16 x, u16 i, u8 palette)
 {
 	const u16 tex = ((u16*)src)[x^i];
@@ -279,7 +299,7 @@ ImageFormat::ImageFormat()
 				{ GetNone, datatype::UNSIGNED_SHORT_4_4_4_4, internalcolorFormat::RGBA4, GetNone, datatype::UNSIGNED_BYTE, internalcolorFormat::RGBA8, internalcolorFormat::RGBA8, 2, 2048 }, // YUV
 				{ GetIA88_RGBA4444, datatype::UNSIGNED_SHORT_4_4_4_4, internalcolorFormat::RGBA4, GetIA88_RGBA8888, datatype::UNSIGNED_BYTE, internalcolorFormat::RGBA8, internalcolorFormat::RGBA8, 2, 2048 }, // CI as IA
 				{ GetIA88_RGBA4444, datatype::UNSIGNED_SHORT_4_4_4_4, internalcolorFormat::RGBA4, GetIA88_RGBA8888, datatype::UNSIGNED_BYTE, internalcolorFormat::RGBA8, internalcolorFormat::RGBA8, 2, 2048 }, // IA
-				{ GetNone, datatype::UNSIGNED_SHORT_4_4_4_4, internalcolorFormat::RGBA4, GetNone, datatype::UNSIGNED_BYTE, internalcolorFormat::RGBA8, internalcolorFormat::RGBA4, 0, 2048 }, // I
+				{ GetI16_RGBA4444, datatype::UNSIGNED_SHORT_4_4_4_4, internalcolorFormat::RGBA4, GetI16_RGBA8888, datatype::UNSIGNED_BYTE, internalcolorFormat::RGBA8, internalcolorFormat::RGBA8, 0, 2048 }, // I
 			},
 			{ // 32-bit
 				{ GetRGBA8888_RGBA4444, datatype::UNSIGNED_SHORT_4_4_4_4, internalcolorFormat::RGBA4, GetRGBA8888_RGBA8888, datatype::UNSIGNED_BYTE, internalcolorFormat::RGBA8, internalcolorFormat::RGBA8, 2, 1024 }, // RGBA
@@ -514,12 +534,40 @@ void TextureCache::destroy()
 	for (FBTextures::const_iterator cur = m_fbTextures.cbegin(); cur != m_fbTextures.cend(); ++cur)
 		gfxContext.deleteTexture(cur->second.name);
 	m_fbTextures.clear();
+
+	m_hdTexCacheSize = 0;
+}
+
+void TextureCache::_checkHdTexLimit()
+{
+	const u64 maxCacheSize = config.textureFilter.txHiresVramLimit * 1024u * 1024u;
+
+	// we don't need to do anything,
+	// when the limit has been disabled
+	if (maxCacheSize == 0u)
+		return;
+
+	// keep removing hd textures until we're below the max size
+	for (auto iter = m_textures.rbegin(); iter != m_textures.rend() && m_hdTexCacheSize >= maxCacheSize;)
+	{
+		if (!iter->bHDTexture) {
+			++iter;
+		} else {
+			assert(m_hdTexCacheSize >= iter->textureBytes);
+			m_hdTexCacheSize -= iter->textureBytes;
+			gfxContext.deleteTexture(iter->name);
+			m_lruTextureLocations.erase(iter->crc);
+			iter = decltype(iter)(m_textures.erase(std::next(iter).base()));
+		}
+	}
 }
 
 void TextureCache::_checkCacheSize()
 {
 	if (m_textures.size() >= m_maxCacheSize) {
 		CachedTexture& clsTex = m_textures.back();
+		if (clsTex.bHDTexture)
+			m_hdTexCacheSize -= clsTex.textureBytes;
 		gfxContext.deleteTexture(clsTex.name);
 		m_lruTextureLocations.erase(clsTex.crc);
 		m_textures.pop_back();
@@ -657,9 +705,7 @@ void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 					height;
 }
 
-
-inline
-void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, u16 widthOrg, u16 heightOrg)
+void TextureCache::_updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, u16 widthOrg, u16 heightOrg)
 {
 	_pTexture->textureBytes = _info.width * _info.height;
 
@@ -679,6 +725,9 @@ void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, u1
 	_pTexture->hdRatioT = (f32)(_info.height) / (f32)(_pTexture->height);
 
 	_pTexture->bHDTexture = true;
+
+	m_hdTexCacheSize += _pTexture->textureBytes;
+	_checkHdTexLimit();
 }
 
 bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture, u64 & _ricecrc)
@@ -1718,6 +1767,7 @@ void TextureCache::clear()
 	}
 	m_textures.clear();
 	m_lruTextureLocations.clear();
+	m_hdTexCacheSize = 0u;
 }
 
 void TextureCache::toggleDumpTex()
@@ -1805,6 +1855,8 @@ void TextureCache::update(u32 _t)
 			return;
 		}
 
+		if (currentTex.bHDTexture)
+			m_hdTexCacheSize -= currentTex.textureBytes;
 		gfxContext.deleteTexture(currentTex.name);
 		m_lruTextureLocations.erase(locations_iter);
 		m_textures.erase(iter);
