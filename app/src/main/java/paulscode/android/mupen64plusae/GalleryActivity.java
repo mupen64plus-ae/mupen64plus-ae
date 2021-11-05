@@ -638,20 +638,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         Log.i("GalleryActivity", "Rom path = " + givenRomPath);
 
-        boolean isUri;
-
-        isUri = !new File(givenRomPath).exists();
-
         mGameStartedExternally = true;
 
-        Uri romPathUri;
-
-        if (isUri) {
-            romPathUri = Uri.parse(givenRomPath);
-        } else {
-            romPathUri = Uri.fromFile(new File(givenRomPath));
-        }
-
+        Uri romPathUri = Uri.parse(givenRomPath);
         RomHeader header = new RomHeader(this, romPathUri);
 
         boolean successful = false;
