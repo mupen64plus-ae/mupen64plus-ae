@@ -100,16 +100,26 @@ void calc_light (VERTEX *v)
 {
     float color[3] = {rdp.light[rdp.num_lights].r, rdp.light[rdp.num_lights].g, rdp.light[rdp.num_lights].b};
 
-    int count = rdp.num_lights - 1;
+	int count = rdp.num_lights - 1;
 
+	// This doesn't work due to different data structure
+	/*
 	while (count >= 6) {
-		DotProductMax7FullNeon(rdp.light_vector[rdp.num_lights - count - 1],(float (*)[3])v->vec, (float (*)[3])&(rdp.light[rdp.num_lights - count - 1]).r,color);
+		DotProductMax7FullNeon(rdp.light_vector[rdp.num_lights - count - 1],
+						 (float (*)[3])v->vec,
+						 (float (*)[3])&(rdp.light[rdp.num_lights - count - 1]).r,
+						 color);
 		count -= 7;
 	}
+
 	while (count >= 3) {
-		DotProductMax4FullNeon(rdp.light_vector[rdp.num_lights - count - 1],(float (*)[3])v->vec,(float (*)[3])&(rdp.light[rdp.num_lights - count - 1]).r,color);
+		DotProductMax4FullNeon(rdp.light_vector[rdp.num_lights - count - 1],
+						 (float (*)[3])v->vec,
+						 (float (*)[3])&(rdp.light[rdp.num_lights - count - 1]).r,
+						 color);
 		count -= 4;
 	}
+    */
 
     while (count >= 0)
     {
@@ -121,6 +131,7 @@ void calc_light (VERTEX *v)
             color[1] += rdp.light[rdp.num_lights - count - 1].g * intensity;
             color[2] += rdp.light[rdp.num_lights - count - 1].b * intensity;
         }
+
         --count;
     }
 
