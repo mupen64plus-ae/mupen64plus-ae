@@ -283,13 +283,14 @@ class NativeConfigFiles
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancedTextureFileStorage", boolToTF( game.glideN64Prefs.txEnhancedTextureFileStorage ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresTextureFileStorage", boolToTF( game.glideN64Prefs.txHiresTextureFileStorage ) );
         }
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresVramLimit", String.valueOf(game.glideN64Prefs.txHiresVramLimit) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHresAltCRC", boolToTF( game.glideN64Prefs.txHresAltCRC ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontName", "DroidSans.ttf" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontSize", "18" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontColor", "B5E61D" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceGammaCorrection", boolToTF( game.glideN64Prefs.forceGammaCorrection ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "GammaCorrectionLevel", String.valueOf( game.glideN64Prefs.gammaCorrectionLevel ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "DisableFBInfo", String.valueOf( true ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "DisableFBInfo", boolToTF( true ) );
 
         // Override certain settings when using netplay
         if (usingNetplay) {

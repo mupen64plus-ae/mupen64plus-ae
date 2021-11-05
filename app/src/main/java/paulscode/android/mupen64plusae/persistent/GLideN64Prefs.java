@@ -1,5 +1,6 @@
 package paulscode.android.mupen64plusae.persistent;
 
+import android.app.ActivityManager;
 import android.content.Context;
 
 import paulscode.android.mupen64plusae.profile.Profile;
@@ -176,6 +177,9 @@ public class GLideN64Prefs {
     /** Use file storage instead of memory cache for hires textures. */
     public final boolean txHiresTextureFileStorage;
 
+    /** Limit hi-res textures size in VRAM (in MB, 0 = no limit) */
+    public final long txHiresVramLimit;
+
     /** Force gamma correction. */
     public final boolean forceGammaCorrection;
 
@@ -231,6 +235,11 @@ public class GLideN64Prefs {
         txSaveCache = emulationProfile.get( "txSaveCache", "False" ).equals( "True" );
         txEnhancedTextureFileStorage = emulationProfile.get( "txEnhancedTextureFileStorage", "False" ).equals( "True" );
         txHiresTextureFileStorage = emulationProfile.get( "txHiresTextureFileStorage", "False" ).equals( "True" );
+
+        ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+        actManager.getMemoryInfo(memInfo);
+        txHiresVramLimit = memInfo.totalMem/2/1024/1024;
 
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
