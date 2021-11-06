@@ -1,11 +1,13 @@
 package paulscode.android.mupen64plusae.game;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.util.PixelBuffer;
@@ -15,6 +17,8 @@ public class ShaderDrawer {
     private static final String TAG = "ShaderDrawer";
     private SurfaceTexture mGameTexture;
     private final ArrayList<Shader> mShaderPasses = new ArrayList<>();
+    private int mWidth = 0;
+    private int mHeight = 0;
 
     public ShaderDrawer(Context context, ArrayList<ShaderLoader> selectedShaders) {
         ShaderLoader.loadShaders(context);
@@ -37,6 +41,8 @@ public class ShaderDrawer {
         if (mGameTexture == null) {
             Log.i(TAG, "Texture available, surface=" + width + "x" + height +
                     " render=" + surface.mWidth + "x" + surface.mHeight);
+            mWidth = width;
+            mHeight = height;
 
             GLES20.glViewport(0, 0, width, height);
             GLES20.glClearColor(0, 0, 0, 1);
@@ -91,6 +97,14 @@ public class ShaderDrawer {
             mGameTexture.detachFromGLContext();
             mGameTexture = null;
         }
+    }
+
+    public Bitmap getScreenShot() {
+        ByteBuffer buffer = ByteBuffer.allocate(mWidth * mHeight * 4);
+        GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
+        Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(buffer);
+        return bitmap;
     }
 
     public void onDrawFrame() {

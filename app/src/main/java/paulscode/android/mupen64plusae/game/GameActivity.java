@@ -777,7 +777,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         } else if (menuItem.getItemId() ==  R.id.menuItem_set_speed ) {
             mCoreFragment.setCustomSpeedFromPrompt();
         } else if (menuItem.getItemId() ==  R.id.menuItem_screenshot) {
-            mCoreFragment.screenshot();
+            mGameSurface.takeScreenshot(mGlobalPrefs.screenshotsDir, mRomGoodName);
         } else if (menuItem.getItemId() ==  R.id.menuItem_set_slot) {
             mCoreFragment.setSlotFromPrompt();
         } else if (menuItem.getItemId() ==  R.id.menuItem_slot_load) {
@@ -1238,7 +1238,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private void initSingleController(int player, ControllerProfile p)
     {
         if(p != null) {
-           new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getAutoDeadzone(),
+           new PeripheralController( mCoreFragment, mGameSurface, mGlobalPrefs, mRomGoodName,
+                   player, mGamePrefs.playerMap, p.getMap(), p.getAutoDeadzone(),
                    p.getDeadzone(), p.getSensitivityX(), p.getSensitivityY(), mGlobalPrefs.holdControllerBottons,
                    mOverlay, this, null, mKeyProvider, mAxisProvider);
             Log.i(TAG, "Player " + player + " controller has been enabled");

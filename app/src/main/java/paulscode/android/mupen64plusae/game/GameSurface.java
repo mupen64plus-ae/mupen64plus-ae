@@ -20,8 +20,13 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.net.Uri;
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
@@ -30,10 +35,13 @@ import android.opengl.EGLExt;
 import android.opengl.EGLSurface;
 import android.opengl.GLES10;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.SurfaceHolder;
@@ -41,12 +49,20 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
 
 import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
+
+import org.mupen64plusae.v3.alpha.R;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
@@ -160,6 +176,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         mSurfaceTexture = null;
+    }
+
+    public void takeScreenshot(String directory, String filename) {
+        Log.i(TAG, "takeScreenshot: " + directory + " " + filename);
+        Notifier.showToast(mContext, R.string.toast_savingScreenshot);
+
+        mRenderThread.getHandler().sendScreenshotRequest(directory, filename);
     }
 
     @Override
@@ -810,6 +833,70 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             frameAvailable();
         }
 
+        /**
+         * Handles a screenshot request
+         */
+        private void takeScreenshot(RenderHandler.ScreenShotRequest screenShotRequest) {
+            Log.i(TAG, "Renderthread -- takeScreenshot: " + screenShotRequest.mFilename);
+
+            Bitmap screenshotMirrored = mShaderDrawer.getScreenShot();
+
+            Matrix mirror = new Matrix();
+            mirror.setScale(-1, 1);
+            mirror.postRotate(180);
+            Bitmap screenshot = Bitmap.createBitmap(screenshotMirrored, 0, 0, screenshotMirrored.getWidth(),
+                    screenshotMirrored.getHeight(), mirror, false);
+            screenshot.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                final String relativeLocation = Environment.DIRECTORY_PICTURES + File.separator + "mupen64plus";
+
+                final ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, screenShotRequest.mFilename);
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
+
+                final ContentResolver resolver = mContext.getContentResolver();
+
+                final Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                Uri uri = null;
+
+                try {
+                    uri = resolver.insert(contentUri, contentValues);
+                } catch (IllegalStateException|IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
+
+                if (uri != null) {
+                    try (OutputStream stream = resolver.openOutputStream(uri)) {
+                        if (stream != null) {
+                            if (!screenshot.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
+                                Log.e(TAG, "Compress: Could not save picture: " + screenShotRequest.mFilename);
+                            }
+                        }
+                        else {
+                            Log.e(TAG, "Null: Could not save picture: " + screenShotRequest.mFilename);
+                        }
+                    } catch (IOException e) {
+                        resolver.delete(uri, null, null);
+                        Log.e(TAG, "Exception: Could not save picture: " + screenShotRequest.mFilename);
+                    }
+                }
+            } else {
+                File file = new File(screenShotRequest.mDir, screenShotRequest.mFilename + ".png");
+                FileOutputStream outpuStream;
+                try {
+                    outpuStream = new FileOutputStream(file);
+                    screenshot.compress(Bitmap.CompressFormat.PNG, 100, outpuStream);
+                    outpuStream.flush();
+                    outpuStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Exception: Could not save picture: " + screenShotRequest.mFilename);
+                }
+            }
+        }
+
         private void surfaceTextureDestroyed() {
             if (mFrameAvailableTexture != null) {
                 mFrameAvailableTexture.setOnFrameAvailableListener(null);
@@ -830,6 +917,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         private static final int MSG_SURFACETEXTURE_DESTROYED = 2;
         private static final int MSG_SHUTDOWN = 3;
         private static final int MSG_FRAME_AVAILABLE = 4;
+        private static final int MSG_GET_SCREENSHOT = 5;
+
+        private static class ScreenShotRequest {
+            public String mDir;
+            public String mFilename;
+        }
 
         // This shouldn't need to be a weak ref, since we'll go away when the Looper quits,
         // but no real harm in it.
@@ -862,6 +955,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
+         * Sends the "screenshot" message
+         * <p>
+         * Call from UI thread.
+         */
+        public void sendScreenshotRequest(String directory, String filename) {
+
+            ScreenShotRequest screenShotRequest = new ScreenShotRequest();
+            screenShotRequest.mDir = directory;
+            screenShotRequest.mFilename = filename;
+            sendMessage(obtainMessage(MSG_GET_SCREENSHOT, 0, 0, screenShotRequest));
+        }
+
+        /**
          * Sends the "surface texture available" message
          * <p>
          * Call from UI thread.
@@ -890,6 +996,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                     break;
                 case MSG_SURFACETEXTURE_DESTROYED:
                     renderThread.surfaceTextureDestroyed();
+                    break;
+                case MSG_GET_SCREENSHOT:
+                    renderThread.takeScreenshot((ScreenShotRequest) msg.obj);
                     break;
                 default:
                     throw new RuntimeException("unknown message " + what);

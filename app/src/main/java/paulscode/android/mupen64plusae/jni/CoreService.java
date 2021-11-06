@@ -164,22 +164,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private CoreServiceListener mListener = null;
     private LoadingDataListener mLoadingDataListener = null;
     private RaphnetControllerHandler mRaphnetHandler = null;
-
-    private boolean mScreenshotRequested = false;
-    private String mWorkingDir = null;
-
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
 
     private GameDataManager mGameDataManager = null;
-
-    //Only find files that end with .sav
-    final FileFilter screenshotFilter = pathname -> {
-        //It must match this format "yyyy-MM-dd-HH-mm-ss"
-        final String fileName = pathname.getName();
-        return fileName.toLowerCase().endsWith("png");
-    };
 
     private final CoreInterface mCoreInterface = new CoreInterface();
 
@@ -408,7 +397,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void screenshot()
     {
-        mScreenshotRequested = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
         mCoreInterface.emuScreenshot();
     }
 
@@ -555,20 +543,20 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 NativeInput.setConfig( 3, mGamePrefs.isPlugged[3], mGamePrefs.getPakType(4).ordinal() );
             }
 
-            mWorkingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
+            String workingDir = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
 
             if (mLoadingDataListener != null) mLoadingDataListener.loadingStarted();
 
             // Clean up the working directory
-            FileUtil.deleteFolder(new File(mWorkingDir));
+            FileUtil.deleteFolder(new File(workingDir));
 
             // Copy game data from external storage
             if (mGlobalPrefs.useExternalStorge) {
                 copyGameContentsFromSdCard();
             }
 
-            FileUtil.makeDirs(mWorkingDir);
-            mCoreInterface.setWorkingPath(mWorkingDir);
+            FileUtil.makeDirs(workingDir);
+            mCoreInterface.setWorkingPath(workingDir);
 
             SparseArray<String> gbRomPaths = new SparseArray<>(4);
             SparseArray<String> gbRamPaths = new SparseArray<>(4);
@@ -740,7 +728,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             // Clean up the working directory
-            FileUtil.deleteFolder(new File(mWorkingDir));
+            FileUtil.deleteFolder(new File(workingDir));
             FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
 
             if (loadingSuccess) {
@@ -1168,11 +1156,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.emuPause();
             }
 
-            if (mScreenshotRequested && mWorkingDir != null) {
-                mScreenshotRequested = false;
-                mPeriodicActionHandler.post(mExportScreenshotChecker);
-            }
-
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
             mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
         }
@@ -1198,67 +1181,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     };
 
-    Runnable mExportScreenshotChecker = () -> {
-        File workingDirFile = new File (mWorkingDir);
-        File[] workingDirFiles = workingDirFile.listFiles(screenshotFilter);
-
-        if (workingDirFiles != null && workingDirFiles.length != 0) {
-
-            for (File file : workingDirFiles) {
-                boolean exportSuccess = exportScreenshot(file);
-                if (exportSuccess && file.delete()) {
-                    Log.e(TAG, "Could not delete file " + file.getAbsolutePath());
-                }
-            }
-
-        } else {
-            // Files are not there yet, try again
-            mScreenshotRequested = true;
-        }
-    };
-
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
-    }
-
-    private boolean exportScreenshot(File file)
-    {
-        boolean exportSuccess = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            final String relativeLocation = Environment.DIRECTORY_PICTURES + File.separator + "mupen64plus";
-
-            final ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, file.getName());
-            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
-
-            final ContentResolver resolver = getApplicationContext().getContentResolver();
-
-            final Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            Uri uri = null;
-
-            try {
-                uri = resolver.insert(contentUri, contentValues);
-            } catch (IllegalStateException|IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-
-            if (uri != null) {
-                try (OutputStream stream = resolver.openOutputStream(uri)) {
-                    if (stream != null && bitmap != null) {
-                        if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
-                            Log.e(TAG, "Could not save picture: " + file.getAbsolutePath());
-                            exportSuccess = false;
-                        }
-                    }
-                } catch (IOException e) {
-                    resolver.delete(uri, null, null);
-                }
-            }
-        }
-
-        return exportSuccess;
     }
 }

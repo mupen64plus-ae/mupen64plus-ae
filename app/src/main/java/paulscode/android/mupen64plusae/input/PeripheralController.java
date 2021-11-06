@@ -24,15 +24,15 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 
+import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
-import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -45,6 +45,21 @@ public class PeripheralController extends AbstractController implements
      * Pointer to core fragment
      */
     private final CoreFragment mCoreFragment;
+
+    /**
+     * Pointer to game surface
+     */
+    private final GameSurface mGameSurface;
+
+    /**
+     * Global preferences
+     */
+    private final GlobalPrefs mGlobalPrefs;
+
+    /**
+     * ROM good game
+     */
+    private final String mRomGoodName;
 
     /** The map from hardware identifiers to players. */
     private final PlayerMap mPlayerMap;
@@ -103,6 +118,9 @@ public class PeripheralController extends AbstractController implements
      * Instantiates a new peripheral controller.
      *
      * @param coreFragment Core interface fragment
+     * @param gameSurface Game surface
+     * @param globalPrefs GLobal preferences
+     * @param romGoodName ROM good name
      * @param player    The player number, between 1 and 4, inclusive.
      * @param playerMap The map from hardware identifiers to players.
      * @param inputMap  The map from input codes to N64/Mupen commands.
@@ -112,7 +130,7 @@ public class PeripheralController extends AbstractController implements
      * @param inputSensitivityY The analog X sensitivity in percent.
      * @param providers The user input providers. Null elements are safe.
      */
-    public PeripheralController(CoreFragment coreFragment, int player, PlayerMap playerMap, InputMap inputMap,
+    public PeripheralController(CoreFragment coreFragment, GameSurface gameSurface, GlobalPrefs globalPrefs, String romGoodName, int player, PlayerMap playerMap, InputMap inputMap,
                                 boolean autoDeadzone, int inputDeadzone, int inputSensitivityX, int inputSensitivityY, boolean holdForFunctions,
                                 OnStateChangedListener listener, View.OnKeyListener keyListener, SensorController sensorController, AbstractProvider... providers )
     {
@@ -131,6 +149,9 @@ public class PeripheralController extends AbstractController implements
         mKeyListener = keyListener;
         mSensorController = sensorController;
         mCoreFragment = coreFragment;
+        mGameSurface = gameSurface;
+        mGlobalPrefs = globalPrefs;
+        mRomGoodName = romGoodName;
         
         // Populate the entry map
         mStrengthCalculator = new InputStrengthCalculator( inputMap, mEntryMap );
@@ -355,7 +376,7 @@ public class PeripheralController extends AbstractController implements
                         break;
                     case InputMap.FUNC_SCREENSHOT:
                         Log.v("PeripheralController", "FUNC_SCREENSHOT");
-                        mCoreFragment.screenshot();
+                        mGameSurface.takeScreenshot(mGlobalPrefs.screenshotsDir, mRomGoodName);
                         break;
                     case InputMap.FUNC_SENSOR_TOGGLE:
                         Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");

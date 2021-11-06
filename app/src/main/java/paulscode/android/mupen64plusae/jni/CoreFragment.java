@@ -804,11 +804,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if (mCoreService != null)
         {
-            try {
-                Notifier.showToast(requireActivity(), R.string.toast_savingScreenshot);
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
             mCoreService.screenshot();
         }
     }
