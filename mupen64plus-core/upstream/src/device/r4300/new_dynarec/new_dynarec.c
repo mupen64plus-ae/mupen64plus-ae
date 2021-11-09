@@ -1403,7 +1403,7 @@ static void clean_registers(int istart,int iend,int wr)
           if(wr) {
             will_dirty[i]=temp_will_dirty;
             wont_dirty[i]=temp_wont_dirty;
-            clean_registers((ba[i]-start)>>2,i-1,0);
+            clean_registers((ba[i]-start)>>2,i-1,1);
           }else{
             // Limit recursion.  It can take an excessive amount
             // of time if there are a lot of nested loops.
@@ -2459,7 +2459,7 @@ static void ll_kill_pointers(struct ll_entry *head,intptr_t addr,int shift)
     {
       inv_debug("EXP: Kill pointer at %x (%x)\n",(intptr_t)head->addr,head->vaddr);
       uintptr_t host_addr=(intptr_t)kill_pointer(head->addr);
-      #if NEW_DYNAREC >= NEW_DYNAREC_ARM
+      #if NEW_DYNAREC == NEW_DYNAREC_ARM
         needs_clear_cache[(host_addr-(uintptr_t)base_addr)>>17]|=1<<(((host_addr-(uintptr_t)base_addr)>>12)&31);
       #else
         /* avoid unused variable warning */
@@ -2800,7 +2800,7 @@ static void invalidate_page(u_int page)
   while(head!=NULL) {
     inv_debug("INVALIDATE: kill pointer to %x (%x)\n",head->vaddr,(intptr_t)head->addr);
       uintptr_t host_addr=(intptr_t)kill_pointer(head->addr);
-    #if NEW_DYNAREC >= NEW_DYNAREC_ARM
+    #if NEW_DYNAREC == NEW_DYNAREC_ARM
       needs_clear_cache[(host_addr-(uintptr_t)base_addr)>>17]|=1<<(((host_addr-(uintptr_t)base_addr)>>12)&31);
     #else
       /* avoid unused variable warning */
@@ -9340,7 +9340,7 @@ int new_recompile_block(int addr)
       // Don't recompile stuff that's already compiled
       if(check_addr(start+i*4+4)) done=1;
       // Don't get too close to the limit
-      if(i>MAXBLOCK/2) done=1;
+      if(i>(MAXBLOCK - 4)) done=1;
     }
     if(i>0&&itype[i]==SYSCALL&&stop_after_jal) done=1;
     assert(i<MAXBLOCK-1);

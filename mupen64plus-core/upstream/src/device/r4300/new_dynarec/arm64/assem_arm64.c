@@ -353,6 +353,8 @@ static void *kill_pointer(void *stub)
   int *i_ptr=(int*)((intptr_t)ptr+offset);
   assert((*i_ptr&0xfc000000)==0x14000000); //b
   set_jump_target((intptr_t)i_ptr,(intptr_t)stub);
+  intptr_t ptr_rx=((intptr_t)i_ptr-(intptr_t)base_addr)+(intptr_t)base_addr_rx;
+  cache_flush((void*)ptr_rx, (void*)(ptr_rx+4));
   return i_ptr;
 }
 
