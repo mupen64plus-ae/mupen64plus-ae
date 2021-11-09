@@ -239,7 +239,7 @@ public class GLideN64Prefs {
         ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
         actManager.getMemoryInfo(memInfo);
-        txHiresVramLimit = memInfo.totalMem/2/1024/1024;
+        txHiresVramLimit = memInfo.totalMem/3/1024/1024;
 
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
