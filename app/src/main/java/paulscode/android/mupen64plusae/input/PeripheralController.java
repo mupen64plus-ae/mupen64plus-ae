@@ -416,7 +416,7 @@ public class PeripheralController extends AbstractController implements
 
     private static float getAutoDeadZone(int source, InputDevice device, int axis)
     {
-        final InputDevice.MotionRange range = device.getMotionRange(axis, source);
+        final InputDevice.MotionRange range = device != null ? device.getMotionRange(axis, source) : null;
 
         // A joystick at rest does not always report an absolute position of
         // (0,0). Use the getFlat() method to determine the range of values
