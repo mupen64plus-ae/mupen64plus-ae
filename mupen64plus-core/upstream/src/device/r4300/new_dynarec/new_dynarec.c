@@ -2459,12 +2459,8 @@ static void ll_kill_pointers(struct ll_entry *head,intptr_t addr,int shift)
     {
       inv_debug("EXP: Kill pointer at %x (%x)\n",(intptr_t)head->addr,head->vaddr);
       uintptr_t host_addr=(intptr_t)kill_pointer(head->addr);
-      #if NEW_DYNAREC == NEW_DYNAREC_ARM
-        needs_clear_cache[(host_addr-(uintptr_t)base_addr)>>17]|=1<<(((host_addr-(uintptr_t)base_addr)>>12)&31);
-      #else
-        /* avoid unused variable warning */
-        (void)host_addr;
-      #endif
+      /* avoid unused variable warning */
+      (void)host_addr;
     }
     head=head->next;
   }
@@ -2799,13 +2795,9 @@ static void invalidate_page(u_int page)
   jump_out[page]=0;
   while(head!=NULL) {
     inv_debug("INVALIDATE: kill pointer to %x (%x)\n",head->vaddr,(intptr_t)head->addr);
-      uintptr_t host_addr=(intptr_t)kill_pointer(head->addr);
-    #if NEW_DYNAREC == NEW_DYNAREC_ARM
-      needs_clear_cache[(host_addr-(uintptr_t)base_addr)>>17]|=1<<(((host_addr-(uintptr_t)base_addr)>>12)&31);
-    #else
-      /* avoid unused variable warning */
-      (void)host_addr;
-    #endif
+    uintptr_t host_addr=(intptr_t)kill_pointer(head->addr);
+    /* avoid unused variable warning */
+    (void)host_addr;
     next=head->next;
     free(head);
     head=next;

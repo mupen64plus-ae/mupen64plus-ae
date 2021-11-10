@@ -356,6 +356,7 @@ static void *kill_pointer(void *stub)
 #endif
   assert((*i_ptr&0x0f000000)==0x0a000000); //jmp
   set_jump_target((int)i_ptr,(int)stub);
+  cache_flush((void*)i_ptr, (void*)((u_int)i_ptr+4));
   return i_ptr;
 }
 
