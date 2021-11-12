@@ -171,8 +171,8 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         } else {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(permissions);
+            intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
         }
         startActivityForResult( intent, requestCode );
     }
