@@ -499,19 +499,8 @@ CachedTexture * FrameBuffer::getTexture(u32 _t)
 	pTexture->scaleS = m_scale / static_cast<f32>(pTexture->width);
 	pTexture->scaleT = m_scale / static_cast<f32>(pTexture->height);
 
-	if (gSP.textureTile[_t]->shifts > 10)
-		pTexture->shiftScaleS = static_cast<f32>(1 << (16 - gSP.textureTile[_t]->shifts));
-	else if (gSP.textureTile[_t]->shifts > 0)
-		pTexture->shiftScaleS = 1.0f / static_cast<f32>(1 << gSP.textureTile[_t]->shifts);
-	else
-		pTexture->shiftScaleS = 1.0f;
-
-	if (gSP.textureTile[_t]->shiftt > 10)
-		pTexture->shiftScaleT = static_cast<f32>(1 << (16 - gSP.textureTile[_t]->shiftt));
-	else if (gSP.textureTile[_t]->shiftt > 0)
-		pTexture->shiftScaleT = 1.0f / static_cast<f32>(1 << gSP.textureTile[_t]->shiftt);
-	else
-		pTexture->shiftScaleT = 1.0f;
+	pTexture->shiftScaleS = calcShiftScaleS(*gSP.textureTile[_t]);
+	pTexture->shiftScaleT = calcShiftScaleT(*gSP.textureTile[_t]);
 
 	return pTexture;
 }
@@ -672,7 +661,10 @@ void FrameBufferList::setBufferChanged(f32 _maxY)
 	gDP.colorImage.height = max(gDP.colorImage.height, static_cast<u32>(_maxY));
 	gDP.colorImage.height = min(gDP.colorImage.height, static_cast<u32>(gDP.scissor.lry));
 	if (m_pCurrent != nullptr) {
-		m_pCurrent->m_height = max(m_pCurrent->m_height, gDP.colorImage.height);
+		if (m_pCurrent->m_isMainBuffer)
+			m_pCurrent->m_height = max(m_pCurrent->m_height, min(gDP.colorImage.height, VI.height));
+		else
+			m_pCurrent->m_height = max(m_pCurrent->m_height, gDP.colorImage.height);
 		m_pCurrent->m_cfb = false;
 		m_pCurrent->m_changed = true;
 		m_pCurrent->m_copiedToRdram = false;
