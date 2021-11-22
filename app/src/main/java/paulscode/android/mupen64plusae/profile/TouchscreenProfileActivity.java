@@ -120,6 +120,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     // This is to prevent more than one popup appearing at once
     private boolean mPopupBeingShown;
 
+    /** True if separated A/B buttons is enabled in the buttons configuration */
+    boolean mSeparatedAB;
+
+    /** True if separated C buttons is enabled in the buttons configuration */
+    boolean mSeparatedC;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -250,18 +256,37 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     public void onPrepareMenuList(MenuListView listView)
     {
         Menu menu = listView.getMenu();
+        mSeparatedAB = Boolean.valueOf(mProfile.get("separateButtonsAB"));
+        mSeparatedC = Boolean.valueOf(mProfile.get("separateButtonsC"));
+
         setCheckState( menu, R.id.menuItem_analog, ANALOG );
         setCheckState( menu, R.id.menuItem_dpad, DPAD );
 
-        // Disable A/B buttons to be separated if the skin is not supporting it.
-        if(!mTouchscreenMap.isSplitABSkin())
+        // Do not show group A/B buttons if separated buttons is enabled in buttons configuration.
+        // Skin must support it.
+        if(mTouchscreenMap.isSplitABSkin() && mSeparatedAB)
+        {
+            UpdateButtonMenu(listView, R.id.menuItem_groupAB);
+        }
+
+        // Do not show group C buttons if separated buttons is enabled in buttons configuration.
+        // Skin must support it.
+        if(mTouchscreenMap.isSplitCSkin() && mSeparatedC)
+        {
+            UpdateButtonMenu(listView, R.id.menuItem_groupC);
+        }
+
+        // Do not show separated A/B buttons if separated buttons is not enabled in buttons configuration.
+        // If skin is not supporting it, it will also remove them.
+        if(!mTouchscreenMap.isSplitABSkin() || !mSeparatedAB)
         {
             UpdateButtonMenu(listView, R.id.menuItem_buttonA);
             UpdateButtonMenu(listView, R.id.menuItem_buttonB);
         }
 
-        // Disable C buttons to be separated if the skin is not supporting it.
-        if(!mTouchscreenMap.isSplitCSkin())
+        // Do not show separated C buttons if separated buttons is not enabled in buttons configuration.
+        // If skin is not supporting it, it will also remove them.
+        if(!mTouchscreenMap.isSplitCSkin() || !mSeparatedC)
         {
             UpdateButtonMenu(listView, R.id.menuItem_buttonCR);
             UpdateButtonMenu(listView, R.id.menuItem_buttonCL);
@@ -301,6 +326,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             ActivityHelper.startTouchscreenPrefsActivity( this );
         } else if (item.getItemId() == R.id.menuItem_sensorConfiguration) {
             new SensorConfigurationDialog(this, mProfile).show();
+        } else if (item.getItemId() == R.id.menuItem_buttonsConfiguration) {
+            new ButtonsConfigurationDialog(this, mProfile, this, mTouchscreenMap).show();
         } else if (item.getItemId() == R.id.menuItem_exit) {
             finish();
         } else if (item.getItemId() == R.id.menuItem_analog) {
@@ -308,9 +335,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         } else if (item.getItemId() == R.id.menuItem_dpad) {
             toggleAsset( DPAD );
         } else if (item.getItemId() == R.id.menuItem_groupAB) {
-            disableAssetNoRefresh( BUTTON_A );
-            disableAssetNoRefresh( BUTTON_B );
-            toggleAsset( GROUP_AB );
+            setGroupABButtons(true);
         } else if (item.getItemId() == R.id.menuItem_buttonA) {
             disableAssetNoRefresh( GROUP_AB );
             toggleAsset( BUTTON_A );
@@ -318,11 +343,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             disableAssetNoRefresh( GROUP_AB );
             toggleAsset( BUTTON_B );
         } else if (item.getItemId() == R.id.menuItem_groupC) {
-            disableAssetNoRefresh( BUTTON_CR );
-            disableAssetNoRefresh( BUTTON_CL );
-            disableAssetNoRefresh( BUTTON_CD );
-            disableAssetNoRefresh( BUTTON_CU );
-            toggleAsset( GROUP_C );
+            setGroupCButtons(true);
         } else if (item.getItemId() == R.id.menuItem_buttonCR) {
             disableAssetNoRefresh( GROUP_C );
             toggleAsset( BUTTON_CR );
@@ -377,6 +398,44 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Change the position of the asset to hide
         mProfile.putInt( assetName + TAG_X, DISABLED_ASSET_POS );
         mProfile.putInt( assetName + TAG_Y, DISABLED_ASSET_POS );
+    }
+
+    public void setGroupABButtons( Boolean isEnabled )
+    {
+        // If group AB buttons is enabled.
+        if(isEnabled)
+        {
+            disableAssetNoRefresh( BUTTON_A );
+            disableAssetNoRefresh( BUTTON_B );
+            toggleAsset( GROUP_AB );
+        }
+        else
+        {
+            disableAssetNoRefresh( GROUP_AB );
+            toggleAsset( BUTTON_A );
+            toggleAsset( BUTTON_B );
+        }
+    }
+
+    public void setGroupCButtons( Boolean isEnabled )
+    {
+        // If group C buttons is enabled.
+        if(isEnabled)
+        {
+            disableAssetNoRefresh( BUTTON_CR );
+            disableAssetNoRefresh( BUTTON_CL );
+            disableAssetNoRefresh( BUTTON_CD );
+            disableAssetNoRefresh( BUTTON_CU );
+            toggleAsset( GROUP_C );
+        }
+        else
+        {
+            disableAssetNoRefresh( GROUP_C );
+            toggleAsset( BUTTON_CR );
+            toggleAsset( BUTTON_CL );
+            toggleAsset( BUTTON_CD );
+            toggleAsset( BUTTON_CU );
+        }
     }
     
     private void setNotHoldable( int n64Index, boolean holdable )
