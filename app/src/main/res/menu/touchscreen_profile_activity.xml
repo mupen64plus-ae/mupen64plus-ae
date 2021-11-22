@@ -9,6 +9,9 @@
         android:id="@+id/menuItem_sensorConfiguration"
         android:title="@string/menuItem_sensorConfiguration"/>
     <item
+        android:id="@+id/menuItem_buttonsConfiguration"
+        android:title="@string/menuItem_buttonsConfiguration"/>
+    <item
         android:id="@+id/menuItem_buttons"
         android:title="@string/touchscreenProfileActivity_buttons">
         <menu>
