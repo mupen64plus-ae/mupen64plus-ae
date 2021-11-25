@@ -317,72 +317,72 @@ typedef struct SDL_VideoInfo
 
 #include "SDL_events.h"
 
-inline void SDL_Quit(void)
+static inline void SDL_Quit(void)
 {
 
 }
 
-inline int SDL_SetHint(const char *name, const char *value)
-{
-    return 1;
-}
-
-inline int SDL_InitSubSystem(unsigned int flags)
-{
-    return 0;
-}
-
-inline const char* SDL_GetError(void)
-{
-    return 0;
-}
-
-inline void SDL_QuitSubSystem(unsigned int flags)
-{
-
-}
-
-inline unsigned int SDL_WasInit(unsigned int flags)
+static inline int SDL_SetHint(const char *name, const char *value)
 {
     return 1;
 }
 
-inline void SDL_FreeSurface(SDL_Surface * surface)
-{
-
-}
-
-inline void SDL_GL_DeleteContext(void* context)
-{
-
-}
-
-inline void SDL_DestroyWindow(void * window)
-{
-
-}
-
-inline char* SDL_getenv(const char *name)
+static inline int SDL_InitSubSystem(unsigned int flags)
 {
     return 0;
 }
 
-inline int SDL_atoi(const char *str)
+static inline const char* SDL_GetError(void)
 {
     return 0;
 }
 
-inline int SDL_GetDesktopDisplayMode(int displayIndex, SDL_DisplayMode * mode)
+static inline void SDL_QuitSubSystem(unsigned int flags)
+{
+
+}
+
+static inline unsigned int SDL_WasInit(unsigned int flags)
+{
+    return 1;
+}
+
+static inline void SDL_FreeSurface(SDL_Surface * surface)
+{
+
+}
+
+static inline void SDL_GL_DeleteContext(void* context)
+{
+
+}
+
+static inline void SDL_DestroyWindow(void * window)
+{
+
+}
+
+static inline char* SDL_getenv(const char *name)
 {
     return 0;
 }
 
-inline SDL_PixelFormat * SDL_AllocFormat(unsigned int pixel_format)
+static inline int SDL_atoi(const char *str)
 {
     return 0;
 }
 
-inline int SDL_ShowCursor(int toggle)
+static inline int SDL_GetDesktopDisplayMode(int displayIndex, SDL_DisplayMode * mode)
+{
+    return 0;
+}
+
+static inline SDL_PixelFormat * SDL_AllocFormat(unsigned int pixel_format)
+{
+    return 0;
+}
+
+static inline int SDL_ShowCursor(int toggle)
 {
     return 0;
 }
@@ -393,71 +393,71 @@ static const SDL_VideoInfo * SDL_GetVideoInfo(void)
     return &info;
 }
 
-inline SDL_Rect ** SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
+static inline SDL_Rect ** SDL_ListModes(const SDL_PixelFormat * format, Uint32 flags)
 {
     SDL_Rect **modes;
     return modes;
 }
 
-inline SDL_Surface * SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
+static inline SDL_Surface * SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
 {
     /* We're finally done! */
     return NULL;
 }
 
-inline void SDL_WM_SetCaption(const char *title, const char *icon)
+static inline void SDL_WM_SetCaption(const char *title, const char *icon)
 {
 }
 
-inline int SDL_WM_ToggleFullScreen(SDL_Surface * surface)
+static inline int SDL_WM_ToggleFullScreen(SDL_Surface * surface)
 {
     return 1;
 }
 
-inline void * SDL_GL_GetProcAddress(const char *proc)
+static inline void * SDL_GL_GetProcAddress(const char *proc)
 {
     return 0;
 }
 
 
-inline int SDL_GL_SetAttribute(SDL_GLattr attr, int value)
+static inline int SDL_GL_SetAttribute(SDL_GLattr attr, int value)
 {
     return 0;
 }
 
 
-inline int SDL_GL_GetAttribute(SDL_GLattr attr, int *value)
+static inline int SDL_GL_GetAttribute(SDL_GLattr attr, int *value)
 {
     return 0;
 }
 
-inline void SDL_GL_SwapBuffers(void)
+static inline void SDL_GL_SwapBuffers(void)
 {
 
 }
 
-inline int SDL_NumJoysticks(void)
-{
-    return 0;
-}
-
-inline int SDL_JoystickOpened(int joystick)
+static inline int SDL_NumJoysticks(void)
 {
     return 0;
 }
 
-inline void SDL_JoystickOpen(int joystick)
+static inline int SDL_JoystickOpened(int joystick)
+{
+    return 0;
+}
+
+static inline void SDL_JoystickOpen(int joystick)
 {
 
 }
 
-inline void SDL_EnableKeyRepeat(int param1, int param2)
+static inline void SDL_EnableKeyRepeat(int param1, int param2)
 {
 
 }
 
 // For the following actually create an implementation
-inline SDL_mutex * SDL_CreateMutex(void)
+static inline SDL_mutex * SDL_CreateMutex(void)
 {
     SDL_mutex *mutex;
     pthread_mutexattr_t attr;
@@ -474,7 +474,7 @@ inline SDL_mutex * SDL_CreateMutex(void)
     return (mutex);
 }
 
-inline void SDL_DestroyMutex(SDL_mutex * mutex)
+static inline void SDL_DestroyMutex(SDL_mutex * mutex)
 {
     if (mutex) {
         pthread_mutex_destroy(&mutex->id);
@@ -482,7 +482,7 @@ inline void SDL_DestroyMutex(SDL_mutex * mutex)
     }
 }
 
-inline int SDL_LockMutex(SDL_mutex * mutex)
+static inline int SDL_LockMutex(SDL_mutex * mutex)
 {
     if (mutex == NULL) {
         return 1;
@@ -495,7 +495,7 @@ inline int SDL_LockMutex(SDL_mutex * mutex)
     return 0;
 }
 
-inline int SDL_TryLockMutex(SDL_mutex * mutex)
+static inline int SDL_TryLockMutex(SDL_mutex * mutex)
 {
     int retval;
     int result;
@@ -518,7 +518,7 @@ inline int SDL_TryLockMutex(SDL_mutex * mutex)
     return retval;
 }
 
-inline int SDL_UnlockMutex(SDL_mutex * mutex)
+static inline int SDL_UnlockMutex(SDL_mutex * mutex)
 {
     if (mutex == NULL) {
         return 1;
@@ -561,7 +561,7 @@ static Uint32 SDL_GetTicks(void)
     return (ticks);
 }
 
-inline void SDL_Delay(Uint32 ms)
+static inline void SDL_Delay(Uint32 ms)
 {
     int was_error;
 
@@ -580,7 +580,7 @@ inline void SDL_Delay(Uint32 ms)
 }
 
 /* Create a semaphore, initialized with value */
-inline SDL_sem * SDL_CreateSemaphore(Uint32 initial_value)
+static inline SDL_sem * SDL_CreateSemaphore(Uint32 initial_value)
 {
     SDL_sem *sem = (SDL_sem *) malloc(sizeof(SDL_sem));
 
@@ -591,7 +591,7 @@ inline SDL_sem * SDL_CreateSemaphore(Uint32 initial_value)
     return sem;
 }
 
-inline void SDL_DestroySemaphore(SDL_sem * sem)
+static inline void SDL_DestroySemaphore(SDL_sem * sem)
 {
     if (sem) {
         sem_destroy(&sem->sem);
@@ -599,7 +599,7 @@ inline void SDL_DestroySemaphore(SDL_sem * sem)
     }
 }
 
-inline int SDL_SemTryWait(SDL_sem * sem)
+static inline int SDL_SemTryWait(SDL_sem * sem)
 {
     int retval;
 
@@ -613,7 +613,7 @@ inline int SDL_SemTryWait(SDL_sem * sem)
     return retval;
 }
 
-inline int SDL_SemWait(SDL_sem * sem)
+static inline int SDL_SemWait(SDL_sem * sem)
 {
     int retval;
 
@@ -663,7 +663,7 @@ static int SDL_SemWaitTimeout(SDL_sem * sem, Uint32 timeout)
     return retval;
 }
 
-inline Uint32 SDL_SemValue(SDL_sem * sem)
+static inline Uint32 SDL_SemValue(SDL_sem * sem)
 {
     int ret = 0;
     if (sem) {
@@ -675,7 +675,7 @@ inline Uint32 SDL_SemValue(SDL_sem * sem)
     return (Uint32) ret;
 }
 
-inline int SDL_SemPost(SDL_sem * sem)
+static inline int SDL_SemPost(SDL_sem * sem)
 {
     int retval;
 
