@@ -64,7 +64,12 @@ public class LoadBitmapTask
             if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() && tempActivity != null && !cancelled)
             {
                 // Check if valid image
-                if (FileUtil.isFileImage(new File(mBitmapPath))) {
+                File imageFile = new File(mBitmapPath);
+                long imageSizeBytes = imageFile.length();
+
+                // Limit file size to 20 MB
+                final long maxImageSizeBytes = 1024*1024*20;
+                if (FileUtil.isFileImage(imageFile) && imageSizeBytes < maxImageSizeBytes) {
                     artBitmap = new BitmapDrawable( tempActivity.getResources(), mBitmapPath );
                 }
 
