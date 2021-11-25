@@ -100,6 +100,11 @@ public class ShaderDrawer {
     }
 
     public Bitmap getScreenShot() {
+
+        if (mWidth <= 0 && mHeight <= 0) {
+            return null;
+        }
+        
         ByteBuffer buffer = ByteBuffer.allocate(mWidth * mHeight * 4);
         GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
         Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);

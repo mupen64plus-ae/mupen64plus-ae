@@ -841,6 +841,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
             Bitmap screenshotMirrored = mShaderDrawer.getScreenShot();
 
+            if (screenshotMirrored == null) {
+                //Something bad happened, don't save the screenshot
+                return;
+            }
+
             Matrix mirror = new Matrix();
             mirror.setScale(-1, 1);
             mirror.postRotate(180);
