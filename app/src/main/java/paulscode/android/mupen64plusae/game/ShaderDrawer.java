@@ -101,7 +101,7 @@ public class ShaderDrawer {
 
     public Bitmap getScreenShot() {
 
-        if (mWidth <= 0 && mHeight <= 0) {
+        if (mWidth <= 0 || mHeight <= 0) {
             return null;
         }
         
