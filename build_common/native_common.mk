@@ -37,7 +37,7 @@ AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/../mupen64plus-core/upstream/src/api/
 GL_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/GL
 
-COMMON_FLAGS := -O3 -Oz -fcommon -ffast-math -ftree-vectorize
+COMMON_FLAGS := -O3 -fcommon -ffast-math -ftree-vectorize
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 COMMON_FLAGS +=                     \
