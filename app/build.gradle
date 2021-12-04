@@ -32,7 +32,7 @@ android {
         release {
             signingConfig signingConfigs.debug
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel 'FULL'
             }
@@ -100,26 +100,26 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.documentfile:documentfile:1.0.1'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation "androidx.constraintlayout:constraintlayout:2.1.0"
-    implementation 'org.apache.commons:commons-lang3:3.9'
-    implementation 'org.apache.commons:commons-text:1.8'
+    implementation "androidx.constraintlayout:constraintlayout:2.1.2"
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-text:1.9'
     implementation 'org.apache.commons:commons-io:1.3.2'
-    implementation 'org.apache.commons:commons-compress:1.20'
-    implementation 'org.tukaani:xz:1.8'
+    implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'org.tukaani:xz:1.9'
     implementation 'org.fourthline.cling:cling-core:2.1.2'
     implementation 'org.fourthline.cling:cling-support:2.1.2'
 
     //Other dependencies required by Cling
-    implementation 'org.eclipse.jetty:jetty-server:8.1.22.v20160922'
-    implementation 'org.eclipse.jetty:jetty-servlet:8.1.22.v20160922'
-    implementation 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
+    implementation 'org.eclipse.jetty:jetty-server:11.0.7'
+    implementation 'org.eclipse.jetty:jetty-servlet:11.0.7'
+    implementation 'org.eclipse.jetty:jetty-client:11.0.7'
     implementation 'org.slf4j:slf4j-jdk14:1.7.14'
 
-    implementation ('net.java.dev.jna:jna-platform:5.8.0') {
+    implementation ('net.java.dev.jna:jna-platform:5.10.0') {
         exclude group: 'net.java.dev.jna', module: 'jna'
     }
-    implementation 'net.java.dev.jna:jna:5.8.0@aar'
-    testImplementation 'junit:junit:4.13.1'
+    implementation 'net.java.dev.jna:jna:5.10.0@aar'
+    testImplementation 'junit:junit:4.13.2'
     implementation project(':mupen64plus-audio-android')
     implementation project(':mupen64plus-video-gliden64')
     implementation project(':mupen64plus-video-glide64mk2')
