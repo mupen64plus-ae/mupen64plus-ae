@@ -19,6 +19,8 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
+        android {
+        }
     }
 
     externalNativeBuild {
