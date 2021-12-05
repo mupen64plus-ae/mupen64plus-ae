@@ -67,8 +67,10 @@ else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
 else
     MY_LOCAL_SRC_FILES += $(SRCDIR)/Glide64/3dmath.cpp $(SRCDIR)/Glide64/CRC.cpp
 endif
-    
-MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11 -Wno-format -Wno-macro-redefined
+
+# Using Oz causes graphics bugs on this plugin for some unknown reason, it should
+# be investigated, but leave at O2 or O3 for now.
+MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11 -O2 -Wno-format -Wno-macro-redefined
     
 MY_LOCAL_CPP_FEATURES := exceptions
 
