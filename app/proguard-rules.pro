@@ -26,5 +26,5 @@
 -dontwarn javax.swing.*
 -keep class com.sun.jna.* { *; }
 -keepclassmembers class * extends com.sun.jna.** { public *; }
--keep class org.apache.http.* { *; }
+-keep class org.apache.http.** { *; }
 -keep class androidx.core.app.CoreComponentFactory { *; }
