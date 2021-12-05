@@ -34,8 +34,8 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DGLES=1", "-DENABLE_IPO=1", "-DANDROID=1", "-DCMAKE_BUILD_TYPE=Release", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
-                cppFlags "-fexceptions", "-ffast-math", "-ftree-vectorize", "-Oz", "-g"
-                cFlags "-ffast-math", "-ftree-vectorize", "-Oz", "-g"
+                cppFlags "-fexceptions", "-ffast-math", "-ftree-vectorize", "-O3", "-g"
+                cFlags "-ffast-math", "-ftree-vectorize", "-O3", "-g"
                 abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
