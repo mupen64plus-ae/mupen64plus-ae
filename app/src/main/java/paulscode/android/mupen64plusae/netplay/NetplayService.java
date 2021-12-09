@@ -208,7 +208,7 @@ public class NetplayService extends Service
         Intent stopIntent = new Intent(this, NetplayService.class);
         stopIntent.setAction(SERVICE_QUIT);
         PendingIntent stopPendingIntent = PendingIntent.getService(this, 1, stopIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         //Show the notification
         initChannels(getApplicationContext());

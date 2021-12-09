@@ -109,10 +109,12 @@ dependencies {
     implementation 'org.fourthline.cling:cling-core:2.1.2'
     implementation 'org.fourthline.cling:cling-support:2.1.2'
 
-    //Other dependencies required by Cling
-    implementation 'org.eclipse.jetty:jetty-server:11.0.7'
-    implementation 'org.eclipse.jetty:jetty-servlet:11.0.7'
-    implementation 'org.eclipse.jetty:jetty-client:11.0.7'
+    // Other dependencies required by Cling, don't update the versions here
+    // since cling requires the specific older versions to work correctly
+    implementation 'org.eclipse.jetty:jetty-server:8.2.0.v20160908'
+    implementation 'org.eclipse.jetty:jetty-servlet:8.2.0.v20160908'
+    implementation 'org.eclipse.jetty:jetty-client:8.2.0.v20160908'
+    implementation 'com.sun.net.httpserver:http:20070405'
     implementation 'org.slf4j:slf4j-jdk14:1.7.14'
 
     implementation ('net.java.dev.jna:jna-platform:5.10.0') {
