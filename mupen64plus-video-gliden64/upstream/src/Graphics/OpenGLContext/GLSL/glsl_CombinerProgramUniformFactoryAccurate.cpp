@@ -26,7 +26,7 @@ public:
 	void update(bool _force) override {
 		const bool isNativeRes = config.frameBufferEmulation.nativeResFactor == 1 && config.video.multisampling == 0;
 		const bool isTexRect = dwnd().getDrawer().getDrawingState() == DrawingState::TexRect;
-		const bool useTexCoordBounds = isTexRect && !isNativeRes && config.graphics2D.enableTexCoordBounds;
+		const bool useTexCoordBounds = gDP.m_texCoordBounds.valid && !isNativeRes;
 		/* At rasterization stage, the N64 places samples on the top left of the fragment while OpenGL		*/
 		/* places them in the fragment center. As a result, a normal approach results in shifted texture	*/
 		/* coordinates. In native resolution, this difference can be negated by shifting vertices by 0.5.	*/
@@ -72,22 +72,17 @@ public:
 		}
 		float tcbounds[4] = {};
 		if (useTexCoordBounds) {
-			f32 S = _FIXED2FLOAT(gDP.lastTexRectInfo.s, 5);
-			f32 T = _FIXED2FLOAT(gDP.lastTexRectInfo.t, 5);
-			f32 uls = S + (ceilf(gDP.lastTexRectInfo.ulx) - gDP.lastTexRectInfo.ulx) * gDP.lastTexRectInfo.dsdx;
-			f32 lrs = S + (ceilf(gDP.lastTexRectInfo.lrx) - gDP.lastTexRectInfo.ulx - 1.0f) * gDP.lastTexRectInfo.dsdx;
-			f32 ult = T + (ceilf(gDP.lastTexRectInfo.uly) - gDP.lastTexRectInfo.uly) * gDP.lastTexRectInfo.dtdy;
-			f32 lrt = T + (ceilf(gDP.lastTexRectInfo.lry) - gDP.lastTexRectInfo.uly - 1.0f) * gDP.lastTexRectInfo.dtdy;
-			tcbounds[0] = fmin(uls, lrs);
-			tcbounds[1] = fmin(ult, lrt);
-			tcbounds[2] = fmax(uls, lrs);
-			tcbounds[3] = fmax(ult, lrt);
+			tcbounds[0] = gDP.m_texCoordBounds.uls;
+			tcbounds[1] = gDP.m_texCoordBounds.ult;
+			tcbounds[2] = gDP.m_texCoordBounds.lrs;
+			tcbounds[3] = gDP.m_texCoordBounds.lrt;
 		}
 
 		uVertexOffset.set(vertexOffset, vertexOffset, _force);
 		uTexCoordOffset.set(texCoordOffset[0], texCoordOffset[1], _force);
 		uUseTexCoordBounds.set(useTexCoordBounds ? 1 : 0, _force);
 		uTexCoordBounds.set(tcbounds, _force);
+		gDP.m_texCoordBounds.valid = false;
 	}
 
 private:
@@ -104,26 +99,32 @@ public:
 		LocateUniform(uMinLod);
 		LocateUniform(uMaxTile);
 		LocateUniform(uEnableLod);
+		LocateUniform(uNoAtlasTex);
 		LocateUniform(uTextureDetail);
 	}
 
 	void update(bool _force) override
 	{
 		uMinLod.set(gDP.primColor.m, _force);
-		const CachedTexture * _pTexture = textureCache().current[1];
-		if (_pTexture == nullptr)
-			uMaxTile.set(gSP.texture.level, _force);
-		else
-			uMaxTile.set(_pTexture->max_level > 0 ? gSP.texture.level : std::min(gSP.texture.level, 1u), _force);
-		const int uCalcLOD = (gDP.otherMode.textureLOD == G_TL_LOD) ? 1 : 0;
-		uEnableLod.set(uCalcLOD, _force);
+		uEnableLod.set(gDP.otherMode.textureLOD == G_TL_LOD ? 1 : 0, _force);
 		uTextureDetail.set(gDP.otherMode.textureDetail, _force);
+
+		u32 maxTile = gSP.texture.level;
+		const CachedTexture * _pTexture = textureCache().current[1];
+		if (_pTexture != nullptr && _pTexture->max_level == 0)
+			maxTile = std::min(gSP.texture.level, 1u); // Hack for HD textures
+		uMaxTile.set(maxTile, _force);
+
+		bool bNoAtlasTex = maxTile == 0 || gDP.otherMode.textureLOD != G_TL_LOD ||
+			(gDP.otherMode.textureDetail != G_TD_DETAIL && maxTile == 1);
+		uNoAtlasTex.set(bNoAtlasTex ? 1 : 0, _force);
 	}
 
 private:
 	fUniform uMinLod;
 	iUniform uMaxTile;
 	iUniform uEnableLod;
+	iUniform uNoAtlasTex;
 	iUniform uTextureDetail;
 };
 
