@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -162,6 +163,28 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
                 screenRoot.addPreference(mCategoryPasses);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Only when in game
+        if(this.getIntent().getBooleanExtra("gameRunning",false)) {
+            Intent intent = new Intent();
+
+            ArrayList<ShaderLoader> shaderPasses = mGlobalPrefs.getShaderPasses();
+            StringBuilder sb = new StringBuilder();
+
+            for (ShaderLoader shaderPass : shaderPasses) {
+                sb.append(shaderPass.toString()).append(",");
+            }
+
+            intent.putExtra(GlobalPrefs.KEY_SHADER_PASS, sb.toString());
+            intent.putExtra("shaderScaleFactor",mGlobalPrefs.shaderScaleFactor);
+
+
+            setResult(RESULT_OK, intent);
+        }
+        super.onBackPressed();
     }
 
     @Override

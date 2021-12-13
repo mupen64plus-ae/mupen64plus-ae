@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import android.util.Log;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
@@ -91,6 +93,12 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
+        if(getIntent() != null && this.getIntent().getBooleanExtra("gameRunning",false)) {
+            Intent i = new Intent(GameActivity.RESET_BROADCAST_MESSAGE);
+            i.putExtra("saveResetBroadcastMessage", true);
+            sendBroadcast(i);
+        }
+
         // Just refresh the preference screens in place
         refreshViews();
     }

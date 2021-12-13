@@ -171,7 +171,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             int currentAttempt = 0;
             while (ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName) &&
                     currentAttempt++ < 100) {
-                Log.i("GalleryActivity", "Waiting on pevious instance to exit");
+                Log.i("GalleryActivity", "Waiting on previous instance to exit");
 
                 // Sleep for 10 ms to prevent a tight loop
                 try {
@@ -1023,6 +1023,51 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
         {
+            if(data != null) {
+                // Checking to see if we're coming back from game setting refresh
+                if (data.getBooleanExtra("gameOpenReset", false)) {
+
+                    data.removeExtra("gameOpenReset");
+
+                    final Bundle extras = data.getExtras();
+
+                    String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+                    String zipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
+                    String romMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+                    String romCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+                    String romHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+                    byte romCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+                    String romArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
+                    String romGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+                    String romDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
+                    boolean doRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+                    boolean isNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
+                    boolean isNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
+
+
+                    Intent intent = new Intent(CoreService.SERVICE_EVENT);
+                    intent.putExtra(CoreService.SERVICE_QUIT, true);
+                    sendBroadcast(intent);
+
+                    int currentAttempt = 0;
+                    while (ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName) &&
+                            currentAttempt++ < 100) {
+                        Log.i("GalleryActivity", "Waiting on previous instance to exit");
+
+                        // Sleep for 10 ms to prevent a tight loop
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    launchGameActivity( romPath, zipPath,  romMd5, romCrc, romHeaderName, romCountryCode, romArtPath,
+                            romGoodName, romDisplayName, doRestart, isNetplayEnabled, isNetplayServer);
+                    return;
+                }
+            }
+
             mSearchQuery = "";
 
             if (mSearchView != null) {

@@ -49,6 +49,9 @@
         android:title="@string/menuItem_disableFramelimiter">
     </item>
     <item
+        android:id="@+id/menuItem_setIme"
+        android:title="@string/menuItem_setIme"/>
+    <item
         android:id="@+id/menuItem_paks"
         android:title="@string/menuItem_paks">
         <menu>
@@ -67,8 +70,30 @@
         </menu>
     </item>
     <item
-        android:id="@+id/menuItem_setIme"
-        android:title="@string/menuItem_setIme"/>
+        android:id="@+id/menuItem_settings"
+        android:title="@string/menuItem_settings">
+        <menu>
+            <item
+                android:id="@+id/menuItem_categoryDisplay"
+                android:title="@string/categoryDisplay_title"/>
+            <item
+                android:id="@+id/menuItem_categoryShaders"
+                android:title="@string/categoryShaders_title"/>
+            <item
+                android:id="@+id/menuItem_categoryAudio"
+                android:title="@string/categoryAudio_title"/>
+            <item
+                android:id="@+id/menuItem_categoryTouchscreen"
+                android:title="@string/menuItem_touchscreenProfiles"/>
+            <item
+                android:id="@+id/menuItem_categoryInput"
+                android:title="@string/categoryInput_title"/>
+            <item
+                android:id="@+id/menuItem_categoryData"
+                android:title="@string/categoryData_title"/>
+        </menu>
+
+    </item>
     <item
         android:id="@+id/menuItem_reset"
         android:title="@string/inputMapActivity_reset"/>

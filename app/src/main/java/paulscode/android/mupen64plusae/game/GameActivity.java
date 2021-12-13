@@ -21,9 +21,11 @@
 package paulscode.android.mupen64plusae.game;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -200,6 +202,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_NETPLAY_SERVER_DIALOG = "STATE_NETPLAY_SERVER_DIALOG";
     private NetplayServerSetupDialog mNetplayServerDialog = null;
 
+    public static final String RESET_BROADCAST_MESSAGE = "RESET_BROADCAST_MESSAGE";
+    private boolean mReset = false;
+
     @Override
     protected void attachBaseContext(Context newBase) {
 
@@ -351,7 +356,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
-        mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipGesture);
+        mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipeGesture);
         mDrawerLayout.setBackgroundColor(0xFF000000);
 
         if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists() && FileUtil.isFileImage(new File(mRomArtPath)))
@@ -459,10 +464,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mTouchscreenMap = new VisibleTouchMap( this.getResources() );
             mTouchscreenMap.load( mGlobalPrefs.isCustomTouchscreenSkin ? null : this,
                     mGlobalPrefs.touchscreenSkinPath, mGamePrefs.touchscreenProfile,
-                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
+                    mGlobalPrefs.touchscreenAnimated, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
 
             mOverlay.initialize(mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
-                    mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.isTouchscreenAnimated);
+                    mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.touchscreenAnimated);
         }
 
         if (mGlobalPrefs.isFpsEnabled) {
@@ -503,6 +508,22 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mNetplayClientDialog = (NetplayClientSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_CLIENT_DIALOG);
         mNetplayServerDialog = (NetplayServerSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_SERVER_DIALOG);
     }
+
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Saving just in case we can't when we reset
+            if(!mReset && intent.getBooleanExtra("saveResetBroadcastMessage",false)){
+                mReset = true;
+
+                intent.removeExtra("saveResetBroadcastMessage");
+                if(mGlobalPrefs.maxAutoSaves != 0)
+                {
+                    mCoreFragment.autoSaveState(false,true);
+                }
+            }
+        }
+    };
 
     @Override
     public void onFpsChanged(int newValue)
@@ -566,6 +587,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onResume()
     {
         super.onResume();
+        registerReceiver(mReceiver, new IntentFilter(RESET_BROADCAST_MESSAGE));
         Log.i(TAG, "onResume");
 
         if (mSensorController != null) {
@@ -616,7 +638,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
-                mCoreFragment.autoSaveState(false);
+                mCoreFragment.autoSaveState(false,false);
             }
 
             mCoreFragment.pauseEmulator();
@@ -634,7 +656,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onDestroy()
     {
         Log.i( TAG, "onDestroy" );
-
+        unregisterReceiver(mReceiver);
         super.onDestroy();
 
         if(mCoreFragment != null)
@@ -677,7 +699,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         if(mCoreFragment == null) return;
 
-            //Reload currently selected speed setting
+        //Reload currently selected speed setting
         final MenuItem toggleSpeedItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
         toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
@@ -821,6 +843,18 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 this.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imeManager != null)
                 imeManager.showInputMethodPicker();
+        } else if (menuItem.getItemId() == R.id.menuItem_categoryDisplay) {
+            ActivityHelper.startDisplayPrefsActivityResult( this );
+        } else if (menuItem.getItemId() == R.id.menuItem_categoryShaders) {
+            ActivityHelper.startShadersPrefsActivityResult( this );
+        } else if (menuItem.getItemId() == R.id.menuItem_categoryAudio) {
+            ActivityHelper.startAudioPrefsActivityResult( this );
+        } else if (menuItem.getItemId() == R.id.menuItem_categoryTouchscreen) {
+            ActivityHelper.startTouchscreenPrefsActivityResult( this );
+        } else if (menuItem.getItemId() == R.id.menuItem_categoryInput) {
+            ActivityHelper.startInputPrefsActivityResult( this );
+        } else if (menuItem.getItemId() == R.id.menuItem_categoryData) {
+            ActivityHelper.startDataPrefsActivityResult( this );
         } else if (menuItem.getItemId() ==  R.id.menuItem_reset) {
             mCoreFragment.restart();
         }
@@ -920,6 +954,82 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             mCoreFragment.setOnFpsChangedListener(this, 30);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(mReset) {
+            mReset = false;
+            getIntent().putExtra("gameOpenReset", true);
+            setResult(RESULT_OK, getIntent());
+            this.finish();
+            return;
+        }
+        else if(resultCode == RESULT_OK && data != null){
+            if(requestCode == ActivityHelper.DISPLAY_SETTINGS_ACTIVITY){
+                int displayZoomSeek = (data.getIntExtra("displayZoomSeek", 100));
+                mGlobalPrefs.putInt("displayZoomSeek",displayZoomSeek);
+                String displayScaling = (data.getStringExtra("displayScaling"));
+                mGlobalPrefs.putString("displayScaling",displayScaling);
+                boolean isImmersiveModeEnabled = (data.getBooleanExtra("displayImmersiveMode_v2", true));
+                mGlobalPrefs.putBoolean("displayImmersiveMode_v2",isImmersiveModeEnabled);
+                int displayOrientation = (data.getIntExtra("displayOrientation", 0));
+                if(mGlobalPrefs.displayOrientation != displayOrientation)
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                mGlobalPrefs.putString("displayOrientation",String.valueOf(displayOrientation));
+                int displayActionBarTransparency = (data.getIntExtra("displayActionBarTransparency", 80));
+                mGlobalPrefs.putInt("displayActionBarTransparency",displayActionBarTransparency);
+                String isFpsEnabled = (data.getStringExtra("displayFpsV2"));
+                mGlobalPrefs.putString("displayFpsV2",isFpsEnabled);
+                boolean threadedGLideN64 = (data.getBooleanExtra("threadedGLideN64",true));
+                mGlobalPrefs.putBoolean("threadedGLideN64",threadedGLideN64);
+                String verticalRenderResolution = (data.getStringExtra("verticalRenderResolution"));
+                mGlobalPrefs.putString("verticalRenderResolution",verticalRenderResolution);
+                int videoHardwareType = (data.getIntExtra("videoHardwareType",-1));
+                mGlobalPrefs.putString("videoHardwareType",String.valueOf(videoHardwareType));
+                String videoPolygonOffset = (data.getStringExtra("videoPolygonOffset"));
+                mGlobalPrefs.putString("videoPolygonOffset",String.valueOf(videoPolygonOffset));
+            }
+            else if(requestCode == ActivityHelper.SHADERS_SETTINGS_ACTIVITY){
+                String shaderPasses = (data.getStringExtra(GlobalPrefs.KEY_SHADER_PASS));
+                mGlobalPrefs.putString(GlobalPrefs.KEY_SHADER_PASS, shaderPasses);
+                int shaderScaleFactor = (data.getIntExtra("shaderScaleFactor", 2));
+                mGlobalPrefs.putInt("shaderScaleFactor",shaderScaleFactor);
+            }
+            else if(requestCode == ActivityHelper.TOUCHSCREEN_SETTINGS_ACTIVITY){
+                int touchscreenScale = (data.getIntExtra("touchscreenScaleV2", 100) );
+                mGlobalPrefs.putInt("touchscreenScaleV2",touchscreenScale);
+                int touchscreenTransparency = data.getIntExtra("touchscreenTransparencyV2", mGlobalPrefs.touchscreenTransparency);
+                mGlobalPrefs.putInt("touchscreenTransparencyV2",touchscreenTransparency);
+                boolean isTouchscreenFeedbackEnabled = data.getBooleanExtra("touchscreenFeedback", mGlobalPrefs.isTouchscreenFeedbackEnabled);
+                mGlobalPrefs.putBoolean("touchscreenFeedback",isTouchscreenFeedbackEnabled);
+                int touchscreenAnimated = data.getIntExtra("touchscreenAnimated_v2", mGlobalPrefs.touchscreenAnimated);
+                mGlobalPrefs.putInt("touchscreenAnimated_v2",touchscreenAnimated);
+                int touchscreenAutoHold = data.getIntExtra("touchscreenAutoHoldV2", 0);
+                mGlobalPrefs.putString("touchscreenAutoHoldV2",String.valueOf(touchscreenAutoHold));//put as string
+                boolean isTouchscreenAnalogRelative = data.getBooleanExtra("touchscreenAnalogRelative_global", mGlobalPrefs.isTouchscreenAnalogRelative);
+                mGlobalPrefs.putBoolean("touchscreenAnalogRelative_global",isTouchscreenAnalogRelative);
+                int touchscreenAutoHideSeconds = data.getIntExtra("touchscreenAutoHideSeconds", mGlobalPrefs.touchscreenAutoHideSeconds);
+                mGlobalPrefs.putInt("touchscreenAutoHideSeconds",touchscreenAutoHideSeconds);
+                boolean isCustomTouchscreenSkin = data.getBooleanExtra("isCustomTouchscreenSkin", mGlobalPrefs.isCustomTouchscreenSkin);
+                mGlobalPrefs.putBoolean("isCustomTouchscreenSkin",isCustomTouchscreenSkin);
+                String touchscreenSkin = data.getStringExtra("touchscreenSkin_v2");
+                mGlobalPrefs.putString("touchscreenSkin_v2",touchscreenSkin);
+
+                String touchscreenSkinPath = data.getStringExtra("touchscreenSkinPath");
+                mGlobalPrefs.putString("touchscreenSkinPath",touchscreenSkinPath);
+
+                mGlobalPrefs.putBoolean("touchscreenAutoHideEnabled", touchscreenAutoHideSeconds < 21);
+            }
+            else if(requestCode == ActivityHelper.DATA_SETTINGS_ACTIVITY){
+                int maxAutoSaves = data.getIntExtra("maxAutoSaves", 5);
+                mGlobalPrefs.putInt("maxAutoSaves",maxAutoSaves);
+            }
+
+            this.recreate();
         }
     }
 
@@ -1141,7 +1251,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 else
                 {
                     //We are using the slide gesture for the menu, so the back key can be used to exit
-                    if(mGlobalPrefs.inGameMenuIsSwipGesture)
+                    if(mGlobalPrefs.inGameMenuIsSwipeGesture)
                     {
                         if(mCoreFragment != null)
                         {
@@ -1240,7 +1350,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(p != null) {
            new PeripheralController( mCoreFragment, mGameSurface, mGlobalPrefs, mRomGoodName,
                    player, mGamePrefs.playerMap, p.getMap(), p.getAutoDeadzone(),
-                   p.getDeadzone(), p.getSensitivityX(), p.getSensitivityY(), mGlobalPrefs.holdControllerBottons,
+                   p.getDeadzone(), p.getSensitivityX(), p.getSensitivityY(), mGlobalPrefs.holdControllerButtons,
                    mOverlay, this, null, mKeyProvider, mAxisProvider);
             Log.i(TAG, "Player " + player + " controller has been enabled");
         }
@@ -1267,7 +1377,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled)
             {
-                mCoreFragment.autoSaveState(true);
+                mCoreFragment.autoSaveState(true,false);
             }
             else
             {

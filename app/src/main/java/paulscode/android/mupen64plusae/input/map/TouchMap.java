@@ -516,7 +516,7 @@ public class TouchMap
      * @param profile  The name of the layout profile.
      * @param animated True to load the analog assets in two parts for animation.
      */
-    public void load(Context context, ConfigFile skin_ini, String skinDir, Profile profile, boolean animated )
+    public void load(Context context, ConfigFile skin_ini, String skinDir, Profile profile, int animated )
     {
         // Clear any old assets and map data
         clear();
@@ -671,7 +671,7 @@ public class TouchMap
      * @param profile  The touchscreen profile.
      * @param animated True to load the analog assets in two parts for animation.
      */
-    protected void loadAllAssets(Context context, Profile profile, boolean animated)
+    protected void loadAllAssets(Context context, Profile profile, int animated)
     {
         if( profile != null )
         {
@@ -712,7 +712,7 @@ public class TouchMap
      * @param profile  The touchscreen profile containing the analog properties.
      * @param animated True to load the assets in two parts for animation.
      */
-    private void loadAnalog(Context context, Profile profile, boolean animated)
+    private void loadAnalog(Context context, Profile profile, int animated)
     {
         int x = profile.getInt( "analog-x", -1 );
         int y = profile.getInt( "analog-y", -1 );
@@ -725,7 +725,7 @@ public class TouchMap
             analogBackY = y;
 
             // The images (used by touchscreens) are in PNG image format.
-            if( animated )
+            if( animated != 0)
             {
                  analogBackImage = new Image( context, mResources, skinFolder + "/analog-back.png" );
                  analogForeImage = new Image( context, mResources, skinFolder + "/analog-fore.png" );

@@ -251,7 +251,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
-    void autoSaveState(final boolean shutdownOnFinish)
+    void autoSaveState(final boolean shutdownOnFinish, final boolean pauseEmulator)
     {
         final String latestSave = mGameDataManager.getAutoSaveFileName();
 
@@ -269,6 +269,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mCoreInterface.setVolume(0);
         }
+
+        if (pauseEmulator)
+            mCoreInterface.setVolume(0);
 
         //Resume to allow save to take place
         resumeEmulator();
@@ -293,7 +296,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                     final CoreInterface.OnStateCallbackListener saveCompleteListener = this;
 
-                    // Don't do this on teh same thread since the core doesn't like to be called
+                    // Don't do this on the same thread since the core doesn't like to be called
                     // back to again on a call back
                     mShutdownHandler.postDelayed(() -> {
                         mCoreInterface.removeOnStateCallbackListener(this);
@@ -312,6 +315,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.addOnStateCallbackListener(saveComplete);
 
         mCoreInterface.emuSaveFile( latestSave );
+
+        if(pauseEmulator)
+            pauseEmulator();
     }
 
     void saveState(String filename)
@@ -551,7 +557,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             FileUtil.deleteFolder(new File(workingDir));
 
             // Copy game data from external storage
-            if (mGlobalPrefs.useExternalStorge) {
+            if (mGlobalPrefs.useExternalStorage) {
                 copyGameContentsFromSdCard();
             }
 
@@ -734,7 +740,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (loadingSuccess) {
                 mGameDataManager.clearOldest();
 
-                if (mGlobalPrefs.useExternalStorge) {
+                if (mGlobalPrefs.useExternalStorage) {
                     copyGameContentsToSdCard();
                 }
 

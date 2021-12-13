@@ -195,6 +195,27 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     }
 
     @Override
+    public void onBackPressed() {
+        // Only when in game
+        if(this.getIntent().getBooleanExtra("gameRunning",false)) {
+            // Check for invalid custom skin file?
+            Intent intent = new Intent();
+            intent.putExtra("touchscreenScaleV2", (int) (mGlobalPrefs.touchscreenScale * 100.0f));
+            intent.putExtra("touchscreenTransparencyV2", ((mGlobalPrefs.touchscreenTransparency * 100)) / 255);
+            intent.putExtra("touchscreenFeedback", mGlobalPrefs.isTouchscreenFeedbackEnabled);
+            intent.putExtra("touchscreenAnimated_v2", mGlobalPrefs.touchscreenAnimated);
+            intent.putExtra("touchscreenAutoHoldV2", mGlobalPrefs.touchscreenAutoHold);
+            intent.putExtra("touchscreenAnalogRelative_global", mGlobalPrefs.isTouchscreenAnalogRelative);
+            intent.putExtra("touchscreenAutoHideSeconds", mGlobalPrefs.touchscreenAutoHideSeconds);
+            intent.putExtra("isCustomTouchscreenSkin", mGlobalPrefs.isCustomTouchscreenSkin);
+            intent.putExtra("touchscreenSkin_v2", mGlobalPrefs.touchscreenSkin);
+            intent.putExtra("touchscreenSkinPath", mGlobalPrefs.touchscreenSkinPath);
+            setResult(RESULT_OK, intent);
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onPreferenceClick(Preference preference) {
         // Handle the clicks on certain menu items that aren't actually
         // preferences

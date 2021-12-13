@@ -788,13 +788,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void autoSaveState(boolean shutdownOnFinish)
+    public void autoSaveState(boolean shutdownOnFinish, boolean pauseEmulator)
     {
         Log.i(TAG, "autoSaveState");
 
         if (mCoreService != null)
         {
-            mCoreService.autoSaveState(shutdownOnFinish);
+            mCoreService.autoSaveState(shutdownOnFinish, pauseEmulator);
         }
     }
 

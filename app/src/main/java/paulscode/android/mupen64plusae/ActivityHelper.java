@@ -119,6 +119,12 @@ public class ActivityHelper
     }
     public static final int GAME_ACTIVITY_CODE = 3;
     public static final int MANAGE_PROFILE_ACTIVITY = 4321;
+    public static final int DISPLAY_SETTINGS_ACTIVITY = 1234;
+    public static final int SHADERS_SETTINGS_ACTIVITY = 1235;
+    public static final int AUDIO_SETTINGS_ACTIVITY = 1236;
+    public static final int TOUCHSCREEN_SETTINGS_ACTIVITY = 1237;
+    public static final int INPUT_SETTINGS_ACTIVITY = 1238;
+    public static final int DATA_SETTINGS_ACTIVITY = 1239;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
@@ -248,11 +254,25 @@ public class ActivityHelper
         Intent intent = new Intent( context, AudioPrefsActivity.class );
         context.startActivity( intent );    
     }
+
+    public static void startAudioPrefsActivityResult( Activity activity )
+    {
+        Intent intent = new Intent( activity, AudioPrefsActivity.class );
+        intent.putExtra("gameRunning",true);
+        activity.startActivityForResult( intent , AUDIO_SETTINGS_ACTIVITY);
+    }
     
     static void startDataPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, DataPrefsActivity.class );
         context.startActivity( intent );    
+    }
+
+    public static void startDataPrefsActivityResult( Activity activity )
+    {
+        Intent intent = new Intent( activity, DataPrefsActivity.class );
+        intent.putExtra("gameRunning",true);
+        activity.startActivityForResult( intent, DATA_SETTINGS_ACTIVITY );
     }
     
     static void startDisplayPrefsActivity( Context context )
@@ -261,16 +281,37 @@ public class ActivityHelper
         context.startActivity( intent );    
     }
 
+    public static void startDisplayPrefsActivityResult( Activity activity )
+    {
+        Intent intent = new Intent( activity, DisplayPrefsActivity.class );
+        intent.putExtra("gameRunning",true);
+        activity.startActivityForResult( intent, DISPLAY_SETTINGS_ACTIVITY );
+    }
+
     static void startShadersPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, ShaderPrefsActivity.class );
         context.startActivity( intent );
+    }
+
+    public static void startShadersPrefsActivityResult( Activity activity )
+    {
+        Intent intent = new Intent( activity, ShaderPrefsActivity.class );
+        intent.putExtra("gameRunning",true);
+        activity.startActivityForResult( intent , SHADERS_SETTINGS_ACTIVITY);
     }
     
     static void startInputPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, InputPrefsActivity.class );
         context.startActivity( intent );    
+    }
+
+    public static void startInputPrefsActivityResult( Activity activity )
+    {
+        Intent intent = new Intent( activity, InputPrefsActivity.class );
+        intent.putExtra("gameRunning",true);
+        activity.startActivityForResult( intent , INPUT_SETTINGS_ACTIVITY);
     }
 
     static void startDefaultPrefsActivity( Context context )
@@ -288,7 +329,14 @@ public class ActivityHelper
     public static void startTouchscreenPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, TouchscreenPrefsActivity.class );
-        context.startActivity( intent );    
+        context.startActivity( intent );
+    }
+
+    public static void startTouchscreenPrefsActivityResult( Activity activity )
+    {
+        Intent intent = new Intent( activity, TouchscreenPrefsActivity.class );
+        intent.putExtra("gameRunning",true);
+        activity.startActivityForResult( intent, TOUCHSCREEN_SETTINGS_ACTIVITY );
     }
     
     static void startGamePrefsActivity( Context context, String romPath, String romMd5,

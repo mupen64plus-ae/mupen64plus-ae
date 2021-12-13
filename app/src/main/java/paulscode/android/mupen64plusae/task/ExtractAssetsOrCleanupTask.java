@@ -168,7 +168,7 @@ public class ExtractAssetsOrCleanupTask
 
         // Don't move data from the legacy folders if a user selects to use external storage. This is because a use could select
         // to use external sorage and use the same folder as the legacy data folder.
-        if (!mGlobalPrefs.useExternalStorge) {
+        if (!mGlobalPrefs.useExternalStorage) {
             //Move data to the new location
             mListener.onExtractAssetsProgress( "Moving: " + mGlobalPrefs.legacyRomInfoCacheCfg, mCurrentAsset, mTotalAssets);
             ++mCurrentAsset;

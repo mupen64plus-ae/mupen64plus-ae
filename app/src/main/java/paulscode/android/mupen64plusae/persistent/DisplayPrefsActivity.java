@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.text.TextUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
@@ -94,8 +96,40 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
     }
 
     @Override
+    public void onBackPressed() {
+
+        // Only when in game
+        if(getIntent() != null && this.getIntent().getBooleanExtra("gameRunning",false)) {
+
+            Intent intent = new Intent();
+
+            intent.putExtra("displayZoomSeek", mGlobalPrefs.videoSurfaceZoom);
+            intent.putExtra("displayScaling",mPrefs.getString("displayScaling","original"));
+            intent.putExtra("displayImmersiveMode_v2", mGlobalPrefs.isImmersiveModeEnabled);
+            intent.putExtra("displayOrientation", mGlobalPrefs.displayOrientation);
+            intent.putExtra("displayActionBarTransparency",((mGlobalPrefs.displayActionBarTransparency * 100) / 255));
+            intent.putExtra("displayFpsV2",mPrefs.getString( "displayFpsV2", "off" ));
+            intent.putExtra("threadedGLideN64",mGlobalPrefs.threadedGLideN64);
+            intent.putExtra("verticalRenderResolution", mPrefs.getString("verticalRenderResolution","-1"));
+            intent.putExtra("videoHardwareType", mGlobalPrefs.videoHardwareType);
+            intent.putExtra("videoPolygonOffset",String.valueOf(mGlobalPrefs.videoPolygonOffset));
+
+            setResult(RESULT_OK, intent);
+        }
+
+        super.onBackPressed();
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
+        // Saving just in case we can't when they reset
+        if(getIntent() != null && getIntent().getBooleanExtra("gameRunning",false) &&
+                (key.equals("displayResolution") || key.equals("hybridTextureFilter_v2"))){
+            Intent i = new Intent(GameActivity.RESET_BROADCAST_MESSAGE);
+            i.putExtra("saveResetBroadcastMessage", true);
+            sendBroadcast(i);
+        }
         // Just refresh the preference screens in place
         refreshViews();
     }
