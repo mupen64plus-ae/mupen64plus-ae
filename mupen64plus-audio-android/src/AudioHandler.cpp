@@ -37,6 +37,7 @@ AudioHandler::AudioHandler() :
 
 void AudioHandler::closeAudio() {
 	if (mOutStream != nullptr) {
+		mOutStream->stop();
 		mOutStream->close();
 		mOutStream = nullptr;
 	}
