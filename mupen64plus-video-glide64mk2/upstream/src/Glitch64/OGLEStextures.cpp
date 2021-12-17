@@ -21,7 +21,10 @@
 #ifdef _WIN32
 #include <windows.h>
 #else // _WIN32
-#include <stdlib.h>
+#include <cstdlib>
+#include <set>
+#include <vector>
+
 #endif // _WIN32
 #include "glide.h"
 #include "glitchmain.h"
@@ -59,79 +62,43 @@ static int min_filter1, mag_filter1, wrap_s1, wrap_t1;
 
 unsigned char *filter(unsigned char *source, int width, int height, int *width2, int *height2);
 
-typedef struct _texlist
-{
-  unsigned int id;
-  struct _texlist *next;
-} texlist;
-
-static int nbTex = 0;
-static texlist *list = NULL;
+std::set<unsigned int> textureList;
+std::vector<unsigned int> texturesToRemove;
 
 #ifdef _WIN32
 extern PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffersEXT;
 extern PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
 extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
 #endif
+
 void remove_tex(unsigned int idmin, unsigned int idmax)
 {
-  unsigned int *t;
-  int n = 0;
-  texlist *aux = list;
-  int sz = nbTex;
-  if (aux == NULL) return;
-  t = (unsigned int*)malloc(sz * sizeof(int));
-  while (aux && aux->id >= idmin && aux->id < idmax)
-  {
-    if (n >= sz)
-      t = (unsigned int *) realloc(t, ++sz*sizeof(int));
-    t[n++] = aux->id;
-    aux = aux->next;
-    free(list);
-    list = aux;
-    nbTex--;
-  }
-  while (aux != NULL && aux->next != NULL)
-  {
-    if (aux->next->id >= idmin && aux->next->id < idmax)
-    {
-      texlist *aux2 = aux->next->next;
-      if (n >= sz)
-        t = (unsigned int *) realloc(t, ++sz*sizeof(int));
-      t[n++] = aux->next->id;
-      free(aux->next);
-      aux->next = aux2;
-      nbTex--;
-    }
-    aux = aux->next;
-  }
-  glDeleteTextures(n, t);
-  free(t);
-  //printf("RMVTEX nbtex is now %d (%06x - %06x)\n", nbTex, idmin, idmax);
-}
+    auto lowerBound = textureList.end();
+    auto upperBound = textureList.end();
+    lowerBound = textureList.lower_bound (idmin);
 
+    // Most of the time this will be true, so save some time
+    if (lowerBound != textureList.end())
+    {
+      upperBound = textureList.upper_bound (idmax-1);
+
+      texturesToRemove.clear();
+
+      int totalRemovedTextures = 0;
+      for(auto textureId = lowerBound; textureId != upperBound; ++textureId) {
+        texturesToRemove.push_back(*textureId);
+        ++totalRemovedTextures;
+      }
+
+      glDeleteTextures(totalRemovedTextures, texturesToRemove.data());
+
+      textureList.erase(lowerBound, upperBound);
+    }
+}
 
 void add_tex(unsigned int id)
 {
-  texlist *aux = list;
-  texlist *aux2;
-  //printf("ADDTEX nbtex is now %d (%06x)\n", nbTex, id);
-  if (list == NULL || id < list->id)
-  {
-    nbTex++;
-    list = (texlist*)malloc(sizeof(texlist));
-    list->next = aux;
-    list->id = id;
-    return;
-  }
-  while (aux->next != NULL && aux->next->id < id) aux = aux->next;
-  // ZIGGY added this test so that add_tex now accept re-adding an existing texture
-  if (aux->next != NULL && aux->next->id == id) return;
-  nbTex++;
-  aux2 = aux->next;
-  aux->next = (texlist*)malloc(sizeof(texlist));
-  aux->next->id = id;
-  aux->next->next = aux2;
+    textureList.insert(id);
 }
 
 void init_textures(int width, int height)
