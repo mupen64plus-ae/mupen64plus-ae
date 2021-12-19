@@ -76,13 +76,13 @@ void PortManager::Terminate() {
 	m_otherPortList.clear(); m_otherPortList.shrink_to_fit();
 	m_portList.clear(); m_portList.shrink_to_fit();
 	m_lanip.clear();
-	m_defaultDesc.clear();
 	m_leaseDuration.clear();
 	m_LocalPort = UPNP_LOCAL_PORT_ANY;
 	m_InitState = UPNP_INITSTATE_NONE;
 }
 
 bool PortManager::Initialize(const unsigned int timeout) {
+
 #ifdef WITH_UPNP
 	// Windows: Assuming WSAStartup already called beforehand
 	struct UPNPDev* devlist;
@@ -123,6 +123,7 @@ bool PortManager::Initialize(const unsigned int timeout) {
 	memset(datas, 0, sizeof(struct IGDdatas));
 
 	devlist = upnpDiscover(timeout, NULL, NULL, localport, ipv6, ttl, &error);
+
 	if (devlist)
 	{
 		dev = devlist;
@@ -130,6 +131,9 @@ bool PortManager::Initialize(const unsigned int timeout) {
 		{
 			if (strstr(dev->st, "InternetGatewayDevice"))
 				break;
+
+			__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Found UPnP device: [desc: %s] [st: %s]", dev->descURL, dev->st);
+
 			dev = dev->pNext;
 		}
 		if (!dev)
@@ -160,9 +164,6 @@ bool PortManager::Initialize(const unsigned int timeout) {
             __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Connection Type: %s", connectionType);
 		}
 
-		// Using Game ID & Player Name as default description for mapping
-		m_defaultDesc = "M64PlusFz"; // Some routers may automatically prefixed it with "UPnP:"
-
 		freeUPNPDevlist(devlist);
 
 		//m_LocalPort = localport; // We shouldn't keep the right port for the next game reset if we wanted to redetect UPnP
@@ -182,7 +183,7 @@ int PortManager::GetInitState() {
 	return m_InitState;
 }
 
-bool PortManager::Add(const char* protocol, unsigned short port, unsigned short intport) {
+bool PortManager::Add(const char* protocol, const char* description, unsigned short port, unsigned short intport) {
 #ifdef WITH_UPNP
 	char port_str[16];
 	char intport_str[16];
@@ -211,11 +212,11 @@ bool PortManager::Add(const char* protocol, unsigned short port, unsigned short 
 			r = UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, port_str, protocol, NULL);
 		}
 		r = UPNP_AddPortMapping(urls->controlURL, datas->first.servicetype,
-			port_str, intport_str, m_lanip.c_str(), m_defaultDesc.c_str(), protocol, NULL, m_leaseDuration.c_str());
+			port_str, intport_str, m_lanip.c_str(), description, protocol, NULL, m_leaseDuration.c_str());
 		if (r == 725 && m_leaseDuration != "0") {
 			m_leaseDuration = "0";
 			r = UPNP_AddPortMapping(urls->controlURL, datas->first.servicetype,
-				port_str, intport_str, m_lanip.c_str(), m_defaultDesc.c_str(), protocol, NULL, m_leaseDuration.c_str());
+				port_str, intport_str, m_lanip.c_str(), description, protocol, NULL, m_leaseDuration.c_str());
 		}
 		if (r != 0)
 		{
@@ -439,7 +440,6 @@ int upnpService(const unsigned int timeout)
 {
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnPService: Begin of UPnPService Thread");
 
-
     // Service Loop
 	while (upnpServiceRunning) {
 		// Attempts to reconnect if not connected yet or got disconnected
@@ -455,7 +455,7 @@ int upnpService(const unsigned int timeout)
 			bool ok = true;
 			switch (arg.cmd) {
 				case UPNP_CMD_ADD:
-					ok = g_PortManager.Add(arg.protocol.c_str(), arg.port, arg.intport);
+					ok = g_PortManager.Add(arg.protocol.c_str(), arg.description.c_str(), arg.port, arg.intport);
 					break;
 				case UPNP_CMD_REMOVE:
 					ok = g_PortManager.Remove(arg.protocol.c_str(), arg.port);
@@ -472,7 +472,7 @@ int upnpService(const unsigned int timeout)
             }
 		}
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 
 	// Cleaning up regardless of g_Config.bEnableUPnP to prevent lingering open ports on the router
@@ -492,14 +492,14 @@ int upnpService(const unsigned int timeout)
     return 0;
 }
 
-void __UPnPInit(const unsigned int timeout) {
+extern "C" __attribute__((visibility("default"))) void UPnPInit(int timeout) {
 	if (!upnpServiceRunning) {
 		upnpServiceRunning = true;
 		upnpServiceThread = std::thread(upnpService, timeout);
 	}
 }
 
-void __UPnPShutdown() {
+extern "C" __attribute__((visibility("default"))) void UPnPShutdown() {
 	if (upnpServiceRunning) {
 		upnpServiceRunning = false;
 		if (upnpServiceThread.joinable()) {
@@ -508,13 +508,14 @@ void __UPnPShutdown() {
 	}
 }
 
-void UPnP_Add(const char* protocol, unsigned short port, unsigned short intport) {
+extern "C" __attribute__((visibility("default"))) void UPnP_Add(const char* protocol, const char* description, int port, int intport) {
 	std::lock_guard<std::recursive_mutex> upnpGuard(upnpLock);
-	upnpReqs.push_back({ UPNP_CMD_ADD, protocol, port, intport });
+
+	upnpReqs.push_back({ UPNP_CMD_ADD, protocol, description, static_cast<unsigned short>(port), static_cast<unsigned short>(intport) });
 }
 
-void UPnP_Remove(const char* protocol, unsigned short port) {
+extern "C" __attribute__((visibility("default"))) void UPnP_Remove(const char* protocol, int port) {
 	std::lock_guard<std::recursive_mutex> upnpGuard(upnpLock);
-	upnpReqs.push_back({ UPNP_CMD_REMOVE, protocol, port, port });
+	upnpReqs.push_back({ UPNP_CMD_REMOVE, protocol, "", static_cast<unsigned short>(port), static_cast<unsigned short>(port) });
 }
 

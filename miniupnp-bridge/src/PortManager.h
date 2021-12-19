@@ -43,6 +43,7 @@
 typedef struct UPnPArgs {
 	int cmd;
 	std::string protocol;
+	std::string description;
 	unsigned short port;
 	unsigned short intport;
 } PACK;
@@ -90,7 +91,7 @@ public:
 	int GetInitState();
 
 	// Add a port & protocol (TCP, UDP or vendor-defined) to map for forwarding (intport = 0 : same as [external] port)
-	bool Add(const char* protocol, unsigned short port, unsigned short intport = 0);
+	bool Add(const char* protocol, const char* description, unsigned short port, unsigned short intport = 0);
 
 	// Remove a port mapping (external port)
 	bool Remove(const char* protocol, unsigned short port);
@@ -111,19 +112,9 @@ protected:
 	int m_InitState = UPNP_INITSTATE_NONE;
 	int m_LocalPort = UPNP_LOCAL_PORT_ANY;
 	std::string m_lanip;
-	std::string m_defaultDesc;
 	std::string m_leaseDuration = "43200"; // range(0-604800) in seconds (0 = Indefinite/permanent). Some routers doesn't support non-zero value
 	std::deque<std::pair<std::string, std::string>> m_portList;
 	std::deque<PortMap> m_otherPortList;
 };
 
 extern PortManager g_PortManager;
-
-void __UPnPInit(const unsigned int timeout = 2000);
-void __UPnPShutdown();
-
-// Add a port & protocol (TCP, UDP or vendor-defined) to map for forwarding (intport = 0 : same as [external] port)
-void UPnP_Add(const char* protocol, unsigned short port, unsigned short intport = 0);
-
-// Remove a port mapping (external port)
-void UPnP_Remove(const char* protocol, unsigned short port);

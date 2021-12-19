@@ -39,22 +39,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import org.fourthline.cling.android.AndroidUpnpServiceConfiguration;
-import org.fourthline.cling.binding.xml.ServiceDescriptorBinder;
-import org.fourthline.cling.binding.xml.UDA10ServiceDescriptorBinderImpl;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.registry.Registry;
-import org.fourthline.cling.registry.RegistryListener;
-import org.fourthline.cling.support.igd.PortMappingListener;
-import org.fourthline.cling.support.model.PortMapping;
+import com.sun.jna.Native;
+
 import org.mupen64plusae.v3.alpha.R;
-
-import java.net.InetAddress;
-
-import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.UpnpServiceImpl;
-
-import paulscode.android.mupen64plusae.util.DeviceUtil;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
@@ -100,7 +87,7 @@ public class NetplayService extends Service
     private NetplayServiceListener mNetplayServiceListener;
     private boolean mPortMappingEnabled = false;
     private int mRoomPort = -1;
-    private UpnpService mUpnpService = null;
+    private final MiniUpnpLibrary mMiniUpnpLibrary = Native.load("miniupnp-bridge", MiniUpnpLibrary.class);
     private final Object mUpnpSyncObject = new Object();
     private boolean mShuttingDown = false;
 
@@ -156,10 +143,11 @@ public class NetplayService extends Service
 
             synchronized (mUpnpSyncObject) {
                 mShuttingDown = true;
+                mMiniUpnpLibrary.UPnP_Remove("TCP", mRoomPort);
+                mMiniUpnpLibrary.UPnP_Remove("TCP", mTcpServer.getPort());
+                mMiniUpnpLibrary.UPnP_Remove("UDP", mTcpServer.getPort());
 
-                if (mUpnpService != null) {
-                    mUpnpService.shutdown();
-                }
+                mMiniUpnpLibrary.UPnPShutdown();
             }
 
             // Sleep for a bit to let the UPnP service close all the ports since it runs async
@@ -297,53 +285,20 @@ public class NetplayService extends Service
             if (mShuttingDown) {
                 return;
             }
-            InetAddress wifiAddress = DeviceUtil.getIPAddress();
 
-            if (wifiAddress != null) {
-                String myIp = wifiAddress.getHostAddress();
+            mMiniUpnpLibrary.UPnPInit(2000);
 
-                //creates a port mapping configuration with the external/internal port, an internal host IP, the protocol and an optional description
-                PortMapping[] desiredMapping = new PortMapping[3];
-                desiredMapping[0] = new PortMapping(mRoomPort,myIp, PortMapping.Protocol.TCP, "M64Plus FZ port1");
-                desiredMapping[1] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.TCP, "M64Plus FZ port2");
-                desiredMapping[2] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.UDP, "M64Plus FZ port2");
+            mMiniUpnpLibrary.UPnP_Add("TCP","M64Plus Room", mRoomPort, mRoomPort);
+            mMiniUpnpLibrary.UPnP_Add("TCP", "M64Plus Core TCP", mTcpServer.getPort(), mTcpServer.getPort());
+            mMiniUpnpLibrary.UPnP_Add("UDP", "M64Plus Core UDP", mTcpServer.getPort(), mTcpServer.getPort());
 
-                //starting the UPnP service
-                //UpnpService upnpService = new UpnpServiceImpl(new AndroidUpnpServiceConfiguration());
-                mUpnpService = new UpnpServiceImpl(
-                        new AndroidUpnpServiceConfiguration() {
-                            @Override
-                            public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
-                                return new UDA10ServiceDescriptorBinderImpl();
-                            }
-                        }
-                );
-
-                RegistryListener registryListener = new PortMappingListener(desiredMapping) {
-                    @Override
-                    public synchronized void deviceAdded(Registry registry, Device device) {
-                        super.deviceAdded(registry, device);
-                        mNetplayServiceListener.onUpnpPortsObtained(desiredMapping[0].getExternalPort().getValue().intValue(),
-                                desiredMapping[1].getExternalPort().getValue().intValue(),
-                                desiredMapping[2].getExternalPort().getValue().intValue());
-                    }
-
-                    @Override
-                    protected void handleFailureMessage(String s) {
-                        super.handleFailureMessage(s);
-
-                        // Failure
-                        mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
-                    }
-                };
-
-
-                mUpnpService.getRegistry().addListener(registryListener);
-                mUpnpService.getControlPoint().search();
-
-                desiredMapping[0].getExternalPort();
-
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
+            mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
         }
     }
 
