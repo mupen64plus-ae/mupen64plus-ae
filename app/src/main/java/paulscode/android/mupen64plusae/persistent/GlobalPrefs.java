@@ -135,9 +135,6 @@ public class GlobalPrefs
     /** Legacy location of user generated configuration data */
     public final String legacyProfilesDir;
 
-    /** The subdirectory containing unzipped 64DD files. */
-    public final String unzippedRomsDir;
-
     /** The subdirectory containing screenshot files. */
     public final String screenshotsDir;
 
@@ -477,7 +474,6 @@ public class GlobalPrefs
         final String coreConfigDir = context.getFilesDir().getAbsolutePath() + "/CoreConfig";
         coreUserDataDir = coreConfigDir + "/UserData";
         coreUserCacheDir = coreConfigDir + "/UserCache";
-        unzippedRomsDir = context.getCacheDir().getAbsolutePath() + "/UnzippedRoms";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";

@@ -94,6 +94,7 @@ public class ActivityHelper
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
+        public static final String SEARCH_SINGLE_FILE   = NAMESPACE + "SEARCH_SINGLE_FILE";
         public static final String CAN_SELECT_FILE      = NAMESPACE + "CAN_SELECT_FILE";
         public static final String CAN_VIEW_EXT_STORAGE = NAMESPACE + "CAN_VIEW_EXT_STORAGE";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
@@ -366,19 +367,20 @@ public class ActivityHelper
     }
     
     static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
-        String searchUri, String databasePath, String configPath, String artDir, String unzipDir,
-        boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
+        String searchUri, String databasePath, String configPath, String artDir,
+        boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
+        boolean singleFile)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
         intent.putExtra(Keys.SEARCH_PATH, searchUri);
         intent.putExtra(Keys.DATABASE_PATH, databasePath);
         intent.putExtra(Keys.CONFIG_PATH, configPath);
         intent.putExtra(Keys.ART_DIR, artDir);
-        intent.putExtra(Keys.UNZIP_DIR, unzipDir);
         intent.putExtra(Keys.SEARCH_ZIPS, searchZips);
         intent.putExtra(Keys.DOWNLOAD_ART, downloadArt);
         intent.putExtra(Keys.CLEAR_GALLERY, clearGallery);
         intent.putExtra(Keys.SEARCH_SUBDIR, searchSubdirectories);
+        intent.putExtra(Keys.SEARCH_SINGLE_FILE, singleFile);
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);

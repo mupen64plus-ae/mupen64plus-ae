@@ -33,7 +33,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -56,7 +55,6 @@ import androidx.core.graphics.drawable.IconCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -66,10 +64,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,6 +101,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT = "STATE_CACHE_ROM_INFO_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED = "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_SCROLL_TO_POSITION = "STATE_SCROLL_TO_POSITION";
+    private static final String STATE_LAUNCH_GAME_AFTER_SCAN = "STATE_LAUNCH_GAME_AFTER_SCAN";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     private static final String STATE_CLEAR_SHADERCACHE_DIALOG = "STATE_CLEAR_SHADERCACHE_DIALOG";
@@ -152,6 +150,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private int mCurrentVisiblePosition = 0;
 
+    // Launch a game after searching is complete
+    private String mLaunchGameAfterScan = "";
+
     private ConfigFile mConfig;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -188,7 +189,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 if( !TextUtils.isEmpty( givenRomPath ) ) {
                     getIntent().replaceExtras((Bundle)null);
 
-                    launchGameOnCreation(givenRomPath);
+                    launchGameOnCreation(givenRomPath, true);
                 }
             } else {
 
@@ -285,7 +286,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mPathToDelete = savedInstanceState.getString( STATE_FILE_TO_DELETE );
             mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
             mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
-            mCurrentVisiblePosition = savedInstanceState.getInt( STATE_SCROLL_TO_POSITION);
+            mCurrentVisiblePosition = savedInstanceState.getInt(STATE_SCROLL_TO_POSITION);
+            mLaunchGameAfterScan = savedInstanceState.getString(STATE_LAUNCH_GAME_AFTER_SCAN);
         }
 
         // Get app data and user preferences
@@ -546,8 +548,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
         savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
         savedInstanceState.putBoolean(STATE_GAME_STARTED_EXTERNALLY, mGameStartedExternally);
-        savedInstanceState.putString( STATE_FILE_TO_DELETE, mPathToDelete);
-        savedInstanceState.putInt( STATE_SCROLL_TO_POSITION, mCurrentVisiblePosition);
+        savedInstanceState.putString(STATE_FILE_TO_DELETE, mPathToDelete);
+        savedInstanceState.putInt(STATE_SCROLL_TO_POSITION, mCurrentVisiblePosition);
+        savedInstanceState.putString(STATE_LAUNCH_GAME_AFTER_SCAN, mLaunchGameAfterScan);
 
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -630,7 +633,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
-    private void launchGameOnCreation(String givenRomPath)
+    private void launchGameOnCreation(String givenRomPath, boolean scanOnFailure)
     {
         if (givenRomPath == null) {
             return;
@@ -650,64 +653,43 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             romPathUri = Uri.fromFile(new File(givenRomPath));
         }
 
-        RomHeader header = new RomHeader(this, romPathUri);
+        // Check if we have a cache of this game first
+        GalleryItem foundItem = null;
+        for (GalleryItem item : mItemsCache) {
 
-        boolean successful = false;
-        String romPath;
-        if(header.isZip) {
-            romPath = FileUtil.ExtractFirstROMFromZip(this, romPathUri, mGlobalPrefs.unzippedRomsDir);
+            try {
+                String decodedPath = URLDecoder.decode(romPathUri.toString(), "UTF-8");
+                String decodedItemZip = item.zipUri != null ? URLDecoder.decode(item.zipUri, "UTF-8") : null;
+                String decodedItemRom = item.romUri != null ? URLDecoder.decode(item.romUri, "UTF-8") : null;
 
-            if (romPath != null) {
-                romPathUri = Uri.fromFile(new File(romPath));
-                header = new RomHeader(this, romPathUri);
-            }
-        }
-        else if (header.is7Zip && AppData.IS_NOUGAT) {
-            romPath = FileUtil.ExtractFirstROMFromSevenZ(this, romPathUri, mGlobalPrefs.unzippedRomsDir);
-
-            if (romPath != null) {
-                romPathUri = Uri.fromFile(new File(romPath));
-                header = new RomHeader(this, romPathUri);
-            }
-        }
-
-        if(header.isValid)
-        {
-            // Synchronously compute MD5 and launch game when finished
-            String computedMd5 = null;
-            try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(romPathUri, "r")) {
-
-                if (parcelFileDescriptor != null) {
-                    InputStream bufferedStream = new BufferedInputStream(new FileInputStream(parcelFileDescriptor.getFileDescriptor()));
-                    computedMd5 = FileUtil.computeMd5(bufferedStream);
+                if ((decodedItemZip != null && decodedItemZip.equals(decodedPath)) ||
+                        (decodedItemRom != null && decodedItemRom.equals(decodedPath)))
+                {
+                    foundItem = item;
+                    break;
                 }
 
-            } catch (Exception|OutOfMemoryError e) {
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
-            if(computedMd5 != null)
-            {
-                final RomDatabase database = RomDatabase.getInstance();
-
-                if(!database.hasDatabaseFile())
-                {
-                    database.setDatabaseFile(mAppData.mupen64plus_ini);
-                }
-
-                successful = true;
-
-                DocumentFile romDocFile = FileUtil.getDocumentFileSingle(this, romPathUri);
-                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, romDocFile == null ? "" : romDocFile.getName(), header.crc, header.countryCode );
-                String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
-                launchGameActivity( romPathUri.toString(), null, computedMd5, header.crc, header.name,
-                        header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false,
-                        false, false);
-            }
         }
 
-        if (!successful) {
-            Notifier.showToast(getApplicationContext(), R.string.toast_nativeMainFailure07);
+        // We found the item, use the pre-existing one
+        if (foundItem != null)
+        {
+            launchGameActivity(foundItem.romUri,
+                    foundItem.zipUri,
+                    foundItem.md5, foundItem.crc,
+                    foundItem.headerName, foundItem.countryCode.getValue(), foundItem.artPath,
+                    foundItem.goodName, foundItem.displayName, true,
+                    false, false);
+        } else if (scanOnFailure){
+            // We want to launch the game after scan completes
+            mLaunchGameAfterScan = givenRomPath;
+
+            // Add it to the gallery
+            mCacheRomInfoFragment.refreshRoms(romPathUri.toString(), true, true, false, false,
+                    true, mAppData, mGlobalPrefs);
         }
     }
 
@@ -1043,7 +1025,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
     {
-        mCacheRomInfoFragment.refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories, mAppData, mGlobalPrefs);
+        mCacheRomInfoFragment.refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories,
+                false, mAppData, mGlobalPrefs);
     }
 
     void refreshGrid()
@@ -1171,6 +1154,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mGridView.getLayoutManager().scrollToPosition(mCurrentVisiblePosition);
         }
         mCurrentVisiblePosition = 0;
+
+        // We were asked to launch a game after a scan completes, so do it here
+        if (!TextUtils.isEmpty(mLaunchGameAfterScan)) {
+            launchGameOnCreation(mLaunchGameAfterScan, false);
+        }
     }
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,

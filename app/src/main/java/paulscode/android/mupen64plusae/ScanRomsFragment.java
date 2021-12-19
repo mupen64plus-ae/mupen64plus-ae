@@ -59,6 +59,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     private boolean mDownloadArt = false;
     private boolean mClearGallery = false;
     private boolean mSearchSubdirectories = false;
+    private boolean mSearchSingleFile = false;
     
     private boolean mInProgress = false;
 
@@ -83,7 +84,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
                 CharSequence title = getString(R.string.scanning_title);
                 CharSequence message = getString(R.string.toast_pleaseWait);
 
-                DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
+                DocumentFile rootDocumentFile = mSearchSingleFile ? FileUtil.getDocumentFileSingle(activity, Uri.parse(mSearchUri)) :
+                        FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
                 String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
 
                 mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
@@ -149,13 +151,14 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     }
 
     public void refreshRoms( String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery,
-        boolean searchSubdirectories, AppData appData, GlobalPrefs globalPrefs )
+        boolean searchSubdirectories, boolean searchSingleFile, AppData appData, GlobalPrefs globalPrefs )
     {
         this.mSearchUri = searchUri;
         this.mSearchZips = searchZips;
         this.mDownloadArt = downloadArt;
         this.mClearGallery = clearGallery;
         this.mSearchSubdirectories = searchSubdirectories;
+        this.mSearchSingleFile = searchSingleFile;
         this.mAppData = appData;
         this.mGlobalPrefs = globalPrefs;
 
@@ -173,7 +176,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         CharSequence title = getString( R.string.scanning_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
 
-        DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
+        DocumentFile rootDocumentFile = mSearchSingleFile ? FileUtil.getDocumentFileSingle(activity, Uri.parse(mSearchUri)) :
+                FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
 
         String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
         mProgress = new ProgressDialog( mProgress, activity, title, text, message, true );
@@ -201,8 +205,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         // Asynchronously search for ROMs
         ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
             mSearchUri, mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCacheCfg,
-            mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
-            mDownloadArt, mClearGallery, mSearchSubdirectories);
+            mGlobalPrefs.coverArtDir, mSearchZips,
+            mDownloadArt, mClearGallery, mSearchSubdirectories, mSearchSingleFile);
     }
     
     public boolean IsInProgress()

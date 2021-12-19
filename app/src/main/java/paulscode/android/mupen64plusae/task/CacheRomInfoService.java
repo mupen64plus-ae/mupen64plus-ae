@@ -60,8 +60,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -89,11 +92,11 @@ public class CacheRomInfoService extends Service
     private String mDatabasePath;
     private String mConfigPath;
     private String mArtDir;
-    private String mUnzipDir;
     private boolean mSearchZips;
     private boolean mDownloadArt;
     private boolean mClearGallery;
     private boolean mSearchSubdirectories;
+    private boolean mSearchSingleFile;
     private boolean mbStopped;
     
     private int mStartId;
@@ -149,21 +152,26 @@ public class CacheRomInfoService extends Service
                 throw new IllegalArgumentException( "Config file path cannot be null or empty" );
             if( TextUtils.isEmpty( mArtDir ) )
                 throw new IllegalArgumentException( "Art directory cannot be null or empty" );
-            if( TextUtils.isEmpty( mUnzipDir ) )
-                throw new IllegalArgumentException( "Unzip directory cannot be null or empty" );
 
             // Ensure destination directories exist
             FileUtil.makeDirs(mArtDir);
-            FileUtil.makeDirs(mUnzipDir);
 
-            List<Uri> filesToSearch = FileUtil.listAllFiles(getApplicationContext(), mSearchUri, mSearchSubdirectories);
+            List<Uri> filesToSearch = null;
+            if (mSearchSingleFile)
+            {
+                filesToSearch = new ArrayList<>();
+                filesToSearch.add(mSearchUri);
+            }
+            else
+            {
+                filesToSearch = FileUtil.listAllFiles(getApplicationContext(), mSearchUri, mSearchSubdirectories);
+            }
 
             final RomDatabase database = RomDatabase.getInstance();
             if(!database.hasDatabaseFile())
             {
                 database.setDatabaseFile(mDatabasePath);
             }
-
 
             if (filesToSearch.isEmpty()) {
 
@@ -175,8 +183,12 @@ public class CacheRomInfoService extends Service
             if (mClearGallery)
                 config.clear();
 
-            removeLegacyEntries(config);
-            cleanupMissingFiles(config);
+            // Don't do this if we are trying to just quickly search a single file
+            if (!mSearchSingleFile)
+            {
+                removeLegacyEntries(config);
+                cleanupMissingFiles(config);
+            }
 
             mListener.GetProgressDialog().setMaxProgress( filesToSearch.size() );
             for( final Uri file : filesToSearch )
@@ -296,11 +308,11 @@ public class CacheRomInfoService extends Service
             mDatabasePath = extras.getString( ActivityHelper.Keys.DATABASE_PATH );
             mConfigPath = extras.getString( ActivityHelper.Keys.CONFIG_PATH );
             mArtDir = extras.getString( ActivityHelper.Keys.ART_DIR );
-            mUnzipDir = extras.getString( ActivityHelper.Keys.UNZIP_DIR );
             mSearchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
             mDownloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
             mClearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
             mSearchSubdirectories = extras.getBoolean( ActivityHelper.Keys.SEARCH_SUBDIR );
+            mSearchSingleFile = extras.getBoolean( ActivityHelper.Keys.SEARCH_SINGLE_FILE );
         }
 
         mbStopped = false;
@@ -769,17 +781,36 @@ public class CacheRomInfoService extends Service
 
                 if(!TextUtils.isEmpty(artPath) && !TextUtils.isEmpty(romGoodName) && !TextUtils.isEmpty(crc))
                 {
-                    RomDetail detail = database.lookupByMd5WithFallback( key, romGoodName, crc, countryCode );
-                    mListener.GetProgressDialog().setText(getShortFileName(romGoodName));
-
                     //Only download art if it's not already present or current art is not a valid image
                     File artPathFile = new File (artPath);
                     if(!artPathFile.exists() || !FileUtil.isFileImage(artPathFile))
                     {
-                        Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
-                        downloadFile( detail.artUrl, artPath );
+                        boolean downloadArt = true;
 
-                        Log.i( "CacheRomInfoService", "End art download: " +  artPath);
+                        if (mSearchSingleFile)
+                        {
+                            String zipUri = theConfigFile.get(key, "zipPathUri");
+                            String romUri = theConfigFile.get(key, "romPathUri");
+                            try {
+                                String decodedPath = URLDecoder.decode(mSearchUri.toString(), "UTF-8");
+                                String decodedItemZip = URLDecoder.decode(zipUri, "UTF-8");
+                                String decodedItemRom = URLDecoder.decode(romUri, "UTF-8");
+
+                                downloadArt = (decodedItemZip != null && decodedItemZip.equals(decodedPath)) ||
+                                        (decodedItemRom != null && decodedItemRom.equals(decodedPath));
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if (downloadArt)
+                        {
+                            RomDetail detail = database.lookupByMd5WithFallback( key, romGoodName, crc, countryCode );
+                            mListener.GetProgressDialog().setText(getShortFileName(romGoodName));
+                            Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
+                            downloadFile( detail.artUrl, artPath );
+                            Log.i( "CacheRomInfoService", "End art download: " +  artPath);
+                        }
                     }
                 }
 

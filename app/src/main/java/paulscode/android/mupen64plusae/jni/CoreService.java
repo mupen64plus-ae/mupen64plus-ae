@@ -729,7 +729,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             // Clean up the working directory
             FileUtil.deleteFolder(new File(workingDir));
-            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
 
             if (loadingSuccess) {
                 mGameDataManager.clearOldest();
