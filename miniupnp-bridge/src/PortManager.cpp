@@ -30,15 +30,11 @@
 #include <cstring>
 #include <string>
 #include <thread>
-#include "Common/TimeUtil.h"
-#include "Common/Data/Text/I18n.h"
-#include "Common/Net/Resolve.h"
-#include "Common/Thread/ThreadUtil.h"
-#include "Common/Log.h"
-#include "Core/System.h"
-#include "Core/Host.h"
-#include "Core/ELF/ParamSFO.h"
-#include "Core/Util/PortManager.h"
+#include <mutex>
+
+#include <android/log.h>
+
+#include "PortManager.h"
 
 
 PortManager g_PortManager;
@@ -53,8 +49,7 @@ PortManager::PortManager():
 	m_InitState(UPNP_INITSTATE_NONE),
 	m_LocalPort(UPNP_LOCAL_PORT_ANY),
 	m_leaseDuration("43200") {
-	// Since WSAStartup can be used multiple times it should be safe to do this right?
-	net::Init();
+
 }
 
 PortManager::~PortManager() {
@@ -62,11 +57,11 @@ PortManager::~PortManager() {
 	Clear();
 	Restore();
 	Terminate();
-	net::Shutdown();
 }
 
 void PortManager::Terminate() {
-	VERBOSE_LOG(SCENET, "PortManager::Terminate()");
+    __android_log_write(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Terminate()");
+
 	if (urls) {
 #ifdef WITH_UPNP
 		FreeUPNPUrls(urls);
@@ -99,23 +94,20 @@ bool PortManager::Initialize(const unsigned int timeout) {
 	int ipv6 = 0; // 0 = IPv4, 1 = IPv6
 	unsigned char ttl = 2; // defaulting to 2
 	int error = 0;
-	
-	VERBOSE_LOG(SCENET, "PortManager::Initialize(%d)", timeout);
-	if (!g_Config.bEnableUPnP) {
-		ERROR_LOG(SCENET, "PortManager::Initialize - UPnP is Disabled on Networking Settings");
-		return false;
-	}
+
+    __android_log_print(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Initialize(%d)", timeout);
 
 	if (m_InitState != UPNP_INITSTATE_NONE) {
 		switch (m_InitState)
 		{
 		case UPNP_INITSTATE_BUSY: {
-			WARN_LOG(SCENET, "PortManager - Initialization already in progress");
+            __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "Initialization already in progress");
+
 			return false;
 		}
 		// Should we redetect UPnP? just in case the player switched to a different network in the middle
 		case UPNP_INITSTATE_DONE: {
-			WARN_LOG(SCENET, "PortManager - Already Initialized");
+            __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "Already Initialized");
 			return true;
 		}
 		default:
@@ -143,7 +135,7 @@ bool PortManager::Initialize(const unsigned int timeout) {
 		if (!dev)
 			dev = devlist; // defaulting to first device
 
-		INFO_LOG(SCENET, "PortManager - UPnP device: [desc: %s] [st: %s]", dev->descURL, dev->st);
+        __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnP device: [desc: %s] [st: %s]", dev->descURL, dev->st);
 
 		descXML = (char*)miniwget(dev->descURL, &descXMLsize, dev->scope_id, &descXMLstatus);
 		if (descXML)
@@ -157,20 +149,19 @@ bool PortManager::Initialize(const unsigned int timeout) {
 		char lanaddr[64] = "unset";
 		int status = UPNP_GetValidIGD(devlist, urls, datas, lanaddr, sizeof(lanaddr)); //possible "status" values, 0 = NO IGD found, 1 = A valid connected IGD has been found, 2 = A valid IGD has been found but it reported as not connected, 3 = an UPnP device has been found but was not recognized as an IGD
 		m_lanip = std::string(lanaddr);
-		INFO_LOG(SCENET, "PortManager - Detected LAN IP: %s", m_lanip.c_str());
+        __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Detected LAN IP: %s", m_lanip.c_str());
 
 		// Additional Info
 		char connectionType[64] = "";
 		if (UPNP_GetConnectionTypeInfo(urls->controlURL, datas->first.servicetype, connectionType) != UPNPCOMMAND_SUCCESS) {
-			WARN_LOG(SCENET, "PortManager - GetConnectionTypeInfo failed");
+            __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "GetConnectionTypeInfo failed");
 		}
 		else {
-			INFO_LOG(SCENET, "PortManager - Connection Type: %s", connectionType);
+            __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Connection Type: %s", connectionType);
 		}
 
 		// Using Game ID & Player Name as default description for mapping
-		std::string gameID = g_paramSFO.GetDiscID();
-		m_defaultDesc = "PPSSPP:" + gameID + ":" + g_Config.sNickName; // Some routers may automatically prefixed it with "UPnP:"
+		m_defaultDesc = "M64PlusFz"; // Some routers may automatically prefixed it with "UPnP:"
 
 		freeUPNPDevlist(devlist);
 
@@ -180,11 +171,8 @@ bool PortManager::Initialize(const unsigned int timeout) {
 		return true;
 	}
 
-	ERROR_LOG(SCENET, "PortManager - upnpDiscover failed (error: %i) or No UPnP device detected", error);
-	if (g_Config.bEnableUPnP) {
-		auto n = GetI18NCategory("Networking");
-		host->NotifyUserMessage(n->T("Unable to find UPnP device"), 2.0f, 0x0000ff);
-	}
+    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "upnpDiscover failed (error: %i) or No UPnP device detected", error);
+
 	m_InitState = UPNP_INITSTATE_NONE;
 #endif // WITH_UPNP
 	return false;
@@ -199,17 +187,14 @@ bool PortManager::Add(const char* protocol, unsigned short port, unsigned short 
 	char port_str[16];
 	char intport_str[16];
 	int r;
-	auto n = GetI18NCategory("Networking");
 	
 	if (intport == 0)
 		intport = port;
-	INFO_LOG(SCENET, "PortManager::Add(%s, %d, %d)", protocol, port, intport);
-	if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+
+    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Add(%s, %d, %d)", protocol, port, intport);
+
+    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
 	{
-		if (g_Config.bEnableUPnP) {
-			WARN_LOG(SCENET, "PortManager::Add - the init was not done !");
-			host->NotifyUserMessage(n->T("UPnP need to be reinitialized"), 2.0f, 0x0000ff);
-		}
 		Terminate();
 		return false;
 	}
@@ -234,12 +219,10 @@ bool PortManager::Add(const char* protocol, unsigned short port, unsigned short 
 		}
 		if (r != 0)
 		{
-			ERROR_LOG(SCENET, "PortManager - AddPortMapping failed (error: %i)", r);
-			if (r == UPNPCOMMAND_HTTP_ERROR) {
-				if (g_Config.bEnableUPnP) {
-					host->NotifyUserMessage(n->T("UPnP need to be reinitialized"), 2.0f, 0x0000ff);
-				}
-				Terminate(); // Most of the time errors occurred because the router is no longer reachable (ie. changed networks) so we should invalidate the state to prevent further lags due to timeouts
+            __android_log_print(ANDROID_LOG_ERROR, "miniupnp-bridge", "AddPortMapping failed (error: %i)", r);
+
+            if (r == UPNPCOMMAND_HTTP_ERROR) {
+                Terminate(); // Most of the time errors occurred because the router is no longer reachable (ie. changed networks) so we should invalidate the state to prevent further lags due to timeouts
 				return false;
 			}
 		}
@@ -256,15 +239,11 @@ bool PortManager::Add(const char* protocol, unsigned short port, unsigned short 
 bool PortManager::Remove(const char* protocol, unsigned short port) {
 #ifdef WITH_UPNP
 	char port_str[16];
-	auto n = GetI18NCategory("Networking");
 
-	INFO_LOG(SCENET, "PortManager::Remove(%s, %d)", protocol, port);
-	if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Remove(%s, %d)", protocol, port);
+
+    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
 	{
-		if (g_Config.bEnableUPnP) {
-			WARN_LOG(SCENET, "PortManager::Remove - the init was not done !");
-			host->NotifyUserMessage(n->T("UPnP need to be reinitialized"), 2.0f, 0x0000ff);
-		}
 		Terminate();
 		return false;
 	}
@@ -272,11 +251,9 @@ bool PortManager::Remove(const char* protocol, unsigned short port) {
 	int r = UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, port_str, protocol, NULL);
 	if (r != 0)
 	{
-		ERROR_LOG(SCENET, "PortManager - DeletePortMapping failed (error: %i)", r);
-		if (r == UPNPCOMMAND_HTTP_ERROR) {
-			if (g_Config.bEnableUPnP) {
-				host->NotifyUserMessage(n->T("UPnP need to be reinitialized"), 2.0f, 0x0000ff);
-			}
+        __android_log_print(ANDROID_LOG_ERROR, "miniupnp-bridge", "DeletePortMapping failed (error: %i)", r);
+
+        if (r == UPNPCOMMAND_HTTP_ERROR) {
 			Terminate(); // Most of the time errors occurred because the router is no longer reachable (ie. changed networks) so we should invalidate the state to prevent further lags due to timeouts
 			return false;
 		}
@@ -293,11 +270,13 @@ bool PortManager::Remove(const char* protocol, unsigned short port) {
 bool PortManager::Restore() {
 #ifdef WITH_UPNP
 	int r;
-	VERBOSE_LOG(SCENET, "PortManager::Restore()");
-	if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    __android_log_print(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Restore()");
+
+    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
 	{
-		if (g_Config.bEnableUPnP) WARN_LOG(SCENET, "PortManager::Remove - the init was not done !");
-		return false;
+        __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "PortManager::Remove - the init was not done !");
+
+        return false;
 	}
 	for (auto it = m_otherPortList.begin(); it != m_otherPortList.end(); ++it) {
 		if (it->taken) {
@@ -312,8 +291,9 @@ bool PortManager::Restore() {
 					m_portList.erase(el_it);
 				}
 				else {
-					ERROR_LOG(SCENET, "PortManager::Restore - DeletePortMapping failed (error: %i)", r);
-					if (r == UPNPCOMMAND_HTTP_ERROR)
+                    __android_log_print(ANDROID_LOG_ERROR, "miniupnp-bridge", "PortManager::Restore - DeletePortMapping failed (error: %i)", r);
+
+                    if (r == UPNPCOMMAND_HTTP_ERROR)
 						return false; // Might be better not to exit here, but exiting a loop will avoid long timeouts in the case the router is no longer reachable
 				}
 			}
@@ -324,8 +304,9 @@ bool PortManager::Restore() {
 				it->taken = false;
 			}
 			else {
-				ERROR_LOG(SCENET, "PortManager::Restore - AddPortMapping failed (error: %i)", r);
-				if (r == UPNPCOMMAND_HTTP_ERROR)
+                __android_log_print(ANDROID_LOG_ERROR, "miniupnp-bridge", "PortManager::Restore - AddPortMapping failed (error: %i)", r);
+
+                if (r == UPNPCOMMAND_HTTP_ERROR)
 					return false; // Might be better not to exit here, but exiting a loop will avoid long timeouts in the case the router is no longer reachable
 			}		
 		}
@@ -350,10 +331,11 @@ bool PortManager::Clear() {
 	char rHost[64];
 	char duration[16];
 
-	VERBOSE_LOG(SCENET, "PortManager::Clear()");
-	if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    __android_log_print(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Clear()");
+
+    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
 	{
-		if (g_Config.bEnableUPnP) WARN_LOG(SCENET, "PortManager::Clear - the init was not done !");
+        __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "PortManager::Clear - the init was not done !");
 		return false;
 	}
 	//unsigned int num = 0;
@@ -375,8 +357,9 @@ bool PortManager::Clear() {
 			int r2 = UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, extPort, protocol, rHost);
 			if (r2 != 0)
 			{
-				ERROR_LOG(SCENET, "PortManager::Clear - DeletePortMapping(%s, %s) failed (error: %i)", extPort, protocol, r2);
-				if (r2 == UPNPCOMMAND_HTTP_ERROR)
+                __android_log_print(ANDROID_LOG_ERROR, "miniupnp-bridge", "PortManager::Clear - DeletePortMapping(%s, %s) failed (error: %i)", extPort, protocol, r2);
+
+                if (r2 == UPNPCOMMAND_HTTP_ERROR)
 					return false;
 			}
 			else {
@@ -408,11 +391,12 @@ bool PortManager::RefreshPortList() {
 	char rHost[64];
 	char duration[16];
 
-	INFO_LOG(SCENET, "PortManager::RefreshPortList()");
-	if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::RefreshPortList()");
+
+    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
 	{
-		if (g_Config.bEnableUPnP) WARN_LOG(SCENET, "PortManager::RefreshPortList - the init was not done !");
-		return false;
+        __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "PortManager::RefreshPortList - the init was not done !");
+        return false;
 	}
 	m_portList.clear();
 	m_otherPortList.clear();
@@ -453,17 +437,17 @@ bool PortManager::RefreshPortList() {
 
 int upnpService(const unsigned int timeout)
 {
-	SetCurrentThreadName("UPnPService");
-	INFO_LOG(SCENET, "UPnPService: Begin of UPnPService Thread");
+    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnPService: Begin of UPnPService Thread");
 
-	// Service Loop
-	while (upnpServiceRunning && coreState != CORE_POWERDOWN) {
+
+    // Service Loop
+	while (upnpServiceRunning) {
 		// Attempts to reconnect if not connected yet or got disconnected
-		if (g_Config.bEnableUPnP && g_PortManager.GetInitState() == UPNP_INITSTATE_NONE) {
+		if (g_PortManager.GetInitState() == UPNP_INITSTATE_NONE) {
 			g_PortManager.Initialize(timeout);
 		}
 
-		if (g_Config.bEnableUPnP && g_PortManager.GetInitState() == UPNP_INITSTATE_DONE && !upnpReqs.empty()) {
+		if (g_PortManager.GetInitState() == UPNP_INITSTATE_DONE && !upnpReqs.empty()) {
 			upnpLock.lock();
 			UPnPArgs arg = upnpReqs.front();
 			upnpLock.unlock();
@@ -488,8 +472,7 @@ int upnpService(const unsigned int timeout)
             }
 		}
 
-		// Sleep for 1ms for faster response
-		sleep_ms(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 
 	// Cleaning up regardless of g_Config.bEnableUPnP to prevent lingering open ports on the router
@@ -504,8 +487,9 @@ int upnpService(const unsigned int timeout)
 	upnpReqs.clear();
 	upnpLock.unlock();
 
-	INFO_LOG(SCENET, "UPnPService: End of UPnPService Thread");
-	return 0;
+    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnPService: End of UPnPService Thread");
+
+    return 0;
 }
 
 void __UPnPInit(const unsigned int timeout) {
