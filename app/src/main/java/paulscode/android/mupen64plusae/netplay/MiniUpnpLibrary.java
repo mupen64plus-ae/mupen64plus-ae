@@ -31,13 +31,14 @@ public interface MiniUpnpLibrary extends Library {
      * @param description Port description
      * @param port External port
      * @param intport Internal port
+     * @return true if success
      */
-    void UPnP_Add(String protocol, String description, int port, int intport);
+    boolean UPnP_Add(String protocol, String description, int port, int intport);
 
     /**
      * Remove port forward
      * @param protocol Protocol, either "TCP" or "UDP"
      * @param port External port
      */
-    void UPnP_Remove(String protocol, int port);
+    boolean UPnP_Remove(String protocol, int port);
 }

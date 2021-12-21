@@ -38,10 +38,6 @@
 
 
 PortManager g_PortManager;
-bool upnpServiceRunning = false;
-std::thread upnpServiceThread;
-std::recursive_mutex upnpLock;
-std::deque<UPnPArgs> upnpReqs;
 
 PortManager::PortManager(): 
 	urls(0), 
@@ -166,7 +162,6 @@ bool PortManager::Initialize(const unsigned int timeout) {
 
 		freeUPNPDevlist(devlist);
 
-		//m_LocalPort = localport; // We shouldn't keep the right port for the next game reset if we wanted to redetect UPnP
 		m_InitState = UPNP_INITSTATE_DONE;
 		RefreshPortList();
 		return true;
@@ -354,7 +349,7 @@ bool PortManager::Clear() {
 			protocol, desc, enabled,
 			rHost, duration);
 		// Only removes port mappings created by PPSSPP for current LAN IP
-		if (r == 0 && intAddr == m_lanip && std::string(desc).find("PPSSPP:") != std::string::npos) {
+		if (r == 0 && intAddr == m_lanip && std::string(desc).find("M64Plus") != std::string::npos) {
 			int r2 = UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, extPort, protocol, rHost);
 			if (r2 != 0)
 			{
@@ -420,7 +415,7 @@ bool PortManager::RefreshPortList() {
 			if (desc_str.find("UPnP:") == 0)
 				desc_str = desc_str.substr(5);
 			// Only include port mappings created by PPSSPP for current LAN IP
-			if (intAddr == m_lanip && desc_str.find("PPSSPP:") != std::string::npos) {
+			if (intAddr == m_lanip && desc_str.find("M64Plus") != std::string::npos) {
 				m_portList.push_back({ extPort, protocol });
 			}
 			// Port mappings belong to others that might be taken by PPSSPP later
@@ -436,86 +431,46 @@ bool PortManager::RefreshPortList() {
 #endif // WITH_UPNP
 }
 
-int upnpService(const unsigned int timeout)
+extern "C" __attribute__((visibility("default"))) void UPnPInit(int timeout)
 {
-    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnPService: Begin of UPnPService Thread");
-
-    // Service Loop
-	while (upnpServiceRunning) {
-		// Attempts to reconnect if not connected yet or got disconnected
-		if (g_PortManager.GetInitState() == UPNP_INITSTATE_NONE) {
-			g_PortManager.Initialize(timeout);
-		}
-
-		if (g_PortManager.GetInitState() == UPNP_INITSTATE_DONE && !upnpReqs.empty()) {
-			upnpLock.lock();
-			UPnPArgs arg = upnpReqs.front();
-			upnpLock.unlock();
-
-			bool ok = true;
-			switch (arg.cmd) {
-				case UPNP_CMD_ADD:
-					ok = g_PortManager.Add(arg.protocol.c_str(), arg.description.c_str(), arg.port, arg.intport);
-					break;
-				case UPNP_CMD_REMOVE:
-					ok = g_PortManager.Remove(arg.protocol.c_str(), arg.port);
-					break;
-				default:
-					break;
-			}
-
-            // It's only considered failed when disconnected (should be retried when reconnected)
-			if (ok) {
-                upnpLock.lock();
-                upnpReqs.pop_front();
-                upnpLock.unlock();
-            }
-		}
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	if (g_PortManager.GetInitState() == UPNP_INITSTATE_NONE) {
+		g_PortManager.Initialize(timeout);
 	}
+}
 
+extern "C" __attribute__((visibility("default"))) void UPnPShutdown()
+{
 	// Cleaning up regardless of g_Config.bEnableUPnP to prevent lingering open ports on the router
 	if (g_PortManager.GetInitState() == UPNP_INITSTATE_DONE) {
 		g_PortManager.Clear();
 		g_PortManager.Restore();
 		g_PortManager.Terminate();
 	}
-
-	// Should we ingore any leftover UPnP requests? instead of processing it on the next game start
-	upnpLock.lock();
-	upnpReqs.clear();
-	upnpLock.unlock();
-
-    __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnPService: End of UPnPService Thread");
-
-    return 0;
 }
 
-extern "C" __attribute__((visibility("default"))) void UPnPInit(int timeout) {
-	if (!upnpServiceRunning) {
-		upnpServiceRunning = true;
-		upnpServiceThread = std::thread(upnpService, timeout);
+extern "C" __attribute__((visibility("default"))) bool UPnP_Add(const char* protocol, const char* description, int port, int intport)
+{
+	static const int maxTries = 10;
+	int currentTry = 0;
+	while(!g_PortManager.Add(protocol, description, port, intport) && currentTry < maxTries)
+	{
+		++currentTry;
+		__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Add current try=%d", currentTry);
 	}
+
+	return currentTry < maxTries;
 }
 
-extern "C" __attribute__((visibility("default"))) void UPnPShutdown() {
-	if (upnpServiceRunning) {
-		upnpServiceRunning = false;
-		if (upnpServiceThread.joinable()) {
-			upnpServiceThread.join();
-		}
+extern "C" __attribute__((visibility("default"))) bool UPnP_Remove(const char* protocol, int port)
+{
+	static const int maxTries = 10;
+	int currentTry = 0;
+	while(!g_PortManager.Remove(protocol, port) && currentTry < maxTries)
+	{
+		++currentTry;
+		__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Remove current try=%d", currentTry);
 	}
-}
 
-extern "C" __attribute__((visibility("default"))) void UPnP_Add(const char* protocol, const char* description, int port, int intport) {
-	std::lock_guard<std::recursive_mutex> upnpGuard(upnpLock);
-
-	upnpReqs.push_back({ UPNP_CMD_ADD, protocol, description, static_cast<unsigned short>(port), static_cast<unsigned short>(intport) });
-}
-
-extern "C" __attribute__((visibility("default"))) void UPnP_Remove(const char* protocol, int port) {
-	std::lock_guard<std::recursive_mutex> upnpGuard(upnpLock);
-	upnpReqs.push_back({ UPNP_CMD_REMOVE, protocol, "", static_cast<unsigned short>(port), static_cast<unsigned short>(port) });
+	return currentTry < maxTries;
 }
 

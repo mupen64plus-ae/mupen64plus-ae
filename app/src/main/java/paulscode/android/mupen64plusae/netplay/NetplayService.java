@@ -149,13 +149,6 @@ public class NetplayService extends Service
 
                 mMiniUpnpLibrary.UPnPShutdown();
             }
-
-            // Sleep for a bit to let the UPnP service close all the ports since it runs async
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -288,17 +281,15 @@ public class NetplayService extends Service
 
             mMiniUpnpLibrary.UPnPInit(2000);
 
-            mMiniUpnpLibrary.UPnP_Add("TCP","M64Plus Room", mRoomPort, mRoomPort);
-            mMiniUpnpLibrary.UPnP_Add("TCP", "M64Plus Core TCP", mTcpServer.getPort(), mTcpServer.getPort());
-            mMiniUpnpLibrary.UPnP_Add("UDP", "M64Plus Core UDP", mTcpServer.getPort(), mTcpServer.getPort());
+            boolean port1Success = mMiniUpnpLibrary.UPnP_Add("TCP","M64Plus Room", mRoomPort, mRoomPort);
+            boolean port2Success = mMiniUpnpLibrary.UPnP_Add("TCP", "M64Plus Core TCP", mTcpServer.getPort(), mTcpServer.getPort());
+            boolean port3Success = mMiniUpnpLibrary.UPnP_Add("UDP", "M64Plus Core UDP", mTcpServer.getPort(), mTcpServer.getPort());
 
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (port1Success && port2Success && port3Success) {
+                mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
+            } else {
+                mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
             }
-
-            mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
         }
     }
 
