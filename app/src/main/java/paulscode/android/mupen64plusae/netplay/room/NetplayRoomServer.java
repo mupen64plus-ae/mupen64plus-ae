@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -205,9 +206,11 @@ public class NetplayRoomServer {
 
                 mRegistrationIds.add(regId);
 
+                Socket socketAccepted = mServerSocket.accept();
+
                 synchronized (mClientSyncObject) {
                     mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, mVideoPlugin, mRspPlugin,
-                            regId, mServerPort, mServerSocket.accept(),
+                            regId, mServerPort, socketAccepted,
                             new NetplayRoomClientHandler.OnClientRegistered() {
                                 @Override
                                 public void onClientRegistration(int playerNumber, String deviceName) {
