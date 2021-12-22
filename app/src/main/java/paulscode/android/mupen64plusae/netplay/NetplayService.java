@@ -143,6 +143,7 @@ public class NetplayService extends Service
 
             synchronized (mUpnpSyncObject) {
                 mShuttingDown = true;
+                Log.i(TAG, "Shutting down ports");
                 mMiniUpnpLibrary.UPnP_Remove("TCP", mRoomPort);
                 mMiniUpnpLibrary.UPnP_Remove("TCP", mTcpServer.getPort());
                 mMiniUpnpLibrary.UPnP_Remove("UDP", mTcpServer.getPort());

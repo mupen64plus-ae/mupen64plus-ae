@@ -463,6 +463,8 @@ extern "C" __attribute__((visibility("default"))) bool UPnP_Add(const char* prot
 
 extern "C" __attribute__((visibility("default"))) bool UPnP_Remove(const char* protocol, int port)
 {
+	__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnP_Remove(%s, %d)", protocol, port);
+
 	static const int maxTries = 10;
 	int currentTry = 0;
 	while(!g_PortManager.Remove(protocol, port) && currentTry < maxTries)

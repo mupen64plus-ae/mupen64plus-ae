@@ -327,7 +327,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                     if (TextUtils.isEmpty(mNetplayCode)) {
                         Notifier.showToast(mActivity, R.string.netplay_codeRetrieveFailure);
                     }
-                }, 5000);
+                }, 20000);
 
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
