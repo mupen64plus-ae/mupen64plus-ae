@@ -30,6 +30,8 @@ import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.net.RouteInfo;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
@@ -49,7 +51,9 @@ import com.sun.jna.Native;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -286,23 +290,6 @@ public class NetplayService extends Service
         }
     }
 
-    private int getGatewayAddress() {
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        Network[] networks = cm.getAllNetworks();
-        for (Network network : networks) {
-            LinkProperties linkProperties = cm.getLinkProperties(network);
-            List<RouteInfo> routes = linkProperties.getRoutes();
-            for (RouteInfo route : routes) {
-                if (route.getGateway() != null)
-                {
-                    return ByteBuffer.wrap(route.getGateway().getAddress()).getInt();
-                }
-            }
-        }
-
-        return 0;
-    }
-
     private boolean mapPortsUpnp()
     {
         mUsingUpnp = true;
@@ -315,19 +302,33 @@ public class NetplayService extends Service
         return port1Success && port2Success && port3Success;
     }
 
-    private boolean mapPortsNatPmp()
+    private boolean mapPortsNatPmp(int gatewayAddress)
     {
         mUsingUpnp = false;
 
-        WifiManager manager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
-        DhcpInfo info = manager.getDhcpInfo();
-
-        mMiniUpnpLibrary.NATPMP_Init(info.gateway);
+        mMiniUpnpLibrary.NATPMP_Init(gatewayAddress);
         boolean port1Success = mMiniUpnpLibrary.NATPMP_Add("TCP", mRoomPort, mRoomPort);
         boolean port2Success = mMiniUpnpLibrary.NATPMP_Add("TCP", mTcpServer.getPort(), mTcpServer.getPort());
         boolean port3Success = mMiniUpnpLibrary.NATPMP_Add("UDP", mTcpServer.getPort(), mTcpServer.getPort());
 
         return port1Success && port2Success && port3Success;
+    }
+
+    private void actuallyMapPorts(int gatewayAddress)
+    {
+        boolean success = mapPortsNatPmp(gatewayAddress);
+
+        if (!success) {
+            Log.w(TAG, "NAT-PMP port forwading failed, trying NAT-PMP");
+            success = mapPortsUpnp();
+        }
+
+        if (success) {
+            mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
+        } else {
+            Log.w(TAG, "UPnP port forwading failed");
+            mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
+        }
     }
 
     private void mapPorts()
@@ -337,19 +338,47 @@ public class NetplayService extends Service
                 return;
             }
 
-            boolean success = mapPortsNatPmp();
+            final ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            if (!success) {
-                Log.w(TAG, "NAT-PMP port forwading failed, trying NAT-PMP");
-                success = mapPortsUpnp();
-            }
+            NetworkRequest.Builder builder = new NetworkRequest.Builder();
+            builder.addTransportType(NetworkCapabilities.TRANSPORT_ETHERNET);
+            builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
 
-            if (success) {
-                mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
-            } else {
-                Log.w(TAG, "UPnP port forwading failed");
-                mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
-            }
+            final NetworkRequest networkRequest = builder.build();
+
+            ConnectivityManager.NetworkCallback callback = new ConnectivityManager.NetworkCallback()
+            {
+                public void onAvailable(Network network)
+                {
+                    super.onAvailable(network);
+
+                    LinkProperties linkProperties = connectivityManager.getLinkProperties(network);
+                    List<RouteInfo> routes = linkProperties.getRoutes();
+                    for (RouteInfo route : routes) {
+                        if (route.getGateway() != null)
+                        {
+                            InetAddress gatewayAddress = route.getGateway();
+
+                            byte[] addressBytes = gatewayAddress.getAddress();
+                            ByteBuffer addressBuffer = ByteBuffer.allocate(addressBytes.length);
+                            addressBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                            addressBuffer.put(addressBytes);
+                            addressBuffer.position(0);
+                            int addressInt = addressBuffer.getInt();
+
+                            if (addressInt != 0) {
+                                Log.i(TAG, "Received gateway address=" + gatewayAddress.toString());
+
+                                actuallyMapPorts(addressInt);
+                            }
+                        }
+                    }
+
+                    connectivityManager.unregisterNetworkCallback(this);
+                }
+            };
+            
+            connectivityManager.registerNetworkCallback(networkRequest, callback);
         }
     }
 
