@@ -26,6 +26,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.DhcpInfo;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.RouteInfo;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -42,6 +48,9 @@ import androidx.core.app.NotificationCompat;
 import com.sun.jna.Native;
 
 import org.mupen64plusae.v3.alpha.R;
+
+import java.nio.ByteBuffer;
+import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
@@ -90,6 +99,9 @@ public class NetplayService extends Service
     private final MiniUpnpLibrary mMiniUpnpLibrary = Native.load("miniupnp-bridge", MiniUpnpLibrary.class);
     private final Object mUpnpSyncObject = new Object();
     private boolean mShuttingDown = false;
+
+    // Set to true if we are currently using UPnP for port forwarding false if we are using NAT-PMP
+    private boolean mUsingUpnp = true;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -144,11 +156,12 @@ public class NetplayService extends Service
             synchronized (mUpnpSyncObject) {
                 mShuttingDown = true;
                 Log.i(TAG, "Shutting down ports");
-                mMiniUpnpLibrary.UPnP_Remove("TCP", mRoomPort);
-                mMiniUpnpLibrary.UPnP_Remove("TCP", mTcpServer.getPort());
-                mMiniUpnpLibrary.UPnP_Remove("UDP", mTcpServer.getPort());
 
-                mMiniUpnpLibrary.UPnPShutdown();
+                if (mUsingUpnp) {
+                    mMiniUpnpLibrary.UPnPShutdown();
+                } else {
+                    mMiniUpnpLibrary.NATPMP_Shutdown();
+                }
             }
         }
     }
@@ -273,6 +286,50 @@ public class NetplayService extends Service
         }
     }
 
+    private int getGatewayAddress() {
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = cm.getAllNetworks();
+        for (Network network : networks) {
+            LinkProperties linkProperties = cm.getLinkProperties(network);
+            List<RouteInfo> routes = linkProperties.getRoutes();
+            for (RouteInfo route : routes) {
+                if (route.getGateway() != null)
+                {
+                    return ByteBuffer.wrap(route.getGateway().getAddress()).getInt();
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private boolean mapPortsUpnp()
+    {
+        mUsingUpnp = true;
+
+        mMiniUpnpLibrary.UPnPInit(2000);
+        boolean port1Success = mMiniUpnpLibrary.UPnP_Add("TCP","M64Plus Room", mRoomPort, mRoomPort);
+        boolean port2Success = mMiniUpnpLibrary.UPnP_Add("TCP", "M64Plus Core TCP", mTcpServer.getPort(), mTcpServer.getPort());
+        boolean port3Success = mMiniUpnpLibrary.UPnP_Add("UDP", "M64Plus Core UDP", mTcpServer.getPort(), mTcpServer.getPort());
+
+        return port1Success && port2Success && port3Success;
+    }
+
+    private boolean mapPortsNatPmp()
+    {
+        mUsingUpnp = false;
+
+        WifiManager manager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
+        DhcpInfo info = manager.getDhcpInfo();
+
+        mMiniUpnpLibrary.NATPMP_Init(info.gateway);
+        boolean port1Success = mMiniUpnpLibrary.NATPMP_Add("TCP", mRoomPort, mRoomPort);
+        boolean port2Success = mMiniUpnpLibrary.NATPMP_Add("TCP", mTcpServer.getPort(), mTcpServer.getPort());
+        boolean port3Success = mMiniUpnpLibrary.NATPMP_Add("UDP", mTcpServer.getPort(), mTcpServer.getPort());
+
+        return port1Success && port2Success && port3Success;
+    }
+
     private void mapPorts()
     {
         synchronized (mUpnpSyncObject) {
@@ -280,15 +337,17 @@ public class NetplayService extends Service
                 return;
             }
 
-            mMiniUpnpLibrary.UPnPInit(2000);
+            boolean success = mapPortsNatPmp();
 
-            boolean port1Success = mMiniUpnpLibrary.UPnP_Add("TCP","M64Plus Room", mRoomPort, mRoomPort);
-            boolean port2Success = mMiniUpnpLibrary.UPnP_Add("TCP", "M64Plus Core TCP", mTcpServer.getPort(), mTcpServer.getPort());
-            boolean port3Success = mMiniUpnpLibrary.UPnP_Add("UDP", "M64Plus Core UDP", mTcpServer.getPort(), mTcpServer.getPort());
+            if (!success) {
+                Log.w(TAG, "NAT-PMP port forwading failed, trying NAT-PMP");
+                success = mapPortsUpnp();
+            }
 
-            if (port1Success && port2Success && port3Success) {
+            if (success) {
                 mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
             } else {
+                Log.w(TAG, "UPnP port forwading failed");
                 mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
             }
         }

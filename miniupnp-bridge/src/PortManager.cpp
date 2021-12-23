@@ -130,8 +130,13 @@ bool PortManager::Initialize(const unsigned int timeout)
 
 			dev = dev->pNext;
 		}
-		if (!dev)
-			dev = devlist; // defaulting to first device
+		if (!dev) {
+			m_InitState = UPNP_INITSTATE_NONE;
+			Terminate();
+			__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "upnpDiscover failed (error: %i) or No UPnP device detected", error);
+
+			return false;
+		}
 
         __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnP device: [desc: %s] [st: %s]", dev->descURL, dev->st);
 
@@ -168,6 +173,7 @@ bool PortManager::Initialize(const unsigned int timeout)
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "upnpDiscover failed (error: %i) or No UPnP device detected", error);
 
 	m_InitState = UPNP_INITSTATE_NONE;
+	Terminate();
 
 	return false;
 }
@@ -188,11 +194,12 @@ bool PortManager::Add(const char* protocol, const char* description, unsigned sh
 
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Add(%s, %d, %d)", protocol, port, intport);
 
-    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+	if (m_InitState != UPNP_INITSTATE_DONE)
 	{
-		Terminate();
+		__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Add UpnP device not initialized yet (%s, %d, %d)", protocol, port, intport);
 		return false;
 	}
+
 	sprintf(port_str, "%d", port);
 	sprintf(intport_str, "%d", intport);
 	// Only add new port map if it's not previously created by PPSSPP for current IP
@@ -234,11 +241,12 @@ bool PortManager::Remove(const char* protocol, unsigned short port)
 
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Remove(%s, %d)", protocol, port);
 
-    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+	if (m_InitState != UPNP_INITSTATE_DONE)
 	{
-		Terminate();
+		__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Remove UpnP device not initialized yet (%s, %d)", protocol, port);
 		return false;
 	}
+
 	sprintf(port_str, "%d", port);
 	int r = UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, port_str, protocol, NULL);
 	if (r != 0)
@@ -261,7 +269,7 @@ bool PortManager::Restore()
 	int r;
     __android_log_print(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Restore()");
 
-    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    if (m_InitState != UPNP_INITSTATE_DONE)
 	{
         __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "PortManager::Remove - the init was not done !");
 
@@ -319,7 +327,7 @@ bool PortManager::Clear()
 
     __android_log_print(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Clear()");
 
-    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    if (m_InitState != UPNP_INITSTATE_DONE)
 	{
         __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "PortManager::Clear - the init was not done !");
 		return false;
@@ -376,7 +384,7 @@ bool PortManager::RefreshPortList()
 
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::RefreshPortList()");
 
-    if (urls == NULL || urls->controlURL == NULL || urls->controlURL[0] == '\0')
+    if (m_InitState != UPNP_INITSTATE_DONE)
 	{
         __android_log_print(ANDROID_LOG_WARN, "miniupnp-bridge", "PortManager::RefreshPortList - the init was not done !");
         return false;

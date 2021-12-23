@@ -152,7 +152,7 @@ bool PortManagerNatPmp::Add(const char* protocol, unsigned short port, unsigned 
 		}
 	}
 
-    m_currentNatPmpState = Ssendmap;
+    m_currentNatPmpState = m_currentNatPmpState != Serror ? Ssendmap : Serror;
 
 	return m_currentNatPmpState != Serror;
 }
@@ -201,8 +201,8 @@ bool PortManagerNatPmp::Remove(const char* protocol, unsigned short port)
 				initFinished = true;
 		}
 	}
-
-    m_currentNatPmpState = Ssendmap;
+	
+	m_currentNatPmpState = m_currentNatPmpState != Serror ? Ssendmap : Serror;
 
 	return m_currentNatPmpState != Serror;
 }

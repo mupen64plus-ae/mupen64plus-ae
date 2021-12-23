@@ -45,17 +45,21 @@ public interface MiniUpnpLibrary extends Library {
     /**
      * Initialize NAT PMP library
      */
-    void NATPMP_Init();
+    void NATPMP_Init(int gatewayIp);
+
+    /**
+     * Shutdown NAT PMP library
+     */
+    void NATPMP_Shutdown();
 
     /**
      * Add NAT-PMP port forward
      * @param protocol Protocol, either "TCP" or "UDP"
-     * @param description Port description
      * @param port External port
      * @param intport Internal port
      * @return true if success
      */
-    boolean NATPMP_Add(String protocol, String description, int port, int intport);
+    boolean NATPMP_Add(String protocol, int port, int intport);
 
     /**
      * Remove NAT-PMP port forward
