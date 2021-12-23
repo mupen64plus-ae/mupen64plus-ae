@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -60,6 +61,9 @@ public class LogcatActivity extends AppCompatActivity
             mLogTextString = DeviceUtil.getLogCat();
             mLogTextString = mLogTextString.replace("]\n", "]: ");
             mLogTextString = mLogTextString.replace("\r\n", "\n");
+
+            // Don't let the logcat get too big
+            mLogTextString = mLogTextString.substring(Math.max(0,mLogTextString.length()-(200*1024)), mLogTextString.length()-1);
         }
 
         mLogText = findViewById( R.id.logcatText );
