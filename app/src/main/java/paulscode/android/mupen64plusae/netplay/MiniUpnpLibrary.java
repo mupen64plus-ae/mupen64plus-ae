@@ -26,7 +26,7 @@ public interface MiniUpnpLibrary extends Library {
     void UPnPShutdown();
 
     /**
-     * Add port forward
+     * Add UPNP port forward
      * @param protocol Protocol, either "TCP" or "UDP"
      * @param description Port description
      * @param port External port
@@ -36,9 +36,31 @@ public interface MiniUpnpLibrary extends Library {
     boolean UPnP_Add(String protocol, String description, int port, int intport);
 
     /**
-     * Remove port forward
+     * Remove UPNP port forward
      * @param protocol Protocol, either "TCP" or "UDP"
      * @param port External port
      */
     boolean UPnP_Remove(String protocol, int port);
+
+    /**
+     * Initialize NAT PMP library
+     */
+    void NATPMP_Init();
+
+    /**
+     * Add NAT-PMP port forward
+     * @param protocol Protocol, either "TCP" or "UDP"
+     * @param description Port description
+     * @param port External port
+     * @param intport Internal port
+     * @return true if success
+     */
+    boolean NATPMP_Add(String protocol, String description, int port, int intport);
+
+    /**
+     * Remove NAT-PMP port forward
+     * @param protocol Protocol, either "TCP" or "UDP"
+     * @param port External port
+     */
+    boolean NATPMP_Remove(String protocol, int port);
 }

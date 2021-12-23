@@ -24,6 +24,7 @@
 // Most of the code are based on https://github.com/RJ/libportfwd and updated to the latest miniupnp library
 // All credit goes to him and the official miniupnp project! http://miniupnp.free.fr/
 
+// Modifications by fzurita for M64Plus AE
 
 #include <algorithm>
 #include <cstdlib>
@@ -33,35 +34,34 @@
 #include <mutex>
 
 #include <android/log.h>
+#include <libnatpmp/natpmp.h>
 
 #include "PortManager.h"
 
 
 PortManager g_PortManager;
 
-PortManager::PortManager(): 
-	urls(0), 
-	datas(0), 
-	m_InitState(UPNP_INITSTATE_NONE),
-	m_LocalPort(UPNP_LOCAL_PORT_ANY),
-	m_leaseDuration("43200") {
+PortManager::PortManager():
+	urls(0),
+	datas(0)
+{
 
 }
 
-PortManager::~PortManager() {
+PortManager::~PortManager()
+{
 	// FIXME: On Windows it seems using any UPnP functions in this destructor that gets triggered when exiting PPSSPP will resulting to UPNPCOMMAND_HTTP_ERROR due to early WSACleanup (miniupnpc was getting WSANOTINITIALISED internally)
 	Clear();
 	Restore();
 	Terminate();
 }
 
-void PortManager::Terminate() {
+void PortManager::Terminate()
+{
     __android_log_write(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Terminate()");
 
 	if (urls) {
-#ifdef WITH_UPNP
 		FreeUPNPUrls(urls);
-#endif
 		free(urls);
 		urls = NULL;
 	}
@@ -77,10 +77,8 @@ void PortManager::Terminate() {
 	m_InitState = UPNP_INITSTATE_NONE;
 }
 
-bool PortManager::Initialize(const unsigned int timeout) {
-
-#ifdef WITH_UPNP
-	// Windows: Assuming WSAStartup already called beforehand
+bool PortManager::Initialize(const unsigned int timeout)
+{
 	struct UPNPDev* devlist;
 	struct UPNPDev* dev;
 	char* descXML;
@@ -141,13 +139,13 @@ bool PortManager::Initialize(const unsigned int timeout) {
 		if (descXML)
 		{
 			parserootdesc(descXML, descXMLsize, datas);
-			free(descXML); descXML = 0;
+			free(descXML);
 			GetUPNPUrls(urls, datas, dev->descURL, dev->scope_id);
 		}
 
 		// Get LAN IP address that connects to the router
 		char lanaddr[64] = "unset";
-		int status = UPNP_GetValidIGD(devlist, urls, datas, lanaddr, sizeof(lanaddr)); //possible "status" values, 0 = NO IGD found, 1 = A valid connected IGD has been found, 2 = A valid IGD has been found but it reported as not connected, 3 = an UPnP device has been found but was not recognized as an IGD
+		UPNP_GetValidIGD(devlist, urls, datas, lanaddr, sizeof(lanaddr)); //possible "status" values, 0 = NO IGD found, 1 = A valid connected IGD has been found, 2 = A valid IGD has been found but it reported as not connected, 3 = an UPnP device has been found but was not recognized as an IGD
 		m_lanip = std::string(lanaddr);
         __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Detected LAN IP: %s", m_lanip.c_str());
 
@@ -170,20 +168,21 @@ bool PortManager::Initialize(const unsigned int timeout) {
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "upnpDiscover failed (error: %i) or No UPnP device detected", error);
 
 	m_InitState = UPNP_INITSTATE_NONE;
-#endif // WITH_UPNP
+
 	return false;
 }
 
-int PortManager::GetInitState() {
+int PortManager::GetInitState()
+{
 	return m_InitState;
 }
 
-bool PortManager::Add(const char* protocol, const char* description, unsigned short port, unsigned short intport) {
-#ifdef WITH_UPNP
+bool PortManager::Add(const char* protocol, const char* description, unsigned short port, unsigned short intport)
+{
 	char port_str[16];
 	char intport_str[16];
 	int r;
-	
+
 	if (intport == 0)
 		intport = port;
 
@@ -200,11 +199,11 @@ bool PortManager::Add(const char* protocol, const char* description, unsigned sh
 	auto el_it = std::find_if(m_portList.begin(), m_portList.end(),
 		[port_str, protocol](const std::pair<std::string, std::string> &el) { return el.first == port_str && el.second == protocol; });
 	if (el_it == m_portList.end()) {
-		auto el_it = std::find_if(m_otherPortList.begin(), m_otherPortList.end(),
+		auto el_it_new = std::find_if(m_otherPortList.begin(), m_otherPortList.end(),
 			[port_str, protocol](const PortMap& el) { return el.extPort_str == port_str && el.protocol == protocol; });
-		if (el_it != m_otherPortList.end()) {
+		if (el_it_new != m_otherPortList.end()) {
 			// Try to delete the port mapping before we create it, just in case we have dangling port mapping from the daemon not being shut down correctly or the port was taken by other
-			r = UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, port_str, protocol, NULL);
+			UPNP_DeletePortMapping(urls->controlURL, datas->first.servicetype, port_str, protocol, NULL);
 		}
 		r = UPNP_AddPortMapping(urls->controlURL, datas->first.servicetype,
 			port_str, intport_str, m_lanip.c_str(), description, protocol, NULL, m_leaseDuration.c_str());
@@ -224,16 +223,13 @@ bool PortManager::Add(const char* protocol, const char* description, unsigned sh
 		}
 		m_portList.push_front({ port_str, protocol });
 		// Keep tracks of it to be restored later if it belongs to others
-		if (el_it != m_otherPortList.end()) el_it->taken = true;
+		if (el_it_new != m_otherPortList.end()) el_it_new->taken = true;
 	}
 	return true;
-#else
-	return false;
-#endif // WITH_UPNP
 }
 
-bool PortManager::Remove(const char* protocol, unsigned short port) {
-#ifdef WITH_UPNP
+bool PortManager::Remove(const char* protocol, unsigned short port)
+{
 	char port_str[16];
 
     __android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "PortManager::Remove(%s, %d)", protocol, port);
@@ -258,13 +254,10 @@ bool PortManager::Remove(const char* protocol, unsigned short port) {
 		(it->first == port_str && it->second == protocol) ? it = m_portList.erase(it) : ++it;
 	}
 	return true;
-#else
-	return false;
-#endif // WITH_UPNP
 }
 
-bool PortManager::Restore() {
-#ifdef WITH_UPNP
+bool PortManager::Restore()
+{
 	int r;
     __android_log_print(ANDROID_LOG_VERBOSE, "miniupnp-bridge", "PortManager::Restore()");
 
@@ -294,7 +287,7 @@ bool PortManager::Restore() {
 				}
 			}
 			// Add the original owner back
-			r = UPNP_AddPortMapping(urls->controlURL, datas->first.servicetype, 
+			r = UPNP_AddPortMapping(urls->controlURL, datas->first.servicetype,
 				it->extPort_str.c_str(), it->intPort_str.c_str(), it->lanip.c_str(), it->desc.c_str(), it->protocol.c_str(), it->remoteHost.c_str(), it->duration.c_str());
 			if (r == 0) {
 				it->taken = false;
@@ -304,17 +297,14 @@ bool PortManager::Restore() {
 
                 if (r == UPNPCOMMAND_HTTP_ERROR)
 					return false; // Might be better not to exit here, but exiting a loop will avoid long timeouts in the case the router is no longer reachable
-			}		
+			}
 		}
 	}
 	return true;
-#else
-	return false;
-#endif // WITH_UPNP
 }
 
-bool PortManager::Clear() {
-#ifdef WITH_UPNP
+bool PortManager::Clear()
+{
 	int r;
 	int i = 0;
 	char index[6];
@@ -368,13 +358,10 @@ bool PortManager::Clear() {
 		i++;
 	} while (r == 0);
 	return true;
-#else
-	return false;
-#endif // WITH_UPNP
 }
 
-bool PortManager::RefreshPortList() {
-#ifdef WITH_UPNP
+bool PortManager::RefreshPortList()
+{
 	int r;
 	int i = 0;
 	char index[6];
@@ -426,9 +413,6 @@ bool PortManager::RefreshPortList() {
 		i++;
 	} while (r == 0);
 	return true;
-#else
-	return false;
-#endif // WITH_UPNP
 }
 
 extern "C" __attribute__((visibility("default"))) void UPnPInit(int timeout)
@@ -450,12 +434,13 @@ extern "C" __attribute__((visibility("default"))) void UPnPShutdown()
 
 extern "C" __attribute__((visibility("default"))) bool UPnP_Add(const char* protocol, const char* description, int port, int intport)
 {
-	static const int maxTries = 10;
+	static const int maxTries = 5;
 	int currentTry = 0;
 	while(!g_PortManager.Add(protocol, description, port, intport) && currentTry < maxTries)
 	{
 		++currentTry;
 		__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Add current try=%d", currentTry);
+		std::this_thread::sleep_for (std::chrono::milliseconds (10));
 	}
 
 	return currentTry < maxTries;
@@ -465,14 +450,14 @@ extern "C" __attribute__((visibility("default"))) bool UPnP_Remove(const char* p
 {
 	__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "UPnP_Remove(%s, %d)", protocol, port);
 
-	static const int maxTries = 10;
+	static const int maxTries = 5;
 	int currentTry = 0;
 	while(!g_PortManager.Remove(protocol, port) && currentTry < maxTries)
 	{
 		++currentTry;
 		__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Remove current try=%d", currentTry);
+		std::this_thread::sleep_for (std::chrono::milliseconds (10));
 	}
 
 	return currentTry < maxTries;
 }
-
