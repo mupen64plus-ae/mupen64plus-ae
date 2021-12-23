@@ -620,6 +620,8 @@
     <string name="importExportActivity_importCheatsAndProfiles">Importar trucos y perfiles</string>
     <string name="importExportActivity_importTouchscreenGraphics">Importar graficos de pantalla tactil</string>
     <string name="importExportActivity_invalidCustomSkinFile">Archivo de graficos de pantalla tactil no es válido</string>
+    <string name="importExportActivity_invalidGameDataFolder">Carpeta GameData no válida, la carpeta debe ser la carpeta GameData exportada.</string>
+    <string name="importExportActivity_invalidProfilesFolder">Carpeta de Perfiles no válida, la carpeta debe ser la carpeta de Perfiles exportada.</string>
 
     <!-- Netplay -->
     <string name="startNetplay_title">Iniciar</string>

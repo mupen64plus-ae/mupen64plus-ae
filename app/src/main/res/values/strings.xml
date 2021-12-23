@@ -832,6 +832,8 @@
     <string name="importExportActivity_importCheatsAndProfiles">Import Cheats and Profiles</string>
     <string name="importExportActivity_importTouchscreenGraphics">Import Touchscreen Graphics</string>
     <string name="importExportActivity_invalidCustomSkinFile">Invalid touchscreen graphics skin file</string>
+    <string name="importExportActivity_invalidGameDataFolder">Invalid GameData folder, folder must be the exported GameData folder.</string>
+    <string name="importExportActivity_invalidProfilesFolder">Invalid Profiles folder, folder must be the exported Profiles folder.</string>
 
     <!-- ROM preparation -->
     <string name="extractRomTask_title">Preparing game data…</string>

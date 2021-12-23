@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
@@ -38,8 +39,10 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+import paulscode.android.mupen64plusae.util.Notifier;
 
 public class ImportExportActivity extends AppCompatPreferenceActivity implements Preference.OnPreferenceClickListener
 {
@@ -207,9 +210,22 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
             } else if (requestCode == PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
                 mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.profilesDir), fileUri);
             } else if (requestCode == PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE) {
-                mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
+
+                DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), fileUri);
+                File destination = new File(mAppData.gameDataDir);
+                if (sourceLocation.getName() != null && sourceLocation.getName().equals(destination.getName())) {
+                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
+                } else {
+                    Notifier.showToast( this, R.string.importExportActivity_invalidGameDataFolder );
+                }
             } else if (requestCode == PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
-                mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
+                DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), fileUri);
+                File destination = new File(mGlobalPrefs.profilesDir);
+                if (sourceLocation.getName() != null && sourceLocation.getName().equals(destination.getName())) {
+                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
+                } else {
+                    Notifier.showToast( this, R.string.importExportActivity_invalidProfilesFolder );
+                }
             }
         }
     }
