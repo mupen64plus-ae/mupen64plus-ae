@@ -302,7 +302,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                                     if (mOnlineNetplayHandler != null) {
                                         mOnlineNetplayHandler.disconnect();
                                     }
-                                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
+                                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("np.zurita.me"),
                                             37520, -1, code,
                                             new OnlineNetplayHandler.OnOnlineNetplayData() {
 

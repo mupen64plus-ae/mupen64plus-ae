@@ -424,7 +424,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         if (mOnlineNetplayHandler == null && tcpPort1 != -1) {
             Thread onlineNetplayThread = new Thread(() -> {
                 try {
-                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
+                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("np.zurita.me"),
                             37520, tcpPort1, -1,
                             new OnlineNetplayHandler.OnOnlineNetplayData() {
 
