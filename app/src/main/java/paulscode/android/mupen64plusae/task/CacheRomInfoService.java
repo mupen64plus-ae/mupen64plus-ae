@@ -793,8 +793,8 @@ public class CacheRomInfoService extends Service
                             String romUri = theConfigFile.get(key, "romPathUri");
                             try {
                                 String decodedPath = URLDecoder.decode(mSearchUri.toString(), "UTF-8");
-                                String decodedItemZip = URLDecoder.decode(zipUri, "UTF-8");
-                                String decodedItemRom = URLDecoder.decode(romUri, "UTF-8");
+                                String decodedItemZip = zipUri != null ? URLDecoder.decode(zipUri, "UTF-8") : null;
+                                String decodedItemRom = romUri != null ? URLDecoder.decode(romUri, "UTF-8") : null;
 
                                 downloadArt = (decodedItemZip != null && decodedItemZip.equals(decodedPath)) ||
                                         (decodedItemRom != null && decodedItemRom.equals(decodedPath));
