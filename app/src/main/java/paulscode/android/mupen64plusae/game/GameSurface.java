@@ -182,7 +182,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         Log.i(TAG, "takeScreenshot: " + directory + " " + filename);
         Notifier.showToast(mContext, R.string.toast_savingScreenshot);
 
-        if (mRenderThread.getHandler() != null) {
+        if (mRenderThread != null && mRenderThread.getHandler() != null) {
             mRenderThread.getHandler().sendScreenshotRequest(directory, filename);
         }
     }
