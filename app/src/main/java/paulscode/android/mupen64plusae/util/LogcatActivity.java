@@ -63,7 +63,9 @@ public class LogcatActivity extends AppCompatActivity
             mLogTextString = mLogTextString.replace("\r\n", "\n");
 
             // Don't let the logcat get too big
-            mLogTextString = mLogTextString.substring(Math.max(0,mLogTextString.length()-(200*1024)), mLogTextString.length()-1);
+            if (mLogTextString.length() > 0) {
+                mLogTextString = mLogTextString.substring(Math.max(0,mLogTextString.length()-(200*1024)), mLogTextString.length()-1);
+            }
         }
 
         mLogText = findViewById( R.id.logcatText );
