@@ -201,7 +201,7 @@ static int savedWidth, savedHeight;
 unsigned int pBufferAddress;
 static int pBufferFmt;
 static int pBufferWidth, pBufferHeight;
-static fb fbs[100];
+static fb fbs[200];
 static int nb_fb = 0;
 static unsigned int curBufferAddr = 0;
 
