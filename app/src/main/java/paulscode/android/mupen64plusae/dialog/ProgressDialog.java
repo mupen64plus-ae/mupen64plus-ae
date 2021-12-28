@@ -80,14 +80,22 @@ public class ProgressDialog implements OnClickListener
     
     public void show()
     {
-        mAbortDialog.show();
-        mDialog.show();
+        try {
+            mAbortDialog.show();
+            mDialog.show();
+        } catch (android.view.WindowManager.BadTokenException e) {
+            e.printStackTrace();
+        }
     }
     
     public void dismiss()
     {
-        mAbortDialog.dismiss();
-        mDialog.dismiss();
+        try {
+            mAbortDialog.dismiss();
+            mDialog.dismiss();
+        } catch (android.view.WindowManager.BadTokenException e) {
+            e.printStackTrace();
+        }
     }
     
     public void setOnCancelListener(OnCancelListener onCancelListener)
