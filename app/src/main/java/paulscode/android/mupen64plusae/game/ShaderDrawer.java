@@ -94,7 +94,11 @@ public class ShaderDrawer {
         if (mGameTexture != null) {
             Log.i(TAG, "Dettaching texture");
 
-            mGameTexture.detachFromGLContext();
+            try {
+                mGameTexture.detachFromGLContext();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
             mGameTexture = null;
         }
     }
