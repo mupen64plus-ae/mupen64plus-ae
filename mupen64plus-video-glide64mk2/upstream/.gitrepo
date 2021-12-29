@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/mupen64plus-ae/mupen64plus-video-glide64mk2.git
 	branch = master
-	commit = ee4a8740c18bd41e395edb043bb2993d87b4ffd6
-	parent = 31bd57a27093329d36ac114d2c86ab6f1f2a9041
+	commit = 076336f5a7e80cb104fbbfd442a1fb5c779ac686
+	parent = bc694e63f9bc598dbd82828113e40eb5f52e24ef
 	method = merge
 	cmdver = 0.4.3
