@@ -210,10 +210,10 @@ private:
 	std::unique_ptr<ShaderBank> shader_bank;
 #endif
 
+	Renderer renderer;
 	CommandRing ring;
 
 	VideoInterface vi;
-	Renderer renderer;
 
 	void clear_hidden_rdram();
 	void clear_tmem();
