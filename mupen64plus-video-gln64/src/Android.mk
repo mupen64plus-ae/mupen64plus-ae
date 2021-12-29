@@ -26,6 +26,8 @@ SRCDIR := .
 LOCAL_MODULE := mupen64plus-video-gln64
 LOCAL_ARM_MODE := arm
 
+LOCAL_SHARED_LIBRARIES := asan
+
 LOCAL_C_INCLUDES :=         \
     $(M64P_API_INCLUDES)    \
 

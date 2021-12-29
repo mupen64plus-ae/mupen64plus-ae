@@ -4,6 +4,7 @@ include $(JNI_LOCAL_PATH)/../build_common/native_common.mk
 include $(CLEAR_VARS)
 LOCAL_MODULE := ae-bridge
 LOCAL_STATIC_LIBRARIES := EGLLoader
+LOCAL_SHARED_LIBRARIES := asan
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) $(GL_INCLUDES)
 LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/src/ae_bridge.cpp
 LOCAL_CFLAGS := $(COMMON_CFLAGS) -DEGL

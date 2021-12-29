@@ -10,6 +10,9 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
+
+LOCAL_SHARED_LIBRARIES := asan
+
 LOCAL_SRC_FILES :=           \
     $(SRCDIR)/alist.c        \
     $(SRCDIR)/alist_audio.c  \

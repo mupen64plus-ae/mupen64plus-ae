@@ -24,6 +24,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := mupen64plus-input-android
 
+LOCAL_SHARED_LIBRARIES := asan
+
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
 LOCAL_SRC_FILES := plugin.cpp

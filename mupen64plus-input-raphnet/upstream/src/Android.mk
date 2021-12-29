@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
-LOCAL_SHARED_LIBRARIES := libusb1.0
+LOCAL_SHARED_LIBRARIES := libusb1.0 asan
 
 LOCAL_SRC_FILES := plugin.c \
 	plugin_front.c \

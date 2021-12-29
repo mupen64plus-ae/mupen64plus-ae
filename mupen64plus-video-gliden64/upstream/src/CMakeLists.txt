@@ -413,6 +413,32 @@ if(ANDROID)
             # Provides the path to the library you want to import.
             ${ANDROID_LIB_PATH}/libs/${BUILD_VARIANT}/${ANDROID_ABI}/libfreetype.so)
     set(FREETYPE_LIBRARIES ANDROID_FREETYPE)
+
+    add_library( ANDROID_ASAN
+            SHARED
+            IMPORTED )
+
+    if (ANDROID_ABI STREQUAL "armeabi-v7a")
+        set( ASAN_LIB_NAME "arm" )
+    elseif(ANDROID_ABI STREQUAL "arm64-v8a")
+        set( ASAN_LIB_NAME "aarch64" )
+    elseif(ANDROID_ABI STREQUAL "x86")
+        set( ASAN_LIB_NAME "i686" )
+    elseif(ANDROID_ABI STREQUAL "x86_64")
+        set( ASAN_LIB_NAME "x86_64" )
+    endif()
+
+
+set_target_properties( # Specifies the target library.
+            ANDROID_ASAN
+
+            # Specifies the parameter you want to define.
+            PROPERTIES IMPORTED_LOCATION
+
+            # Provides the path to the library you want to import.
+            ${ANDROID_LIB_PATH}/libs/${BUILD_VARIANT}/${ANDROID_ABI}/libclang_rt.asan-${ASAN_LIB_NAME}-android.so)
+
+
 else(ANDROID)
     FIND_PACKAGE( Freetype REQUIRED )
     # presume a qt build linked to freetype
@@ -559,29 +585,29 @@ if(GLIDEN64_BUILD_TYPE STREQUAL "Debug")
 
   if(SDL)
         if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald ANDROID_ASAN)
 	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald GLideNHQd )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald GLideNHQd ANDROID_ASAN)
 	endif (NOHQ)
   else(SDL)
 	if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald ANDROID_ASAN)
 	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald GLideNHQd )
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald GLideNHQd ANDROID_ASAN)
 	endif (NOHQ)
   endif(SDL)
 else(GLIDEN64_BUILD_TYPE STREQUAL "Debug")
   if(SDL)
         if (NOHQ)
-          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal )
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal ANDROID_ASAN)
         else (NOHQ)
-          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ )
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ ANDROID_ASAN)
         endif (NOHQ)
   else(SDL)
         if (NOHQ)
-          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal )
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal ANDROID_ASAN)
         else (NOHQ)
-          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ )
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ ANDROID_ASAN)
         endif (NOHQ)
   endif(SDL)
 endif(GLIDEN64_BUILD_TYPE STREQUAL "Debug")

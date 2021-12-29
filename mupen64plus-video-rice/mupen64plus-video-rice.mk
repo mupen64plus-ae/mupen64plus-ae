@@ -9,6 +9,8 @@ LOCAL_MODULE := mupen64plus-video-rice
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
+LOCAL_SHARED_LIBRARIES := asan
+
 LOCAL_C_INCLUDES :=                     \
     $(LOCAL_PATH)/$(SRCDIR)             \
     $(M64P_API_INCLUDES)                \

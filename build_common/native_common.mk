@@ -4,8 +4,23 @@ ifeq ($(NDK_DEBUG), 1)
     BUILD_VARIANT := debug
 endif
 
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+    ASAN_LIB_NAME = arm
+else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+    ASAN_LIB_NAME = aarch64
+else ifeq ($(TARGET_ARCH_ABI), x86)
+    ASAN_LIB_NAME = i686
+else ifeq ($(TARGET_ARCH_ABI), x86_64)
+    ASAN_LIB_NAME = x86_64
+endif
 
-#hidapi
+#address sanitizer
+include $(CLEAR_VARS)
+LOCAL_MODULE := asan
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libclang_rt.asan-$(ASAN_LIB_NAME)-android.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+#libhidapi
 include $(CLEAR_VARS)
 LOCAL_MODULE := libhidapi
 LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libhidapi.so
@@ -37,7 +52,7 @@ AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/../mupen64plus-core/upstream/src/api/
 GL_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/GL
 
-COMMON_FLAGS := -Oz -fcommon -ffast-math -ftree-vectorize -fno-omit-frame-pointer
+COMMON_FLAGS := -Oz -fcommon -ffast-math -ftree-vectorize -fsanitize=address -fno-omit-frame-pointer
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 COMMON_FLAGS +=                     \
