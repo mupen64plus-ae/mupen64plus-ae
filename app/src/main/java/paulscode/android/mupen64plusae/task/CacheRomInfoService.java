@@ -798,7 +798,7 @@ public class CacheRomInfoService extends Service
 
                                 downloadArt = (decodedItemZip != null && decodedItemZip.equals(decodedPath)) ||
                                         (decodedItemRom != null && decodedItemRom.equals(decodedPath));
-                            } catch (UnsupportedEncodingException e) {
+                            } catch (UnsupportedEncodingException|java.lang.IllegalArgumentException e) {
                                 e.printStackTrace();
                             }
                         }

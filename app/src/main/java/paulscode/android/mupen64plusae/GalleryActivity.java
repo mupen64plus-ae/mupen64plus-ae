@@ -678,7 +678,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     break;
                 }
 
-            } catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException|java.lang.IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
