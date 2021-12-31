@@ -156,27 +156,30 @@ public class CacheRomInfoService extends Service
             // Ensure destination directories exist
             FileUtil.makeDirs(mArtDir);
 
-            List<Uri> filesToSearch = null;
+            List<Uri> filesToSearch;
             if (mSearchSingleFile)
             {
                 filesToSearch = new ArrayList<>();
-                filesToSearch.add(mSearchUri);
+
+                if (mSearchUri != null) {
+                    filesToSearch.add(mSearchUri);
+                }
             }
             else
             {
                 filesToSearch = FileUtil.listAllFiles(getApplicationContext(), mSearchUri, mSearchSubdirectories);
+
+                if (filesToSearch.isEmpty()) {
+
+                    DocumentFile fileTree = FileUtil.getDocumentFileTree(getApplicationContext(), mSearchUri);
+                    filesToSearch = FileUtil.listAllFilesLegacy(fileTree, mSearchSubdirectories);
+                }
             }
 
             final RomDatabase database = RomDatabase.getInstance();
             if(!database.hasDatabaseFile())
             {
                 database.setDatabaseFile(mDatabasePath);
-            }
-
-            if (filesToSearch.isEmpty()) {
-
-                DocumentFile fileTree = FileUtil.getDocumentFileTree(getApplicationContext(), mSearchUri);
-                filesToSearch = FileUtil.listAllFilesLegacy(fileTree, mSearchSubdirectories);
             }
             
             final ConfigFile config = new ConfigFile( mConfigPath );
