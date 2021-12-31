@@ -701,6 +701,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mCacheRomInfoFragment.refreshRoms(romPathUri.toString(), true, true, false, false,
                     true, mAppData, mGlobalPrefs);
         }
+
+        if (foundItem == null && !scanOnFailure) {
+            Notifier.showToast(getApplicationContext(), R.string.toast_nativeMainFailure07);
+        }
     }
 
     @Override
