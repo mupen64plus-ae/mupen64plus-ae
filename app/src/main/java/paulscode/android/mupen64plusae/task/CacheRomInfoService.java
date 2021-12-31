@@ -479,7 +479,7 @@ public class CacheRomInfoService extends Service
     private void cacheFile(@Nullable Uri uri, @NonNull String name, RomHeader header, String md5, RomDatabase database, ConfigFile config, Uri zipFileLocation )
     {
         // Only add the file if it doesn't already exist
-        if (config.get(md5) == null) {
+        if (config.get(md5) == null || mSearchSingleFile) {
             mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
             RomDetail detail = database.lookupByMd5WithFallback( md5, name, header.crc, header.countryCode );
             String artPath = mArtDir + "/" + detail.artName;

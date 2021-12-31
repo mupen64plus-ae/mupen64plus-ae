@@ -88,8 +88,6 @@ import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomHeader;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
         GalleryRefreshFinishedListener
@@ -245,9 +243,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         setIntent( intent );
 
         // Get the ROM path if it was passed from another activity/app
-        final Bundle extras = getIntent().getExtras();
-
-        loadGameFromExtras(extras);
+        if (getIntent() != null)
+        {
+            boolean launchedFromHistory = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+            if (!launchedFromHistory) {
+                final Bundle extras = getIntent().getExtras();
+                loadGameFromExtras(extras);
+            }
+        }
     }
 
     @Override
@@ -496,8 +499,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         });
 
         // Get the ROM path if it was passed from another activity/app
-        final Bundle extras = getIntent().getExtras();
-        loadGameFromExtras(extras);
+        if (getIntent() != null)
+        {
+            boolean launchedFromHistory = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+            if (!launchedFromHistory) {
+                final Bundle extras = getIntent().getExtras();
+                loadGameFromExtras(extras);
+            }
+        }
 
         if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName)) {
             Log.i("GalleryActivity", "CoreService is running");
@@ -639,7 +648,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return;
         }
 
-        Log.i("GalleryActivity", "Rom path test = " + givenRomPath);
+        Log.i("GalleryActivity", "Rom path = " + givenRomPath);
 
         boolean isUri = !new File(givenRomPath).exists();
 
@@ -683,6 +692,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     foundItem.headerName, foundItem.countryCode.getValue(), foundItem.artPath,
                     foundItem.goodName, foundItem.displayName, true,
                     false, false);
+            finishAffinity();
         } else if (scanOnFailure){
             // We want to launch the game after scan completes
             mLaunchGameAfterScan = givenRomPath;

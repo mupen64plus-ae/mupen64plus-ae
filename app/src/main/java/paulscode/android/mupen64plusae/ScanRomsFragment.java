@@ -27,6 +27,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
@@ -63,6 +64,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     
     private boolean mInProgress = false;
 
+    private boolean mScanRomsOnActivityCreated = false;
+
     // this method is only called once for this fragment
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -76,10 +79,13 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        
-        if(mInProgress)
-        {
-            try {
+
+
+        try {
+            if (mScanRomsOnActivityCreated) {
+                mScanRomsOnActivityCreated = false;
+                ActuallyRefreshRoms(requireActivity());
+            } else if(mInProgress) {
                 Activity activity = requireActivity();
                 CharSequence title = getString(R.string.scanning_title);
                 CharSequence message = getString(R.string.toast_pleaseWait);
@@ -90,9 +96,9 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 
                 mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
                 mProgress.show();
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
             }
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
         }
     }
     
@@ -110,7 +116,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     
     @Override
     public void onDestroy()
-    {        
+    {
         if(mServiceConnection != null && mInProgress)
         {
             try {
@@ -126,7 +132,6 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     @Override
     public void onCacheRomInfoFinished()
     {
-
     }
     
     @Override
@@ -165,7 +170,8 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         try {
             ActuallyRefreshRoms(requireActivity());
         } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+            Log.w("ScanRomsFragment", "Activity not created yet, scan later");
+            mScanRomsOnActivityCreated = true;
         }
     }
     
