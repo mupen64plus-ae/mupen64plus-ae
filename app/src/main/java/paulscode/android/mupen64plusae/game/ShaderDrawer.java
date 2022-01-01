@@ -111,6 +111,12 @@ public class ShaderDrawer {
         
         ByteBuffer buffer = ByteBuffer.allocate(mWidth * mHeight * 4);
         GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
+
+        // Fix alpha to 255 for all pixels, some plugins don't ever set alpha values
+        for (int bufferIndex = 3; bufferIndex < buffer.array().length; bufferIndex+=4) {
+            buffer.array()[bufferIndex] = -1;
+        }
+
         Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(buffer);
         return bitmap;
