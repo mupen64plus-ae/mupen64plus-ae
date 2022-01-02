@@ -815,7 +815,8 @@
 
     <!-- Scan Roms Dialog -->
     <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan (zip/7zip/n64/z64 files supported)</string>
-    <string name="scanRomsDialog_start_file_picker">Start file picker</string>
+    <string name="scanRomsDialog_select_folder">Select Folder</string>
+    <string name="scanRomsDialog_select_file">Select File</string>
     <string name="scanRomsDialog_no_saf">No system file picker detected, please place your ROMs in the follow folder: </string>
     <string name="scanRomsDialog_searchZips">Search zip files</string>
     <string name="scanRomsDialog_downloadArt">Download cover art</string>

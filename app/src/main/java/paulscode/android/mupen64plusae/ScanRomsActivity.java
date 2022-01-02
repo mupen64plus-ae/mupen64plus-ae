@@ -23,8 +23,10 @@ import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class ScanRomsActivity extends AppCompatActivity
 {
-    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
+    private static final int LEGACY_PICK_FOLDER_REQUEST_CODE = 1;
     private static final int PICK_FOLDER_REQUEST_CODE = 2;
+    private static final int LEGACY_PICK_FILE_REQUEST_CODE = 3;
+    private static final int PICK_FILE_REQUEST_CODE = 4;
 
     private CheckBox mCheckBox1;
     private CheckBox mCheckBox2;
@@ -65,8 +67,10 @@ public class ScanRomsActivity extends AppCompatActivity
 
         setContentView(R.layout.scan_roms_activity);
 
-        Button filePickerButtont = findViewById(R.id.buttonFilePicker);
-        filePickerButtont.setOnClickListener(v -> startFilePicker());
+        Button folderPickerButton = findViewById(R.id.buttonFolderPicker);
+        folderPickerButton.setOnClickListener(v -> startFolderPicker());
+        Button filePickerButton = findViewById(R.id.buttonFilePicker);
+        filePickerButton.setOnClickListener(v -> startFilePicker());
 
         AppData appData = new AppData( this );
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && appData.useLegacyFileBrowser) {
@@ -97,6 +101,16 @@ public class ScanRomsActivity extends AppCompatActivity
         super.onSaveInstanceState( savedInstanceState );
     }
 
+    private void startFolderPicker()
+    {
+        AppData appData = new AppData( this );
+        if (appData.useLegacyFileBrowser) {
+            startLegacyFolderPicker();
+        } else {
+            startSafFolderPicker();
+        }
+    }
+
     private void startFilePicker()
     {
         AppData appData = new AppData( this );
@@ -107,27 +121,43 @@ public class ScanRomsActivity extends AppCompatActivity
         }
     }
 
-    private void startLegacyFilePicker()
+    private void startLegacyFolderPicker()
     {
         Intent intent = new Intent(this, LegacyFilePicker.class);
         intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
         intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-        startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+        startActivityForResult( intent, LEGACY_PICK_FOLDER_REQUEST_CODE);
+    }
+
+    private void startSafFolderPicker()
+    {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
+                );
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(intent, PICK_FOLDER_REQUEST_CODE);
+    }
+
+    private void startLegacyFilePicker()
+    {
+        Intent intent = new Intent(this, LegacyFilePicker.class);
+        intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
+        intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
+        startActivityForResult( intent, LEGACY_PICK_FILE_REQUEST_CODE );
     }
 
     private void startSafFilePicker()
     {
-        try {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                    Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
-                    );
-            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            startActivityForResult(intent, PICK_FOLDER_REQUEST_CODE);
-        } catch (android.content.ActivityNotFoundException e) {
-            startLegacyFilePicker();
-        }
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
+                Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
     }
 
     @Override
@@ -143,7 +173,7 @@ public class ScanRomsActivity extends AppCompatActivity
             scanData.putExtra(ActivityHelper.Keys.SEARCH_SUBDIR, mCheckBox4.isChecked());
 
             // Check which request we're responding to
-            if (requestCode == PICK_FOLDER_REQUEST_CODE)
+            if (requestCode == PICK_FOLDER_REQUEST_CODE || requestCode == PICK_FILE_REQUEST_CODE)
             {
                 // The result data contains a URI for the document or directory that
                 // the user selected.
@@ -151,17 +181,24 @@ public class ScanRomsActivity extends AppCompatActivity
 
                 if (mFileUri != null) {
                     scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
+                    scanData.putExtra(ActivityHelper.Keys.SEARCH_SINGLE_FILE, requestCode == PICK_FILE_REQUEST_CODE);
 
+                    boolean takePermissionsSuccess = false;
                     try {
                         getContentResolver().takePersistableUriPermission(mFileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        takePermissionsSuccess = true;
                     } catch (SecurityException e) {
                         e.printStackTrace();
                     }
 
-                    ScanRomsActivity.this.setResult(RESULT_OK, scanData);
-                    ScanRomsActivity.this.finish();
+                    if (takePermissionsSuccess) {
+                        setResult(RESULT_OK, scanData);
+                    } else {
+                        setResult(RESULT_CANCELED, null);
+                    }
+                    finish();
                 }
-            } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
+            } else if (requestCode == LEGACY_PICK_FOLDER_REQUEST_CODE || requestCode == LEGACY_PICK_FILE_REQUEST_CODE) {
                 final Bundle extras = data.getExtras();
 
                 if (extras != null) {
@@ -169,8 +206,9 @@ public class ScanRomsActivity extends AppCompatActivity
 
                     mFileUri = Uri.parse(searchUri);
                     scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, mFileUri.toString());
-                    ScanRomsActivity.this.setResult(RESULT_OK, scanData);
-                    ScanRomsActivity.this.finish();
+                    scanData.putExtra(ActivityHelper.Keys.SEARCH_SINGLE_FILE, requestCode == LEGACY_PICK_FILE_REQUEST_CODE);
+                    setResult(RESULT_OK, scanData);
+                    finish();
                 }
             }
         }

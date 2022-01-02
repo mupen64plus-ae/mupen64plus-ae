@@ -603,7 +603,8 @@
 
     <!--Scan Roms Dialog-->
     <string name="scanRomsDialog_selectRom">Seleccionar un ROM o Carpeta para Escanear (se soporta archivos n64/z64/zip/7zip)</string>
-    <string name="scanRomsDialog_start_file_picker">Iniciar buscador de archivos</string>
+    <string name="scanRomsDialog_select_folder">Seleccionar Carpeta</string>
+    <string name="scanRomsDialog_select_file">Seleccionar ROM</string>
     <string name="scanRomsDialog_no_saf">No se detectó ningún buscador de archivos en el sistema, por favor coloque sus ROMs en la siguiente carpeta: </string>
     <string name="scanRomsDialog_searchZips">Buscar archivos ZIP</string>
     <string name="scanRomsDialog_downloadArt">Descargar Portada</string>

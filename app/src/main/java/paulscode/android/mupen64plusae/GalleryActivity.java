@@ -1009,10 +1009,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     final boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
                     final boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
                     final boolean searchSubdirectories = extras.getBoolean( ActivityHelper.Keys.SEARCH_SUBDIR );
+                    final boolean searchSingleFile = extras.getBoolean( ActivityHelper.Keys.SEARCH_SINGLE_FILE );
 
                     if (searchUri != null)
                     {
-                        refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories);
+                        refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories, searchSingleFile);
                     }
                 }
             }
@@ -1037,10 +1038,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
-    private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
+    private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
+                             boolean searchSingleFile)
     {
         mCacheRomInfoFragment.refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories,
-                false, mAppData, mGlobalPrefs);
+                searchSingleFile, mAppData, mGlobalPrefs);
     }
 
     void refreshGrid()
