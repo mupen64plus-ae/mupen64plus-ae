@@ -158,6 +158,9 @@
     <string name="screenAdvanced_CountPerOpDefault_title">Cuenta por operación</string>
     <string name="screenAdvanced_CountPerOpDefault_summary">Modificar esto cambia el tiempo del juego, los valores más bajos pueden hacer overclock en el juego pero pueden causar inestabilidad.</string>
     <string name="screenAdvanced_CountPerOp_title">Cuenta por operación</string>
+    <string name="screenAdvanced_CountPerOpDenDefault_title">Usar factor de overclocking predeterminado</string>
+    <string name="screenAdvanced_CountPerOpDenDefault_summary">Modificar este parámetro overclocks al procesador R4300 por un factor de 2 cada vez que se incrementa el valor, 0 es no overclock.</string>
+    <string name="screenAdvanced_CountPerOpDen_title">Factor de Overclocking</string>
     <string name="screenAdvanced_ViRefreshRateDefault_title">Frecuencia de actualización de VI</string>
     <string name="screenAdvanced_ViRefreshRateDefault_summary">Modificar esto cambia el tiempo del juego, esto puede afectar algunos relojes del juego, es necesario reiniciar el juego para que esto tome efecto.</string>
     <string name="screenAdvanced_ViRefreshRate_title">Frecuencia de actualización de VI</string>

@@ -110,6 +110,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );
         mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );
+        mupen64plus_cfg.put( "Core", "CountPerOpDenomPot", String.valueOf( game.countPerOpDen ) );
         mupen64plus_cfg.put( "Core", "ForceAlignmentOfPiDma", String.valueOf( game.forceAlignmentOfPiDma ) );
         mupen64plus_cfg.put( "Core", "TlbHack", usingNetplay ? String.valueOf(0) : String.valueOf( game.ignoreTlbExceptions ? 1 : 0 ) );
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf(game.currentStateSlot));

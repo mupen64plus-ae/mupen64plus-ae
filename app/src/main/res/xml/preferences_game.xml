@@ -276,6 +276,19 @@
             mupen64:units=""/>
         <androidx.preference.CheckBoxPreference
             android:defaultValue="true"
+            android:key="screenAdvancedUseDefaultCountPerOpDen"
+            android:summary="@string/screenAdvanced_CountPerOpDenDefault_summary"
+            android:title="@string/screenAdvanced_CountPerOpDenDefault_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="screenAdvancedCountPerOpDen"
+            android:title="@string/screenAdvanced_CountPerOpDen_title"
+            mupen64:maximumValue="5"
+            mupen64:minimumValue="0"
+            mupen64:stepSize="1"
+            mupen64:units=""/>
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="true"
             android:key="screenAdvancedUseDefaultViRefresh"
             android:summary="@string/screenAdvanced_ViRefreshRateDefault_summary"
             android:title="@string/screenAdvanced_ViRefreshRateDefault_title" />

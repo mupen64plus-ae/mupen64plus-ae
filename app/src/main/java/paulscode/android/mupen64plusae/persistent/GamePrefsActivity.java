@@ -74,11 +74,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private static final int PICK_FILE_REQUEST_CODE = 2;
     private static final int EDIT_CHEATS_REQUEST_CODE = 111;
 
-    // These constants must match the keys used in res/xml/preferences_play.xml
+    // These constants must match the keys used in res/xml/preferences_game.xml
     private static final String SCREEN_ROOT = "screenRoot";
     private static final String SCREEN_CHEATS = "screenCheats";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     private static final String COUNT_PER_OP = "screenAdvancedCountPerOp";
+    private static final String COUNT_PER_OP_DEN = "screenAdvancedCountPerOpDen";
     private static final String VI_REFRESH = "screenAdvancedViRefreshRate";
 
     private static final String SHOW_BUILTIN_CHEAT_CODES = "showBuiltInCheatCodes";
@@ -524,6 +525,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
 
         PrefUtil.enablePreference( this, COUNT_PER_OP, !mGamePrefs.useDefaultCountPerOp );
+        PrefUtil.enablePreference( this, COUNT_PER_OP_DEN, !mGamePrefs.useDefaultCountPerOpDen );
         PrefUtil.enablePreference( this, VI_REFRESH, !mGamePrefs.useDefaultViRefreshRate );
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
