@@ -34,12 +34,14 @@ public class SettingsUpdateMessage implements TcpMessage {
             offset += bytesRead != -1 ? bytesRead : 0;
         }
         mSettings.mCountPerOp = mReceiveBuffer.getInt();
+        mSettings.mCountPerOpDenomPot = mReceiveBuffer.getInt();
         mSettings.mDisableExtraMem = mReceiveBuffer.getInt();
         mSettings.mSiDmADuration = mReceiveBuffer.getInt();
         mSettings.mEmuMode = mReceiveBuffer.getInt();
         mSettings.mNoCompiledJump = mReceiveBuffer.getInt();
 
         Log.i("Netplay", "GOT SETTINGS: count_per_op=" + mSettings.mCountPerOp +
+                " count_per_op_denom_pot=" + mSettings.mCountPerOpDenomPot +
                 " disable_extra_mem=" + mSettings.mDisableExtraMem +
                 " si_dma_duration=" + mSettings.mSiDmADuration +
                 " emu_mode=" + mSettings.mEmuMode +
