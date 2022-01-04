@@ -208,7 +208,13 @@ void F5INDI_Lighting_Overlay1(u32 _w0, u32 _w1)
 					++V;
 					s16 Z1 = (s16)_SHIFTR(*V, 16, 16);
 
-					V = CAST_DMEM(const u32*, 0x170 + offsetAddr[offsetAddrIdx^3]);
+					// Check for out of bounds access
+					int vertexAddressOffset = 0x170 + offsetAddr[offsetAddrIdx^3];
+					if (vertexAddressOffset + 8 >= 0x2000) {
+						continue;
+					}
+
+					V = CAST_DMEM(const u32*, vertexAddressOffset);
 					offsetAddrIdx++;
 					s16 X = (s16)_SHIFTR(*V, 16, 16);
 					s16 Y = (s16)_SHIFTR(*V, 0, 16);
