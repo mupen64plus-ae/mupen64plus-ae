@@ -167,8 +167,9 @@ void GLInfo::init() {
 		}
 	}
 
-	if (renderer == Renderer::PowerVR && config.generalEmulation.enableFragmentDepthWrite == 0) {
+	if (renderer == Renderer::PowerVR) {
 		config.frameBufferEmulation.forceDepthBufferClear = 1;
+		config.generalEmulation.enableFragmentDepthWrite = 0;
 	}
 
 	depthTexture = !isGLES2 || Utils::isExtensionSupported(*this, "GL_OES_depth_texture");
