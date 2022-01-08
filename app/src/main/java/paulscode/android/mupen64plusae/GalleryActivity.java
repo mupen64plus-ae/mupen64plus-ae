@@ -40,6 +40,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.PointerIcon;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
@@ -1041,6 +1042,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
                              boolean searchSingleFile)
     {
+        // Don't let the activity sleep in the middle of scan
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
+
         mCacheRomInfoFragment.refreshRoms(searchUri, searchZips, downloadArt, clearGallery, searchSubdirectories,
                 searchSingleFile, mAppData, mGlobalPrefs);
     }
@@ -1077,6 +1081,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void reloadCacheAndRefreshGrid()
     {
+        // This is called once ROM scan is finished, so no longer require the screen to remain on at this point
+        getWindow().setFlags( 0, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
+        
         mConfig = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
 
         refreshGridAsync();
