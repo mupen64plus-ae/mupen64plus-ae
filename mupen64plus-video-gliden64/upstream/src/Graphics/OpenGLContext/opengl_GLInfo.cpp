@@ -167,6 +167,10 @@ void GLInfo::init() {
 		}
 	}
 
+	if (renderer == Renderer::PowerVR && config.generalEmulation.enableFragmentDepthWrite == 0) {
+		config.frameBufferEmulation.forceDepthBufferClear = 1;
+	}
+
 	depthTexture = !isGLES2 || Utils::isExtensionSupported(*this, "GL_OES_depth_texture");
 	noPerspective = Utils::isExtensionSupported(*this, "GL_NV_shader_noperspective_interpolation");
 
