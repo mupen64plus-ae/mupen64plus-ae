@@ -36,7 +36,7 @@ public:
 		/* In higher resolutions, there	are more samples than the game intends, so shifting is not very		*/
 		/* effective. Still, an heuristic is applied to render texture rectangles as correctly as possible  */
 		/* in higher resolutions too. See issue #2324 for details. 											*/
-		const float vertexOffset = isNativeRes ? 0.5f : 0.0f;
+		const float vertexOffset = 0.0f;
 		float texCoordOffset[2][2] = { 0.0f, 0.0f };
 		if (isTexRect && !isNativeRes) {
 			float scale[2] = { 0.0f, 0.0f };
@@ -50,8 +50,15 @@ public:
 				const CachedTexture* _pTexture = textureCache().current[t];
 				if (_pTexture != nullptr) {
 					if (config.frameBufferEmulation.nativeResFactor != 0) {
-						texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? -0.5f / scale[0] : -1.0f + 0.5f / scale[0]) * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
-						texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? -0.5f / scale[1] : -1.0f + 0.5f / scale[1]) * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
+						if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
+							texCoordOffset[t][0] = -0.5f * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
+							texCoordOffset[t][1] = -0.5f * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
+						} else {
+							texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? -0.5f / scale[0] : -1.0f + 0.5f / scale[0]) *
+									gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
+							texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? -0.5f / scale[1] : -1.0f + 0.5f / scale[1]) *
+									gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
+						}
 					} else {
 						texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
 						texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
@@ -63,6 +70,7 @@ public:
 				}
 			}
 		}
+
 		/* Hack for framebuffer textures. See #519 and #2112 */
 		if ((config.generalEmulation.hacks & hack_fbTextureOffset) != 0) {
 			for (int t = 0; t < 2; t++) {
