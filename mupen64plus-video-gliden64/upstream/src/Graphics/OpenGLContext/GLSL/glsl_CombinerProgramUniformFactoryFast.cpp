@@ -36,7 +36,7 @@ public:
 		/* In higher resolutions, there	are more samples than the game intends, so shifting is not very		*/
 		/* effective. Still, an heuristic is applied to render texture rectangles as correctly as possible  */
 		/* in higher resolutions too. See issue #2324 for details. 											*/
-		const float vertexOffset = 0.0f;
+		const float vertexOffset = isNativeRes && gDP.otherMode.textureFilter == G_TF_POINT ? 0.5f : 0.0f;
 		float texCoordOffset[2][2] = { 0.0f, 0.0f };
 		if (isTexRect && !isNativeRes) {
 			float scale[2] = { 0.0f, 0.0f };
