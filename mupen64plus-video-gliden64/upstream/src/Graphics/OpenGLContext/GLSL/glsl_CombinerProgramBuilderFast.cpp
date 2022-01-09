@@ -325,7 +325,7 @@ public:
 					// Original author: ArthurCarvalho
 					// GLSL implementation: twinaphex, mupen64plus-libretro project.
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)			\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off - vec2(0.5))/texSize)			\n"
 						"#define TEX_FILTER(name, tex, texCoord)												\\\n"
 						"  {																					\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));										\\\n"
@@ -340,7 +340,7 @@ public:
 				break;
 				case BILINEAR_STANDARD:
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)									\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off - vec2(0.5))/texSize)									\n"
 						"#define TEX_FILTER(name, tex, texCoord)																		\\\n"
 						"{																												\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));																\\\n"
@@ -366,7 +366,7 @@ public:
 					// Original author: ArthurCarvalho
 					// GLSL implementation: twinaphex, mupen64plus-libretro project.
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)									\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off - vec2(0.5))/texSize)									\n"
 						"#define TEX_FILTER(name, tex, texCoord)												\\\n"
 						"{																						\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));										\\\n"
@@ -389,7 +389,7 @@ public:
 				break;
 				case BILINEAR_STANDARD_WITH_COLOR_BLEEDING_AND_PREMULTIPLIED_ALPHA:
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)									\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off - vec2(0.5))/texSize)									\n"
 						"#define TEX_FILTER(name, tex, texCoord)																		\\\n"
 						"{																												\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));																\\\n"
@@ -813,8 +813,8 @@ public:
 			} else {
 				if (config.texture.bilinearMode == BILINEAR_3POINT)
 					m_part =
-					"#define TEX_OFFSET_NORMAL(off, tex, texCoord, lod) texture(tex, texCoord - (off + 0.5)/texSize)			\n"
-					"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off + 0.5)/texSize, lod)	\n"
+					"#define TEX_OFFSET_NORMAL(off, tex, texCoord, lod) texture(tex, texCoord - (off - vec2(0.5))/texSize)			\n"
+					"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off - vec2(0.5))/texSize, lod)	\n"
 					"#define READ_TEX_NORMAL(name, tex, texCoord, lod)											\\\n"
 					"  {																								\\\n"
 					"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));											\\\n"
@@ -949,7 +949,7 @@ public:
 						// 3 point texture filtering.
 						// Original author: ArthurCarvalho
 						// GLSL implementation: twinaphex, mupen64plus-libretro project.
-						"#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)			\n"
+						"#define TEX_OFFSET(off) texture2D(tex, texCoord - (off - vec2(0.5))/texSize)			\n"
 						"lowp vec4 TextureFilter(in sampler2D tex, in highp vec2 texCoord)		\n"
 						"{																			\n"
 						"  mediump vec2 texSize;													\n"
@@ -969,7 +969,7 @@ public:
 					shaderPart +=
 						// bilinear filtering.
 						"uniform mediump vec2 uTextureSize[2];										\n"
-						"#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)			\n"
+						"#define TEX_OFFSET(off) texture2D(tex, texCoord - (off - vec2(0.5))/texSize)			\n"
 						"lowp vec4 TextureFilter(in sampler2D tex, in highp vec2 texCoord)		\n"
 						"{																			\n"
 						"  mediump vec2 texSize;													\n"
