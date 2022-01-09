@@ -325,11 +325,11 @@ public:
 					// Original author: ArthurCarvalho
 					// GLSL implementation: twinaphex, mupen64plus-libretro project.
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off)/texSize)			\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)			\n"
 						"#define TEX_FILTER(name, tex, texCoord)												\\\n"
 						"  {																					\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));										\\\n"
-						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));							\\\n"
+						"  mediump vec2 offset = fract(texCoord*texSize);							\\\n"
 						"  offset -= step(1.0, offset.x + offset.y);											\\\n"
 						"  lowp vec4 c0 = TEX_OFFSET(offset, tex, texCoord);									\\\n"
 						"  lowp vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y), tex, texCoord);	\\\n"
@@ -340,11 +340,11 @@ public:
 				break;
 				case BILINEAR_STANDARD:
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off)/texSize)									\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)									\n"
 						"#define TEX_FILTER(name, tex, texCoord)																		\\\n"
 						"{																												\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));																\\\n"
-						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\\\n"
+						"  mediump vec2 offset = fract(texCoord*texSize);													\\\n"
 						"  offset -= step(1.0, offset.x + offset.y);																	\\\n"
 						"  lowp vec4 zero = vec4(0.0);																					\\\n"
 						"																												\\\n"
@@ -366,11 +366,11 @@ public:
 					// Original author: ArthurCarvalho
 					// GLSL implementation: twinaphex, mupen64plus-libretro project.
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off)/texSize)									\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)									\n"
 						"#define TEX_FILTER(name, tex, texCoord)												\\\n"
 						"{																						\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));										\\\n"
-						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));							\\\n"
+						"  mediump vec2 offset = fract(texCoord*texSize);							\\\n"
 						"  offset -= step(1.0, offset.x + offset.y);											\\\n"
 						"  lowp vec4 c0 = TEX_OFFSET(offset, tex, texCoord);									\\\n"
 						"  lowp vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y), tex, texCoord);	\\\n"
@@ -389,11 +389,11 @@ public:
 				break;
 				case BILINEAR_STANDARD_WITH_COLOR_BLEEDING_AND_PREMULTIPLIED_ALPHA:
 					shaderPart +=
-						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off)/texSize)									\n"
+						"#define TEX_OFFSET(off, tex, texCoord) texture(tex, texCoord - (off + 0.5)/texSize)									\n"
 						"#define TEX_FILTER(name, tex, texCoord)																		\\\n"
 						"{																												\\\n"
 						"  mediump vec2 texSize = vec2(textureSize(tex,0));																\\\n"
-						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\\\n"
+						"  mediump vec2 offset = fract(texCoord*texSize);													\\\n"
 						"  offset -= step(1.0, offset.x + offset.y);																	\\\n"
 						"  lowp vec4 zero = vec4(0.0);																					\\\n"
 						"																												\\\n"
@@ -813,12 +813,12 @@ public:
 			} else {
 				if (config.texture.bilinearMode == BILINEAR_3POINT)
 					m_part =
-					"#define TEX_OFFSET_NORMAL(off, tex, texCoord, lod) texture(tex, texCoord - (off)/texSize)			\n"
-					"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off)/texSize, lod)	\n"
+					"#define TEX_OFFSET_NORMAL(off, tex, texCoord, lod) texture(tex, texCoord - (off + 0.5)/texSize)			\n"
+					"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off + 0.5)/texSize, lod)	\n"
 					"#define READ_TEX_NORMAL(name, tex, texCoord, lod)											\\\n"
 					"  {																								\\\n"
 					"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));											\\\n"
-					"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));										\\\n"
+					"  mediump vec2 offset = fract(texCoord*texSize);										\\\n"
 					"  offset -= step(1.0, offset.x + offset.y);														\\\n"
 					"  lowp vec4 c0 = TEX_OFFSET_NORMAL(offset, tex, texCoord, lod);									\\\n"
 					"  lowp vec4 c1 = TEX_OFFSET_NORMAL(vec2(offset.x - sign(offset.x), offset.y), tex, texCoord, lod);	\\\n"
@@ -828,7 +828,7 @@ public:
 					"#define READ_TEX_MIPMAP(name, tex, texCoord, lod)													\\\n"
 					"  {																								\\\n"
 					"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));											\\\n"
-					"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));										\\\n"
+					"  mediump vec2 offset = fract(texCoord*texSize);										\\\n"
 					"  offset -= step(1.0, offset.x + offset.y);														\\\n"
 					"  lowp vec4 c0 = TEX_OFFSET_MIPMAP(offset, tex, texCoord, lod);									\\\n"
 					"  lowp vec4 c1 = TEX_OFFSET_MIPMAP(vec2(offset.x - sign(offset.x), offset.y), tex, texCoord, lod);	\\\n"
@@ -957,7 +957,7 @@ public:
 						"    texSize = uTextureSize[0];												\n"
 						"  else																		\n"
 						"    texSize = uTextureSize[1];												\n"
-						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));				\n"
+						"  mediump vec2 offset = fract(texCoord*texSize);				\n"
 						"  offset -= step(1.0, offset.x + offset.y);								\n"
 						"  lowp vec4 c0 = TEX_OFFSET(offset);										\n"
 						"  lowp vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));	\n"
@@ -977,7 +977,7 @@ public:
 						"    texSize = uTextureSize[0];												\n"
 						"  else																		\n"
 						"    texSize = uTextureSize[1];												\n"
-						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));				\n"
+						"  mediump vec2 offset = fract(texCoord*texSize);				\n"
 						"  offset -= step(1.0, offset.x + offset.y);								\n"
 						"  lowp vec4 zero = vec4(0.0);												\n"
 						"																			\n"
