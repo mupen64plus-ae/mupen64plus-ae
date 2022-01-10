@@ -388,7 +388,10 @@ public class GamePrefs
         // profile instead
         if (headerName.toLowerCase().contains("indiana jones") ||
                 headerName.toLowerCase().contains("rogue squadron") ||
-                headerName.toLowerCase().contains("battle for naboo")) {
+                headerName.toLowerCase().contains("battle for naboo") ||
+                headerName.toLowerCase().contains("gauntlet legends")
+
+        ) {
             Plugin tempVideoPlugin = new Plugin( tempEmulationProfile, "videoPlugin" );
 
             if (tempVideoPlugin.name.toLowerCase().contains("glide64mk2") ||
