@@ -12,7 +12,7 @@ import paulscode.android.mupen64plusae.netplay.TcpServer;
 public class RequestSettingsMessage implements TcpMessage {
 
     TcpServer mTcpServer;
-    ByteBuffer mOutboundByteBuffer = ByteBuffer.allocate(20);
+    ByteBuffer mOutboundByteBuffer = ByteBuffer.allocate(24);
     OutputStream mOutputStream;
 
     public RequestSettingsMessage(TcpServer tcpServer, OutputStream outputStream) {

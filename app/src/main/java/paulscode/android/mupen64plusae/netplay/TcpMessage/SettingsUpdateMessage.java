@@ -11,7 +11,7 @@ import paulscode.android.mupen64plusae.netplay.TcpServer;
 
 public class SettingsUpdateMessage implements TcpMessage {
 
-    private static final int MESSAGE_SIZE = 21 - 1;
+    private static final int MESSAGE_SIZE = 25 - 1;
     TcpServer mTcpServer;
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate(MESSAGE_SIZE);
 
