@@ -26,6 +26,13 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
@@ -73,21 +80,34 @@ public final class Utility
     
     public static String executeShellCommand(String... args)
     {
-        try
-        {
-            Process process = Runtime.getRuntime().exec( args );
+        StringBuilder result = new StringBuilder();
+
+        try {
+            Process process = Runtime.getRuntime().exec(args);
             BufferedReader reader = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
-            StringBuilder result = new StringBuilder();
+
+            ExecutorService executor = Executors.newFixedThreadPool(1);
+
+            // Read data with timeout
+            Callable<String> readTask = reader::readLine;
+
             String line;
-            while( ( line = reader.readLine() ) != null )
+
+            do
             {
+                Future<String> future = executor.submit(readTask);
+                line = future.get(1000, TimeUnit.MILLISECONDS);
+
                 result.append(line).append("\n");
             }
-            return result.toString();
+            while(line != null );
+
         }
-        catch( IOException ignored )
+        catch( InterruptedException | ExecutionException | TimeoutException| IOException e )
         {
+            e.printStackTrace();
         }
-        return "";
+
+        return result.toString();
     }
 }
