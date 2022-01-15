@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -21,40 +21,27 @@
 package paulscode.android.mupen64plusae.util;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.input.map.AxisMap;
-
-import static android.content.Context.WIFI_SERVICE;
 
 public final class DeviceUtil
 {
@@ -136,6 +123,11 @@ public final class DeviceUtil
                        itself). we want to return the first non-loopback address. */
                     if (!inetAddress.isLoopbackAddress()) {
                         String ipAddr = inetAddress.getHostAddress();
+
+                        if (ipAddr == null) {
+                            continue;
+                        }
+
                         boolean isIPv4 = ipAddr.indexOf(':') < 0;
 
                         if (ipAddr.toLowerCase().contains("dummy")) {

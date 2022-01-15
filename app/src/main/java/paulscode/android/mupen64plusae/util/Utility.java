@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -23,9 +23,6 @@ package paulscode.android.mupen64plusae.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -39,8 +36,6 @@ import java.util.concurrent.TimeoutException;
  */
 public final class Utility
 {
-    public static final float MINIMUM_TABLET_SIZE = 6.5f;
-    
     /**
      * Clamps a value to the limit defined by min and max.
      * 
@@ -67,17 +62,7 @@ public final class Utility
         else
             return min;
     }
-    
-    public static String getDateString()
-    {
-        return getDateString( new Date() );
-    }
 
-    public static String getDateString( Date date )
-    {
-        return new SimpleDateFormat( "yyyy-MM-dd_HH-mm-ss", Locale.US ).format( date );
-    }
-    
     public static String executeShellCommand(String... args)
     {
         StringBuilder result = new StringBuilder();
@@ -100,7 +85,7 @@ public final class Utility
 
                 result.append(line).append("\n");
             }
-            while(line != null );
+            while(line != null);
 
         }
         catch( InterruptedException | ExecutionException | TimeoutException| IOException e )
