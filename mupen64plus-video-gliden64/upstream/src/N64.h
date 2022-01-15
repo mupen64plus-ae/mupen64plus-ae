@@ -41,7 +41,7 @@ extern u8 *HEADER;
 extern u8 *DMEM;
 extern u8 *IMEM;
 extern u8 *RDRAM;
-extern u64 TMEM[512];
+extern u64 TMEM[1024];
 extern u32 RDRAMSize;
 extern bool ConfigOpen;
 
