@@ -9587,11 +9587,11 @@ int new_recompile_block(int addr)
       ds=0; // Skip delay slot, already allocated as part of branch
       // ...but we need to alloc it in case something jumps here
       if(i+1<slen) {
-        current.u=branch_unneeded_reg[i-1]&unneeded_reg[i+1];
-        current.uu=branch_unneeded_reg_upper[i-1]&unneeded_reg_upper[i+1];
+        current.u=branch_unneeded_reg[max(i-1,0)]&unneeded_reg[i+1];
+        current.uu=branch_unneeded_reg_upper[max(i-1,0)]&unneeded_reg_upper[i+1];
       }else{
-        current.u=branch_unneeded_reg[i-1];
-        current.uu=branch_unneeded_reg_upper[i-1];
+        current.u=branch_unneeded_reg[max(i-1,0)];
+        current.uu=branch_unneeded_reg_upper[max(i-1,0)];
       }
       current.u&=~((1LL<<rs1[i])|(1LL<<rs2[i]));
       current.uu&=~((1LL<<us1[i])|(1LL<<us2[i]));
