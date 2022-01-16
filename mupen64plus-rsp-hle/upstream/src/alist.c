@@ -1018,7 +1018,7 @@ void alist_iirf(
     } while (count > 0);
 
     dram_store_u16(hle, (uint16_t*)&frame[6], address + 4, 2);
-    dram_store_u16(hle, (uint16_t*)&ibuf[(index-2)&3], address+8, 2);
-    dram_store_u16(hle, (uint16_t*)&ibuf[(index-1)&3], address+10, 2);
+    dram_store_u16(hle, (uint16_t*)&ibuf[(index-2)&3], address+8, 1);
+    dram_store_u16(hle, (uint16_t*)&ibuf[(index-1)&3], address+10, 1);
 }
 
