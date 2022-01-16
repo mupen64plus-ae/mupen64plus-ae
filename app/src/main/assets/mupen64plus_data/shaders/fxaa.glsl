@@ -50,6 +50,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #version 100
 
+#if defined(VERTEX)
+
+attribute vec4 VertexCoord;
+attribute vec4 TexCoord;
+varying vec2 vTexPosition;
+
+void main() {
+  gl_Position = VertexCoord;
+  vTexPosition = TexCoord.xy;
+}
+
+#elif defined(FRAGMENT)
+
 #define FXAA_REDUCE_MIN   (1.0/ 128.0)
 #define FXAA_REDUCE_MUL   (1.0 / 8.0)
 #define FXAA_SPAN_MAX     8.0
@@ -113,3 +126,5 @@ void main() {
         color = vec4(rgbB, texColor.a);
     gl_FragColor = color;
 }
+
+#endif

@@ -23,8 +23,7 @@ public enum ShaderLoader {
     private final int mFriendlyName;
     private final int mDescription;
     private final boolean mNeedsVsync;
-    private String mVertCode = null;
-    private String mFragCode = null;
+    private String mShaderCode = null;
 
     static final String TAG = "ShaderLoader";
 
@@ -47,20 +46,12 @@ public enum ShaderLoader {
         return mDescription;
     }
 
-    private void setVertCode(String vertCode) {
-        mVertCode = vertCode;
+    private void setShaderCode(String shaderCode) {
+        mShaderCode = shaderCode;
     }
 
-    private void setFragCode(String fragCode) {
-        mFragCode = fragCode;
-    }
-
-    public String getVertCode() {
-        return mVertCode;
-    }
-
-    public String getFragCode() {
-        return mFragCode;
+    public String getShaderCode() {
+        return mShaderCode;
     }
 
     public static boolean needsVsync(ArrayList<ShaderLoader> shaderList) {
@@ -76,27 +67,17 @@ public enum ShaderLoader {
     public static void loadShaders(Context context){
 
         for (ShaderLoader shader : ShaderLoader.values()) {
-            String vertexShader = null;
-            String fragmentShader = null;
+            String shaderText = null;
 
-            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shader.mShaderName + "_vert.glsl"))) {
-                vertexShader = IOUtils.toString(reader);
-
+            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shader.mShaderName + ".glsl"))) {
+                shaderText = IOUtils.toString(reader);
             } catch (IOException|NullPointerException e) {
                 e.printStackTrace();
-                Log.e(TAG, "Can't find vertex shader");
+                Log.e(TAG, "Can't find shader");
             }
 
-            try (InputStreamReader reader = new InputStreamReader(context.getAssets().open("mupen64plus_data/shaders/" + shader.mShaderName + "_frag.glsl"))) {
-                fragmentShader = IOUtils.toString(reader);
-            } catch (IOException|NullPointerException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Can't find fragment shader");
-            }
-
-            if (vertexShader != null || fragmentShader != null) {
-                shader.setVertCode(vertexShader);
-                shader.setFragCode(fragmentShader);
+            if (shaderText != null) {
+                shader.setShaderCode(shaderText);
             }
         }
     }

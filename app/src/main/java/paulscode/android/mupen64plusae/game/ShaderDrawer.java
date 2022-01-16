@@ -26,13 +26,12 @@ public class ShaderDrawer {
         for (int index = 0; index < selectedShaders.size(); ++ index) {
             boolean first = index == 0;
             boolean last = index == selectedShaders.size() - 1;
-            mShaderPasses.add(new Shader(selectedShaders.get(index).getVertCode(), selectedShaders.get(index).getFragCode(), first, last));
+            mShaderPasses.add(new Shader(selectedShaders.get(index).getShaderCode(), first, last));
         }
 
         if (mShaderPasses.size() == 0) {
-            mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getVertCode(), ShaderLoader.DEFAULT.getFragCode(), true, true));
+            mShaderPasses.add(new Shader(ShaderLoader.DEFAULT.getShaderCode(), true, true));
         }
-
     }
 
     public void onSurfaceTextureAvailable(PixelBuffer.SurfaceTextureWithSize surface, int width, int height) {

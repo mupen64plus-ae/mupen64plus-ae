@@ -1,5 +1,23 @@
 #version 100
 
+#if defined(VERTEX)
+
+uniform mediump vec2 OutputSize;
+uniform mediump vec2 TextureSize;
+uniform mediump vec2 InputSize;
+attribute vec4 VertexCoord;
+attribute vec4 TexCoord;
+precision highp float;
+
+varying vec2 vTexPosition;
+
+
+void main(void) {
+  gl_Position = VertexCoord;
+  vTexPosition = TexCoord.xy;
+}
+
+#elif defined(FRAGMENT)
 precision mediump float;
 varying vec2 vTexPosition;
 
@@ -36,3 +54,5 @@ void main() {
 
   gl_FragColor = vec4(col.r,col.g,col.b,1.0);
 }
+
+#endif

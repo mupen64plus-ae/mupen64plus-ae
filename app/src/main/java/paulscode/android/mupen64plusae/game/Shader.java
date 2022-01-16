@@ -54,13 +54,20 @@ public class Shader {
     private final String mVertexCode;
     private final String mFragmentCode;
 
-    public Shader(String vertexCode, String fragmentCode, boolean firstPass, boolean lastPass){
+    public Shader(String shaderCode, boolean firstPass, boolean lastPass){
 
-        mVertexCode = vertexCode;
+
+        mVertexCode = shaderCode.replaceAll("#version 100",
+                "#version 100\n" +
+                        "#define VERTEX 1\n");
+
+        String fragmentCode = shaderCode.replaceAll("#version 100",
+                "#version 100\n" +
+                        "#define FRAGMENT 1\n");
 
         if (firstPass) {
-            fragmentCode = fragmentCode.replaceAll("#version 100",
-                    "#version 100\n" +
+            fragmentCode = fragmentCode.replaceAll("#define FRAGMENT 1",
+                    "#define FRAGMENT 1\n" +
                             "#extension GL_OES_EGL_image_external : require\n");
             fragmentCode = fragmentCode.replace("sampler2D ", "samplerExternalOES ");
             mTextureTarget = GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
@@ -156,7 +163,8 @@ public class Shader {
         int[] params = new int[1];
         GLES20.glGetShaderiv(vertexShader, GLES20.GL_COMPILE_STATUS, params, 0);
         if (params[0] == GLES20.GL_FALSE) {
-            Log.e("Shader", "Vertex Compilation error:\n" + GLES20.glGetShaderInfoLog(vertexShader));
+            Log.e("Shader", "Vertex Compilation error:\n" + GLES20.glGetShaderInfoLog(vertexShader)
+                    + "\n Shader code:\n" + vertexShaderText);
         }
 
         int fragmentShader = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
@@ -165,7 +173,8 @@ public class Shader {
 
         GLES20.glGetShaderiv(fragmentShader, GLES20.GL_COMPILE_STATUS, params, 0);
         if (params[0] == GLES20.GL_FALSE) {
-            Log.e("Shader", "Fragment Compilation error:\n" + GLES20.glGetShaderInfoLog(fragmentShader));
+            Log.e("Shader", "Fragment Compilation error:\n" + GLES20.glGetShaderInfoLog(fragmentShader)
+                    + "\n Shader code:\n" + fragmentShaderText);
         }
 
         program = GLES20.glCreateProgram();
