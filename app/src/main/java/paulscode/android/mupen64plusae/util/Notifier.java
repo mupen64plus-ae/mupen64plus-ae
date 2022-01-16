@@ -93,7 +93,6 @@ public final class Notifier
             return;
 
         Toast toast = Toast.makeText( activity, message, Toast.LENGTH_SHORT );
-        toast.setGravity( Gravity.BOTTOM, 0, 0 );
         toast.show();
     }
 }
