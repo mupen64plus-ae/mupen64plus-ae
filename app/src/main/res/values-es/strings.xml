@@ -495,6 +495,8 @@
     <string name="shadersFxaa_summary">Anti-aliasing rápido aproximado, impacto de rendimiento medio.</string>
     <string name="shadersCrtGeom_title">Geometría CRT</string>
     <string name="shadersCrtGeom_summary">Se aproxima al aspecto de un CRT, esto puede tener un rendimiento costoso.</string>
+    <string name="shadersScaleFx_title">ScaleFX</string>
+    <string name="shadersScaleFx_summary">ScaleFX es un algoritmo de interpolación de bordes especializado en pixel art.</string>
 
     <string name="audioVolume_title">Volumen de Audio</string>
     <string name="audioBufferSize_title">Tamaño del Búfer de Audio</string>
