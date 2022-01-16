@@ -764,6 +764,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         if(mCoreFragment == null) return;
 
+        if (menuItem.getTitle() != null) {
+            Log.i(TAG, "User selected: " + menuItem.getTitle().toString());
+        }
+
         if (menuItem.getItemId() ==  R.id.menuItem_exit) {
             mCoreFragment.exit();
         } else if (menuItem.getItemId() ==  R.id.menuItem_toggle_speed) {
