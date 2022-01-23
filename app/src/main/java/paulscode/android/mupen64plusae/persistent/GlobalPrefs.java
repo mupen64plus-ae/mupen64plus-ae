@@ -1066,4 +1066,9 @@ public class GlobalPrefs
 
         putString(KEY_SHADER_PASS, sb.toString());
     }
+
+    public void putShaderScaleFactor(int factor) {
+
+        mPreferences.edit().putInt( "shaderScaleFactor", factor).apply();
+    }
 }
