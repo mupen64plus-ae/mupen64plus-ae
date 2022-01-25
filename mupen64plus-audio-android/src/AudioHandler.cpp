@@ -109,7 +109,8 @@ void AudioHandler::initializeAudio(int _freq) {
 #endif
 
 	builder.setCallback(this);
-	if (builder.openStream(mOutStream) == oboe::Result::OK) {
+	mStreamOpenSuccess = builder.openStream(mOutStream) == oboe::Result::OK;
+	if (mStreamOpenSuccess) {
 
 		if (mOutStream->getAudioApi() == oboe::AudioApi::AAudio) {
 			mOutputFreq = mOutStream->getSampleRate();
@@ -587,7 +588,7 @@ void AudioHandler::resumePlayback() {
 		mPlaybackPaused = false;
 
 		std::thread asyncCall( [this] {
-			if (mOutStream != nullptr) {
+			if (mOutStream != nullptr && mStreamOpenSuccess) {
 				mOutStream->requestStart();
 			}
 		});

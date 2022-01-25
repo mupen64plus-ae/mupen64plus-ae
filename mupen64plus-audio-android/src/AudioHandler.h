@@ -344,5 +344,8 @@ private:
 
 	// Number of samples waiting to be played back
 	std::atomic_int mSamplesWaiting;
+
+	// True if we have successfully opened a stream
+	bool mStreamOpenSuccess = false;
 };
 
