@@ -23,11 +23,13 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
@@ -70,10 +72,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
         if(mInProgress)
         {
             try {

@@ -23,9 +23,12 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -64,8 +67,8 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
         if (mInProgress) {
             try {
