@@ -20,18 +20,20 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
-
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -64,8 +66,17 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     private SharedPreferences mPrefs = null;
 
     private static final String ACTION_IMPORT_TOUCHSCREEN_GRAPHICS = "actionImportTouchscreenGraphics";
-    private static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
+
+    ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    importCustomSkin(fileUri);
+                }
+            });
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -201,7 +212,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         final String key = preference.getKey();
 
         if (ACTION_IMPORT_TOUCHSCREEN_GRAPHICS.equals(key)) {
-            startFilePickerForSingle(PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startFilePickerForSingle(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         } else {// Let Android handle all other preference clicks
             return false;
         }
@@ -269,36 +280,24 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         FileUtil.unzipAll(getApplicationContext(), uri, mGlobalPrefs.touchscreenCustomSkinsDir);
     }
 
-    @Override
-    protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && data != null) {
-            Uri fileUri = getUri(data);
-
-            if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                importCustomSkin(fileUri);
-            }
-        }
-    }
-
-    private void startFilePickerForSingle(int requestCode, int permissions)
+    private void startFilePickerForSingle(int permissions)
     {
         AppData appData = new AppData( this );
+        Intent intent;
         if (appData.useLegacyFileBrowser) {
-            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
-            startActivityForResult( intent, requestCode );
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.addFlags(permissions);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-            startActivityForResult(intent, requestCode);
         }
+
+        mLaunchFilePicker.launch(intent);
     }
 
     private Uri getUri(Intent data)
