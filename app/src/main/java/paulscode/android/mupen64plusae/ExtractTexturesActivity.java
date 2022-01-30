@@ -1,7 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;

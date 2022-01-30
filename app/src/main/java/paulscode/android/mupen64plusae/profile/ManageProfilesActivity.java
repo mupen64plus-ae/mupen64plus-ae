@@ -25,11 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.preference.PreferenceManager;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +36,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
+
 import org.mupen64plusae.v3.alpha.BuildConfig;
 import org.mupen64plusae.v3.alpha.R;
 
@@ -48,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
@@ -133,9 +134,10 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
      * launch a dialog or activity, to allow the user to modify the given profile. Subclasses are
      * responsible for persisting the profile data to disk when the dialog or activity finishes.
      * 
+     * @param launcher Activity launcher to use
      * @param profile the profile to be edited
      */
-    abstract protected void onEditProfile( Profile profile );
+    abstract protected void onEditProfile(ActivityResultLauncher<Intent> launcher, Profile profile );
     
     /**
      * Returns the title of the activity resource id
@@ -176,6 +178,13 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     /** Current selectedOperation */
     private int mSelectedOperation = 0;
 
+    ActivityResultLauncher<Intent> mLaunchEditProfile = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                mConfigCustom.reload();
+                refreshList();
+            });
+
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -214,16 +223,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         }
         
         refreshList();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == ActivityHelper.MANAGE_PROFILE_ACTIVITY) {
-            mConfigCustom.reload();
-            refreshList();
-        }
     }
 
     @Override
@@ -345,7 +344,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         if(BuildConfig.DEBUG && profile.isBuiltin)
             throw new RuntimeException();
         
-        onEditProfile( profile );
+        onEditProfile(mLaunchEditProfile, profile);
     }
     
     private void addProfile(String name, String comment)

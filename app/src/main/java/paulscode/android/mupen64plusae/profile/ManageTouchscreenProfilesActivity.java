@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -19,6 +19,10 @@
  * Authors: littleguy77
  */
 package paulscode.android.mupen64plusae.profile;
+
+import android.content.Intent;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -73,9 +77,11 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     }
     
     @Override
-    protected void onEditProfile( Profile profile )
+    protected void onEditProfile(ActivityResultLauncher<Intent> launcher, Profile profile )
     {
-        ActivityHelper.startTouchscreenProfileActivity( this, profile.name );
+        Intent intent = new Intent( this, TouchscreenProfileActivity.class );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profile.name );
+        launcher.launch(intent);
     }
     
     @Override

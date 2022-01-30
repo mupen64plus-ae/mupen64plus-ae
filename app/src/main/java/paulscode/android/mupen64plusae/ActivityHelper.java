@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -48,13 +47,9 @@ import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
-import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
-import paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen;
-import paulscode.android.mupen64plusae.profile.EmulationProfileActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
-import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.CopyFromSdService;
 import paulscode.android.mupen64plusae.task.CopyToSdService;
@@ -100,7 +95,6 @@ public class ActivityHelper
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
         public static final String ART_DIR              = NAMESPACE + "GALLERY_ART_PATH";
-        public static final String UNZIP_DIR            = NAMESPACE + "GALLERY_UNZIP_PATH";
         public static final String SEARCH_ZIPS          = NAMESPACE + "GALLERY_SEARCH_ZIP";
         public static final String DOWNLOAD_ART         = NAMESPACE + "GALLERY_DOWNLOAD_ART";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
@@ -140,7 +134,7 @@ public class ActivityHelper
         }
         catch(java.lang.SecurityException|ActivityNotFoundException e)
         {
-            Log.e("ActivityHelper", "Failed to launch link to due exception: " + e.toString());
+            Log.e("ActivityHelper", "Failed to launch link to due exception: " + e);
         }
     }
     
@@ -300,34 +294,6 @@ public class ActivityHelper
     static void startManageControllerProfilesActivity( Context context )
     {
         context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
-    }
-    
-    public static void startEmulationProfileActivity( Activity activity, String profileName )
-    {
-        Intent intent = new Intent( activity, EmulationProfileActivity.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
-    }
-    
-    public static void startTouchscreenProfileActivity( Activity activity, String profileName )
-    {
-        Intent intent = new Intent( activity, TouchscreenProfileActivity.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
-    }
-    
-    public static void startControllerProfileActivity( Activity activity, String profileName )
-    {
-        Intent intent = new Intent( activity, ControllerProfileActivity.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
-    }
-    
-    public static void startControllerProfileActivityBigScreen( Context context, String profileName )
-    {
-        Intent intent = new Intent( context, ControllerProfileActivityBigScreen.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        context.startActivity( intent );
     }
 
     public static void startImportExportActivity( Context context )
