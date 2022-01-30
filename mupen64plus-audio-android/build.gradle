@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply from: '../build_common/version_common.gradle'
 
 android {
+
     buildTypes {
         release {
             minifyEnabled true
@@ -51,18 +52,13 @@ android {
     buildFeatures {
         prefab true
     }
-
     packagingOptions {
-        exclude 'lib/x86/libsoundtouch.so'
-        exclude 'lib/x86_64/libsoundtouch.so'
-        exclude 'lib/armeabi-v7a/libsoundtouch.so'
-        exclude 'lib/arm64-v8a/libsoundtouch.so'
-
-        exclude 'lib/x86/libsoundtouch_fp.so'
-        exclude 'lib/x86_64/libsoundtouch_fp.so'
-        exclude 'lib/armeabi-v7a/libsoundtouch_fp.so'
-        exclude 'lib/arm64-v8a/libsoundtouch_fp.so'
+        jniLibs {
+            excludes += ['lib/x86/libsoundtouch.so', 'lib/x86_64/libsoundtouch.so', 'lib/armeabi-v7a/libsoundtouch.so', 'lib/arm64-v8a/libsoundtouch.so', 'lib/x86/libsoundtouch_fp.so', 'lib/x86_64/libsoundtouch_fp.so', 'lib/armeabi-v7a/libsoundtouch_fp.so', 'lib/arm64-v8a/libsoundtouch_fp.so']
+            useLegacyPackaging = true
+        }
     }
+
 }
 
 dependencies {
