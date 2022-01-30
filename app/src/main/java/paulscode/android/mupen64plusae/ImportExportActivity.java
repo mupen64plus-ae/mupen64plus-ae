@@ -20,12 +20,15 @@
  */
 package paulscode.android.mupen64plusae;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
@@ -52,11 +55,6 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     private static final String ACTION_IMPORT_GAME_DATA = "actionImportGameData";
     private static final String ACTION_IMPORT_CHEATS_AND_PROFILES = "actionImportCheatsAndProfiles";
 
-    private static final int PICK_FILE_EXPORT_GAME_DATA_REQUEST_CODE = 1;
-    private static final int PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE = 2;
-    private static final int PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE = 3;
-    private static final int PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE = 4;
-
     private static final String STATE_COPY_TO_SD_FRAGMENT= "STATE_COPY_TO_SD_FRAGMENT";
     private CopyToSdFragment mCopyToSdFragment = null;
     private static final String STATE_COPY_FROM_SD_FRAGMENT= "STATE_COPY_FROM_SD_FRAGMENT";
@@ -65,6 +63,58 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
+
+    ActivityResultLauncher<Intent> mLaunchExportGameDataFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    mCopyToSdFragment.copyToSd(new File(mAppData.gameDataDir), fileUri);
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchExportCheatsAndProfilesFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.profilesDir), fileUri);
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchImportGameDataFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), fileUri);
+                    File destination = new File(mAppData.gameDataDir);
+                    if (sourceLocation.getName() != null && sourceLocation.getName().equals(destination.getName())) {
+                        mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
+                    } else {
+                        Notifier.showToast( this, R.string.importExportActivity_invalidGameDataFolder );
+                    }
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchImportCheatsAndProfilesFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), fileUri);
+                    File destination = new File(mGlobalPrefs.profilesDir);
+                    if (sourceLocation.getName() != null && sourceLocation.getName().equals(destination.getName())) {
+                        mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
+                    } else {
+                        Notifier.showToast( this, R.string.importExportActivity_invalidProfilesFolder );
+                    }
+                }
+            });
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -143,16 +193,16 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
 
         switch (key) {
             case ACTION_EXPORT_GAME_DATA:
-                startFilePicker(PICK_FILE_EXPORT_GAME_DATA_REQUEST_CODE, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
+                startFilePicker(mLaunchExportGameDataFilePicker, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
                 break;
             case ACTION_EXPORT_CHEATS_AND_PROFILES:
-                startFilePicker(PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
+                startFilePicker(mLaunchExportCheatsAndProfilesFilePicker, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
                 break;
             case ACTION_IMPORT_GAME_DATA:
-                startFilePicker(PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);
+                startFilePicker(mLaunchImportGameDataFilePicker, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);
                 break;
             case ACTION_IMPORT_CHEATS_AND_PROFILES:
-                startFilePicker(PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);
+                startFilePicker(mLaunchImportCheatsAndProfilesFilePicker, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);
                 break;
             default:
                 // Let Android handle all other preference clicks
@@ -163,7 +213,8 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         return true;
     }
 
-    private void startFilePicker(int requestCode, int permissions, boolean canViewExtStorage)
+    private void startFilePicker(ActivityResultLauncher<Intent> launcher,
+                                 int permissions, boolean canViewExtStorage)
     {
         AppData appData = new AppData( this );
         Intent intent;
@@ -177,7 +228,8 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
             intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         }
-        startActivityForResult( intent, requestCode );
+
+        launcher.launch(intent);
     }
 
     private Uri getUri(Intent data)
@@ -196,37 +248,5 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
         }
 
         return returnValue;
-    }
-
-    @Override
-    protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && data != null) {
-            Uri fileUri = getUri(data);
-
-            if (requestCode == PICK_FILE_EXPORT_GAME_DATA_REQUEST_CODE) {
-                mCopyToSdFragment.copyToSd(new File(mAppData.gameDataDir), fileUri);
-            } else if (requestCode == PICK_FILE_EXPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
-                mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.profilesDir), fileUri);
-            } else if (requestCode == PICK_FILE_IMPORT_GAME_DATA_REQUEST_CODE) {
-
-                DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), fileUri);
-                File destination = new File(mAppData.gameDataDir);
-                if (sourceLocation.getName() != null && sourceLocation.getName().equals(destination.getName())) {
-                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mAppData.gameDataDir));
-                } else {
-                    Notifier.showToast( this, R.string.importExportActivity_invalidGameDataFolder );
-                }
-            } else if (requestCode == PICK_FILE_IMPORT_CHEATS_AND_PROFILES_REQUEST_CODE) {
-                DocumentFile sourceLocation = FileUtil.getDocumentFileTree(getApplicationContext(), fileUri);
-                File destination = new File(mGlobalPrefs.profilesDir);
-                if (sourceLocation.getName() != null && sourceLocation.getName().equals(destination.getName())) {
-                    mCopyFromSdFragment.copyFromSd(fileUri, new File(mGlobalPrefs.profilesDir));
-                } else {
-                    Notifier.showToast( this, R.string.importExportActivity_invalidProfilesFolder );
-                }
-            }
-        }
     }
 }
