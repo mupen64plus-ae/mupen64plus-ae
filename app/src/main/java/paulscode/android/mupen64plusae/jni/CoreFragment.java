@@ -158,14 +158,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        Log.i(TAG, "onActivityCreated");
-
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onDetach()
     {
         //This can be null if this fragment is never utilized and this will be called on shutdown
