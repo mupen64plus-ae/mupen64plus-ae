@@ -51,7 +51,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     //Progress dialog for ROM scan
     private ProgressDialog mProgress = null;
 
-    private static class DataViewModel extends ViewModel {
+    public static class DataViewModel extends ViewModel {
 
         public DataViewModel() { }
 

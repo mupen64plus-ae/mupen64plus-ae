@@ -35,7 +35,9 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.os.Process;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -44,6 +46,9 @@ import androidx.documentfile.provider.DocumentFile;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.ImportExportActivity;
@@ -60,6 +65,7 @@ public class CopyFromSdService extends Service
     private int mStartId;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
+    private boolean mCancelled = false;
 
     private final IBinder mBinder = new LocalBinder();
     private CopyFilesListener mListener = null;
@@ -100,6 +106,7 @@ public class CopyFromSdService extends Service
         public void handleMessage(@NonNull Message msg) {
 
             //Check for error conditions
+            mCancelled = false;
 
             if( mSourcePath == null || mDestinationPath == null)
             {
@@ -117,7 +124,7 @@ public class CopyFromSdService extends Service
                 if (!sourceLocation.getName().equals(mDestinationPath.getName())) {
                     sourceLocation = sourceLocation.findFile(mDestinationPath.getName());
                 }
-                FileUtil.copyFolder(getApplicationContext(), sourceLocation, mDestinationPath );
+                copyFolder(sourceLocation, mDestinationPath );
             }
             
             if (mListener != null)
@@ -129,6 +136,60 @@ public class CopyFromSdService extends Service
             // the service in the middle of handling another job
             stopSelf(msg.arg1);
         }
+    }
+
+    /**
+     * Copies a {@code src} {@link DocumentFile} to a desired destination represented by a {@code dest}
+     * {@link File}.
+     *
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public boolean copyFolder(DocumentFile src, File dest )
+    {
+        if(src == null)
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if( dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        if (src.isDirectory()) {
+            FileUtil.makeDirs(dest.getPath());
+
+            DocumentFile[] files = src.listFiles();
+            for (DocumentFile file : files) {
+                File newDest = new File(dest.getAbsolutePath() + "/" + file.getName());
+                copyFolder(file, newDest );
+
+                if (mCancelled) {
+                    break;
+                }
+            }
+        } else {
+            try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(src.getUri(), "r");
+                 FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                 FileChannel out = new FileOutputStream(dest).getChannel()) {
+
+                long bytesTransferred = 0;
+
+                while (bytesTransferred < in.size()) {
+                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                }
+
+            } catch (Exception|OutOfMemoryError e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
+            }
+        }
+
+        return true;
     }
 
     public void initChannels(Context context) {
@@ -215,9 +276,11 @@ public class CopyFromSdService extends Service
     
     public void setCopyFromSdListener(CopyFilesListener copyFilesListener)
     {
+        mCancelled = false;
+
         mListener = copyFilesListener;
         mListener.GetProgressDialog().setOnCancelListener(() -> {
-
+            mCancelled = true;
         });
         
         // For each start request, send a message to start a job and deliver the

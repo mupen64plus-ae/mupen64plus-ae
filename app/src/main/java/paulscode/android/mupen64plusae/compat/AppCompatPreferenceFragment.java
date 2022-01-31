@@ -99,6 +99,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         }
     }
     
+    @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -113,7 +114,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onDisplayPreferenceDialog(Preference preference)
+    public void onDisplayPreferenceDialog(@NonNull Preference preference)
     {
         DialogFragment fragment = null;
 
