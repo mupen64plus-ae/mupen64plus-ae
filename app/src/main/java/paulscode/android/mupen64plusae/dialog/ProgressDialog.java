@@ -171,4 +171,16 @@ public class ProgressDialog implements OnClickListener
             }
         });
     }
+
+    public void setProgress(final long progress) {
+        mActivity.runOnUiThread(() -> {
+            if( mMaxProgress > 0 )
+            {
+                mProgress = progress;
+                int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
+                        / mMaxProgress );
+                mProgressTotal.setProgress( pctProgress );
+            }
+        });
+    }
 }

@@ -98,7 +98,12 @@ public class CacheRomInfoService extends Service
     private boolean mSearchSubdirectories;
     private boolean mSearchSingleFile;
     private boolean mbStopped;
-    
+    private int mCurrentProgress = 0;
+    private int mCurrentMaxProgress = 0;
+    private String mCurrentDialogText = "";
+    private String mCurrentDialogSubText = "";
+    private String mCurrentDialogMessage = "";
+
     private int mStartId;
     private ServiceHandler mServiceHandler;
     
@@ -193,18 +198,23 @@ public class CacheRomInfoService extends Service
                 cleanupMissingFiles(config);
             }
 
-            mListener.GetProgressDialog().setMaxProgress( filesToSearch.size() );
+            mCurrentProgress = 0;
+            mCurrentMaxProgress = filesToSearch.size();
+            updateDialog();
+
             for( final Uri file : filesToSearch )
             {
-                mListener.GetProgressDialog().setSubtext( "" );
-                String fileName = FileUtil.getFileName(getApplicationContext(), file);
+                mCurrentDialogSubText = "";
+                updateDialog();
 
+                String fileName = FileUtil.getFileName(getApplicationContext(), file);
                 if (fileName == null) {
                     continue;
                 }
 
-                mListener.GetProgressDialog().setText( getShortFileName(fileName));
-                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
+                mCurrentDialogText = getShortFileName(fileName);
+                mCurrentDialogMessage = getString(R.string.cacheRomInfo_searching);
+                updateDialog();
 
                 if( mbStopped ) break;
                 RomHeader header = new RomHeader( getApplicationContext(), file );
@@ -222,7 +232,8 @@ public class CacheRomInfoService extends Service
                     }
                 }
 
-                mListener.GetProgressDialog().incrementProgress( 1 );
+                ++mCurrentProgress;
+                updateDialog();
             }
 
             downloadCoverArt(database, config);
@@ -340,11 +351,13 @@ public class CacheRomInfoService extends Service
                 // Assume only one entry per zip file
                 if( entry != null && !mbStopped)
                 {
-                    mListener.GetProgressDialog().setSubtext( getShortFileName(new File(entry.getName()).getName()));
-                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
+                    mCurrentDialogSubText = getShortFileName(new File(entry.getName()).getName());
+                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
+                    updateDialog();
 
                     InputStream zipStream = new BufferedInputStream(zipfile);
-                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
+                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
+                    updateDialog();
 
                     cacheZipFileFromInputStream(database, file, config, new File(entry.getName()).getName(), zipStream);
                 }
@@ -387,11 +400,14 @@ public class CacheRomInfoService extends Service
                     ZipArchiveEntry zipEntry = entries.nextElement();
 
                     InputStream zipStream;
-                    mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
-                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
+
+                    mCurrentDialogSubText = getShortFileName(new File(zipEntry.getName()).getName());
+                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
+                    updateDialog();
 
                     zipStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
+                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
+                    updateDialog();
 
                     if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
                         currentChance = 0;
@@ -431,11 +447,13 @@ public class CacheRomInfoService extends Service
                     }
 
                     InputStream zipStream;
-                    mListener.GetProgressDialog().setSubtext(getShortFileName(new File(zipEntry.getName()).getName()));
-                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_searchingZip);
+                    mCurrentDialogSubText = getShortFileName(new File(zipEntry.getName()).getName());
+                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
+                    updateDialog();
 
                     zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
-                    mListener.GetProgressDialog().setMessage(R.string.cacheRomInfo_extractingZip);
+                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
+                    updateDialog();
 
                     if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
                         currentChance = 0;
@@ -467,7 +485,8 @@ public class CacheRomInfoService extends Service
 
                 //Then extract the ROM file
                 inputStream.reset();
-                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_computingMD5 );
+                mCurrentDialogMessage = getString(R.string.cacheRomInfo_computingMD5);
+                updateDialog();
                 String md5 = FileUtil.computeMd5( inputStream );
 
                 cacheFile(null, name, extractedHeader, md5, database, config, zipFile );
@@ -483,7 +502,9 @@ public class CacheRomInfoService extends Service
     {
         // Only add the file if it doesn't already exist
         if (config.get(md5) == null || mSearchSingleFile) {
-            mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
+            mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingDB);
+            updateDialog();
+
             RomDetail detail = database.lookupByMd5WithFallback( md5, name, header.crc, header.countryCode );
             String artPath = mArtDir + "/" + detail.artName;
             config.put( md5, "goodName", detail.goodName );
@@ -503,7 +524,8 @@ public class CacheRomInfoService extends Service
     private void cacheFile(Uri file, RomDatabase database, ConfigFile config )
     {
         String fileName = FileUtil.getFileName(getApplicationContext(), file);
-        mListener.GetProgressDialog().setSubtext(getShortFileName(fileName));
+        mCurrentDialogSubText = getShortFileName(fileName);
+        updateDialog();
 
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
 
@@ -634,6 +656,7 @@ public class CacheRomInfoService extends Service
     {
         mListener = cacheRomInfoListener;
         mListener.GetProgressDialog().setOnCancelListener(this::stop);
+        updateDialog();
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -766,10 +789,11 @@ public class CacheRomInfoService extends Service
         {
             Set<String> keys = theConfigFile.keySet();
 
-            mListener.GetProgressDialog().setMaxProgress( keys.size() );
-
-            mListener.GetProgressDialog().setMessage( "" );
-            mListener.GetProgressDialog().setSubtext( getString(R.string.cacheRomInfo_downloadingArt) );
+            mCurrentProgress = 0;
+            mCurrentMaxProgress = keys.size();
+            mCurrentDialogMessage = "";
+            mCurrentDialogSubText = getString(R.string.cacheRomInfo_downloadingArt);
+            updateDialog();
 
             for (String key : keys) {
                 String artPath = theConfigFile.get(key, "artPath");
@@ -809,7 +833,8 @@ public class CacheRomInfoService extends Service
                         if (downloadArt)
                         {
                             RomDetail detail = database.lookupByMd5WithFallback( key, romGoodName, crc, countryCode );
-                            mListener.GetProgressDialog().setText(getShortFileName(romGoodName));
+                            mCurrentDialogText = getShortFileName(romGoodName);
+                            updateDialog();
                             Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
                             downloadFile( detail.artUrl, artPath );
                             Log.i( "CacheRomInfoService", "End art download: " +  artPath);
@@ -817,14 +842,26 @@ public class CacheRomInfoService extends Service
                     }
                 }
 
-                mListener.GetProgressDialog().incrementProgress(1);
+                ++mCurrentProgress;
+                updateDialog();
 
                 if( mbStopped ) break;
             }
         }
 
-        mListener.GetProgressDialog().setMessage("");
-        mListener.GetProgressDialog().setSubtext("");
-        mListener.GetProgressDialog().setText("");
+        mCurrentDialogMessage = "";
+        mCurrentDialogSubText = "";
+        mCurrentDialogText = "";
+        updateDialog();
+    }
+
+    void updateDialog()
+    {
+        mListener.GetProgressDialog().setMessage(mCurrentDialogMessage);
+        mListener.GetProgressDialog().setSubtext(mCurrentDialogSubText);
+        mListener.GetProgressDialog().setText(mCurrentDialogText);
+        mListener.GetProgressDialog().setMaxProgress(mCurrentMaxProgress);
+        mListener.GetProgressDialog().setProgress(mCurrentProgress);
+
     }
 }
