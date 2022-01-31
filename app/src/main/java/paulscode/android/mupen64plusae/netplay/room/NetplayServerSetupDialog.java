@@ -345,17 +345,6 @@ public class NetplayServerSetupDialog extends DialogFragment
         return dialog;
     }
 
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
-    }
-
     static class NetplayClient implements Comparable<NetplayClient>
     {
         private final int mPlayerNumer;

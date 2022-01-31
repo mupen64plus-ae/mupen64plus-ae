@@ -347,17 +347,6 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     }
 
     @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mServers.get(position).mNetplayVersion == NetplayRoomClientHandler.NETPLAY_VERSION) {
             if (mServers.get(position).mRomMd5.equals(mRomMd5)) {

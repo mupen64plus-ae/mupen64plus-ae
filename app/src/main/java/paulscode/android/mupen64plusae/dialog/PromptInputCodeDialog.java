@@ -208,17 +208,6 @@ public class PromptInputCodeDialog extends DialogFragment
         return Math.abs(strengths1 - strengths2) < delta;
     }
 
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
-    }
-
     private void onInputCommon(final ArrayList<AbstractProvider> providers, Activity activity, int inputCode, int hardwareId,
             int which) {
         for (AbstractProvider provider : providers)
