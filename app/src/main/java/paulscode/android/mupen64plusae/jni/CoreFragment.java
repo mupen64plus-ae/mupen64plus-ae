@@ -23,16 +23,19 @@ package paulscode.android.mupen64plusae.jni;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Vibrator;
 import android.text.InputType;
@@ -105,33 +108,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private static final int RESET_CONFIRM_DIALOG_ID = 4;
     private static final int EXIT_CONFIRM_DIALOG_ID = 5;
 
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
-
     //Progress dialog for extracting ROMs
     private ProgressDialog mProgress = null;
-
-    private GamePrefs mGamePrefs = null;
-    private String mRomGoodName = null;
-    private String mRomDisplayName = null;
-    private String mRomPath = null;
-    private String mZipPath = null;
-    private String mRomMd5 = null;
-    private String mRomCrc = null;
-    private String mRomHeaderName = null;
-    private byte mRomCountryCode = 0;
-    private String mRomArtPath = null;
-    private boolean mIsRestarting = false;
-    private boolean mUseRaphnetIfAvailable = false;
-    private int mVideoRenderWidth = 0;
-    private int mVideoRenderHeight = 0;
-    private boolean mUsingNetplay = false;
-
-    private boolean mIsRunning = false;
-    private CoreService mCoreService = null;
-    private OnFpsChangedListener mFpsChangeListener = null;
-    private int mFpsRecalcPeriod = 30;
-    private File mCurrentSaveStateFile = null;
 
     // Speed info - used internally
     public static final int BASELINE_SPEED = 100;
@@ -139,22 +117,62 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private static final int MAX_SPEED = 300;
     private static final int MIN_SPEED = 10;
     private static final int DELTA_SPEED = 10;
-    private boolean mUseCustomSpeed = false;
-    private int mCustomSpeed = DEFAULT_SPEED;
+
+    public static class DataViewModel extends ViewModel {
+
+        public DataViewModel() { }
+
+        //Service connection for the progress dialog
+        ServiceConnection mServiceConnection;
+        CoreService.LocalBinder mBinder;
+
+        GamePrefs mGamePrefs = null;
+        String mRomGoodName = null;
+        String mRomDisplayName = null;
+        String mRomPath = null;
+        String mZipPath = null;
+        String mRomMd5 = null;
+        String mRomCrc = null;
+        String mRomHeaderName = null;
+        byte mRomCountryCode = 0;
+        String mRomArtPath = null;
+        boolean mIsRestarting = false;
+        boolean mUseRaphnetIfAvailable = false;
+        int mVideoRenderWidth = 0;
+        int mVideoRenderHeight = 0;
+        boolean mUsingNetplay = false;
+        boolean mIsRunning = false;
+        File mCurrentSaveStateFile = null;
+        boolean mUseCustomSpeed = false;
+        int mCustomSpeed = DEFAULT_SPEED;
+        boolean mAskingForExit = false;
+    }
+
+    DataViewModel mViewModel;
+
+    private CoreService mCoreService = null;
+    private OnFpsChangedListener mFpsChangeListener = null;
+    private int mFpsRecalcPeriod = 30;
 
     private CoreEventListener mCoreEventListener = null;
 
-    private boolean mAskingForExit = false;
-
-    // this method is only called once for this fragment
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        Log.i(TAG, "onCreate");
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+        try {
+            mViewModel = new ViewModelProvider(requireActivity()).get(CoreFragment.DataViewModel.class);
+
+            if (mViewModel.mBinder != null) {
+                mCoreService = mViewModel.mBinder.getService();
+                mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+                mCoreService.setCoreServiceListener(CoreFragment.this);
+                mCoreService.setLoadingDataListener(CoreFragment.this);
+            }
+        } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -226,7 +244,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "onCoreServiceDestroyed");
 
-        mIsRunning = false;
+        mViewModel.mIsRunning = false;
     }
 
     @Override
@@ -240,11 +258,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
                 String displayName;
 
-                if (mZipPath != null) {
-                    DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mZipPath));
-                    displayName = file == null ? mRomDisplayName : file.getName();
+                if (mViewModel.mZipPath != null) {
+                    DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mZipPath));
+                    displayName = file == null ? mViewModel.mRomDisplayName : file.getName();
                 } else {
-                    displayName = mRomDisplayName;
+                    displayName = mViewModel.mRomDisplayName;
                 }
                 mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
                 mProgress.show();
@@ -283,23 +301,23 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "startCore");
 
-        mGamePrefs = gamePrefs;
-        mRomGoodName = romGoodName;
-        mRomDisplayName = romDisplayName;
-        mRomPath = romPath;
-        mZipPath = zipPath;
-        mIsRestarting = isRestarting;
-        mRomMd5 = romMd5;
-        mRomCrc = romCrc;
-        mRomHeaderName = romHeaderName;
-        mRomCountryCode = romCountryCode;
-        mRomArtPath = romArtPath;
-        mUseRaphnetIfAvailable = globalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
-        mVideoRenderWidth = videoRenderWidth;
-        mVideoRenderHeight = videoRenderHeight;
-        mUsingNetplay = usingNetplay;
+        mViewModel.mGamePrefs = gamePrefs;
+        mViewModel.mRomGoodName = romGoodName;
+        mViewModel.mRomDisplayName = romDisplayName;
+        mViewModel.mRomPath = romPath;
+        mViewModel.mZipPath = zipPath;
+        mViewModel.mIsRestarting = isRestarting;
+        mViewModel.mRomMd5 = romMd5;
+        mViewModel.mRomCrc = romCrc;
+        mViewModel.mRomHeaderName = romHeaderName;
+        mViewModel.mRomCountryCode = romCountryCode;
+        mViewModel.mRomArtPath = romArtPath;
+        mViewModel.mUseRaphnetIfAvailable = globalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
+        mViewModel.mVideoRenderWidth = videoRenderWidth;
+        mViewModel.mVideoRenderHeight = videoRenderHeight;
+        mViewModel.mUsingNetplay = usingNetplay;
 
-        if(!mIsRunning)
+        if(!mViewModel.mIsRunning)
         {
             try {
                 actuallyStartCore(requireActivity());
@@ -307,7 +325,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 e.printStackTrace();
             }
 
-            mIsRunning = true;
+            mViewModel.mIsRunning = true;
         }
     }
 
@@ -316,14 +334,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         Log.i(TAG, "actuallyStartCore");
 
         // Defines callbacks for service binding, passed to bindService()
-        mServiceConnection = new ServiceConnection() {
+        mViewModel.mServiceConnection = new ServiceConnection() {
 
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                mCoreService = binder.getService();
+                mViewModel.mBinder = (LocalBinder) service;
+                mCoreService = mViewModel.mBinder.getService();
 
                 mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mCoreService.setCoreServiceListener(CoreFragment.this);
@@ -338,22 +356,22 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         // Start the core
         StartCoreServiceParams params = new StartCoreServiceParams();
-        params.setRomGoodName(mRomGoodName);
-        params.setRomDisplayName(mRomDisplayName);
-        params.setRomPath(mRomPath);
-        params.setZipPath(mZipPath);
-        params.setRomMd5(mRomMd5);
-        params.setRomCrc(mRomCrc);
-        params.setRomHeaderName(mRomHeaderName);
-        params.setRomCountryCode(mRomCountryCode);
-        params.setRomArtPath(mRomArtPath);
-        params.setRestarting(mIsRestarting);
-        params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
-        params.setVideoRenderWidth(mVideoRenderWidth);
-        params.setVideoRenderHeight(mVideoRenderHeight);
-        params.setUsingNetplay(mUsingNetplay);
+        params.setRomGoodName(mViewModel.mRomGoodName);
+        params.setRomDisplayName(mViewModel.mRomDisplayName);
+        params.setRomPath(mViewModel.mRomPath);
+        params.setZipPath(mViewModel.mZipPath);
+        params.setRomMd5(mViewModel.mRomMd5);
+        params.setRomCrc(mViewModel.mRomCrc);
+        params.setRomHeaderName(mViewModel.mRomHeaderName);
+        params.setRomCountryCode(mViewModel.mRomCountryCode);
+        params.setRomArtPath(mViewModel.mRomArtPath);
+        params.setRestarting(mViewModel.mIsRestarting);
+        params.setUseRaphnetDevicesIfAvailable(mViewModel.mUseRaphnetIfAvailable);
+        params.setVideoRenderWidth(mViewModel.mVideoRenderWidth);
+        params.setVideoRenderHeight(mViewModel.mVideoRenderHeight);
+        params.setUsingNetplay(mViewModel.mUsingNetplay);
 
-        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
+        ActivityHelper.startCoreService(activity.getApplicationContext(), mViewModel.mServiceConnection, params);
     }
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -361,16 +379,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "actuallyStopCore");
 
-        if(mIsRunning)
+        if(mViewModel.mIsRunning)
         {
-            mIsRunning = false;
+            mViewModel.mIsRunning = false;
 
             try {
                 Activity activity = requireActivity();
 
                 activity.runOnUiThread(() -> {
                     mCoreService = null;
-                    ActivityHelper.stopCoreService(activity.getApplicationContext(), mServiceConnection);
+                    ActivityHelper.stopCoreService(activity.getApplicationContext(), mViewModel.mServiceConnection);
                 });
             } catch (java.lang.IllegalStateException e) {
                 e.printStackTrace();
@@ -382,7 +400,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "resumeEmulator");
 
-        if(mCoreService != null && !mAskingForExit)
+        if(mCoreService != null && !mViewModel.mAskingForExit)
         {
             mCoreService.resumeEmulator();
         }
@@ -489,7 +507,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
 
         try {
-            mAskingForExit = true;
+            mViewModel.mAskingForExit = true;
             FragmentActivity activity = requireActivity();
             String title = activity.getString(R.string.confirm_title);
             String message = activity.getString(R.string.confirmExitGame_message);
@@ -501,7 +519,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
-            mAskingForExit = false;
+            mViewModel.mAskingForExit = false;
         }
     }
 
@@ -511,8 +529,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if (mCoreService != null)
         {
-            mUseCustomSpeed = !mUseCustomSpeed;
-            int speed = mUseCustomSpeed ? mCustomSpeed : BASELINE_SPEED;
+            mViewModel.mUseCustomSpeed = !mViewModel.mUseCustomSpeed;
+            int speed = mViewModel.mUseCustomSpeed ? mViewModel.mCustomSpeed : BASELINE_SPEED;
             mCoreService.setCustomSpeed(speed);
         }
     }
@@ -522,7 +540,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         Log.i(TAG, "fastForward");
         if (mCoreService != null)
         {
-            int speed = pressed ? mCustomSpeed : BASELINE_SPEED;
+            int speed = pressed ? mViewModel.mCustomSpeed : BASELINE_SPEED;
             mCoreService.setCustomSpeed( speed );
         }
     }
@@ -678,17 +696,17 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "saveState");
 
-        if (!mIsRunning) {
+        if (!mViewModel.mIsRunning) {
             return;
         }
 
         try {
             FragmentActivity activity = requireActivity();
 
-            mCurrentSaveStateFile = new File(mGamePrefs.getUserSaveDir() + "/" +
-                    filename + "." + mRomGoodName + ".sav");
+            mViewModel.mCurrentSaveStateFile = new File(mViewModel.mGamePrefs.getUserSaveDir() + "/" +
+                    filename + "." + mViewModel.mRomGoodName + ".sav");
 
-            if (mCurrentSaveStateFile.exists()) {
+            if (mViewModel.mCurrentSaveStateFile.exists()) {
 
                 String title = activity.getString(R.string.confirm_title);
                 String message = activity.getString(R.string.confirmOverwriteFile_message, filename);
@@ -700,8 +718,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
             } else {
                 if (mCoreService != null) {
-                    mCoreService.saveState(mCurrentSaveStateFile.getName());
-                    Notifier.showToast(activity, R.string.toast_savingFile, mCurrentSaveStateFile.getName());
+                    mCoreService.saveState(mViewModel.mCurrentSaveStateFile.getName());
+                    Notifier.showToast(activity, R.string.toast_savingFile, mViewModel.mCurrentSaveStateFile.getName());
                 }
 
                 if (mCoreEventListener != null) {
@@ -717,14 +735,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "loadFileFromPrompt");
 
-        if (!mIsRunning) {
+        if (!mViewModel.mIsRunning) {
             return;
         }
 
         try {
             Activity activity = requireActivity();
             CharSequence title = activity.getText(R.string.menuItem_fileLoad);
-            File startPath = new File(mGamePrefs.getUserSaveDir());
+            File startPath = new File(mViewModel.mGamePrefs.getUserSaveDir());
             Prompt.promptFile(activity, title, null, startPath, "", (file, which) -> {
                 if (which >= 0) {
                     loadState(file);
@@ -743,14 +761,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "loadAutoSaveFromPrompt");
 
-        if (!mIsRunning) {
+        if (!mViewModel.mIsRunning) {
             return;
         }
 
         try {
             Activity activity = requireActivity();
             CharSequence title = activity.getText(R.string.menuItem_fileLoadAutoSave);
-            File startPath = new File(mGamePrefs.getAutoSaveDir());
+            File startPath = new File(mViewModel.mGamePrefs.getAutoSaveDir());
             Prompt.promptFile(activity, title, null, startPath, "sav", (file, which) -> {
                 if (which >= 0) {
                     loadState(file);
@@ -899,26 +917,26 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "incrementCustomSpeed");
 
-        setCustomSpeed( mCustomSpeed + DELTA_SPEED );
+        setCustomSpeed( mViewModel.mCustomSpeed + DELTA_SPEED );
     }
 
     public void decrementCustomSpeed()
     {
         Log.i(TAG, "decrementCustomSpeed");
 
-        setCustomSpeed( mCustomSpeed - DELTA_SPEED );
+        setCustomSpeed( mViewModel.mCustomSpeed - DELTA_SPEED );
     }
 
     private void setCustomSpeed(int value)
     {
         Log.i(TAG, "setCustomSpeed");
 
-        mCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
-        mUseCustomSpeed = true;
+        mViewModel.mCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
+        mViewModel.mUseCustomSpeed = true;
 
         if(mCoreService != null)
         {
-            mCoreService.setCustomSpeed(mCustomSpeed);
+            mCoreService.setCustomSpeed(mViewModel.mCustomSpeed);
         }
     }
 
@@ -934,7 +952,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public int getCurrentSpeed()
     {
-        return mUseCustomSpeed ? mCustomSpeed : BASELINE_SPEED;
+        return mViewModel != null && mViewModel.mUseCustomSpeed ?
+                mViewModel.mCustomSpeed : BASELINE_SPEED;
     }
 
     public void setCustomSpeedFromPrompt()
@@ -944,7 +963,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         try {
             Activity activity = requireActivity();
             final CharSequence title = activity.getText(R.string.menuItem_setSpeed);
-            Prompt.promptInteger(activity, title, "%1$d %%", mCustomSpeed, MIN_SPEED, MAX_SPEED,
+            Prompt.promptInteger(activity, title, "%1$d %%", mViewModel.mCustomSpeed, MIN_SPEED, MAX_SPEED,
                     (value, which) -> {
                         if (which == DialogInterface.BUTTON_POSITIVE) {
                             setCustomSpeed(value);
@@ -966,10 +985,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (id == SAVE_STATE_FILE_CONFIRM_DIALOG_ID)
         {
             if (mCoreService != null) {
-                mCoreService.saveState(mCurrentSaveStateFile.getName());
+                mCoreService.saveState(mViewModel.mCurrentSaveStateFile.getName());
             }
             try {
-                Notifier.showToast(requireActivity(), R.string.toast_overwritingFile, mCurrentSaveStateFile.getName());
+                Notifier.showToast(requireActivity(), R.string.toast_overwritingFile, mViewModel.mCurrentSaveStateFile.getName());
             } catch (java.lang.IllegalStateException e) {
                 e.printStackTrace();
             }
@@ -987,7 +1006,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
         else if (id == EXIT_CONFIRM_DIALOG_ID)
         {
-            mAskingForExit = false;
+            mViewModel.mAskingForExit = false;
             if(mCoreEventListener != null)
                 mCoreEventListener.onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
@@ -1005,7 +1024,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     
     public boolean IsInProgress()
     {
-        return mIsRunning;
+        return mViewModel.mIsRunning;
     }
 
     public boolean hasServiceStarted()
