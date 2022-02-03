@@ -18,7 +18,7 @@
 
 -dontobfuscate
 
--keep, includedescriptorclasses class paulscode.android.mupen64plusae.jni.** { *; }
+-keep, includedescriptorclasses class emulator.android.mupen64plusae.jni.** { *; }
 
 -dontwarn java.awt.event.*
 -dontwarn java.awt.dnd.*

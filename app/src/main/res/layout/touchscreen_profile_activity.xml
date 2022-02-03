@@ -27,7 +27,7 @@
             android:focusableInTouchMode="false"
             android:background="@drawable/overlay_color"/>
 
-        <paulscode.android.mupen64plusae.game.GameOverlay
+        <emulator.android.mupen64plusae.game.GameOverlay
             android:id="@+id/gameOverlay"
             android:layout_weight="4"
             android:layout_height="0dp"

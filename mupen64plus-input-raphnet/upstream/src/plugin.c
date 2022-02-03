@@ -56,7 +56,7 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 // JNI exported function definitions
 //*****************************************************************************
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_RaphnetControllerHandler_init(JNIEnv* env, jclass cls,
+JNIEXPORT void JNICALL Java_emulator_android_mupen64plusae_jni_RaphnetControllerHandler_init(JNIEnv* env, jclass cls,
         jint usbFileDescriptor, jint vendorId, jint ProductId)
 {
     DebugMessage(M64MSG_INFO, "init()");

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paulscode.android.mupen64plusae.game.GameDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<emulator.android.mupen64plusae.game.GameDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-        <paulscode.android.mupen64plusae.game.GameSurface
+        <emulator.android.mupen64plusae.game.GameSurface
             android:id="@+id/shaderSurface"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,7 +20,7 @@
         <LinearLayout android:orientation="vertical"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
-            <paulscode.android.mupen64plusae.game.FpsOverlay
+            <emulator.android.mupen64plusae.game.FpsOverlay
                 android:id="@+id/fpsOverlay"
                 android:layout_weight="3"
                 android:layout_height="0dp"
@@ -29,7 +29,7 @@
                 android:focusableInTouchMode="false"
                 android:background="@drawable/overlay_color"/>
 
-            <paulscode.android.mupen64plusae.game.GameOverlay
+            <emulator.android.mupen64plusae.game.GameOverlay
                 android:id="@+id/gameOverlay"
                 android:layout_weight="4"
                 android:layout_height="0dp"
@@ -48,11 +48,11 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true" >
 
-        <paulscode.android.mupen64plusae.GameSidebar
+        <emulator.android.mupen64plusae.GameSidebar
             android:id="@+id/gameSidebar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true" />
     </RelativeLayout>
 
-</paulscode.android.mupen64plusae.game.GameDrawerLayout>
+</emulator.android.mupen64plusae.game.GameDrawerLayout>

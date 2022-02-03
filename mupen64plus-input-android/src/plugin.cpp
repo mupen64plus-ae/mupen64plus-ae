@@ -158,7 +158,7 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 // JNI exported function definitions
 //*****************************************************************************
 
-extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_init(JNIEnv* env, jclass cls)
+extern "C" JNIEXPORT void Java_emulator_android_mupen64plusae_jni_NativeInput_init(JNIEnv* env, jclass cls)
 {
     DebugMessage(M64MSG_INFO, "init()");
 
@@ -174,7 +174,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_i
     }
 }
 
-extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setConfig(JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged,
+extern "C" JNIEXPORT void Java_emulator_android_mupen64plusae_jni_NativeInput_setConfig(JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged,
         jint pakType)
 {
     if (controllerNum < 4 && controllerNum > -1)
@@ -192,7 +192,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
     }
 }
 
-extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
+extern "C" JNIEXPORT void Java_emulator_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
         jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isDigital)
 {
     jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, nullptr);

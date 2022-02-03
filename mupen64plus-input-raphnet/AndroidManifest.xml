@@ -1,2 +1,2 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="deps.mupen64plusae.android.paulscode.mupen64plus_input_raphnet" />
+    package="deps.mupen64plusae.android.emulator.mupen64plus_input_raphnet" />

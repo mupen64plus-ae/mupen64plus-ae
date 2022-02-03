@@ -35,7 +35,7 @@
     </queries>
     
     <application
-        android:name="paulscode.android.mupen64plusae.AppMupen64Plus"
+        android:name="emulator.android.mupen64plusae.AppMupen64Plus"
         android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="false"
         android:isGame="true"
@@ -56,7 +56,7 @@
         android:extractNativeLibs="true">
 
         <activity
-            android:name="paulscode.android.mupen64plusae.SplashActivity"
+            android:name="emulator.android.mupen64plusae.SplashActivity"
             android:label="@string/SplashActivity_title"
             android:theme="@style/Theme.AppCompat.Black"
             android:exported="true">
@@ -89,36 +89,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.GalleryActivity"
+            android:name="emulator.android.mupen64plusae.GalleryActivity"
             android:exported="false"
             android:label="@string/GalleryActivity_title"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Mupen64plusaeTheme.NoActionBar" />
         <activity
-            android:name="paulscode.android.mupen64plusae.ScanRomsActivity"
+            android:name="emulator.android.mupen64plusae.ScanRomsActivity"
             android:exported="false"
             android:label="@string/menuItem_refreshRoms"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme" />
-        <activity android:name="paulscode.android.mupen64plusae.util.LegacyFilePicker"
+        <activity android:name="emulator.android.mupen64plusae.util.LegacyFilePicker"
             android:exported="false"
             android:label="@string/menuItem_refreshRoms"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
-            android:name="paulscode.android.mupen64plusae.ExtractTexturesActivity"
+            android:name="emulator.android.mupen64plusae.ExtractTexturesActivity"
             android:exported="false"
             android:label="@string/menuItem_Extract"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
-            android:name="paulscode.android.mupen64plusae.DeleteTexturesActivity"
+            android:name="emulator.android.mupen64plusae.DeleteTexturesActivity"
             android:exported="false"
             android:label="@string/DeleteTexturesActivity_title"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Mupen64plusaeTheme" />
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.GamePrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.GamePrefsActivity"
             android:exported="false"
             android:label="@string/PlayMenuActivity_title"
             android:launchMode="singleTop"
@@ -129,7 +129,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.AudioPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.AudioPrefsActivity"
             android:exported="false"
             android:label="@string/categoryAudio_title"
             android:launchMode="singleTop"
@@ -140,7 +140,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.DataPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.DataPrefsActivity"
             android:exported="false"
             android:label="@string/categoryData_title"
             android:launchMode="singleTop"
@@ -151,7 +151,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.DisplayPrefsActivity"
             android:exported="false"
             android:label="@string/categoryDisplay_title"
             android:launchMode="singleTop"
@@ -162,7 +162,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.ShaderPrefsActivity"
             android:exported="false"
             android:label="@string/categoryShaders_title"
             android:launchMode="singleTop"
@@ -173,7 +173,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.InputPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.InputPrefsActivity"
             android:exported="false"
             android:label="@string/categoryInput_title"
             android:launchMode="singleTop"
@@ -184,7 +184,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.DefaultsPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.DefaultsPrefsActivity"
             android:exported="false"
             android:label="@string/menuItem_select_profiles"
             android:launchMode="singleTop"
@@ -195,7 +195,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.LibraryPrefsActivity"
             android:exported="false"
             android:label="@string/categoryLibrary_title"
             android:launchMode="singleTop"
@@ -206,7 +206,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity"
+            android:name="emulator.android.mupen64plusae.persistent.TouchscreenPrefsActivity"
             android:exported="false"
             android:label="@string/categoryTouchscreen_title"
             android:launchMode="singleTop"
@@ -217,7 +217,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity"
+            android:name="emulator.android.mupen64plusae.profile.ManageControllerProfilesActivity"
             android:exported="false"
             android:label="@string/ManageControllerProfilesActivity_title"
             android:launchMode="singleTop"
@@ -228,7 +228,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
+            android:name="emulator.android.mupen64plusae.profile.ControllerProfileActivity"
             android:exported="false"
             android:label="@string/ControllerProfileActivity_title"
             android:launchMode="singleTop"
@@ -239,7 +239,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen"
+            android:name="emulator.android.mupen64plusae.profile.ControllerProfileActivityBigScreen"
             android:exported="false"
             android:label="@string/ControllerProfileActivity_title"
             android:launchMode="singleTop"
@@ -250,7 +250,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity"
+            android:name="emulator.android.mupen64plusae.profile.ManageEmulationProfilesActivity"
             android:exported="false"
             android:label="@string/ManageEmulationProfilesActivity_title"
             android:launchMode="singleTop"
@@ -261,7 +261,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.EmulationProfileActivity"
+            android:name="emulator.android.mupen64plusae.profile.EmulationProfileActivity"
             android:exported="false"
             android:label="@string/EmulationProfileActivity_title"
             android:launchMode="singleTop"
@@ -272,7 +272,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity"
+            android:name="emulator.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity"
             android:exported="false"
             android:label="@string/ManageTouchscreenProfilesActivity_title"
             android:launchMode="singleTop"
@@ -283,7 +283,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity"
+            android:name="emulator.android.mupen64plusae.profile.TouchscreenProfileActivity"
             android:exported="false"
             android:label="@string/TouchscreenProfileActivity_title"
             android:launchMode="singleTop"
@@ -294,7 +294,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
+            android:name="emulator.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
             android:label="@string/DiagnosticActivity_title"
             android:launchMode="singleTop"
@@ -305,7 +305,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.util.LogcatActivity"
+            android:name="emulator.android.mupen64plusae.util.LogcatActivity"
             android:exported="false"
             android:label="@string/menuItem_logcat"
             android:launchMode="singleTop"
@@ -316,7 +316,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.cheat.CheatEditorActivity"
+            android:name="emulator.android.mupen64plusae.cheat.CheatEditorActivity"
             android:exported="false"
             android:label="@string/CheatEditorActivity_title"
             android:launchMode="singleTop"
@@ -327,14 +327,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.game.GameActivity"
+            android:name="emulator.android.mupen64plusae.game.GameActivity"
             android:exported="false"
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
             android:theme="@style/Theme.Mupen64plusaeTheme.Game"
             android:process=":EmulationProcess"/>
         <activity
-            android:name="paulscode.android.mupen64plusae.ImportExportActivity"
+            android:name="emulator.android.mupen64plusae.ImportExportActivity"
             android:exported="false"
             android:label="@string/importExportActivity_title"
             android:launchMode="singleTop"
@@ -344,28 +344,28 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService"
+        <service android:name="emulator.android.mupen64plusae.task.CacheRomInfoService"
                  android:exported="false" />
-        <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService"
+        <service android:name="emulator.android.mupen64plusae.task.ExtractTexturesService"
                  android:exported="false" />
-        <service android:name="paulscode.android.mupen64plusae.task.DeleteFilesService"
+        <service android:name="emulator.android.mupen64plusae.task.DeleteFilesService"
                  android:exported="false" />
         <service
-            android:name="paulscode.android.mupen64plusae.jni.CoreService"
+            android:name="emulator.android.mupen64plusae.jni.CoreService"
             android:exported="false"
             android:process=":EmulationProcess"/>
-        <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService"
+        <service android:name="emulator.android.mupen64plusae.task.CopyToSdService"
             android:exported="false" />
-        <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService"
+        <service android:name="emulator.android.mupen64plusae.task.CopyFromSdService"
             android:exported="false" />
-        <service android:name="paulscode.android.mupen64plusae.netplay.NetplayService"
+        <service android:name="emulator.android.mupen64plusae.netplay.NetplayService"
             android:process=":EmulationProcess"
             android:exported="false" />
-        <service android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService"
+        <service android:name="emulator.android.mupen64plusae.task.SyncProgramsJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
-        <receiver android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService$StartupIntentReceiver"
+        <receiver android:name="emulator.android.mupen64plusae.task.SyncProgramsJobService$StartupIntentReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

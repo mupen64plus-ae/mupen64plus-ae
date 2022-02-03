@@ -3,7 +3,7 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <emulator.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayResolution_default_game"
         android:entries="@array/displayResolutionGame_entries"
         android:entryValues="@array/displayResolutionGame_values"
@@ -17,7 +17,7 @@
         android:key="useDefaultZoom"
         android:summary="@string/displayZoomDefault_summary"
         android:title="@string/displayZoomDefault_title" />
-    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+    <emulator.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="100"
         android:icon="@drawable/ic_display"
         android:key="displayZoomSeekGame"
@@ -27,7 +27,7 @@
         mupen64:stepSize="1"
         mupen64:units="%" />
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <emulator.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayScalingGame_default"
         android:entries="@array/displayScalingGame_entries"
         android:entryValues="@array/displayScalingGame_values"
@@ -36,7 +36,7 @@
         android:summary="@string/selectedValue"
         android:title="@string/displayScaling_title" />
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <emulator.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/touchscreenAutoHoldGame_default"
         android:entries="@array/touchscreenAutoHoldGame_entries"
         android:entryValues="@array/touchscreenAutoHoldGame_values"
@@ -45,7 +45,7 @@
         android:icon="@drawable/ic_phone"
         android:title="@string/touchscreenAutoHold_title" />
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <emulator.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/relativeAnalog_default"
         android:entries="@array/relativeAnalog_entries"
         android:entryValues="@array/relativeAnalog_values"
@@ -76,14 +76,14 @@
             android:title="@string/categoryCheats_title" />
     </androidx.preference.PreferenceScreen>
 
-    <paulscode.android.mupen64plusae.preference.ProfilePreference
+    <emulator.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_circuit"
         android:key="emulationProfile"
         android:summary="@string/selectedValue"
         android:title="@string/emulationProfile_title"
         mupen64:allowDisable="false"
         mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
-    <paulscode.android.mupen64plusae.preference.ProfilePreference
+    <emulator.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_phone"
         android:key="touchscreenProfileGame"
         android:summary="@string/selectedValue"
@@ -113,35 +113,35 @@
         android:key="screenController"
         android:title="@string/menuItem_controllerProfiles" >
 
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
+        <emulator.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile1Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile1_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
+        <emulator.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile2Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile2_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
+        <emulator.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile3Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile3_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
+        <emulator.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile4Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile4_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
+        <emulator.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/shareController_default"
             android:entries="@array/shareController_entries"
             android:entryValues="@array/shareController_values"
@@ -156,7 +156,7 @@
             android:summary="@string/playerMap_useDefaultPlayerMap_summary"
             android:title="@string/playerMap_useDefaultPlayerMap_title" />
 
-        <paulscode.android.mupen64plusae.preference.PlayerMapPreference
+        <emulator.android.mupen64plusae.preference.PlayerMapPreference
             android:icon="@drawable/ic_users"
             android:key="playerMapGame"
             android:summary="@string/playerMap_summary"
@@ -166,7 +166,7 @@
             android:key="categoryControllerPaks"
             android:title="@string/menuItem_paks" >
 
-            <paulscode.android.mupen64plusae.preference.CompatListPreference
+            <emulator.android.mupen64plusae.preference.CompatListPreference
                 android:defaultValue="@string/pakType_default"
                 android:entries="@array/pakType_entries"
                 android:entryValues="@array/pakType_values"
@@ -174,7 +174,7 @@
                 android:summary="@string/selectedValue"
                 android:title="@string/menuItem_player_one" />
 
-            <paulscode.android.mupen64plusae.preference.CompatListPreference
+            <emulator.android.mupen64plusae.preference.CompatListPreference
                 android:defaultValue="@string/pakType_default"
                 android:entries="@array/pakType_entries"
                 android:entryValues="@array/pakType_values"
@@ -182,7 +182,7 @@
                 android:summary="@string/selectedValue"
                 android:title="@string/menuItem_player_two" />
 
-            <paulscode.android.mupen64plusae.preference.CompatListPreference
+            <emulator.android.mupen64plusae.preference.CompatListPreference
                 android:defaultValue="@string/pakType_default"
                 android:entries="@array/pakType_entries"
                 android:entryValues="@array/pakType_values"
@@ -190,7 +190,7 @@
                 android:summary="@string/selectedValue"
                 android:title="@string/menuItem_player_three" />
 
-            <paulscode.android.mupen64plusae.preference.CompatListPreference
+            <emulator.android.mupen64plusae.preference.CompatListPreference
                 android:defaultValue="@string/pakType_default"
                 android:entries="@array/pakType_entries"
                 android:entryValues="@array/pakType_values"
@@ -266,7 +266,7 @@
             android:key="screenAdvancedUseDefaultCountPerOp"
             android:summary="@string/screenAdvanced_CountPerOpDefault_summary"
             android:title="@string/screenAdvanced_CountPerOpDefault_title" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        <emulator.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="2"
             android:key="screenAdvancedCountPerOp"
             android:title="@string/screenAdvanced_CountPerOp_title"
@@ -279,7 +279,7 @@
             android:key="screenAdvancedUseDefaultCountPerOpDen"
             android:summary="@string/screenAdvanced_CountPerOpDenDefault_summary"
             android:title="@string/screenAdvanced_CountPerOpDenDefault_title" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        <emulator.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="0"
             android:key="screenAdvancedCountPerOpDen"
             android:title="@string/screenAdvanced_CountPerOpDen_title"
@@ -292,7 +292,7 @@
             android:key="screenAdvancedUseDefaultViRefresh"
             android:summary="@string/screenAdvanced_ViRefreshRateDefault_summary"
             android:title="@string/screenAdvanced_ViRefreshRateDefault_title" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        <emulator.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="1542"
             android:key="screenAdvancedViRefreshRate"
             android:title="@string/screenAdvanced_ViRefreshRate_title"
