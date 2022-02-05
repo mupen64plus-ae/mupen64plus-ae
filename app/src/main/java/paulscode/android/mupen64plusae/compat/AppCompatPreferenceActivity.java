@@ -20,30 +20,29 @@
  */
 package paulscode.android.mupen64plusae.compat;
 
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AlertDialog.Builder;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
-import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.View;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
 public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
@@ -91,7 +90,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         }
 
         @Override
-        public void onPrepareDialogBuilder(Builder builder)
+        public void onPrepareDialogBuilder(@NonNull Builder builder)
         {
             super.onPrepareDialogBuilder(builder);
 
@@ -106,7 +105,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         }
 
         @Override
-        public void onBindDialogView(View view)
+        public void onBindDialogView(@NonNull View view)
         {
             super.onBindDialogView(view);
 
@@ -200,8 +199,8 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     }
 
     @Override
-    public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat,
-        PreferenceScreen preferenceScreen)
+    public boolean onPreferenceStartScreen(@NonNull PreferenceFragmentCompat preferenceFragmentCompat,
+                                           PreferenceScreen preferenceScreen)
     {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         AppCompatPreferenceFragment fragment = AppCompatPreferenceFragment.newInstance(mSharedPrefsName,
