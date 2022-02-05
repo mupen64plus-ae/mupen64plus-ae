@@ -53,7 +53,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         void onFinish();
     }
 
-    //Progress dialog for extracting textures
+    //Progress dialog to show progress
     private ProgressDialog mProgress = null;
 
     public static class DataViewModel extends ViewModel {
