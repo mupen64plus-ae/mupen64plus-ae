@@ -80,14 +80,6 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
             frag.setArguments(args);
             return frag;
         }
-        
-        @Override
-        public void onCreate(Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
-
-            setRetainInstance(true);
-        }
 
         @Override
         public void onPrepareDialogBuilder(@NonNull Builder builder)
