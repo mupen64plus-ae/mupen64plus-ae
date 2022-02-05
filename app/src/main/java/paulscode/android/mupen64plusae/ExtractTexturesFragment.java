@@ -26,12 +26,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -54,39 +55,39 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
 
     //Progress dialog for extracting textures
     private ProgressDialog mProgress = null;
-    
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
 
-    private Uri mTexturesFile = null;
-    
-    private boolean mInProgress = false;
+    public static class DataViewModel extends ViewModel {
 
-    // this method is only called once for this fragment
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+        public DataViewModel() {}
+
+        //Service connection for the progress dialog
+        private ServiceConnection mServiceConnection;
+
+        private Uri mTexturesFile = null;
+        private boolean mInProgress = false;
     }
+
+    DataViewModel mViewModel;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if(mInProgress)
-        {
-            try {
+        try {
+            mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+
+            if(mViewModel.mInProgress)
+            {
                 Activity activity = requireActivity();
                 CharSequence title = getString(R.string.pathHiResTexturesTask_title);
                 CharSequence message = getString(R.string.toast_pleaseWait);
-                DocumentFile file = FileUtil.getDocumentFileSingle(activity, mTexturesFile);
+                DocumentFile file = FileUtil.getDocumentFileSingle(activity, mViewModel.mTexturesFile);
                 mProgress = new ProgressDialog(mProgress, activity, title, file == null ? "" : file.getName(), message, true);
                 mProgress.show();
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
             }
+
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
         }
     }
     
@@ -100,21 +101,6 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         }
         
         super.onDetach();
-    }
-    
-    @Override
-    public void onDestroy()
-    {        
-        if(mServiceConnection != null && mInProgress)
-        {
-            try {
-                ActivityHelper.stopExtractTexturesService(requireActivity().getApplicationContext(), mServiceConnection);
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        super.onDestroy();
     }
 
     @Override
@@ -133,7 +119,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onExtractTexturesServiceDestroyed()
     {
-        mInProgress = false;
+        mViewModel.mInProgress = false;
         mProgress.dismiss();
     }
 
@@ -145,27 +131,29 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
 
     public void extractTextures( Uri textureFile )
     {
-        this.mTexturesFile = textureFile;
+        if (mViewModel != null) {
+            mViewModel.mTexturesFile = textureFile;
 
-        try {
-            actuallyExtractTextures(requireActivity());
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+            try {
+                actuallyExtractTextures(requireActivity());
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
     
     private void actuallyExtractTextures(Activity activity)
     {
-        mInProgress = true;
+        mViewModel.mInProgress = true;
         
         CharSequence title = getString( R.string.pathHiResTexturesTask_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
-        DocumentFile file = FileUtil.getDocumentFileSingle(activity, mTexturesFile);
+        DocumentFile file = FileUtil.getDocumentFileSingle(activity, mViewModel.mTexturesFile);
         mProgress = new ProgressDialog( mProgress, activity, title, file == null ? "" : file.getName(), message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */
-        mServiceConnection = new ServiceConnection() {
+        mViewModel.mServiceConnection = new ServiceConnection() {
             
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
@@ -183,12 +171,12 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         };
 
         // Asynchronously extract textures
-        ActivityHelper.startExtractTexturesService(activity.getApplicationContext(), mServiceConnection,
-            mTexturesFile);
+        ActivityHelper.startExtractTexturesService(activity.getApplicationContext(), mViewModel.mServiceConnection,
+                mViewModel.mTexturesFile);
     }
     
     public boolean IsInProgress()
     {
-        return mInProgress;
+        return mViewModel != null && mViewModel.mInProgress;
     }
 }
