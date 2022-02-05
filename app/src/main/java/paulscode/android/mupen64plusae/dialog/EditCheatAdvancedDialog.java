@@ -26,7 +26,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -179,8 +178,6 @@ public class EditCheatAdvancedDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         String title;
 
         if (getArguments() == null)  {

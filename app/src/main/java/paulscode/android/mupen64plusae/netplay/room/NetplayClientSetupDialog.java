@@ -112,8 +112,6 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-        
         Bundle args = getArguments();
         
         if (args == null) {

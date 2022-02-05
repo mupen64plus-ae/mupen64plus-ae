@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
@@ -33,7 +35,6 @@ public class ProfileNameEditDialog extends DialogFragment
     private static final String STATE_ALLOW_SAME_NAME = "STATE_ALLOW_SAME_NAME";
 
     private String mName = null;
-    private String mComment = null;
     private boolean mAllowSameName = false;
     private List<String> mItems = null;
 
@@ -73,17 +74,16 @@ public class ProfileNameEditDialog extends DialogFragment
         return frag;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
-        final int dialogId = getArguments().getInt(STATE_DIALOG_ID);
-        final String title = getArguments().getString(STATE_TITLE);
-        mName = getArguments().getString(STATE_NAME);
-        mComment = getArguments().getString(STATE_COMMENT);
-        final int numItems = getArguments().getInt(STATE_NUM_ITEMS);
-        mAllowSameName = getArguments().getBoolean(STATE_ALLOW_SAME_NAME);
+        final int dialogId = getArguments() != null ? getArguments().getInt(STATE_DIALOG_ID) : 0;
+        final String title = getArguments() != null ? getArguments().getString(STATE_TITLE) : "";
+        mName = getArguments() != null ? getArguments().getString(STATE_NAME) : "";
+        String comment = getArguments() != null ? getArguments().getString(STATE_COMMENT) : "";
+        final int numItems = getArguments() != null ? getArguments().getInt(STATE_NUM_ITEMS) : 0;
+        mAllowSameName = getArguments() != null && getArguments().getBoolean(STATE_ALLOW_SAME_NAME);
 
         mItems = new ArrayList<>();
 
@@ -99,9 +99,9 @@ public class ProfileNameEditDialog extends DialogFragment
         final EditText editComment = mDialogView.findViewById(R.id.textProfileComment);
 
         editName.setText(mName);
-        editComment.setText(mComment);
+        editComment.setText(comment);
 
-        Builder builder = new Builder(getActivity());
+        Builder builder = new Builder(requireActivity());
         builder.setTitle(title);
 
         // Create listener for OK/cancel button clicks
@@ -138,10 +138,14 @@ public class ProfileNameEditDialog extends DialogFragment
             @Override
             public void afterTextChanged(Editable s)
             {
-                Button okButton = ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);
+                AlertDialog dialog = (AlertDialog) getDialog();
+                Button okButton = dialog != null ? dialog.getButton(DialogInterface.BUTTON_POSITIVE) : null;
                 String warning = isValidName(mItems, mName, s.toString(), mAllowSameName);
                 textWarning.setText(warning);
-                okButton.setEnabled(TextUtils.isEmpty(warning));
+
+                if (okButton != null) {
+                    okButton.setEnabled(TextUtils.isEmpty(warning));
+                }
             }
         });
 
@@ -157,10 +161,14 @@ public class ProfileNameEditDialog extends DialogFragment
         final EditText editName = mDialogView.findViewById(R.id.textProfileName);
 
         // Dynamically disable the OK button if the name is not unique
-        final Button okButton = ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);
+        AlertDialog dialog = (AlertDialog) getDialog();
+        final Button okButton = dialog != null ? dialog.getButton(DialogInterface.BUTTON_POSITIVE) : null;
         String warning = isValidName(mItems, mName, editName.getText().toString(), mAllowSameName);
         textWarning.setText(warning);
-        okButton.setEnabled(TextUtils.isEmpty(warning));
+
+        if (okButton != null) {
+            okButton.setEnabled(TextUtils.isEmpty(warning));
+        }
     }
 
     /**

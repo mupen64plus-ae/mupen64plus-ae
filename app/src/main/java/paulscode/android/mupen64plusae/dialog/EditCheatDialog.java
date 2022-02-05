@@ -187,8 +187,6 @@ public class EditCheatDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         String title;
 
         if (getArguments() == null)  {

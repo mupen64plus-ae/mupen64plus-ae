@@ -133,8 +133,6 @@ public class NetplayServerSetupDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         Bundle args = getArguments();
 
         if (args == null) {

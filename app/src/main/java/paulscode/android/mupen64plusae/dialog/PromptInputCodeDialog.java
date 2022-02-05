@@ -82,8 +82,6 @@ public class PromptInputCodeDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         final String title = getArguments().getString(STATE_TITLE);
         final String message = getArguments().getString(STATE_MESSAGE);
         final String neutralButtonText = getArguments().getString(STATE_NEUTRAL_BUTTON_TEXT);
