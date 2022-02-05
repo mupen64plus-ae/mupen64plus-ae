@@ -53,7 +53,6 @@ import java.nio.channels.FileChannel;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.ImportExportActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -105,9 +104,9 @@ public class CopyFromSdService extends Service
         @Override
         public void handleMessage(@NonNull Message msg) {
 
-            //Check for error conditions
             mCancelled = false;
 
+            //Check for error conditions
             if( mSourcePath == null || mDestinationPath == null)
             {
                 if (mListener != null)
@@ -145,20 +144,19 @@ public class CopyFromSdService extends Service
      * @param src         Source file
      * @param dest        Desired destination
      *
-     * @return True if the copy succeeded, false otherwise.
      */
-    public boolean copyFolder(DocumentFile src, File dest )
+    public void copyFolder(DocumentFile src, File dest )
     {
         if(src == null)
         {
             Log.e( "copyFile", "src null" );
-            return false;
+            return;
         }
 
         if( dest == null )
         {
             Log.e( "copyFile", "dest null" );
-            return false;
+            return;
         }
 
         if (src.isDirectory()) {
@@ -188,8 +186,6 @@ public class CopyFromSdService extends Service
                 Log.e("copyFile", "Exception: " + e.getMessage());
             }
         }
-
-        return true;
     }
 
     public void initChannels(Context context) {
@@ -279,9 +275,7 @@ public class CopyFromSdService extends Service
         mCancelled = false;
 
         mListener = copyFilesListener;
-        mListener.GetProgressDialog().setOnCancelListener(() -> {
-            mCancelled = true;
-        });
+        mListener.GetProgressDialog().setOnCancelListener(() -> mCancelled = true);
         
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
