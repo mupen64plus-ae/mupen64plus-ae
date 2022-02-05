@@ -4,8 +4,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
 import android.util.Log;
 
@@ -19,8 +20,6 @@ public class ConfirmationDialog extends DialogFragment
     
     /**
      * The listener interface for handling confirmations.
-     * 
-     * @see Prompt#promptConfirm
      */
     public interface PromptConfirmListener
     {
@@ -42,13 +41,12 @@ public class ConfirmationDialog extends DialogFragment
         return frag;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
-        final String title = getArguments().getString(STATE_TITLE);
-        final String message = getArguments().getString(STATE_MESSAGE);
+        final String title = getArguments() != null ? getArguments().getString(STATE_TITLE) : "";
+        final String message = getArguments() != null ? getArguments().getString(STATE_MESSAGE) : "";
         mId = getArguments().getInt(STATE_ID);
 
         // When the user clicks Ok, notify the downstream listener
@@ -63,20 +61,18 @@ public class ConfirmationDialog extends DialogFragment
             }
         };
 
-        Builder builder = new Builder(getActivity());
+        Builder builder = new Builder(requireActivity());
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setCancelable(false);
-        builder.setNegativeButton(getActivity().getString(android.R.string.cancel), internalListener);
-        builder.setPositiveButton(getActivity().getString( android.R.string.ok ), internalListener);
-        
-        final AlertDialog promptInputCodeDialog = builder.create();
-        
-        return promptInputCodeDialog;
+        builder.setNegativeButton(requireActivity().getString(android.R.string.cancel), internalListener);
+        builder.setPositiveButton(requireActivity().getString( android.R.string.ok ), internalListener);
+
+        return builder.create();
     }
     
     @Override
-    public void onCancel(DialogInterface dialog)
+    public void onCancel(@NonNull DialogInterface dialog)
     {
         if (getActivity() instanceof PromptConfirmListener)
         {
