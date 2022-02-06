@@ -71,8 +71,6 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
     {
-        setRetainInstance(true);
-
         Bundle arguments = getArguments();
 
         if (arguments == null) {
