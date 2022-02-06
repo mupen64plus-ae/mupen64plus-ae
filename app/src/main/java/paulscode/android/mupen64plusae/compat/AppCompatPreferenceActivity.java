@@ -44,7 +44,7 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisp
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
-public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
+public abstract class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
     public interface OnPreferenceDialogListener
     {
@@ -143,16 +143,17 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         super.onCreate(savedInstanceState);
 
         DisplayWrapper.drawBehindSystemBars(this);
-    }
 
-    public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
-    {
-        mSharedPrefsName = sharedPrefsName;
-        mPreferencesResId = preferencesResId;
+        mSharedPrefsName = getSharedPrefsName();
+        mPreferencesResId = getSharedPrefsId();
 
-        mPrefFrag = AppCompatPreferenceFragment.newInstance(sharedPrefsName, preferencesResId, null);
+        mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
     }
+
+    protected abstract String getSharedPrefsName();
+
+    protected abstract int getSharedPrefsId();
     
     public void resetPreferences()
     {        

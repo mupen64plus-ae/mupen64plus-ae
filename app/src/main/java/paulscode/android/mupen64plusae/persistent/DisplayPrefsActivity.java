@@ -70,11 +70,19 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_display);
-
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
+    }
+
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_display;
     }
 
     @Override

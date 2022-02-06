@@ -140,9 +140,17 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+    }
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_data);
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_data;
     }
 
     @Override

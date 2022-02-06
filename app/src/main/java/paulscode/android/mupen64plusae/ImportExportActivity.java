@@ -156,11 +156,19 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
 
         PreferenceManager.setDefaultValues( this, R.xml.import_export_data, false );
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.import_export_data);
-
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
+    }
+
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.import_export_data;
     }
 
     @Override

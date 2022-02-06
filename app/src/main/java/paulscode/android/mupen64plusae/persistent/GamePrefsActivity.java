@@ -196,8 +196,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        super.onCreate( savedInstanceState );
-
         // Get the ROM path and MD5 that was passed to the activity
         final Bundle extras = getIntent().getExtras();
         if( extras == null )
@@ -244,9 +242,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, fileName, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );
-
         if( savedInstanceState != null )
         {
             mCurrentFilePickerKey = savedInstanceState.getString( STATE_FILE_PICKER_KEY );
@@ -260,6 +255,19 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mDeleteFilesFragment = new DeleteFilesFragment();
             fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
         }
+
+        super.onCreate( savedInstanceState );
+    }
+
+    @Override
+    protected String getSharedPrefsName() {
+        return mGamePrefs.getSharedPrefsName();
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_game;
     }
 
     @Override

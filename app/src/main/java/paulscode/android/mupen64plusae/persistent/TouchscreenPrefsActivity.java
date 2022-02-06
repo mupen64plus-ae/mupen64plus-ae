@@ -100,9 +100,6 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_touchscreen);
-
         mValidSkinFiles.add("analog-back.png");
         mValidSkinFiles.add("analog-fore.png");
         mValidSkinFiles.add("analog.png");
@@ -163,6 +160,17 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         mValidSkinFiles.add("buttonCu-mask.png");
         mValidSkinFiles.add("buttonCu.png");
         mValidSkinFiles.add("skin.ini");
+    }
+
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_touchscreen;
     }
 
     @Override

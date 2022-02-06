@@ -82,9 +82,17 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         mPrefs = getSharedPreferences( "ShaderPrefs", MODE_PRIVATE );
+    }
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource("ShaderPrefs", R.xml.preferences_shader);
+    @Override
+    protected String getSharedPrefsName() {
+        return "ShaderPrefs";
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_shader;
     }
 
     @Override

@@ -25,19 +25,21 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
+
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 /**
  * A base class for implementing simple list-based profile editor activities. This class is meant to
- * be subclassed the same way that a {@link PreferenceActivity} would be, and the process for
+ * be subclassed the same way that a PreferenceActivity would be, and the process for
  * defining the structure and behavior is virtually identical. That is, the hierarchical menu
  * structure and default values are defined using an xml resource, using identical syntax to that
  * used for a <code>PreferenceActivity</code>. Similarly, the behavior of the activity (lifecycle,
@@ -110,7 +112,7 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
     
     // Working cache for preference data while activity is running
     protected SharedPreferences mPrefs = null;
-    private static String PREFS_NAME = "tempProfileActivity";
+    private static final String PREFS_NAME = "tempProfileActivity";
     
     // Backing config file and profile name
     private ConfigFile mConfigFile;
@@ -132,9 +134,6 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
-        // Set locale
-        AppData appData = new AppData( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();
@@ -159,9 +158,17 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         
         // Populate any missing fields with defaults
         PreferenceManager.setDefaultValues( this, PREFS_NAME, MODE_PRIVATE, resId, false );
-        
-        // Load user preference menu structure from XML
-        addPreferencesFromResource( PREFS_NAME, resId );
+    }
+
+    @Override
+    protected String getSharedPrefsName() {
+        return PREFS_NAME;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return getPrefsResId();
     }
     
     @Override
