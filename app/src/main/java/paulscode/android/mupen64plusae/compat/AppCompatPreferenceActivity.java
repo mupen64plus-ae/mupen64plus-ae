@@ -143,33 +143,22 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         super.onCreate(savedInstanceState);
 
         DisplayWrapper.drawBehindSystemBars(this);
-
-        if(savedInstanceState != null)
-        {
-            final FragmentManager fm = getSupportFragmentManager();
-            mPrefFrag = (AppCompatPreferenceFragment) fm.findFragmentById(android.R.id.content);   
-        }
     }
 
     public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
     {
         mSharedPrefsName = sharedPrefsName;
         mPreferencesResId = preferencesResId;
-        
-        if(mPrefFrag == null)
-        {
-            mPrefFrag = AppCompatPreferenceFragment.newInstance(sharedPrefsName, preferencesResId, null);
-            getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
-        }
+
+        mPrefFrag = AppCompatPreferenceFragment.newInstance(sharedPrefsName, preferencesResId, null);
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
     }
     
     public void resetPreferences()
     {        
         getSupportFragmentManager().beginTransaction().remove(mPrefFrag);
         mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
-        getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
     }
 
 
