@@ -75,7 +75,6 @@ android {
     }
     packagingOptions {
         jniLibs {
-            keepDebugSymbols += ['*/armeabi/*.so', '*/armeabi-v7a/*.so', '*/x86/*.so', '*/x86_64/*.so']
             useLegacyPackaging = true
         }
         resources {
