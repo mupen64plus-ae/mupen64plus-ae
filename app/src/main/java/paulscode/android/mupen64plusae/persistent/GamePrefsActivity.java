@@ -218,8 +218,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
         mPrefs = getSharedPreferences( mGamePrefs.getSharedPrefsName(), MODE_PRIVATE );
+
+        super.onCreate(savedInstanceState);
 
         // Get the detailed info about the ROM
         RomDatabase romDatabase = RomDatabase.getInstance();
@@ -255,8 +257,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mDeleteFilesFragment = new DeleteFilesFragment();
             fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
         }
-
-        super.onCreate( savedInstanceState );
     }
 
     @Override
