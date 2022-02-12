@@ -1165,8 +1165,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         public void run() {
             long seconds = System.currentTimeMillis() / 1000L;
 
-            //Use a 5 second timeout to save before killing the core process
-            if(seconds - mLastFpsChangedTime > 15)
+            //Use a 60 second timeout to save before killing the core process
+            if(seconds - mLastFpsChangedTime > 60)
             {
                 Log.e(TAG, "Killing Core due to no response");
                 forceExit();
