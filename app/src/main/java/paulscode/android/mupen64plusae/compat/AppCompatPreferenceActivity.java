@@ -30,6 +30,7 @@ import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -40,11 +41,11 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
 
-import paulscode.android.mupen64plusae.DeleteFilesFragment;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
-public abstract class AppCompatPreferenceActivity extends AppCompatActivity implements OnPreferenceStartScreenCallback, OnFragmentCreationListener
+public abstract class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
     public interface OnPreferenceDialogListener
     {
@@ -175,6 +176,18 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     public Preference findPreference(CharSequence key)
     {
         return mPrefFrag.findPreference(key);
+    }
+
+    @Override
+    public DialogFragment getPreferenceDialogFragment(Preference preference)
+    {
+        DialogFragment returnFragment = null;
+
+        if (preference instanceof OnPreferenceDialogListener)
+        {
+            returnFragment = PreferenceDialog.newInstance(preference);
+        }
+        return returnFragment;
     }
 
     @Override

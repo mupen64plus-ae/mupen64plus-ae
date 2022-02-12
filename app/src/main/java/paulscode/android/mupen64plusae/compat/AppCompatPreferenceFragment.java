@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,19 @@ import org.mupen64plusae.v3.alpha.R;
 
 public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 {
+    public interface OnDisplayDialogListener
+    {
+        /**
+         * Called when a preference dialog is being displayed. This must return
+         * the appropriate DialogFragment for the preference.
+         *
+         * @param preference
+         *            The preference dialog
+         * @return The dialog fragment for the preference
+         */
+        DialogFragment getPreferenceDialogFragment(Preference preference);
+    }
+
     public interface OnFragmentCreationListener
     {
         /**
@@ -93,6 +109,34 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         mHasFocusBeenSet = false;
         
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(@NonNull Preference preference)
+    {
+        DialogFragment fragment = null;
+
+        if (getActivity() instanceof OnDisplayDialogListener)
+        {
+            fragment = ((OnDisplayDialogListener) getActivity()).getPreferenceDialogFragment(preference);
+
+            if (fragment != null)
+            {
+                fragment.setTargetFragment(this, 0);
+
+                try {
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    fragment.show(fragmentManager, "androidx.preference.PreferenceFragment.DIALOG");
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (fragment == null)
+        {
+            super.onDisplayPreferenceDialog(preference);
+        }
     }
 
     @Override
