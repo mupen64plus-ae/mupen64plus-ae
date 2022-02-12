@@ -134,6 +134,7 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
 
     private int mBottomInset = 0;
     private int mRightInset = 0;
+    private int mLeftInset = 0;
     private int mTopInset = 0;
 
     // Preference fragment
@@ -240,15 +241,16 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
 
             mBottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
             mRightInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).right;
+            mLeftInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).left;
             mTopInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
 
-            view.setPadding(0, mTopInset, mRightInset, mBottomInset);
+            view.setPadding(mLeftInset, mTopInset, mRightInset, mBottomInset);
             
             return insets;
         });
 
         // Call this a second time since the callback only happens on the first screen
-        view.setPadding(0, mTopInset, mRightInset, mBottomInset);
+        view.setPadding(mLeftInset, mTopInset, mRightInset, mBottomInset);
     }
 
     protected Context getPreferenceManagerContext()
