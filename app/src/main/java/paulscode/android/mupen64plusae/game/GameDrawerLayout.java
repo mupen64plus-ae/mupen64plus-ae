@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -22,17 +22,15 @@ package paulscode.android.mupen64plusae.game;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Point;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 // Android's DrawerLayout intercepts touches along the left edge of the screen
 // so it can have the drawer peek out when you press and hold on the left edge.
@@ -43,8 +41,7 @@ import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
 {
-    private TouchMap mTouchMap;
-    private List<MotionEvent> ignore = new ArrayList<>();
+    private final List<MotionEvent> ignore = new ArrayList<>();
     private long mLastEdgeTime = 0;
     private boolean mForceDrawer = false;
     
@@ -55,19 +52,19 @@ public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
         addDrawerListener(new DrawerLayout.DrawerListener(){
 
             @Override
-            public void onDrawerClosed(View arg0)
+            public void onDrawerClosed(@NonNull View arg0)
             {
                 mForceDrawer = false;
             }
 
             @Override
-            public void onDrawerOpened(View arg0)
+            public void onDrawerOpened(@NonNull View arg0)
             {
 
             }
 
             @Override
-            public void onDrawerSlide(View arg0, float arg1)
+            public void onDrawerSlide(@NonNull View arg0, float arg1)
             {
 
             }
@@ -79,12 +76,6 @@ public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
             }
 
         });
-        mTouchMap = null;
-    }
-    
-    public void setTouchMap( TouchMap touchMap )
-    {
-        mTouchMap = touchMap;
     }
 
     public void setSwipGestureEnabled( boolean enable )
@@ -140,8 +131,7 @@ public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
             ignore.add( event );
             return false;
         }
-        else if(mForceDrawer ||
-                (actionCode == MotionEvent.ACTION_DOWN) && lastEdgeTime >= edgeIgnorePeriod )
+        else if(mForceDrawer || actionCode == MotionEvent.ACTION_DOWN)
         {
             int actionIndex = event.getActionIndex();
             int xLocation = (int) event.getX( actionIndex );
@@ -157,42 +147,6 @@ public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
                 }
                 catch( Exception ex )
                 {
-                    return false;
-                }
-            }
-        }
-        else if( actionCode == MotionEvent.ACTION_DOWN && !isDrawerOpen( GravityCompat.START )
-                && mTouchMap != null )
-        {
-            for( int i = 0; i < event.getPointerCount(); i++ )
-            {
-                int xLocation = (int) event.getX( i );
-                int yLocation = (int) event.getY( i );
-                
-                // See if it touches the d-pad or the C buttons,
-                // as they are small enough to interfere with left edge swipes
-                // (fortunately placing the C buttons on the left is unusual)
-                int buttonIndex = mTouchMap.getButtonPress( xLocation, yLocation );
-                if( buttonIndex != TouchMap.UNMAPPED )
-                {
-                    if( "dpad".equals( TouchMap.ASSET_NAMES.get( buttonIndex ) )
-                            || "groupC".equals( TouchMap.ASSET_NAMES.get( buttonIndex ) ) )
-                    {
-                        ignore.add( event );
-                        return false;
-                    }
-                }
-                
-                // See if it touches the analog stick
-                Point displacementPoint = mTouchMap.getAnalogDisplacementOriginal( xLocation, yLocation);
-                // Add a slightly larger hit area around the analog stick,
-                // by artificially shrinking the size of the displacement
-                displacementPoint.x *= 0.9;
-                displacementPoint.y *= 0.9;
-
-                if( mTouchMap.isInCaptureRange( displacementPoint ) )
-                {
-                    ignore.add( event );
                     return false;
                 }
             }

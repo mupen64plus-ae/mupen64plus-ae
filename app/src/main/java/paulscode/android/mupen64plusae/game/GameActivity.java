@@ -1208,7 +1208,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis,
                     mGamePrefs.isTouchscreenAnalogRelative );
             inputSource.setOnTouchListener(this);
-            mDrawerLayout.setTouchMap( mTouchscreenMap );
         }
 
         // Popup the multi-player dialog if necessary and abort if any players are unassigned
