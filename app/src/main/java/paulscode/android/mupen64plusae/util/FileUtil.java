@@ -577,10 +577,11 @@ public final class FileUtil
 
             } catch (Exception|OutOfMemoryError e) {
                 Log.e("copyFile", "Exception: " + e.getMessage());
+                success = false;
             }
         }
 
-        return true;
+        return success;
     }
 
     /**
