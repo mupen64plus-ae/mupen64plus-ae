@@ -386,7 +386,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         if (FileUtil.isFileImage(getApplicationContext(), uri)) {
             DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), uri);
-            if (file != null && FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ) )) {
+            if (file != null && FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ), true )) {
 
                 ConfigFile configFile = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
                 configFile.put(mRomMd5, "artPath", mGlobalPrefs.coverArtDir + "/" + file.getName());

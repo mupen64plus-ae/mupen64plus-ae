@@ -776,11 +776,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (gameDataDir != null) {
                 DocumentFile gameDataDirSpecific = gameDataDir.findFile(mGamePrefs.getGameDataDirName());
 
-                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomGoodName);
-                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomHeaderName);
+                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomGoodName, false);
+                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomHeaderName, false);
 
                 if (gameDataDirSpecific != null) {
-                    FileUtil.copyFolder(getApplicationContext(), gameDataDirSpecific, new File(mGamePrefs.getGameDataDir()));
+                    FileUtil.copyFolder(getApplicationContext(), gameDataDirSpecific, new File(mGamePrefs.getGameDataDir()), false);
                 }
             }
         }
