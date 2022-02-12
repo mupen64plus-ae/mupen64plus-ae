@@ -144,7 +144,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     // Activity and views
     private GameOverlay mOverlay;
     private FpsOverlay mFpsOverlay;
-    private GameDrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
     private GameSurface mGameSurface;
 
@@ -351,7 +351,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
-        mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipGesture);
+
+        if(mGlobalPrefs.inGameMenuIsSwipGesture)
+        {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+        else
+        {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+
         mDrawerLayout.setBackgroundColor(0xFF000000);
 
         if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists() && FileUtil.isFileImage(new File(mRomArtPath)))
@@ -583,7 +592,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             mDrawerLayout.openDrawer(GravityCompat.START);
-            mGameSidebar.requestFocus();
+            //mGameSidebar.requestFocus();
+            mDrawerLayout.requestFocus();
             ReloadAllMenus();
         }
     }
