@@ -111,11 +111,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         {
             ((OnFragmentCreationListener) getActivity()).onViewCreation(getListView());
         }
-    }
-    
-    @Override
-    protected void onBindPreferences()
-    {
+
         // Detect when a view is added to the preference fragment and request focus if it's the first view
         final RecyclerView recyclerView = getListView();
 
@@ -154,7 +150,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 
                     return false;
                 });
-                
+
                 //Make sure all views are focusable
                 childView.setFocusable(true);
 
