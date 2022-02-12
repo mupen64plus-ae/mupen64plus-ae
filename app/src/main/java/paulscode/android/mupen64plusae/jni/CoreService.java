@@ -614,30 +614,29 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.setDdDiskPath(getApplicationContext(), mRomHeaderName, mGamePrefs.diskPath64Dd);
             }
 
-            mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
-                    mGlobalPrefs.coreUserCacheDir);
-
             boolean loadingSuccess;
 
-            // Disk only games still require a ROM image, so use a dummy test ROM
-            if (isNdd) {
-                loadingSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
+            loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
+                    mGlobalPrefs.coreUserCacheDir) == 0;
 
-                InputStream inputStream ;
-                try {
-                    inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
-                    loadingSuccess = loadingSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
-                } catch (IOException e) {
-                    loadingSuccess = false;
-                }
-            } else {
-                if (TextUtils.isEmpty(mZipPath))
-                {
-                    loadingSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
-                }
-                else
-                {
-                    loadingSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+            // Disk only games still require a ROM image, so use a dummy test ROM
+            if (loadingSuccess) {
+                if (isNdd) {
+                    loadingSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
+
+                    InputStream inputStream;
+                    try {
+                        inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
+                        loadingSuccess = loadingSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
+                    } catch (IOException e) {
+                        loadingSuccess = false;
+                    }
+                } else {
+                    if (TextUtils.isEmpty(mZipPath)) {
+                        loadingSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
+                    } else {
+                        loadingSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+                    }
                 }
             }
 
