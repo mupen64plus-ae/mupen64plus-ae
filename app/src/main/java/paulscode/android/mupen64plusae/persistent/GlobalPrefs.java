@@ -387,6 +387,15 @@ public class GlobalPrefs
      * some functions to take effect */
     public final boolean holdControllerBottons;
 
+    /** True if we should use UPnP or NAT/PMP to map external ports */
+    public final boolean useUpnpToMapNetplayPorts;
+
+    /** Room TCP port number */
+    public final int netplayRoomTcpPort;
+
+    /** Server UDP/TCP port number */
+    public final int netplayServerUdpTcpPort;
+
     // Shared preferences keys and key templates
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -402,6 +411,9 @@ public class GlobalPrefs
     public static final String GAME_DATA_STORAGE_TYPE = "gameDataStorageType";
     public static final String PATH_GAME_SAVES = "gameDataStoragePath";
     public static final String PATH_JAPAN_IPL_ROM = "japanIdlPath64dd";
+
+    public static final String ROOM_TCP_PORT = "roomTcpPort";
+    public static final String SERVER_UDP_TCP_PORT = "serverTcpUdpPort";
 
     public static final String AUDIO_SAMPLING_TYPE = "audioSamplingType";
     public static final String AUDIO_LOW_PERFORMANCE_MODE = "lowPerformanceMode";
@@ -772,6 +784,12 @@ public class GlobalPrefs
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread_v2", true );
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
         holdControllerBottons = mPreferences.getBoolean( "holdButtonForMenu", true );
+
+        useUpnpToMapNetplayPorts = mPreferences.getBoolean( "useUpnpToMapPorts", true );
+        int tempRoomTcpPort = getSafeInt( mPreferences, ROOM_TCP_PORT, 43821 );
+        netplayRoomTcpPort = tempRoomTcpPort > 1024 ? tempRoomTcpPort : 43821;
+        int serverServerUdpTcpPort = getSafeInt( mPreferences, SERVER_UDP_TCP_PORT, 43822 );
+        netplayServerUdpTcpPort = serverServerUdpTcpPort > 1024 ? serverServerUdpTcpPort : 43822;
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
         gpuRenderer = AppData.getOpenGlEsRenderer();

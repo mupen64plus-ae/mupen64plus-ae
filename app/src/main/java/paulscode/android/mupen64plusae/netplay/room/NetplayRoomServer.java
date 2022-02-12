@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -121,8 +123,12 @@ public class NetplayRoomServer {
         mMulticastLock.setReferenceCounted(true);
         mMulticastLock.acquire();
 
+        AppData appData = new AppData(context);
+        GlobalPrefs globalPrefs = new GlobalPrefs(context, appData);
+
         try {
-            mServerSocket = new ServerSocket(0);
+            int port = globalPrefs.useUpnpToMapNetplayPorts ? 0 : globalPrefs.netplayRoomTcpPort;
+            mServerSocket = new ServerSocket(port);
 
             // Thread used to listen for new connections
             Thread serverThread = new Thread(this::runTcpServer);

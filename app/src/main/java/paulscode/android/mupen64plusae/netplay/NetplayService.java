@@ -27,13 +27,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.DhcpInfo;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.net.RouteInfo;
-import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -55,6 +53,9 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
+
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
@@ -90,6 +91,8 @@ public class NetplayService extends Service
     private static final String TAG = "NetplayService";
 
     public static final String SERVICE_QUIT = "M64P_NETPLAY_SERVICE_QUIT";
+
+    private GlobalPrefs mGlobalPrefs = null;
 
     private int mStartId;
     private Looper mServiceLooper;
@@ -145,7 +148,11 @@ public class NetplayService extends Service
 
             Log.i(TAG, "Netplay service started");
 
-            mTcpServer.setPort(0);
+            AppData appData = new AppData(getApplicationContext());
+            mGlobalPrefs = new GlobalPrefs(getApplicationContext(), appData);
+            int port = mGlobalPrefs.useUpnpToMapNetplayPorts ? 0 : mGlobalPrefs.netplayServerUdpTcpPort;
+
+            mTcpServer.setPort(port);
             mNetplayServiceListener.onPortObtained(mTcpServer.getPort());
             mUdpServer.setPort(mTcpServer.getPort());
 
@@ -280,13 +287,18 @@ public class NetplayService extends Service
 
     public void mapPorts(int roomPort)
     {
-        if (!mPortMappingEnabled) {
+        if (!mPortMappingEnabled && mGlobalPrefs.useUpnpToMapNetplayPorts) {
             mPortMappingEnabled = true;
             mRoomPort = roomPort;
 
             Thread mappingThread = new Thread(this::mapPorts);
             mappingThread.setDaemon(true);
             mappingThread.start();
+        }
+
+        if (!mGlobalPrefs.useUpnpToMapNetplayPorts) {
+            mNetplayServiceListener.onUpnpPortsObtained(mGlobalPrefs.netplayRoomTcpPort,
+                    mGlobalPrefs.netplayServerUdpTcpPort, mGlobalPrefs.netplayServerUdpTcpPort);
         }
     }
 
@@ -367,7 +379,7 @@ public class NetplayService extends Service
                             int addressInt = addressBuffer.getInt();
 
                             if (addressInt != 0) {
-                                Log.i(TAG, "Received gateway address=" + gatewayAddress.toString());
+                                Log.i(TAG, "Received gateway address=" + gatewayAddress);
 
                                 actuallyMapPorts(addressInt);
                             }

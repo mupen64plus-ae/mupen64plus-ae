@@ -45,6 +45,7 @@ import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.NetplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
@@ -112,7 +113,6 @@ public class ActivityHelper
 
         //@formatter:on
     }
-    public static final int MANAGE_PROFILE_ACTIVITY = 4321;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
@@ -229,6 +229,12 @@ public class ActivityHelper
         Intent intent = new Intent( context, DataPrefsActivity.class );
         context.startActivity( intent );    
     }
+
+    static void startNetplayPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, NetplayPrefsActivity.class );
+        context.startActivity( intent );
+    }
     
     static void startDisplayPrefsActivity( Context context )
     {
@@ -332,14 +338,6 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, CacheRomInfoService.class);
-        
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
-    }
-
     static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,
         Uri fileUri)
     {
@@ -348,14 +346,6 @@ public class ActivityHelper
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
-    }
-
-    static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, ExtractTexturesService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
     }
 
     static void startDeleteFilesService(Context context, ServiceConnection serviceConnection,
@@ -369,14 +359,6 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    static void stopDeleteFilesService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, DeleteFilesService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
-    }
-
     static void startCopyToSdService(Context context, ServiceConnection serviceConnection,
                                         File source, Uri destination)
     {
@@ -386,14 +368,6 @@ public class ActivityHelper
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
-    }
-
-    static void stopCopyToSdService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, CopyToSdService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
     }
 
     static void startCopyFromSdService(Context context, ServiceConnection serviceConnection,

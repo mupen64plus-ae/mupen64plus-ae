@@ -32,6 +32,9 @@
             <item
                 android:id="@+id/menuItem_categoryData"
                 android:title="@string/categoryData_title"/>
+            <item
+                android:id="@+id/menuItem_categoryNetplay"
+                android:title="@string/categoryNetplay_title"/>
         </menu>
     </item>
     <item

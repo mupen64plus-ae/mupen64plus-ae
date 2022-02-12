@@ -183,6 +183,7 @@
     <string name="categoryTouchscreen_title">Pantalla táctil</string>
     <string name="categoryInput_title">Entrada</string>
     <string name="categoryData_title">Datos</string>
+    <string name="categoryNetplay_title">Netplay</string>
     <!--Checkbox Preferences-->
     <string name="playShowCheats_title">Habilitar trucos</string>
     <string name="touchscreenFeedback_title">Retroalimentación háptica</string>
@@ -556,7 +557,10 @@
     <string name="GameAutoSavesMax_title">Maximos autoguardados por juego</string>
     <string name="useFlatGameDataPath_title">Usar la estructura de carpetas de datos de juegos planos</string>
     <string name="useFlatGameDataPath_summary">Mantener todas las guardas de ranura, capturas de pantalla, y guardas dentro del juego en la misma carpeta</string>
-
+    <string name="useUpnpToMapPort_title">Automaticamente mapear puertos externos</string>
+    <string name="useUpnpToMapPort_summary">Usar UPnP o NAT/PMP para mapear puertos externos automaticamente</string>
+    <string name="roomTcpPort_title">Puerto de TCP para el cuerto</string>
+    <string name="serverTcpUdpPort_title">Puero de UDP/TCP para el servidor</string>
     <!--**************************************************************************-->
     <!--Dialogs and Other Feedback-->
     <!--Developers: Use formatting arguments rather than string concatenation:-->

@@ -230,6 +230,7 @@
     <string name="categoryInput_title">Input</string>
 
     <string name="categoryData_title">Data</string>
+    <string name="categoryNetplay_title">Netplay</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
@@ -748,6 +749,12 @@
     <string name="useFlatGameDataPath_title">Use flat game data folder structure</string>
     <string name="useFlatGameDataPath_summary">Keep all slot saves, screenshots, and in-game saves in the same folder</string>
     <string name="japanIplRom64ddPath_title">64DD IPL (J)</string>
+    <string name="useUpnpToMapPort_title">Automatically map external ports</string>
+    <string name="useUpnpToMapPort_summary">Use UPnP or NAT/PMP to automatically map external ports</string>
+    <string name="roomTcpPort_title">Room TCP Port</string>
+    <string name="serverTcpUdpPort_title">Server UDP/TCP Port</string>
+
+
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback -->

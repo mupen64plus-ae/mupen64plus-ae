@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -289,7 +291,11 @@ public class NetplayServerSetupDialog extends DialogFragment
         }
 
         if (mNetplayRoomService != null) {
-            SpannableString port1SpanString = new SpannableString(String.format(Locale.getDefault(), "%d", mNetplayRoomService.getServerPort()));
+            AppData appData = new AppData(mActivity);
+            GlobalPrefs globalPrefs = new GlobalPrefs(mActivity, appData);
+
+            int port = globalPrefs.useUpnpToMapNetplayPorts ? mNetplayRoomService.getServerPort() : globalPrefs.netplayRoomTcpPort;
+            SpannableString port1SpanString = new SpannableString(String.format(Locale.getDefault(), "%d", port));
             port1SpanString.setSpan(new UnderlineSpan(), 0, port1SpanString.length(), 0);
             port1SpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, port1SpanString.length(), 0);
 
