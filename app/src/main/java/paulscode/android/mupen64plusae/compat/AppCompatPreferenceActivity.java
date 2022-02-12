@@ -30,7 +30,9 @@ import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
@@ -38,6 +40,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
 
+import paulscode.android.mupen64plusae.DeleteFilesFragment;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
@@ -144,8 +147,17 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
         mSharedPrefsName = getSharedPrefsName();
         mPreferencesResId = getSharedPrefsId();
 
-        mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+        final FragmentManager fm = getSupportFragmentManager();
+
+
+        Fragment contentFragment = fm.findFragmentById(android.R.id.content);
+
+        if (!(contentFragment instanceof AppCompatPreferenceFragment)) {
+            mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
+            fm.beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+        } else {
+            mPrefFrag = (AppCompatPreferenceFragment) contentFragment;
+        }
     }
 
     protected abstract String getSharedPrefsName();
