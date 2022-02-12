@@ -146,6 +146,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         boolean mUseCustomSpeed = false;
         int mCustomSpeed = DEFAULT_SPEED;
         boolean mAskingForExit = false;
+        boolean mLoadingInProgress = false;
     }
 
     DataViewModel mViewModel;
@@ -162,6 +163,24 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         try {
             mViewModel = new ViewModelProvider(requireActivity()).get(CoreFragment.DataViewModel.class);
+
+            if (mViewModel.mLoadingInProgress) {
+                Activity activity = requireActivity();
+                CharSequence title = activity.getString( R.string.extractRomTask_title );
+                CharSequence message = activity.getString( R.string.toast_pleaseWait );
+
+                String displayName;
+
+                if (mViewModel.mZipPath != null) {
+                    DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mZipPath));
+                    displayName = file == null ? mViewModel.mRomDisplayName : file.getName();
+                } else {
+                    displayName = mViewModel.mRomDisplayName;
+                }
+
+                mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
+                mProgress.show();
+            }
 
             if (mViewModel.mBinder != null) {
                 mCoreService = mViewModel.mBinder.getService();
@@ -266,6 +285,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 }
                 mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
                 mProgress.show();
+                mViewModel.mLoadingInProgress = true;
             });
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
@@ -275,6 +295,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void loadingFinished()
     {
+        mViewModel.mLoadingInProgress = false;
+
         try {
             Activity activity = requireActivity();
             activity.runOnUiThread(() -> {
@@ -282,7 +304,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                     activity.runOnUiThread(() -> mProgress.dismiss());
                 }
             });
-
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
         }
