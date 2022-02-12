@@ -122,6 +122,8 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 
             if (fragment != null)
             {
+                // TODO: Correct this deprecation once setTargetFragment is no longer required by
+                // PreferenceDialogFragmentCompat in Android preference library
                 fragment.setTargetFragment(this, 0);
 
                 try {
