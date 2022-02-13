@@ -20,11 +20,13 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.text.TextUtils;
 
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -34,6 +36,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class NetplayPrefsActivity extends AppCompatPreferenceActivity implements
     SharedPreferences.OnSharedPreferenceChangeListener
@@ -64,6 +67,18 @@ public class NetplayPrefsActivity extends AppCompatPreferenceActivity implements
 
         private boolean isInRange(int max, int input) {
             return input <= max;
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
         }
     }
 
