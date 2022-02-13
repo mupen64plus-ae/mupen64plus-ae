@@ -788,8 +788,8 @@ public class GlobalPrefs
         useUpnpToMapNetplayPorts = mPreferences.getBoolean( "useUpnpToMapPorts", true );
         int tempRoomTcpPort = getSafeInt( mPreferences, ROOM_TCP_PORT, 43821 );
         netplayRoomTcpPort = tempRoomTcpPort > 1024 ? tempRoomTcpPort : 43821;
-        int serverServerUdpTcpPort = getSafeInt( mPreferences, SERVER_UDP_TCP_PORT, 43822 );
-        netplayServerUdpTcpPort = serverServerUdpTcpPort > 1024 ? serverServerUdpTcpPort : 43822;
+        int tempServerUdpTcpPort = getSafeInt( mPreferences, SERVER_UDP_TCP_PORT, 43822 );
+        netplayServerUdpTcpPort = tempServerUdpTcpPort > 1024 && tempServerUdpTcpPort != tempRoomTcpPort ? tempServerUdpTcpPort : 43822;
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
         gpuRenderer = AppData.getOpenGlEsRenderer();
