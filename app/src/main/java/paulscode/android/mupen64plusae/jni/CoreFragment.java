@@ -43,7 +43,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.intergi.playwiresdk.PWBannerView;
+import com.intergi.playwiresdk.ads.view.PWViewAd;
+import com.intergi.playwiresdk.ads.view.banner.PWBannerView;
 
 import paulscode.android.mupen64plusae.R;
 
@@ -502,7 +503,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
             mBannerView.setListener(new PWBannerView.Listener() {
                 @Override
-                public void onBannerAdLoaded() {
+                public void onViewAdOpened(@NonNull PWViewAd pwViewAd) {
+
+                }
+
+                @Override
+                public void onViewAdLoaded(@NonNull PWViewAd pwViewAd) {
                     Log.i(TAG, "Banner ad loaded");
 
                     if (!mViewModel.mDialogReadyToBeDismissed) {
@@ -521,36 +527,29 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 }
 
                 @Override
-                public void onBannerAdFailedToLoad() {
-                    Log.i(TAG, "Banner ad failed to load");
+                public void onViewAdImpression(@NonNull PWViewAd pwViewAd) {
+
                 }
 
                 @Override
-                public void onBannerAdOpened() {
-                    Log.i(TAG, "Banner ad opened");
+                public void onViewAdFailedToLoad(@NonNull PWViewAd pwViewAd) {
+
                 }
 
                 @Override
-                public void onBannerAdClosed() {
-                    Log.i(TAG, "Banner ad failed to closed");
+                public void onViewAdClosed(@NonNull PWViewAd pwViewAd) {
+
                 }
 
                 @Override
-                public void onBannerAdClicked() {
-                    Log.i(TAG, "Banner ad clicked");
-                }
+                public void onViewAdClicked(@NonNull PWViewAd pwViewAd) {
 
-                @Override
-                public void onBannerAdImpression() {
-                    Log.i(TAG, "Banner ad impression");
                 }
             });
 
             // load if autoload is set to false
-            if (mBannerView.getLoadStatus() == PWBannerView.LoadStatus.None) {
-                mBannerView.setAdUnitName("Banner-300x250");
-                mBannerView.load();
-            }
+            mBannerView.setAdUnitName("banner-300x250");
+            mBannerView.load();
         }
     }
 

@@ -31,7 +31,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.drive.DriveFolder;
-import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.client.http.ByteArrayContent;
@@ -117,7 +117,7 @@ public class DriveServiceHelper {
         credential.setSelectedAccount(account.getAccount());
 
         return new com.google.api.services.drive.Drive.Builder(
-                AndroidHttp.newCompatibleTransport(),
+                new NetHttpTransport(),
                 new GsonFactory(),
                 credential)
                 .setApplicationName(appName)

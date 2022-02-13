@@ -8,21 +8,46 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.2'
 
-        classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
+        classpath 'com.google.gms:google-services:4.4.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 allprojects {
     repositories {
         mavenCentral()
         google()
+
+        maven {
+            name = "GitHubPackages"
+            url = 'https://maven.pkg.github.com/intergi/playwire-android-binaries'
+            credentials {
+                username = properties.getProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = properties.getProperty("gpr.key") ?: System.getenv("TOKED")
+            }
+        }
+        maven {
+            // ironsource
+            url 'https://android-sdk.is.com/'
+        }
+        maven {
+            //pangle
+            url 'https://artifact.bytedance.com/repository/pangle/'
+        }
+        maven {
+            url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")
+        }
+
     }
 }
+
 
 task clean(type: Delete) {
     delete "$projectDir/build"

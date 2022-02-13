@@ -92,5 +92,16 @@
 -dontwarn com.smaato.sdk.inject.Component
 -dontwarn com.smaato.sdk.inject.Provides
 
--keep class com.google.android.gms.ads.admanager.** { *; }
--keep class com.intergi.playwiresdk.ads.view.banner.** { *; }
+
+# Google Mobile Ads SDK
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.gms.ads.identifier.** { *; }
+
+# Playwire SDK
+-keep class com.intergi.playwiresdk.** { *; }
+-keep class com.intergi.playwiresdk.ads.view.** { *; }
+-keep class com.intergi.playwiresdk.headerbidding.** { *; }
+
+-keepclassmembers class com.google.android.gms.ads.admanager.AdManagerAdRequest$Builder {
+   public *;
+}

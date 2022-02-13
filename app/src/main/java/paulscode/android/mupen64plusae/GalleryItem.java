@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,7 +42,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.intergi.playwiresdk.PWBannerView;
+import com.intergi.playwiresdk.ads.view.PWViewAd;
+import com.intergi.playwiresdk.ads.view.banner.PWBannerView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -341,6 +343,7 @@ public class GalleryItem
 
         private void initBannerAd(View view)
         {
+            Log.e("GalleryItem", "initBannerAd");
             // Banner instantiated using Storyboard
             // Configure if you require being delegate or you want to give it an adUnitName by code
             PWBannerView adView = view.findViewById(R.id.ad_gallery_item_view);
@@ -348,42 +351,41 @@ public class GalleryItem
             if (adView != null) {
 
                 adView.setListener(new PWBannerView.Listener() {
-                    @Override
-                    public void onBannerAdLoaded() {
 
+                    @Override
+                    public void onViewAdOpened(@NonNull PWViewAd pwViewAd) {
+                        Log.e("GalleryItem", "onViewAdOpened");
                     }
 
                     @Override
-                    public void onBannerAdFailedToLoad() {
-
+                    public void onViewAdLoaded(@NonNull PWViewAd pwViewAd) {
+                        Log.e("GalleryItem", "onViewAdLoaded");
                     }
 
                     @Override
-                    public void onBannerAdOpened() {
-
+                    public void onViewAdImpression(@NonNull PWViewAd pwViewAd) {
+                        Log.e("GalleryItem", "onViewAdImpression");
                     }
 
                     @Override
-                    public void onBannerAdClosed() {
-
+                    public void onViewAdFailedToLoad(@NonNull PWViewAd pwViewAd) {
+                        Log.e("GalleryItem", "onViewAdFailedToLoad");
                     }
 
                     @Override
-                    public void onBannerAdClicked() {
-
+                    public void onViewAdClosed(@NonNull PWViewAd pwViewAd) {
+                        Log.e("GalleryItem", "onViewAdClosed");
                     }
 
                     @Override
-                    public void onBannerAdImpression() {
-
+                    public void onViewAdClicked(@NonNull PWViewAd pwViewAd) {
+                        Log.e("GalleryItem", "onViewAdClicked");
                     }
                 });
 
                 // load if autoload is set to false
-                if (adView.getLoadStatus() == PWBannerView.LoadStatus.None) {
-                    adView.setAdUnitName("Banner-320x50");
-                    adView.load();
-                }
+                adView.setAdUnitName("banner-320x50");
+                adView.load();
             }
         }
         

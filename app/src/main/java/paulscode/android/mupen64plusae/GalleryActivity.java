@@ -68,19 +68,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.android.play.core.tasks.Task;
-import com.intergi.playwiresdk.PWBannerView;
 import com.intergi.playwiresdk.PlaywireSDK;
-import com.intergi.playwiresdk_amazon.PWAdBidder_Amazon;
-import com.intergi.playwiresdk_prebid.PWAdBidder_Prebid;
-import com.intergi.playwiresdk_smaato.PWAdMediator_Smaato;
-import com.ironsource.mediationsdk.IronSource;
+import com.intergi.playwiresdk.ads.view.banner.PWBannerView;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -130,6 +124,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_SHOW_APP_VERSION_POPUP = "STATE_SHOW_APP_VERSION_POPUP";
     private static final String STATE_FAQ_POPUP = "STATE_FAQ_POPUP";
     private static final String STATE_TRY_PRO_DIALOG = "STATE_TRY_PRO_DIALOG";
+    private static final String PUBLISHER_ID = "1024562";
+    private static final String APP_ID = "152";
 
     public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
     public static final String KEY_IS_SHORTCUT = "KEY_IS_SHORTCUT";
@@ -662,24 +658,32 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 refreshGridAsync();
             };
 
-            mViewModelData.getReadyToShowAds().observe(this, readyToShowAdsObserver);
-
             if( savedInstanceState == null ) {
-                PWAdBidder_Amazon.Companion.register(getApplicationContext());
-                PWAdBidder_Prebid.Companion.register(getApplicationContext());
-                PWAdMediator_Smaato.Companion.register(getApplication());
+                // set test to true before initializing the sdk to get test ads
+                // PlaywireSDK.INSTANCE.setTest(true);
+                Log.e("GalleryActivity", "Initializing ads test");
 
-                PlaywireSDK.INSTANCE.initialize(this, () -> {
+                // Create a Handler and Runnable for the timeout
+                Handler handler = new Handler(Looper.getMainLooper());
+                Runnable timeoutRunnable = () -> {
+                    Log.e("GalleryActivity", "PlaywireSDK initialization timeout");
+                    mViewModelData.getReadyToShowAds().setValue(true);
+                };
+
+                // Post the timeout Runnable with a delay of 3 seconds
+                handler.postDelayed(timeoutRunnable, 3000);
+
+                PlaywireSDK.INSTANCE.initialize(PUBLISHER_ID, APP_ID, this, () -> {
+                    Log.e("GalleryActivity", "PlaywireSDK callback");
                     mViewModelData.getReadyToShowAds().setValue(true);
                     return null;
                 });
-/*
-                List<String> testDeviceIds = Collections.singletonList("B0E4044F46CEA2CEBB33F72EDEC1B49E");
-                RequestConfiguration configuration =
-                        new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-                MobileAds.setRequestConfiguration(configuration);
- */
             }
+
+            mViewModelData.getReadyToShowAds().observe(this, readyToShowAdsObserver);
+        }
+        else {
+            Log.e("GalleryActivity", "NOT SHOWING ADS");
         }
     }
 
@@ -688,10 +692,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Log.i("GalleryActivity", "onPause");
 
         super.onPause();
-
-        if (mShowAds) {
-            IronSource.onPause(this);
-        }
 
         GridLayoutManager layoutManager = (GridLayoutManager)mGridView.getLayoutManager();
         if (layoutManager != null) {
@@ -705,10 +705,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Log.i("GalleryActivity", "onResume");
 
         super.onResume();
-
-        if (mShowAds) {
-            IronSource.onResume(this);
-        }
 
         //mRefreshNeeded will be set to true whenever a game is launched
         if(mRefreshNeeded)
@@ -1304,6 +1300,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mViewModelData.getReadyToShowAds().getValue() && !items.isEmpty();
 
         if (readyToShowAds && !items.get(0).isAdvertisement) {
+            Log.e("GalleryActivity", "READY TO SHOW ADS");
             items.add(0, new GalleryItem(this));
         }
 

@@ -68,11 +68,7 @@ import androidx.preference.PreferenceManager;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.intergi.playwiresdk.PWNotifier;
 import com.intergi.playwiresdk.PlaywireSDK;
-import com.intergi.playwiresdk_amazon.PWAdBidder_Amazon;
-import com.intergi.playwiresdk_prebid.PWAdBidder_Prebid;
-import com.intergi.playwiresdk_smaato.PWAdMediator_Smaato;
 import com.ironsource.mediationsdk.IronSource;
 
 import paulscode.android.mupen64plusae.R;
@@ -156,6 +152,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         NetplayServerSetupDialog.OnClientDialogActionListener, NetplayFragment.NetplayListener
 {
     private static final String TAG = "GameActivity";
+
+    private static final String PUBLISHER_ID = "1024562";
+    private static final String APP_ID = "152";
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -588,21 +587,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     }
                 }
 
-                PWAdBidder_Amazon.Companion.register(getApplicationContext());
-                PWAdBidder_Prebid.Companion.register(getApplicationContext());
-                PWAdMediator_Smaato.Companion.register(getApplication());
+                // PlaywireSDK.INSTANCE.setTest(true);
 
-                PlaywireSDK.INSTANCE.initialize(this, () -> {
+                Handler handler = new Handler(Looper.getMainLooper());
+                Runnable timeoutRunnable = () -> {
+                    Log.e(TAG, "PlaywireSDK initialization timeout");
+                    mViewModelData.getReadyToShowAds().setValue(true);
+                };
+
+                // Post the timeout Runnable with a delay of 3 seconds
+                handler.postDelayed(timeoutRunnable, 3000);
+
+                PlaywireSDK.INSTANCE.initialize(PUBLISHER_ID, APP_ID, this, () -> {
                     mViewModelData.getReadyToShowAds().setValue(true);
                     return null;
                 });
-
-/*
-                List<String> testDeviceIds = Collections.singletonList("B0E4044F46CEA2CEBB33F72EDEC1B49E");
-                RequestConfiguration configuration =
-                        new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-                MobileAds.setRequestConfiguration(configuration);
- */
             }
         }
     }
