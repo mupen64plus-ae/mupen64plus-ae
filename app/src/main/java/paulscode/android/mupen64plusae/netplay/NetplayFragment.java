@@ -187,11 +187,7 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        try {
-            mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
-        }
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
 
         startNetplayServer();
     }

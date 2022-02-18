@@ -74,20 +74,15 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        try {
-            mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
 
-            if(mViewModel.mInProgress)
-            {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.importExportActivity_exportDialogTitle);
-                CharSequence message = getString(R.string.toast_pleaseWait);
-                mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
-                mProgress.show();
-            }
-
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+        if(mViewModel.mInProgress)
+        {
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.importExportActivity_exportDialogTitle);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+            mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
+            mProgress.show();
         }
     }
     

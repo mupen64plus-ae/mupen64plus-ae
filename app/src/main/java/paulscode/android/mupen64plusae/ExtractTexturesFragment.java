@@ -73,21 +73,16 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        try {
-            mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
 
-            if(mViewModel.mInProgress)
-            {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.pathHiResTexturesTask_title);
-                CharSequence message = getString(R.string.toast_pleaseWait);
-                DocumentFile file = FileUtil.getDocumentFileSingle(activity, mViewModel.mTexturesFile);
-                mProgress = new ProgressDialog(mProgress, activity, title, file == null ? "" : file.getName(), message, true);
-                mProgress.show();
-            }
-
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+        if(mViewModel.mInProgress)
+        {
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.pathHiResTexturesTask_title);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+            DocumentFile file = FileUtil.getDocumentFileSingle(activity, mViewModel.mTexturesFile);
+            mProgress = new ProgressDialog(mProgress, activity, title, file == null ? "" : file.getName(), message, true);
+            mProgress.show();
         }
     }
     

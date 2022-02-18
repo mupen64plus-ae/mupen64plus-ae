@@ -79,29 +79,25 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        try {
-            mViewModel = new ViewModelProvider(requireActivity()).get(ScanRomsFragment.DataViewModel.class);
+        mViewModel = new ViewModelProvider(requireActivity()).get(ScanRomsFragment.DataViewModel.class);
 
-            if (mViewModel.mScanRomsOnActivityCreated) {
-                mViewModel.mScanRomsOnActivityCreated = false;
-                ActuallyRefreshRoms(requireActivity());
-            } else if(mViewModel.mInProgress) {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.scanning_title);
-                CharSequence message = getString(R.string.toast_pleaseWait);
+        if (mViewModel.mScanRomsOnActivityCreated) {
+            mViewModel.mScanRomsOnActivityCreated = false;
+            ActuallyRefreshRoms(requireActivity());
+        } else if(mViewModel.mInProgress) {
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.scanning_title);
+            CharSequence message = getString(R.string.toast_pleaseWait);
 
-                DocumentFile rootDocumentFile = mViewModel.mSearchSingleFile ? FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mSearchUri)) :
-                        FileUtil.getDocumentFileTree(activity, Uri.parse(mViewModel.mSearchUri));
-                String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
+            DocumentFile rootDocumentFile = mViewModel.mSearchSingleFile ? FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mSearchUri)) :
+                    FileUtil.getDocumentFileTree(activity, Uri.parse(mViewModel.mSearchUri));
+            String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
 
-                mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
-                mProgress.show();
+            mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
+            mProgress.show();
 
-                CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
-                cacheRomInfoService.SetCacheRomInfoListener(ScanRomsFragment.this);
-            }
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+            CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
+            cacheRomInfoService.SetCacheRomInfoListener(ScanRomsFragment.this);
         }
     }
     

@@ -68,20 +68,16 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        try {
-            mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
 
-            if (mViewModel.mInProgress) {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.pathDeletingFilesTask_title);
-                CharSequence message = getString(R.string.toast_pleaseWait);
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
 
-                mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
-                mProgress.show();
-            }
+        if (mViewModel.mInProgress) {
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.pathDeletingFilesTask_title);
+            CharSequence message = getString(R.string.toast_pleaseWait);
 
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+            mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
+            mProgress.show();
         }
     }
 
