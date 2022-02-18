@@ -759,10 +759,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mLaunchGameAfterScan = givenRomPath;
             mScanForGameOnResume = romPathUri.toString();
         }
-
-        if (foundItem == null && !scanOnFailure) {
-            Notifier.showToast(getApplicationContext(), R.string.toast_nativeMainFailure07);
-        }
     }
 
     @Override
