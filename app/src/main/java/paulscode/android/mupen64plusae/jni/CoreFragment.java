@@ -147,6 +147,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         int mCustomSpeed = DEFAULT_SPEED;
         boolean mAskingForExit = false;
         boolean mLoadingInProgress = false;
+        CoreFragment mCurrentFragment = null;
     }
 
     DataViewModel mViewModel;
@@ -161,37 +162,43 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        try {
-            mViewModel = new ViewModelProvider(requireActivity()).get(CoreFragment.DataViewModel.class);
+        Log.i(TAG, "onAttach");
 
-            if (mViewModel.mLoadingInProgress) {
-                Activity activity = requireActivity();
-                CharSequence title = activity.getString( R.string.extractRomTask_title );
-                CharSequence message = activity.getString( R.string.toast_pleaseWait );
+        Activity activity = requireActivity();
+        mViewModel = new ViewModelProvider(requireActivity()).get(CoreFragment.DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
-                String displayName;
+        if (mViewModel.mLoadingInProgress) {
+            CharSequence title = activity.getString( R.string.extractRomTask_title );
+            CharSequence message = activity.getString( R.string.toast_pleaseWait );
 
-                if (mViewModel.mZipPath != null) {
-                    DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mZipPath));
-                    displayName = file == null ? mViewModel.mRomDisplayName : file.getName();
-                } else {
-                    displayName = mViewModel.mRomDisplayName;
+            String displayName;
+
+            if (mViewModel.mZipPath != null) {
+                DocumentFile file = FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mZipPath));
+                displayName = file == null ? mViewModel.mRomDisplayName : file.getName();
+            } else {
+                displayName = mViewModel.mRomDisplayName;
+            }
+
+            mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
+            mProgress.show();
+        }
+        else
+        {
+            activity.runOnUiThread(() -> {
+                if (mProgress != null) {
+                    activity.runOnUiThread(() -> mProgress.dismiss());
                 }
-
-                mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
-                mProgress.show();
-            }
-
-            if (mViewModel.mBinder != null) {
-                mCoreService = mViewModel.mBinder.getService();
-                mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
-                mCoreService.setCoreServiceListener(CoreFragment.this);
-                mCoreService.setLoadingDataListener(CoreFragment.this);
-            }
-        } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
+            });
         }
 
+        if (mViewModel.mBinder != null) {
+            mCoreService = mViewModel.mBinder.getService();
+            mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+            mCoreService.setCoreServiceListener(mViewModel.mCurrentFragment);
+            mCoreService.setLoadingDataListener(mViewModel.mCurrentFragment);
+        }
     }
 
     @Override
@@ -285,6 +292,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 }
                 mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
                 mProgress.show();
+
                 mViewModel.mLoadingInProgress = true;
             });
         } catch (java.lang.IllegalStateException e) {
@@ -359,14 +367,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
-
+                Log.i(TAG, "onServiceConnected");
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
                 mViewModel.mBinder = (LocalBinder) service;
-                mCoreService = mViewModel.mBinder.getService();
+                mViewModel.mCurrentFragment.mCoreService = mViewModel.mBinder.getService();
 
-                mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
-                mCoreService.setCoreServiceListener(CoreFragment.this);
-                mCoreService.setLoadingDataListener(CoreFragment.this);
+                mViewModel.mCurrentFragment.mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+                mViewModel.mCurrentFragment.mCoreService.setCoreServiceListener(mViewModel.mCurrentFragment);
+                mViewModel.mCurrentFragment.mCoreService.setLoadingDataListener(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -492,6 +500,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mCoreService != null)
         {
             mCoreService.pauseEmulator();
+        }
+        else
+        {
+            Log.i(TAG, "core service is NULL");
         }
     }
 
