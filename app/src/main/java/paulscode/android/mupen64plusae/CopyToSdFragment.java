@@ -62,10 +62,12 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
 
         //Service connection for the progress dialog
         private ServiceConnection mServiceConnection;
+        LocalBinder mBinder;
 
         private File mSource = null;
         private Uri mDestination = null;
         private boolean mInProgress = false;
+        CopyToSdFragment mCurrentFragment = null;
     }
 
     DataViewModel mViewModel;
@@ -75,6 +77,7 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
         super.onAttach(context);
 
         mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
         if(mViewModel.mInProgress)
         {
@@ -83,6 +86,8 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
             CharSequence message = getString(R.string.toast_pleaseWait);
             mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
             mProgress.show();
+
+            mViewModel.mBinder.getService().setCopyToSdListener(mViewModel.mCurrentFragment);
         }
     }
     
@@ -153,9 +158,9 @@ public class CopyToSdFragment extends Fragment implements CopyFilesListener
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                CopyToSdService copyToSdService = binder.getService();
-                copyToSdService.setCopyToSdListener(CopyToSdFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                CopyToSdService copyToSdService = mViewModel.mBinder.getService();
+                copyToSdService.setCopyToSdListener(mViewModel.mCurrentFragment);
             }
 
             @Override

@@ -58,9 +58,12 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
         //Service connection for the progress dialog
         private ServiceConnection mServiceConnection;
+        LocalBinder mBinder;
+
         private ArrayList<String> mDeleteFilesPath = new ArrayList<>();
         private ArrayList<String> mFilter = new ArrayList<>();
         private boolean mInProgress = false;
+        DeleteFilesFragment mCurrentFragment = null;
     }
 
     DataViewModel mViewModel;
@@ -70,6 +73,7 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         super.onAttach(context);
 
         mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
         if (mViewModel.mInProgress) {
             Activity activity = requireActivity();
@@ -78,6 +82,8 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
             mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
             mProgress.show();
+
+            mViewModel.mBinder.getService().setDeleteFilesListener(mViewModel.mCurrentFragment);
         }
     }
 
@@ -145,9 +151,9 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                DeleteFilesService deleteFilesService = binder.getService();
-                deleteFilesService.setDeleteFilesListener(DeleteFilesFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                DeleteFilesService deleteFilesService = mViewModel.mBinder.getService();
+                deleteFilesService.setDeleteFilesListener(mViewModel.mCurrentFragment);
             }
 
             @Override

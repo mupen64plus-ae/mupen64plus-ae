@@ -62,11 +62,13 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
 
         //Service connection for the progress dialog
         ServiceConnection mServiceConnection;
+        LocalBinder mBinder;
 
         Uri mSource = null;
         File mDestination = null;
 
         boolean mInProgress = false;
+        CopyFromSdFragment mCurrentFragment = null;
     }
 
     DataViewModel mViewModel;
@@ -75,7 +77,8 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        mViewModel = new ViewModelProvider(requireActivity()).get(CopyFromSdFragment.DataViewModel.class);
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
         if(mViewModel.mInProgress)
         {
@@ -84,6 +87,8 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
             CharSequence message = getString(R.string.toast_pleaseWait);
             mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
             mProgress.show();
+
+            mViewModel.mBinder.getService().setCopyFromSdListener(mViewModel.mCurrentFragment);
         }
     }
     
@@ -156,9 +161,9 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                CopyFromSdService copyFromSdService = binder.getService();
-                copyFromSdService.setCopyFromSdListener(CopyFromSdFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                CopyFromSdService copyFromSdService = mViewModel.mBinder.getService();
+                copyFromSdService.setCopyFromSdListener(mViewModel.mCurrentFragment);
             }
 
             @Override

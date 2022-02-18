@@ -62,9 +62,11 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
 
         //Service connection for the progress dialog
         private ServiceConnection mServiceConnection;
+        LocalBinder mBinder;
 
         private Uri mTexturesFile = null;
         private boolean mInProgress = false;
+        ExtractTexturesFragment mCurrentFragment = null;
     }
 
     DataViewModel mViewModel;
@@ -74,6 +76,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
         super.onAttach(context);
 
         mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
         if(mViewModel.mInProgress)
         {
@@ -83,6 +86,8 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
             DocumentFile file = FileUtil.getDocumentFileSingle(activity, mViewModel.mTexturesFile);
             mProgress = new ProgressDialog(mProgress, activity, title, file == null ? "" : file.getName(), message, true);
             mProgress.show();
+
+            mViewModel.mBinder.getService().setExtractTexturesListener(mViewModel.mCurrentFragment);
         }
     }
     
@@ -154,9 +159,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                ExtractTexturesService extractTexturesService = binder.getService();
-                extractTexturesService.setExtractTexturesListener(ExtractTexturesFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                ExtractTexturesService extractTexturesService = mViewModel.mBinder.getService();
+                extractTexturesService.setExtractTexturesListener(mViewModel.mCurrentFragment);
             }
 
             @Override

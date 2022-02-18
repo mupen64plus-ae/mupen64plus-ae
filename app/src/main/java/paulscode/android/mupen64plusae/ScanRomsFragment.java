@@ -72,6 +72,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         boolean mInProgress = false;
 
         boolean mScanRomsOnActivityCreated = false;
+        ScanRomsFragment mCurrentFragment = null;
     }
     DataViewModel mViewModel;
 
@@ -80,6 +81,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         super.onAttach(context);
 
         mViewModel = new ViewModelProvider(requireActivity()).get(ScanRomsFragment.DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
         if (mViewModel.mScanRomsOnActivityCreated) {
             mViewModel.mScanRomsOnActivityCreated = false;
@@ -97,7 +99,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
             mProgress.show();
 
             CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
-            cacheRomInfoService.SetCacheRomInfoListener(ScanRomsFragment.this);
+            cacheRomInfoService.SetCacheRomInfoListener(mViewModel.mCurrentFragment);
         }
     }
     
@@ -179,7 +181,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
                 mViewModel.mBinder = (LocalBinder) service;
                 CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
-                cacheRomInfoService.SetCacheRomInfoListener(ScanRomsFragment.this);
+                cacheRomInfoService.SetCacheRomInfoListener(mViewModel.mCurrentFragment);
             }
 
             @Override
