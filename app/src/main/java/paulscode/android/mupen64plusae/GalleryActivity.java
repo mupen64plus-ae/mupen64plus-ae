@@ -153,6 +153,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     // Launch a game after searching is complete
     private String mLaunchGameAfterScan = "";
+    private String mScanForGameOnResume = "";
 
     private ConfigFile mConfig;
 
@@ -598,6 +599,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // This is called here rather than onCreate otherwise onQueryTextChange is called on creation
         createSearchMenu();
+
+        // A game that did not exist in the gallery was requested to be searched for
+        if (!TextUtils.isEmpty(mScanForGameOnResume)) {
+            mCacheRomInfoFragment.refreshRoms(mScanForGameOnResume, true, true, false, false,
+                    true, mAppData, mGlobalPrefs);
+        }
     }
 
     @Override
@@ -750,10 +757,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         } else if (scanOnFailure){
             // We want to launch the game after scan completes
             mLaunchGameAfterScan = givenRomPath;
-
-            // Add it to the gallery
-            mCacheRomInfoFragment.refreshRoms(romPathUri.toString(), true, true, false, false,
-                    true, mAppData, mGlobalPrefs);
+            mScanForGameOnResume = romPathUri.toString();
         }
 
         if (foundItem == null && !scanOnFailure) {
