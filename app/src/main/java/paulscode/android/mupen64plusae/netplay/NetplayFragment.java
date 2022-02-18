@@ -66,6 +66,7 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
         private NetplayService.LocalBinder mNetplayServiceBinder;
 
         private boolean mIsNetplayRunning = false;
+        private NetplayFragment mCurrentFragment = null;
     }
 
     DataViewModel mViewModel;
@@ -99,7 +100,7 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
                 mViewModel.mNetplayServiceBinder = (NetplayService.LocalBinder) service;
-                mViewModel.mNetplayServiceBinder.getService().startListening(NetplayFragment.this);
+                mViewModel.mNetplayServiceBinder.getService().startListening(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -188,7 +189,14 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
         super.onAttach(context);
 
         mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
-        startNetplayServer();
+        if (!mViewModel.mIsNetplayRunning) {
+            startNetplayServer();
+        }
+
+        if (mViewModel.mNetplayServiceBinder != null) {
+            mViewModel.mNetplayServiceBinder.getService().startListening(mViewModel.mCurrentFragment);
+        }
     }
 }

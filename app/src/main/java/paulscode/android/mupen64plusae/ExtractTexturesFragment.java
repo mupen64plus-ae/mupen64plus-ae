@@ -62,7 +62,7 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
 
         //Service connection for the progress dialog
         private ServiceConnection mServiceConnection;
-        LocalBinder mBinder;
+        LocalBinder mBinder = null;
 
         private Uri mTexturesFile = null;
         private boolean mInProgress = false;
@@ -87,7 +87,9 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
             mProgress = new ProgressDialog(mProgress, activity, title, file == null ? "" : file.getName(), message, true);
             mProgress.show();
 
-            mViewModel.mBinder.getService().setExtractTexturesListener(mViewModel.mCurrentFragment);
+            if (mViewModel.mBinder != null) {
+                mViewModel.mBinder.getService().setExtractTexturesListener(mViewModel.mCurrentFragment);
+            }
         }
     }
     

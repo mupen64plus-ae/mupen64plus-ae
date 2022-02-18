@@ -62,7 +62,7 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
 
         //Service connection for the progress dialog
         ServiceConnection mServiceConnection;
-        LocalBinder mBinder;
+        LocalBinder mBinder = null;
 
         Uri mSource = null;
         File mDestination = null;
@@ -88,7 +88,9 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
             mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
             mProgress.show();
 
-            mViewModel.mBinder.getService().setCopyFromSdListener(mViewModel.mCurrentFragment);
+            if (mViewModel.mBinder != null) {
+                mViewModel.mBinder.getService().setCopyFromSdListener(mViewModel.mCurrentFragment);
+            }
         }
     }
     

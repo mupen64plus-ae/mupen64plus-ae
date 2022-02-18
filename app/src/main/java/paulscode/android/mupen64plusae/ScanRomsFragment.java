@@ -56,7 +56,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         public DataViewModel() { }
 
         //Service connection for the progress dialog
-        LocalBinder mBinder;
+        LocalBinder mBinder = null;
 
         AppData mAppData = null;
 
@@ -98,8 +98,10 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
             mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
             mProgress.show();
 
-            CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
-            cacheRomInfoService.SetCacheRomInfoListener(mViewModel.mCurrentFragment);
+            if (mViewModel.mBinder != null) {
+                CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
+                cacheRomInfoService.SetCacheRomInfoListener(mViewModel.mCurrentFragment);
+            }
         }
     }
     

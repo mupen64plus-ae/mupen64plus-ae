@@ -58,7 +58,7 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
         //Service connection for the progress dialog
         private ServiceConnection mServiceConnection;
-        LocalBinder mBinder;
+        LocalBinder mBinder = null;
 
         private ArrayList<String> mDeleteFilesPath = new ArrayList<>();
         private ArrayList<String> mFilter = new ArrayList<>();
@@ -83,7 +83,9 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
             mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
             mProgress.show();
 
-            mViewModel.mBinder.getService().setDeleteFilesListener(mViewModel.mCurrentFragment);
+            if (mViewModel.mBinder != null) {
+                mViewModel.mBinder.getService().setDeleteFilesListener(mViewModel.mCurrentFragment);
+            }
         }
     }
 
