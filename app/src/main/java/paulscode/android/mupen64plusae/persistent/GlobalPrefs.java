@@ -420,7 +420,7 @@ public class GlobalPrefs
     // ... add more as needed
 
     // Shared preferences default values
-    static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
+    static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Accurate";
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
     public static final String DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "Everything";
     static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
@@ -904,9 +904,9 @@ public class GlobalPrefs
         {
             defaultEmulationProfile = "GlideN64-Very-Accurate";
         }
-        else if(supportedGlesVersion.equals("3.1") || supportedGlesVersion.equals("3.2"))
+        else if(AppData.isAngleRenderer())
         {
-            defaultEmulationProfile = "Glide64-Accurate";
+            defaultEmulationProfile = "GlideN64-Very-Accurate";
         }
 
         return defaultEmulationProfile;
