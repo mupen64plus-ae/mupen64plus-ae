@@ -64,6 +64,9 @@ void GLInfo::init() {
 		renderer = Renderer::Tegra;
 	LOG(LOG_VERBOSE, "OpenGL renderer: %s", strRenderer);
 
+	if (strstr(strDriverVersion, "ANGLE") != nullptr)
+		renderer = Renderer::Angle;
+
 	int numericVersion = majorVersion * 10 + minorVersion;
 	if (isGLES2) {
 		imageTextures = false;
@@ -190,7 +193,7 @@ void GLInfo::init() {
 #ifdef OS_ANDROID
 	eglImage = eglImage &&
 	        ( (isGLES2 && GraphicBufferWrapper::isSupportAvailable()) || (isGLESX && GraphicBufferWrapper::isPublicSupportAvailable()) ) &&
-		    (renderer != Renderer::PowerVR) && (renderer != Renderer::Tegra);
+		    (renderer != Renderer::PowerVR) && (renderer != Renderer::Tegra) && (renderer != Renderer::Angle);
 #endif
 
 	if (renderer == Renderer::Intel) {
