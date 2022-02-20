@@ -12,10 +12,6 @@ android {
         repositories {
             mavenCentral()
             google()
-            maven {
-                allowInsecureProtocol true
-                url 'http://4thline.org/m2'
-            }
         }
     }
 
