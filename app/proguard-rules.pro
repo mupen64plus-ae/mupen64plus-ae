@@ -85,3 +85,12 @@
 -keep class * extends com.google.api.client.json.GenericJson { *; }
 -keep class com.google.api.services.drive.** { *; }
 -keepclassmembers class * { @com.google.api.client.util.Key <fields>; }
+-keep class com.amazon.device.ads.** { *; }
+-keep public class com.smaato.sdk.** { *; }
+-keep public interface com.smaato.sdk.** { *; }
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.smaato.sdk.inject.Component
+-dontwarn com.smaato.sdk.inject.Provides
+
+-keep class com.google.android.gms.ads.admanager.** { *; }
+-keep class com.intergi.playwiresdk.ads.view.banner.** { *; }

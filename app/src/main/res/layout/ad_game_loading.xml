@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:padding="0dp"
+    android:layout_width="wrap_content"
+    android:gravity="center_horizontal"
+    android:layout_height="wrap_content">
+
+    <com.intergi.playwiresdk.PWBannerView
+        android:id="@+id/ad_loading_view"
+        android:layout_height="250dp"
+        android:layout_width="300dp"
+        android:minHeight="250dp"
+        android:minWidth="300dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        custom:ad_unit_name= "Banner-300x250"
+        custom:autoload="false"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

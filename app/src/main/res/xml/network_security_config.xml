@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">paulscode.com</domain>
         <domain includeSubdomains="true">zurita.me</domain>
+        <base-config cleartextTrafficPermitted="true" />
     </domain-config>
 </network-security-config>

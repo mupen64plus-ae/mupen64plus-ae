@@ -8,6 +8,7 @@
     <uses-feature android:name="android.hardware.gamepad" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.hardware.location.network" />
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="false" />
@@ -25,7 +26,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -64,8 +65,20 @@
         android:requestLegacyExternalStorage="true"
         android:hasFragileUserData="true"
         android:allowNativeHeapPointerTagging="false"
+        tools:replace="android:label"
         tools:ignore="UnusedAttribute"
         android:fullBackupContent="@xml/backup_descriptor">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true"/>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6531503260671471~1849480163"/>
+
+        <activity android:name="com.amazon.device.ads.DTBInterstitialActivity"/>
+        <activity android:name="com.amazon.device.ads.DTBAdActivity"/>
+        <activity android:name="com.google.android.gms.ads.AdActivity" android:multiprocess="true"/>
 
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"

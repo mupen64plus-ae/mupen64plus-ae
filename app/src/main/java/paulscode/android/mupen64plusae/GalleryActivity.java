@@ -61,19 +61,32 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.android.play.core.tasks.Task;
+import com.intergi.playwiresdk.PWBannerView;
+import com.intergi.playwiresdk.PlaywireSDK;
+import com.intergi.playwiresdk_amazon.PWAdBidder_Amazon;
+import com.intergi.playwiresdk_prebid.PWAdBidder_Prebid;
+import com.intergi.playwiresdk_smaato.PWAdMediator_Smaato;
+import com.ironsource.mediationsdk.IronSource;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -172,6 +185,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     List<GalleryItem> mItemsCache = new ArrayList<>();
     List<GalleryItem> mAllItems = new ArrayList<>();
     List<GalleryItem> mRecentItemsCache = new ArrayList<>();
+
+    public static class GalleryActivityData extends ViewModel
+    {
+        public GalleryActivityData() { }
+
+        // Ads
+        private MutableLiveData<Boolean> mAreAdsReadyToBeDisplayed;
+
+        public MutableLiveData<Boolean> getReadyToShowAds() {
+            if (mAreAdsReadyToBeDisplayed == null) {
+                mAreAdsReadyToBeDisplayed = new MutableLiveData<>();
+            }
+            return mAreAdsReadyToBeDisplayed;
+        }
+    }
+
+    GalleryActivityData mViewModelData;
+
+    boolean mShowAds = false;
 
     ActivityResultLauncher<Intent> mLaunchGame = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -341,6 +373,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         super.onCreate( savedInstanceState );
 
+        mViewModelData = new ViewModelProvider(this).get(GalleryActivityData.class);
+
         if( savedInstanceState != null )
         {
             mSelectedItem = null;
@@ -369,6 +403,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Lay out the content
         setContentView( R.layout.gallery_activity );
+
         mGridView = findViewById( R.id.gridview );
 
         FloatingActionButton floatingActionButton = findViewById(R.id.menuItem_refreshRoms);
@@ -617,6 +652,35 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
             }
         }
+
+        mShowAds = !mAppData.isPro && !mAppData.isAmazon && !mAppData.isAndroidTv;
+
+        if (mShowAds) {
+            // Create the observer which updates the UI.
+            final Observer<Boolean> readyToShowAdsObserver = newReadyToShowAds -> {
+                // Update the UI, in this case
+                refreshGridAsync();
+            };
+
+            mViewModelData.getReadyToShowAds().observe(this, readyToShowAdsObserver);
+
+            if( savedInstanceState == null ) {
+                PWAdBidder_Amazon.Companion.register(getApplicationContext());
+                PWAdBidder_Prebid.Companion.register(getApplicationContext());
+                PWAdMediator_Smaato.Companion.register(getApplication());
+
+                PlaywireSDK.INSTANCE.initialize(this, () -> {
+                    mViewModelData.getReadyToShowAds().setValue(true);
+                    return null;
+                });
+/*
+                List<String> testDeviceIds = Collections.singletonList("B0E4044F46CEA2CEBB33F72EDEC1B49E");
+                RequestConfiguration configuration =
+                        new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+                MobileAds.setRequestConfiguration(configuration);
+ */
+            }
+        }
     }
 
     @Override
@@ -624,6 +688,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Log.i("GalleryActivity", "onPause");
 
         super.onPause();
+
+        if (mShowAds) {
+            IronSource.onPause(this);
+        }
 
         GridLayoutManager layoutManager = (GridLayoutManager)mGridView.getLayoutManager();
         if (layoutManager != null) {
@@ -637,6 +705,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Log.i("GalleryActivity", "onResume");
 
         super.onResume();
+
+        if (mShowAds) {
+            IronSource.onResume(this);
+        }
 
         //mRefreshNeeded will be set to true whenever a game is launched
         if(mRefreshNeeded)
@@ -674,6 +746,34 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         savedInstanceState.putString(STATE_LAUNCH_GAME_AFTER_SCAN, mLaunchGameAfterScan);
 
         super.onSaveInstanceState( savedInstanceState );
+    }
+
+    void destroyBannerAd()
+    {
+        Log.i("GalleryActivity", "destroyBannerAd");
+
+        GalleryItem.ViewHolder holder = (GalleryItem.ViewHolder) mGridView.findViewHolderForAdapterPosition(0);
+
+        if (holder != null) {
+            PWBannerView adView = holder.itemView.findViewById(R.id.ad_gallery_item_view);
+
+            if (adView != null) {
+                Log.i("GalleryActivity", "Removed view");
+
+                // No other methods should be called on the adView after destroy() is called.
+                adView.destroy();
+
+                mGridView.removeViewAt(0);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        Log.i("GalleryActivity", "onDestroy");
+        destroyBannerAd();
+        super.onDestroy();
     }
 
     private void tagForRefreshNeeded()
@@ -1200,6 +1300,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             items = combinedItems;
         }
 
+        boolean readyToShowAds = mViewModelData.getReadyToShowAds().getValue() != null &&
+                mViewModelData.getReadyToShowAds().getValue() && !items.isEmpty();
+
+        if (readyToShowAds && !items.get(0).isAdvertisement) {
+            items.add(0, new GalleryItem(this));
+        }
+
         // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
         final GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
@@ -1209,7 +1316,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             public int getSpanSize( int position )
             {
                 // Headings will take up every span (column) in the grid
-                if( finalItems.get( position ).isHeading )
+                if( finalItems.get( position ).isHeading || finalItems.get(position).isAdvertisement)
                     return galleryColumns;
 
                 // Games will fit in a single column
@@ -1305,9 +1412,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         tagForRefreshNeeded();
 
         mSelectedItem = null;
+
         // Launch the game activity
         startGameActivity(romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
                 romArtPath, romGoodName, romDisplayName, isRestarting, isNetplayEnabled, isNetplayServer);
+
+        destroyBannerAd();
     }
 
     void startGameActivity(String romPath, String zipPath, String romMd5, String romCrc,

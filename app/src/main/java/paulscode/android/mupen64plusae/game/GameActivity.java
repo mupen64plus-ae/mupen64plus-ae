@@ -20,7 +20,10 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
+
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,15 +37,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-
 import android.os.VibratorManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
@@ -54,11 +51,29 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.intergi.playwiresdk.PWNotifier;
+import com.intergi.playwiresdk.PlaywireSDK;
+import com.intergi.playwiresdk_amazon.PWAdBidder_Amazon;
+import com.intergi.playwiresdk_prebid.PWAdBidder_Prebid;
+import com.intergi.playwiresdk_smaato.PWAdMediator_Smaato;
+import com.ironsource.mediationsdk.IronSource;
 
 import paulscode.android.mupen64plusae.R;
 
@@ -70,7 +85,6 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
 import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
-import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -83,14 +97,13 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
+import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.netplay.room.NetplayClientSetupDialog;
 import paulscode.android.mupen64plusae.netplay.room.NetplayServerSetupDialog;
-import paulscode.android.mupen64plusae.jni.CoreTypes;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.DisplayResolutionData;
@@ -99,8 +112,6 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
-
-import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
 
 //@formatter:off
 /**
@@ -180,6 +191,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private boolean mIsNetplayServer = false;
     private boolean mForceExit = false;
     private int mServerPort = 0;
+    private boolean mShowAds = false;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -206,6 +218,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private static final String STATE_NETPLAY_SERVER_DIALOG = "STATE_NETPLAY_SERVER_DIALOG";
     private NetplayServerSetupDialog mNetplayServerDialog = null;
+
+    public static class GameActivityData extends ViewModel
+    {
+        public GameActivityData() { }
+
+        // Ads
+        private MutableLiveData<Boolean> mAreAdsReadyToBeDisplayed;
+
+        public MutableLiveData<Boolean> getReadyToShowAds() {
+            if (mAreAdsReadyToBeDisplayed == null) {
+                mAreAdsReadyToBeDisplayed = new MutableLiveData<>();
+            }
+            return mAreAdsReadyToBeDisplayed;
+        }
+    }
+
+    GameActivityData mViewModelData;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -279,6 +308,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         super.setTheme( androidx.appcompat.R.style.Theme_AppCompat_NoActionBar );
+
+        mViewModelData = new ViewModelProvider(this).get(GameActivityData.class);
 
         FirebaseApp.initializeApp(getApplicationContext());
 
@@ -529,6 +560,62 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mNetplayClientDialog = (NetplayClientSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_CLIENT_DIALOG);
         mNetplayServerDialog = (NetplayServerSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_SERVER_DIALOG);
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        // Don't show ads on screens that can't fit the loading dialog with ads
+        float ratio = (float)Math.max(metrics.heightPixels, metrics.widthPixels) /
+                (float)Math.min(metrics.heightPixels, metrics.widthPixels);
+
+        mShowAds = !mAppData.isPro && !mAppData.isAmazon && !mAppData.isAndroidTv && ratio > 1.5;
+        if (mShowAds) {
+
+            // Create the observer which updates the UI.
+            final Observer<Boolean> readyToShowAdsObserver = newReadyToShowAds -> {
+                if (mCoreFragment != null) {
+                    mCoreFragment.showProgressDialogAds();
+                }
+            };
+
+            mViewModelData.getReadyToShowAds().observe(this, readyToShowAdsObserver);
+
+            if( savedInstanceState == null ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    try {
+                        String process = getProcessName(this);
+                        WebView.setDataDirectorySuffix(process);
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                PWAdBidder_Amazon.Companion.register(getApplicationContext());
+                PWAdBidder_Prebid.Companion.register(getApplicationContext());
+                PWAdMediator_Smaato.Companion.register(getApplication());
+
+                PlaywireSDK.INSTANCE.initialize(this, () -> {
+                    mViewModelData.getReadyToShowAds().setValue(true);
+                    return null;
+                });
+
+/*
+                List<String> testDeviceIds = Collections.singletonList("B0E4044F46CEA2CEBB33F72EDEC1B49E");
+                RequestConfiguration configuration =
+                        new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+                MobileAds.setRequestConfiguration(configuration);
+ */
+            }
+        }
+    }
+
+    public static String getProcessName(Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
+            if (processInfo.pid == android.os.Process.myPid()) {
+                return processInfo.processName;
+            }
+        }
+
+        return null;
     }
 
     private void fillCrashlyticsKeys()
@@ -619,7 +706,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
-                        mIsNetplayEnabled);
+                        mIsNetplayEnabled, mShowAds);
             }
 
             // Try running now in case the core service has already started
@@ -660,6 +747,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mDrawerLayout.requestFocus();
             ReloadAllMenus();
         }
+
+        if (mShowAds) {
+            IronSource.onResume(this);
+        }
     }
 
     @Override
@@ -670,6 +761,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Bundle bundle = new Bundle();
         bundle.putString("Lifecycle", "onPause");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+
+        if (mShowAds) {
+            IronSource.onPause(this);
+        }
     }
 
     @Override
@@ -1018,7 +1113,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (mCoreFragment.hasServiceStarted()) {
             mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
 
-            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerOpenState) {
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerOpenState ||
+                    !mCoreFragment.getUserAdDismissState()) {
                 mCoreFragment.pauseEmulator();
             } else {
                 mCoreFragment.resumeEmulator();

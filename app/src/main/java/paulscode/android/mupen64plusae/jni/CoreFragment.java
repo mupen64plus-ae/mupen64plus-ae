@@ -27,7 +27,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Vibrator;
+import android.text.InputType;
+import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
@@ -37,9 +43,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Vibrator;
-import android.text.InputType;
-import android.util.Log;
+import com.intergi.playwiresdk.PWBannerView;
 
 import paulscode.android.mupen64plusae.R;
 
@@ -60,7 +64,8 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
 import paulscode.android.mupen64plusae.util.Utility;
 
-public class CoreFragment extends Fragment implements CoreServiceListener, CoreService.LoadingDataListener
+public class CoreFragment extends Fragment implements CoreServiceListener, CoreService.LoadingDataListener,
+        ProgressDialog.OnCancelListener
 {
     public interface CoreEventListener
     {
@@ -132,6 +137,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     //Progress dialog for extracting ROMs
     private ProgressDialog mProgress = null;
 
+    private PWBannerView mBannerView = null;
+
     // Speed info - used internally
     public static final int BASELINE_SPEED = 100;
     private static final int DEFAULT_SPEED = 250;
@@ -168,6 +175,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         int mCustomSpeed = DEFAULT_SPEED;
         boolean mAskingForExit = false;
         boolean mLoadingInProgress = false;
+        boolean mLoadingStarted = false;
+        boolean mReadyToShowAds = false;
+        boolean mDialogReadyToBeDismissed = false;
+        boolean mUserHasDismissed = false;
+        int mDialogTimeRemainingSec = -1;
+        Handler mHandler;
+
         CoreFragment mCurrentFragment = null;
     }
 
@@ -187,7 +201,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mViewModel = new ViewModelProvider(requireActivity()).get(CoreFragment.DataViewModel.class);
         mViewModel.mCurrentFragment = this;
 
-        if (mViewModel.mLoadingInProgress) {
+        if (mViewModel.mHandler == null) {
+            mViewModel.mHandler = new Handler(Looper.getMainLooper());
+        }
+
+        if (mViewModel.mLoadingStarted &&
+                (mViewModel.mLoadingInProgress || !mViewModel.mUserHasDismissed)) {
             CharSequence title = activity.getString( R.string.extractRomTask_title );
             CharSequence message = activity.getString( R.string.toast_pleaseWait );
 
@@ -200,8 +219,18 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 displayName = mViewModel.mRomDisplayName;
             }
 
-            mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
+            mProgress = new ProgressDialog( mProgress, activity, title, displayName, message,
+                    !mViewModel.mUserHasDismissed, R.string.continue_title );
+            mProgress.setOnCancelListener(this);
+
+            if (!mViewModel.mDialogReadyToBeDismissed) {
+                mProgress.setCancelButtonState(false);
+            }
             mProgress.show();
+
+            if (mViewModel.mReadyToShowAds) {
+                initBannerAd();
+            }
         }
 
         if (mViewModel.mBinder != null) {
@@ -221,6 +250,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mProgress != null)
         {
             mProgress.dismiss();
+        }
+
+        if (mBannerView != null) {
+            mBannerView.destroy();
         }
 
         super.onDetach();
@@ -333,10 +366,19 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 } else {
                     displayName = mViewModel.mRomDisplayName;
                 }
-                mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
+
+                mViewModel.mLoadingStarted = true;
+                mViewModel.mLoadingInProgress = true;
+
+                mProgress = new ProgressDialog( mProgress, activity, title, displayName, message,
+                        !mViewModel.mUserHasDismissed, R.string.continue_title );
+                mProgress.setOnCancelListener(this);
+                mProgress.setCancelButtonState(false);
                 mProgress.show();
 
-                mViewModel.mLoadingInProgress = true;
+                if (mViewModel.mReadyToShowAds) {
+                    initBannerAd();
+                }
             });
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
@@ -350,16 +392,165 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         try {
             Activity activity = requireActivity();
-            activity.runOnUiThread(() -> {
-                if (mProgress != null) {
-                    mProgress.dismiss();
-                    if (mCoreEventListener != null) {
-                        mCoreEventListener.onGameStarted();
+
+            if (mViewModel.mDialogReadyToBeDismissed) {
+                activity.runOnUiThread(() -> {
+                    if (mViewModel.mCurrentFragment.mProgress != null) {
+                        mViewModel.mCurrentFragment.mProgress.dismiss();
                     }
+
+                    if (mViewModel.mCurrentFragment.mCoreEventListener != null) {
+                        mViewModel.mCurrentFragment.mCoreEventListener.onGameStarted();
+                    }
+                });
+            } else {
+                mViewModel.mCurrentFragment.pauseEmulator();
+
+                // Only start this timer if an ad timer hasn't been started yet
+                if (mViewModel.mDialogTimeRemainingSec == -1) {
+                    // Have a timeout of 10 seconds to show an ad
+                    mViewModel.mDialogTimeRemainingSec = 10;
+
+                    mViewModel.mHandler.removeCallbacksAndMessages(null);
+                    mViewModel.mHandler.postDelayed(() -> {
+                        if (mViewModel != null) {
+                            mViewModel.mCurrentFragment.updateButtonTimeRemaining();
+                        }
+                    }, 1000);
                 }
-            });
+            }
         } catch (java.lang.IllegalStateException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void OnCancel() {
+        if (mViewModel != null && mViewModel.mDialogReadyToBeDismissed && !mViewModel.mLoadingInProgress) {
+            if (mViewModel.mCurrentFragment.mProgress != null) {
+                mViewModel.mCurrentFragment.mProgress.dismiss();
+            }
+
+            if (mCoreEventListener != null) {
+                mCoreEventListener.onGameStarted();
+            }
+
+            if (mViewModel.mCurrentFragment.mBannerView != null) {
+                mViewModel.mCurrentFragment.mBannerView.destroy();
+            }
+
+            mViewModel.mCurrentFragment.resumeEmulator();
+
+            mViewModel.mUserHasDismissed = true;
+        }
+    }
+
+    public void showProgressDialogAds()
+    {
+        if (mViewModel != null) {
+            mViewModel.mReadyToShowAds = true;
+            Log.i(TAG, "showProgressDialogAds");
+            initBannerAd();
+        }
+    }
+
+    public void updateButtonTimeRemaining() {
+
+        if (mViewModel.mCurrentFragment.mProgress == null) {
+            return;
+        }
+
+        if (mViewModel.mDialogTimeRemainingSec > 0)
+            mViewModel.mDialogTimeRemainingSec--;
+
+        String text = "(" + mViewModel.mDialogTimeRemainingSec + ")";
+        mViewModel.mCurrentFragment.mProgress.appendCancelButtonText(text);
+
+        if (mViewModel.mDialogTimeRemainingSec == 0) {
+            mViewModel.mCurrentFragment.mProgress.appendCancelButtonText("");
+        }
+
+        if (mViewModel.mDialogTimeRemainingSec == 0 && !mViewModel.mLoadingInProgress) {
+            mViewModel.mDialogReadyToBeDismissed = true;
+            mViewModel.mCurrentFragment.mProgress.setCancelButtonState(true);
+        } else {
+            mViewModel.mHandler.postDelayed(() -> mViewModel.mCurrentFragment.updateButtonTimeRemaining(), 1000);
+        }
+    }
+
+    private void initBannerAd()
+    {
+        Activity activity = null;
+
+        try {
+            activity = requireActivity();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        if (mProgress == null || activity == null) {
+            return;
+        }
+
+        View adLayoutView = View.inflate( activity, R.layout.ad_game_loading, null );
+        mProgress.addView(adLayoutView);
+
+        // Banner instantiated using Storyboard
+        // Configure if you require being delegate or you want to give it an adUnitName by code
+        mBannerView = adLayoutView.findViewById(R.id.ad_loading_view);
+
+        if (mBannerView != null) {
+
+            mBannerView.setListener(new PWBannerView.Listener() {
+                @Override
+                public void onBannerAdLoaded() {
+                    Log.i(TAG, "Banner ad loaded");
+
+                    if (!mViewModel.mDialogReadyToBeDismissed) {
+                        // Have a timeout of 5 seconds to show an ad
+                        if (mViewModel.mDialogTimeRemainingSec == -1 || mViewModel.mDialogTimeRemainingSec > 5) {
+                            mViewModel.mDialogTimeRemainingSec = 5;
+                        }
+
+                        mViewModel.mHandler.removeCallbacksAndMessages(null);
+                        mViewModel.mHandler.postDelayed(() -> {
+                            if (mViewModel != null) {
+                                mViewModel.mCurrentFragment.updateButtonTimeRemaining();
+                            }
+                        }, 1000);
+                    }
+                }
+
+                @Override
+                public void onBannerAdFailedToLoad() {
+                    Log.i(TAG, "Banner ad failed to load");
+                }
+
+                @Override
+                public void onBannerAdOpened() {
+                    Log.i(TAG, "Banner ad opened");
+                }
+
+                @Override
+                public void onBannerAdClosed() {
+                    Log.i(TAG, "Banner ad failed to closed");
+                }
+
+                @Override
+                public void onBannerAdClicked() {
+                    Log.i(TAG, "Banner ad clicked");
+                }
+
+                @Override
+                public void onBannerAdImpression() {
+                    Log.i(TAG, "Banner ad impression");
+                }
+            });
+
+            // load if autoload is set to false
+            if (mBannerView.getLoadStatus() == PWBannerView.LoadStatus.None) {
+                mBannerView.setAdUnitName("Banner-300x250");
+                mBannerView.load();
+            }
         }
     }
 
@@ -372,7 +563,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean showAds)
     {
         Log.i(TAG, "startCore");
 
@@ -391,6 +582,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mViewModel.mVideoRenderWidth = videoRenderWidth;
         mViewModel.mVideoRenderHeight = videoRenderHeight;
         mViewModel.mUsingNetplay = usingNetplay;
+        mViewModel.mDialogReadyToBeDismissed = !showAds;
+        mViewModel.mUserHasDismissed = !showAds;
 
         if(!mViewModel.mIsRunning)
         {
@@ -456,7 +649,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     {
         Log.i(TAG, "resumeEmulator");
 
-        if(mCoreService != null && !mViewModel.mAskingForExit)
+        if(mCoreService != null && !mViewModel.mAskingForExit && mViewModel.mDialogReadyToBeDismissed)
         {
             mCoreService.resumeEmulator();
         }
@@ -980,6 +1173,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             mCoreService.setCustomSpeed(mViewModel.mCustomSpeed);
         }
+    }
+
+    public boolean getUserAdDismissState()
+    {
+        return mViewModel != null && mViewModel.mUserHasDismissed;
     }
 
     public void updateControllerConfig(int player, boolean plugged, CoreTypes.PakType pakType)

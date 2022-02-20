@@ -598,7 +598,7 @@
     <string name="confirmClearData_message">¿Seguro que desea borrar el paquetes de texturas seleccionado?</string>
     <string name="confirmRemoveFromLibrary_message">¿Seguro que desea eliminar ese juego de la librería?</string>
     <string name="confirmTryPro">Pruebe M64Plus FZ Pro</string>
-    <string name="confirmPleaseTryPro">Si le gusta usar M64Plus FZ, considere apoyar al desarrollador con comprando la versión Pro. ¡La versión Pro agrega soporte para servidor de netplay y soporte para Google Drive!</string>
+    <string name="confirmPleaseTryPro">Si le gusta usar M64Plus FZ, considere apoyar al desarrollador con comprando la versión Pro. ¡La versión Pro agrega soporte para servidor de netplay, Google Drive, y ningún aviso!</string>
     <string name="confirmRemindMeLater">Recuérdame más tarde</string>
     <string name="confirmNoThanks">No, gracias</string>
 
@@ -688,6 +688,7 @@
 
     <!-- ROM unzipping -->
     <string name="extractRomTask_title">Preparando datos del juego…</string>
+    <string name="continue_title">Continuar%1$s</string>
 
     <!--ROM Scanning-->
     <string name="scanning_title">Escaneando…</string>

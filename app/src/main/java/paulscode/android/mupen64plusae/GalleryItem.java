@@ -41,6 +41,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.intergi.playwiresdk.PWBannerView;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Comparator;
@@ -65,8 +67,18 @@ public class GalleryItem
     public final String zipUri;
     public final WeakReference<Context> context;
     public final boolean isHeading;
+    public final boolean isAdvertisement;
     public BitmapDrawable artBitmap;
     public final float scale;
+
+    public enum GalleryItemType
+    {
+        GAME,
+        HEADING,
+        ADVERTISEMENT
+    }
+
+    private final GalleryItemType galleryItemType;
     
     public GalleryItem(Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName,
                        String displayName, String romUri, String zipUri, String artPath, int lastPlayed, float scale )
@@ -85,6 +97,8 @@ public class GalleryItem
         this.scale = scale;
         this.romUri = romUri;
         this.zipUri = zipUri;
+        this.galleryItemType = GalleryItemType.GAME;
+        this.isAdvertisement = false;
     }
     
     GalleryItem( Context context, String headingName)
@@ -103,6 +117,28 @@ public class GalleryItem
         this.romUri = null;
         this.zipUri = null;
         this.scale = 1.0f;
+        this.galleryItemType = GalleryItemType.HEADING;
+        this.isAdvertisement = false;
+    }
+
+    GalleryItem(Context context)
+    {
+        this.goodName = "";
+        this.displayName = "";
+        this.context = new WeakReference<>(context);
+        this.isHeading = true;
+        this.md5 = "";
+        this.crc = "";
+        this.headerName = "";
+        this.countryCode = CountryCode.UNKNOWN;
+        this.artPath = "";
+        this.artBitmap = null;
+        this.lastPlayed = 0;
+        this.romUri = null;
+        this.zipUri = null;
+        this.scale = 1.0f;
+        this.galleryItemType = GalleryItemType.ADVERTISEMENT;
+        this.isAdvertisement = true;
     }
     
     void loadBitmap(Context context)
@@ -185,7 +221,7 @@ public class GalleryItem
         public void onClick( View view )
         {
             Context tempContext = mActivity.get();
-            if ( tempContext instanceof GalleryActivity )
+            if ( tempContext instanceof GalleryActivity && !item.isAdvertisement)
             {
                 GalleryActivity activity = (GalleryActivity) tempContext;
                 activity.onGalleryItemClick( item );
@@ -197,7 +233,7 @@ public class GalleryItem
         {
             Context tempContext = mActivity.get();
 
-            if ( tempContext instanceof GalleryActivity )
+            if ( tempContext instanceof GalleryActivity && !item.isAdvertisement)
             {
                 GalleryActivity activity = (GalleryActivity) tempContext;
                 return activity.onGalleryItemLongClick( item );
@@ -234,12 +270,14 @@ public class GalleryItem
         @Override
         public int getItemViewType( int position )
         {
-            return mObjects.get( position ).isHeading ? 1 : 0;
+            return mObjects.get( position ).galleryItemType.ordinal();
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position )
         {
+            View view = holder.itemView;
+
             // Clear the now-offscreen bitmap to conserve memory, also cancel any tasks reading the bitmap
             if( holder.item != null )
             {
@@ -247,58 +285,104 @@ public class GalleryItem
             }
 
             // Called by RecyclerView to display the data at the specified position.
-            View view = holder.itemView;
             GalleryItem item = mObjects.get( position );
             holder.item = item;
-            
-            if( item != null )
+            Activity tempActivity = mActivity.get();
+            GalleryActivity activity = (GalleryActivity) tempActivity;
+
+            if( item != null && tempActivity != null)
             {
-                ImageView artView = view.findViewById( R.id.imageArt );
-                
-                TextView tv1 = view.findViewById( R.id.text1 );
-                tv1.setText( item.toString() );
-
-                Activity tempActivity = mActivity.get();
-
-                if (tempActivity != null) {
+                if( item.galleryItemType == GalleryItemType.HEADING )
+                {
                     LinearLayout linearLayout = view.findViewById( R.id.galleryItem );
-                    GalleryActivity activity = (GalleryActivity) tempActivity;
+                    ImageView artView = view.findViewById( R.id.imageArt );
+                    TextView tv1 = view.findViewById( R.id.text1 );
+                    tv1.setText( item.toString() );
+                    tv1.setText( item.toString().toUpperCase() );
+                    tv1.setGravity(Gravity.BOTTOM);
+                    view.setClickable( false );
+                    view.setLongClickable( false );
+                    linearLayout.setPadding( 0, 0, 0, 0 );
+                    tv1.setPadding( 25, 10, 0, 0 );
+                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 14.5f );
+                    tv1.setLetterSpacing(0.1f);
+                    artView.setVisibility( View.GONE );
+                } else if (item.galleryItemType == GalleryItemType.ADVERTISEMENT) {
+                    initBannerAd(view);
+                } else {
+                    // Else, it's a game
+                    LinearLayout linearLayout = view.findViewById( R.id.galleryItem );
+                    ImageView artView = view.findViewById( R.id.imageArt );
+                    TextView tv1 = view.findViewById( R.id.text1 );
+                    tv1.setText( item.toString() );
+                    view.setClickable( true );
+                    view.setLongClickable( true );
+                    linearLayout.setPadding( activity.galleryHalfSpacing,
+                            activity.galleryHalfSpacing, activity.galleryHalfSpacing,
+                            activity.galleryHalfSpacing );
+                    tv1.setPadding( 0, 0, 0, 0 );
+                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f*item.scale );
+                    artView.setVisibility( View.VISIBLE );
 
-                    if( item.isHeading )
-                    {
-                        tv1.setText( item.toString().toUpperCase() );
-                        tv1.setGravity(Gravity.BOTTOM);
-                        view.setClickable( false );
-                        view.setLongClickable( false );
-                        linearLayout.setPadding( 0, 0, 0, 0 );
-                        tv1.setPadding( 25, 10, 0, 0 );
-                        tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 14.5f );
-                        tv1.setLetterSpacing(0.1f);
-                        artView.setVisibility( View.GONE );
+                    artView.setImageResource( R.drawable.default_coverart );
+
+                    //Load the real cover art in a background task
+                    mLoadBitMapTask.loadInBackGround(holder.hashCode(), item.artPath, artView);
+
+                    artView.getLayoutParams().width = activity.galleryWidth;
+                    artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
+
+                    LinearLayout layout = view.findViewById( R.id.info );
+                    layout.getLayoutParams().width = activity.galleryWidth;
+                    layout.getLayoutParams().height = (int)(activity.getResources().getDimension( R.dimen.galleryTextHeight )*item.scale);
+                }
+            }
+        }
+
+        private void initBannerAd(View view)
+        {
+            // Banner instantiated using Storyboard
+            // Configure if you require being delegate or you want to give it an adUnitName by code
+            PWBannerView adView = view.findViewById(R.id.ad_gallery_item_view);
+
+            if (adView != null) {
+
+                adView.setListener(new PWBannerView.Listener() {
+                    @Override
+                    public void onBannerAdLoaded() {
+
                     }
-                    else
-                    {
-                        view.setClickable( true );
-                        view.setLongClickable( true );
-                        linearLayout.setPadding( activity.galleryHalfSpacing,
-                                activity.galleryHalfSpacing, activity.galleryHalfSpacing,
-                                activity.galleryHalfSpacing );
-                        tv1.setPadding( 0, 0, 0, 0 );
-                        tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f*item.scale );
-                        artView.setVisibility( View.VISIBLE );
 
-                        artView.setImageResource( R.drawable.default_coverart );
+                    @Override
+                    public void onBannerAdFailedToLoad() {
 
-                        //Load the real cover art in a background task
-                        mLoadBitMapTask.loadInBackGround(holder.hashCode(), item.artPath, artView);
-
-                        artView.getLayoutParams().width = activity.galleryWidth;
-                        artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
-
-                        LinearLayout layout = view.findViewById( R.id.info );
-                        layout.getLayoutParams().width = activity.galleryWidth;
-                        layout.getLayoutParams().height = (int)(activity.getResources().getDimension( R.dimen.galleryTextHeight )*item.scale);
                     }
+
+                    @Override
+                    public void onBannerAdOpened() {
+
+                    }
+
+                    @Override
+                    public void onBannerAdClosed() {
+
+                    }
+
+                    @Override
+                    public void onBannerAdClicked() {
+
+                    }
+
+                    @Override
+                    public void onBannerAdImpression() {
+
+                    }
+                });
+
+                // load if autoload is set to false
+                if (adView.getLoadStatus() == PWBannerView.LoadStatus.None) {
+                    adView.setAdUnitName("Banner-320x50");
+                    adView.load();
                 }
             }
         }
@@ -311,11 +395,17 @@ public class GalleryItem
                     .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
             View view;
+
             if (inflater != null) {
-                view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
+                if (viewType == GalleryItemType.GAME.ordinal() || viewType == GalleryItemType.HEADING.ordinal()) {
+                    view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
+                } else {
+                    view = inflater.inflate( R.layout.ad_gallery_item, parent, false );
+                }
             } else {
                 view = new View(tempActivity, null);
             }
+
             return new ViewHolder( mActivity, view );
         }
     }

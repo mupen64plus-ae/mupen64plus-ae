@@ -792,7 +792,7 @@
     <string name="confirmClearData_message">Are you sure you want to clear the selected high resolution texture pack?</string>
     <string name="confirmRemoveFromLibrary_message">Are you sure you want to remove this game from the library?</string>
     <string name="confirmTryPro">Try M64Plus FZ Pro</string>
-    <string name="confirmPleaseTryPro">If you enjoy using M64Plus FZ, please consider supporting the developer by buying the Pro version. The Pro version adds netplay server support and google drive support!</string>
+    <string name="confirmPleaseTryPro">If you enjoy using M64Plus FZ, please consider supporting the developer by buying the Pro version. The Pro version adds netplay server support, google drive support, and no ads!</string>
     <string name="confirmRemindMeLater">Remind me later</string>
     <string name="confirmNoThanks">No, thanks</string>
 
@@ -880,6 +880,7 @@
 
     <!-- ROM preparation -->
     <string name="extractRomTask_title">Preparing game data…</string>
+    <string name="continue_title">Continue%1$s</string>
 
     <!-- Netplay -->
     <string name="startNetplay_title">Start</string>
