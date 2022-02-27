@@ -5,14 +5,14 @@ on: [push, pull_request]
 jobs:
   build:
     name: Build Mupen64Plus-AE
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container: cirrusci/android-sdk:30-ndk
 
     steps:
     - name: Checkout mupen64plus-ae repo 
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
-        submodules: true
+        fetch-depth: 0
 
     - name: Decode debug keystore
       env:
