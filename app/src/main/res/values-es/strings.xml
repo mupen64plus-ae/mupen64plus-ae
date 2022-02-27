@@ -357,7 +357,7 @@
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-puntos</string>
     <string name="gliden64_bilinear_mode_entry_standard">Estandar</string>
     <string name="gliden64_enable_halos_removal_title">Eliminar halos alrededor de texturas filtradas</string>
-    <string name="gliden64_enable_halos_removal_summary">This can clean up odd colors around text but it can break other textures.</string>
+    <string name="gliden64_enable_halos_removal_summary">Esto puede limpiar colores extraños alrededor del texto pero puede romper otras texturas.</string>
     <string name="gliden64_max_anisotropic_filtering_title">Esto puede limpiar colores extraños alrededor del texto pero puede romper otras texturas.</string>
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Hack de pantalla ancha</string>
