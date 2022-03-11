@@ -55,7 +55,7 @@ public class NetplayRoomServer {
     private int mServerPort;
 
     // TCP server used to communicate game data
-    private ServerSocket mServerSocket;
+    private ServerSocket mServerSocket = null;
 
     // Broadcast service through NSD
     private NsdManager mNsdManager;
@@ -143,10 +143,14 @@ public class NetplayRoomServer {
 
     public int getServerPort()
     {
-        return mServerSocket.getLocalPort();
+        return mServerSocket != null ? mServerSocket.getLocalPort() : 0;
     }
 
     public void registerService() {
+        if (mServerSocket == null) {
+            return;
+        }
+
         mRegistrationListener = new NsdManager.RegistrationListener() {
 
             @Override
@@ -264,7 +268,9 @@ public class NetplayRoomServer {
     {
         mRunning = false;
         try {
-            mServerSocket.close();
+            if (mServerSocket != null) {
+                mServerSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
