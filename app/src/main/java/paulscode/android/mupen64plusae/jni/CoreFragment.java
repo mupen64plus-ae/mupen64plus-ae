@@ -96,6 +96,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          * Called when we should exit the application
          */
         void onExitFinished();
+
+        /**
+         * Called when the service is bound
+         */
+        void onBindService();
     }
     
     private static final String TAG = "CoreFragment";
@@ -148,6 +153,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         boolean mAskingForExit = false;
         boolean mLoadingInProgress = false;
         CoreFragment mCurrentFragment = null;
+        boolean mNotifyOfBoundService = false;
     }
 
     DataViewModel mViewModel;
@@ -186,14 +192,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
         else
         {
-            activity.runOnUiThread(() -> {
-                if (mProgress != null) {
-                    activity.runOnUiThread(() -> mProgress.dismiss());
-                }
-            });
+            if (mProgress != null) {
+                mProgress.dismiss();
+            }
         }
 
         if (mViewModel.mBinder != null) {
+            Log.i(TAG, "Assigning service");
             mCoreService = mViewModel.mBinder.getService();
             mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
             mCoreService.setCoreServiceListener(mViewModel.mCurrentFragment);
@@ -204,6 +209,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void onDetach()
     {
+        Log.i(TAG, "onDetach");
+
         //This can be null if this fragment is never utilized and this will be called on shutdown
         if(mProgress != null)
         {
@@ -375,6 +382,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mViewModel.mCurrentFragment.mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mViewModel.mCurrentFragment.mCoreService.setCoreServiceListener(mViewModel.mCurrentFragment);
                 mViewModel.mCurrentFragment.mCoreService.setLoadingDataListener(mViewModel.mCurrentFragment);
+
+                if (mViewModel.mCurrentFragment.mCoreEventListener != null) {
+                    mViewModel.mCurrentFragment.mCoreEventListener.onBindService();
+                }
             }
 
             @Override
@@ -401,28 +412,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setUsingNetplay(mViewModel.mUsingNetplay);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mViewModel.mServiceConnection, params);
-    }
-
-    @SuppressWarnings({"unused", "RedundantSuppression"})
-    private void actuallyStopCore()
-    {
-        Log.i(TAG, "actuallyStopCore");
-
-        if(mViewModel.mIsRunning)
-        {
-            mViewModel.mIsRunning = false;
-
-            try {
-                Activity activity = requireActivity();
-
-                activity.runOnUiThread(() -> {
-                    mCoreService = null;
-                    ActivityHelper.stopCoreService(activity.getApplicationContext(), mViewModel.mServiceConnection);
-                });
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void resumeEmulator()
@@ -527,6 +516,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public  boolean isShuttingDown()
     {
         Log.i(TAG, "isShuttingDown");
+
+        if (mCoreService == null) {
+            Log.i(TAG, "Core service is null");
+        }
 
         return mCoreService != null && mCoreService.isShuttingDown();
     }

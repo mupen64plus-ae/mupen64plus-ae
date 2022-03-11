@@ -770,6 +770,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
+    public void onBindService()
+    {
+        if(mCoreFragment.isShuttingDown())
+        {
+            Log.i(TAG, "Shutting down because previous instance hasn't finished");
+
+            runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_not_done_shutting_down ));
+
+            finishActivity();
+        }
+    }
+
+    @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
         if(mCoreFragment == null) return;
@@ -1018,16 +1031,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             finish();
         }
 
-        if(mCoreFragment.isShuttingDown())
-        {
-            Log.i(TAG, "Shutting down because previous instance hasn't finished");
-
-            runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_not_done_shutting_down ));
-
-            finishActivity();
-        }
-        else
-        {
+        if(!mCoreFragment.isShuttingDown()) {
             //This can happen if GameActivity is killed while service is running
             tryRunning();
         }
