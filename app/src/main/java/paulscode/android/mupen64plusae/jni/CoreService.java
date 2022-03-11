@@ -25,19 +25,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -45,7 +40,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -59,10 +53,8 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
@@ -740,8 +732,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             mCoreInterface.emuShutdown();
-
-            mIsRunning = false;
 
             if(mListener != null && !mIsShuttingDown)
             {
