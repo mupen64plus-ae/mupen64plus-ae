@@ -190,12 +190,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mProgress = new ProgressDialog( mProgress, activity, title, displayName, message, false );
             mProgress.show();
         }
-        else
-        {
-            if (mProgress != null) {
-                mProgress.dismiss();
-            }
-        }
 
         if (mViewModel.mBinder != null) {
             Log.i(TAG, "Assigning service");
