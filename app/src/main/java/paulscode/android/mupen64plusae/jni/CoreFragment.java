@@ -153,7 +153,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         boolean mAskingForExit = false;
         boolean mLoadingInProgress = false;
         CoreFragment mCurrentFragment = null;
-        boolean mNotifyOfBoundService = false;
     }
 
     DataViewModel mViewModel;
