@@ -749,7 +749,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             //Stop the service
-            forceExit();
+            exitGracefully();
         }
     }
 
