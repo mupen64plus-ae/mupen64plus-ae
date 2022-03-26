@@ -27,18 +27,17 @@ jobs:
            sudo cp -f debug.keystore /root/.android/.
         fi 
 
-    - name: Install
+    - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y file
-        sudo apt-get install -y gawk
+        sudo apt-get install -y --no-install-recommends file gawk
         echo y | sdkmanager "cmake;3.18.1"
         
-    - name: Set environment
+    - name: Set up environment
       run: |
         echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/23.1.7779620" >> $GITHUB_ENV
 
-    - name: Build
+    - name: Build artifact
       run: ./gradlew assemble
 
     - name: Declare some variables
@@ -48,7 +47,7 @@ jobs:
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-    - name: Upload build artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v2
       with: 
         name: mupen64plus-ae-${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
