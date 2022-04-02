@@ -94,14 +94,14 @@ public class ShaderDrawer {
                     // Always scale at the last shader of the first subpass
                     if (subPassIndex == 0) {
                         if (shaderIndex == shaderSubPasses.size() - 1) {
-                            Log.e("Shader", "subpass=" + subPassIndex + " shader=" + shaderIndex + " scale=yes");
+                            Log.d("Shader", "subpass=" + subPassIndex + " shader=" + shaderIndex + " scale=yes");
                             shader.setDimensions(surface.mWidth, surface.mHeight, surface.mWidth, surface.mHeight, width, height);
                         } else {
-                            Log.e("Shader", "subpass=" + subPassIndex + " shader=" + shaderIndex + " scale=no");
+                            Log.d("Shader", "subpass=" + subPassIndex + " shader=" + shaderIndex + " scale=no");
                             shader.setDimensions(surface.mWidth, surface.mHeight, surface.mWidth, surface.mHeight, surface.mWidth, surface.mHeight);
                         }
                     } else {
-                        Log.e("Shader", "subpass=" + subPassIndex + " shader=" + shaderIndex + " scale=already");
+                        Log.d("Shader", "subpass=" + subPassIndex + " shader=" + shaderIndex + " scale=already");
                         shader.setDimensions(surface.mWidth, surface.mHeight, width, height, width, height);
                     }
 

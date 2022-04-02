@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
@@ -1053,11 +1052,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     public void finishActivity()
     {
-        // Set the screen orientation
-        if (mGlobalPrefs.displayOrientation != -1) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        }
-
         if(mCoreFragment != null)
         {
             mCoreFragment.setCoreEventListener(null);

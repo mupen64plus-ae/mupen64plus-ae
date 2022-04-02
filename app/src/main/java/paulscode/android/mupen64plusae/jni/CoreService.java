@@ -162,7 +162,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     private GameDataManager mGameDataManager = null;
 
-    private final CoreInterface mCoreInterface = new CoreInterface();
+    private static final CoreInterface mCoreInterface = new CoreInterface();
 
     /**
      * Last time we received an FPS changed callback. This is used to determine if the core
@@ -234,8 +234,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void resumeEmulator()
     {
+        Log.e(TAG, "resume emulator");
+
         if(!mIsShuttingDown)
         {
+            Log.e(TAG, "Actually resume emulator");
+
             mIsPaused = false;
             mCoreInterface.emuResume();
 
@@ -260,15 +264,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mIsShuttingDown = true;
 
             mCoreInterface.setVolume(0);
-        }
 
-        //Resume to allow save to take place
-        resumeEmulator();
+            Log.e(TAG, "Autosave started");
+        }
 
         CoreInterface.OnStateCallbackListener saveComplete = new CoreInterface.OnStateCallbackListener() {
             @Override
             public void onStateCallback(int paramChanged, int newValue) {
                 if (paramChanged == CoreTypes.m64p_core_param.M64CORE_STATE_SAVECOMPLETE.ordinal()) {
+                    Log.e(TAG, "Save completed: " + latestSave);
 
                     //newValue == 1, then it was successful
                     if (newValue == 1) {
