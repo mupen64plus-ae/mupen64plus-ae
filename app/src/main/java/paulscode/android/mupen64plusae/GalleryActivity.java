@@ -160,6 +160,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     List<GalleryItem> mItemsCache = new ArrayList<>();
+    List<GalleryItem> mAllItems = new ArrayList<>();
     List<GalleryItem> mRecentItemsCache = new ArrayList<>();
 
     ActivityResultLauncher<Intent> mLaunchGame = registerForActivityResult(
@@ -725,7 +726,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Check if we have a cache of this game first
         GalleryItem foundItem = null;
-        for (GalleryItem item : mItemsCache) {
+        for (GalleryItem item : mAllItems) {
 
             try {
                 String decodedPath = URLDecoder.decode(romPathUri.toString(), "UTF-8");
@@ -1066,7 +1067,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
         
-        galleryRefreshTask.generateGridItemsAndSaveConfig(mItemsCache, mRecentItemsCache);
+        galleryRefreshTask.generateGridItemsAndSaveConfig(mItemsCache, mAllItems, mRecentItemsCache);
         refreshGrid(mItemsCache, mRecentItemsCache);
 
         SyncProgramsJobService.syncProgramsForChannel(this, mAppData.getChannelId());
@@ -1097,9 +1098,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems)
+    public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> allItems, List<GalleryItem> recentItems)
     {
         mItemsCache = items;
+        mAllItems = allItems;
         mRecentItemsCache = recentItems;
         runOnUiThread(() -> refreshGrid(mItemsCache, mRecentItemsCache));
     }
