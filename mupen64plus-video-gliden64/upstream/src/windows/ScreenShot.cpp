@@ -1,4 +1,4 @@
-#include <Windows.h>
+#include "Platform.h"
 
 #include "Config.h"
 #include "../GLideNHQ/inc/png.h"
@@ -100,7 +100,8 @@ void SaveScreenshot(const wchar_t * _folder, const char * _name, int _width, int
 	std::wstring romName = std::wstring(wbuf);
 	for (size_t i = 0, n = romName.size(); i < n; i++) {
 		if (romName[i] == L' ') romName[i] = L'_';
-		if (romName[i] == L':') romName[i] = L';';
+		else if (romName[i] == L':') romName[i] = L';';
+		else if (romName[i] == L'/') romName[i] = L'-';
 	}
 
 	wchar_t fileName[MAX_PATH];
@@ -118,6 +119,6 @@ void SaveScreenshot(const wchar_t * _folder, const char * _name, int _width, int
 	}
 	if (i == 1000)
 		return;
-	
+
 	write_png_file(fileName, _width, _height, _data);
 }

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
-    <height>715</height>
+    <width>597</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,11 +21,11 @@
     <normaloff>:/Icon.ico</normaloff>:/Icon.ico</iconset>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
+    <enum>QLayout::SetDefaultConstraint</enum>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
@@ -3644,17 +3644,39 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="fontPreviewNoteLabel">
-                 <property name="text">
-                  <string>The font preview only shows the regular style for the font family. Some styles like bold and italic display only in game.</string>
-                 </property>
-                 <property name="wordWrap">
+                <widget class="QPlainTextEdit" name="fontPreviewNotePlainTextEdit">
+                 <property name="readOnly">
                   <bool>true</bool>
+                 </property>
+                 <property name="plainText">
+                  <string>1. The font preview only shows the regular style for the font family. Some styles like bold and italic display only in game.
+
+2. If the desired font is not listed above:
+* navigate to your installation where GLideN64.ini is located, and open it with a text editor.
+* find your active profile [Default = User],
+* change the value of &quot;font\name=NAME.ttf&quot; to &quot;font\name=Full Name of Font.ttf&quot;
+   do not include the path to where the font is located before the name.
+* save the file.
+
+The font's full name can be found in Settings&gt;Personalization&gt;Fonts</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <spacer name="verticalSpacer_3">
@@ -4059,9 +4081,8 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="fixTexrectCoordsButtonGroup"/>
-  <buttongroup name="screenshotButtonGroup"/>
   <buttongroup name="osdButtonGroup"/>
+  <buttongroup name="fixTexrectCoordsButtonGroup"/>
   <buttongroup name="factorButtonGroup"/>
  </buttongroups>
 </ui>

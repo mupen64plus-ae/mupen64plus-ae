@@ -8,10 +8,6 @@
 
 #include <cmath>
 
-#ifdef min
-#undef min
-#endif
-
 namespace {
 using namespace glsl;
 
@@ -43,15 +39,8 @@ public:
 				const CachedTexture* _pTexture = textureCache().current[t];
 				if (_pTexture != nullptr) {
 					if (config.frameBufferEmulation.nativeResFactor != 0) {
-						if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
-							texCoordOffset[t][0] = -0.5f * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
-							texCoordOffset[t][1] = -0.5f * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
-						} else {
-							texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? -0.5f / scale[0] : -1.0f + 0.5f / scale[0]) *
-									gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
-							texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? -0.5f / scale[1] : -1.0f + 0.5f / scale[1]) *
-									gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
-						}
+						texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? -0.5f / scale[0] : -1.0f + 0.5f / scale[0]) * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
+						texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? -0.5f / scale[1] : -1.0f + 0.5f / scale[1]) * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
 					} else {
 						texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dsdx * _pTexture->hdRatioS;
 						texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dtdy * _pTexture->hdRatioT;
@@ -63,7 +52,6 @@ public:
 				}
 			}
 		}
-
 		/* Hack for framebuffer textures. See #519 and #2112 */
 		if ((config.generalEmulation.hacks & hack_fbTextureOffset) != 0) {
 			for (int t = 0; t < 2; t++) {
@@ -110,7 +98,7 @@ public:
 			}
 		}
 
-		uVertexOffset.set(0.0f, 0.0f, _force);
+		uVertexOffset.set(0.0, 0.0, _force);
 		uTexCoordOffset[0].set(texCoordOffset[0][0], texCoordOffset[0][1], _force);
 		uTexCoordOffset[1].set(texCoordOffset[1][0], texCoordOffset[1][1], _force);
 		uUseTexCoordBounds.set(useTexCoordBounds ? 1 : 0, _force);

@@ -175,9 +175,11 @@ void GLInfo::init() {
 		config.generalEmulation.enableFragmentDepthWrite = 0;
 	}
 
+#ifdef OS_ANDROID
 	if (renderer == Renderer::Angle) {
         config.generalEmulation.enableFragmentDepthWrite = 0;
     }
+#endif
 
 	depthTexture = !isGLES2 || Utils::isExtensionSupported(*this, "GL_OES_depth_texture");
 	noPerspective = Utils::isExtensionSupported(*this, "GL_NV_shader_noperspective_interpolation");

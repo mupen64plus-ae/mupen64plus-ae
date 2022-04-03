@@ -1,5 +1,4 @@
 #include "glsl_CombinerProgramUniformFactoryAccurate.h"
-
 #include <Config.h>
 #include <FrameBuffer.h>
 #include <Textures.h>
@@ -7,10 +6,6 @@
 #include <Debugger.h>
 
 #include <cmath>
-
-#ifdef min
-#undef min
-#endif
 
 namespace {
 using namespace glsl;
@@ -116,8 +111,10 @@ public:
 			maxTile = std::min(gSP.texture.level, 1u); // Hack for HD textures
 		uMaxTile.set(maxTile, _force);
 
-		bool bNoAtlasTex = maxTile == 0 || gDP.otherMode.textureLOD != G_TL_LOD ||
-			(gDP.otherMode.textureDetail != G_TD_DETAIL && maxTile == 1);
+		bool bNoAtlasTex = (_pTexture != nullptr && _pTexture->bHDTexture) ||
+							maxTile == 0 ||
+							gDP.otherMode.textureLOD != G_TL_LOD ||
+							(gDP.otherMode.textureDetail != G_TD_DETAIL && maxTile == 1);
 		uNoAtlasTex.set(bNoAtlasTex ? 1 : 0, _force);
 	}
 
@@ -258,8 +255,6 @@ public:
 			aTexSize[t][0] = pTexture->width * pTexture->hdRatioS;
 			aTexSize[t][1] = pTexture->height * pTexture->hdRatioT;
 
-			aShiftScale[t][0] = calcShiftScaleS(*pTile);
-			aShiftScale[t][1] = calcShiftScaleT(*pTile);
 
 			if (pTile->textureMode != TEXTUREMODE_BGIMAGE && pTile->textureMode != TEXTUREMODE_FRAMEBUFFER_BG) {
 				float fuls = pTile->fuls;
@@ -277,6 +272,9 @@ public:
 				}
 				aTexOffset[t][0] = fuls;
 				aTexOffset[t][1] = fult;
+
+				aShiftScale[t][0] = calcShiftScaleS(*pTile);
+				aShiftScale[t][1] = calcShiftScaleT(*pTile);
 			}
 
 			aHDRatio[t][0] = pTexture->hdRatioS;
