@@ -333,11 +333,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Keep screen from going to sleep
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
 
-        // Set the screen orientation
-        if (mGlobalPrefs.displayOrientation != -1) {
-            setRequestedOrientation( mGlobalPrefs.displayOrientation );
-        }
-
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
 
@@ -1033,6 +1028,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(!mCoreFragment.isShuttingDown()) {
             //This can happen if GameActivity is killed while service is running
             tryRunning();
+        }
+    }
+
+    @Override
+    public void onGameStarted()
+    {
+        // Set the screen orientation
+        if (mGlobalPrefs.displayOrientation != -1) {
+            setRequestedOrientation( mGlobalPrefs.displayOrientation );
         }
     }
 

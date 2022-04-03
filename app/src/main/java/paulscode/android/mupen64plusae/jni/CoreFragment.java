@@ -71,6 +71,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         void onCoreServiceStarted();
 
         /**
+         * Will be called once the game has started
+         */
+        void onGameStarted();
+
+        /**
          * Called when a game is requested to exited
          * @param shouldExit True if we want to exit
          */
@@ -309,7 +314,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             Activity activity = requireActivity();
             activity.runOnUiThread(() -> {
                 if (mProgress != null) {
-                    activity.runOnUiThread(() -> mProgress.dismiss());
+                    mProgress.dismiss();
+                    if (mCoreEventListener != null) {
+                        mCoreEventListener.onGameStarted();
+                    }
                 }
             });
         } catch (java.lang.IllegalStateException e) {
