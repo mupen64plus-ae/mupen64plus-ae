@@ -95,6 +95,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
          * Called when the service has been destroyed
          */
         void onCoreServiceDestroyed();
+
+        /**
+         * Called when the frame rate has changed.
+         *
+         * @param newValue The new FPS value.
+         */
+        void onFpsChanged( int newValue );
     }
 
     interface LoadingDataListener
@@ -417,16 +424,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     void emuGameShark(boolean pressed)
     {
         mCoreInterface.emuGameShark(pressed);
-    }
-
-    void removeOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener )
-    {
-        mCoreInterface.removeOnFpsChangedListener( fpsListener );
-    }
-
-    void addOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
-    {
-        mCoreInterface.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod, mCoreInterface );
     }
 
     void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital )
@@ -1175,5 +1172,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+
+        if (mListener != null) {
+            mListener.onFpsChanged(newValue);
+        }
     }
 }

@@ -129,10 +129,10 @@ dependencies {
     implementation 'org.apache.commons:commons-compress:1.21'
     implementation 'org.tukaani:xz:1.9'
 
-    implementation ('net.java.dev.jna:jna-platform:5.10.0') {
+    implementation ('net.java.dev.jna:jna-platform:5.11.0') {
         exclude group: 'net.java.dev.jna', module: 'jna'
     }
-    implementation 'net.java.dev.jna:jna:5.10.0@aar'
+    implementation 'net.java.dev.jna:jna:5.11.0@aar'
     testImplementation 'junit:junit:4.13.2'
     implementation project(':ae-bridge')
     implementation project(':miniupnp-bridge')

@@ -78,7 +78,6 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.netplay.room.NetplayClientSetupDialog;
 import paulscode.android.mupen64plusae.netplay.room.NetplayServerSetupDialog;
@@ -135,7 +134,7 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
-        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
+        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener,
         NetplayClientSetupDialog.OnServerDialogActionListener,
         NetplayServerSetupDialog.OnClientDialogActionListener, NetplayFragment.NetplayListener
 {
@@ -641,11 +640,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         super.onDestroy();
 
-        if(mCoreFragment != null)
-        {
-            mCoreFragment.clearOnFpsChangedListener();
-        }
-
         // This apparently can happen on rare occasion, not sure how, so protect against it
         if(mHandler != null)
         {
@@ -939,8 +933,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             } else {
                 mCoreFragment.resumeEmulator();
             }
-
-            mCoreFragment.setOnFpsChangedListener(this, 30);
         }
     }
 

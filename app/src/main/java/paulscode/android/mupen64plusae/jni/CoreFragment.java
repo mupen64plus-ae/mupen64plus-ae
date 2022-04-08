@@ -59,7 +59,6 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
 import paulscode.android.mupen64plusae.util.Utility;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 
 public class CoreFragment extends Fragment implements CoreServiceListener, CoreService.LoadingDataListener
 {
@@ -106,6 +105,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          * Called when the service is bound
          */
         void onBindService();
+
+        /**
+         * Called when the frame rate has changed.
+         *
+         * @param newValue The new FPS value.
+         */
+        void onFpsChanged( int newValue );
     }
     
     private static final String TAG = "CoreFragment";
@@ -163,8 +169,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     DataViewModel mViewModel;
 
     private CoreService mCoreService = null;
-    private OnFpsChangedListener mFpsChangeListener = null;
-    private int mFpsRecalcPeriod = 30;
 
     private CoreEventListener mCoreEventListener = null;
 
@@ -198,7 +202,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (mViewModel.mBinder != null) {
             Log.i(TAG, "Assigning service");
             mCoreService = mViewModel.mBinder.getService();
-            mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
             mCoreService.setCoreServiceListener(mViewModel.mCurrentFragment);
             mCoreService.setLoadingDataListener(mViewModel.mCurrentFragment);
         }
@@ -276,6 +279,21 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         Log.i(TAG, "onCoreServiceDestroyed");
 
         mViewModel.mIsRunning = false;
+    }
+
+    @Override
+    public void onFpsChanged(int newValue) {
+        Log.i(TAG, "onCoreServiceStarted");
+
+        try {
+            requireActivity().runOnUiThread(() -> {
+                if (mCoreEventListener != null) {
+                    mCoreEventListener.onFpsChanged(newValue);
+                }
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -380,7 +398,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mViewModel.mBinder = (LocalBinder) service;
                 mViewModel.mCurrentFragment.mCoreService = mViewModel.mBinder.getService();
 
-                mViewModel.mCurrentFragment.mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mViewModel.mCurrentFragment.mCoreService.setCoreServiceListener(mViewModel.mCurrentFragment);
                 mViewModel.mCurrentFragment.mCoreService.setLoadingDataListener(mViewModel.mCurrentFragment);
 
@@ -442,28 +459,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mCoreService != null)
         {
             mCoreService.emuGameShark(pressed);
-        }
-    }
-
-    public void clearOnFpsChangedListener()
-    {
-        Log.i(TAG, "clearOnFpsChangedListener");
-
-        if(mCoreService != null && mFpsChangeListener != null)
-        {
-            mCoreService.removeOnFpsChangedListener(mFpsChangeListener);
-        }
-    }
-
-    public void setOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
-    {
-        Log.i(TAG, "addOnFpsChangedListener");
-
-        mFpsChangeListener = fpsListener;
-        mFpsRecalcPeriod = fpsRecalcPeriod;
-        if(mCoreService != null)
-        {
-            mCoreService.addOnFpsChangedListener(fpsListener, fpsRecalcPeriod);
         }
     }
 
