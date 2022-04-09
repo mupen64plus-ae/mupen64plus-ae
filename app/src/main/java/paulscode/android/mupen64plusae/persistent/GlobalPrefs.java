@@ -147,6 +147,9 @@ public class GlobalPrefs
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
 
+    /** The subdirectory where to dump textures */
+    public final String textureDumpDir;
+
     /** Directory where texture cache htc files are stored */
     public final String textureCacheDir;
 
@@ -489,6 +492,8 @@ public class GlobalPrefs
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
+        textureDumpDir = context.getFilesDir().getAbsolutePath() + "/TextureDump";
+        FileUtil.makeDirs(textureDumpDir);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             screenshotsDir = context.getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
         } else {

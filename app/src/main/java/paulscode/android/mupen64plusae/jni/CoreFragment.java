@@ -283,7 +283,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     @Override
     public void onFpsChanged(int newValue) {
-        Log.i(TAG, "onCoreServiceStarted");
 
         try {
             requireActivity().runOnUiThread(() -> {

@@ -521,6 +521,8 @@
     <string name="gliden64_tx_enhanced_texture_file_storage_summary">Use file storage instead of memory cache for enhanced textures.</string>
     <string name="gliden64_tx_hires_texture_file_storage_title">Hires texture file storage</string>
     <string name="gliden64_tx_hires_texture_file_storage_summary">Use file storage instead of memory cache for hires textures.</string>
+    <string name="gliden64_tx_dump_title">Dump textures</string>
+    <string name="gliden64_tx_dump_summary">Dump in-game textures as they are encountered</string>
     <string name="gliden64_category_gamma_title">Gamma Correction</string>
     <string name="gliden64_force_gamma_correction_title">Force gamma correction</string>
     <string name="gliden64_gamma_correction_level">Gamma correction value</string>

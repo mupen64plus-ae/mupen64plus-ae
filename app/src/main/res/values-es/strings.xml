@@ -458,6 +458,8 @@
     <string name="gliden64_tx_enhanced_texture_file_storage_summary">Almanezar cache de texturas filtradas directamenet en disco en vez de HTC</string>
     <string name="gliden64_tx_hires_texture_file_storage_title">Almanezar texturas de paquete de texturas en disco</string>
     <string name="gliden64_tx_hires_texture_file_storage_summary">Almanezar cache de paquete de texturas directamente en disco en vez de HTC</string>
+    <string name="gliden64_tx_dump_title">Extraer textures</string>
+    <string name="gliden64_tx_dump_summary">Extaer las texturas del juego a medida que se encuentran</string>
     <string name="gliden64_category_gamma_title">Correccion Gama</string>
     <string name="gliden64_force_gamma_correction_title">Forzar correccion gama</string>
     <string name="gliden64_gamma_correction_level">Valor de correccion gama</string>

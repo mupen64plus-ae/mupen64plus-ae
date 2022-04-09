@@ -177,6 +177,9 @@ public class GLideN64Prefs {
     /** Use file storage instead of memory cache for hires textures. */
     public final boolean txHiresTextureFileStorage;
 
+    /** Dump textures */
+    public final boolean txDump;
+
     /** Limit hi-res textures size in VRAM (in MB, 0 = no limit) */
     public final long txHiresVramLimit;
 
@@ -235,6 +238,7 @@ public class GLideN64Prefs {
         txSaveCache = emulationProfile.get( "txSaveCache", "False" ).equals( "True" );
         txEnhancedTextureFileStorage = emulationProfile.get( "txEnhancedTextureFileStorage", "False" ).equals( "True" );
         txHiresTextureFileStorage = emulationProfile.get( "txHiresTextureFileStorage", "False" ).equals( "True" );
+        txDump = emulationProfile.get( "txDump", "False" ).equals( "True" );
 
         ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
