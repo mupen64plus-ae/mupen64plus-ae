@@ -52,6 +52,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String ACTION_EXPORT_GAME_DATA = "actionExportGameData";
     private static final String ACTION_EXPORT_CHEATS_AND_PROFILES = "actionExportCheatsAndProfiles";
+    private static final String ACTION_EXPORT_EXTRACTED_TEXTURES = "actionExportExtractedTextures";
     private static final String ACTION_IMPORT_GAME_DATA = "actionImportGameData";
     private static final String ACTION_IMPORT_CHEATS_AND_PROFILES = "actionImportCheatsAndProfiles";
 
@@ -81,6 +82,16 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
                 if (result.getResultCode() == Activity.RESULT_OK && data != null) {
                     Uri fileUri = getUri(data);
                     mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.profilesDir), fileUri);
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchExportDumpedTexturesFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    mCopyToSdFragment.copyToSd(new File(mGlobalPrefs.textureDumpDir), fileUri);
                 }
             });
 
@@ -188,6 +199,7 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
     {
         PrefUtil.setOnPreferenceClickListener(this, ACTION_EXPORT_GAME_DATA, this);
         PrefUtil.setOnPreferenceClickListener(this, ACTION_EXPORT_CHEATS_AND_PROFILES, this);
+        PrefUtil.setOnPreferenceClickListener(this, ACTION_EXPORT_EXTRACTED_TEXTURES, this);
         PrefUtil.setOnPreferenceClickListener(this, ACTION_IMPORT_GAME_DATA, this);
         PrefUtil.setOnPreferenceClickListener(this, ACTION_IMPORT_CHEATS_AND_PROFILES, this);
     }
@@ -205,6 +217,9 @@ public class ImportExportActivity extends AppCompatPreferenceActivity implements
                 break;
             case ACTION_EXPORT_CHEATS_AND_PROFILES:
                 startFilePicker(mLaunchExportCheatsAndProfilesFilePicker, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
+                break;
+            case ACTION_EXPORT_EXTRACTED_TEXTURES:
+                startFilePicker(mLaunchExportDumpedTexturesFilePicker, Intent.FLAG_GRANT_WRITE_URI_PERMISSION, false);
                 break;
             case ACTION_IMPORT_GAME_DATA:
                 startFilePicker(mLaunchImportGameDataFilePicker, Intent.FLAG_GRANT_READ_URI_PERMISSION, true);

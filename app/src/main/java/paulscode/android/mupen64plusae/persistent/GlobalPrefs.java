@@ -493,7 +493,6 @@ public class GlobalPrefs
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
         textureDumpDir = context.getFilesDir().getAbsolutePath() + "/TextureDump";
-        FileUtil.makeDirs(textureDumpDir);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             screenshotsDir = context.getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
         } else {

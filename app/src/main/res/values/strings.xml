@@ -842,6 +842,7 @@
     <string name="importExportActivity_exportDialogTitle">Exporting Data</string>
     <string name="importExportActivity_exportGameData">Export Game Data</string>
     <string name="importExportActivity_exportCheatsAndProfiles">Export Cheats and Profiles</string>
+    <string name="importExportActivity_exportDumpedTextures">Export Dumped Textures</string>
     <string name="importExportActivity_importDialogTitle">Importing Data</string>
     <string name="importExportActivity_importGameData">Import Game Data</string>
     <string name="importExportActivity_importCheatsAndProfiles">Import Cheats and Profiles</string>

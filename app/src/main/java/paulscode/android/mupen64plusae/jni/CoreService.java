@@ -543,6 +543,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             // Clean up the working directory
             FileUtil.deleteFolder(new File(workingDir));
 
+            // Cleanup previously dumped textures
+            FileUtil.deleteFolder(new File(mGlobalPrefs.textureDumpDir));
+
             // Copy game data from external storage
             if (mGlobalPrefs.useExternalStorge) {
                 copyGameContentsFromSdCard();
@@ -550,6 +553,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             FileUtil.makeDirs(workingDir);
             mCoreInterface.setWorkingPath(workingDir);
+            FileUtil.makeDirs(mGlobalPrefs.textureDumpDir);
 
             SparseArray<String> gbRomPaths = new SparseArray<>(4);
             SparseArray<String> gbRamPaths = new SparseArray<>(4);
