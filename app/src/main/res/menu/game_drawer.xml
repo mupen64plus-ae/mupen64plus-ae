@@ -71,28 +71,8 @@
     </item>
     <item
         android:id="@+id/menuItem_settings"
+        android:icon="@drawable/ic_settings"
         android:title="@string/menuItem_settings">
-        <menu>
-            <item
-                android:id="@+id/menuItem_categoryDisplay"
-                android:title="@string/categoryDisplay_title"/>
-            <item
-                android:id="@+id/menuItem_categoryShaders"
-                android:title="@string/categoryShaders_title"/>
-            <item
-                android:id="@+id/menuItem_categoryAudio"
-                android:title="@string/categoryAudio_title"/>
-            <item
-                android:id="@+id/menuItem_categoryTouchscreen"
-                android:title="@string/menuItem_touchscreenProfiles"/>
-            <item
-                android:id="@+id/menuItem_categoryInput"
-                android:title="@string/categoryInput_title"/>
-            <item
-                android:id="@+id/menuItem_categoryData"
-                android:title="@string/categoryData_title"/>
-        </menu>
-
     </item>
     <item
         android:id="@+id/menuItem_reset"

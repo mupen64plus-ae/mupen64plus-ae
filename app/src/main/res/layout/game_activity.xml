@@ -48,6 +48,12 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true" >
 
+<!--        <paulscode.android.mupen64plusae.dialog.GameSettingsDialog-->
+<!--            android:id="@+id/gameSettings"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:fillViewport="true" />-->
+
         <paulscode.android.mupen64plusae.GameSidebar
             android:id="@+id/gameSidebar"
             android:layout_width="match_parent"

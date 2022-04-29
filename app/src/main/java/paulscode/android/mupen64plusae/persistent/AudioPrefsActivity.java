@@ -32,6 +32,7 @@ import android.util.Log;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -64,7 +65,7 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
 
         // Get app data and user preferences
         mAppData = new AppData(this);

@@ -252,7 +252,7 @@ public class GlobalPrefs
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
 
-    /** Surface scale facor for shaders */
+    /** Surface scale factor for shaders */
     public final int shaderScaleFactor;
 
     /** User selected shader passes */
@@ -286,7 +286,7 @@ public class GlobalPrefs
     public final boolean isPolygonOffsetHackEnabled;
 
     /** The manually-overridden hardware type, used for flicker reduction. */
-    final int videoHardwareType;
+    public final int videoHardwareType;
 
     /** The polygon offset to use. */
     public final float videoPolygonOffset;
@@ -349,19 +349,19 @@ public class GlobalPrefs
     public final boolean volKeysMappable;
 
     /** The input profile for Player 1. */
-    final ControllerProfile controllerProfile1;
+    public final ControllerProfile controllerProfile1;
 
     /** The input profile for Player 2. */
-    final ControllerProfile controllerProfile2;
+    public final ControllerProfile controllerProfile2;
 
     /** The input profile for Player 3. */
-    final ControllerProfile controllerProfile3;
+    public final ControllerProfile controllerProfile3;
 
     /** The input profile for Player 4. */
-    final ControllerProfile controllerProfile4;
+    public final ControllerProfile controllerProfile4;
 
     /** True if auto player mapping is enabled */
-    final boolean autoPlayerMapping;
+    public final boolean autoPlayerMapping;
 
     /** True if we want to tell the cores 4 N64 controllers are always plugged in
      * regardless if 4 controllers are actually attached.
@@ -369,7 +369,7 @@ public class GlobalPrefs
     public final boolean allEmulatedControllersPlugged;
 
     /** True if one controller can control multiple players */
-    final boolean isControllerShared;
+    public final boolean isControllerShared;
 
     /** True if we want to show built in emulation profiles */
     final boolean showBuiltInEmulationProfiles;

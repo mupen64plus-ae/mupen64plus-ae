@@ -93,6 +93,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          * Called when we should exit the application
          */
         void onExitFinished();
+
+        void onRecreateSurface();
     }
     
     private static final String TAG = "CoreFragment";
@@ -145,6 +147,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private CoreEventListener mCoreEventListener = null;
 
     private boolean mAskingForExit = false;
+    private boolean mRecreateSurface = false;
 
     // this method is only called once for this fragment
     @Override
@@ -194,6 +197,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
             Log.e( TAG, "Launch failure: " + message );
         }
+    }
+
+    public void resetCoreServiceAppData(){
+        if(mCoreService != null)
+            mCoreService.resetAppData();
+    }
+
+    public void resetCoreServiceControllers(){
+        if(mCoreService != null)
+            mCoreService.resetControllers();
     }
 
     @Override
@@ -319,7 +332,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    private void actuallyStartCore(Activity activity)
+    public void actuallyStartCore(Activity activity)
     {
         Log.i(TAG, "actuallyStartCore");
 
@@ -336,6 +349,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mCoreService.setCoreServiceListener(CoreFragment.this);
                 mCoreService.setLoadingDataListener(CoreFragment.this);
+                if(mRecreateSurface) {
+                    mCoreEventListener.onRecreateSurface();
+                    mRecreateSurface = false;
+                }
             }
 
             @Override
@@ -1023,5 +1040,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public PixelBuffer.SurfaceTextureWithSize getSurfaceTexture() {
         return mCoreService != null ? mCoreService.getSurfaceTexture() : null;
+    }
+
+    public void setRecreateSurface(boolean recreateSurface){ mRecreateSurface = recreateSurface; }
+
+    public boolean isPaused(){
+        if(mCoreService != null)
+            return mCoreService.isPaused();
+        else
+            return false;
     }
 }

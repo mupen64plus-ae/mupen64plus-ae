@@ -881,6 +881,24 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return codes;
     }
 
+    public void resetAppData(){
+        mAppData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
+        mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
+    }
+
+    public void resetControllers(){
+        if (!mUseRaphnetDevicesIfAvailable) {
+//            NativeInput.init();
+            NativeInput.setConfig( 0, mGamePrefs.isPlugged[0], mGamePrefs.getPakType(1).ordinal() );
+            NativeInput.setConfig( 1, mGamePrefs.isPlugged[1], mGamePrefs.getPakType(2).ordinal() );
+            NativeInput.setConfig( 2, mGamePrefs.isPlugged[2], mGamePrefs.getPakType(3).ordinal() );
+            NativeInput.setConfig( 3, mGamePrefs.isPlugged[3], mGamePrefs.getPakType(4).ordinal() );
+        }
+    }
+
     @Override
     public void onCreate() {
 
@@ -1056,7 +1074,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
             mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
 
-            // This must happen here instead of OnCreate because we only find out the redering
+            // This must happen here instead of OnCreate because we only find out the rendering
             // resolution here.
             if (mPixelBuffer == null) {
                 mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);

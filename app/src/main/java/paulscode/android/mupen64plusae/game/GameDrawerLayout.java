@@ -87,7 +87,7 @@ public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
         mTouchMap = touchMap;
     }
 
-    public void setSwipGestureEnabled( boolean enable )
+    public void setSwipeGestureEnabled( boolean enable )
     {
         if(enable)
         {

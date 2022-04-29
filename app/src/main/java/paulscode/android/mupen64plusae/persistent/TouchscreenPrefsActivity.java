@@ -87,7 +87,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         // Get app data and user preferences
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_touchscreen);

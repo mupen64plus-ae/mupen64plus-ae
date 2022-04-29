@@ -49,7 +49,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 {
     public static final int FOLDER_PICKER_REQUEST_CODE = 1;
     public static final int LEGACY_FOLDER_PICKER_REQUEST_CODE = 2;
-    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 3;
+    public static final int LEGACY_FILE_PICKER_REQUEST_CODE = 3;
     public static final int FILE_PICKER_REQUEST_CODE = 4;
 
     // These constants must match the keys used in res/xml/preferences.xml
@@ -82,7 +82,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_data);

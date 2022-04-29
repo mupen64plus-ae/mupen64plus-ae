@@ -459,7 +459,7 @@ public final class Prompt
             linearLayout.setLayoutParams(params);
             linearLayout.setOrientation(LinearLayout.HORIZONTAL);
             
-            //create all the colums for this row
+            //create all the columns for this row
             for(int columnIndex = 0; columnIndex < columns; ++columnIndex)
             {
                 View radioLayout = View.inflate( context, R.layout.radio_selection, null );

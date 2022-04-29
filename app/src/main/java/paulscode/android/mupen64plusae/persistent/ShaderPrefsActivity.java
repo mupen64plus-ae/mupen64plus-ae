@@ -36,6 +36,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -80,7 +81,7 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_shader);

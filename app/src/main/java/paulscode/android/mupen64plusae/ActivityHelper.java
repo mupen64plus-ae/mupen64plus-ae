@@ -27,6 +27,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -90,6 +91,7 @@ public class ActivityHelper
         public static final String ROM_DISPLAY_NAME     = NAMESPACE + "ROM_DISPLAY_NAME";
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
+        public static final String DO_SETTINGS_RESET    = NAMESPACE + "DO_SETTINGS_RESET";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
@@ -211,7 +213,7 @@ public class ActivityHelper
 
     static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                  boolean doRestart, boolean isNetplayEnabled, boolean isNetplayServer) {
+                                  boolean doRestart, boolean doSettingsReset, boolean isNetplayEnabled, boolean isNetplayServer) {
         Intent intent = new Intent(activity, GameActivity.class);
         intent.putExtra( Keys.ROM_PATH, romPath );
         intent.putExtra( Keys.ZIP_PATH, zipPath );
@@ -223,6 +225,7 @@ public class ActivityHelper
         intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
         intent.putExtra( Keys.ROM_DISPLAY_NAME, romDisplayName );
         intent.putExtra( Keys.DO_RESTART, doRestart );
+        intent.putExtra( Keys.DO_SETTINGS_RESET, doSettingsReset );
         intent.putExtra( Keys.NETPLAY_ENABLED, isNetplayEnabled );
         intent.putExtra( Keys.NETPLAY_SERVER, isNetplayServer );
         activity.startActivityForResult(intent, GAME_ACTIVITY_CODE);
@@ -574,5 +577,11 @@ public class ActivityHelper
         }
 
         return false;
+    }
+    public static SharedPreferences getDefaultSharedPreferencesMultiProcess(
+            Context context) {
+        return context.getSharedPreferences(
+                context.getPackageName() + "_preferences",
+                Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
     }
 }

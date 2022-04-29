@@ -51,7 +51,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         void onViewCreation(View view);
     }
 
-    private static final String STATE_SHATED_PREFS_NAME = "STATE_SHATED_PREFS_NAME";
+    private static final String STATE_SHARED_PREFS_NAME = "STATE_SHARED_PREFS_NAME";
     private static final String STATE_RESOURCE_ID = "STATE_RESOURCE_ID";
     
     private boolean mHasFocusBeenSet = false;
@@ -60,7 +60,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     {
         AppCompatPreferenceFragment frag = new AppCompatPreferenceFragment();
         Bundle args = new Bundle();
-        args.putString(STATE_SHATED_PREFS_NAME, sharedPrefsName);
+        args.putString(STATE_SHARED_PREFS_NAME, sharedPrefsName);
         args.putInt(STATE_RESOURCE_ID, resourceId);
         args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, rootKey);
 
@@ -79,7 +79,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
             return;
         }
         
-        final String sharedPrefsName = arguments.getString(STATE_SHATED_PREFS_NAME);
+        final String sharedPrefsName = arguments.getString(STATE_SHARED_PREFS_NAME);
         final int resourceId = arguments.getInt(STATE_RESOURCE_ID);
 
         // Load the preferences from an XML resource

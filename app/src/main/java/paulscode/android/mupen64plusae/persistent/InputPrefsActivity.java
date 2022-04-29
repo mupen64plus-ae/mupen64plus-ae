@@ -66,7 +66,7 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
     {
         super.onCreate(savedInstanceState);
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
 
         // Get app data and user preferences
         mAppData = new AppData(this);
