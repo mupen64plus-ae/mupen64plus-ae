@@ -149,7 +149,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private int removeShader = -1;
     public static int oldShaderScaleFactor = 1;
     public static boolean firstPass = false;
-    private boolean resetShadersCheck = false;
+    private boolean shaderScaleFactorSet = false;
 
     // Preferences
 
@@ -526,14 +526,12 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         else if (key.startsWith(SHADER_PASS_KEY)) {
             shaderLoader(shaderPasses,key);
 
-            mListener.onComplete("resetShaderScaleFactor");//IJUSTADDEDTHISWORKS
+            mListener.onComplete("resetShaderScaleFactor");
 
-            if(firstPass)
-                mListener.onComplete("resetShadersFirstPass");
-            else
-                mListener.onComplete("resetShaders");
-
-            recreateView();
+            if(shaderScaleFactorSet) { // get rid of & always recreate if issues
+                shaderScaleFactorSet = false;
+                mGameActivity.recreate();
+            }
         }
         else if(removeShader != -1 && key.equals("shaderPass")){
             String keyy = "shaderpass,"+String.valueOf(removeShader);
@@ -541,6 +539,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             removeShader = -1;
         }
         else if(key.equals("shaderScaleFactor")){
+            shaderScaleFactorSet = true;
             shaderLoader(shaderPasses,"shaderpass,1");
             mListener.onComplete("resetSurface");
         }

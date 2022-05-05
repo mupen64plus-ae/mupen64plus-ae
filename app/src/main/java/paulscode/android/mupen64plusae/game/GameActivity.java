@@ -1219,8 +1219,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 resetGlContext();
                 break;
             case "resetShaderScaleFactor":
-                mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
                 resetShaders();
+                mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
                 resetGlContext();
                 mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
                 break;
