@@ -223,6 +223,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 mGameActivity.mGlobalPrefs.putShaderPasses(shaderPasses);
 
                 refreshShaderViews();
+                mGameActivity.recreate();
             }
 //            removeShader = changedPass;
         }

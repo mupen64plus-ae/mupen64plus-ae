@@ -194,14 +194,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         mSurfaceTexture = surfaceTexture;
         if (mRenderThread != null && mRenderThread.getHandler() != null && mSurfaceTexture != null) {
-//            if(GameSettingsDialog.firstPass) {
-//                mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth, //HERE TO RESET SURFACE
-//                        mSurfaceTexture.mHeight, mSurfaceTexture);
-//            }
-//            else {
-                mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth * mShaderScaleFactor, //HERE TO RESET SURFACE
+                mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth * mShaderScaleFactor,
                         mSurfaceTexture.mHeight * mShaderScaleFactor, mSurfaceTexture);
-//            }
         }
     }
 
@@ -851,13 +845,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         public void resetSurfaceParameters(){
-            mRenderThread.surfaceTextureAvailable2(getWidth()*mShaderScaleFactor,getHeight()*mShaderScaleFactor,mSurfaceTexture);
+            mRenderThread.surfaceTextureReset(getWidth()*mShaderScaleFactor,getHeight()*mShaderScaleFactor,mSurfaceTexture);
         }
 
         /**
          * Handles incoming frame
          */
-        private void surfaceTextureAvailable2(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
+        private void surfaceTextureReset(int width, int height, PixelBuffer.SurfaceTextureWithSize surfaceTexture) {
             mFrameAvailableTexture = surfaceTexture.mSurfaceTexture;
             mFrameAvailableTexture.setOnFrameAvailableListener(this, mHandler);
             mShaderDrawer.onSurfaceTextureDestroyed();
