@@ -522,13 +522,17 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             shaderPasses.remove(0);
             mPrefs.edit().remove(keyy).apply();
             mGameActivity.mGlobalPrefs.putShaderPasses(shaderPasses);
+            if(shaderScaleFactorSet || firstPass){
+                shaderScaleFactorSet = false;
+                mGameActivity.recreate();
+            }
         }
         else if (key.startsWith(SHADER_PASS_KEY)) {
             shaderLoader(shaderPasses,key);
 
             mListener.onComplete("resetShaderScaleFactor");
 
-            if(shaderScaleFactorSet) { // get rid of & always recreate if issues
+            if(shaderScaleFactorSet || firstPass) { // get rid of & always recreate if issues
                 shaderScaleFactorSet = false;
                 mGameActivity.recreate();
             }

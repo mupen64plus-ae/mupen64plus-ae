@@ -194,14 +194,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         mSurfaceTexture = surfaceTexture;
         if (mRenderThread != null && mRenderThread.getHandler() != null && mSurfaceTexture != null) {
-            if(GameSettingsDialog.firstPass) {
-                mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth, //HERE TO RESET SURFACE
-                        mSurfaceTexture.mHeight, mSurfaceTexture);
-            }
-            else {
+//            if(GameSettingsDialog.firstPass) {
+//                mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth, //HERE TO RESET SURFACE
+//                        mSurfaceTexture.mHeight, mSurfaceTexture);
+//            }
+//            else {
                 mRenderThread.getHandler().sendSurfaceTextureAvailable(mSurfaceTexture.mWidth * mShaderScaleFactor, //HERE TO RESET SURFACE
                         mSurfaceTexture.mHeight * mShaderScaleFactor, mSurfaceTexture);
-            }
+//            }
         }
     }
 
