@@ -766,6 +766,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         return true;
     }
 
+    // Prevents emulator resuming when coming back from Activity after settings like
+    // inputShareController and holdButtonForMenu have been changed
+    private void recreateAndPause(){
+        mGameActivity.recreate();
+        mListener.onComplete("pauseEmulator");
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -781,6 +788,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 }
                 mListener.onComplete("resetTouchscreenController");
                 onGameSettingsDialogPass.recreateSurface();
+                recreateAndPause();
             }
 
             if (requestCode == DataPrefsActivity.FOLDER_PICKER_REQUEST_CODE) {
@@ -796,6 +804,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     mListener.onComplete("resetAppData");
 
                     mListener.onComplete("gameDataStoragePath");
+                    recreateAndPause();
                 }
             } else if (requestCode == DataPrefsActivity.LEGACY_FOLDER_PICKER_REQUEST_CODE) {
                 final Bundle extras = data.getExtras();
@@ -810,6 +819,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         mGameActivity.mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
 
                         mListener.onComplete("resetAppData");
+                        recreateAndPause();
                     }
                 }
             } else if (requestCode == DataPrefsActivity.FILE_PICKER_REQUEST_CODE) {
@@ -826,6 +836,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         String summary = file == null ? "" : file.getName();
                         mGameActivity.mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
                         mListener.onComplete("resetAppData");
+                        recreateAndPause();
                     }
                 }
             }else if (requestCode == DataPrefsActivity.LEGACY_FILE_PICKER_REQUEST_CODE) {
@@ -839,10 +850,14 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         File file = new File(fileUri.getPath());
                         mGameActivity.mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
                         mListener.onComplete("resetAppData");
+                        recreateAndPause();
                     }
                 }
             }
 
+        }
+        else {
+            recreateAndPause();
         }
     }
 
