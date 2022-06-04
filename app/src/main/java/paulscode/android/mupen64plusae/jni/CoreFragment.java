@@ -128,6 +128,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
     private boolean mUsingNetplay = false;
+    private boolean mResolutionReset = false;
 
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
@@ -300,7 +301,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean resolutionReset)
     {
         Log.i(TAG, "startCore");
 
@@ -319,6 +320,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mVideoRenderWidth = videoRenderWidth;
         mVideoRenderHeight = videoRenderHeight;
         mUsingNetplay = usingNetplay;
+        mResolutionReset = resolutionReset;
 
         if(!mIsRunning)
         {
@@ -377,6 +379,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setVideoRenderWidth(mVideoRenderWidth);
         params.setVideoRenderHeight(mVideoRenderHeight);
         params.setUsingNetplay(mUsingNetplay);
+        params.setResolutionReset(mResolutionReset);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
@@ -1049,5 +1052,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             return mCoreService.isPaused();
         else
             return false;
+    }
+
+    public void setResolutionReset(boolean resolutionReset){
+        mResolutionReset = resolutionReset;
+        mCoreService.setResolutionReset(resolutionReset);
     }
 }

@@ -26,7 +26,7 @@ public interface CoreLibrary extends Library {
      * creating data structures, and loading the configuration file.
      */
     int CoreStartup(int APIVersion, String ConfigPath, String DataPath, Pointer Context, DebugCallback debugCallBack,
-                    Pointer Context2, StateCallback stateCallback);
+                    Pointer Context2, StateCallback stateCallback, boolean resolutionReset);
 
     /* CoreShutdown()
      *

@@ -533,7 +533,8 @@ class CoreInterface
      * This function initializes libmupen64plus for use by allocating memory,
      * creating data structures, and loading the configuration file.
      */
-    int coreStartup(String configDirPath, String dataDirPath, String userDataPath, String userCachePath)
+    int coreStartup(String configDirPath, String dataDirPath, String userDataPath, String userCachePath,
+                    boolean resolutionReset)
     {
         LibC.INSTANCE.setenv("XDG_DATA_HOME", userDataPath, 1);
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
@@ -552,7 +553,7 @@ class CoreInterface
         }
 
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
-                dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);
+                dataDirPath, mCoreContext, debugCallback, null, mStateCallBack, resolutionReset);
         mAeBridgeLibrary.overrideAeVidExtFuncs();
         mAeBridgeLibrary.registerFpsCounterCallback(mFpsCounterCallback);
         return returnValue;
@@ -587,6 +588,11 @@ class CoreInterface
     {
         Pointer parameter = null;
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CLOSE.ordinal(), 0, parameter);
+    }
+
+    void setResetResolution(boolean resetResolution){
+        IntByReference parameter = new IntByReference(resetResolution ? -1 : 0);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_SET_RESOLUTION_RESET.ordinal(), 0, parameter.getPointer());
     }
 
     /* coreAttachPlugin()

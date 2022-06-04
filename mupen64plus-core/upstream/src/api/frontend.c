@@ -57,7 +57,8 @@ static int l_CallerUsingSDL = 0;
 /* functions exported outside of libmupen64plus to front-end application */
 EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const char *DataPath, void *Context,
                                    void (*DebugCallback)(void *, int, const char *), void *Context2,
-                                   void (*StateCallback)(void *, m64p_core_param, int))
+                                   void (*StateCallback)(void *, m64p_core_param, int),
+                                   int resolutionReset)
 {
     if (l_CoreInit)
         return M64ERR_ALREADY_INIT;
@@ -85,6 +86,8 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
 
     savestates_init();
 
+    l_resolutionReset = resolutionReset;
+
     /* next, start up the configuration handling code by loading and parsing the config file */
     if (ConfigInit(ConfigPath, DataPath) != M64ERR_SUCCESS)
         return M64ERR_INTERNAL;
@@ -106,6 +109,9 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     romdatabase_open();
 
     workqueue_init();
+
+    if(resolutionReset != 0)
+        main_core_state_set(M64CORE_EMU_STATE, M64EMU_PAUSED);
 
     l_CoreInit = 1;
     return M64ERR_SUCCESS;
@@ -329,6 +335,14 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
             if (ParamInt < 1 || ParamPtr == NULL)
                 return M64ERR_INPUT_INVALID;
             return netplay_start(ParamPtr, ParamInt);
+        case M64CMD_SET_RESOLUTION_RESET:
+            if(ParamPtr == NULL)
+                return M64ERR_INPUT_INVALID;
+            if (ParamInt == 0)
+                l_resolutionReset = 0;
+            else
+                l_resolutionReset = -1;
+            return M64ERR_SUCCESS;
         case M64CMD_NETPLAY_CONTROL_PLAYER:
             if (ParamInt < 1 || ParamInt > 4 || ParamPtr == NULL)
                 return M64ERR_INPUT_INVALID;

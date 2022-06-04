@@ -46,9 +46,9 @@ EXPORT void CALL StateCallback(void *Context, m64p_core_param param_type, int ne
  * This function initializes libmupen64plus for use by allocating memory,
  * creating data structures, and loading the configuration file.
  */
-typedef m64p_error (*ptr_CoreStartup)(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback);
+typedef m64p_error (*ptr_CoreStartup)(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback, int);
 #if defined(M64P_CORE_PROTOTYPES)
-EXPORT m64p_error CALL CoreStartup(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback);
+EXPORT m64p_error CALL CoreStartup(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback, int);
 #endif
 
 /* CoreShutdown()
@@ -136,6 +136,8 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *, int, int, int);
 #ifdef __cplusplus
 }
 #endif
+
+int l_resolutionReset;
 
 #endif /* #define M64P_FRONTEND_H */
 

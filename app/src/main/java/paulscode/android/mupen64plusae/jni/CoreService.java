@@ -154,6 +154,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private boolean mNetplayReady = false;
     private boolean mUsingNetplay = false;
     private boolean mNetplayInitSuccess = false;
+    private boolean mResolutionReset = false;
 
     //Service attributes
     private int mStartId;
@@ -621,7 +622,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             }
 
             mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
-                    mGlobalPrefs.coreUserCacheDir);
+                    mGlobalPrefs.coreUserCacheDir, mResolutionReset);
 
             boolean loadingSuccess;
 
@@ -657,7 +658,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     if (!mUsingNetplay) {
                         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
                         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
-
                         if (mUseRaphnetDevicesIfAvailable) {
                             mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
                         } else {
@@ -959,6 +959,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
+        notificationIntent.putExtra( ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
@@ -1032,6 +1033,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
             mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
+            mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
 
             mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
             mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
@@ -1154,7 +1156,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     public void setLoadingDataListener(LoadingDataListener loadingDataListener)
     {
         Log.i(TAG, "setLoadingDataListener");
-        mLoadingDataListener = loadingDataListener;
+        if(mLoadingDataListener == null)                // gets stuck on landscape
+            mLoadingDataListener = loadingDataListener;
     }
 
     @Override
@@ -1208,5 +1211,14 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+    }
+
+    public boolean getResolutionReset(){
+        return mResolutionReset;
+    }
+
+    public void setResolutionReset(boolean resolutionReset){
+        this.mResolutionReset = resolutionReset;
+        mCoreInterface.setResetResolution(resolutionReset);
     }
 }

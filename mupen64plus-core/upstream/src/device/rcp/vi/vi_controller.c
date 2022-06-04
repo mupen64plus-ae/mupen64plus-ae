@@ -22,6 +22,7 @@
 #include "vi_controller.h"
 
 #include <string.h>
+#include <api/callbacks.h>
 
 #include "api/m64p_types.h"
 #include "device/memory/memory.h"
@@ -29,9 +30,11 @@
 #include "device/rcp/mi/mi_controller.h"
 #include "main/main.h"
 #include "plugin/plugin.h"
+#include "api/m64p_frontend.h"
 
 /** static (local) variables **/
 static uint32_t   l_countPerScanlineOverride = 0;
+extern int        l_resolutionReset;
 
 unsigned int vi_clock_from_tv_standard(m64p_system_type tv_standard)
 {
@@ -177,6 +180,11 @@ void vi_vertical_interrupt_event(void* opaque)
         vi->dp->do_on_unfreeze |= DELAY_UPDATESCREEN;
     else
         gfx.updateScreen();
+
+    if(l_resolutionReset != 0){
+        main_toggle_pause();
+        l_resolutionReset = 0;
+    }
 
     /* allow main module to do things on VI event */
     new_vi();

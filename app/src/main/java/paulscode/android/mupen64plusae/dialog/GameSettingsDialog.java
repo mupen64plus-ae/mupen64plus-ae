@@ -200,6 +200,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 mListener.onComplete("pauseEmulator");
                 e.printStackTrace();
             }
+            mListener.onComplete("gameSettingDialogClosed");
         }
     }
 
@@ -499,17 +500,19 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mListener.onComplete(key);
 
         //CHECK ALL RECREATE VALUES HERE
-        if(key.equals("threadedGLideN64") || key.equals("inputShareController") || key.equals("holdButtonForMenu") ||
+        if(key.equals("threadedGLideN64") || key.equals("inputShareController") ||
+                key.equals("holdButtonForMenu") ||
+                (key.equals("displayOrientation") && mGameActivity.mGlobalPrefs.displayOrientation != -1) ||
                 (key.equals("displayImmersiveMode_v2") && !mGameActivity.mGlobalPrefs.isImmersiveModeEnabled))
             mListener.onComplete("settingsRecreate");
 
         //CHECK ALL RESET VALUES HERE
-        if(key.equals("displayResolution") || key.equals("hybridTextureFilter_v2") ||
-                key.equals("displayScaling") || key.equals("displayOrientation") ||
-                key.equals("navigationMode") || key.equals("useRaphnetAdapter") ||
+        if(key.equals("hybridTextureFilter_v2") || key.equals("navigationMode") ||
+                key.equals("useRaphnetAdapter") ||
                 (key.equals("displayImmersiveMode_v2") && mGameActivity.mGlobalPrefs.isImmersiveModeEnabled) ||
                 mSettingsFragment.viewPager.getCurrentItem() == 2 ||
                 (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType"))) {
+            mListener.onComplete("resolutionRefresh");
             mListener.onComplete("settingsReset");
         }
 
@@ -539,7 +542,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             }
         }
         else if(removeShader != -1 && key.equals("shaderPass")){
-            String keyy = "shaderpass,"+String.valueOf(removeShader);
+//            String keyy = "shaderpass,"+String.valueOf(removeShader);
             mListener.onComplete("resetShaders");
             removeShader = -1;
         }

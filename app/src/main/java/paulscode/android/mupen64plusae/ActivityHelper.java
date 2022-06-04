@@ -115,6 +115,7 @@ public class ActivityHelper
         public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
         public static final String NETPLAY_ENABLED      = NAMESPACE + "NETPLAY_ENABLED";
         public static final String NETPLAY_SERVER       = NAMESPACE + "NETPLAY_SERVER";
+        public static final String RESOLUTION_RESET     = NAMESPACE + "RESOLUTION_RESET";
 
 
         //@formatter:on
@@ -213,7 +214,8 @@ public class ActivityHelper
 
     static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                  boolean doRestart, boolean doSettingsReset, boolean isNetplayEnabled, boolean isNetplayServer) {
+                                  boolean doRestart, boolean doSettingsReset, boolean isNetplayEnabled, boolean isNetplayServer,
+                                  boolean resolutionReset) {
         Intent intent = new Intent(activity, GameActivity.class);
         intent.putExtra( Keys.ROM_PATH, romPath );
         intent.putExtra( Keys.ZIP_PATH, zipPath );
@@ -228,6 +230,7 @@ public class ActivityHelper
         intent.putExtra( Keys.DO_SETTINGS_RESET, doSettingsReset );
         intent.putExtra( Keys.NETPLAY_ENABLED, isNetplayEnabled );
         intent.putExtra( Keys.NETPLAY_SERVER, isNetplayServer );
+        intent.putExtra(Keys.RESOLUTION_RESET,resolutionReset);
         activity.startActivityForResult(intent, GAME_ACTIVITY_CODE);
     }
 
@@ -548,6 +551,7 @@ public class ActivityHelper
         intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
         intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
         intent.putExtra(Keys.NETPLAY_ENABLED, params.isUsingNetplay());
+        intent.putExtra(Keys.RESOLUTION_RESET, params.getResolutionReset());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);

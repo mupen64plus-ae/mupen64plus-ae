@@ -158,6 +158,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void avoidBlackScreen(){
+        mRenderThread.waitUntilReady();
         mRenderThread.frameAvailable();
     }
 
@@ -829,7 +830,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
-         * Handles incoming fram
+         * Handles incoming frame
          */
         private void frameAvailable() {
             mShaderDrawer.onDrawFrame();
