@@ -244,6 +244,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mListener.onComplete("resetSurface");
             firstPass = false;
         }
+        mListener.onComplete("resolutionRefresh");
     }
 
     @Override

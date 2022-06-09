@@ -16,6 +16,7 @@ ViWidthChanged;
 ReadScreen2;
 SetRenderingCallback;
 ResizeVideoOutput;
+PluginResolutionReset;
 FBRead;
 FBWrite;
 FBGetFrameBufferInfo;

@@ -7,6 +7,10 @@
 #include "PluginAPI.h"
 
 extern "C" {
+//#include "../../../mupen64plus-core/upstream/src/main/main.h"
+//#include "../../../mupen64plus-core/upstream/src/plugin/plugin.h"
+
+//extern int l_resolutionReset;
 
 EXPORT BOOL CALL InitiateGFX (GFX_INFO Gfx_Info)
 {
@@ -41,6 +45,11 @@ EXPORT void CALL ShowCFB (void)
 EXPORT void CALL UpdateScreen (void)
 {
 	api().UpdateScreen();
+//	if(l_resolutionReset != 0){
+//		if(!g_rom_pause)
+//			main_toggle_pause();
+//		l_resolutionReset = 0;
+//	}
 }
 
 EXPORT void CALL ViStatusChanged (void)

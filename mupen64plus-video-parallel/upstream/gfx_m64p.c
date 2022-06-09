@@ -303,6 +303,11 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
     window_height = height;
 }
 
+EXPORT void CALL PluginResolutionReset(void)
+{
+    return;
+}
+
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)
 {
 }

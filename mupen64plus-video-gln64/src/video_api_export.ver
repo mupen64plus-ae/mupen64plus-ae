@@ -1,6 +1,7 @@
 { global:
 PluginStartup;
 PluginShutdown;
+PluginResolutionReset;
 PluginGetVersion;
 ChangeWindow;
 InitiateGFX;

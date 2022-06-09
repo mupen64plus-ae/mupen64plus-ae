@@ -109,7 +109,8 @@ class CoreInterface
             void invoke(Pointer Context, int level, String message);
         }
 
-        int PluginStartup(Pointer CoreLibHandle, Pointer Context, DebugCallback debugCallBack);
+        int PluginStartup(Pointer CoreLibHandle, Pointer Context, DebugCallback debugCallBack
+                , boolean resolutionReset);
 
         int PluginGetVersion(IntByReference PluginType, IntByReference PluginVersion, IntByReference APIVersion, PointerByReference PluginNamePtr, IntByReference Capabilities);
 
@@ -144,6 +145,7 @@ class CoreInterface
     private static final String DD_ROM_NAME = "dd_rom.n64";
     private static final String DD_DISK_NAME = "dd_disk.ndd";
     private File mWorkingPath = null;
+    private boolean mResolutionReset = false;
 
     private final HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
@@ -552,6 +554,8 @@ class CoreInterface
             Log.i(TAG, "Disable core debug due to 64DD ROM found");
         }
 
+        mResolutionReset = resolutionReset;
+
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
                 dataDirPath, mCoreContext, debugCallback, null, mStateCallBack, resolutionReset);
         mAeBridgeLibrary.overrideAeVidExtFuncs();
@@ -624,7 +628,8 @@ class CoreInterface
         mPluginContext.put(pluginType, new Memory(bytes.length + 1));
 
         mPluginContext.get(pluginType).setString(0, pluginName);
-        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), loggingEnabled ? mDebugCallBackPlugin : null);
+        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), loggingEnabled ? mDebugCallBackPlugin : null,
+                mResolutionReset);
 
         Pointer handle = mAeBridgeLibrary.loadLibrary(pluginName);
         return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
@@ -851,6 +856,12 @@ class CoreInterface
     void setNativeWindow(Surface surface)
     {
         mAeBridgeLibrary.setNativeWindow(JNIEnv.CURRENT, surface);
+    }
+
+    void pluginResolutionReset()
+    {
+        Pointer parameter = null;
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PLUGIN_RESOLUTION_RESET.ordinal(),0,parameter);
     }
 
     void unsetNativeWindow()

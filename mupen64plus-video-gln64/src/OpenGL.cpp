@@ -783,6 +783,11 @@ void OGL_AddTriangle(int v0, int v1, int v2)
     OGL.triangles.elements[OGL.triangles.num++] = v2;
 }
 
+void OGL_ResolutionReset(int resolutionReset)
+{
+    OGL.resolutionReset = resolutionReset;
+}
+
 void OGL_SetColorArray()
 {
     if (scProgramCurrent->usesCol)
@@ -1256,6 +1261,10 @@ void OGL_SwapBuffers()
     else
     {
         CoreVideo_GL_SwapBuffers(); // paulscode, fix for black-screen bug
+//        if(OGL.resolutionReset != 0) {
+//            CoreVideo_ResolutionReset();
+//            OGL_ResolutionReset(0);
+//        }
     }
 
     // if emulator defined a render callback function, call it before
@@ -1278,7 +1287,6 @@ void OGL_SwapBuffers()
     glEnable( GL_SCISSOR_TEST );
 ///////
     }
-
 }
 
 void OGL_ReadScreen( void *dest, int *width, int *height )

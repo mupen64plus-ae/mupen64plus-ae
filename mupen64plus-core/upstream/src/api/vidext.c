@@ -31,6 +31,7 @@
 #include "osal/preproc.h"
 #include "../osd/osd.h"
 #include "callbacks.h"
+#include "m64p_frontend.h"
 #include "m64p_types.h"
 #include "m64p_vidext.h"
 #include "vidext.h"
@@ -479,6 +480,12 @@ EXPORT m64p_error CALL VidExt_ResizeWindow(int Width, int Height)
     StateChanged(M64CORE_VIDEO_SIZE, (Width << 16) | Height);
     // re-create the On-Screen Display
     osd_init(Width, Height);
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL VidExt_ResolutionReset(void)
+{
+    CoreDoCommand(M64CMD_SET_RESOLUTION_RESET,1,1);
     return M64ERR_SUCCESS;
 }
 

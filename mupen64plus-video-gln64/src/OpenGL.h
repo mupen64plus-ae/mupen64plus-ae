@@ -78,6 +78,7 @@ struct GLInfo
     int     frame_prevdl;
     int     mustRenderDlist;
     int     renderingToTexture;
+    int     resolutionReset;
 
 
     GLint   defaultProgram;
@@ -135,6 +136,7 @@ void OGL_ClearColorBuffer(float *color);
 void OGL_ResizeWindow(int x, int y, int width, int height);
 void OGL_SwapBuffers();
 void OGL_ReadScreen( void *dest, int *width, int *height );
+void OGL_ResolutionReset(int resolutionReset);
 
 int  OGL_CheckError();
 int  OGL_IsExtSupported( const char *extension );
@@ -146,6 +148,7 @@ extern ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode;
 extern ptr_VidExt_SetCaption            CoreVideo_SetCaption;
 extern ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen;
 extern ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow;
+extern ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset;
 extern ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress;
 extern ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute;
 extern ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute;

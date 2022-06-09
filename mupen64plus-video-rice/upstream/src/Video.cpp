@@ -847,6 +847,11 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
     status.ToResize = true;
 }
 
+EXPORT void CALL PluginResolutionReset(void)
+{
+    return;
+}
+
 //---------------------------------------------------------------------------------------
 
 EXPORT void CALL ProcessRDPList(void)

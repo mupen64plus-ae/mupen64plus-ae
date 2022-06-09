@@ -70,6 +70,8 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     SetDebugCallback(DebugCallback, Context);
     SetStateCallback(StateCallback, Context2);
 
+    l_resolutionReset = resolutionReset;
+
     /* check front-end's API version */
     if ((APIVersion & 0xffff0000) != (FRONTEND_API_VERSION & 0xffff0000))
     {
@@ -85,8 +87,6 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     plugin_connect(M64PLUGIN_CORE, NULL);
 
     savestates_init();
-
-    l_resolutionReset = resolutionReset;
 
     /* next, start up the configuration handling code by loading and parsing the config file */
     if (ConfigInit(ConfigPath, DataPath) != M64ERR_SUCCESS)
@@ -109,9 +109,6 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     romdatabase_open();
 
     workqueue_init();
-
-    if(resolutionReset != 0)
-        main_core_state_set(M64CORE_EMU_STATE, M64EMU_PAUSED);
 
     l_CoreInit = 1;
     return M64ERR_SUCCESS;
@@ -342,6 +339,14 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 l_resolutionReset = 0;
             else
                 l_resolutionReset = -1;
+
+            return M64ERR_SUCCESS;
+        case M64CMD_PLUGIN_RESOLUTION_RESET:
+            if (!g_EmulatorRunning)
+                return M64ERR_INVALID_STATE;
+
+            gfx.pluginResolutionReset();
+
             return M64ERR_SUCCESS;
         case M64CMD_NETPLAY_CONTROL_PLAYER:
             if (ParamInt < 1 || ParamInt > 4 || ParamPtr == NULL)

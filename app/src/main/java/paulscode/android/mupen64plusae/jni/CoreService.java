@@ -229,6 +229,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
+    void pluginResolutionReset()
+    {
+        mCoreInterface.pluginResolutionReset();
+    }
+
     private void tryShutdown()
     {
         mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
@@ -623,6 +628,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir, mResolutionReset);
+
+            if(mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-gln64")) {
+                mResolutionReset = false;
+                mCoreInterface.setResetResolution(false);
+            }
 
             boolean loadingSuccess;
 

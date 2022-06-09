@@ -658,10 +658,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mResolutionReset){
             mSettingsView = true;
             mGameSidebar.setVisibility(View.GONE);
-            if(mCoreFragment != null)
-            {
-                mCoreFragment.pauseEmulator();
-            }
 
             mDrawerLayout.openDrawer(GravityCompat.START);
             mGameSidebar.requestFocus();
@@ -1191,6 +1187,18 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         finish();
     }
 
+    private void resolutionRefresh(){
+        mResolutionReset = false;
+        mCoreFragment.setResolutionReset(false);
+        getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
+        getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
+
+        //if gln64 then update those values
+        if(mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-gln64")) {
+            mCoreFragment.pluginResolutionReset();
+        }
+    }
+
     public void onComplete(String string) {
         // After the dialog fragment completes, it calls this callback.
         // use the string here
@@ -1214,14 +1222,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 tryRunning();
                 break;
             case "resolutionRefresh":
-                mResolutionReset = false;
-                getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
-                getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
+                resolutionRefresh();
                 break;
-            case "displayResolution": case "displayScaling":
+            case "displayResolution": case "displayScaling": case "videoHardwareType":
+            case "videoPolygonOffset":
                 resolutionResetOnComplete();
                 return;
-            case "displayZoomSeek": //case "displayScaling":
+            case "displayZoomSeek": //case "videoHardwareType": case "videoPolygonOffset":
                 resetGameSurfaceResolutionData();
                 break;
             case "displayOrientation":
@@ -1305,10 +1312,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mSettingsRecreate = true;
                 break;
             case "gameSettingDialogClosed":
-                mResolutionReset = false;
-                mCoreFragment.setResolutionReset(false);
-                getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
-                getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
+                resolutionRefresh();
                 tryRunning();
                 break;
             default:

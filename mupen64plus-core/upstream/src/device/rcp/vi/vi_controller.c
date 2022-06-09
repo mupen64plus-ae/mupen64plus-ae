@@ -24,13 +24,13 @@
 #include <string.h>
 #include <api/callbacks.h>
 
+#include "api/m64p_frontend.h"
 #include "api/m64p_types.h"
 #include "device/memory/memory.h"
 #include "device/r4300/r4300_core.h"
 #include "device/rcp/mi/mi_controller.h"
 #include "main/main.h"
 #include "plugin/plugin.h"
-#include "api/m64p_frontend.h"
 
 /** static (local) variables **/
 static uint32_t   l_countPerScanlineOverride = 0;
@@ -182,7 +182,10 @@ void vi_vertical_interrupt_event(void* opaque)
         gfx.updateScreen();
 
     if(l_resolutionReset != 0){
-        main_toggle_pause();
+//        DebugMessage(M64MSG_STATUS,"l_resolutionReset");
+//        gfx.updateScreen();
+        if(!g_rom_pause)
+            main_toggle_pause();
         l_resolutionReset = 0;
     }
 

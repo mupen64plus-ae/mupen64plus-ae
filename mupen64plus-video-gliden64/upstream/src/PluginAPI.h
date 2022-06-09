@@ -67,6 +67,7 @@ public:
 	void FBGetFrameBufferInfo(void *pinfo);
 #else
 	// MupenPlus
+	void PluginResolutionReset(void);
 	void ResizeVideoOutput(int _Width, int _Height);
 	void ReadScreen2(void * _dest, int * _width, int * _height, int _front);
 

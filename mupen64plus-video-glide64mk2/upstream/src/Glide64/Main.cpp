@@ -117,6 +117,7 @@ ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
 ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
+ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
@@ -1566,13 +1567,14 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResizeWindow");
+    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
     if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
-        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_ResizeWindow || !CoreVideo_GL_GetProcAddress ||
-        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
+        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_ResizeWindow || !CoreVideo_ResolutionReset ||
+        !CoreVideo_GL_GetProcAddress || !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
     {
         ERRLOG("Couldn't connect to Core video functions");
         return M64ERR_INCOMPATIBLE;
@@ -1836,6 +1838,10 @@ output:   none
 EXPORT void CALL MoveScreen (int xpos, int ypos)
 {
   rdp.window_changed = TRUE;
+}
+
+EXPORT void CALL PluginResolutionReset (void)
+{
 }
 
 /******************************************************************

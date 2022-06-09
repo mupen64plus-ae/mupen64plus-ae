@@ -508,6 +508,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         return mCoreService != null && mCoreService.isShuttingDown();
     }
 
+    public void pluginResolutionReset()
+    {
+        mCoreService.pluginResolutionReset();
+    }
+
     public void exit()
     {
         Log.i(TAG, "exit");

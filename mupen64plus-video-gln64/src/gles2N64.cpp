@@ -29,6 +29,7 @@ ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
 ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
+ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
@@ -39,12 +40,34 @@ static FrameSkipper frameSkipper;
 u32         last_good_ucode = (u32) -1;
 void        (*CheckInterrupts)( void );
 void        (*renderCallback)() = NULL;
+static void (*l_DebugCallback)(void *, int, const char *) = NULL;
+static void *l_DebugCallContext = NULL;
+
+
+void DebugMessage(int level, const char *message, ...)
+{
+    char msgbuf[1024];
+    va_list args;
+
+    if (l_DebugCallback == NULL)
+        return;
+
+    va_start(args, message);
+    vsprintf(msgbuf, message, args);
+
+    (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
+
+    va_end(args);
+}
 
 extern "C" {
-
+int l_resolutionReset;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
-        void *Context, void (*DebugCallback)(void *, int, const char *))
+        void *Context, void (*DebugCallback)(void *, int, const char *),
+        int resolutionReset)
 {
+    l_DebugCallback = DebugCallback;
+    l_DebugCallContext = Context;
     ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)
             dlsym(CoreLibHandle, "ConfigGetSharedDataFilepath");
 
@@ -56,10 +79,13 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption) dlsym(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) dlsym(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) dlsym(CoreLibHandle, "VidExt_ResizeWindow");
+    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset) dlsym(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) dlsym(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) dlsym(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
+    l_resolutionReset = resolutionReset;
+    OGL_ResolutionReset(resolutionReset);
 
 #ifdef __NEON_OPT
     MathInitNeon();
@@ -74,6 +100,8 @@ EXPORT m64p_error CALL PluginShutdown(void)
 
     return M64ERR_SUCCESS;
 }
+
+int l_resolutionResetCounter = 0;
 
 EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType,
         int *PluginVersion, int *APIVersion, const char **PluginNamePtr,
@@ -151,8 +179,14 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
         frameSkipper.setSkips( FrameSkipper::MANUAL, config.maxFrameSkip );
 
     OGL_Start();
-
     return 1;
+}
+
+EXPORT void CALL PluginResolutionReset(void)
+{
+    l_resolutionResetCounter = 0;
+    l_resolutionReset = 0;
+    OGL_ResolutionReset(0);
 }
 
 EXPORT void CALL ProcessDList(void)
@@ -211,8 +245,14 @@ EXPORT void CALL ShowCFB (void)
 {
 }
 
-EXPORT void CALL UpdateScreen (void)
-{
+EXPORT void CALL UpdateScreen (void) {
+    if (l_resolutionResetCounter > 2) {//5
+        l_resolutionResetCounter = 0;
+        l_resolutionReset = 0;
+        OGL_ResolutionReset(0);
+
+        CoreVideo_ResolutionReset();
+    }
     frameSkipper.update();
 
     //has there been any display lists since last update
@@ -227,6 +267,8 @@ EXPORT void CALL UpdateScreen (void)
         OGL.screenUpdate=true;
         VI_UpdateScreen();
         OGL.mustRenderDlist = false;
+        if(l_resolutionReset != 0 && l_resolutionResetCounter < 50)
+            l_resolutionResetCounter++;
     }
 }
 
