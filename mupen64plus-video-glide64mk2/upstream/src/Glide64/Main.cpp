@@ -1436,6 +1436,22 @@ void ReleaseGfx ()
   rdp.window_changed = TRUE;
 }
 
+/* Global functions */
+static void DebugMessage(int level, const char *message, ...) {
+  char msgbuf[1024];
+  va_list args;
+
+  if (l_DebugCallback == nullptr)
+    return;
+
+  va_start(args, message);
+  vsprintf(msgbuf, message, args);
+
+  (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
+
+  va_end(args);
+}
+
 // new API code begins here!
 
 #ifdef __cplusplus
@@ -1505,12 +1521,15 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
   }
 }
 
+int    resolutionResetGlide = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                   void (*DebugCallback)(void *, int, const char *))
+                                   void (*DebugCallback)(void *, int, const char *),
+                                   int resolutionReset)
 {
   VLOG("CALL PluginStartup ()\n");
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
+    resolutionResetGlide = resolutionReset;
 
     /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
@@ -1840,10 +1859,6 @@ EXPORT void CALL MoveScreen (int xpos, int ypos)
   rdp.window_changed = TRUE;
 }
 
-EXPORT void CALL PluginResolutionReset (void)
-{
-}
-
 /******************************************************************
 Function: ResizeVideoOutput
 Purpose:  This function is called to force us to resize our output OpenGL window.
@@ -2084,6 +2099,14 @@ void DrawFrameBuffer ()
   }
 }
 
+void ResolutionResetInternal(){
+  if(resolutionResetGlide != 0){
+//    DebugMessage(M64MSG_STATUS,"glide64 ResolutionResetInternal");
+    resolutionResetGlide = 0;
+    CoreVideo_ResolutionReset();
+  }
+}
+
 extern "C" {
 /******************************************************************
 Function: UpdateScreen
@@ -2132,6 +2155,7 @@ EXPORT void CALL UpdateScreen (void)
     vi_count = 0;
   }
 #endif
+
   //*
   wxUint32 limit = (settings.hacks&hack_Lego) ? 15 : 30;
   if ((settings.frame_buffer&fb_cpu_write_hack) && (update_screen_count > limit) && (rdp.last_bg == 0))
@@ -2141,6 +2165,7 @@ EXPORT void CALL UpdateScreen (void)
     no_dlist = true;
     ClearCache ();
     UpdateScreen();
+    ResolutionResetInternal();
     return;
   }
   //*/
@@ -2161,6 +2186,7 @@ EXPORT void CALL UpdateScreen (void)
   //*/
   if (settings.swapmode == 0)
     newSwapBuffers ();
+  ResolutionResetInternal();
 }
 
 static void DrawWholeFrameBufferToScreen()
@@ -2200,6 +2226,12 @@ static void GetGammaTable()
     voodoo.gamma_table_b = new FxU32[voodoo.gamma_table_size];
     grGetGammaTableExt(voodoo.gamma_table_size, voodoo.gamma_table_r, voodoo.gamma_table_g, voodoo.gamma_table_b);
   }
+}
+
+EXPORT void CALL PluginResolutionReset (void)
+{
+//  DebugMessage(M64MSG_STATUS,"PluginResolutionReset Glide64");
+  resolutionResetGlide = 0;
 }
 
 }

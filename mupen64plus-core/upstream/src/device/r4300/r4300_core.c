@@ -130,7 +130,19 @@ void run_r4300(struct r4300_core* r4300)
 #endif
 
     *r4300_stop(r4300) = 0;
-    g_rom_pause = 0;
+
+    // Set g_rom_pause to 1 so the graphics plugin can pause the emulator properly
+    // if the user changes settings in game & the gfx plugin just so happens to
+    // initialize first.
+    char c[9] = "GLideN64";
+    c[8] = '\0';
+
+    if(strncmp(c, main_get_gfx_name(),8) == 0){
+        g_rom_pause = 0;
+//        DebugMessage(M64MSG_STATUS,"graphics plugin GLideN64 check pass");
+    }
+    else
+        g_rom_pause = 1;
 
     /* clear instruction counters */
 #if defined(COUNT_INSTR)

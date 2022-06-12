@@ -167,7 +167,7 @@ void PluginAPI::ResizeVideoOutput(int _Width, int _Height)
 	dwnd().setWindowSize(_Width, _Height);
 }
 
-void PluginAPI::PluginResolutionReset(void) { return;}
+void PluginAPI::PluginResolutionReset() { return;}
 
 void PluginAPI::ReadScreen2(void * _dest, int * _width, int * _height, int _front)
 {

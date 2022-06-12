@@ -121,6 +121,7 @@ static int l_RspAttached = 0;
 static int l_InputAttached = 0;
 static int l_AudioAttached = 0;
 static int l_GfxAttached = 0;
+static char s_GfxName[48];
 
 static unsigned int dummy;
 
@@ -219,6 +220,22 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
             DebugMessage(M64MSG_WARNING, "Fallback for Video plugin API (%02i.%02i.%02i) < 2.2.0. Resizable video will not work", VERSION_PRINTF_SPLIT(APIVersion));
             gfx.resizeVideoOutput = dummyvideo_ResizeVideoOutput;
         }
+
+        ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(plugin_handle, "PluginGetVersion");
+        if (PluginGetVersion == NULL)
+        {
+            DebugMessage(M64MSG_STATUS,"Error can't find PluginGetVersion in plugin.");
+        }
+
+        m64p_plugin_type plugin_type = (m64p_plugin_type)0;
+        int plugin_version = 0;
+        const char *plugin_name = NULL;
+        int api_version = 0;
+
+        (*PluginGetVersion)(&plugin_type, &plugin_version, &api_version, &plugin_name, NULL);
+        DebugMessage(M64MSG_STATUS,"Graphics plugin version = %s",plugin_name);
+        strncpy((char *) s_GfxName,plugin_name,47);
+        s_GfxName[47] = '\0';
 
         l_GfxAttached = 1;
     }
@@ -576,3 +593,6 @@ m64p_error plugin_check(void)
     return M64ERR_SUCCESS;
 }
 
+const char *get_gfx_name(){
+    return s_GfxName;
+}

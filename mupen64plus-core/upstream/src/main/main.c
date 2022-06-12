@@ -732,6 +732,12 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
     }
 }
 
+m64p_error main_plugin_resolution_reset()
+{
+    gfx.pluginResolutionReset();
+    return M64ERR_SUCCESS;
+}
+
 m64p_error main_get_screen_size(int *width, int *height)
 {
     gfx.readScreen(NULL, width, height, 0);
@@ -803,6 +809,10 @@ m64p_error main_reset(int do_hard_reset)
     }
 
     return M64ERR_SUCCESS;
+}
+
+const char * main_get_gfx_name(){
+    return get_gfx_name();
 }
 
 /*********************************************************************************************************

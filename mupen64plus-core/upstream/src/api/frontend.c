@@ -339,14 +339,9 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 l_resolutionReset = 0;
             else
                 l_resolutionReset = -1;
-
             return M64ERR_SUCCESS;
         case M64CMD_PLUGIN_RESOLUTION_RESET:
-            if (!g_EmulatorRunning)
-                return M64ERR_INVALID_STATE;
-
-            gfx.pluginResolutionReset();
-
+            main_plugin_resolution_reset();
             return M64ERR_SUCCESS;
         case M64CMD_NETPLAY_CONTROL_PLAYER:
             if (ParamInt < 1 || ParamInt > 4 || ParamPtr == NULL)

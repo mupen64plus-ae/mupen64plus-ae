@@ -1193,8 +1193,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
 
-        //if gln64 then update those values
-        if(mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-gln64")) {
+        //if not gliden64 then update those values
+        if(!mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-GLideN64")){
             mCoreFragment.pluginResolutionReset();
         }
     }

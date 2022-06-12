@@ -571,6 +571,16 @@ EXPORT void CALL ShowCFB (void);
 EXPORT void CALL UpdateScreen (void);
 
 /******************************************************************
+  Function: PluginResolutionReset
+  Purpose:  This function is called to pause the emulator after
+            resetting from certain video settings being updated
+			in game
+  input:    none
+  output:   none
+*******************************************************************/
+EXPORT void CALL PluginResolutionReset (void);
+
+/******************************************************************
   Function: ViStatusChanged
   Purpose:  This function is called to notify the dll that the
             ViStatus registers value has been changed.

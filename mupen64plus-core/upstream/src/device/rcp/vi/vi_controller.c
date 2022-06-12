@@ -184,9 +184,16 @@ void vi_vertical_interrupt_event(void* opaque)
     if(l_resolutionReset != 0){
 //        DebugMessage(M64MSG_STATUS,"l_resolutionReset");
 //        gfx.updateScreen();
-        if(!g_rom_pause)
+
+        // Making sure to pause once the core has started up;
+        // sometimes the graphics plugin finishes first
+        if(g_EmulatorRunning && !g_rom_pause) {
             main_toggle_pause();
-        l_resolutionReset = 0;
+            l_resolutionReset = 0;
+        }
+        else{
+            DebugMessage(M64MSG_STATUS, "graphics plugin finished too quickly.");
+        }
     }
 
     /* allow main module to do things on VI event */

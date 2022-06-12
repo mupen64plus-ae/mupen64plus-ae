@@ -510,6 +510,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void pluginResolutionReset()
     {
+//        Log.i(TAG, "pluginResolutionReset");
         mCoreService.pluginResolutionReset();
     }
 
