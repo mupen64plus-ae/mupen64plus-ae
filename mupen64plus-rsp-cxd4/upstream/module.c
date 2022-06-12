@@ -111,7 +111,8 @@ void DebugMessage(int level, const char *message, ...)
 }
 
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                     void (*DebugCallback)(void *, int, const char *))
+                                     void (*DebugCallback)(void *, int, const char *),
+                                     int resolutionReset)
 {
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
 

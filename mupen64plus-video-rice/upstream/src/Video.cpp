@@ -100,10 +100,13 @@ ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
 ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
+ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
+
+int l_resolutionReset = 0;
 
 //---------------------------------------------------------------------------------------
 // Forward function declarations
@@ -167,6 +170,13 @@ static void ResizeStep2(void)
     status.ToResize = false;
 }
 
+void ResolutionResetInternal(){
+    if(l_resolutionReset != 0){
+        l_resolutionReset = 0;
+        CoreVideo_ResolutionReset();
+    }
+}
+
 static void UpdateScreenStep2 (void)
 {
     status.bVIOriginIsUpdated = false;
@@ -174,11 +184,13 @@ static void UpdateScreenStep2 (void)
     if( status.ToToggleFullScreen && status.gDlistCount > 0 )
     {
         ChangeWindowStep2();
+//        ResolutionResetInternal();
         return;
     }
     if (status.ToResize && status.gDlistCount > 0)
     {
         ResizeStep2();
+//        ResolutionResetInternal();
         return;
     }
 
@@ -199,6 +211,7 @@ static void UpdateScreenStep2 (void)
             CGraphicsContext::Get()->UpdateFrame();
         }
         g_CritialSection.Unlock();
+//        ResolutionResetInternal();
         return;
     }
 
@@ -212,6 +225,7 @@ static void UpdateScreenStep2 (void)
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
         g_CritialSection.Unlock();
+        ResolutionResetInternal();
         return;
     }
 
@@ -232,6 +246,7 @@ static void UpdateScreenStep2 (void)
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
         g_CritialSection.Unlock();
+//        ResolutionResetInternal();
         return;
     }
 
@@ -264,6 +279,7 @@ static void UpdateScreenStep2 (void)
         }
 
         g_CritialSection.Unlock();
+        ResolutionResetInternal();
         return;
     }
 
@@ -272,6 +288,7 @@ static void UpdateScreenStep2 (void)
         status.bVIOriginIsUpdated=true;
         DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
         g_CritialSection.Unlock();
+        ResolutionResetInternal();
         return;
     }
 
@@ -280,6 +297,8 @@ static void UpdateScreenStep2 (void)
     DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
 
     g_CritialSection.Unlock();
+
+    ResolutionResetInternal();
 }
 
 static void ProcessDListStep2(void)
@@ -566,7 +585,6 @@ void DebugMessage(int level, const char *message, ...)
 
   va_end(args);
 }
-
 //---------------------------------------------------------------------------------------
 // Global functions, exported for use by the core library
 
@@ -577,7 +595,8 @@ extern "C" {
 
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                   void (*DebugCallback)(void *, int, const char *))
+                                   void (*DebugCallback)(void *, int, const char *),
+                                   int resolutionReset)
 {
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
@@ -585,6 +604,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     /* first thing is to set the callback function for debug info */
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
+    l_resolutionReset = resolutionReset;
 
     /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
@@ -653,14 +673,15 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResizeWindow");
+    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
     if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
-        !CoreVideo_ResizeWindow || !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_GL_GetProcAddress ||
-        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_GetAttribute || !CoreVideo_GL_SwapBuffers)
+        !CoreVideo_ResizeWindow || !CoreVideo_ResolutionReset || !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen ||
+        !CoreVideo_GL_GetProcAddress || !CoreVideo_GL_SetAttribute || !CoreVideo_GL_GetAttribute || !CoreVideo_GL_SwapBuffers)
     {
         DebugMessage(M64MSG_ERROR, "Couldn't connect to Core video extension functions");
         return M64ERR_INCOMPATIBLE;
@@ -849,7 +870,7 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 
 EXPORT void CALL PluginResolutionReset(void)
 {
-    return;
+    l_resolutionReset = 0;
 }
 
 //---------------------------------------------------------------------------------------

@@ -126,7 +126,8 @@ static void ReadConfig() {
 
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                     void (*DebugCallback)(void *, int, const char *)) {
+                                     void (*DebugCallback)(void *, int, const char *),
+                                     int resolutionReset) {
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
 
     int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion, bSaveConfig;

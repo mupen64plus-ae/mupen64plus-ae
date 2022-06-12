@@ -173,7 +173,7 @@ static void setup_rsp_fallback(const char* rsp_fallback_path)
     }
 
     /* call the plugin's initialization function and make sure it starts okay */
-    if ((*PluginStartup)(l_CoreHandle, l_DebugCallContext, l_DebugCallback) != M64ERR_SUCCESS) {
+    if ((*PluginStartup)(l_CoreHandle, l_DebugCallContext, l_DebugCallback, 0) != M64ERR_SUCCESS) {
         HleErrorMessage(NULL, "Error: %s plugin library '%s' failed to start.", plugin_name, rsp_fallback_path);
         goto close_handle;
     }
@@ -285,7 +285,8 @@ int HleForwardTask(void* user_defined)
 
 /* DLL-exported functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                     void (*DebugCallback)(void *, int, const char *))
+                                     void (*DebugCallback)(void *, int, const char *),
+                                     int resolutionReset)
 {
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
     int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
