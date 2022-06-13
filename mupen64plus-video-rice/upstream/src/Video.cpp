@@ -184,13 +184,11 @@ static void UpdateScreenStep2 (void)
     if( status.ToToggleFullScreen && status.gDlistCount > 0 )
     {
         ChangeWindowStep2();
-//        ResolutionResetInternal();
         return;
     }
     if (status.ToResize && status.gDlistCount > 0)
     {
         ResizeStep2();
-//        ResolutionResetInternal();
         return;
     }
 
@@ -211,7 +209,6 @@ static void UpdateScreenStep2 (void)
             CGraphicsContext::Get()->UpdateFrame();
         }
         g_CritialSection.Unlock();
-//        ResolutionResetInternal();
         return;
     }
 
@@ -246,7 +243,7 @@ static void UpdateScreenStep2 (void)
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
         g_CritialSection.Unlock();
-//        ResolutionResetInternal();
+        ResolutionResetInternal();
         return;
     }
 
