@@ -156,6 +156,7 @@ static void plugin_disconnect_gfx(void)
     gfx = dummy_gfx;
     l_GfxAttached = 0;
     l_mainRenderCallback = NULL;
+    memset(s_GfxName,0,48);
 }
 
 static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)

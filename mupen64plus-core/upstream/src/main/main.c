@@ -954,7 +954,8 @@ static void pause_loop(void)
     if(g_rom_pause)
     {
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
-        VidExt_GL_SwapBuffers();
+        if(strncmp(main_get_gfx_name(),"parallel",7) != 0)
+            VidExt_GL_SwapBuffers();
         while(g_rom_pause)
         {
             SDL_Delay(10);

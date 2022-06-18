@@ -87,6 +87,15 @@ typedef m64p_error (*ptr_VidExt_ResizeWindow)(int, int);
 EXPORT m64p_error CALL VidExt_ResizeWindow(int, int);
 #endif
 
+/* VidExt_ResolutionReset()
+ *
+ * This function pauses the emulator after displaying the first frame.
+ */
+typedef m64p_error (*ptr_VidExt_ResolutionReset)();
+#if defined(M64P_CORE_PROTOTYPES)
+EXPORT m64p_error CALL VidExt_ResolutionReset();
+#endif
+
 /* VidExt_SetCaption()
  *
  * This function sets the caption text of the emulator rendering window.

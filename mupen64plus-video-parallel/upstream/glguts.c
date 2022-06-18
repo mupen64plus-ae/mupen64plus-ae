@@ -28,6 +28,7 @@ static ptr_VidExt_SetVideoMode CoreVideo_SetVideoMode = NULL;
 static ptr_VidExt_SetCaption CoreVideo_SetCaption = NULL;
 static ptr_VidExt_ToggleFullScreen CoreVideo_ToggleFullScreen = NULL;
 static ptr_VidExt_ResizeWindow CoreVideo_ResizeWindow = NULL;
+static ptr_VidExt_ResolutionReset CoreVideo_ResolutionReset = NULL;
 static ptr_VidExt_GL_GetProcAddress CoreVideo_GL_GetProcAddress = NULL;
 static ptr_VidExt_GL_SetAttribute CoreVideo_GL_SetAttribute = NULL;
 static ptr_VidExt_GL_GetAttribute CoreVideo_GL_GetAttribute = NULL;
@@ -71,6 +72,7 @@ static int toggle_buffer;
 int32_t window_width;
 int32_t window_height;
 int32_t window_fullscreen;
+int l_resolutionReset;
 
 
 
@@ -290,6 +292,7 @@ void screen_init()
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption)DLSYM(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen)DLSYM(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow)DLSYM(CoreLibHandle, "VidExt_ResizeWindow");
+    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset)DLSYM(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress)DLSYM(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute)DLSYM(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute)DLSYM(CoreLibHandle, "VidExt_GL_GetAttribute");
@@ -398,6 +401,13 @@ void screen_swap(bool blank)
 
     (*render_callback)(1);
     CoreVideo_GL_SwapBuffers();
+}
+void screen_resolution_reset()
+{
+    if(l_resolutionReset != 0) {
+        CoreVideo_ResolutionReset();
+//        l_resolutionReset = 0;
+    }
 }
 
 void screen_set_fullscreen(bool _fullscreen)
