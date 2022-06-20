@@ -541,6 +541,7 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
         intent.putExtra(Keys.ZIP_PATH,  params.getZipPath());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
+        intent.putExtra(Keys.DO_SETTINGS_RESET,  params.getSettingsReset());
         intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
 
         intent.putExtra(Keys.ROM_MD5, params.getRomMd5());

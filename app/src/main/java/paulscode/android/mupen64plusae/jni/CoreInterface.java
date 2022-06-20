@@ -52,8 +52,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -138,6 +141,7 @@ class CoreInterface
 
     private final SparseArray<String> mGbRomPaths = new SparseArray<>(4);
     private final SparseArray<String> mGbRamPaths = new SparseArray<>(4);
+    public String latestSave = "";
     private String mDdRom = null;
     private String mDdDisk = null;
     private static final String GB_ROM_NAME = "gb_rom.gb";
@@ -803,6 +807,7 @@ class CoreInterface
         byte[] bytes = filename.getBytes(Charset.defaultCharset());
         Pointer parameterPointer = new Memory(bytes.length + 1);
         parameterPointer.setString(0, filename);
+//        Log.i("CoreInterface","resultValue = "+filename);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameterPointer);
     }
 
@@ -877,6 +882,36 @@ class CoreInterface
     void FPSEnabled(int recalc)
     {
         mAeBridgeLibrary.FPSEnabled(recalc);
+    }
+
+    public boolean checkOnStateCallbackListener(String filename, String directory)
+    {
+        synchronized(mStateCallbackLock)
+        {
+            File fileCheck = new File(filename);
+            if(fileCheck.exists())
+                return false;
+            else {
+                final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
+                final DateFormat dateFormat = new SimpleDateFormat(sFormatString, java.util.Locale.getDefault());
+                final String dateAndTime = dateFormat.format(new Date());
+                final String fileName = dateAndTime + "." + "v2" + ".sav";
+                final String newFile = directory + fileName;
+                latestSave = newFile;
+
+                emuResume();
+                try{
+                    Thread.sleep(1000);
+                }
+                catch(Exception e){
+
+                }
+                emuSaveFile(newFile);
+                mStateCallBack.invoke(mCoreContext,11,1);
+                emuPause();
+                return true;
+            }
+        }
     }
 
     void addOnStateCallbackListener( OnStateCallbackListener listener )

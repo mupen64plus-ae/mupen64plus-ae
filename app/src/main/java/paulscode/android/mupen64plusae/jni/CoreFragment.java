@@ -124,6 +124,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
     private boolean mIsRestarting = false;
+    private boolean mSettingsReset = false;
     private boolean mUseRaphnetIfAvailable = false;
     private int mVideoRenderWidth = 0;
     private int mVideoRenderHeight = 0;
@@ -301,7 +302,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean resolutionReset)
+                          boolean isRestarting, boolean settingsReset, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay,
+                          boolean resolutionReset)
     {
         Log.i(TAG, "startCore");
 
@@ -311,6 +313,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mRomPath = romPath;
         mZipPath = zipPath;
         mIsRestarting = isRestarting;
+        mSettingsReset = settingsReset;
         mRomMd5 = romMd5;
         mRomCrc = romCrc;
         mRomHeaderName = romHeaderName;
@@ -375,6 +378,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomCountryCode(mRomCountryCode);
         params.setRomArtPath(mRomArtPath);
         params.setRestarting(mIsRestarting);
+        params.setSettingsReset(mSettingsReset);
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
         params.setVideoRenderWidth(mVideoRenderWidth);
         params.setVideoRenderHeight(mVideoRenderHeight);
@@ -812,6 +816,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (mCoreService != null) {
             mCoreService.loadState(file);
         }
+    }
+
+    public boolean checkOnStateCallbackListeners(){
+        if(mCoreService == null)
+            return false;
+        return mCoreService.checkOnStateCallbackListeners();
     }
 
     public void autoSaveState(boolean shutdownOnFinish, boolean pauseEmulator)

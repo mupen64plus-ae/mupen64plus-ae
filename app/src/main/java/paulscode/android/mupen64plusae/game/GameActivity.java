@@ -612,7 +612,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart, mSettingsReset,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
                         mIsNetplayEnabled, mResolutionReset);
@@ -1075,6 +1075,35 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 //        view.setPadding(0, mTopInset, mRightInset, mBottomInset);
 //    }
 
+    private void safeAutoSave(){
+        if(mCoreFragment == null)
+            return;
+        int tryingCount = 0;
+        if(mGlobalPrefs.maxAutoSaves != 0)
+        {
+            mCoreFragment.autoSaveState(false,true);
+            try{
+                Log.i(TAG,"Sleeping tryingcount = 0");
+                Thread.sleep(100);
+            }
+            catch(Exception e){
+                Log.i(TAG,"Can't sleep");
+            }
+            while(mCoreFragment.checkOnStateCallbackListeners()){
+                try{
+                    Log.i(TAG,"Sleeping tryingcount = "+tryingCount);
+                    Thread.sleep(1000);
+                }
+                catch(Exception e){
+                    Log.i(TAG,"Can't sleep");
+                }
+                if(tryingCount > 5)
+                    break;
+                tryingCount++;
+            }
+        }
+    }
+
     public void resetGlContext(){
         mGameSurface.stopGlContext();
         mGameSurface.startGlContext();
@@ -1177,10 +1206,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     private void resolutionResetOnComplete(){
-        if(mGlobalPrefs.maxAutoSaves != 0)
-        {
-            mCoreFragment.autoSaveState(false,true);
-        }
+        safeAutoSave();
         getIntent().putExtra("gameOpenReset", true);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, true);
         setResult(RESULT_OK, getIntent());

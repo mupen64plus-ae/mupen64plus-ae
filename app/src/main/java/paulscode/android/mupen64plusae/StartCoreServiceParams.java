@@ -41,6 +41,7 @@ public class StartCoreServiceParams
     private int videoRenderHeight;
     private boolean usingNetplay;
     private boolean resolutionReset;
+    private boolean settingsReset;
 
     public String getRomGoodName() {
         return romGoodName;
@@ -144,6 +145,14 @@ public class StartCoreServiceParams
 
     public void setVideoRenderHeight(int videoRenderHeight) {
         this.videoRenderHeight = videoRenderHeight;
+    }
+
+    public boolean getSettingsReset(){
+        return settingsReset;
+    }
+
+    public void setSettingsReset(boolean settingsReset) {
+        this.settingsReset = settingsReset;
     }
 
     public boolean getResolutionReset() {

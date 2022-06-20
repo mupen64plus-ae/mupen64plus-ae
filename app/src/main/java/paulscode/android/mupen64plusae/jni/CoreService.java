@@ -155,6 +155,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private boolean mUsingNetplay = false;
     private boolean mNetplayInitSuccess = false;
     private boolean mResolutionReset = false;
+    private boolean mSettingsReset = false;
+    private boolean mLoadLatestAutoSave = false;
 
     //Service attributes
     private int mStartId;
@@ -257,9 +259,23 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
+    public boolean checkOnStateCallbackListeners(){
+        return mCoreInterface.checkOnStateCallbackListener(mCoreInterface.latestSave,mGamePrefs.getAutoSaveDir() + "/");
+    }
+
     void autoSaveState(final boolean shutdownOnFinish, final boolean pauseEmulator)
     {
         final String latestSave = mGameDataManager.getAutoSaveFileName();
+        if(mCoreInterface.latestSave.equals(""))
+            mCoreInterface.latestSave = latestSave;
+        int timer;
+
+        // Pausing means we are coming back from settings change so we need to make sure
+        // the saving finishes
+        if (pauseEmulator)
+            timer = 1500;
+        else
+            timer = 500;
 
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
@@ -289,15 +305,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                     //newValue == 1, then it was successful
                     if (newValue == 1) {
+                        Log.i(TAG, "trying to write " + mCoreInterface.latestSave);
                         try {
-                            if (!new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
-                                Log.e(TAG, "Unable to save file due to file write failure: " + latestSave);
+                            if (!new File(mCoreInterface.latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
+                                Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.latestSave);
                             }
                         } catch (IOException e) {
-                            Log.e(TAG, "Unable to save file due to file write failure: " + latestSave);
+                            Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.latestSave);
                         }
                     } else {
-                        Log.e(TAG, "Unable to save file due to bad return: " + latestSave);
+                        Log.e(TAG, "Unable to save file due to bad return: " + mCoreInterface.latestSave);
                     }
 
                     final CoreInterface.OnStateCallbackListener saveCompleteListener = this;
@@ -306,11 +323,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     // back to again on a call back
                     mShutdownHandler.postDelayed(() -> {
                         mCoreInterface.removeOnStateCallbackListener(this);
+                        mCoreInterface.latestSave = "";
 
                         if (shutdownOnFinish) {
                             shutdownEmulator();
                         }
-                    }, 500);
+                    }, timer);
 
                 } else {
                     Log.i(TAG, "Param changed = " + paramChanged + " value = " + newValue);
@@ -629,6 +647,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir, mResolutionReset);
 
+            if(mResolutionReset || mSettingsReset)
+                mLoadLatestAutoSave = true;
+
             if(!mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-GLideN64")){
                 mResolutionReset = false;
                 mCoreInterface.setResetResolution(false);
@@ -720,10 +741,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
 
                 if (!mIsShuttingDown) {
-                    if (!mIsRestarting)
+                    if (!mIsRestarting || mLoadLatestAutoSave)
                     {
+                        resetAppData();
                         final String latestSave = mGameDataManager.getLatestAutoSave();
                         mCoreInterface.emuLoadFile(latestSave);
+                        mLoadLatestAutoSave = false;
+
+                        mResolutionReset = false;//delete?
+                        mSettingsReset = false;//delete?
                     }
 
                     // This call blocks until emulation is stopped
@@ -897,6 +923,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
                 CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
         mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
+        mGameDataManager.clearOldest();
+
+        updateNotification();
     }
 
     public void resetControllers(){
@@ -969,6 +998,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
+        notificationIntent.putExtra( ActivityHelper.Keys.DO_SETTINGS_RESET, mSettingsReset );
         notificationIntent.putExtra( ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
@@ -1042,6 +1072,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
 
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+            mSettingsReset = extras.getBoolean( ActivityHelper.Keys.DO_SETTINGS_RESET, false);
             mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
             mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
 
