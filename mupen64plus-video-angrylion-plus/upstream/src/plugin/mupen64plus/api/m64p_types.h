@@ -152,6 +152,7 @@ typedef enum {
   M64CMD_SEND_SDL_KEYDOWN,
   M64CMD_SEND_SDL_KEYUP,
   M64CMD_SET_FRAME_CALLBACK,
+  M64CMD_PLUGIN_RESOLUTION_RESET,
   M64CMD_TAKE_NEXT_SCREENSHOT,
   M64CMD_CORE_STATE_SET,
   M64CMD_READ_SCREEN,
@@ -360,6 +361,7 @@ typedef struct {
   m64p_error (*VidExtFuncSetCaption)(const char *);
   m64p_error (*VidExtFuncToggleFS)(void);
   m64p_error (*VidExtFuncResizeWindow)(int, int);
+  m64p_error (*VidExtFuncResolutionReset)(void);
 } m64p_video_extension_functions;
 
 #endif /* define M64P_TYPES_H */

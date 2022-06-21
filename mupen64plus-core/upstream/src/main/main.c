@@ -954,7 +954,8 @@ static void pause_loop(void)
     if(g_rom_pause)
     {
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
-        if(strncmp(main_get_gfx_name(),"parallel",7) != 0)
+        if(strncmp(main_get_gfx_name(),"parallel",7) != 0 &&
+           strncmp(main_get_gfx_name(),"angrylion",8) != 0)
             VidExt_GL_SwapBuffers();
         while(g_rom_pause)
         {
