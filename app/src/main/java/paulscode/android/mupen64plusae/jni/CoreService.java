@@ -263,11 +263,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mCoreInterface.checkOnStateCallbackListener(mCoreInterface.latestSave,mGamePrefs.getAutoSaveDir() + "/");
     }
 
+    void loadLatestSave(){
+        resetAppData();
+        final String latestSave = mGameDataManager.getLatestAutoSave();
+        mCoreInterface.emuLoadFile(latestSave);
+    }
+
     void autoSaveState(final boolean shutdownOnFinish, final boolean pauseEmulator)
     {
         final String latestSave = mGameDataManager.getAutoSaveFileName();
-        if(mCoreInterface.latestSave.equals(""))
-            mCoreInterface.latestSave = latestSave;
+//        if(mCoreInterface.latestSave.equals(""))
+        mCoreInterface.latestSave = latestSave;
         int timer;
 
         // Pausing means we are coming back from settings change so we need to make sure
@@ -743,9 +749,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 if (!mIsShuttingDown) {
                     if (!mIsRestarting || mLoadLatestAutoSave)
                     {
-                        resetAppData();
-                        final String latestSave = mGameDataManager.getLatestAutoSave();
-                        mCoreInterface.emuLoadFile(latestSave);
+                        loadLatestSave();
                         mLoadLatestAutoSave = false;
 
                         mResolutionReset = false;//delete?

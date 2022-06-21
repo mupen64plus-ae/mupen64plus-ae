@@ -439,10 +439,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // Show the drawer at the start and have it hide itself
             // automatically ... should delete altogether (then wouldn't
             // have to pass mSettingsReset to GameActivity)
-            if(!mSettingsReset)
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            else
-                mSettingsReset = false;
+            mDrawerLayout.openDrawer(GravityCompat.START);
         }
         else // possibly recreate() called
         {
@@ -616,6 +613,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
                         mIsNetplayEnabled, mResolutionReset);
+                mSettingsReset = false;
             }
 
             // Try running now in case the core service has already started
@@ -1079,7 +1077,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mCoreFragment == null)
             return;
         int tryingCount = 0;
-        if(mGlobalPrefs.maxAutoSaves != 0)
+        if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled)
         {
             mCoreFragment.autoSaveState(false,true);
             try{
@@ -1329,10 +1327,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 break;
             case "settingsReset":
                 mSettingsReset = true;
-                if(mGlobalPrefs.maxAutoSaves != 0)
-                {
-                    mCoreFragment.autoSaveState(false,true);
-                }
                 break;
             case "settingsRecreate":
                 mSettingsRecreate = true;
@@ -1359,6 +1353,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if(mSettingsReset) {
                 mSettingsReset = false;
                 mSettingsRecreate = false;
+                safeAutoSave();
                 getIntent().putExtra("gameOpenReset", true);
                 setResult(RESULT_OK, getIntent());
                 finish();
