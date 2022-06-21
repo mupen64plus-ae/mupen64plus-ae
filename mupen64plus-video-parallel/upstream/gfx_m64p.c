@@ -163,8 +163,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
     ConfigSetDefaultBool(configVideoParallel, KEY_NATIVETEXTRECT, 1, "Native resolution TEX_RECT. TEX_RECT primitives should generally be rendered at native resolution to avoid seams");
     ConfigSaveSection("Video-Parallel");
 
-    l_resolutionReset = resolutionReset;
-//    DebugMessage(M64MSG_STATUS,"graphics plugin parallel here at pluginstartup l_resolutionreset = %d",l_resolutionReset);
+    resolution_reset = resolutionReset;
+//    DebugMessage(M64MSG_STATUS,"graphics plugin parallel here at pluginstartup resolution_reset = %d",resolution_reset);
     plugin_initialized = true;
     return M64ERR_SUCCESS;
 }
@@ -324,8 +324,8 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 
 EXPORT void CALL PluginResolutionReset(void)
 {
-//    DebugMessage(M64MSG_STATUS,"graphics plugin parallel l_resolutionReset");
-    l_resolutionReset = 0;
+//    DebugMessage(M64MSG_STATUS,"graphics plugin parallel resolution_reset");
+    resolution_reset = 0;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

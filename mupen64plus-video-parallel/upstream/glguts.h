@@ -39,7 +39,7 @@ extern "C"
     extern int32_t window_width;
     extern int32_t window_height;
     extern int32_t window_fullscreen;
-    extern int l_resolutionReset;
+    extern int resolution_reset;
 
 #ifdef __cplusplus
 }
