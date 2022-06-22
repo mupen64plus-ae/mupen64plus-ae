@@ -598,6 +598,9 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
             else
                 *rval = M64VIDEO_WINDOWED;
             break;
+        case M64CORE_DYNAREC_INIT:
+            *rval = l_dynarecInitiated;
+            break;
         case M64CORE_SAVESTATE_SLOT:
             *rval = savestates_get_slot();
             break;

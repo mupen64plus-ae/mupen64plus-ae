@@ -8728,6 +8728,7 @@ void new_dynarec_init(void)
 
   tlb_speed_hacks();
   arch_init();
+  l_dynarecInitiated = 1;
 }
 
 void new_dynarec_cleanup(void)

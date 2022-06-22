@@ -515,7 +515,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void pluginResolutionReset()
     {
 //        Log.i(TAG, "pluginResolutionReset");
-        mCoreService.pluginResolutionReset();
+        if(mCoreService != null)
+            mCoreService.pluginResolutionReset();
     }
 
     public void exit()
@@ -623,6 +624,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             return 0;
         }
+    }
+
+    public int getDynarecInit()
+    {
+        if(mCoreService == null)
+            return 0;
+        return mCoreService.getDynarecInit();
     }
 
     public void incrementSlot()

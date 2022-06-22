@@ -852,6 +852,13 @@ class CoreInterface
         return slot.getValue();
     }
 
+    int emuGetDynarecInitiated()
+    {
+        IntByReference dynarec = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_DYNAREC_INIT.ordinal(), dynarec.getPointer());
+        return dynarec.getValue();
+    }
+
     void emuReset()
     {
         Pointer parameter = null;

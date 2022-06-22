@@ -71,6 +71,7 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     SetStateCallback(StateCallback, Context2);
 
     l_resolutionReset = resolutionReset;
+    l_dynarecInitiated = 0;
 
     /* check front-end's API version */
     if ((APIVersion & 0xffff0000) != (FRONTEND_API_VERSION & 0xffff0000))

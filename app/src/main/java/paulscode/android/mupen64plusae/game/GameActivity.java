@@ -1334,6 +1334,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "gameSettingDialogClosed":
                 resolutionRefresh();
                 tryRunning();
+
+                if(mCoreFragment != null){
+                    // This means we broke out of the settings dialog fragment before
+                    // the cpu instruction compiler got initiated, so best to recreate
+                    if(mCoreFragment.getDynarecInit() == 0)
+                        recreate();
+                }
                 break;
             default:
                 break;
