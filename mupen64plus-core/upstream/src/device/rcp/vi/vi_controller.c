@@ -173,6 +173,28 @@ void write_vi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
     masked_write(&vi->regs[reg], value, mask);
 }
 
+int l_resolutionCounter = 0;
+
+void resolution_reset_check(){
+    if(l_resolutionReset != 0){
+        // Making sure to pause once the core has started up;
+        // sometimes the graphics plugin finishes first
+        if(g_EmulatorRunning && !g_rom_pause) {
+            if(strncmp(get_gfx_name(),"GLideN64",7) == 0 && l_resolutionCounter < 3) {
+                l_resolutionCounter++;
+            }
+            else{
+                main_toggle_pause();
+                l_resolutionCounter = 0;
+                l_resolutionReset = 0;
+            }
+        }
+        else{
+            DebugMessage(M64MSG_STATUS, "graphics plugin finished too quickly.");
+        }
+    }
+}
+
 void vi_vertical_interrupt_event(void* opaque)
 {
     struct vi_controller* vi = (struct vi_controller*)opaque;
@@ -181,26 +203,14 @@ void vi_vertical_interrupt_event(void* opaque)
     else
         gfx.updateScreen();
 
-    if(l_resolutionReset != 0){
-//        DebugMessage(M64MSG_STATUS,"l_resolutionReset");
-//        gfx.updateScreen();
-
-        // Making sure to pause once the core has started up;
-        // sometimes the graphics plugin finishes first
-        if(g_EmulatorRunning && !g_rom_pause) {
-            main_toggle_pause();
-            l_resolutionReset = 0;
-        }
-        else{
-            DebugMessage(M64MSG_STATUS, "graphics plugin finished too quickly.");
-        }
-    }
-
     /* allow main module to do things on VI event */
     new_vi();
 
     /* toggle vi field if in interlaced mode */
     vi->field ^= (vi->regs[VI_STATUS_REG] >> 6) & 0x1;
+
+    /* make sure we aren't resetting from changing settings in game*/
+    resolution_reset_check();
 
     /* schedule next vertical interrupt */
     uint32_t next_vi = *get_event(&vi->mi->r4300->cp0.q, VI_INT) + vi->delay;
