@@ -173,19 +173,19 @@ void write_vi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
     masked_write(&vi->regs[reg], value, mask);
 }
 
-int l_resolutionCounter = 0;
+extern int l_resolutionResetCoreCounter = 0;
 
 void resolution_reset_check(){
     if(l_resolutionReset != 0){
         // Making sure to pause once the core has started up;
         // sometimes the graphics plugin finishes first
-        if(g_EmulatorRunning && !g_rom_pause) {
-            if(strncmp(get_gfx_name(),"GLideN64",7) == 0 && l_resolutionCounter < 3) {
-                l_resolutionCounter++;
+        if(g_EmulatorRunning && !g_rom_pause && l_dynarecInitiated == 1) {
+            if(strncmp(get_gfx_name(),"GLideN64",7) == 0 && l_resolutionResetCoreCounter < 3) {
+//                l_resolutionCounter++;
             }
             else{
                 main_toggle_pause();
-                l_resolutionCounter = 0;
+                l_resolutionResetCoreCounter = 0;
                 l_resolutionReset = 0;
             }
         }

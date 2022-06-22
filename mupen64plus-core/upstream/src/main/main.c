@@ -859,6 +859,9 @@ void new_frame(void)
     /* advance the current frame */
     l_CurrentFrame++;
 
+    if(l_resolutionReset != 0)
+        l_resolutionResetCoreCounter++;
+
     if (l_FrameAdvance) {
         g_rom_pause = 1;
         l_FrameAdvance = 0;

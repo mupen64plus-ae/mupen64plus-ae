@@ -138,6 +138,7 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *, int, int, int);
 #endif
 
 int l_resolutionReset;
+int l_resolutionResetCoreCounter;
 int l_dynarecInitiated;
 
 #endif /* #define M64P_FRONTEND_H */
