@@ -1072,6 +1072,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void setResolutionReset(boolean resolutionReset){
         mResolutionReset = resolutionReset;
-        mCoreService.setResolutionReset(resolutionReset);
+        if(mCoreService != null)
+            mCoreService.setResolutionReset(resolutionReset);
     }
 }
