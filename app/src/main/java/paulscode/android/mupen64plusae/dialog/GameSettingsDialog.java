@@ -35,8 +35,12 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -122,6 +126,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 {
     public static GameActivity mGameActivity;
     private SettingsFragment mSettingsFragment;
+    private Vibrator mVibrator;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
     private final String TAG = "GameSettingsDialog";
     private String mTitle;
@@ -134,6 +139,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     public static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
+    private static final int FEEDBACK_VIBRATE_TIME = 50;
     public static int currentResourceId = 0;
     public static boolean launchingActivity = false;//delete
 
@@ -335,6 +341,17 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mGameActivity = (GameActivity) getActivity();
         mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(mGameActivity);
         oldShaderScaleFactor = mPrefs.getInt("shaderScaleFactor",2);
+
+        // By default, send Player 1 rumbles through phone vibrator
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) getActivity().getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) getActivity().getSystemService( Context.VIBRATOR_SERVICE );
+        }
+        mVibrator = vibrator;
+
         return inflater.inflate(R.layout.game_settings_header, container, false);
     }
 
@@ -515,6 +532,16 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType"))) {
             mListener.onComplete("resolutionRefresh");
             mListener.onComplete("settingsReset");
+        }
+
+        // Vibrating if they activate haptic feedback
+        if(key.equals("touchscreenFeedback") && mGameActivity.mGlobalPrefs.isTouchscreenFeedbackEnabled &&
+                mVibrator != null){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
+            } else {
+                mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
+            }
         }
 
         ArrayList<ShaderLoader> shaderPasses = mGameActivity.mGlobalPrefs.getShaderPasses();
