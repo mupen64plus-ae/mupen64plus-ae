@@ -24,12 +24,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import android.os.ParcelFileDescriptor;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -62,9 +66,11 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
+    private Vibrator mVibrator = null;
 
     private static final String ACTION_IMPORT_TOUCHSCREEN_GRAPHICS = "actionImportTouchscreenGraphics";
     private static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
+    private static final int FEEDBACK_VIBRATE_TIME = 50;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
 
     @Override
@@ -88,6 +94,16 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
         mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
+
+        // Vibrator to show on haptic feedback
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        }
+        mVibrator = vibrator;
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_touchscreen);
@@ -182,6 +198,15 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     {
         // Just refresh the preference screens in place
         refreshViews();
+
+        if(key.equals("touchscreenFeedback") && mGlobalPrefs.isTouchscreenFeedbackEnabled &&
+        mVibrator != null){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
+            } else {
+                mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
+            }
+        }
     }
 
     private void refreshViews()
