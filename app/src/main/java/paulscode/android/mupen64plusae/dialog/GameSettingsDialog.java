@@ -417,13 +417,65 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
     }
 
+    private void setPreference(String preferenceString, boolean value){
+        Preference preference;
+        preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(preferenceString);
+        if (preference != null)
+            preference.setEnabled(value);
+    }
+
+    private void disableSettingsThatReset(int currentResource){
+        boolean setBool = true;
+        if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+            setBool = false;
+
+        switch(currentResource) {
+            // Display
+            case 0:
+                setPreference("displayResolution", setBool);
+                setPreference("displayOrientation", setBool);
+                setPreference("displayScaling", setBool);
+                setPreference("videoHardwareType", setBool);
+                setPreference("hybridTextureFilter_v2", setBool);
+                setPreference("displayImmersiveMode_v2", setBool);
+                break;
+            // Audio
+            case 2:
+                setPreference("audioVolume", setBool);
+                setPreference("audioBufferSize", setBool);
+                setPreference("audioTimeStretch", setBool);
+                setPreference("audioFloatingPoint", setBool);
+                setPreference("audioSynchronize", setBool);
+                setPreference("audioSwapChannels", setBool);
+                setPreference("lowPerformanceMode", setBool);
+                setPreference("useHighPriorityThread_v2", setBool);
+                break;
+            // Input
+            case 4:
+                setPreference("navigationMode", setBool);
+                setPreference("useRaphnetAdapter", setBool);
+                break;
+            // Data
+            case 5:
+                setPreference("gameDataStorageType", setBool);
+                setPreference("useFlatGameDataPath", setBool);
+                setPreference("japanIdlPath64dd", setBool);
+                break;
+            default:
+                break;
+        }
+    }
+
+    // This gets updated as soon as a change in settings occurs
     public void resetPreferences(){
         Preference preference;
         switch(currentResourceId) {
             case 0:
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(VIDEO_POLYGON_OFFSET);
-                if (preference != null)
-                    preference.setEnabled(mGameActivity.mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
+                if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                    setPreference("videoPolygonOffset",false);
+                else
+                    setPreference(VIDEO_POLYGON_OFFSET,mGameActivity.mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
+                disableSettingsThatReset(currentResourceId);
                 break;
             case 1:
                 if(removeShader != -1)
@@ -431,31 +483,24 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 //                recreateView();
                 break;
             case 2:
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(AUDIO_SAMPLING_TYPE);
-                if (preference != null)
-                    preference.setEnabled(!mGameActivity.mGlobalPrefs.enableAudioTimeSretching);
+                if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                    setPreference("audioSamplingType",false);
+                else
+                    setPreference(AUDIO_SAMPLING_TYPE,!mGameActivity.mGlobalPrefs.enableAudioTimeSretching);
+                disableSettingsThatReset(currentResourceId);
                 break;
             case 3:
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(GlobalPrefs.KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH);
-                if (preference != null)
-                    preference.setEnabled(!TextUtils.isEmpty(mGameActivity.mGlobalPrefs.touchscreenSkin) &&
-                            mGameActivity.mGlobalPrefs.touchscreenSkin.equals("Custom"));
+                setPreference(GlobalPrefs.KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH,
+                        !TextUtils.isEmpty(mGameActivity.mGlobalPrefs.touchscreenSkin) &&
+                                mGameActivity.mGlobalPrefs.touchscreenSkin.equals("Custom"));
+//                disableSettingsThatReset();
                 break;
             case 4:
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(GlobalPrefs.PLAYER_MAP);
-                if (preference != null)
-                    preference.setEnabled(false);//for now, update with code below when fixed
-//                  preference.setEnabled(!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
-
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference("inputVolumeMappable");
-                if (preference != null)
-                    preference.setEnabled(false);
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference("inputBackMappable");
-                if (preference != null)
-                    preference.setEnabled(false);
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference("inputMenuMappable");
-                if (preference != null)
-                    preference.setEnabled(false);
+                setPreference(GlobalPrefs.PLAYER_MAP,false);//for now, update with code below when fixed
+////                    setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
+                setPreference("inputVolumeMappable",false);
+                setPreference("inputBackMappable",false);
+                setPreference("inputMenuMappable",false);
 
 
                 final PlayerMapPreference playerPref = (PlayerMapPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
@@ -471,11 +516,15 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
                     playerPref.setValue( mGameActivity.mGamePrefs.playerMap.serialize() );
                 }
+                disableSettingsThatReset(currentResourceId);
                 break;
             case 5 :
-                preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(GlobalPrefs.PATH_GAME_SAVES);
-                if (preference != null)
-                    preference.setEnabled(mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                    setPreference("gameDataStoragePath",false);
+                else
+                    setPreference("gameDataStoragePath",
+                            mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                disableSettingsThatReset(currentResourceId);
                 break;
             default:
                 break;
@@ -1488,42 +1537,86 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mPreferencesResId = preferencesResId;
         }
 
-        public void resetPreferences(){
+        private void setPreference(String preferenceString, boolean value){
             Preference preference;
+            preference = findPreference(preferenceString);
+            if (preference != null)
+                preference.setEnabled(value);
+        }
+
+        private void disableSettingsThatReset(int currentResource){
+            boolean setBool = true;
+            if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                setBool = false;
+
+            switch(currentResource){
+                // Display
+                case 0:
+                    setPreference("displayResolution",setBool);
+                    setPreference("displayOrientation",setBool);
+                    setPreference("displayScaling",setBool);
+                    setPreference("videoHardwareType",setBool);
+                    setPreference("hybridTextureFilter_v2",setBool);
+                    setPreference("displayImmersiveMode_v2",setBool);
+                    break;
+                // Audio
+                case 2:
+                    setPreference("audioVolume",setBool);
+                    setPreference("audioBufferSize",setBool);
+                    setPreference("audioTimeStretch",setBool);
+                    setPreference("audioFloatingPoint",setBool);
+                    setPreference("audioSynchronize",setBool);
+                    setPreference("audioSwapChannels",setBool);
+                    setPreference("lowPerformanceMode",setBool);
+                    setPreference("useHighPriorityThread_v2",setBool);
+                    break;
+                // Input
+                case 4:
+                    setPreference("navigationMode",setBool);
+                    setPreference("useRaphnetAdapter",setBool);
+                    break;
+                // Data
+                case 5:
+                    setPreference("gameDataStorageType",setBool);
+                    setPreference("useFlatGameDataPath",setBool);
+                    setPreference("japanIdlPath64dd",setBool);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void resetPreferences(){
             switch(currentResourceId){
                 case 0:
-                    preference = findPreference(VIDEO_POLYGON_OFFSET);
-                    if (preference != null)
-                        preference.setEnabled(mGameActivity.mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
+                    if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                        setPreference("videoPolygonOffset",false);
+                    else
+                        setPreference(VIDEO_POLYGON_OFFSET,mGameActivity.mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
+                    disableSettingsThatReset(currentResourceId);
                     break;
                 case 1:
                     gameSettingsDialog.OnPreferenceScreenChange("");
                     break;
                 case 2:
-                    preference = findPreference(AUDIO_SAMPLING_TYPE);
-                    if (preference != null)
-                        preference.setEnabled(!mGameActivity.mGlobalPrefs.enableAudioTimeSretching);
+                    if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                        setPreference("audioSamplingType",false);
+                    else
+                        setPreference(AUDIO_SAMPLING_TYPE,!mGameActivity.mGlobalPrefs.enableAudioTimeSretching);
+                    disableSettingsThatReset(currentResourceId);
                     break;
                 case 3:
-                    preference = findPreference(GlobalPrefs.KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH);
-                    if (preference != null)
-                        preference.setEnabled(!TextUtils.isEmpty(mGameActivity.mGlobalPrefs.touchscreenSkin) &&
-                                mGameActivity.mGlobalPrefs.touchscreenSkin.equals("Custom"));
+                    setPreference(GlobalPrefs.KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH,
+                            !TextUtils.isEmpty(mGameActivity.mGlobalPrefs.touchscreenSkin) &&
+                            mGameActivity.mGlobalPrefs.touchscreenSkin.equals("Custom"));
                     break;
                 case 4:
-                    preference = findPreference(GlobalPrefs.PLAYER_MAP);
-                    if (preference != null)
-                        preference.setEnabled(false);//for now, update with code below when fixed
-//                        preference.setEnabled(!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
-                    preference = findPreference("inputVolumeMappable");
-                    if (preference != null)
-                        preference.setEnabled(false);
-                    preference = findPreference("inputBackMappable");
-                    if (preference != null)
-                        preference.setEnabled(false);
-                    preference = findPreference("inputMenuMappable");
-                    if (preference != null)
-                        preference.setEnabled(false);
+                    setPreference(GlobalPrefs.PLAYER_MAP,false);//for now, update with code below when fixed
+////                    setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
+                    setPreference("inputVolumeMappable",false);
+                    setPreference("inputBackMappable",false);
+                    setPreference("inputMenuMappable",false);
+
 
                     final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
                     if (playerPref != null)
@@ -1537,11 +1630,15 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
                         playerPref.setValue( mGameActivity.mGamePrefs.playerMap.serialize() );
                     }
+                    disableSettingsThatReset(currentResourceId);
                     break;
                 case 5:
-                    preference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
-                    if (preference != null)
-                        preference.setEnabled(mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                    if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
+                        setPreference("gameDataStoragePath",false);
+                    else
+                        setPreference("gameDataStoragePath",
+                                mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                    disableSettingsThatReset(currentResourceId);
                     break;
                 default:
                     break;
