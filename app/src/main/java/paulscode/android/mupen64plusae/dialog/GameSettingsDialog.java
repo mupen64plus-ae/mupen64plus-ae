@@ -627,6 +627,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             shaderScaleFactorSet = true;
             shaderLoader(shaderPasses,"shaderpass,1");
             mListener.onComplete("resetSurface");
+            mGameActivity.recreate();
         }
         //if change custom
         refreshViews();
