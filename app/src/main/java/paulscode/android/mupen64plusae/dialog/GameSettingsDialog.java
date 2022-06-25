@@ -613,10 +613,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
             mListener.onComplete("resetShaderScaleFactor");
 
-            if(shaderScaleFactorSet || firstPass) { // get rid of & always recreate if issues
+//            if(shaderScaleFactorSet || firstPass) { // get rid of & always recreate if issues
                 shaderScaleFactorSet = false;
                 mGameActivity.recreate();
-            }
+//            }
         }
         else if(removeShader != -1 && key.equals("shaderPass")){
 //            String keyy = "shaderpass,"+String.valueOf(removeShader);

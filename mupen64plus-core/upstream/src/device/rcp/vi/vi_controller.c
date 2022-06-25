@@ -179,7 +179,7 @@ void resolution_reset_check(){
     if(l_resolutionReset != 0){
         // Making sure to pause once the core has started up;
         // sometimes the graphics plugin finishes first
-        if(g_EmulatorRunning && !g_rom_pause && l_dynarecInitiated == 1) {
+        if(g_EmulatorRunning && !g_rom_pause) {
             if(strncmp(get_gfx_name(),"GLideN64",7) == 0 && l_resolutionResetCoreCounter < 3) {
 //                l_resolutionCounter++;
             }
