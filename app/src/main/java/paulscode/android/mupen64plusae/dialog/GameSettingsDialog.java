@@ -121,8 +121,8 @@ import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.dialog.GameSettingsDialog.OnSettingsFragmentCreationListener;
 
 public class GameSettingsDialog extends DialogFragment implements SharedPreferences.OnSharedPreferenceChangeListener,
-        Preference.OnPreferenceClickListener, ShaderPreference.OnRemove, PromptInputCodeDialog.PromptInputCodeListener,
-        AppCompatPreferenceFragment.OnDisplayDialogListener, PreferenceFragmentCompat.OnPreferenceStartScreenCallback//PreferenceFragmentCompat //MenuListView
+        Preference.OnPreferenceClickListener, ShaderPreference.OnRemove, AppCompatPreferenceFragment.OnDisplayDialogListener,
+        PreferenceFragmentCompat.OnPreferenceStartScreenCallback//PreferenceFragmentCompat //MenuListView
 {
     public static GameActivity mGameActivity;
     private SettingsFragment mSettingsFragment;
@@ -417,6 +417,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
     }
 
+    public PlayerMapPreference findPlayerMapPreferenceSettings(){
+        if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
+                mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4] == null)
+            return null;
+        return (PlayerMapPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
+    }
+
     private void setPreference(String preferenceString, boolean value){
         Preference preference;
         preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(preferenceString);
@@ -496,8 +503,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 //                disableSettingsThatReset();
                 break;
             case 4:
-                setPreference(GlobalPrefs.PLAYER_MAP,false);//for now, update with code below when fixed
-////                    setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
+                setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
                 setPreference("inputVolumeMappable",false);
                 setPreference("inputBackMappable",false);
                 setPreference("inputMenuMappable",false);
@@ -570,7 +576,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         if(key.equals("threadedGLideN64") || key.equals("inputShareController") ||
                 key.equals("holdButtonForMenu") ||
                 (key.equals("displayOrientation") && mGameActivity.mGlobalPrefs.displayOrientation != -1) ||
-                (key.equals("displayImmersiveMode_v2") && !mGameActivity.mGlobalPrefs.isImmersiveModeEnabled))
+                (key.equals("displayImmersiveMode_v2") && !mGameActivity.mGlobalPrefs.isImmersiveModeEnabled) ||
+                key.equals("playerMap"))
             mListener.onComplete("settingsRecreate");
 
         //CHECK ALL RESET VALUES HERE
@@ -959,15 +966,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
     }
 
-    @Override
-    public void onDialogClosed(int inputCode, int hardwareId, int which) {
-//        final PlayerMapPreference playerPref = (PlayerMapPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
-//        playerPref.onDialogClosed(hardwareId, which);
-//
-//        //initControllers(mOverlay);
-    }
-
-
     public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
     {
         mSharedPrefsName = sharedPrefsName;
@@ -1036,7 +1034,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     if(fragmentAdapter.mSettingsFragmentPreference[currentResourceId] != null) {
                         fragmentAdapter.mSettingsFragmentPreference[currentResourceId].resetPreferences();
 
-                        if(currentResourceId == 1){// also 4?
+                        if(currentResourceId == 1){
                             gameSettingsDialog.OnPreferenceScreenChange("");
                         }
                     }
@@ -1098,152 +1096,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
             mPrefs.registerOnSharedPreferenceChangeListener(this);
         }
-
-        // FOR INPUT
-//        @Override
-//        protected void onBindPreferences()
-//        {
-////            if(currentResourceId == 4) {
-//                // Detect when a view is added to the preference fragment and request focus if it's the first view
-//                final RecyclerView recyclerView = getListView();
-//
-//                final RecyclerView.Adapter<?> adapter = recyclerView.getAdapter();
-//
-//                recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-//                    @Override
-//                    public void onChildViewAttachedToWindow(@NonNull View childView) {
-//                        final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-//
-//                        //Prevent scrolling past the top
-//                        childView.setOnKeyListener((v, keyCode, event) -> {
-//                            View focusedChild;
-//                            if (layoutManager != null && adapter != null) {
-//                                focusedChild = layoutManager.getFocusedChild();
-//                                int selectedPos;
-//                                if (focusedChild != null) {
-//                                    selectedPos = recyclerView.getChildAdapterPosition(focusedChild);
-//
-//                                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-//                                        switch (keyCode) {
-//                                            case KeyEvent.KEYCODE_DPAD_DOWN:
-//                                                return !(selectedPos < adapter.getItemCount() - 1);
-//                                            case KeyEvent.KEYCODE_DPAD_UP:
-//                                                return selectedPos == 0;
-//                                            case KeyEvent.KEYCODE_DPAD_RIGHT:
-//                                                return true;
-//                                        }
-//                                        return false;
-//                                    }
-//                                    return false;
-//                                }
-//                            }
-//
-//                            return false;
-//                        });
-//
-//                        //Make sure all views are focusable
-//                        childView.setFocusable(true);
-//
-//                        if (adapter != null && layoutManager != null && adapter.getItemCount() > 0) {
-//                            int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition();
-//
-//                            //Get focus on the first visible item the first time it's displayed
-//                            if (firstItem != -1) {
-//                                RecyclerView.ViewHolder holder = recyclerView.findViewHolderForItemId(adapter.getItemId(firstItem));
-//                                if (holder != null) {
-//                                    if (!mHasFocusBeenSet) {
-//                                        mHasFocusBeenSet = true;
-//                                        holder.itemView.requestFocus();
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildViewDetachedFromWindow(@NonNull View arg0) {
-//                        // Nothing to do here
-//                    }
-//                });
-////            }
-//        }
-//        @Override
-//        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-//        {
-////            if(currentResourceId == 4) {
-//                if (getActivity() instanceof OnSettingsFragmentCreationListener) {
-//                    ((OnSettingsFragmentCreationListener) getActivity()).onFragmentCreation(this);
-//                }
-//                mHasFocusBeenSet = false;
-////            }
-//
-//            return super.onCreateView(inflater, container, savedInstanceState);
-//        }
-//
-//        @Override
-//        public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
-//        {
-//            super.onViewCreated(view, savedInstanceState);
-//
-////            if(currentResourceId == 4) {
-//                if (getActivity() instanceof OnSettingsFragmentCreationListener) {
-//                    ((OnSettingsFragmentCreationListener) getActivity()).onViewCreation(getListView());
-//                }
-////            }
-//        }
-//
-//        // FOR INPUT
-//
-//        @Override
-//        public void onDialogClosed(int inputCode, int hardwareId, int which) {
-//            final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
-//            playerPref.onDialogClosed(hardwareId, which);
-//
-//            //initControllers(mOverlay);
-//        }
-
-//        public Preference findPreference(CharSequence key)
-//        {
-//            return mPrefFrag.findPreference(key);
-////            return this.findPreference(key);
-//        }
-
-//        @Override
-//        protected void OnPreferenceScreenChange(String key)
-//        {
-//            Log.i("Shader", "OnPreferenceScreenChange");
-//            mCategoryPasses = (PreferenceGroup) findPreference( CATEGORY_PASSES );
-//
-//            if (mCategoryPasses == null) {
-//                resetPreferences();
-//            } else {
-//                PrefUtil.setOnPreferenceClickListener(this, ADD_PREFERENCE, this);
-//                refreshViews();
-//            }
-//        }
-
-//        public static SettingsFragmentPreference newInstance(int resourceId) {
-//            SettingsFragmentPreference frag = new SettingsFragmentPreference();
-//            Bundle args = new Bundle();
-//            args.putInt("resourceId", resourceId);
-////        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(gameActivity);
-////        args.putString(STATE_PREFS, title);
-//
-//            frag.setArguments(args);
-//            return frag;
-//        }
-
-//        public static AppCompatPreferenceFragment newInstance(String sharedPrefsName, int resourceId, String rootKey)
-//        {
-//            AppCompatPreferenceFragment frag = new AppCompatPreferenceFragment();
-//            Bundle args = new Bundle();
-//            args.putString(STATE_SHARED_PREFS_NAME, sharedPrefsName);
-//            args.putInt(STATE_RESOURCE_ID, resourceId);
-//            args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, rootKey);
-//
-//            frag.setArguments(args);
-//            return frag;
-//        }
 
         @Override
         public void onSaveInstanceState( Bundle savedInstanceState )
@@ -1385,34 +1237,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 getActivity().startActivityForResult(intent, DataPrefsActivity.FILE_PICKER_REQUEST_CODE);
             }
         }
-
-//        @Override
-//        public void onDisplayPreferenceDialog(Preference preference)
-//        {
-//            DialogFragment fragment = null;
-//
-//            if (getActivity() instanceof OnDisplayDialogListener)
-//            {
-//                fragment = ((OnDisplayDialogListener) getActivity()).getPreferenceDialogFragment(preference);
-//
-//                if (fragment != null)
-//                {
-//                    fragment.setTargetFragment(this, 0);
-//
-//                    try {
-//                        FragmentManager fragmentManager = getParentFragmentManager();
-//                        fragment.show(fragmentManager, "androidx.preference.PreferenceFragment.DIALOG");
-//                    } catch (IllegalStateException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//
-//            if (fragment == null)
-//            {
-//                super.onDisplayPreferenceDialog(preference);
-//            }
-//        }
 
         @Override
         public boolean onPreferenceTreeClick(Preference preference) {
@@ -1612,8 +1436,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                             mGameActivity.mGlobalPrefs.touchscreenSkin.equals("Custom"));
                     break;
                 case 4:
-                    setPreference(GlobalPrefs.PLAYER_MAP,false);//for now, update with code below when fixed
-////                    setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
+                    setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
                     setPreference("inputVolumeMappable",false);
                     setPreference("inputBackMappable",false);
                     setPreference("inputMenuMappable",false);

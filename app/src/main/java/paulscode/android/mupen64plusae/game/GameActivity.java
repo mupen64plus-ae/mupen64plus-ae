@@ -75,6 +75,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.SensorController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -93,6 +94,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
+import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.DisplayResolutionData;
@@ -145,7 +147,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
         NetplayClientSetupDialog.OnServerDialogActionListener,
         NetplayServerSetupDialog.OnClientDialogActionListener, NetplayFragment.NetplayListener,
-        GameSettingsDialog.OnCompleteListener , GameSettingsDialog.OnGameSettingsDialogPass {
+        GameSettingsDialog.OnCompleteListener , GameSettingsDialog.OnGameSettingsDialogPass,
+        PromptInputCodeDialog.PromptInputCodeListener{
     private static final String TAG = "GameActivity";
     // Activity and views
     private GameOverlay mOverlay;
@@ -1954,6 +1957,20 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (mIsNetplayServer && mNetplayServerDialog != null) {
             mNetplayServerDialog.onUpnpPortsObtained(tcpPort1, tcpPort2, udpPort2);
         }
+    }
+
+    @Override
+    public void onDialogClosed(int inputCode, int hardwareId, int which) {
+        final FragmentManager fm = this.getSupportFragmentManager();
+        if(fm == null)
+            return;
+        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+        if(gameSettings == null)
+            return;
+        final PlayerMapPreference playerPref = (PlayerMapPreference) gameSettings.findPlayerMapPreferenceSettings();
+        if (playerPref == null)
+            return;
+        playerPref.onDialogClosed(hardwareId, which);
     }
 
     public void recreateSurface(){
