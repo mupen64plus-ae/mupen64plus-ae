@@ -859,7 +859,7 @@ void new_frame(void)
     /* advance the current frame */
     l_CurrentFrame++;
 
-    if(l_resolutionReset != 0)
+    if(l_resolutionReset != 0)//&& l_dynarecInitiated == 1)
         l_resolutionResetCoreCounter++;
 
     if (l_FrameAdvance) {
@@ -1860,6 +1860,7 @@ m64p_error main_run(void)
 
     // clean up
     g_EmulatorRunning = 0;
+    l_dynarecInitiated = 0;
     StateChanged(M64CORE_EMU_STATE, M64EMU_STOPPED);
 
     return M64ERR_SUCCESS;
