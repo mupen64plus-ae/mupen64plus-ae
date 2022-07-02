@@ -556,8 +556,20 @@ void main_state_inc_slot(void)
     savestates_inc_slot();
 }
 
+void main_state_load_latest_auto_save()
+{
+    if (netplay_is_init() || l_FileName == NULL)
+        return;
+    savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
+}
+
 void main_state_load(const char *filename)
 {
+    if(filename != NULL) {
+        l_FileName = malloc(strlen(filename) + 1);
+        strcpy(l_FileName, filename);
+    }
+//    DebugMessage(M64MSG_STATUS,"l_FileName = %s",l_FileName);
     if (netplay_is_init())
         return;
 
@@ -598,8 +610,11 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
             else
                 *rval = M64VIDEO_WINDOWED;
             break;
-        case M64CORE_DYNAREC_INIT:
-            *rval = l_dynarecInitiated;
+        case M64CORE_EMU_MODE_INIT:
+            *rval = l_emuModeInitiated;
+            break;
+        case M64CORE_EMU_MODE:
+            *rval = get_r4300_emumode(&g_dev.r4300);
             break;
         case M64CORE_SAVESTATE_SLOT:
             *rval = savestates_get_slot();
@@ -859,7 +874,7 @@ void new_frame(void)
     /* advance the current frame */
     l_CurrentFrame++;
 
-    if(l_resolutionReset != 0)//&& l_dynarecInitiated == 1)
+    if(l_resolutionReset != 0 && l_emuModeInitiated == 1)
         l_resolutionResetCoreCounter++;
 
     if (l_FrameAdvance) {
@@ -959,10 +974,13 @@ static void pause_loop(void)
 {
     if(g_rom_pause)
     {
+//        DebugMessage(M64MSG_STATUS,"main_gfx_name = %s",main_get_gfx_name());
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
-        if(strncmp(main_get_gfx_name(),"parallel",7) != 0 &&
-           strncmp(main_get_gfx_name(),"angrylion",8) != 0)
+
+//        if(l_usingAutoSaves == 0)     // could maybe just use this
+        if(l_inMenuAfterResetting == 0) // using estimated frame skip settings with gfx plugin causes black screen
             VidExt_GL_SwapBuffers();
+
         while(g_rom_pause)
         {
             SDL_Delay(10);
@@ -1860,7 +1878,8 @@ m64p_error main_run(void)
 
     // clean up
     g_EmulatorRunning = 0;
-    l_dynarecInitiated = 0;
+    l_emuModeInitiated = 0;
+    free(l_FileName);
     StateChanged(M64CORE_EMU_STATE, M64EMU_STOPPED);
 
     return M64ERR_SUCCESS;

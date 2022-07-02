@@ -238,6 +238,9 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
         strncpy((char *) s_GfxName,plugin_name,47);
         s_GfxName[47] = '\0';
 
+        if(strncmp(main_get_gfx_name(),"Glide64mk2 Video Plugin",23) == 0)         // this plugin always needs to swap buffers on pause
+            l_inMenuAfterResetting = 0;
+
         l_GfxAttached = 1;
     }
     else

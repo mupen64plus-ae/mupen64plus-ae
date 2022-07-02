@@ -139,7 +139,11 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *, int, int, int);
 
 int l_resolutionReset;
 int l_resolutionResetCoreCounter;
-int l_dynarecInitiated;
+int l_usingAutoSaves;                       // we set this as l_resolutionReset but don't set it back to 0 so we can
+                                            // load properly with the interpreter even if other processes have finished
+int l_emuModeInitiated;
+int l_inMenuAfterResetting;                 // we use this to see if we need to swap buffer on pause
+char * l_FileName;
 
 #endif /* #define M64P_FRONTEND_H */
 

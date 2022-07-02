@@ -626,11 +626,23 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public int getDynarecInit()
+    public int getEmuModeInit()
     {
         if(mCoreService == null)
             return 0;
-        return mCoreService.getDynarecInit();
+        return mCoreService.getEmuModeInit();
+    }
+
+    public int getEmuMode()
+    {
+        if(mCoreService == null)
+            return 0;
+        return mCoreService.getEmuMode();
+    }
+
+    public void loadLatestAutoSave(){
+        if(mCoreService != null)
+            mCoreService.loadLatestSave();
     }
 
     public void incrementSlot()

@@ -852,11 +852,18 @@ class CoreInterface
         return slot.getValue();
     }
 
-    int emuGetDynarecInitiated()
+    int emuGetEmuModeInitiated()
     {
-        IntByReference dynarec = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_DYNAREC_INIT.ordinal(), dynarec.getPointer());
-        return dynarec.getValue();
+        IntByReference emuModeInit = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_MODE_INIT.ordinal(), emuModeInit.getPointer());
+        return emuModeInit.getValue();
+    }
+
+    int emuGetEmuMode()
+    {
+        IntByReference emuMode = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_MODE.ordinal(), emuMode.getPointer());
+        return emuMode.getValue();
     }
 
     void emuReset()

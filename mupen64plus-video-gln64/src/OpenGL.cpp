@@ -783,10 +783,10 @@ void OGL_AddTriangle(int v0, int v1, int v2)
     OGL.triangles.elements[OGL.triangles.num++] = v2;
 }
 
-void OGL_ResolutionReset(int resolutionReset)
-{
-    OGL.resolutionReset = resolutionReset;
-}
+//void OGL_ResolutionReset(int resolutionReset)
+//{
+//    OGL.resolutionReset = resolutionReset;
+//}
 
 void OGL_SetColorArray()
 {

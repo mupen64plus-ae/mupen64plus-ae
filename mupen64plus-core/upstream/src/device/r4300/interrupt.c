@@ -532,6 +532,7 @@ static void call_interrupt_handler(const struct cp0* cp0, size_t index)
     handler->callback(handler->opaque);
 }
 
+int loadOnce = 0;
 void gen_interrupt(struct r4300_core* r4300)
 {
     uint32_t* cp0_regs = r4300_cp0_regs(&r4300->cp0);
@@ -553,6 +554,13 @@ void gen_interrupt(struct r4300_core* r4300)
         if (savestates_get_job() == savestates_job_load)
         {
             savestates_load();
+
+            // Doing this because the interpreter doesn't get initiated properly after resetting from
+            // the in game settings menu (no instructions seem to get executed)
+            if(l_usingAutoSaves != 0 && get_r4300_emumode(&g_dev.r4300) == 1 && loadOnce == 0){
+                main_state_load_latest_auto_save();
+                loadOnce++;
+            }
             return;
         }
 

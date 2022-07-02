@@ -85,6 +85,7 @@ void main_take_next_screenshot(void);
 
 void main_state_set_slot(int slot);
 void main_state_inc_slot(void);
+void main_state_load_latest_auto_save(void);
 void main_state_load(const char *filename);
 void main_state_save(int format, const char *filename);
 

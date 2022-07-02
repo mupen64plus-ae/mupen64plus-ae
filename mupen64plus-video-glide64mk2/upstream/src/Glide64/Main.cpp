@@ -1522,6 +1522,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 }
 
 int    resolutionResetGlide = 0;
+int    resolutionResetGlideCount = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *),
                                    int resolutionReset)
@@ -1604,6 +1605,12 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     {
         SetConfigDir(configDir);
         ReadSettings();
+      if( settings.autoframeskip ){
+//        DebugMessage(M64MSG_STATUS,"config.maxframes = %d",settings.maxframeskip);
+      }
+      else{
+        resolutionResetGlideCount = settings.maxframeskip;
+      }
 		return M64ERR_SUCCESS;
     }
     else
@@ -2101,6 +2108,10 @@ void DrawFrameBuffer ()
 
 void ResolutionResetInternal(){
   if(resolutionResetGlide != 0){
+    if(resolutionResetGlideCount != 0){
+      resolutionResetGlideCount--;
+      return;
+    }
 //    DebugMessage(M64MSG_STATUS,"glide64 ResolutionResetInternal");
     resolutionResetGlide = 0;
     CoreVideo_ResolutionReset();

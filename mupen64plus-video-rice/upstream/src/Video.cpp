@@ -51,6 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
+int l_ResolutionResetRice = 0;
 
 //=======================================================
 // global variables
@@ -105,8 +106,6 @@ ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
-
-int l_resolutionReset = 0;
 
 //---------------------------------------------------------------------------------------
 // Forward function declarations
@@ -171,9 +170,18 @@ static void ResizeStep2(void)
 }
 
 void ResolutionResetInternal(){
-    if(l_resolutionReset != 0){
-        l_resolutionReset = 0;
+    if(l_ResolutionResetRice != 0){
+        if(frameBufferOptions.ResolutionResetRiceCounter > 0){
+//            DebugMessage(M64MSG_STATUS,"config.maxframes = %d",options.ResolutionResetRiceCounter);
+            frameBufferOptions.ResolutionResetRiceCounter=-1;
+            return;
+        }
+        l_ResolutionResetRice = 0;
         CoreVideo_ResolutionReset();
+    }
+    else if(frameBufferOptions.ResolutionResetRiceCounter != 0){
+        frameBufferOptions.ResolutionResetRiceCounter=0;
+        options.bSkipFrame = frameBufferOptions.bAutoFrameSkipKeep;
     }
 }
 
@@ -601,7 +609,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     /* first thing is to set the callback function for debug info */
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
-    l_resolutionReset = resolutionReset;
+    l_ResolutionResetRice = resolutionReset;
 
     /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
@@ -867,7 +875,7 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 
 EXPORT void CALL PluginResolutionReset(void)
 {
-    l_resolutionReset = 0;
+    l_ResolutionResetRice = 0;
 }
 
 //---------------------------------------------------------------------------------------

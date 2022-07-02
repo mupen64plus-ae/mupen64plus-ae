@@ -1059,6 +1059,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     intent.putExtra(CoreService.SERVICE_QUIT, true);
                     sendBroadcast(intent);
 
+                    // Waiting for service to quit
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     int currentAttempt = 0;
                     while (ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName) &&
                             currentAttempt++ < 100) {

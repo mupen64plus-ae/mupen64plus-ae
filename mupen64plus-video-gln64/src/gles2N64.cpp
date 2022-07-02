@@ -61,7 +61,8 @@ void DebugMessage(int level, const char *message, ...)
 }
 
 extern "C" {
-int l_resolutionReset;
+int l_resolutionResetGln;
+int l_resolutionResetGlnCounter = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
         void *Context, void (*DebugCallback)(void *, int, const char *),
         int resolutionReset)
@@ -84,8 +85,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) dlsym(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
-    l_resolutionReset = resolutionReset;
-    OGL_ResolutionReset(resolutionReset);
+    l_resolutionResetGln = resolutionReset;
+//    OGL_ResolutionReset(resolutionReset);
 
 #ifdef __NEON_OPT
     MathInitNeon();
@@ -100,8 +101,6 @@ EXPORT m64p_error CALL PluginShutdown(void)
 
     return M64ERR_SUCCESS;
 }
-
-int l_resolutionResetCounter = 0;
 
 EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType,
         int *PluginVersion, int *APIVersion, const char **PluginNamePtr,
@@ -124,7 +123,6 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType,
     {
         *Capabilities = 0;
     }
-                    
     return M64ERR_SUCCESS;
 }
 
@@ -184,9 +182,9 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
 
 EXPORT void CALL PluginResolutionReset(void)
 {
-    l_resolutionResetCounter = 0;
-    l_resolutionReset = 0;
-    OGL_ResolutionReset(0);
+    l_resolutionResetGlnCounter = 0;
+    l_resolutionResetGln = 0;
+//    OGL_ResolutionReset(0);
 }
 
 EXPORT void CALL ProcessDList(void)
@@ -246,10 +244,10 @@ EXPORT void CALL ShowCFB (void)
 }
 
 EXPORT void CALL UpdateScreen (void) {
-    if (l_resolutionResetCounter > 2) {//5
-        l_resolutionResetCounter = 0;
-        l_resolutionReset = 0;
-        OGL_ResolutionReset(0);
+    if (l_resolutionResetGlnCounter > 2) {//5
+        l_resolutionResetGlnCounter = 0;
+        l_resolutionResetGln = 0;
+//        OGL_ResolutionReset(0);
 
         CoreVideo_ResolutionReset();
     }
@@ -267,8 +265,8 @@ EXPORT void CALL UpdateScreen (void) {
         OGL.screenUpdate=true;
         VI_UpdateScreen();
         OGL.mustRenderDlist = false;
-        if(l_resolutionReset != 0 && l_resolutionResetCounter < 50)
-            l_resolutionResetCounter++;
+        if(l_resolutionResetGln != 0 && l_resolutionResetGlnCounter < 50) //&& l_emuModeInitiated == 1)
+            l_resolutionResetGlnCounter++;
     }
 }
 

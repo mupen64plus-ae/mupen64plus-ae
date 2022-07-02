@@ -200,6 +200,7 @@ typedef struct {
 
     int     OpenglDepthBufferSetting;
     int     OpenglRenderSetting;
+    int     ResolutionResetRiceCounter;
     uint32  colorQuality;
 
     // Polygon Offset Settings
@@ -238,6 +239,9 @@ typedef struct {
 
     bool    bFillRectNextTextureBuffer;
     bool    bIgnoreRenderTextureIfHeightUnknown;
+    BOOL    bAutoFrameSkipKeep;
+
+    int     ResolutionResetRiceCounter;
     //bool  bFillColor;
 } FrameBufferOptions;
 

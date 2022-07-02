@@ -155,7 +155,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private FpsOverlay mFpsOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
-    private MenuDialogFragment mGameSettings;
     private GameSurface mGameSurface;
 
     // Input resources
@@ -1016,7 +1015,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private void tryRunning()
     {
-        if (mCoreFragment.hasServiceStarted()) {
+        if (mCoreFragment != null && mCoreFragment.hasServiceStarted()) {
             mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
 
             if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerOpenState) {
@@ -1076,32 +1075,83 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 //        view.setPadding(0, mTopInset, mRightInset, mBottomInset);
 //    }
 
+    int safeSaveTryingCount = 0;        // for way to do 2
     private void safeAutoSave(){
+//        int tryingCount = 0;          // for way to do 1
+        boolean saveNotifier = false;
         if(mCoreFragment == null)
             return;
-        int tryingCount = 0;
-        if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled)
-        {
-            mCoreFragment.autoSaveState(false,true);
-            try{
-                Log.i(TAG,"Sleeping tryingcount = 0");
-                Thread.sleep(100);
-            }
-            catch(Exception e){
-                Log.i(TAG,"Can't sleep");
-            }
-            while(mCoreFragment.checkOnStateCallbackListeners()){
+
+        if(mCoreFragment.getEmuMode() == 1){
+            while(mCoreFragment.getEmuModeInit() == 0){
                 try{
-                    Log.i(TAG,"Sleeping tryingcount = "+tryingCount);
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 }
-                catch(Exception e){
-                    Log.i(TAG,"Can't sleep");
+                catch (Exception e){
+
                 }
-                if(tryingCount > 5)
-                    break;
-                tryingCount++;
             }
+        }
+
+        if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled) {
+            mCoreFragment.autoSaveState(false, false);
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                Log.i(TAG, "Can't sleep");
+            }
+
+            // Way to do 1
+
+//            while(mCoreFragment.checkOnStateCallbackListeners()){
+//                if(!saveNotifier){
+//                    saveNotifier = true;
+//                    runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_savingFile,"to reset properly"));
+//                }
+//                try{
+//                    Log.i(TAG,"Sleeping tryingcount = "+tryingCount);
+//                    Thread.sleep(1000);
+//                }
+//                catch(Exception e){
+//                    Log.i(TAG,"Can't sleep");
+//                }
+//                if(tryingCount > 5)
+//                    break;
+//                tryingCount++;
+//            }
+
+            // Way to do 2 (no sleep on ui thread)
+
+            final Thread handler = new Thread(() -> {
+                while (mCoreFragment.checkOnStateCallbackListeners()) {
+                    try {
+                        Log.i(TAG, "Sleeping tryingcount = " + safeSaveTryingCount);
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        Log.i(TAG, "Can't sleep");
+                    }
+                    if (safeSaveTryingCount > 5)
+                        break;
+                    safeSaveTryingCount++;
+                    // do something after 1000ms
+                }
+                safeSaveTryingCount = 8;
+            });
+
+            handler.start();
+
+            while(safeSaveTryingCount != 8) {
+                try {
+                    Thread.sleep(100);
+                    if(!saveNotifier && safeSaveTryingCount != 8){
+                        saveNotifier = true;
+                        runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_savingFile,"to reset properly"));
+                    }
+                } catch (Exception e) {
+                    Log.i(TAG, "Can't sleep");
+                }
+            }
+            safeSaveTryingCount = 0;
         }
     }
 
@@ -1211,18 +1261,41 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         getIntent().putExtra("gameOpenReset", true);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, true);
         setResult(RESULT_OK, getIntent());
+
+        if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
+            mCoreFragment.shutdownEmulator();
+
         finish();
+
+        // testing this get rid of after
+        if(mCoreFragment != null && mCoreFragment.isShuttingDown())
+        {
+            Log.i(TAG, "Shutting down because previous instance hasn't finished");
+
+            runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_pleaseWait ));
+            // maybe do this to keep intent when exiting back to galleryactivity?
+//            if(mCoreFragment != null)
+//            {
+//                mCoreFragment.setCoreEventListener(null);
+//                mCoreFragment = null;
+//            }
+//            finish();
+            finishActivity();
+        }
+//        finish();
     }
 
     private void resolutionRefresh(){
         mResolutionReset = false;
-        mCoreFragment.setResolutionReset(false);
+        if(mCoreFragment != null)
+            mCoreFragment.setResolutionReset(false);
         getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
 
         //if not gliden64 then update those values
         if(!mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-GLideN64")){
-            mCoreFragment.pluginResolutionReset();
+            if(mCoreFragment != null)
+                mCoreFragment.pluginResolutionReset();
         }
     }
 
@@ -1243,7 +1316,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mSettingsView = true;
                 mGameSidebar.setVisibility(View.GONE);
                 mDrawerLayout.openDrawer(GravityCompat.START,false);
-                mCoreFragment.pauseEmulator();
+                if(mCoreFragment != null)
+                    mCoreFragment.pauseEmulator();
                 break;
             case "resumeEmulator":
                 tryRunning();
@@ -1340,8 +1414,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
                 if(mCoreFragment != null){
                     // This means we broke out of the settings dialog fragment before
-                    // the cpu instruction compiler got initiated, so best to recreate
-                    if(mCoreFragment.getDynarecInit() == 0)
+                    // the cpu instruction compiler/interpreter got initiated, so best
+                    // to recreate
+                    if(mCoreFragment.getEmuModeInit() == 0)
                         recreate();
                 }
                 break;
