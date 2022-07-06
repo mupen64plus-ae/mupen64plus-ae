@@ -222,6 +222,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private boolean mSettingsReset = false;
     public static boolean mResolutionReset = false;
 
+    // when using landscape and resetting from the in game settings
+    // the activity will automatically be recreated so we use this
+    // to prevent a loop of the activity being recreated continuously.
+    private static final String STATE_SETTINGS_BREAKOUT = "STATE_SETTINGS_BREAKOUT";
+    private boolean mSettingsBreakout = false;
+
     // Preference fragment
 //    private AppCompatPreferenceFragment mPrefFrag = null;
 
@@ -367,11 +373,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Keep screen from going to sleep
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
 
-        // Set the screen orientation
-        if (mGlobalPrefs.displayOrientation != -1) {
-            setRequestedOrientation( mGlobalPrefs.displayOrientation );
-        }
-
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
 
@@ -449,11 +450,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             currentFps = savedInstanceState.getInt(STATE_CURRENT_FPS);
             mSettingsView = savedInstanceState.getBoolean(STATE_SETTINGS_VIEW);
             reOpenSidebar = savedInstanceState.getBoolean(STATE_REOPEN_SIDEBAR);
+            mSettingsBreakout = savedInstanceState.getBoolean(STATE_SETTINGS_BREAKOUT);
             mResolutionReset = savedInstanceState.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET);
-            if(savedInstanceState.getBoolean(STATE_SETTINGS_RECREATE)) {
-                mDrawerOpenState = false;
-                mSettingsView = false;
-            }
+
+//            if(savedInstanceState.getBoolean(STATE_SETTINGS_RECREATE) && !orientationCheck){//!GameSettingsDialog.orientationCheck) {
+//                mDrawerOpenState = false;
+//                mSettingsView = false;
+//            }
 
             if(mSettingsReset)
                 mSettingsReset = false;
@@ -666,7 +669,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             runOnUiThread(() -> {
                 gameSettingsDialogPrompt();
             });
-            mResolutionReset = false;
+//            mResolutionReset = false;
         }
     }
 
@@ -685,6 +688,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         savedInstanceState.putBoolean(STATE_SETTINGS_VIEW, mSettingsView);
         savedInstanceState.putBoolean(ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset);
         savedInstanceState.putBoolean(STATE_REOPEN_SIDEBAR, reOpenSidebar);
+        savedInstanceState.putBoolean(STATE_SETTINGS_BREAKOUT,mSettingsBreakout);
 
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -1416,8 +1420,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     // This means we broke out of the settings dialog fragment before
                     // the cpu instruction compiler/interpreter got initiated, so best
                     // to recreate
-                    if(mCoreFragment.getEmuModeInit() == 0)
+                    if(mCoreFragment.getEmuModeInit() == 0 && !mSettingsBreakout) {
+                        mSettingsBreakout = true;
                         recreate();
+                    }
+                    else if(mSettingsBreakout)
+                        mSettingsBreakout = false;
                 }
                 break;
             default:
@@ -1631,6 +1639,53 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         reOpenSidebar = true;
         tryRunning();
+    }
+
+    @Override
+    public void onGameStarted()
+    {
+        final Thread handler = new Thread(() -> {
+            int startingGameAttempt = 0;
+            // Making sure the cpu recompiler/interpreter is initiated before setting the
+            // screen orientation
+            while ((mCoreFragment.getEmuModeInit() == 0)
+                && startingGameAttempt++ < 100) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    Log.i(TAG, "Can't sleep");
+                }
+            }
+
+            // If we're resetting from changing certain video settings in game, then this will
+            // make sure we set the screen orientation after the graphics plugin pauses the game
+            // to display whatever changes were made
+            if(mResolutionReset) {
+                startingGameAttempt = 0;
+
+                // Only the glide64 plugin needs the audio initialized to pause properly (parallel and glideN specifically don't)
+                // And when using glideN there is no plugin to get the plugin resolution reset setting from so we don't ask for it
+                // when using that video plugin
+                while((mCoreFragment == null || (mCoreFragment.getAudioInit() == 0 && mGamePrefs.videoPlugin.name.equals("glide64mk2")) ||
+                        mCoreFragment.getResolutionResetCore() || (mCoreFragment.getPluginResolutionReset() && !mGamePrefs.videoPlugin.name.equals("GLideN64")))
+                        && startingGameAttempt++ < 50){
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+
+                    }
+                }
+
+                mResolutionReset = false;
+            }
+
+            // Set the screen orientation
+            if (mGlobalPrefs.displayOrientation != -1) {
+                setRequestedOrientation( mGlobalPrefs.displayOrientation );
+            }
+        });
+
+        handler.start();
     }
 
     @Override

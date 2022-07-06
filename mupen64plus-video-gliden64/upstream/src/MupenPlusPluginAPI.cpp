@@ -64,4 +64,6 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 
 EXPORT void CALL PluginResolutionReset(void) {return;}
 
+EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset) {return;}
+
 } // extern "C"

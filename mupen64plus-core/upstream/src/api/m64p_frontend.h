@@ -143,6 +143,8 @@ int l_usingAutoSaves;                       // we set this as l_resolutionReset 
                                             // load properly with the interpreter even if other processes have finished
 int l_emuModeInitiated;
 int l_inMenuAfterResetting;                 // we use this to see if we need to swap buffer on pause
+int l_audioInitiated;                       // we use this to help the glide64 plugin wait before initializing
+                                            // when resetting from in game settings
 char * l_FileName;
 
 #endif /* #define M64P_FRONTEND_H */

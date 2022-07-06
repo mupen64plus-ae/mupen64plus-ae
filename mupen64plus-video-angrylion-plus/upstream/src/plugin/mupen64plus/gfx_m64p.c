@@ -81,7 +81,7 @@ static m64p_handle configVideoAngrylionPlus = NULL;
 extern int32_t win_width;
 extern int32_t win_height;
 extern int32_t win_fullscreen;
-int resolution_reset;
+int resolution_reset = 0;
 
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Context,
                                      void (*DebugCallback)(void *, int, const char *),
@@ -306,6 +306,11 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 EXPORT void CALL PluginResolutionReset(void)
 {
     resolution_reset = 0;
+}
+
+EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
+{
+    *pluginResolutionReset = resolution_reset;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

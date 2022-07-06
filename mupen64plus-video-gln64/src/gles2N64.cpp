@@ -187,6 +187,11 @@ EXPORT void CALL PluginResolutionReset(void)
 //    OGL_ResolutionReset(0);
 }
 
+EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
+{
+    *pluginResolutionReset = l_resolutionResetGln;
+}
+
 EXPORT void CALL ProcessDList(void)
 {
     OGL.frame_dl++;

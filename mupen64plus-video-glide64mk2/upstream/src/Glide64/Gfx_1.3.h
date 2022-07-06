@@ -581,6 +581,15 @@ EXPORT void CALL UpdateScreen (void);
 EXPORT void CALL PluginResolutionReset (void);
 
 /******************************************************************
+  Function: GetPluginResolutionReset
+  Purpose:  This function receives the PluginResolutionReset
+  			settings so we can start the game properly
+  input:    none
+  output:   none
+*******************************************************************/
+EXPORT void CALL GetPluginResolutionReset (int *pluginResolutionReset);
+
+/******************************************************************
   Function: ViStatusChanged
   Purpose:  This function is called to notify the dll that the
             ViStatus registers value has been changed.

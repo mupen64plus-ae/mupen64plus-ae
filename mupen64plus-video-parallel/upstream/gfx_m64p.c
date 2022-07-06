@@ -324,8 +324,12 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 
 EXPORT void CALL PluginResolutionReset(void)
 {
-//    DebugMessage(M64MSG_STATUS,"graphics plugin parallel resolution_reset");
     resolution_reset = 0;
+}
+
+EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
+{
+    *pluginResolutionReset = resolution_reset;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

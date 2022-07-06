@@ -2,6 +2,7 @@
 PluginStartup;
 PluginShutdown;
 PluginResolutionReset;
+GetPluginResolutionReset;
 PluginGetVersion;
 ChangeWindow;
 InitiateGFX;

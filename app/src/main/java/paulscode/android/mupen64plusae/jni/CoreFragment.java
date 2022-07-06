@@ -68,6 +68,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         void onCoreServiceStarted();
 
         /**
+         * Will be called once the game has started
+         */
+        void onGameStarted();
+
+        /**
          * Called when a game is requested to exited
          * @param shouldExit True if we want to exit
          */
@@ -284,7 +289,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             Activity activity = requireActivity();
             activity.runOnUiThread(() -> {
                 if (mProgress != null) {
-                    activity.runOnUiThread(() -> mProgress.dismiss());
+                    mProgress.dismiss();
+                    if (mCoreEventListener != null) {
+                        mCoreEventListener.onGameStarted();
+                    }
                 }
             });
 
@@ -519,6 +527,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.pluginResolutionReset();
     }
 
+    public boolean getPluginResolutionReset()
+    {
+        if(mCoreService == null)
+            return false;
+        return mCoreService.getPluginResolutionReset();
+    }
+
     public void exit()
     {
         Log.i(TAG, "exit");
@@ -624,6 +639,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         {
             return 0;
         }
+    }
+
+    public int getAudioInit()
+    {
+        if(mCoreService == null)
+            return 0;
+        return mCoreService.getAudioInit();
     }
 
     public int getEmuModeInit()
@@ -1088,6 +1110,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             return mCoreService.isPaused();
         else
             return false;
+    }
+
+    public boolean getResolutionResetCore(){
+        if(mCoreService == null)
+            return true;
+        return mCoreService.getResolutionResetCore();
     }
 
     public void setResolutionReset(boolean resolutionReset){

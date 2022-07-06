@@ -129,6 +129,7 @@ void run_r4300(struct r4300_core* r4300)
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_OFF);
 #endif
 
+    DebugMessage(M64MSG_STATUS,"r4300 modez = %d",r4300->emumode);
     *r4300_stop(r4300) = 0;
 
     // Set g_rom_pause to 1 so the graphics plugin can pause the emulator properly
@@ -154,7 +155,7 @@ void run_r4300(struct r4300_core* r4300)
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Pure Interpreter");
         r4300->emumode = EMUMODE_PURE_INTERPRETER;
         l_emuModeInitiated = 1;
-//        l_resolutionResetCoreCounter+=5; // if black screen from settings reset then get rid of this (Pokemon Stadium 2 causes this)
+//        l_resolutionResetCoreCounter+=5; // if black screen from settings reset then get rid of this
         run_pure_interpreter(r4300);
     }
 #if defined(DYNAREC)
@@ -163,7 +164,8 @@ void run_r4300(struct r4300_core* r4300)
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Dynamic Recompiler");
         r4300->emumode = EMUMODE_DYNAREC;
         init_blocks(&r4300->cached_interp);
-        l_resolutionResetCoreCounter=5; // if black screen from settings reset then get rid of this
+        if(l_resolutionResetCoreCounter == 0)
+            l_resolutionResetCoreCounter=5; // if black screen from settings reset then get rid of this
 #ifdef NEW_DYNAREC
         new_dynarec_init();
         new_dyna_start();

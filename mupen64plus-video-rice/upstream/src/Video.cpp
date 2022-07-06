@@ -878,6 +878,11 @@ EXPORT void CALL PluginResolutionReset(void)
     l_ResolutionResetRice = 0;
 }
 
+EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
+{
+    *pluginResolutionReset = l_ResolutionResetRice;
+}
+
 //---------------------------------------------------------------------------------------
 
 EXPORT void CALL ProcessRDPList(void)

@@ -2112,7 +2112,7 @@ void ResolutionResetInternal(){
       resolutionResetGlideCount--;
       return;
     }
-//    DebugMessage(M64MSG_STATUS,"glide64 ResolutionResetInternal");
+    DebugMessage(M64MSG_STATUS,"glide64 ResolutionResetInternal");
     resolutionResetGlide = 0;
     CoreVideo_ResolutionReset();
   }
@@ -2243,6 +2243,13 @@ EXPORT void CALL PluginResolutionReset (void)
 {
 //  DebugMessage(M64MSG_STATUS,"PluginResolutionReset Glide64");
   resolutionResetGlide = 0;
+  resolutionResetGlideCount = 0;
+}
+
+
+EXPORT void CALL GetPluginResolutionReset (int *pluginResolutionReset)
+{
+  *pluginResolutionReset = resolutionResetGlide;
 }
 
 }

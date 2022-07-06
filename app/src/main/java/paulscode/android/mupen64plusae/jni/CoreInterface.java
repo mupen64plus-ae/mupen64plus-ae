@@ -598,6 +598,13 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CLOSE.ordinal(), 0, parameter);
     }
 
+    boolean emuGetResetResolutionCore()
+    {
+        IntByReference resetResolution = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_RESOLUTION_RESET.ordinal(), resetResolution.getPointer());
+        return resetResolution.getValue() != 0;
+    }
+
     void setResetResolution(boolean resetResolution){
         IntByReference parameter = new IntByReference(resetResolution ? -1 : 0);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_SET_RESOLUTION_RESET.ordinal(), 0, parameter.getPointer());
@@ -852,6 +859,13 @@ class CoreInterface
         return slot.getValue();
     }
 
+    int emuGetAudioInitiated()
+    {
+        IntByReference audioInit = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_AUDIO_INIT.ordinal(), audioInit.getPointer());
+        return audioInit.getValue();
+    }
+
     int emuGetEmuModeInitiated()
     {
         IntByReference emuModeInit = new IntByReference(1);
@@ -881,6 +895,13 @@ class CoreInterface
     {
         Pointer parameter = null;
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PLUGIN_RESOLUTION_RESET.ordinal(),0,parameter);
+    }
+
+    boolean getPluginResolutionReset()
+    {
+        IntByReference getPluginResolutionReset = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_GET_PLUGIN_RESOLUTION_RESET.ordinal(), 0,getPluginResolutionReset.getPointer());
+        return getPluginResolutionReset.getValue() != 0;
     }
 
     void unsetNativeWindow()

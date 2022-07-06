@@ -92,6 +92,15 @@ typedef void (*ptr_PluginResolutionReset)(void);
 EXPORT void CALL PluginResolutionReset(void);
 #endif
 
+/* GetPluginResolutionReset()
+ *
+ * This function gets the PluginResolutionReset settings
+*/
+typedef void (*ptr_GetPluginResolutionReset)(int *pluginResolutionReset);
+#if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
+EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

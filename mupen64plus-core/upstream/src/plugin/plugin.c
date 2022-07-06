@@ -70,6 +70,7 @@ static const gfx_plugin_functions dummy_gfx = {
     dummyvideo_SetRenderingCallback,
     dummyvideo_ResizeVideoOutput,
     dummyvideo_PluginResolutionReset,
+    dummyvideo_GetPluginResolutionReset,
     dummyvideo_FBRead,
     dummyvideo_FBWrite,
     dummyvideo_FBGetFrameBufferInfo
@@ -185,6 +186,7 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
             !GET_FUNC(ptr_ViWidthChanged, gfx.viWidthChanged, "ViWidthChanged") ||
             !GET_FUNC(ptr_ReadScreen2, gfx.readScreen, "ReadScreen2") ||
             !GET_FUNC(ptr_PluginResolutionReset, gfx.pluginResolutionReset, "PluginResolutionReset") ||
+            !GET_FUNC(ptr_GetPluginResolutionReset, gfx.getPluginResolutionReset, "GetPluginResolutionReset") ||
             !GET_FUNC(ptr_SetRenderingCallback, gfx.setRenderingCallback, "SetRenderingCallback") ||
             !GET_FUNC(ptr_FBRead, gfx.fBRead, "FBRead") ||
             !GET_FUNC(ptr_FBWrite, gfx.fBWrite, "FBWrite") ||

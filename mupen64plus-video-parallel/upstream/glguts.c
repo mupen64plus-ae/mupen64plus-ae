@@ -72,7 +72,7 @@ static int toggle_buffer;
 int32_t window_width;
 int32_t window_height;
 int32_t window_fullscreen;
-int resolution_reset;
+int resolution_reset = 0;
 
 
 
@@ -406,7 +406,7 @@ void screen_resolution_reset()
 {
     if(resolution_reset != 0) {
         CoreVideo_ResolutionReset();
-//        resolution_reset = 0;
+        resolution_reset = 0;
     }
 }
 

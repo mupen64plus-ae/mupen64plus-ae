@@ -236,6 +236,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.pluginResolutionReset();
     }
 
+    boolean getPluginResolutionReset()
+    {
+        return mCoreInterface.getPluginResolutionReset();
+    }
+
     private void tryShutdown()
     {
         mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
@@ -410,6 +415,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     {
         return mCoreInterface.emuGetSlot();
     }
+
+    int getAudioInit() { return mCoreInterface.emuGetAudioInitiated(); }
 
     int getEmuModeInit()
     {
@@ -1268,8 +1275,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
     }
 
-    public boolean getResolutionReset(){
-        return mResolutionReset;
+    public boolean getResolutionResetCore(){
+        return mCoreInterface.emuGetResetResolutionCore();
     }
 
     public void setResolutionReset(boolean resolutionReset){

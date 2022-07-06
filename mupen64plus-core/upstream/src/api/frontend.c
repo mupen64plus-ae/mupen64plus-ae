@@ -348,6 +348,10 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
             l_inMenuAfterResetting = 0;
             main_plugin_resolution_reset();
             return M64ERR_SUCCESS;
+        case M64CMD_GET_PLUGIN_RESOLUTION_RESET: {
+            main_get_plugin_resolution_reset((int *)ParamPtr);
+            return M64ERR_SUCCESS;
+        }
         case M64CMD_NETPLAY_CONTROL_PLAYER:
             if (ParamInt < 1 || ParamInt > 4 || ParamPtr == NULL)
                 return M64ERR_INPUT_INVALID;

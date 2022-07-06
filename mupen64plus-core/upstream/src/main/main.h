@@ -95,6 +95,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val);
 m64p_error main_get_screen_size(int *width, int *height);
 m64p_error main_read_screen(void *pixels, int bFront);
 m64p_error main_plugin_resolution_reset();
+m64p_error main_get_plugin_resolution_reset(int *pluginResolutionReset);
 
 m64p_error main_volume_up(void);
 m64p_error main_volume_down(void);

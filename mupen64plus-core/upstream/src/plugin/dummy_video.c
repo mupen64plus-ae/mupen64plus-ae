@@ -131,4 +131,8 @@ void dummyvideo_PluginResolutionReset(void){
 
 }
 
+void dummyvideo_GetPluginResolutionReset(int *pluginResolutionReset){
+    return;
+}
+
 

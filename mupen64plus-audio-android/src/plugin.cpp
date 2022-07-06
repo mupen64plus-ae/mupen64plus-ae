@@ -124,6 +124,12 @@ static void ReadConfig() {
     AudioHandler::get().forceSles(forceSles);
 }
 
+void setAudioInitiated(int audioInitiated){
+    int e = audioInitiated;
+    CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_AUDIO_INIT, &e);
+    return;
+}
+
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                      void (*DebugCallback)(void *, int, const char *),
@@ -252,6 +258,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-Android");
 
+    setAudioInitiated(0);
     l_PluginInit = 1;
 
     return M64ERR_SUCCESS;
@@ -320,6 +327,7 @@ EXPORT void CALL AiDacrateChanged(int SystemType) {
     ReadConfig();
     GameFreq = freq;
     AudioHandler::get().initializeAudio(freq);
+    setAudioInitiated(1);
 }
 
 bool isSpeedLimiterEnabled() {

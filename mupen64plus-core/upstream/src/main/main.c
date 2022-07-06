@@ -610,11 +610,17 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
             else
                 *rval = M64VIDEO_WINDOWED;
             break;
+        case M64CORE_AUDIO_INIT:
+            *rval = l_audioInitiated;
+            break;
         case M64CORE_EMU_MODE_INIT:
             *rval = l_emuModeInitiated;
             break;
         case M64CORE_EMU_MODE:
             *rval = get_r4300_emumode(&g_dev.r4300);
+            break;
+        case M64CORE_RESOLUTION_RESET:
+            *rval = l_resolutionReset;
             break;
         case M64CORE_SAVESTATE_SLOT:
             *rval = savestates_get_slot();
@@ -712,6 +718,11 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
         case M64CORE_SPEED_LIMITER:
             main_set_speedlimiter(val);
             return M64ERR_SUCCESS;
+        case M64CORE_AUDIO_INIT:
+            l_audioInitiated = val;
+            return M64ERR_SUCCESS;
+        case M64CORE_RESOLUTION_RESET:
+            return M64ERR_SUCCESS;
         case M64CORE_VIDEO_SIZE:
         {
             // the front-end app is telling us that the user has resized the video output frame, and so
@@ -753,6 +764,12 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
 m64p_error main_plugin_resolution_reset()
 {
     gfx.pluginResolutionReset();
+    return M64ERR_SUCCESS;
+}
+
+m64p_error main_get_plugin_resolution_reset(int *pluginResolutionReset)
+{
+    gfx.getPluginResolutionReset(pluginResolutionReset);
     return M64ERR_SUCCESS;
 }
 
@@ -1833,6 +1850,13 @@ m64p_error main_run(void)
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 
     poweron_device(&g_dev);
+
+    // PS2 needs additional frame count when resetting from in game settings (can use this count as
+    // default if more games get black screen when restarting from in game settings
+    if( get_r4300_emumode(&g_dev.r4300) >= 2 && strncmp(ROM_PARAMS.headername,"POKEMON STADIUM 2",17) == 0){
+        l_resolutionResetCoreCounter = 1;
+    }
+
     pif_bootrom_hle_execute(&g_dev.r4300);
 
     if (setjmp(jump_exit) == 0)
@@ -1879,6 +1903,7 @@ m64p_error main_run(void)
     // clean up
     g_EmulatorRunning = 0;
     l_emuModeInitiated = 0;
+    l_audioInitiated = 0;
     free(l_FileName);
     StateChanged(M64CORE_EMU_STATE, M64EMU_STOPPED);
 
