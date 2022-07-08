@@ -256,14 +256,14 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         return true;
     }
 
-    private void importCustomSkin(Uri uri) {
+    private boolean importCustomSkin(Uri uri) {
 
         RomHeader header = new RomHeader( getApplicationContext(), uri );
 
         if (!header.isZip) {
             Log.e(TAG, "Invalid custom skin file");
             Notifier.showToast(getApplicationContext(), R.string.importExportActivity_invalidCustomSkinFile);
-            return;
+            return false;
         }
 
         boolean validZip = true;
@@ -306,13 +306,14 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         if (!validZip) {
             Notifier.showToast(getApplicationContext(), R.string.importExportActivity_invalidCustomSkinFile);
             Log.e(TAG, "Invalid custom skin zip");
-            return;
+            return false;
         }
 
         File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
         FileUtil.deleteFolder(customSkinDir);
         FileUtil.makeDirs(mGlobalPrefs.touchscreenCustomSkinsDir);
         FileUtil.unzipAll(getApplicationContext(), uri, mGlobalPrefs.touchscreenCustomSkinsDir);
+        return true;
     }
 
     @Override
@@ -323,7 +324,11 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
             Uri fileUri = getUri(data);
 
             if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                importCustomSkin(fileUri);
+                if(importCustomSkin(fileUri)){
+                    mGlobalPrefs.putBoolean("isCustomTouchscreenSkin",true);
+                    mGlobalPrefs.putString("touchscreenSkin_v2","Custom");
+                    resetPreferences();
+                }
             }
         }
     }
