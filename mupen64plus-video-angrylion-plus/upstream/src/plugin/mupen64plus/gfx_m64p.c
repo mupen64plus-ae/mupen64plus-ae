@@ -82,6 +82,7 @@ extern int32_t win_width;
 extern int32_t win_height;
 extern int32_t win_fullscreen;
 int resolution_reset = 0;
+int resolution_reset_counter = 0; // need this for pokemon stadium 2 in my testing
 
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Context,
                                      void (*DebugCallback)(void *, int, const char *),
@@ -261,7 +262,11 @@ EXPORT void CALL UpdateScreen (void)
 
     vdac_sync(fb.valid);
 
-    if(resolution_reset != 0){
+    if(resolution_reset != 0) {
+        if (resolution_reset_counter < 1) {//2
+            resolution_reset_counter++;
+            return;
+        }
         screen_resolution_reset();
         resolution_reset = 0;
     }
@@ -306,6 +311,7 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
 EXPORT void CALL PluginResolutionReset(void)
 {
     resolution_reset = 0;
+    resolution_reset_counter = 0;
 }
 
 EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
