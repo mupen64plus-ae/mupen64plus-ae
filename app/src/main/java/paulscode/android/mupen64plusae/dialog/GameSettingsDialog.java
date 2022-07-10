@@ -21,19 +21,13 @@
 package paulscode.android.mupen64plusae.dialog;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.AUDIO_SAMPLING_TYPE;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,40 +35,27 @@ import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
-import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.adapter.FragmentViewHolder;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -87,19 +68,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.CopyFromSdFragment;
-import paulscode.android.mupen64plusae.CopyToSdFragment;
-import paulscode.android.mupen64plusae.GalleryActivity;
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.game.GameActivity;
-import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
@@ -110,28 +84,22 @@ import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
-import paulscode.android.mupen64plusae.preference.SeekBarPreference;
 import paulscode.android.mupen64plusae.preference.ShaderPreference;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
-import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import paulscode.android.mupen64plusae.dialog.GameSettingsDialog.OnSettingsFragmentCreationListener;
 
 public class GameSettingsDialog extends DialogFragment implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.OnPreferenceClickListener, ShaderPreference.OnRemove, AppCompatPreferenceFragment.OnDisplayDialogListener,
-        PreferenceFragmentCompat.OnPreferenceStartScreenCallback//PreferenceFragmentCompat //MenuListView
+        PreferenceFragmentCompat.OnPreferenceStartScreenCallback
 {
-    public static GameActivity mGameActivity;
+    private static GameActivity mGameActivity;
     private SettingsFragment mSettingsFragment;
     private Vibrator mVibrator;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
     private final String TAG = "GameSettingsDialog";
-    private String mTitle;
     private static final String ACTION_IMPORT_TOUCHSCREEN_GRAPHICS = "actionImportTouchscreenGraphics";
-    private static final String STATE_TITLE = "STATE_TITLE";
     private static final String STATE_CURRENT_RESOURCE_ID = "STATE_CURRENT_RESOURCE_ID";
     private static final String STATE_SHARED_PREFS_NAME = "STATE_SHARED_PREFS_NAME";
     private static final String STATE_RESOURCE_ID = "STATE_RESOURCE_ID";
@@ -153,15 +121,15 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     static final int MAX_SHADER_PASSES = 5;
     private boolean removeFirstPassShader = false;
     private int removeShader = -1;
-    public static int oldShaderScaleFactor = 1;
+    private static int oldShaderScaleFactor = 1;
     public static boolean firstPass = false;
     private boolean shaderScaleFactorSet = false;
 
     // Preferences
 
     private static SharedPreferences mPrefs;
-    public static String mSharedPrefsName = null;
-    public static int mPreferencesResId;
+    private static String mSharedPrefsName = null;
+    private static int mPreferencesResId;
 
     public interface OnGameSettingsDialogPass {
         public void settingsViewReset();
@@ -170,10 +138,9 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
     OnGameSettingsDialogPass onGameSettingsDialogPass;
 
-    public static GameSettingsDialog newInstance(GameActivity gameActivity, String title) {
+    public static GameSettingsDialog newInstance() {
         GameSettingsDialog frag = new GameSettingsDialog();
         Bundle args = new Bundle();
-        args.putString(STATE_TITLE, title);
         args.putInt(STATE_CURRENT_RESOURCE_ID,currentResourceId);
 
         frag.setArguments(args);
@@ -185,9 +152,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onActivityCreated(savedInstanceState);
 
         Bundle args = getArguments();
-        String title;
-        if( args != null ) {
-            title = args.getString(STATE_TITLE, "");
+        if( args != null ){
             currentResourceId = args.getInt(STATE_CURRENT_RESOURCE_ID,0);
         }
     }
@@ -322,14 +287,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         launchingActivity = false;
 
         Bundle args = getArguments();
-        String title;
-        if( args != null ) {
-            title = args.getString(STATE_TITLE, "");
+        if( args != null ){
             currentResourceId = args.getInt(STATE_CURRENT_RESOURCE_ID,0);
-        }
-
-        if(savedInstanceState != null){
-//            mPrefFrag = (SettingsFragmentPreference) getActivity().getSupportFragmentManager().findFragmentById(android.R.id.content);
         }
 
         setStyle(STYLE_NO_FRAME, R.style.MupenTheme_Dark_Translucent);
@@ -339,7 +298,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mGameActivity = (GameActivity) getActivity();
-        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(mGameActivity);
+        if(mGameActivity != null)
+            mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(mGameActivity);
         oldShaderScaleFactor = mPrefs.getInt("shaderScaleFactor",2);
 
         // By default, send Player 1 rumbles through phone vibrator
@@ -358,13 +318,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction().setReorderingAllowed(true);
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         mSettingsFragment = new SettingsFragment(this);
         transaction.replace(R.id.settings_view, mSettingsFragment).commit();
-        if (mTitle != null)
-            ((TextView)view.findViewById(R.id.title)).setText(mTitle);
     }
 
     public void recreateView(){
@@ -473,9 +431,16 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
     }
 
+    public void resetPreferencesFromResolutionReset(){
+        if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
+                mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId] == null)
+            return;
+        mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].resolutionResetPreferences(true);
+        resetPreferences();
+    }
+
     // This gets updated as soon as a change in settings occurs
     public void resetPreferences(){
-        Preference preference;
         switch(currentResourceId) {
             case 0:
                 if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
@@ -487,7 +452,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             case 1:
                 if(removeShader != -1)
                     removeShader = -1;
-//                recreateView();
                 break;
             case 2:
                 if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
@@ -500,14 +464,12 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 setPreference(GlobalPrefs.KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH,
                         !TextUtils.isEmpty(mGameActivity.mGlobalPrefs.touchscreenSkin) &&
                                 mGameActivity.mGlobalPrefs.touchscreenSkin.equals("Custom"));
-//                disableSettingsThatReset();
                 break;
             case 4:
                 setPreference(GlobalPrefs.PLAYER_MAP,!mGameActivity.mGlobalPrefs.autoPlayerMapping && !mGameActivity.mGlobalPrefs.isControllerShared);
                 setPreference("inputVolumeMappable",false);
                 setPreference("inputBackMappable",false);
                 setPreference("inputMenuMappable",false);
-
 
                 final PlayerMapPreference playerPref = (PlayerMapPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
                 if (playerPref != null)
@@ -600,6 +562,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             }
         }
 
+        // Checking shaders
         ArrayList<ShaderLoader> shaderPasses = mGameActivity.mGlobalPrefs.getShaderPasses();
 
         if(removeFirstPassShader){
@@ -626,7 +589,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 //            }
         }
         else if(removeShader != -1 && key.equals("shaderPass")){
-//            String keyy = "shaderpass,"+String.valueOf(removeShader);
             mListener.onComplete("resetShaders");
             removeShader = -1;
         }
@@ -636,6 +598,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mListener.onComplete("resetSurface");
             mGameActivity.recreate();
         }
+
         //if change custom
         refreshViews();
 
@@ -677,7 +640,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         // If there are no shaders, then remove the category
-        if (mCategoryPasses != null) {
+        if (mCategoryPasses != null && screenRoot != null) {
             if (shaderPasses.isEmpty()) {
                 screenRoot.removePreference(mCategoryPasses);
             } else if (categoryPasses == null) {
@@ -903,7 +866,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
                     if (fileUri != null) {
                         DocumentFile file = FileUtil.getDocumentFileTree(getActivity(), fileUri);
-                        String summary = file.getName();
                         mGameActivity.mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
 
                         mListener.onComplete("resetAppData");
@@ -921,7 +883,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         getActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                         DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), fileUri);
-                        String summary = file == null ? "" : file.getName();
                         mGameActivity.mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
                         mListener.onComplete("resetAppData");
                         recreateAndPause();
@@ -935,7 +896,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     fileUri = Uri.parse(searchUri);
 
                     if (fileUri != null && fileUri.getPath() != null) {
-                        File file = new File(fileUri.getPath());
                         mGameActivity.mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
                         mListener.onComplete("resetAppData");
                         recreateAndPause();
@@ -949,8 +909,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
     }
 
-    public static interface OnCompleteListener {
-        public abstract void onComplete(String string);
+    public interface OnCompleteListener {
+        void onComplete(String string);
     }
 
     public static OnCompleteListener mListener;
@@ -1004,7 +964,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(mGameActivity);
-            View view = inflater.inflate(R.layout.game_settings_menu, container, false);
             return inflater.inflate(R.layout.game_settings_menu, container, false);
         }
 
@@ -1071,7 +1030,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
         private GameSettingsDialog gameSettingsDialog;
         private int resourceId;
-        private boolean mHasFocusBeenSet = false;
         private static SharedPreferences mPrefs;
 
         public SettingsFragmentPreference() {}
@@ -1130,8 +1088,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
             DialogFragment fragment = null;
-//            if (preference instanceof SeekBarPreference) {// Change based on id?
-//            else if(preference instanceof PlayerMapPreference){
             switch(resourceId){
                 case R.xml.preferences_display:
                     fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new DisplayPrefsActivity()).
@@ -1156,7 +1112,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 case R.xml.preferences_input:
                     fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new InputPrefsActivity()).
                             getPreferenceDialogFragment(preference);
-//                        fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) getActivity()).getPreferenceDialogFragment(preference);
                     break;
                 default:
                     fragment = null;
@@ -1255,15 +1210,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     mGameActivity.mGlobalPrefs.putShaderPasses(shaderPasses);
                     gameSettingsDialog.refreshShaderViews();
                     if(gameSettingsDialog.mCategoryPasses == null) {
-                        gameSettingsDialog.firstPass = true;
+                        firstPass = true;
                         gameSettingsDialog.recreateView();
                     }
                 }
-            }
-            else if (key.equals("playerMap")){
-                Log.i("GameSettingsDialog","playerMap");
-//                mListener.onComplete("resetAppData");
-//                mListener.onComplete("settingsReset");
             }
             else if (GlobalPrefs.PATH_GAME_SAVES.equals(key)) {
                 startFolderPicker();
@@ -1441,7 +1391,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     setPreference("inputBackMappable",false);
                     setPreference("inputMenuMappable",false);
 
-
                     final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
                     if (playerPref != null)
                     {
@@ -1467,6 +1416,14 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 default:
                     break;
             }
+
+            if(GameActivity.mResolutionReset)
+                resolutionResetPreferences(false);
+        }
+
+        public void resolutionResetPreferences(boolean enabled){
+            for(int i = 0; i <= getPreferenceScreen().getPreferenceCount()-1; i++)
+                getPreferenceManager().getPreferenceScreen().getPreference(i).setEnabled(enabled);
         }
 
         @Override
@@ -1510,7 +1467,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     public static class SettingsFragmentAdapter extends FragmentStateAdapter {
 
         public SettingsFragmentPreference[] mSettingsFragmentPreference = new SettingsFragmentPreference[6];
-        private GameSettingsDialog gameSettingsDialog;
+        private final GameSettingsDialog gameSettingsDialog;
 
 
 
@@ -1676,32 +1633,4 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         return true;
     }
 
-    public interface OnDisplayDialogListener
-    {
-        /**
-         * Called when a preference dialog is being displayed. This must return
-         * the appropriate DialogFragment for the preference.
-         *
-         * @param preference
-         *            The preference dialog
-         * @return The dialog fragment for the preference
-         */
-        DialogFragment getPreferenceDialogFragment(Preference preference);
-    }
-    public interface OnSettingsFragmentCreationListener
-    {
-        /**
-         * Called when a preference dialog is being displayed. This must return
-         * the appropriate DialogFragment for the preference.
-         *
-         * @param currentFragment Current fragment
-         */
-        void onFragmentCreation(SettingsFragmentPreference currentFragment);
-
-        /**
-         * Callback when the fragment views are created
-         * @param view Fragment main view
-         */
-        void onViewCreation(View view);
-    }
 }

@@ -219,8 +219,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private NetplayServerSetupDialog mNetplayServerDialog = null;
 
     public static final String RESET_BROADCAST_MESSAGE = "RESET_BROADCAST_MESSAGE";
-    private boolean mSettingsReset = false;
     public static boolean mResolutionReset = false;
+
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
+    private boolean mSettingsReset = false;
 
     // when using landscape and resetting from the in game settings
     // the activity will automatically be recreated so we use this
@@ -851,11 +853,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     public void gameSettingsDialogPrompt(){
         final FragmentManager fm = this.getSupportFragmentManager();
-        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
         if(gameSettings == null)
         {
             gameSettings = new GameSettingsDialog();
-            fm.beginTransaction().add(gameSettings, "STATE_SETTINGS_FRAGMENT").commit();
+            fm.beginTransaction().add(gameSettings, STATE_SETTINGS_FRAGMENT).commit();
         }
     }
 
@@ -1672,7 +1674,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     try {
                         Thread.sleep(100);
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 }
 
@@ -1683,6 +1685,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if (mGlobalPrefs.displayOrientation != -1) {
                 setRequestedOrientation( mGlobalPrefs.displayOrientation );
             }
+
+            final FragmentManager fm = getSupportFragmentManager();
+            runOnUiThread(() -> {
+                GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+                if (gameSettings != null) {
+                    gameSettings.resetPreferencesFromResolutionReset();
+                }
+            });
         });
 
         handler.start();
@@ -2094,7 +2104,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final FragmentManager fm = this.getSupportFragmentManager();
         if(fm == null)
             return;
-        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
         if(gameSettings == null)
             return;
         final PlayerMapPreference playerPref = (PlayerMapPreference) gameSettings.findPlayerMapPreferenceSettings();
