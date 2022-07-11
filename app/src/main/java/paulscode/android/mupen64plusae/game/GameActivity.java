@@ -667,7 +667,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mDrawerLayout.openDrawer(GravityCompat.START);
             mGameSidebar.requestFocus();
 
-
+            // locking to load data properly
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
             runOnUiThread(() -> {
                 gameSettingsDialogPrompt();
             });
@@ -1263,6 +1264,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     private void resolutionResetOnComplete(){
+        // if there is a black screen issue with changing orientation while resetting the activity
+        // from updating settings in game, then uncomment this line below to help prevent orientation
+        // from changing at all
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED); // might be necessary
+
         safeAutoSave();
         getIntent().putExtra("gameOpenReset", true);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, true);
@@ -1319,6 +1325,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 resetGlContext();
                 break;
             case "pauseEmulator":
+                if(mResolutionReset)
+                    break;
                 mSettingsView = true;
                 mGameSidebar.setVisibility(View.GONE);
                 mDrawerLayout.openDrawer(GravityCompat.START,false);
@@ -1415,6 +1423,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mSettingsRecreate = true;
                 break;
             case "gameSettingDialogClosed":
+                // Checking orientation lock
+                if(!mResolutionReset){
+                    if(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LOCKED){
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                        // Set the screen orientation
+                        if (mGlobalPrefs.displayOrientation != -1) {
+                            setRequestedOrientation( mGlobalPrefs.displayOrientation );
+                        }
+                    }
+                }
+
                 resolutionRefresh();
                 tryRunning();
 
@@ -1679,6 +1698,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 }
 
                 mResolutionReset = false;
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
 
             // Set the screen orientation

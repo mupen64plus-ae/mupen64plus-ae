@@ -161,12 +161,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     public void onStop() {
         super.onStop();
         // check if we're launching activity from settings menu
-        if(!launchingActivity) {
+        if (!GameActivity.mResolutionReset && !launchingActivity) {
             onGameSettingsDialogPass.settingsViewReset();
             try {
                 dismiss();
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 //If we're here the user has probably rotated screen orientation
                 mListener.onComplete("pauseEmulator");
                 e.printStackTrace();
