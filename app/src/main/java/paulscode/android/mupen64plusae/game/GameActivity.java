@@ -1311,6 +1311,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
+    public void unlockOrientation(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        // Set the screen orientation
+        if (mGlobalPrefs.displayOrientation != -1) {
+            setRequestedOrientation( mGlobalPrefs.displayOrientation );
+        }
+    }
+
     public void onComplete(String string) {
         // After the dialog fragment completes, it calls this callback.
         // use the string here
@@ -1426,11 +1434,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 // Checking orientation lock
                 if(!mResolutionReset){
                     if(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LOCKED){
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                        // Set the screen orientation
-                        if (mGlobalPrefs.displayOrientation != -1) {
-                            setRequestedOrientation( mGlobalPrefs.displayOrientation );
-                        }
+                        unlockOrientation();
                     }
                 }
 
@@ -1711,6 +1715,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
                 if (gameSettings != null) {
                     gameSettings.resetPreferencesFromResolutionReset();
+                }
+                else{
+                    // User has exited the settings fragment before everything initialized so we need to reset
+                    // everything that would have if they exited properly (after it initialized)
+                    settingsViewReset();
+                    resolutionRefresh();
+                    unlockOrientation();
                 }
             });
         });
