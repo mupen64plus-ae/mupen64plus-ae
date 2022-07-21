@@ -208,6 +208,22 @@ public class PromptInputCodeDialog extends DialogFragment
         return Math.abs(strengths1 - strengths2) < delta;
     }
 
+    private void nestedDialogCheck(){
+        if(getActivity() != null) {
+            GameSettingsDialog gameSettings = (GameSettingsDialog) getActivity().
+                    getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+            if (gameSettings != null) {
+                gameSettings.nestedDialogCheck();
+            }
+        }
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        nestedDialogCheck();
+        super.onDismiss(dialog);
+    }
+
     @Override
     public void onDestroyView()
     {

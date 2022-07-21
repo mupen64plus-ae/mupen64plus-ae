@@ -224,6 +224,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
     private boolean mSettingsReset = false;
 
+    private static final String DIALOG_FRAGMENT_KEY = "DIALOG_FRAGMENT_KEY";
+    private String mDialogFragmentKey = "";
+
+    // Used if we open a second dialog (like within player map)
+    private static final String ASSOCIATED_DIALOG_FRAGMENT = "ASSOCIATED_DIALOG_FRAGMENT";
+    private int mAssociatedDialogFragment = 0;
+
     // when using landscape and resetting from the in game settings
     // the activity will automatically be recreated so we use this
     // to prevent a loop of the activity being recreated continuously.
@@ -454,6 +461,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             reOpenSidebar = savedInstanceState.getBoolean(STATE_REOPEN_SIDEBAR);
             mSettingsBreakout = savedInstanceState.getBoolean(STATE_SETTINGS_BREAKOUT);
             mResolutionReset = savedInstanceState.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET);
+            mDialogFragmentKey = savedInstanceState.getString(DIALOG_FRAGMENT_KEY);
+            mAssociatedDialogFragment = savedInstanceState.getInt(ASSOCIATED_DIALOG_FRAGMENT);
 
 //            if(savedInstanceState.getBoolean(STATE_SETTINGS_RECREATE) && !orientationCheck){//!GameSettingsDialog.orientationCheck) {
 //                mDrawerOpenState = false;
@@ -690,6 +699,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         savedInstanceState.putBoolean(STATE_SETTINGS_RECREATE, mSettingsRecreate);
         savedInstanceState.putBoolean(STATE_SETTINGS_VIEW, mSettingsView);
         savedInstanceState.putBoolean(ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset);
+        savedInstanceState.putString(DIALOG_FRAGMENT_KEY, mDialogFragmentKey);
+        savedInstanceState.putInt(ASSOCIATED_DIALOG_FRAGMENT, mAssociatedDialogFragment);
         savedInstanceState.putBoolean(STATE_REOPEN_SIDEBAR, reOpenSidebar);
         savedInstanceState.putBoolean(STATE_SETTINGS_BREAKOUT,mSettingsBreakout);
 
@@ -852,7 +863,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         finishAndRemoveTask();
     }
 
-    public void gameSettingsDialogPrompt(){
+    private void gameSettingsDialogPrompt(){
         final FragmentManager fm = this.getSupportFragmentManager();
         GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
         if(gameSettings == null)
@@ -1162,19 +1173,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    public void resetGlContext(){
+    private void resetGlContext(){
         mGameSurface.stopGlContext();
         mGameSurface.startGlContext();
     }
 
-    public void resetShaders(){
+    private void resetShaders(){
         resetGameSurfaceResolutionData();
         mGameSurface.resetSurfaceParameters(mCoreFragment.getSurfaceTexture());
         mGameSurface.setSelectedShader(mGlobalPrefs.getShaderPasses());
         mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
     }
 
-    public void resetAppData(){
+    private void resetAppData(){
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs(this,mAppData);
 
@@ -1182,7 +1193,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
     }
 
-    public void resetGameSurfaceResolutionData(){
+    private void resetGameSurfaceResolutionData(){
         resetAppData();
 
         mDisplayResolutionData = new DisplayResolutionData(mGlobalPrefs, this, mDrawerLayout, mGamePrefs.displayScaling);
@@ -1311,7 +1322,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    public void unlockOrientation(){
+    private void unlockOrientation(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         // Set the screen orientation
         if (mGlobalPrefs.displayOrientation != -1) {
@@ -1722,6 +1733,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     settingsViewReset();
                     resolutionRefresh();
                     unlockOrientation();
+                    mDialogFragmentKey = "";
                 }
             });
         });
@@ -2148,7 +2160,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mCoreFragment.setRecreateSurface(true);
     }
 
-    public int getShaderScaleFactor(){
-        return mGameSurface.mShaderScaleFactor;
+    public String getDialogFragmentKey(){
+        return mDialogFragmentKey;
+    }
+
+    public void setDialogFragmentKey(String key){
+        mDialogFragmentKey = key;
+    }
+
+    public int getAssociatedDialogFragment(){
+        return mAssociatedDialogFragment;
+    }
+
+    public void setAssociatedDialogFragment(int associatedDialogFragment){
+        mAssociatedDialogFragment = associatedDialogFragment;
     }
 }

@@ -35,11 +35,13 @@ import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
+import androidx.preference.EditTextPreference;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -97,19 +99,29 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static GameActivity mGameActivity;
     private SettingsFragment mSettingsFragment;
     private Vibrator mVibrator;
+    private InputMethodManager imm;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
     private final String TAG = "GameSettingsDialog";
     private static final String ACTION_IMPORT_TOUCHSCREEN_GRAPHICS = "actionImportTouchscreenGraphics";
     private static final String STATE_CURRENT_RESOURCE_ID = "STATE_CURRENT_RESOURCE_ID";
     private static final String STATE_SHARED_PREFS_NAME = "STATE_SHARED_PREFS_NAME";
     private static final String STATE_RESOURCE_ID = "STATE_RESOURCE_ID";
-    public static final String STATE_PREFERENCE_FRAGMENT = "STATE_PREFERENCE_FRAGMENT";
+    private static final String STATE_PREFERENCE_FRAGMENT = "STATE_PREFERENCE_FRAGMENT";
+    private static final String STATE_SETTINGS_RESET = "STATE_SETTINGS_RESET";
+    private static final String STATE_RECREATE_LATER = "STATE_RECREATE_LATER";
+    private static final String STATE_SCREEN_ROTATING = "STATE_SCREEN_ROTATING";
+    private static final String STATE_DELETE_EXTRA_DIALOG = "STATE_DELETE_EXTRA_DIALOG";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
-    public static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
+    private static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
     private static final int FEEDBACK_VIBRATE_TIME = 50;
     public static int currentResourceId = 0;
     public static boolean launchingActivity = false;//delete
+    private boolean settingsReset = false;
+    private boolean recreateLater = false;
+    private boolean screenRotating = false;
+    private boolean longClick = false;
+    private int deleteExtraDialog = 0;
 
     // Shader
 
@@ -154,7 +166,12 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         Bundle args = getArguments();
         if( args != null ){
             currentResourceId = args.getInt(STATE_CURRENT_RESOURCE_ID,0);
+            settingsReset = args.getBoolean(STATE_SETTINGS_RESET, false);
+            recreateLater = args.getBoolean(STATE_RECREATE_LATER, false);
+            screenRotating = args.getBoolean(STATE_SCREEN_ROTATING, false);
         }
+        if(mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset"))
+            showKeyboard(requireContext());
     }
 
     @Override
@@ -162,13 +179,39 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onStop();
         // check if we're launching activity from settings menu
         if (!GameActivity.mResolutionReset && !launchingActivity) {
-            onGameSettingsDialogPass.settingsViewReset();
+            if(!settingsReset && !recreateLater)
+                onGameSettingsDialogPass.settingsViewReset();
             try {
                 dismiss();
+                mGameActivity.setDialogFragmentKey("");
+
+                if(settingsReset) {
+                    settingsReset = false;
+                    mListener.onComplete("resolutionRefresh");
+                    mListener.onComplete("settingsReset");
+                    onGameSettingsDialogPass.settingsViewReset();
+                }
+
+                // need to do this when changing a playerMap setting because recreating with
+                // the extra dialog fragment can mess things up
+                if(recreateLater){
+                    recreateLater = false;
+                    mListener.onComplete("settingsRecreate");
+                    onGameSettingsDialogPass.settingsViewReset();
+                }
             } catch (Exception e) {
-                //If we're here the user has probably rotated screen orientation
+                screenRotating = true;
                 mListener.onComplete("pauseEmulator");
                 e.printStackTrace();
+
+                // on long click from player map needs this here (it dismisses a dialog or
+                // resets the fragment key or something) otherwise we'd always set to 1
+                if(!mGameActivity.getDialogFragmentKey().equals(""))//("playerMap"))
+                    deleteExtraDialog = 1;
+
+                if(!keyboardOpen() && mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset")) {//also make sure we're not exiting
+                    mGameActivity.setDialogFragmentKey("");// set delete extra dialog too? (0 or 1?)
+                }
             }
             mListener.onComplete("gameSettingDialogClosed");
         }
@@ -215,6 +258,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             firstPass = false;
         }
         mListener.onComplete("resolutionRefresh");
+        deleteExtraDialog = 1;
     }
 
     @Override
@@ -288,9 +332,28 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         Bundle args = getArguments();
         if( args != null ){
             currentResourceId = args.getInt(STATE_CURRENT_RESOURCE_ID,0);
+            settingsReset = args.getBoolean(STATE_SETTINGS_RESET, false);
+            recreateLater = args.getBoolean(STATE_RECREATE_LATER, false);
+            screenRotating = args.getBoolean(STATE_SCREEN_ROTATING, false);
         }
 
         setStyle(STYLE_NO_FRAME, R.style.MupenTheme_Dark_Translucent);
+
+        if(savedInstanceState != null){
+            settingsReset = savedInstanceState.getBoolean(STATE_SETTINGS_RESET, false);
+            recreateLater = savedInstanceState.getBoolean(STATE_RECREATE_LATER, false);
+            screenRotating = savedInstanceState.getBoolean(STATE_SCREEN_ROTATING, false);
+            deleteExtraDialog = savedInstanceState.getInt(STATE_DELETE_EXTRA_DIALOG,0);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean(STATE_SETTINGS_RESET,settingsReset);
+        outState.putBoolean(STATE_RECREATE_LATER,recreateLater);
+        outState.putBoolean(STATE_SCREEN_ROTATING,screenRotating);
+        outState.putInt(STATE_DELETE_EXTRA_DIALOG, deleteExtraDialog);
+        super.onSaveInstanceState(outState);
     }
 
     @Nullable
@@ -300,6 +363,25 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         if(mGameActivity != null)
             mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(mGameActivity);
         oldShaderScaleFactor = mPrefs.getInt("shaderScaleFactor",2);
+
+        imm = (InputMethodManager) mGameActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+        if (screenRotating) {
+            try {
+                Preference preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].
+                        findPreference(mGameActivity.getDialogFragmentKey());
+                final PlayerMapPreference playerPref = (PlayerMapPreference) preference;
+                if (playerPref != null) {
+                    playerPref.setValue(mGameActivity.mGamePrefs.playerMap.serialize());
+                    playerPref.dismissFragments((FragmentActivity) getActivity());// causing issues
+                }
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        screenRotating = false;
 
         // By default, send Player 1 rumbles through phone vibrator
         Vibrator vibrator;
@@ -311,10 +393,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
         mVibrator = vibrator;
 
+        if(mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset"))
+            showKeyboard(requireContext());
+
         return inflater.inflate(R.layout.game_settings_header, container, false);
     }
-
-
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -337,11 +420,19 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onPause();
 
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+
+        if(!mGameActivity.isChangingConfigurations()){
+            Log.i(TAG,"Set stuff needed from onStop here.");
+        }
+        else{
+            Log.i(TAG,"Set stuff needed from orientation change but that's not as necessary.");
+        }
     }
 
     @Override
     public void onResume()
     {
+        Log.i(TAG,"onResume");
         super.onResume();
 
         mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -386,6 +477,20 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[currentResourceId].findPreference(preferenceString);
         if (preference != null)
             preference.setEnabled(value);
+    }
+
+    public void showKeyboard(Context context) {
+        imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    public boolean keyboardOpen(){
+        if(!mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset"))
+            return false;
+        if(imm != null && imm.isActive()) {
+            return true;
+        }
+        return false;
     }
 
     private void disableSettingsThatReset(int currentResource){
@@ -537,8 +642,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         if(key.equals("threadedGLideN64") || key.equals("inputShareController") ||
                 key.equals("holdButtonForMenu") ||
                 (key.equals("displayOrientation") && mGameActivity.mGlobalPrefs.displayOrientation != -1) ||
-                (key.equals("displayImmersiveMode_v2") && !mGameActivity.mGlobalPrefs.isImmersiveModeEnabled) ||
-                key.equals("playerMap"))
+                (key.equals("displayImmersiveMode_v2") && !mGameActivity.mGlobalPrefs.isImmersiveModeEnabled) )//||
+                //key.equals("playerMap"))
             mListener.onComplete("settingsRecreate");
 
         //CHECK ALL RESET VALUES HERE
@@ -547,8 +652,18 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 (key.equals("displayImmersiveMode_v2") && mGameActivity.mGlobalPrefs.isImmersiveModeEnabled) ||
                 mSettingsFragment.viewPager.getCurrentItem() == 2 ||
                 (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType"))) {
-            mListener.onComplete("resolutionRefresh");
-            mListener.onComplete("settingsReset");
+//            mListener.onComplete("resolutionRefresh");
+//            mListener.onComplete("settingsReset");
+            settingsReset = true;
+        }
+
+        if(key.equals("playerMap")) {
+            recreateLater = true;
+            mGameActivity.setAssociatedDialogFragment(0);
+            if(!longClick)
+                dialogDeleted();
+            else
+                longClick = false;
         }
 
         // Vibrating if they activate haptic feedback
@@ -596,6 +711,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             shaderLoader(shaderPasses,"shaderpass,1");
             mListener.onComplete("resetSurface");
             mGameActivity.recreate();
+        }
+
+        // Setting open dialog values
+        mGameActivity.setAssociatedDialogFragment(0);
+        if(!key.equals("playerMap")) {
+            mGameActivity.setDialogFragmentKey("");
+            deleteExtraDialog = 0;
         }
 
         //if change custom
@@ -993,7 +1115,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         fragmentAdapter.mSettingsFragmentPreference[currentResourceId].resetPreferences();
 
                         if(currentResourceId == 1){
-                            gameSettingsDialog.OnPreferenceScreenChange("");
+                            if(gameSettingsDialog != null)
+                                gameSettingsDialog.OnPreferenceScreenChange("");
                         }
                     }
                     super.onPageSelected(position);
@@ -1076,16 +1199,62 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
+            Log.i("GameSettingsDialogPref","onCreate");
             if(savedInstanceState != null) {
                 resourceId = savedInstanceState.getInt("resourceId");
             }
             super.onCreate(savedInstanceState);
 
             mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(mGameActivity);
+
+            if(!mGameActivity.getDialogFragmentKey().equals("")) {
+                Log.i("GameSettingsDialogPref","DialogFragmentKey = "+mGameActivity.getDialogFragmentKey());
+                DialogFragment fragment = null;
+                Preference preference = findPreference(mGameActivity.getDialogFragmentKey());
+
+                if(mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset")) {
+                    EditTextPreference pref = (EditTextPreference) preference;
+                    if(pref != null)
+                        onDisplayPreferenceDialog(pref);
+                    return;
+                }
+
+                fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new DisplayPrefsActivity()).
+                        getPreferenceDialogFragment(preference);
+                if (fragment != null) {
+                    fragment.setTargetFragment(this, 0);
+
+                    try {
+                        FragmentManager fm = getParentFragmentManager();
+                        fragment.show(fm, "androidx.preference.PreferenceFragment.DIALOG");
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // make another
+                if(mGameActivity.getAssociatedDialogFragment() != 0){
+                    final PlayerMapPreference playerPref = (PlayerMapPreference) preference;
+                    if (playerPref != null)
+                    {
+                        // Check null in case preference has been removed
+                        final boolean enable1 = mGameActivity.mGlobalPrefs.controllerProfile1 != null;
+                        final boolean enable2 = mGameActivity.mGlobalPrefs.controllerProfile2 != null;
+                        final boolean enable3 = mGameActivity.mGlobalPrefs.controllerProfile3 != null;
+                        final boolean enable4 = mGameActivity.mGlobalPrefs.controllerProfile4 != null;
+                        playerPref.setControllersEnabled(enable1, enable2, enable3, enable4);
+
+                        playerPref.setValue( mGameActivity.mGamePrefs.playerMap.serialize() );
+                        playerPref.rePromptPlayer(mGameActivity.getAssociatedDialogFragment(),
+                                (FragmentActivity) getActivity());// change 1 with int of whichever we change
+                    }
+                }
+            }
         }
 
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
+            mGameActivity.setDialogFragmentKey(preference.getKey());
             DialogFragment fragment = null;
             switch(resourceId){
                 case R.xml.preferences_display:
@@ -1361,6 +1530,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         public void resetPreferences(){
+//          if(gameSettingsDialog == null){
+//              // (if orientation is changed at a specific time before starting then
+//              // gameSettingsDialog goes null and case 1 preferencescreenchange won't
+//              // trigger for example (need to change something here to reload)
+//          }
             switch(currentResourceId){
                 case 0:
                     if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
@@ -1370,7 +1544,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     disableSettingsThatReset(currentResourceId);
                     break;
                 case 1:
-                    gameSettingsDialog.OnPreferenceScreenChange("");
+                    if(gameSettingsDialog != null)
+                        gameSettingsDialog.OnPreferenceScreenChange("");
                     break;
                 case 2:
                     if(mGameActivity.mGlobalPrefs.maxAutoSaves == 0)
@@ -1630,6 +1805,59 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         ft.commit();
 
         return true;
+    }
+
+    // Deleting extra dialog when screen gets rotated
+    public void extraDialogCheck(){
+        Log.i("GameSettingsDialog","Dialog Check DeleteExtraDialog = "+deleteExtraDialog+
+                " DialogFragmentKey = "+mGameActivity.getDialogFragmentKey());
+        if(deleteExtraDialog == 1)
+            deleteExtraDialog++;
+        else if(deleteExtraDialog >= 2)
+            deleteExtraDialog = 0;
+        else if(!screenRotating) {
+            Log.i("GameSettingsDialog","extraDialogCheck resetting dialogFragmentKey which is currently "+mGameActivity.getDialogFragmentKey());
+            mGameActivity.setDialogFragmentKey("");
+        }
+    }
+
+    // Checking for nested dialog (like someone setting a controller within player map)
+    // when we close the settings fragment
+    public void nestedDialogCheck(){
+        if(!screenRotating)
+            mGameActivity.setAssociatedDialogFragment(0);
+    }
+
+    // Checking for player map dialog when we close the settings fragment
+    public void playerMapDialogCheck(int mSelectedPlayer){
+        if(!screenRotating){
+            try {
+                int associatedFragment = 0;
+                final FragmentManager fm = mGameActivity.getSupportFragmentManager();
+                PromptInputCodeDialog promptInputCodeDialog = (PromptInputCodeDialog) fm.findFragmentByTag("STATE_PROMPT_INPUT_CODE_DIALOG");
+                if (promptInputCodeDialog != null)
+                    associatedFragment = mSelectedPlayer;
+                mGameActivity.setAssociatedDialogFragment(associatedFragment);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Used when we get rid of a nested dialog to indicate we don't need to delete more later
+    public void dialogDeleted(){
+        if(deleteExtraDialog == 1){
+            deleteExtraDialog++;
+        }
+        else if(deleteExtraDialog >= 2)
+            deleteExtraDialog = 0;
+    }
+
+    // This happens when using a long click to disable a controller in player map, it triggers
+    // something to blank out mDialogFragmentKey so we become aware when it happens and try to
+    // ignore its effects
+    public void setLongClickOnDialog(boolean longClick){
+        this.longClick = longClick;
     }
 
 }

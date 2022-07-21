@@ -39,6 +39,7 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
+import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
 import android.util.Log;
@@ -131,9 +132,20 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
             }
         }
 
+        private void extraDialogCheck(){
+            if(getActivity() != null) {
+                GameSettingsDialog gameSettings = (GameSettingsDialog) getActivity().
+                        getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                if (gameSettings != null) {
+                    gameSettings.extraDialogCheck();
+                }
+            }
+        }
+
         @Override
         public void onDialogClosed(boolean result)
         {
+            extraDialogCheck();
             if (getPreference() instanceof OnPreferenceDialogListener)
             {
 
@@ -281,6 +293,6 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     {
         return mPrefFrag;
     }
-    
+
     
 }
