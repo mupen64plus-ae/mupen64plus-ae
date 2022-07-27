@@ -99,6 +99,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
          */
         void onExitFinished();
 
+        /**
+         * Called when a setting has changed the game's surface
+         */
         void onRecreateSurface();
     }
     
@@ -310,8 +313,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, boolean settingsReset, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay,
-                          boolean resolutionReset)
+                          boolean isRestarting, boolean settingsReset, boolean resolutionReset, int videoRenderWidth, int videoRenderHeight,
+                          boolean usingNetplay)
     {
         Log.i(TAG, "startCore");
 
@@ -322,6 +325,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mZipPath = zipPath;
         mIsRestarting = isRestarting;
         mSettingsReset = settingsReset;
+        mResolutionReset = resolutionReset;
         mRomMd5 = romMd5;
         mRomCrc = romCrc;
         mRomHeaderName = romHeaderName;
@@ -331,7 +335,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mVideoRenderWidth = videoRenderWidth;
         mVideoRenderHeight = videoRenderHeight;
         mUsingNetplay = usingNetplay;
-        mResolutionReset = resolutionReset;
 
         if(!mIsRunning)
         {
@@ -345,7 +348,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void actuallyStartCore(Activity activity)
+    private void actuallyStartCore(Activity activity)
     {
         Log.i(TAG, "actuallyStartCore");
 
@@ -387,11 +390,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomArtPath(mRomArtPath);
         params.setRestarting(mIsRestarting);
         params.setSettingsReset(mSettingsReset);
+        params.setResolutionReset(mResolutionReset);
         params.setUseRaphnetDevicesIfAvailable(mUseRaphnetIfAvailable);
         params.setVideoRenderWidth(mVideoRenderWidth);
         params.setVideoRenderHeight(mVideoRenderHeight);
         params.setUsingNetplay(mUsingNetplay);
-        params.setResolutionReset(mResolutionReset);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, params);
     }
@@ -522,7 +525,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void pluginResolutionReset()
     {
-//        Log.i(TAG, "pluginResolutionReset");
+        Log.i(TAG, "pluginResolutionReset");
         if(mCoreService != null)
             mCoreService.pluginResolutionReset();
     }
@@ -660,11 +663,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if(mCoreService == null)
             return 0;
         return mCoreService.getEmuMode();
-    }
-
-    public void loadLatestAutoSave(){
-        if(mCoreService != null)
-            mCoreService.loadLatestSave();
     }
 
     public void incrementSlot()
@@ -866,13 +864,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         return mCoreService.checkOnStateCallbackListeners();
     }
 
-    public void autoSaveState(boolean shutdownOnFinish, boolean pauseEmulator)
+    public void autoSaveState(boolean shutdownOnFinish)
     {
         Log.i(TAG, "autoSaveState");
 
         if (mCoreService != null)
         {
-            mCoreService.autoSaveState(shutdownOnFinish, pauseEmulator);
+            mCoreService.autoSaveState(shutdownOnFinish);
         }
     }
 
@@ -1104,13 +1102,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     public void setRecreateSurface(boolean recreateSurface){ mRecreateSurface = recreateSurface; }
-
-    public boolean isPaused(){
-        if(mCoreService != null)
-            return mCoreService.isPaused();
-        else
-            return false;
-    }
 
     public boolean getResolutionResetCore(){
         if(mCoreService == null)

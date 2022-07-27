@@ -565,11 +565,12 @@ void main_state_load_latest_auto_save()
 
 void main_state_load(const char *filename)
 {
+
     if(filename != NULL) {
         l_FileName = malloc(strlen(filename) + 1);
         strcpy(l_FileName, filename);
     }
-//    DebugMessage(M64MSG_STATUS,"l_FileName = %s",l_FileName);
+
     if (netplay_is_init())
         return;
 
@@ -991,11 +992,10 @@ static void pause_loop(void)
 {
     if(g_rom_pause)
     {
-//        DebugMessage(M64MSG_STATUS,"main_gfx_name = %s",main_get_gfx_name());
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
 
-//        if(l_usingAutoSaves == 0)     // could maybe just use this
-        if(l_inMenuAfterResetting == 0) // using estimated frame skip settings with gfx plugin causes black screen
+        // Using estimated frame skip settings with gfx plugin causes black screen
+        if(l_inMenuAfterResetting == 0)
             VidExt_GL_SwapBuffers();
 
         while(g_rom_pause)

@@ -86,7 +86,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
     l_resolutionResetGln = resolutionReset;
-//    OGL_ResolutionReset(resolutionReset);
 
 #ifdef __NEON_OPT
     MathInitNeon();
@@ -184,7 +183,6 @@ EXPORT void CALL PluginResolutionReset(void)
 {
     l_resolutionResetGlnCounter = 0;
     l_resolutionResetGln = 0;
-//    OGL_ResolutionReset(0);
 }
 
 EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
@@ -248,11 +246,11 @@ EXPORT void CALL ShowCFB (void)
 {
 }
 
-EXPORT void CALL UpdateScreen (void) {
+EXPORT void CALL UpdateScreen (void)
+{
     if (l_resolutionResetGlnCounter > 2) {//5
         l_resolutionResetGlnCounter = 0;
         l_resolutionResetGln = 0;
-//        OGL_ResolutionReset(0);
 
         CoreVideo_ResolutionReset();
     }

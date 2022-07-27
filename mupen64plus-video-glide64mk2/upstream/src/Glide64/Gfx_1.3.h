@@ -584,7 +584,8 @@ EXPORT void CALL PluginResolutionReset (void);
   Function: GetPluginResolutionReset
   Purpose:  This function receives the PluginResolutionReset
   			settings so we can start the game properly
-  input:    none
+  input:    Pointer to know if the plugin has finished resetting
+  			from resolution reset
   output:   none
 *******************************************************************/
 EXPORT void CALL GetPluginResolutionReset (int *pluginResolutionReset);

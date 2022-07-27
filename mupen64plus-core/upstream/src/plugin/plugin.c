@@ -224,24 +224,28 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
             gfx.resizeVideoOutput = dummyvideo_ResizeVideoOutput;
         }
 
+        /* checking for certain plugins */
         ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(plugin_handle, "PluginGetVersion");
         if (PluginGetVersion == NULL)
         {
             DebugMessage(M64MSG_STATUS,"Error can't find PluginGetVersion in plugin.");
         }
+        else
+        {
+            m64p_plugin_type plugin_type = (m64p_plugin_type)0;
+            int plugin_version = 0;
+            const char *plugin_name = NULL;
+            int api_version = 0;
 
-        m64p_plugin_type plugin_type = (m64p_plugin_type)0;
-        int plugin_version = 0;
-        const char *plugin_name = NULL;
-        int api_version = 0;
+            (*PluginGetVersion)(&plugin_type, &plugin_version, &api_version, &plugin_name, NULL);
+            DebugMessage(M64MSG_STATUS,"Graphics plugin version = %s",plugin_name);
+            strncpy((char *) s_GfxName,plugin_name,47);
+            s_GfxName[47] = '\0';
 
-        (*PluginGetVersion)(&plugin_type, &plugin_version, &api_version, &plugin_name, NULL);
-        DebugMessage(M64MSG_STATUS,"Graphics plugin version = %s",plugin_name);
-        strncpy((char *) s_GfxName,plugin_name,47);
-        s_GfxName[47] = '\0';
-
-        if(strncmp(main_get_gfx_name(),"Glide64mk2 Video Plugin",23) == 0)         // this plugin always needs to swap buffers on pause
-            l_inMenuAfterResetting = 0;
+            /* this plugin always needs to swap buffers on pause */
+            if(strncmp(main_get_gfx_name(),"Glide64mk2 Video Plugin",23) == 0)
+                l_inMenuAfterResetting = 0;
+        }
 
         l_GfxAttached = 1;
     }

@@ -137,14 +137,20 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *, int, int, int);
 }
 #endif
 
+/* Used to check if the game needs to pause before starting because of in game settings being changed */
 int l_resolutionReset;
+/* Counts frames to make sure the video plugin is showing when resetting via resolution reset */
 int l_resolutionResetCoreCounter;
-int l_usingAutoSaves;                       // we set this as l_resolutionReset but don't set it back to 0 so we can
-                                            // load properly with the interpreter even if other processes have finished
+/* We set this as l_resolutionReset but don't set it back to 0 so we can load properly with the
+ * interpreter even if other processes have finished */
+int l_usingAutoSaves;
+/* We use this to help the plugin wait before initializing when resetting from in game settings */
 int l_emuModeInitiated;
-int l_inMenuAfterResetting;                 // we use this to see if we need to swap buffer on pause
-int l_audioInitiated;                       // we use this to help the glide64 plugin wait before initializing
-                                            // when resetting from in game settings
+/* We use this to see if we need to swap buffer on pause */
+int l_inMenuAfterResetting;
+/* We use this to help the plugin wait before initializing */
+int l_audioInitiated;
+/* Holds the latest auto save file name to use if we reset from in game settings */
 char * l_FileName;
 
 #endif /* #define M64P_FRONTEND_H */

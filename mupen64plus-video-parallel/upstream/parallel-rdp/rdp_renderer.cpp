@@ -2348,8 +2348,6 @@ void Renderer::enqueue_fence_wait(Vulkan::Fence fence)
 
 void Renderer::submit_to_queue()
 {
-//	if(l_resolutionReset != 0) // use
-//		return;
 	bool pending_host_visible_render_passes =
 			(caps.super_sample_readback ? pending_render_passes_upscaled : pending_render_passes) != 0;
 	bool pending_upscaled_passes = pending_render_passes_upscaled != 0;

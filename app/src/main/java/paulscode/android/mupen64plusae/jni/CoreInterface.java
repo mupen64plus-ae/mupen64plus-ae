@@ -141,7 +141,7 @@ class CoreInterface
 
     private final SparseArray<String> mGbRomPaths = new SparseArray<>(4);
     private final SparseArray<String> mGbRamPaths = new SparseArray<>(4);
-    public String latestSave = "";
+    private String latestSave = "";
     private String mDdRom = null;
     private String mDdDisk = null;
     private static final String GB_ROM_NAME = "gb_rom.gb";
@@ -814,7 +814,6 @@ class CoreInterface
         byte[] bytes = filename.getBytes(Charset.defaultCharset());
         Pointer parameterPointer = new Memory(bytes.length + 1);
         parameterPointer.setString(0, filename);
-//        Log.i("CoreInterface","resultValue = "+filename);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_STATE_SAVE.ordinal(), 1, parameterPointer);
     }
 
@@ -902,6 +901,14 @@ class CoreInterface
         IntByReference getPluginResolutionReset = new IntByReference(1);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_GET_PLUGIN_RESOLUTION_RESET.ordinal(), 0,getPluginResolutionReset.getPointer());
         return getPluginResolutionReset.getValue() != 0;
+    }
+
+    void setLatestSave(String save){
+        latestSave = save;
+    }
+
+    String getLatestSave(){
+        return latestSave;
     }
 
     void unsetNativeWindow()

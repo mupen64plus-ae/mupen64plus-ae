@@ -21,11 +21,9 @@
 package paulscode.android.mupen64plusae.game;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -43,7 +41,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import android.os.VibratorManager;
@@ -73,7 +70,6 @@ import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
 import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -147,8 +143,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
         NetplayClientSetupDialog.OnServerDialogActionListener,
         NetplayServerSetupDialog.OnClientDialogActionListener, NetplayFragment.NetplayListener,
-        GameSettingsDialog.OnCompleteListener , GameSettingsDialog.OnGameSettingsDialogPass,
-        PromptInputCodeDialog.PromptInputCodeListener{
+        GameSettingsDialog.OnGameSettingsDialogListener, PromptInputCodeDialog.PromptInputCodeListener{
     private static final String TAG = "GameActivity";
     // Activity and views
     private GameOverlay mOverlay;
@@ -184,9 +179,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private int mServerPort = 0;
 
     // App data and user preferences
-    public AppData mAppData = null;
-    public GlobalPrefs mGlobalPrefs = null;
-    public GamePrefs mGamePrefs = null;
+    private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
+    private GamePrefs mGamePrefs = null;
     private DisplayResolutionData mDisplayResolutionData = null;
 
     private static final String STATE_DRAWER_OPEN = "STATE_DRAWER_OPEN";
@@ -202,12 +197,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private boolean mSettingsView = false;
 
     private static final String STATE_REOPEN_SIDEBAR = "STATE_REOPEN_SIDEBAR";
-    private boolean reOpenSidebar = false;
+    private boolean mReOpenSidebar = false;
 
     private static final String STATE_NETPLAY_FRAGMENT = "STATE_NETPLAY_FRAGMENT";
     private NetplayFragment mNetplayFragment = null;
 
     private final boolean[] isControllerPlugged = new boolean[4];
+    private boolean mResolutionReset = false;
 
     private static final String STATE_CURRENT_FPS = "STATE_CURRENT_FPS";
     private int currentFps = -1;
@@ -218,17 +214,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_NETPLAY_SERVER_DIALOG = "STATE_NETPLAY_SERVER_DIALOG";
     private NetplayServerSetupDialog mNetplayServerDialog = null;
 
-    public static final String RESET_BROADCAST_MESSAGE = "RESET_BROADCAST_MESSAGE";
-    public static boolean mResolutionReset = false;
-
     private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
     private boolean mSettingsReset = false;
 
-    private static final String DIALOG_FRAGMENT_KEY = "DIALOG_FRAGMENT_KEY";
+    private static final String STATE_DIALOG_FRAGMENT_KEY = "STATE_DIALOG_FRAGMENT_KEY";
     private String mDialogFragmentKey = "";
 
     // Used if we open a second dialog (like within player map)
-    private static final String ASSOCIATED_DIALOG_FRAGMENT = "ASSOCIATED_DIALOG_FRAGMENT";
+    private static final String STATE_ASSOCIATED_DIALOG_FRAGMENT = "STATE_ASSOCIATED_DIALOG_FRAGMENT";
     private int mAssociatedDialogFragment = 0;
 
     // when using landscape and resetting from the in game settings
@@ -237,8 +230,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_SETTINGS_BREAKOUT = "STATE_SETTINGS_BREAKOUT";
     private boolean mSettingsBreakout = false;
 
-    // Preference fragment
-//    private AppCompatPreferenceFragment mPrefFrag = null;
+    private int safeSaveTryingCount = 0;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -312,19 +304,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Initialize the objects and data files interfacing to the emulator core
         final FragmentManager fm = this.getSupportFragmentManager();
-        CoreFragment fragment = new CoreFragment();
-        fragment = (CoreFragment) fm.findFragmentByTag(STATE_CORE_FRAGMENT);
+        CoreFragment fragment = (CoreFragment) fm.findFragmentByTag(STATE_CORE_FRAGMENT);
 
-        if(fragment != null){
+        if(fragment != null)
+            fm.beginTransaction().remove(fragment).commit();
 
-            mCoreFragment = new CoreFragment();
-            fm.beginTransaction().replace(android.R.id.content,mCoreFragment,STATE_CORE_FRAGMENT).commit();
-        }
-        else if(fragment == null)
-        {
-            mCoreFragment = new CoreFragment();
-            fm.beginTransaction().add(mCoreFragment, STATE_CORE_FRAGMENT).commit();
-        }
+        mCoreFragment = new CoreFragment();
+        fm.beginTransaction().add(mCoreFragment, STATE_CORE_FRAGMENT).commit();
 
         mCoreFragment.setCoreEventListener(this);
 
@@ -352,10 +338,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
         mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
-        mSettingsReset = extras.getBoolean(ActivityHelper.Keys.DO_SETTINGS_RESET, false);
+        mSettingsReset = extras.getBoolean(ActivityHelper.Keys.SETTINGS_RESET, false);
+        mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
         mIsNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
         mIsNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
-        mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
 
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             finish();
@@ -458,23 +444,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mDrawerOpenState = savedInstanceState.getBoolean(STATE_DRAWER_OPEN);
             currentFps = savedInstanceState.getInt(STATE_CURRENT_FPS);
             mSettingsView = savedInstanceState.getBoolean(STATE_SETTINGS_VIEW);
-            reOpenSidebar = savedInstanceState.getBoolean(STATE_REOPEN_SIDEBAR);
+            mReOpenSidebar = savedInstanceState.getBoolean(STATE_REOPEN_SIDEBAR);
             mSettingsBreakout = savedInstanceState.getBoolean(STATE_SETTINGS_BREAKOUT);
             mResolutionReset = savedInstanceState.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET);
-            mDialogFragmentKey = savedInstanceState.getString(DIALOG_FRAGMENT_KEY);
-            mAssociatedDialogFragment = savedInstanceState.getInt(ASSOCIATED_DIALOG_FRAGMENT);
-
-//            if(savedInstanceState.getBoolean(STATE_SETTINGS_RECREATE) && !orientationCheck){//!GameSettingsDialog.orientationCheck) {
-//                mDrawerOpenState = false;
-//                mSettingsView = false;
-//            }
+            mDialogFragmentKey = savedInstanceState.getString(STATE_DIALOG_FRAGMENT_KEY);
+            mAssociatedDialogFragment = savedInstanceState.getInt(STATE_ASSOCIATED_DIALOG_FRAGMENT);
 
             if(mSettingsReset)
                 mSettingsReset = false;
 
             // black screen fix
             mCoreFragment.setRecreateSurface(true);
-            // black screen fix
         }
 
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
@@ -566,22 +546,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mNetplayServerDialog = (NetplayServerSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_SERVER_DIALOG);
     }
 
-    BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Saving just in case we can't when we reset
-//            if(!mSettingsReset && intent.getBooleanExtra("saveResetBroadcastMessage",false)){
-//                mSettingsReset = true;
-//
-//                intent.removeExtra("saveResetBroadcastMessage");
-//                if(mGlobalPrefs.maxAutoSaves != 0)
-//                {
-//                    mCoreFragment.autoSaveState(false,true);
-//                }
-//            }
-        }
-    };
-
     @Override
     public void onFpsChanged(int newValue)
     {
@@ -625,10 +589,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart, mSettingsReset,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart, mSettingsReset, mResolutionReset,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
-                        mIsNetplayEnabled, mResolutionReset);
+                        mIsNetplayEnabled);
                 mSettingsReset = false;
             }
 
@@ -645,7 +609,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onResume()
     {
         super.onResume();
-        registerReceiver(mReceiver, new IntentFilter(RESET_BROADCAST_MESSAGE));
         Log.i(TAG, "onResume");
 
         if (mSensorController != null) {
@@ -655,10 +618,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Set the sidebar opacity
         mGameSidebar.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
 
-        if(mSettingsView) {
-
-        }
-        else if(mDrawerOpenState)
+        if(!mSettingsView && mDrawerOpenState)
         {
             if(mCoreFragment != null)
             {
@@ -669,6 +629,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mGameSidebar.requestFocus();
             ReloadAllMenus();
         }
+
         if(mResolutionReset){
             mSettingsView = true;
             mGameSidebar.setVisibility(View.GONE);
@@ -681,7 +642,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             runOnUiThread(() -> {
                 gameSettingsDialogPrompt();
             });
-//            mResolutionReset = false;
         }
     }
 
@@ -698,10 +658,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         savedInstanceState.putInt(STATE_CURRENT_FPS, currentFps);
         savedInstanceState.putBoolean(STATE_SETTINGS_RECREATE, mSettingsRecreate);
         savedInstanceState.putBoolean(STATE_SETTINGS_VIEW, mSettingsView);
-        savedInstanceState.putBoolean(ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset);
-        savedInstanceState.putString(DIALOG_FRAGMENT_KEY, mDialogFragmentKey);
-        savedInstanceState.putInt(ASSOCIATED_DIALOG_FRAGMENT, mAssociatedDialogFragment);
-        savedInstanceState.putBoolean(STATE_REOPEN_SIDEBAR, reOpenSidebar);
+        savedInstanceState.putString(STATE_DIALOG_FRAGMENT_KEY, mDialogFragmentKey);
+        savedInstanceState.putInt(STATE_ASSOCIATED_DIALOG_FRAGMENT, mAssociatedDialogFragment);
+        savedInstanceState.putBoolean(STATE_REOPEN_SIDEBAR, mReOpenSidebar);
         savedInstanceState.putBoolean(STATE_SETTINGS_BREAKOUT,mSettingsBreakout);
 
         super.onSaveInstanceState( savedInstanceState );
@@ -720,7 +679,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
-                mCoreFragment.autoSaveState(false,false);
+                mCoreFragment.autoSaveState(false);
             }
 
             mCoreFragment.pauseEmulator();
@@ -738,7 +697,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onDestroy()
     {
         Log.i( TAG, "onDestroy" );
-        unregisterReceiver(mReceiver);
         super.onDestroy();
 
         if(mCoreFragment != null)
@@ -1045,57 +1003,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
-    {
-//        mSharedPrefsName = sharedPrefsName;
-//        mPreferencesResId = preferencesResId;
-    }
-
-//    @Override
-//    public void onFragmentCreation(AppCompatPreferenceFragment currentFragment)
-//    {
-//        if(mPrefFrag != null)
-//        {
-//            View fragView = mPrefFrag.getView();
-//
-//            if(fragView != null)
-//            {
-//                fragView.setVisibility(View.GONE);
-//            }
-//        }
-//
-//        mPrefFrag = currentFragment;
-//
-//        View fragView = mPrefFrag.getView();
-//
-//        if(fragView != null)
-//        {
-//            fragView.setVisibility(View.VISIBLE);
-//        }
-
-//        OnPreferenceScreenChange(mPrefFrag.getTag());
-//    }
-
-//    @Override
-//    public void onViewCreation(View view) {
-//        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-////
-//            mBottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
-//            mRightInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).right;
-//            mTopInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
-//
-//            view.setPadding(0, mTopInset, mRightInset, mBottomInset);
-//
-//            return insets;
-//        });
-//
-//        // Call this a second time since the callback only happens on the first screen
-//        view.setPadding(0, mTopInset, mRightInset, mBottomInset);
-//    }
-
-    int safeSaveTryingCount = 0;        // for way to do 2
+    // Tries to save and if the emulation is not in a safe state to save then it will
+    // let the emulator run for a second before trying to save again
     private void safeAutoSave(){
-//        int tryingCount = 0;          // for way to do 1
         boolean saveNotifier = false;
         if(mCoreFragment == null)
             return;
@@ -1106,40 +1016,20 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     Thread.sleep(100);
                 }
                 catch (Exception e){
-
+                    e.printStackTrace();
                 }
             }
         }
 
         if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled) {
-            mCoreFragment.autoSaveState(false, false);
+            mCoreFragment.autoSaveState(false);
             try {
                 Thread.sleep(100);
             } catch (Exception e) {
                 Log.i(TAG, "Can't sleep");
             }
 
-            // Way to do 1
-
-//            while(mCoreFragment.checkOnStateCallbackListeners()){
-//                if(!saveNotifier){
-//                    saveNotifier = true;
-//                    runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_savingFile,"to reset properly"));
-//                }
-//                try{
-//                    Log.i(TAG,"Sleeping tryingcount = "+tryingCount);
-//                    Thread.sleep(1000);
-//                }
-//                catch(Exception e){
-//                    Log.i(TAG,"Can't sleep");
-//                }
-//                if(tryingCount > 5)
-//                    break;
-//                tryingCount++;
-//            }
-
-            // Way to do 2 (no sleep on ui thread)
-
+            // no sleep on ui thread
             final Thread handler = new Thread(() -> {
                 while (mCoreFragment.checkOnStateCallbackListeners()) {
                     try {
@@ -1180,7 +1070,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private void resetShaders(){
         resetGameSurfaceResolutionData();
-        mGameSurface.resetSurfaceParameters(mCoreFragment.getSurfaceTexture());
         mGameSurface.setSelectedShader(mGlobalPrefs.getShaderPasses());
         mGameSurface.setShaderScaleFactor(mGlobalPrefs.shaderScaleFactor);
     }
@@ -1217,8 +1106,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             resetAppData();
             mTouchscreenMap.clear();
-            // The touch map and overlay are needed to display frame rate and/or controls
 
+            // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap.load( mGlobalPrefs.isCustomTouchscreenSkin ? null : this,
                     mGlobalPrefs.touchscreenSkinPath, mGamePrefs.touchscreenProfile,
                     mGlobalPrefs.touchscreenAnimated, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
@@ -1274,12 +1163,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         });
     }
 
+    // Used to reset and pause the game upon restarting
     private void resolutionResetOnComplete(){
-        // if there is a black screen issue with changing orientation while resetting the activity
-        // from updating settings in game, then uncomment this line below to help prevent orientation
-        // from changing at all
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED); // might be necessary
-
         safeAutoSave();
         getIntent().putExtra("gameOpenReset", true);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, true);
@@ -1296,18 +1181,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             Log.i(TAG, "Shutting down because previous instance hasn't finished");
 
             runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_pleaseWait ));
-            // maybe do this to keep intent when exiting back to galleryactivity?
-//            if(mCoreFragment != null)
-//            {
-//                mCoreFragment.setCoreEventListener(null);
-//                mCoreFragment = null;
-//            }
-//            finish();
             finishActivity();
         }
-//        finish();
     }
 
+    // Resets variables involved with resetting the game and pausing on start
     private void resolutionRefresh(){
         mResolutionReset = false;
         if(mCoreFragment != null)
@@ -1330,14 +1208,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
+    // After the dialog fragment completes, it calls this callback.
     public void onComplete(String string) {
-        // After the dialog fragment completes, it calls this callback.
-        // use the string here
-
-        Preference preference;
-
         switch(string){
-            case "resetAppData"://case "gameDataStorageType":
+            case "resetAppData":
                 resetAppData();
                 break;
             case "resetSurface":
@@ -1362,7 +1236,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "videoPolygonOffset":
                 resolutionResetOnComplete();
                 return;
-            case "displayZoomSeek": //case "videoHardwareType": case "videoPolygonOffset":
+            case "displayZoomSeek":
                 resetGameSurfaceResolutionData();
                 break;
             case "displayOrientation":
@@ -1390,12 +1264,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     onFpsChanged(currentFps);
                 }
                 break;
-            case "resetShadersFirstPass":
-                resetShaders();
-                resetGlContext();
-                GameSettingsDialog.firstPass = false;
-                break;
-            case "resetShaders":
+            case "resetShaders": case "resetShadersFirstPass":
                 resetShaders();
                 resetGlContext();
                 break;
@@ -1430,12 +1299,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.resetCoreServiceAppData();
                 mCoreFragment.resetCoreServiceControllers();
                 resetGlContext();
-
                 break;
-            case "gameDataStorageType": case "gameDataStoragePath":
-                mSettingsReset = true;
-                break;
-            case "settingsReset":
+            case "settingsReset": case "gameDataStorageType": case "gameDataStoragePath":
                 mSettingsReset = true;
                 break;
             case "settingsRecreate":
@@ -1471,10 +1336,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     public void settingsViewReset(){
         if(mSettingsView){
-            if(reOpenSidebar){
+            if(mReOpenSidebar){
                 mGameSidebar.setVisibility(View.GONE);
                 mDrawerLayout.openDrawer(GravityCompat.START, false);
-                reOpenSidebar = false;
+                mReOpenSidebar = false;
             }
             mSettingsView = false;
 
@@ -1507,69 +1372,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
-        }
-        // leaving in for now
-        // Getting all the settings we don't need to reload for
-        if(resultCode == RESULT_OK && data != null){
-            if(requestCode == ActivityHelper.DISPLAY_SETTINGS_ACTIVITY){
-                int displayZoomSeek = (data.getIntExtra("displayZoomSeek", 100));
-                mGlobalPrefs.putInt("displayZoomSeek",displayZoomSeek);
-                String displayScaling = (data.getStringExtra("displayScaling"));
-                mGlobalPrefs.putString("displayScaling",displayScaling);
-                boolean isImmersiveModeEnabled = (data.getBooleanExtra("displayImmersiveMode_v2", true));
-                mGlobalPrefs.putBoolean("displayImmersiveMode_v2",isImmersiveModeEnabled);
-                int displayOrientation = (data.getIntExtra("displayOrientation", 0));
-                if(mGlobalPrefs.displayOrientation != displayOrientation)
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                mGlobalPrefs.putString("displayOrientation",String.valueOf(displayOrientation));
-                int displayActionBarTransparency = (data.getIntExtra("displayActionBarTransparency", 80));
-                mGlobalPrefs.putInt("displayActionBarTransparency",displayActionBarTransparency);
-                String isFpsEnabled = (data.getStringExtra("displayFpsV2"));
-                mGlobalPrefs.putString("displayFpsV2",isFpsEnabled);
-                boolean threadedGLideN64 = (data.getBooleanExtra("threadedGLideN64",true));
-                mGlobalPrefs.putBoolean("threadedGLideN64",threadedGLideN64);
-                String verticalRenderResolution = (data.getStringExtra("verticalRenderResolution"));
-                mGlobalPrefs.putString("verticalRenderResolution",verticalRenderResolution);
-                int videoHardwareType = (data.getIntExtra("videoHardwareType",-1));
-                mGlobalPrefs.putString("videoHardwareType",String.valueOf(videoHardwareType));
-                String videoPolygonOffset = (data.getStringExtra("videoPolygonOffset"));
-                mGlobalPrefs.putString("videoPolygonOffset",String.valueOf(videoPolygonOffset));
-            }
-            else if(requestCode == ActivityHelper.SHADERS_SETTINGS_ACTIVITY){
-                String shaderPasses = (data.getStringExtra(GlobalPrefs.KEY_SHADER_PASS));
-                mGlobalPrefs.putString(GlobalPrefs.KEY_SHADER_PASS, shaderPasses);
-                int shaderScaleFactor = (data.getIntExtra("shaderScaleFactor", 2));
-                mGlobalPrefs.putInt("shaderScaleFactor",shaderScaleFactor);
-            }
-            else if(requestCode == ActivityHelper.TOUCHSCREEN_SETTINGS_ACTIVITY){
-                int touchscreenScale = (data.getIntExtra("touchscreenScaleV2", 100) );
-                mGlobalPrefs.putInt("touchscreenScaleV2",touchscreenScale);
-                int touchscreenTransparency = data.getIntExtra("touchscreenTransparencyV2", mGlobalPrefs.touchscreenTransparency);
-                mGlobalPrefs.putInt("touchscreenTransparencyV2",touchscreenTransparency);
-                boolean isTouchscreenFeedbackEnabled = data.getBooleanExtra("touchscreenFeedback", mGlobalPrefs.isTouchscreenFeedbackEnabled);
-                mGlobalPrefs.putBoolean("touchscreenFeedback",isTouchscreenFeedbackEnabled);
-                int touchscreenAnimated = data.getIntExtra("touchscreenAnimated_v2", mGlobalPrefs.touchscreenAnimated);
-                mGlobalPrefs.putInt("touchscreenAnimated_v2",touchscreenAnimated);
-                int touchscreenAutoHold = data.getIntExtra("touchscreenAutoHoldV2", 0);
-                mGlobalPrefs.putString("touchscreenAutoHoldV2",String.valueOf(touchscreenAutoHold));//put as string
-                boolean isTouchscreenAnalogRelative = data.getBooleanExtra("touchscreenAnalogRelative_global", mGlobalPrefs.isTouchscreenAnalogRelative);
-                mGlobalPrefs.putBoolean("touchscreenAnalogRelative_global",isTouchscreenAnalogRelative);
-                int touchscreenAutoHideSeconds = data.getIntExtra("touchscreenAutoHideSeconds", mGlobalPrefs.touchscreenAutoHideSeconds);
-                mGlobalPrefs.putInt("touchscreenAutoHideSeconds",touchscreenAutoHideSeconds);
-                boolean isCustomTouchscreenSkin = data.getBooleanExtra("isCustomTouchscreenSkin", mGlobalPrefs.isCustomTouchscreenSkin);
-                mGlobalPrefs.putBoolean("isCustomTouchscreenSkin",isCustomTouchscreenSkin);
-                String touchscreenSkin = data.getStringExtra("touchscreenSkin_v2");
-                mGlobalPrefs.putString("touchscreenSkin_v2",touchscreenSkin);
-
-                String touchscreenSkinPath = data.getStringExtra("touchscreenSkinPath");
-                mGlobalPrefs.putString("touchscreenSkinPath",touchscreenSkinPath);
-
-                mGlobalPrefs.putBoolean("touchscreenAutoHideEnabled", touchscreenAutoHideSeconds < 21);
-            }
-            else if(requestCode == ActivityHelper.DATA_SETTINGS_ACTIVITY){
-                int maxAutoSaves = data.getIntExtra("maxAutoSaves", 5);
-                mGlobalPrefs.putInt("maxAutoSaves",maxAutoSaves);
-            }
         }
     }
 
@@ -1673,7 +1475,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onRecreateSurface()
     {
-        reOpenSidebar = true;
+        mReOpenSidebar = true;
         tryRunning();
     }
 
@@ -1682,6 +1484,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         final Thread handler = new Thread(() -> {
             int startingGameAttempt = 0;
+
             // Making sure the cpu recompiler/interpreter is initiated before setting the
             // screen orientation
             while ((mCoreFragment.getEmuModeInit() == 0)
@@ -1990,7 +1793,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0 && !mIsNetplayEnabled)
             {
-                mCoreFragment.autoSaveState(true,false);
+                mCoreFragment.autoSaveState(true);
             }
             else
             {
@@ -2145,8 +1948,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onDialogClosed(int inputCode, int hardwareId, int which) {
         final FragmentManager fm = this.getSupportFragmentManager();
-        if(fm == null)
-            return;
         GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
         if(gameSettings == null)
             return;
@@ -2174,5 +1975,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     public void setAssociatedDialogFragment(int associatedDialogFragment){
         mAssociatedDialogFragment = associatedDialogFragment;
+    }
+
+    public boolean getResolutionReset(){
+        return mResolutionReset;
+    }
+
+    public GlobalPrefs getGlobalPrefs(){
+        return mGlobalPrefs;
+    }
+
+    public GamePrefs getGamePrefs(){
+        return mGamePrefs;
     }
 }

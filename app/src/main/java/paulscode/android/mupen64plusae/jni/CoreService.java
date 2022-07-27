@@ -231,16 +231,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
-    void pluginResolutionReset()
-    {
-        mCoreInterface.pluginResolutionReset();
-    }
-
-    boolean getPluginResolutionReset()
-    {
-        return mCoreInterface.getPluginResolutionReset();
-    }
-
     private void tryShutdown()
     {
         mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
@@ -265,7 +255,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     }
 
     public boolean checkOnStateCallbackListeners(){
-        return mCoreInterface.checkOnStateCallbackListener(mCoreInterface.latestSave,mGamePrefs.getAutoSaveDir() + "/");
+        return mCoreInterface.checkOnStateCallbackListener(mCoreInterface.getLatestSave(),mGamePrefs.getAutoSaveDir() + "/");
     }
 
     void loadLatestSave(){
@@ -274,19 +264,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.emuLoadFile(latestSave);
     }
 
-    void autoSaveState(final boolean shutdownOnFinish, final boolean pauseEmulator)
+    void autoSaveState(final boolean shutdownOnFinish)
     {
         final String latestSave = mGameDataManager.getAutoSaveFileName();
-//        if(mCoreInterface.latestSave.equals(""))
-        mCoreInterface.latestSave = latestSave;
-        int timer;
-
-        // Pausing means we are coming back from settings change so we need to make sure
-        // the saving finishes
-        if (pauseEmulator)
-            timer = 1500;
-        else
-            timer = 500;
+        mCoreInterface.setLatestSave(latestSave);
+        int timer = 500;
 
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
@@ -303,9 +285,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mCoreInterface.setVolume(0);
         }
 
-        if (pauseEmulator)
-            mCoreInterface.setVolume(0);
-
         //Resume to allow save to take place
         resumeEmulator();
 
@@ -316,16 +295,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                     //newValue == 1, then it was successful
                     if (newValue == 1) {
-                        Log.i(TAG, "trying to write " + mCoreInterface.latestSave);
+                        Log.i(TAG, "trying to write " + mCoreInterface.getLatestSave());
                         try {
-                            if (!new File(mCoreInterface.latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
-                                Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.latestSave);
+                            if (!new File(mCoreInterface.getLatestSave() + "." + COMPLETE_EXTENSION).createNewFile()) {
+                                Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.getLatestSave());
                             }
                         } catch (IOException e) {
-                            Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.latestSave);
+                            Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.getLatestSave());
                         }
                     } else {
-                        Log.e(TAG, "Unable to save file due to bad return: " + mCoreInterface.latestSave);
+                        Log.e(TAG, "Unable to save file due to bad return: " + mCoreInterface.getLatestSave());
                     }
 
                     final CoreInterface.OnStateCallbackListener saveCompleteListener = this;
@@ -334,7 +313,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     // back to again on a call back
                     mShutdownHandler.postDelayed(() -> {
                         mCoreInterface.removeOnStateCallbackListener(this);
-                        mCoreInterface.latestSave = "";
+                        mCoreInterface.setLatestSave("");
 
                         if (shutdownOnFinish) {
                             shutdownEmulator();
@@ -350,9 +329,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.addOnStateCallbackListener(saveComplete);
 
         mCoreInterface.emuSaveFile( latestSave );
-
-        if(pauseEmulator)
-            pauseEmulator();
     }
 
     void saveState(String filename)
@@ -392,6 +368,25 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mIsPaused;
     }
 
+    void pluginResolutionReset()
+    {
+        mCoreInterface.pluginResolutionReset();
+    }
+
+    boolean getPluginResolutionReset()
+    {
+        return mCoreInterface.getPluginResolutionReset();
+    }
+
+    public boolean getResolutionResetCore(){
+        return mCoreInterface.emuGetResetResolutionCore();
+    }
+
+    public void setResolutionReset(boolean resolutionReset){
+        this.mResolutionReset = resolutionReset;
+        mCoreInterface.setResetResolution(resolutionReset);
+    }
+
     void toggleFramelimiter()
     {
         if (!mUsingNetplay) {
@@ -416,7 +411,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mCoreInterface.emuGetSlot();
     }
 
-    int getAudioInit() { return mCoreInterface.emuGetAudioInitiated(); }
+    int getAudioInit()
+    {
+        return mCoreInterface.emuGetAudioInitiated();
+    }
 
     int getEmuModeInit()
     {
@@ -712,6 +710,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     if (!mUsingNetplay) {
                         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, mGamePrefs.videoPluginLib.getPluginLib(), true);
                         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
+
                         if (mUseRaphnetDevicesIfAvailable) {
                             mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
                         } else {
@@ -951,7 +950,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     public void resetControllers(){
         if (!mUseRaphnetDevicesIfAvailable) {
-//            NativeInput.init();
             NativeInput.setConfig( 0, mGamePrefs.isPlugged[0], mGamePrefs.getPakType(1).ordinal() );
             NativeInput.setConfig( 1, mGamePrefs.isPlugged[1], mGamePrefs.getPakType(2).ordinal() );
             NativeInput.setConfig( 2, mGamePrefs.isPlugged[2], mGamePrefs.getPakType(3).ordinal() );
@@ -1019,7 +1017,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
-        notificationIntent.putExtra( ActivityHelper.Keys.DO_SETTINGS_RESET, mSettingsReset );
+        notificationIntent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, mSettingsReset );
         notificationIntent.putExtra( ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
@@ -1093,9 +1091,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
 
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
-            mSettingsReset = extras.getBoolean( ActivityHelper.Keys.DO_SETTINGS_RESET, false);
-            mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
+            mSettingsReset = extras.getBoolean( ActivityHelper.Keys.SETTINGS_RESET, false);
             mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
+            mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
 
             mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
             mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
@@ -1273,14 +1271,5 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
-    }
-
-    public boolean getResolutionResetCore(){
-        return mCoreInterface.emuGetResetResolutionCore();
-    }
-
-    public void setResolutionReset(boolean resolutionReset){
-        this.mResolutionReset = resolutionReset;
-        mCoreInterface.setResetResolution(resolutionReset);
     }
 }

@@ -136,7 +136,6 @@ void OGL_ClearColorBuffer(float *color);
 void OGL_ResizeWindow(int x, int y, int width, int height);
 void OGL_SwapBuffers();
 void OGL_ReadScreen( void *dest, int *width, int *height );
-//void OGL_ResolutionReset(int resolutionReset);
 
 int  OGL_CheckError();
 int  OGL_IsExtSupported( const char *extension );

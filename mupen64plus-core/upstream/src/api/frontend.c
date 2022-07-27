@@ -75,7 +75,6 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     l_inMenuAfterResetting = resolutionReset;
     l_emuModeInitiated = 0;
 
-
     /* check front-end's API version */
     if ((APIVersion & 0xffff0000) != (FRONTEND_API_VERSION & 0xffff0000))
     {
@@ -348,10 +347,9 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
             l_inMenuAfterResetting = 0;
             main_plugin_resolution_reset();
             return M64ERR_SUCCESS;
-        case M64CMD_GET_PLUGIN_RESOLUTION_RESET: {
+        case M64CMD_GET_PLUGIN_RESOLUTION_RESET:
             main_get_plugin_resolution_reset((int *)ParamPtr);
             return M64ERR_SUCCESS;
-        }
         case M64CMD_NETPLAY_CONTROL_PLAYER:
             if (ParamInt < 1 || ParamInt > 4 || ParamPtr == NULL)
                 return M64ERR_INPUT_INVALID;

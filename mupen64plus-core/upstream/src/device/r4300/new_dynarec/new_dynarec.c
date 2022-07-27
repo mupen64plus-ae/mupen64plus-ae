@@ -1877,9 +1877,7 @@ void* ERET_new(void)
     r4300_check_interrupt(r4300, CP0_CAUSE_IP2, r4300->mi->regs[MI_INTR_REG] & r4300->mi->regs[MI_INTR_MASK_REG]); // ???
     r4300->cp0.last_addr = state->pcaddr;
     state->pending_exception = 0;
-    if (state->cycle_count >= 0) {
-      gen_interrupt(r4300);
-    }
+    if (state->cycle_count >= 0) { gen_interrupt(r4300); }
 
     if(state->stop)
         return NULL;

@@ -34,7 +34,9 @@
 
 /** static (local) variables **/
 static uint32_t   l_countPerScanlineOverride = 0;
+/** external variables **/
 extern int        l_resolutionReset;
+extern int        l_resolutionResetCoreCounter = 0;
 
 unsigned int vi_clock_from_tv_standard(m64p_system_type tv_standard)
 {
@@ -173,7 +175,6 @@ void write_vi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
     masked_write(&vi->regs[reg], value, mask);
 }
 
-extern int l_resolutionResetCoreCounter = 0;
 
 void resolution_reset_check(){
     if(l_resolutionReset != 0){

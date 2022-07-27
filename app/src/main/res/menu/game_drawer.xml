@@ -49,9 +49,6 @@
         android:title="@string/menuItem_disableFramelimiter">
     </item>
     <item
-        android:id="@+id/menuItem_setIme"
-        android:title="@string/menuItem_setIme"/>
-    <item
         android:id="@+id/menuItem_paks"
         android:title="@string/menuItem_paks">
         <menu>
@@ -69,6 +66,9 @@
                 android:title="@string/menuItem_player_four"/>
         </menu>
     </item>
+    <item
+        android:id="@+id/menuItem_setIme"
+        android:title="@string/menuItem_setIme"/>
     <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"

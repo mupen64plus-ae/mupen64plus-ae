@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -33,7 +32,6 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
-import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -111,13 +109,6 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
             // case it's easier just to restart the activity than try to figure
             // out what to fix.
             ActivityHelper.restartActivity(this);
-        }
-
-        // Saving just in case we can't when they reset
-        if(getIntent() != null && getIntent().getBooleanExtra("gameRunning",false)){
-            Intent i = new Intent(GameActivity.RESET_BROADCAST_MESSAGE);
-            i.putExtra("saveResetBroadcastMessage", true);
-            sendBroadcast(i);
         }
     }
 

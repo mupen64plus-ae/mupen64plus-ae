@@ -220,7 +220,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
 
                 launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, true,
-                        false,false, false, false);
+                        false, false, false, false);
                 getIntent().replaceExtras((Bundle)null);
             }
         } else {
@@ -402,7 +402,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
         };
 
-
         mDrawerToggle.setDrawerIndicatorEnabled(false);
 
         mDrawerLayout.addDrawerListener( mDrawerToggle );
@@ -434,7 +433,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerList.requestFocus();
 
         // Configure the game information drawer
-        mGameSidebar = findViewById(R.id.gameSidebar);
+        mGameSidebar = findViewById( R.id.gameSidebar );
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
@@ -497,7 +496,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 refreshGrid(mItemsCache, mRecentItemsCache);
             }
         });
-
 
         if(!mGameRunning) {
             // Get the ROM path if it was passed from another activity/app
@@ -888,14 +886,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     item.md5, item.crc,
                     item.headerName, item.countryCode.getValue(), item.artPath,
                     item.goodName, item.displayName, true,
-                    false,true, false, false);
+                    false,false, true, false);
         } else if (menuItem.getItemId() == R.id.menuItem_startNetplayServer) {
             launchGameActivity(item.romUri,
                     item.zipUri,
                     item.md5, item.crc,
                     item.headerName, item.countryCode.getValue(), item.artPath,
                     item.goodName, item.displayName, true,
-                    false,true, true, false);
+                    false,false, true, true);
         } else if (menuItem.getItemId() == R.id.menuItem_settings) {
             tagForRefreshNeeded();
             ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
@@ -981,7 +979,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         launchGameActivity( item.romUri, item.zipUri,
             item.md5, item.crc, item.headerName, item.countryCode.getValue(),
-            item.artPath, item.goodName, item.displayName, false,false, false, false, false );
+            item.artPath, item.goodName, item.displayName, false, false, false, false, false );
         return true;
     }
 
@@ -1036,8 +1034,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 // Checking to see if we're coming back from game setting refresh
                 if (data.getBooleanExtra("gameOpenReset", false)) {
 
-//                    data.removeExtra("gameOpenReset");
-
                     final Bundle extras = data.getExtras();
 
                     String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
@@ -1050,9 +1046,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     String romGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
                     String romDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
                     boolean doRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+                    boolean doResolutionReset = extras.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET, false);
                     boolean isNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
                     boolean isNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
-                    boolean resolutionReset = extras.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET, false);
 
 
                     Intent intent = new Intent(CoreService.SERVICE_EVENT);
@@ -1082,14 +1078,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     refreshGrid();
 
                     launchGameActivity( romPath, zipPath,  romMd5, romCrc, romHeaderName, romCountryCode, romArtPath,
-                            romGoodName, romDisplayName, doRestart, true, isNetplayEnabled, isNetplayServer,
-                            resolutionReset);
+                            romGoodName, romDisplayName, doRestart, true, doResolutionReset, isNetplayEnabled,
+                            isNetplayServer);
                     return;
                 }
                 else{
                     // Reset preferences
                 }
             }
+            else
+                mGameRunning = false;
 
             mSearchQuery = "";
 
@@ -1106,7 +1104,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 finishAffinity();
             }
-//            resetAppData();
         }
     }
 
@@ -1244,8 +1241,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-            boolean isRestarting, boolean isResetting, boolean isNetplayEnabled, boolean isNetplayServer,
-                                    boolean resolutionReset)
+            boolean isRestarting, boolean settingsReset, boolean resolutionReset, boolean isNetplayEnabled,
+            boolean isNetplayServer)
     {
         Log.i( "GalleryActivity", "launchGameActivity" );
 
@@ -1279,8 +1276,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGameRunning = true;
         // Launch the game activity
         ActivityHelper.startGameActivity(this, romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                romArtPath, romGoodName, romDisplayName, isRestarting, isResetting, isNetplayEnabled, isNetplayServer,
-                resolutionReset);
+                romArtPath, romGoodName, romDisplayName, isRestarting, settingsReset, resolutionReset, isNetplayEnabled,
+                isNetplayServer);
     }
 
     @Override

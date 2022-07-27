@@ -91,7 +91,8 @@ public class ActivityHelper
         public static final String ROM_DISPLAY_NAME     = NAMESPACE + "ROM_DISPLAY_NAME";
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
-        public static final String DO_SETTINGS_RESET    = NAMESPACE + "DO_SETTINGS_RESET";
+        public static final String SETTINGS_RESET       = NAMESPACE + "SETTINGS_RESET";
+        public static final String RESOLUTION_RESET     = NAMESPACE + "RESOLUTION_RESET";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
@@ -115,19 +116,12 @@ public class ActivityHelper
         public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
         public static final String NETPLAY_ENABLED      = NAMESPACE + "NETPLAY_ENABLED";
         public static final String NETPLAY_SERVER       = NAMESPACE + "NETPLAY_SERVER";
-        public static final String RESOLUTION_RESET     = NAMESPACE + "RESOLUTION_RESET";
 
 
         //@formatter:on
     }
     public static final int GAME_ACTIVITY_CODE = 3;
     public static final int MANAGE_PROFILE_ACTIVITY = 4321;
-    public static final int DISPLAY_SETTINGS_ACTIVITY = 1234;
-    public static final int SHADERS_SETTINGS_ACTIVITY = 1235;
-    public static final int AUDIO_SETTINGS_ACTIVITY = 1236;
-    public static final int TOUCHSCREEN_SETTINGS_ACTIVITY = 1237;
-    public static final int INPUT_SETTINGS_ACTIVITY = 1238;
-    public static final int DATA_SETTINGS_ACTIVITY = 1239;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
@@ -214,8 +208,8 @@ public class ActivityHelper
 
     static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                  boolean doRestart, boolean doSettingsReset, boolean isNetplayEnabled, boolean isNetplayServer,
-                                  boolean resolutionReset) {
+                                  boolean doRestart, boolean doSettingsReset, boolean doResolutionReset, boolean isNetplayEnabled,
+                                  boolean isNetplayServer) {
         Intent intent = new Intent(activity, GameActivity.class);
         intent.putExtra( Keys.ROM_PATH, romPath );
         intent.putExtra( Keys.ZIP_PATH, zipPath );
@@ -227,10 +221,10 @@ public class ActivityHelper
         intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
         intent.putExtra( Keys.ROM_DISPLAY_NAME, romDisplayName );
         intent.putExtra( Keys.DO_RESTART, doRestart );
-        intent.putExtra( Keys.DO_SETTINGS_RESET, doSettingsReset );
+        intent.putExtra( Keys.SETTINGS_RESET, doSettingsReset );
+        intent.putExtra( Keys.RESOLUTION_RESET, doResolutionReset );
         intent.putExtra( Keys.NETPLAY_ENABLED, isNetplayEnabled );
         intent.putExtra( Keys.NETPLAY_SERVER, isNetplayServer );
-        intent.putExtra(Keys.RESOLUTION_RESET,resolutionReset);
         activity.startActivityForResult(intent, GAME_ACTIVITY_CODE);
     }
 
@@ -260,25 +254,11 @@ public class ActivityHelper
         Intent intent = new Intent( context, AudioPrefsActivity.class );
         context.startActivity( intent );    
     }
-
-    public static void startAudioPrefsActivityResult( Activity activity )
-    {
-        Intent intent = new Intent( activity, AudioPrefsActivity.class );
-        intent.putExtra("gameRunning",true);
-        activity.startActivityForResult( intent , AUDIO_SETTINGS_ACTIVITY);
-    }
     
     static void startDataPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, DataPrefsActivity.class );
         context.startActivity( intent );    
-    }
-
-    public static void startDataPrefsActivityResult( Activity activity )
-    {
-        Intent intent = new Intent( activity, DataPrefsActivity.class );
-        intent.putExtra("gameRunning",true);
-        activity.startActivityForResult( intent, DATA_SETTINGS_ACTIVITY );
     }
     
     static void startDisplayPrefsActivity( Context context )
@@ -287,37 +267,16 @@ public class ActivityHelper
         context.startActivity( intent );    
     }
 
-    public static void startDisplayPrefsActivityResult( Activity activity )
-    {
-        Intent intent = new Intent( activity, DisplayPrefsActivity.class );
-        intent.putExtra("gameRunning",true);
-        activity.startActivityForResult( intent, DISPLAY_SETTINGS_ACTIVITY );
-    }
-
     static void startShadersPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, ShaderPrefsActivity.class );
         context.startActivity( intent );
-    }
-
-    public static void startShadersPrefsActivityResult( Activity activity )
-    {
-        Intent intent = new Intent( activity, ShaderPrefsActivity.class );
-        intent.putExtra("gameRunning",true);
-        activity.startActivityForResult( intent , SHADERS_SETTINGS_ACTIVITY);
     }
     
     static void startInputPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, InputPrefsActivity.class );
         context.startActivity( intent );    
-    }
-
-    public static void startInputPrefsActivityResult( Activity activity )
-    {
-        Intent intent = new Intent( activity, InputPrefsActivity.class );
-        intent.putExtra("gameRunning",true);
-        activity.startActivityForResult( intent , INPUT_SETTINGS_ACTIVITY);
     }
 
     static void startDefaultPrefsActivity( Context context )
@@ -336,13 +295,6 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, TouchscreenPrefsActivity.class );
         context.startActivity( intent );
-    }
-
-    public static void startTouchscreenPrefsActivityResult( Activity activity )
-    {
-        Intent intent = new Intent( activity, TouchscreenPrefsActivity.class );
-        intent.putExtra("gameRunning",true);
-        activity.startActivityForResult( intent, TOUCHSCREEN_SETTINGS_ACTIVITY );
     }
     
     static void startGamePrefsActivity( Context context, String romPath, String romMd5,
@@ -541,7 +493,8 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
         intent.putExtra(Keys.ZIP_PATH,  params.getZipPath());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
-        intent.putExtra(Keys.DO_SETTINGS_RESET,  params.getSettingsReset());
+        intent.putExtra(Keys.SETTINGS_RESET,  params.getSettingsReset());
+        intent.putExtra(Keys.RESOLUTION_RESET, params.getResolutionReset());
         intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
 
         intent.putExtra(Keys.ROM_MD5, params.getRomMd5());
@@ -552,7 +505,6 @@ public class ActivityHelper
         intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
         intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
         intent.putExtra(Keys.NETPLAY_ENABLED, params.isUsingNetplay());
-        intent.putExtra(Keys.RESOLUTION_RESET, params.getResolutionReset());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
@@ -583,8 +535,8 @@ public class ActivityHelper
 
         return false;
     }
-    public static SharedPreferences getDefaultSharedPreferencesMultiProcess(
-            Context context) {
+
+    public static SharedPreferences getDefaultSharedPreferencesMultiProcess(Context context) {
         return context.getSharedPreferences(
                 context.getPackageName() + "_preferences",
                 Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);

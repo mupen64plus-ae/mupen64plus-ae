@@ -38,7 +38,6 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
@@ -118,14 +117,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             return false;
         }
 
-        // Saving just in case we can't when they reset
-        if(getIntent() != null && getIntent().getBooleanExtra("gameRunning",false) &&
-                !key.equals("gameAutoSaves")){
-            Intent i = new Intent(GameActivity.RESET_BROADCAST_MESSAGE);
-            i.putExtra("saveResetBroadcastMessage", true);
-            sendBroadcast(i);
-        }
-
         // Tell Android that we handled the click
         return true;
     }
@@ -163,14 +154,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        // Saving just in case we can't when they reset
-        if(getIntent() != null && getIntent().getBooleanExtra("gameRunning",false) &&
-                !key.equals("gameAutoSaves")){
-            Intent i = new Intent(GameActivity.RESET_BROADCAST_MESSAGE);
-            i.putExtra("saveResetBroadcastMessage", true);
-            sendBroadcast(i);
-        }
-
         refreshViews();
     }
 
@@ -217,18 +200,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Only when in game
-        if (this.getIntent().getBooleanExtra("gameRunning", false)) {
-            Intent intent = new Intent();
-            intent.putExtra("maxAutoSaves", mGlobalPrefs.maxAutoSaves);
-
-            setResult(RESULT_OK, intent);
-        }
-        super.onBackPressed();
     }
 
     @Override

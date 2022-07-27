@@ -84,7 +84,7 @@ EXPORT m64p_error CALL PluginShutdown(void);
 
 /* PluginResolutionReset()
  *
- * This function tells the plugin to continue the emulation incase the
+ * This function tells the plugin to continue the emulation in case the
  * settings menu exits.
 */
 typedef void (*ptr_PluginResolutionReset)(void);

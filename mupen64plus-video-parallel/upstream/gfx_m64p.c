@@ -108,9 +108,6 @@ void DebugMessage(int level, const char *message, ...) {
     char msgbuf[1024];
     va_list args;
 
-//    if (debug_callback)
-//        return;
-
     va_start(args, message);
     vsprintf(msgbuf, message, args);
 
@@ -164,7 +161,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
     ConfigSaveSection("Video-Parallel");
 
     resolution_reset = resolutionReset;
-//    DebugMessage(M64MSG_STATUS,"graphics plugin parallel here at pluginstartup resolution_reset = %d",resolution_reset);
     plugin_initialized = true;
     return M64ERR_SUCCESS;
 }
