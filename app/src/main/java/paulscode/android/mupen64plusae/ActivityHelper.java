@@ -535,10 +535,4 @@ public class ActivityHelper
 
         return false;
     }
-
-    public static SharedPreferences getDefaultSharedPreferencesMultiProcess(Context context) {
-        return context.getSharedPreferences(
-                context.getPackageName() + "_preferences",
-                Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
-    }
 }

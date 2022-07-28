@@ -56,6 +56,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
+import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -362,7 +363,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(requireActivity());
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         mImm = (InputMethodManager) requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         if (mScreenRotating && mGameActivity != null) {
@@ -1051,7 +1052,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(requireActivity());
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
             return inflater.inflate(R.layout.game_settings_menu, container, false);
         }
 
@@ -1126,7 +1127,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         public SettingsFragmentPreference(GameSettingsDialog mGameSettingsDialog, int resourceId) {
             gameSettingsDialog = mGameSettingsDialog;
             this.resourceId = resourceId;
-            mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(gameSettingsDialog.requireActivity());
         }
         @Override
         public void onPause()
@@ -1172,7 +1172,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             }
             super.onCreate(savedInstanceState);
 
-            mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(requireActivity());
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
 
             if(!mGameActivity.getDialogFragmentKey().equals("")) {
                 Log.i("GameSettingsDialogPref","DialogFragmentKey = "+mGameActivity.getDialogFragmentKey());
@@ -1562,7 +1562,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     break;
             }
 
-            if(mGameActivity.getResolutionReset())
             if(mGameActivity.getResolutionReset())
                 resolutionResetPreferences(false);
         }

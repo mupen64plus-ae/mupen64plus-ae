@@ -81,7 +81,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_data);

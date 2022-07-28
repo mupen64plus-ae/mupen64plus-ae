@@ -63,7 +63,7 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Get app data and user preferences
         mAppData = new AppData(this);

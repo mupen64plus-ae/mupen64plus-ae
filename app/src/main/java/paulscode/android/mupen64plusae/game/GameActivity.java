@@ -240,7 +240,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         try
         {
             // Fire TV Cube (2nd generation) on Android 9 ( Fire OS 7.2.4.2 / PS7242/2216 ) crash here with a null exception when calling getDefaultSharedPreferences.
-            SharedPreferences preferences = ActivityHelper.getDefaultSharedPreferencesMultiProcess(newBase);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( newBase );
 
             // Locale
             localeCode = preferences.getString( GlobalPrefs.KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );

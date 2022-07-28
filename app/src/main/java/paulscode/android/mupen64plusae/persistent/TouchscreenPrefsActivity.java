@@ -93,7 +93,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         // Get app data and user preferences
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
-        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Vibrator to show on haptic feedback
         Vibrator vibrator;

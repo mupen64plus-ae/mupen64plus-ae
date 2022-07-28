@@ -80,7 +80,7 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mPrefs = ActivityHelper.getDefaultSharedPreferencesMultiProcess(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_shader);
