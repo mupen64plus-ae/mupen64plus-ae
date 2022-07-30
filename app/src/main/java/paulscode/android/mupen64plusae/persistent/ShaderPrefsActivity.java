@@ -29,7 +29,6 @@ import android.util.Log;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
-import androidx.preference.PreferenceManager;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -39,12 +38,14 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.preference.SeekBarPreference;
 import paulscode.android.mupen64plusae.preference.ShaderPreference;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener, ShaderPreference.OnRemove {
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String SCREEN_ROOT = "screenRoot";
+    private static final String SCALE_FACTOR = "shaderScaleFactor";
     private static final String CATEGORY_PASSES = "categoryShaderPasses";
     private static final String ADD_PREFERENCE = "addShader";
     private static final String SHADER_PASS_KEY = "shaderpass,";
@@ -54,6 +55,7 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
     private PreferenceGroup mCategoryPasses = null;
+    private SeekBarPreference mScaleFactor = null;
 
     static final int MAX_SHADER_PASSES = 5;
 
@@ -80,10 +82,18 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = getSharedPreferences( "ShaderPrefs", MODE_PRIVATE );
+    }
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_shader);
+    @Override
+    protected String getSharedPrefsName() {
+        return "ShaderPrefs";
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_shader;
     }
 
     @Override
@@ -107,11 +117,15 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        Log.i("Shader", "onSharedPreferenceChanged");
+        Log.i("Shader", "onSharedPreferenceChanged: key=" + key);
 
         ArrayList<ShaderLoader> shaderPasses = mGlobalPrefs.getShaderPasses();
 
-        if (key.startsWith(SHADER_PASS_KEY)) {
+        if (key != null && key.equals(SCALE_FACTOR)) {
+            mGlobalPrefs.putShaderScaleFactor(mScaleFactor.getValue());
+        }
+
+        if (key != null && key.startsWith(SHADER_PASS_KEY)) {
             String value = mPrefs.getString(key, ShaderLoader.DEFAULT.toString());
 
             String[] currentPassSplitString = key.split(",");
@@ -144,10 +158,14 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
         PreferenceGroup screenRoot = (PreferenceGroup) findPreference(SCREEN_ROOT);
         PreferenceGroup categoryPasses = (PreferenceGroup) findPreference(CATEGORY_PASSES);
+        mScaleFactor = (SeekBarPreference) findPreference(SCALE_FACTOR);
+        mScaleFactor.setValue(mGlobalPrefs.shaderScaleFactor);
 
         if (mCategoryPasses != null) {
             mCategoryPasses.removeAll();
         }
+
+        mPrefs.edit().clear().apply();
 
         ArrayList<ShaderLoader> shaderPasses = mGlobalPrefs.getShaderPasses();
 
@@ -170,6 +188,7 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
     {
         Log.i("Shader", "OnPreferenceScreenChange");
         mCategoryPasses = (PreferenceGroup) findPreference( CATEGORY_PASSES );
+        mScaleFactor = (SeekBarPreference) findPreference(SCALE_FACTOR);
 
         if (mCategoryPasses == null) {
             resetPreferences();
@@ -226,9 +245,7 @@ public class ShaderPrefsActivity extends AppCompatPreferenceActivity implements 
 
             if (changedPass >= 0 && changedPass < shaderPasses.size()) {
                 shaderPasses.remove(changedPass);
-                mPrefs.edit().remove(key).apply();
                 mGlobalPrefs.putShaderPasses(shaderPasses);
-
                 refreshViews();
             }
         }

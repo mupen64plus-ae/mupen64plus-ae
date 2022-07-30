@@ -12,7 +12,7 @@ import paulscode.android.mupen64plusae.netplay.TcpServer;
 public class RequestSettingsMessage implements TcpMessage {
 
     TcpServer mTcpServer;
-    ByteBuffer mOutboundByteBuffer = ByteBuffer.allocate(20);
+    ByteBuffer mOutboundByteBuffer = ByteBuffer.allocate(24);
     OutputStream mOutputStream;
 
     public RequestSettingsMessage(TcpServer tcpServer, OutputStream outputStream) {
@@ -36,12 +36,14 @@ public class RequestSettingsMessage implements TcpMessage {
 
             if (settings != null) {
                 mOutboundByteBuffer.putInt(settings.mCountPerOp);
+                mOutboundByteBuffer.putInt(settings.mCountPerOpDenomPot);
                 mOutboundByteBuffer.putInt(settings.mDisableExtraMem);
                 mOutboundByteBuffer.putInt(settings.mSiDmADuration);
                 mOutboundByteBuffer.putInt(settings.mEmuMode);
                 mOutboundByteBuffer.putInt(settings.mNoCompiledJump);
 
                 Log.e("Netplay", "count_per_op=" + settings.mCountPerOp +
+                        " count_per_op_denom_pot=" + settings.mCountPerOpDenomPot +
                         " disable_extra_mem=" + settings.mDisableExtraMem +
                         " si_dma_duration=" + settings.mSiDmADuration +
                                 " emu_mode=" + settings.mEmuMode +

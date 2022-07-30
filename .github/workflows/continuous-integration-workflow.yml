@@ -5,13 +5,14 @@ on: [push, pull_request]
 jobs:
   build:
     name: Build Mupen64Plus-AE
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container: cirrusci/android-sdk:30-ndk
 
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout mupen64plus-ae repo 
+      uses: actions/checkout@v2
       with:
-        submodules: true
+        fetch-depth: 0
 
     - name: Decode debug keystore
       env:
@@ -26,18 +27,17 @@ jobs:
            sudo cp -f debug.keystore /root/.android/.
         fi 
 
-    - name: Install
+    - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y file
-        sudo apt-get install -y gawk
+        sudo apt-get install -y --no-install-recommends file gawk
         echo y | sdkmanager "cmake;3.18.1"
         
-    - name: Set Environment
+    - name: Set up environment
       run: |
         echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/23.1.7779620" >> $GITHUB_ENV
 
-    - name: Build
+    - name: Build artifact
       run: ./gradlew assemble
 
     - name: Declare some variables
@@ -47,8 +47,8 @@ jobs:
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-    - name: Upload Build Artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v2
       with: 
         name: mupen64plus-ae-${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
-        path: ${{ github.workspace }}/app/build/outputs/apk/debug/Mupen64PlusAE-debug.apk
+        path: ${{ github.workspace }}/app/build/outputs/apk/release/Mupen64PlusAE-release.apk

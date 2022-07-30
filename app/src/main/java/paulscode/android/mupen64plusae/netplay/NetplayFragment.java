@@ -26,12 +26,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -55,38 +56,20 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
          */
         void onUpnpPortsObtained(int tcpPort1, int tcpPort2, int udpPort2);
     }
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
-    private NetplayService mNetPlayService;
 
-    private boolean mIsNetplayRunning = false;
+    public static class DataViewModel extends ViewModel {
 
-    // this method is only called once for this fragment
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+        public DataViewModel() {}
+
+        //Service connection for the progress dialog
+        private ServiceConnection mServiceConnection;
+        private NetplayService.LocalBinder mNetplayServiceBinder;
+
+        private boolean mIsNetplayRunning = false;
+        private NetplayFragment mCurrentFragment = null;
     }
-    
-    @Override
-    public void onDestroy()
-    {        
-        if(mServiceConnection != null)
-        {
-            try {
-                Activity activity = requireActivity();
-                Intent intent = new Intent(activity, NetplayService.class);
-                activity.stopService(intent);
 
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        super.onDestroy();
-    }
+    DataViewModel mViewModel;
 
     public void startNetplayServer()
     {
@@ -99,27 +82,25 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
 
     public void mapPorts(int roomPort)
     {
-        if (mNetPlayService != null) {
-            mNetPlayService.mapPorts(roomPort);
+        if (mViewModel != null && mViewModel.mNetplayServiceBinder != null) {
+            mViewModel.mNetplayServiceBinder.getService().mapPorts(roomPort);
         }
     }
 
     public boolean isNetplayStarted()
     {
-        return mIsNetplayRunning;
+        return mViewModel != null && mViewModel.mIsNetplayRunning;
     }
     
     private void actuallyStartNetplayService(Activity activity)
     {
         /* Defines callbacks for service binding, passed to bindService() */
-        mServiceConnection = new ServiceConnection() {
+        mViewModel.mServiceConnection = new ServiceConnection() {
             
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
-                NetplayService.LocalBinder binder = (NetplayService.LocalBinder) service;
-
-                mNetPlayService = binder.getService();
-                mNetPlayService.startListening(NetplayFragment.this);
+                mViewModel.mNetplayServiceBinder = (NetplayService.LocalBinder) service;
+                mViewModel.mNetplayServiceBinder.getService().startListening(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -131,9 +112,9 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
 
         Intent intent = new Intent(activity.getApplicationContext(), NetplayService.class);
         activity.getApplicationContext().startService(intent);
-        activity.getApplicationContext().bindService(intent, mServiceConnection, 0);
+        activity.getApplicationContext().bindService(intent, mViewModel.mServiceConnection, 0);
 
-        mIsNetplayRunning = true;
+        mViewModel.mIsNetplayRunning = true;
     }
 
     @Override
@@ -164,17 +145,17 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
 
     @Override
     public void onFinish() {
-        if(mServiceConnection != null)
+        if(mViewModel != null && mViewModel.mServiceConnection != null)
         {
             try {
-                if (mNetPlayService != null) {
-                    mNetPlayService.stopServers();
+                if (mViewModel.mNetplayServiceBinder != null) {
+                    mViewModel.mNetplayServiceBinder.getService().stopServers();
                 }
 
                 Activity activity = requireActivity();
                 Intent intent = new Intent(activity.getApplicationContext(), NetplayService.class);
                 activity.stopService(intent);
-                mServiceConnection = null;
+                mViewModel.mServiceConnection = null;
 
             } catch (IllegalStateException e) {
                 e.printStackTrace();
@@ -183,7 +164,7 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
     }
 
     @Override
-    /**
+    /*
      * Callback when a UDP port has been mapped
      * @param tcpPort1 Port for room server
      * @param tcpPort2 Port for TCP netplay server
@@ -207,6 +188,15 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        startNetplayServer();
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
+
+        if (!mViewModel.mIsNetplayRunning) {
+            startNetplayServer();
+        }
+
+        if (mViewModel.mNetplayServiceBinder != null) {
+            mViewModel.mNetplayServiceBinder.getService().startListening(mViewModel.mCurrentFragment);
+        }
     }
 }

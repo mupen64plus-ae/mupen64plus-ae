@@ -20,8 +20,11 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -79,9 +82,11 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     }
 
     @Override
-    protected void onEditProfile( Profile profile )
+    protected void onEditProfile(ActivityResultLauncher<Intent> launcher, Profile profile )
     {
-        ActivityHelper.startEmulationProfileActivity( this, profile.name );
+        Intent intent = new Intent( this, EmulationProfileActivity.class );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profile.name );
+        launcher.launch(intent);
     }
 
     @Override

@@ -12,32 +12,25 @@ android {
         repositories {
             mavenCentral()
             google()
-            maven {
-                allowInsecureProtocol true
-                url 'http://4thline.org/m2'
-            }
         }
     }
 
     buildFeatures.viewBinding = true
 
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds = false
-    }
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.alpha"
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.debug
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel 'FULL'
             }
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             jniDebuggable true
             applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -76,53 +69,76 @@ android {
             }
         }
     }
-
     packagingOptions {
-        exclude 'META-INF/AL2.0'
-        exclude 'META-INF/LGPL2.1'
-        exclude 'META-INF/beans.xml'
-        doNotStrip "*/armeabi/*.so"
-        doNotStrip "*/armeabi-v7a/*.so"
-        doNotStrip "*/x86/*.so"
-        doNotStrip "*/x86_64/*.so"
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        resources {
+            excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1', 'META-INF/beans.xml']
+        }
     }
+
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.tvprovider:tvprovider:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.documentfile:documentfile:1.0.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation "androidx.constraintlayout:constraintlayout:2.1.0"
-    implementation 'org.apache.commons:commons-lang3:3.9'
-    implementation 'org.apache.commons:commons-text:1.8'
+    implementation 'com.google.android.material:material:1.6.0'
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+
+    def lifecycle_version = "2.4.1"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+
+    // Saved state module for ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+
+    // alternately - if using Java8, use the following instead of lifecycle-compiler
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+
+    // optional - helpers for implementing LifecycleOwner in a Service
+    implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
+
+    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
+
+    // optional - ReactiveStreams support for LiveData
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:$lifecycle_version"
+
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-text:1.9'
     implementation 'org.apache.commons:commons-io:1.3.2'
-    implementation 'org.apache.commons:commons-compress:1.20'
-    implementation 'org.tukaani:xz:1.8'
-    implementation 'org.fourthline.cling:cling-core:2.1.2'
-    implementation 'org.fourthline.cling:cling-support:2.1.2'
+    implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'org.tukaani:xz:1.9'
 
-    //Other dependencies required by Cling
-    implementation 'org.eclipse.jetty:jetty-server:8.1.22.v20160922'
-    implementation 'org.eclipse.jetty:jetty-servlet:8.1.22.v20160922'
-    implementation 'org.eclipse.jetty:jetty-client:8.1.22.v20160922'
-    implementation 'org.slf4j:slf4j-jdk14:1.7.14'
-
-    implementation ('net.java.dev.jna:jna-platform:5.8.0') {
+    implementation ('net.java.dev.jna:jna-platform:5.11.0') {
         exclude group: 'net.java.dev.jna', module: 'jna'
     }
-    implementation 'net.java.dev.jna:jna:5.8.0@aar'
-    testImplementation 'junit:junit:4.13.1'
+    implementation 'net.java.dev.jna:jna:5.11.0@aar'
+    testImplementation 'junit:junit:4.13.2'
+    implementation project(':ae-bridge')
+    implementation project(':miniupnp-bridge')
     implementation project(':mupen64plus-audio-android')
     implementation project(':mupen64plus-video-gliden64')
     implementation project(':mupen64plus-video-glide64mk2')
-    implementation project(':ae-bridge')
     implementation project(':mupen64plus-video-gln64')
     implementation project(':mupen64plus-rsp-parallel')
     implementation project(':mupen64plus-rsp-cxd4')

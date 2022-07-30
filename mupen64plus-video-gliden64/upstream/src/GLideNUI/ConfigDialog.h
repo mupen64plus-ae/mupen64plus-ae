@@ -9,6 +9,13 @@ namespace Ui {
 class ConfigDialog;
 }
 
+struct DisplayInfo
+{
+	QString m_displayName;
+	QString m_deviceName;
+	int     m_leftBound{ 0 };
+};
+
 class QAbstractButton;
 class ConfigDialog : public QDialog
 {
@@ -106,6 +113,7 @@ private:
 	const char * m_romName;
 	unsigned int m_maxMSAA;
 	unsigned int m_maxAnisotropy;
+	std::vector<DisplayInfo> m_displayInfo;
 };
 
 #endif // CONFIGDIALOG_H

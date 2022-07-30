@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
@@ -70,15 +73,12 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener, ConfirmationDialog.PromptConfirmListener
 {
-    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
-    private static final int PICK_FILE_REQUEST_CODE = 2;
-    private static final int EDIT_CHEATS_REQUEST_CODE = 111;
-
-    // These constants must match the keys used in res/xml/preferences_play.xml
+    // These constants must match the keys used in res/xml/preferences_game.xml
     private static final String SCREEN_ROOT = "screenRoot";
     private static final String SCREEN_CHEATS = "screenCheats";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     private static final String COUNT_PER_OP = "screenAdvancedCountPerOp";
+    private static final String COUNT_PER_OP_DEN = "screenAdvancedCountPerOpDen";
     private static final String VI_REFRESH = "screenAdvancedViRefreshRate";
 
     private static final String SHOW_BUILTIN_CHEAT_CODES = "showBuiltInCheatCodes";
@@ -125,6 +125,62 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     private String mCurrentFilePickerKey = null;
 
+    ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+
+                    Uri fileUri = getUri(data);
+
+                    Preference currentPreference = findPreference(mCurrentFilePickerKey);
+                    if (currentPreference != null && fileUri != null) {
+
+                        if (!mAppData.useLegacyFileBrowser) {
+                            getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        }
+
+                        if (mCurrentFilePickerKey.equals(GamePrefs.CHANGE_COVERT_ART)) {
+                            copyGalleryImageAndUpdateConfig(fileUri);
+                        } else {
+                            DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
+                            String summary = file == null ? "" : file.getName();
+                            currentPreference.setSummary(summary);
+                            mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
+                        }
+                    }
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchCheatEditor = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    //If the user cheats were saved, reset all selected cheats
+                    mClearCheats = true;
+                    refreshCheatsCategory();
+                }
+            });
+
+    private Uri getUri(Intent data)
+    {
+        AppData appData = new AppData( this );
+        Uri returnValue = null;
+        if (appData.useLegacyFileBrowser) {
+            final Bundle extras = data.getExtras();
+
+            if (extras != null) {
+                final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+                returnValue = Uri.parse(searchUri);
+            }
+        } else {
+            returnValue = data.getData();
+        }
+
+        return returnValue;
+    }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -140,8 +196,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        super.onCreate( savedInstanceState );
-
         // Get the ROM path and MD5 that was passed to the activity
         final Bundle extras = getIntent().getExtras();
         if( extras == null )
@@ -164,8 +218,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
         mPrefs = getSharedPreferences( mGamePrefs.getSharedPrefsName(), MODE_PRIVATE );
+
+        super.onCreate(savedInstanceState);
 
         // Get the detailed info about the ROM
         RomDatabase romDatabase = RomDatabase.getInstance();
@@ -188,9 +244,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, fileName, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );
-
         if( savedInstanceState != null )
         {
             mCurrentFilePickerKey = savedInstanceState.getString( STATE_FILE_PICKER_KEY );
@@ -204,6 +257,17 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mDeleteFilesFragment = new DeleteFilesFragment();
             fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
         }
+    }
+
+    @Override
+    protected String getSharedPrefsName() {
+        return mGamePrefs.getSharedPrefsName();
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_game;
     }
 
     @Override
@@ -318,64 +382,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
     }
 
-    @Override
-    protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == EDIT_CHEATS_REQUEST_CODE) {
-                //If the user cheats were saved, reset all selected cheatd
-                mClearCheats = true;
-                refreshCheatsCategory();
-            } else if (requestCode == PICK_FILE_REQUEST_CODE) {
-                // The result data contains a URI for the document or directory that
-                // the user selected.
-                if (data != null) {
-                    Uri fileUri = data.getData();
-
-                    Preference currentPreference = findPreference(mCurrentFilePickerKey);
-                    if (currentPreference != null && fileUri != null) {
-                        getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-                        if (mCurrentFilePickerKey.equals(GamePrefs.CHANGE_COVERT_ART)) {
-                            copyGalleryImageAndUpdateConfig(fileUri);
-                        } else {
-                            DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
-                            String summary = file == null ? "" : file.getName();
-                            currentPreference.setSummary(summary);
-                            mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
-                        }
-                    }
-                }
-            } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                    Uri fileUri = Uri.parse(searchUri);
-
-                    Preference currentPreference = findPreference(mCurrentFilePickerKey);
-                    if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
-
-                        if (mCurrentFilePickerKey.equals(GamePrefs.CHANGE_COVERT_ART)) {
-                            copyGalleryImageAndUpdateConfig(fileUri);
-                        } else {
-                            File file = new File(fileUri.getPath());
-                            currentPreference.setSummary(file.getName());
-                            mGamePrefs.putString(mCurrentFilePickerKey, fileUri.toString());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private void copyGalleryImageAndUpdateConfig(Uri uri)
     {
         if (FileUtil.isFileImage(getApplicationContext(), uri)) {
             DocumentFile file = FileUtil.getDocumentFileSingle(getApplicationContext(), uri);
-            if (file != null && FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ) )) {
+            if (file != null && FileUtil.copyFolder(getApplicationContext(), file, new File(mGlobalPrefs.coverArtDir + "/" + file.getName() ), true )) {
 
                 ConfigFile configFile = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
                 configFile.put(mRomMd5, "artPath", mGlobalPrefs.coverArtDir + "/" + file.getName());
@@ -524,6 +535,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
 
         PrefUtil.enablePreference( this, COUNT_PER_OP, !mGamePrefs.useDefaultCountPerOp );
+        PrefUtil.enablePreference( this, COUNT_PER_OP_DEN, !mGamePrefs.useDefaultCountPerOpDen );
         PrefUtil.enablePreference( this, VI_REFRESH, !mGamePrefs.useDefaultViRefreshRate );
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
@@ -631,7 +643,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             intent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
             intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
             intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
-            startActivityForResult( intent, EDIT_CHEATS_REQUEST_CODE );
+            mLaunchCheatEditor.launch(intent);
         } else if (key.equals(ACTION_WIKI)) {
             ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
         } else if (key.equals(GamePrefs.IDL_PATH_64DD) ||
@@ -653,13 +665,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private void startFilePicker(boolean selectImage)
     {
         AppData appData = new AppData( this );
+        Intent intent;
+
         if (appData.useLegacyFileBrowser) {
-            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
 
             if (selectImage) {
@@ -671,8 +684,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                     Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-            startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
         }
+        mLaunchFilePicker.launch(intent);
     }
 
     @Override

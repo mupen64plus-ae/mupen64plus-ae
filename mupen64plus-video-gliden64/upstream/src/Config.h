@@ -23,12 +23,14 @@ struct Config
 	struct
 	{
 		u32 fullscreen;
+		u32 borderless;
 		u32 windowedWidth, windowedHeight;
 		u32 fullscreenWidth, fullscreenHeight, fullscreenRefresh;
 		u32 fxaa;
 		u32 multisampling, maxMultiSampling;
 		u32 verticalSync;
 		u32 threadedVideo;
+		wchar_t deviceName[32];
 	} video;
 
 	struct
@@ -173,6 +175,7 @@ struct Config
 		u32 txForce16bpp;				// Force use 16bit color textures
 		u32 txCacheCompression;			// Zip textures cache
 		u32 txSaveCache;				// Save texture cache to hard disk
+		u32 txDump;                     // Dump textures
 
 		u32 txEnhancedTextureFileStorage;	// Use file storage instead of memory cache for enhanced textures.
 		u32 txHiresTextureFileStorage;		// Use file storage instead of memory cache for hires textures.
@@ -234,6 +237,7 @@ struct Config
 		hkOsdInternalResolution,
 		hkOsdRenderingResolution,
 		hkForceGammaCorrection,
+		hkInaccurateTexCords,
 		hkTotal
 	};
 

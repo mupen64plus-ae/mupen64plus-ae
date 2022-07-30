@@ -41,7 +41,7 @@ void ColorBufferToRDRAM::destroy() {
 
 bool ColorBufferToRDRAM::_prepareCopy(u32& _startAddress)
 {
-	if (VI.width == 0 || frameBufferList().getCurrent() == nullptr)
+	if (VI.width == 0)
 		return false;
 
 	FrameBuffer * pBuffer = frameBufferList().findBuffer(_startAddress);
@@ -236,7 +236,7 @@ void ColorBufferToRDRAM::copyToRDRAM(u32 _address, bool _sync)
 		return;
 	if (!_prepareCopy(_address))
 		return;
-	if (config.frameBufferEmulation.copyToRDRAM == Config::CopyToRDRAM::ctDisable)
+	if (config.frameBufferEmulation.copyToRDRAM == Config::CopyToRDRAM::ctDisable && config.frameBufferEmulation.fbInfoDisabled != 0)
 		return;
 
 	const u32 numBytes = (m_pCurFrameBuffer->m_width*m_pCurFrameBuffer->m_height) << m_pCurFrameBuffer->m_size >> 1;

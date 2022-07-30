@@ -64,6 +64,7 @@ static ptr_ConfigGetParamInt ConfigGetParamInt = NULL;
 static ptr_ConfigGetParamBool ConfigGetParamBool = NULL;
 static ptr_ConfigSetParameter ConfigSetParameter = NULL;
 
+static bool vk_initialized;
 static bool warn_hle;
 static bool plugin_initialized;
 void (*debug_callback)(void *, int, const char *);
@@ -162,6 +163,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
 
     resolution_reset = resolutionReset;
     plugin_initialized = true;
+    vk_initialized = false;
     return M64ERR_SUCCESS;
 }
 
@@ -178,6 +180,7 @@ EXPORT m64p_error CALL PluginShutdown(void)
     debug_call_context = NULL;
 
     plugin_initialized = false;
+    vk_initialized = false;
 
     return M64ERR_SUCCESS;
 }
@@ -257,7 +260,13 @@ EXPORT int CALL RomOpen(void)
 
     plugin_init();
 
-    return vk_init() ? 1 : 0;
+    if (vk_init()) {
+        vk_initialized = true;
+        return 1;
+    } else {
+        vk_initialized = false;
+        return 0;
+    }
 }
 
 EXPORT void CALL RomClosed(void)
@@ -266,7 +275,8 @@ EXPORT void CALL RomClosed(void)
     ConfigSetParameter(configVideoParallel, KEY_SCREEN_HEIGHT, M64TYPE_INT, &window_height);
     ConfigSaveSection("Video-Parallel");
 
-    vk_destroy();
+    if (vk_initialized)
+        vk_destroy();
 }
 
 EXPORT void CALL ShowCFB(void)

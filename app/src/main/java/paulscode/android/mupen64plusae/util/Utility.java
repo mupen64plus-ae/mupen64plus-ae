@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -23,17 +23,19 @@ package paulscode.android.mupen64plusae.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
  */
 public final class Utility
 {
-    public static final float MINIMUM_TABLET_SIZE = 6.5f;
-    
     /**
      * Clamps a value to the limit defined by min and max.
      * 
@@ -60,34 +62,37 @@ public final class Utility
         else
             return min;
     }
-    
-    public static String getDateString()
-    {
-        return getDateString( new Date() );
-    }
 
-    public static String getDateString( Date date )
-    {
-        return new SimpleDateFormat( "yyyy-MM-dd_HH-mm-ss", Locale.US ).format( date );
-    }
-    
     public static String executeShellCommand(String... args)
     {
-        try
-        {
-            Process process = Runtime.getRuntime().exec( args );
+        StringBuilder result = new StringBuilder();
+
+        try {
+            Process process = Runtime.getRuntime().exec(args);
             BufferedReader reader = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
-            StringBuilder result = new StringBuilder();
+
+            ExecutorService executor = Executors.newFixedThreadPool(1);
+
+            // Read data with timeout
+            Callable<String> readTask = reader::readLine;
+
             String line;
-            while( ( line = reader.readLine() ) != null )
+
+            do
             {
+                Future<String> future = executor.submit(readTask);
+                line = future.get(1000, TimeUnit.MILLISECONDS);
+
                 result.append(line).append("\n");
             }
-            return result.toString();
+            while(line != null);
+
         }
-        catch( IOException ignored )
+        catch( InterruptedException | ExecutionException | TimeoutException| IOException e )
         {
+            e.printStackTrace();
         }
-        return "";
+
+        return result.toString();
     }
 }

@@ -98,6 +98,40 @@ public:
 	}
 };
 
+class VertexShaderTexturedRectFast : public ShaderPart
+{
+public:
+	VertexShaderTexturedRectFast(const opengl::GLInfo & _glinfo)
+	{
+		m_part =
+			"IN highp vec4 aRectPosition;						\n"
+			"IN highp vec2 aTexCoord0;							\n"
+			"IN highp vec2 aTexCoord1;							\n"
+			"IN highp vec2 aBaryCoords;							\n"
+			"													\n"
+			"OUT highp vec2 vTexCoord0;							\n"
+			"OUT highp vec2 vTexCoord1;							\n"
+			"OUT lowp vec4 vShadeColor;							\n"
+			"OUT highp vec4 vBaryCoords;						\n"
+			;
+		if (!_glinfo.isGLESX || _glinfo.noPerspective)
+			m_part += "noperspective OUT lowp vec4 vShadeColorNoperspective;\n";
+		else
+			m_part += "OUT lowp vec4 vShadeColorNoperspective;				\n";
+		m_part +=
+			"uniform lowp vec4 uRectColor;						\n"
+			"void main()										\n"
+			"{													\n"
+			"  gl_Position = aRectPosition;						\n"
+			"  vShadeColor = uRectColor;						\n"
+			"  vShadeColorNoperspective = uRectColor;			\n"
+			"  vTexCoord0 = aTexCoord0;							\n"
+			"  vTexCoord1 = aTexCoord1;							\n"
+			"  vBaryCoords = vec4(aBaryCoords, vec2(1.0) - aBaryCoords);	\n"
+			;
+	}
+};
+
 class ShaderFragmentGlobalVariablesTexFast : public ShaderPart
 {
 public:
@@ -536,6 +570,22 @@ public:
 	}
 };
 
+class ShaderFragmentCorrectTexCoords : public ShaderPart {
+public:
+	ShaderFragmentCorrectTexCoords() {
+		m_part +=
+			" highp vec2 mTexCoord0 = vTexCoord0 + vec2(0.0001);						\n"
+			" highp vec2 mTexCoord1 = vTexCoord1 + vec2(0.0001);						\n"
+			" mTexCoord0 += uTexCoordOffset[0];											\n"
+			" mTexCoord1 += uTexCoordOffset[1];											\n"
+			" if (uUseTexCoordBounds != 0) {											\n"
+			" mTexCoord0 = clamp(mTexCoord0, uTexCoordBounds0.xy, uTexCoordBounds0.zw); \n"
+			" mTexCoord1 = clamp(mTexCoord1, uTexCoordBounds1.xy, uTexCoordBounds1.zw); \n"
+			" }																			\n"
+			;
+	}
+};
+
 class ShaderFragmentReadTexCopyModeFast : public ShaderPart
 {
 public:
@@ -745,27 +795,11 @@ public:
 					"}														\n"
 				;
 			}
-		}
-		else {
-			if (config.generalEmulation.enableLOD == 0) {
-				// Fake mipmap
+		} else {
+			if (config.texture.bilinearMode == BILINEAR_3POINT) {
 				m_part =
-					"uniform lowp int uMaxTile;			\n"
-					"uniform mediump float uMinLod;		\n"
-					"														\n"
-					"mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1) {	\n"
-					"  readtex0 = texture(uTex0, texCoord0);				\n"
-					"  readtex1 = texture(uTex1, texCoord1);				\n"
-					"  if (uMaxTile == 0) return 1.0;						\n"
-					"  return uMinLod;										\n"
-					"}														\n"
-				;
-			} else {
-				if (config.texture.bilinearMode == BILINEAR_3POINT)
-					m_part =
 					"#define TEX_OFFSET_NORMAL(off, tex, texCoord, lod) texture(tex, texCoord - (off)/texSize)			\n"
-					"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off)/texSize, lod)	\n"
-					"#define READ_TEX_NORMAL(name, tex, texCoord, lod)											\\\n"
+					"#define READ_TEX_NORMAL(name, tex, texCoord, lod)													\\\n"
 					"  {																								\\\n"
 					"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));											\\\n"
 					"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));										\\\n"
@@ -775,6 +809,10 @@ public:
 					"  lowp vec4 c2 = TEX_OFFSET_NORMAL(vec2(offset.x, offset.y - sign(offset.y)), tex, texCoord, lod);	\\\n"
 					"  name = c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0); 										\\\n"
 					"  }																								\n"
+					;
+				if (config.generalEmulation.enableLOD != 0) {
+					m_part +=
+					"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off)/texSize, lod)	\n"
 					"#define READ_TEX_MIPMAP(name, tex, texCoord, lod)													\\\n"
 					"  {																								\\\n"
 					"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));											\\\n"
@@ -786,13 +824,68 @@ public:
 					"  name = c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0); 										\\\n"
 					"  }																								\n"
 					;
-				else
+				}
+			} else {
 					m_part =
-					"#define TEX_FETCH_NORMAL(tex, texCoord, lod) texture(tex, texCoord)									\n"
-					"#define TEX_FETCH_MIPMAP(tex, texCoord, lod) textureLod(tex, texCoord, lod)							\n"
-					"#define READ_TEX_NORMAL(name, tex, texCoord, lod) name = TEX_FETCH_NORMAL(tex, texCoord, lod)	\n"
-					"#define READ_TEX_MIPMAP(name, tex, texCoord, lod) name = TEX_FETCH_MIPMAP(tex, texCoord, lod)	\n"
-					;
+						"#define TEX_OFFSET_NORMAL(off, tex, texCoord, lod) texture(tex, texCoord - (off)/texSize)						\n"
+						"#define READ_TEX_NORMAL(name, tex, texCoord, lod)																\\\n"
+						"  {																											\\\n"
+						"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));														\\\n"
+						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\\\n"
+						"  offset -= step(1.0, offset.x + offset.y);																	\\\n"
+						"  lowp vec4 zero = vec4(0.0);																					\\\n"
+						"																												\\\n"
+						"  lowp vec4 p0q0 = TEX_OFFSET_NORMAL(offset, tex, texCoord, lod);												\\\n"
+						"  lowp vec4 p1q0 = TEX_OFFSET_NORMAL(vec2(offset.x - sign(offset.x), offset.y), tex, texCoord, lod);			\\\n"
+						"																												\\\n"
+						"  lowp vec4 p0q1 = TEX_OFFSET_NORMAL(vec2(offset.x, offset.y - sign(offset.y)), tex, texCoord, lod);			\\\n"
+						"  lowp vec4 p1q1 = TEX_OFFSET_NORMAL(vec2(offset.x - sign(offset.x), offset.y - sign(offset.y)), tex, texCoord, lod);	\\\n"
+						"																												\\\n"
+						"  mediump vec2 interpolationFactor = abs(offset);																\\\n"
+						"  lowp vec4 pInterp_q0 = mix( p0q0, p1q0, interpolationFactor.x ); 											\\\n"
+						"  lowp vec4 pInterp_q1 = mix( p0q1, p1q1, interpolationFactor.x ); 											\\\n"
+						"  name = mix( pInterp_q0, pInterp_q1, interpolationFactor.y ); 												\\\n"
+						"}																												\n"
+						;
+					if (config.generalEmulation.enableLOD != 0) {
+						m_part +=
+						"#define TEX_OFFSET_MIPMAP(off, tex, texCoord, lod) textureLod(tex, texCoord - (off)/texSize, lod)				\n"
+						"#define READ_TEX_MIPMAP(name, tex, texCoord, lod)																\\\n"
+						"  {																											\\\n"
+						"  mediump vec2 texSize = vec2(textureSize(tex, int(lod)));														\\\n"
+						"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\\\n"
+						"  offset -= step(1.0, offset.x + offset.y);																	\\\n"
+						"  lowp vec4 zero = vec4(0.0);																					\\\n"
+						"																												\\\n"
+						"  lowp vec4 p0q0 = TEX_OFFSET_MIPMAP(offset, tex, texCoord, lod);												\\\n"
+						"  lowp vec4 p1q0 = TEX_OFFSET_MIPMAP(vec2(offset.x - sign(offset.x), offset.y), tex, texCoord, lod);			\\\n"
+						"																												\\\n"
+						"  lowp vec4 p0q1 = TEX_OFFSET_MIPMAP(vec2(offset.x, offset.y - sign(offset.y)), tex, texCoord, lod);			\\\n"
+						"  lowp vec4 p1q1 = TEX_OFFSET_MIPMAP(vec2(offset.x - sign(offset.x), offset.y - sign(offset.y)), tex, texCoord, lod);	\\\n"
+						"																												\\\n"
+						"  mediump vec2 interpolationFactor = abs(offset);																\\\n"
+						"  lowp vec4 pInterp_q0 = mix( p0q0, p1q0, interpolationFactor.x ); 											\\\n"
+						"  lowp vec4 pInterp_q1 = mix( p0q1, p1q1, interpolationFactor.x ); 											\\\n"
+						"  name = mix( pInterp_q0, pInterp_q1, interpolationFactor.y ); 												\\\n"
+						"}																												\n"
+						;
+					}
+			}
+
+			if (config.generalEmulation.enableLOD == 0) {
+				// Fake mipmap
+				m_part +=
+					"uniform lowp int uMaxTile;			\n"
+					"uniform mediump float uMinLod;		\n"
+					"														\n"
+					"mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1) {	\n"
+					"  READ_TEX_NORMAL(readtex0, uTex0, texCoord0, 0.0);	\n"
+					"  READ_TEX_NORMAL(readtex1, uTex1, texCoord1, 0.0);	\n"
+					"  if (uMaxTile == 0) return 1.0;						\n"
+					"  return uMinLod;										\n"
+					"}														\n"
+				;
+			} else {
 				m_part +=
 					"uniform lowp int uEnableLod;		\n"
 					"uniform mediump float uMinLod;		\n"
@@ -856,7 +949,7 @@ public:
 					"  }																	\n"
 					"  return lod_frac;														\n"
 					"}																		\n"
-				;
+					;
 			}
 		}
 	}
@@ -1090,8 +1183,9 @@ public:
 namespace glsl {
 
 CombinerProgramBuilderFast::CombinerProgramBuilderFast(const opengl::GLInfo & _glinfo, opengl::CachedUseProgram * _useProgram)
-: CombinerProgramBuilderCommon(_glinfo, _useProgram, std::make_unique<CombinerProgramUniformFactoryFast>(_glinfo),
-        std::make_unique<VertexShaderTexturedTriangleFast>(_glinfo))
+: CombinerProgramBuilderCommon(_glinfo, _useProgram, std::make_unique<CombinerProgramUniformFactoryFast>(_glinfo))
+, m_vertexTexturedTriangle(new VertexShaderTexturedTriangleFast(_glinfo))
+, m_vertexTexturedRect(new VertexShaderTexturedRectFast(_glinfo))
 , m_fragmentGlobalVariablesTex(new ShaderFragmentGlobalVariablesTexFast(_glinfo))
 , m_fragmentHeaderClampWrapMirror(new ShaderFragmentHeaderClampWrapMirror(_glinfo))
 , m_fragmentHeaderReadMSTex(new ShaderFragmentHeaderReadMSTexFast(_glinfo))
@@ -1101,12 +1195,23 @@ CombinerProgramBuilderFast::CombinerProgramBuilderFast(const opengl::GLInfo & _g
 , m_fragmentReadTex1(new ShaderFragmentReadTex1Fast(_glinfo))
 , m_fragmentClampWrapMirrorTex0(new ShaderFragmentClampWrapMirrorTex0(_glinfo))
 , m_fragmentClampWrapMirrorTex1(new ShaderFragmentClampWrapMirrorTex1(_glinfo))
+, m_fragmentCorrectTexCoords(new ShaderFragmentCorrectTexCoords())
 , m_fragmentReadTexCopyMode(new ShaderFragmentReadTexCopyModeFast(_glinfo))
 , m_shaderMipmap(new ShaderMipmapFast(_glinfo))
 , m_shaderReadtex(new ShaderReadtexFast(_glinfo))
 , m_shaderReadtexCopyMode(new ShaderReadtexCopyModeFast(_glinfo))
 , m_shaderClampWrapMirror(new ShaderClampWrapMirror(_glinfo))
 {
+}
+
+const ShaderPart * CombinerProgramBuilderFast::getVertexShaderTexturedRect() const
+{
+	return m_vertexTexturedRect.get();
+}
+
+const ShaderPart * CombinerProgramBuilderFast::getVertexShaderTexturedTriangle() const
+{
+	return m_vertexTexturedTriangle.get();
 }
 
 void CombinerProgramBuilderFast::_writeFragmentGlobalVariablesTex(std::stringstream& ssShader) const
@@ -1144,6 +1249,10 @@ void CombinerProgramBuilderFast::_writeFragmentClampWrapMirrorEngineTex1(std::st
 	m_fragmentClampWrapMirrorTex1->write(ssShader);
 }
 
+void CombinerProgramBuilderFast::_writeFragmentCorrectTexCoords(std::stringstream& ssShader)const
+{
+	m_fragmentCorrectTexCoords->write(ssShader);
+}
 void CombinerProgramBuilderFast::_writeFragmentReadTex0(std::stringstream& ssShader) const
 {
 	m_fragmentReadTex0->write(ssShader);

@@ -8,6 +8,9 @@
         android:key="actionExportCheatsAndProfiles"
         android:title="@string/importExportActivity_exportCheatsAndProfiles" />
     <androidx.preference.Preference
+        android:key="actionExportExtractedTextures"
+        android:title="@string/importExportActivity_exportDumpedTextures" />
+    <androidx.preference.Preference
         android:key="actionImportGameData"
         android:title="@string/importExportActivity_importGameData" />
     <androidx.preference.Preference

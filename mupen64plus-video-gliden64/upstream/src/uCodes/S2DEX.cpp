@@ -476,12 +476,10 @@ struct ObjCoordinates
 
 		f32 frameW = _FIXED2FLOAT(_pObjScaleBg->frameW, 2);
 		f32 frameH = _FIXED2FLOAT(_pObjScaleBg->frameH, 2);
-		f32 imageW = (f32)(_pObjScaleBg->imageW >> 2);
-		f32 imageH = (f32)(_pObjScaleBg->imageH >> 2);
-		//		const f32 imageW = (f32)gSP.bgImage.width;
-		//		const f32 imageH = (f32)gSP.bgImage.height;
+		f32 imageW = (f32)((_pObjScaleBg->imageW >> 2) & 0xFFFFFFFE);
+		f32 imageH = (f32)((_pObjScaleBg->imageH >> 2) & 0xFFFFFFFE);
 
-		if (u32(imageW) == 512 && (config.generalEmulation.hacks & hack_RE2) != 0) {
+		if (u32(imageW) == 512 && (config.generalEmulation.hacks & hack_RE2) != 0u) {
 			const f32 width = f32(*REG.VI_WIDTH);
 			const f32 scale = imageW / width;
 			imageW = width;
@@ -492,35 +490,38 @@ struct ObjCoordinates
 			scaleH = 1.0f;
 		}
 
+		ulx = frameX;
+		uly = frameY;
+		lrx = ulx + std::min(frameW, imageW/scaleW);
+		lry = uly + std::min(frameH, imageH/scaleH);
+
 		uls = imageX;
 		ult = imageY;
-		lrs = uls + std::min(imageW, frameW * scaleW) - 1;
-		lrt = ult + std::min(imageH, frameH * scaleH) - 1;
-
-		gSP.bgImage.clampS = lrs <= (imageW - 1) ? 1 : 0 ;
-		gSP.bgImage.clampT = lrt <= (imageH - 1) ? 1 : 0 ;
+		lrs = uls + (lrx - ulx) * scaleW;
+		lrt = ult + (lry - uly) * scaleH;
 
 		// G_CYC_COPY (BgRectCopyOnePiece()) does not allow texture filtering
 		if (gDP.otherMode.cycleType != G_CYC_COPY) {
-			// Correct texture coordinates -0.5f and +0.5 if G_OBJRM_BILERP 
+			// Correct texture coordinates if G_OBJRM_BILERP
 			// bilinear interpolation is set
-			if (gDP.otherMode.textureFilter == G_TF_BILERP) {
-				uls -= 0.5f;
-				ult -= 0.5f;
-				lrs += 0.5f;
-				lrt += 0.5f;
+			if ((gSP.objRendermode & G_OBJRM_BILERP) != 0u) {
+				// No correction gives the best picture, but is this correct?
+				//uls -= 0.5f;
+				//ult -= 0.5f;
+				//lrs -= 0.5f;
+				//lrt -= 0.5f;
 			}
 			// SHRINKSIZE_1 adds a 0.5f perimeter around the image
 			// upper left texture coords += 0.5f; lower left texture coords -= 0.5f
-			if ((gSP.objRendermode&G_OBJRM_SHRINKSIZE_1) != 0) {
+			if ((gSP.objRendermode&G_OBJRM_SHRINKSIZE_1) != 0u) {
 				uls += 0.5f;
 				ult += 0.5f;
 				lrs -= 0.5f;
 				lrt -= 0.5f;
-				// SHRINKSIZE_2 adds a 1.0f perimeter 
-				// upper left texture coords += 1.0f; lower left texture coords -= 1.0f
 			}
-			else if ((gSP.objRendermode&G_OBJRM_SHRINKSIZE_2) != 0) {
+			// SHRINKSIZE_2 adds a 1.0f perimeter
+			// upper left texture coords += 1.0f; lower left texture coords -= 1.0f
+			else if ((gSP.objRendermode&G_OBJRM_SHRINKSIZE_2) != 0u) {
 				uls += 1.0f;
 				ult += 1.0f;
 				lrs -= 1.0f;
@@ -528,20 +529,17 @@ struct ObjCoordinates
 			}
 		}
 
-		// Calculate lrx and lry width new ST values
-		ulx = frameX;
-		uly = frameY;
-		lrx = ulx + (lrs - uls) / scaleW;
-		lry = uly + (lrt - ult) / scaleH;
-		if (((gSP.objRendermode&G_OBJRM_BILERP) == 0 && gDP.otherMode.textureFilter != G_TF_BILERP) ||
-			((gSP.objRendermode&G_OBJRM_BILERP) != 0 && gDP.otherMode.textureFilter == G_TF_POINT && (gSP.objRendermode&G_OBJRM_NOTXCLAMP) != 0)) {
-			lrx += 1.0f / scaleW;
-			lry += 1.0f / scaleH;
+		if (config.graphics2D.enableTexCoordBounds != 0u) {
+			gDP.m_texCoordBounds.valid = true;
+			gDP.m_texCoordBounds.uls = uls;
+			gDP.m_texCoordBounds.lrs = lrs - 1.0f;
+			gDP.m_texCoordBounds.ult = ult;
+			gDP.m_texCoordBounds.lrt = lrt - 1.0f;
 		}
 
 		// BgRect1CycOnePiece() and BgRectCopyOnePiece() do only support
 		// imageFlip in horizontal direction
-		if ((_pObjScaleBg->imageFlip & G_BG_FLAG_FLIPS) != 0) {
+		if ((_pObjScaleBg->imageFlip & G_BG_FLAG_FLIPS) != 0u) {
 			std::swap(ulx, lrx);
 		}
 
@@ -834,57 +832,6 @@ void gSPObjSubMatrix(u32 mtx)
 }
 
 static
-void _copyDepthBuffer()
-{
-	if (!config.frameBufferEmulation.enable)
-		return;
-
-	if (!Context::BlitFramebuffer)
-		return;
-
-	// The game copies content of depth buffer into current color buffer
-	// OpenGL has different format for color and depth buffers, so this trick can't be performed directly
-	// To do that, depth buffer with address of current color buffer created and attached to the current FBO
-	// It will be copy depth buffer
-	DepthBufferList & dbList = depthBufferList();
-	dbList.saveBuffer(gDP.colorImage.address);
-	// Take any frame buffer and attach source depth buffer to it, to blit it into copy depth buffer
-	FrameBufferList & fbList = frameBufferList();
-	FrameBuffer * pTmpBuffer = fbList.findTmpBuffer(fbList.getCurrent()->m_startAddress);
-	if (pTmpBuffer == nullptr)
-		return;
-	DepthBuffer * pCopyBufferDepth = dbList.findBuffer(gSP.bgImage.address);
-	if (pCopyBufferDepth == nullptr)
-		return;
-	pCopyBufferDepth->setDepthAttachment(pTmpBuffer->m_FBO, bufferTarget::READ_FRAMEBUFFER);
-
-	DisplayWindow & wnd = dwnd();
-	Context::BlitFramebuffersParams blitParams;
-	blitParams.readBuffer = pTmpBuffer->m_FBO;
-	blitParams.drawBuffer = fbList.getCurrent()->m_FBO;
-	blitParams.srcX0 = 0;
-	blitParams.srcY0 = 0;
-	blitParams.srcX1 = wnd.getWidth();
-	blitParams.srcY1 = wnd.getHeight();
-	blitParams.dstX0 = 0;
-	blitParams.dstY0 = 0;
-	blitParams.dstX1 = wnd.getWidth();
-	blitParams.dstY1 = wnd.getHeight();
-	blitParams.mask = blitMask::DEPTH_BUFFER;
-	blitParams.filter = textureParameters::FILTER_NEAREST;
-
-	gfxContext.blitFramebuffers(blitParams);
-
-	// Restore objects
-	if (pTmpBuffer->m_pDepthBuffer != nullptr)
-		pTmpBuffer->m_pDepthBuffer->setDepthAttachment(fbList.getCurrent()->m_FBO, bufferTarget::READ_FRAMEBUFFER);
-	gfxContext.bindFramebuffer(bufferTarget::READ_FRAMEBUFFER, ObjectHandle::defaultFramebuffer);
-
-	// Set back current depth buffer
-	dbList.saveBuffer(gDP.depthImageAddress);
-}
-
-static
 void _loadBGImage(const uObjScaleBg * _pBgInfo, bool _loadScale, bool _fbImage)
 {
 	gSP.bgImage.address = RSP_SegmentToPhysical(_pBgInfo->imagePtr);
@@ -959,21 +906,27 @@ void BgRect1CycOnePiece(u32 _bg, bool _fbImage)
 	uObjScaleBg *pObjScaleBg = (uObjScaleBg*)&RDRAM[_bg];
 	_loadBGImage(pObjScaleBg, true, _fbImage);
 
-	// Zelda MM uses depth buffer copy in LoT and in pause screen.
-	// In later case depth buffer is used as temporal color buffer, and usual rendering must be used.
-	// Since both situations are hard to distinguish, do the both depth buffer copy and bg rendering.
-	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
-		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != nullptr)
-		)
-		_copyDepthBuffer();
-
 	gDP.otherMode.cycleType = G_CYC_1CYCLE;
 	gDP.changed |= CHANGED_CYCLETYPE;
 	gSPTexture(1.0f, 1.0f, 0, 0, TRUE);
 
 	ObjCoordinates objCoords(pObjScaleBg);
-	gSPDrawObjRect(objCoords);
+	GraphicsDrawer & drawer = dwnd().getDrawer();
 
+	// Zelda MM uses depth buffer copy in LoT and in pause screen.
+	// In later case depth buffer is used as temporal color buffer, and usual rendering must be used.
+	// Since both situations are hard to distinguish, do the both depth buffer copy and bg rendering.
+	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0u &&
+		config.frameBufferEmulation.enable != 0u &&
+		gSP.bgImage.address == gDP.depthImageAddress)
+	{
+		drawer.setBgDepthCopyMode(GraphicsDrawer::BgDepthCopyMode::eBg1cyc);
+		gSPDrawObjRect(objCoords);
+		drawer.setBgDepthCopyMode(GraphicsDrawer::BgDepthCopyMode::eCopyDone);
+	}
+
+	gSPDrawObjRect(objCoords);
+	drawer.setBgDepthCopyMode(GraphicsDrawer::BgDepthCopyMode::eNone);
 	DebugMsg(DEBUG_NORMAL, "BgRect1CycOnePiece\n");
 }
 
@@ -982,20 +935,26 @@ void BgRectCopyOnePiece(u32 _bg, bool _fbImage)
 {
 	uObjScaleBg *pObjBg = (uObjScaleBg*)&RDRAM[_bg];
 	_loadBGImage(pObjBg, false, _fbImage);
-
-	// See comment to BgRect1CycOnePiece
-	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
-		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != nullptr)
-		)
-		_copyDepthBuffer();
-
 	gDP.otherMode.cycleType = G_CYC_COPY;
 	gDP.changed |= CHANGED_CYCLETYPE;
 	gSPTexture(1.0f, 1.0f, 0, 0, TRUE);
 
 	ObjCoordinates objCoords(pObjBg);
-	gSPDrawObjRect(objCoords);
+	GraphicsDrawer & drawer = dwnd().getDrawer();
 
+	// See comment to BgRect1CycOnePiece
+	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0u &&
+		config.frameBufferEmulation.enable != 0u &&
+		gSP.bgImage.address != gDP.depthImageAddress &&
+		depthBufferList().findBuffer(gSP.bgImage.address) != nullptr)
+	{
+		drawer.setBgDepthCopyMode(GraphicsDrawer::BgDepthCopyMode::eBgCopy);
+		gSPDrawObjRect(objCoords);
+		drawer.setBgDepthCopyMode(GraphicsDrawer::BgDepthCopyMode::eCopyDone);
+	}
+
+	gSPDrawObjRect(objCoords);
+	drawer.setBgDepthCopyMode(GraphicsDrawer::BgDepthCopyMode::eNone);
 	DebugMsg(DEBUG_NORMAL, "BgRectCopyOnePiece\n");
 }
 

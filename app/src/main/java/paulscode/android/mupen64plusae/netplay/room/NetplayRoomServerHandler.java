@@ -201,17 +201,19 @@ public class NetplayRoomServerHandler {
 
     synchronized private void getRoomData()
     {
+        if (mSocketOutputStream == null) {
+            return;
+        }
+
         Log.i(TAG, "Requesting room data");
 
         synchronized (mSocketOutputSync) {
-            if (mSocketOutputStream != null) {
-                try {
-                    mSendBuffer.reset();
-                    mSendBuffer.putInt(NetplayRoomClientHandler.ID_GET_ROOM_DATA);
-                    mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                mSendBuffer.reset();
+                mSendBuffer.putInt(NetplayRoomClientHandler.ID_GET_ROOM_DATA);
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -227,6 +229,10 @@ public class NetplayRoomServerHandler {
 
     private void registerToRoom()
     {
+        if (mSocketOutputStream == null) {
+            return;
+        }
+
         Log.i(TAG, "Requesting room registration");
 
         synchronized (mSocketOutputSync) {
@@ -262,6 +268,10 @@ public class NetplayRoomServerHandler {
 
     private void leaveRoom()
     {
+        if (mSocketOutputStream == null) {
+            return;
+        }
+
         Log.i(TAG, "Leaving room");
 
         synchronized (mSocketOutputSync) {
@@ -270,10 +280,7 @@ public class NetplayRoomServerHandler {
                 mRegisteredToRoom = true;
                 mSendBuffer.reset();
                 mSendBuffer.putInt(NetplayRoomClientHandler.ID_LEAVE_ROOM);
-
-                if (mSocketOutputStream != null) {
-                    mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
-                }
+                mSocketOutputStream.write(mSendBuffer.array(), 0, mSendBuffer.position());
             } catch (IOException e) {
                 e.printStackTrace();
             }

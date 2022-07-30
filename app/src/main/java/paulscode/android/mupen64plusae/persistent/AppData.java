@@ -30,6 +30,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.opengl.EGL14;
+import android.opengl.GLES10;
 import android.os.Build;
 
 import androidx.core.content.pm.PackageInfoCompat;
@@ -337,6 +338,7 @@ public class AppData
 
     private static String openGlVersion = null;
     private static String openGlRenderer = null;
+    private static Boolean isAngleRenderer = null;
 
     public final String manufacturer;
     
@@ -411,7 +413,7 @@ public class AppData
         isAndroidTv = uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        useLegacyFileBrowser = (isAndroidTv || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1 ||
+        useLegacyFileBrowser = ((isAndroidTv && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) || Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1 ||
                 intent.resolveActivity(context.getPackageManager()) == null);
 
         manufacturer = android.os.Build.MANUFACTURER;
@@ -715,19 +717,23 @@ public class AppData
 
     public static boolean doesSupportFullGL()
     {
-
         // Files
-        String arch = System.getProperty("os.arch");
-
-        // Check for x86, older versions of AndroidX86 report GL support, but it doesn't work
-        boolean itsX86 = arch != null && arch.equals( "i686" );
-
-        boolean supportsFullGl = (itsX86 && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API)) ||
-                (!itsX86 && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API));
+        boolean supportsFullGl = EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
 
         //Return back to the original after we determine that full GL is supported
         EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
         return supportsFullGl;
+    }
+
+    public static boolean isAngleRenderer()
+    {
+        if (isAngleRenderer == null) {
+            PixelBuffer buffer = new PixelBuffer(320,240);
+            String versionString = buffer.getGLVersion();
+            isAngleRenderer = versionString.contains("ANGLE");
+        }
+
+        return isAngleRenderer;
     }
 
     @SuppressWarnings("deprecation")

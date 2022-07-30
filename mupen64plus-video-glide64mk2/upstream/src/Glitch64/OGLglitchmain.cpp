@@ -199,8 +199,7 @@ static int savedWidth, savedHeight;
 unsigned int pBufferAddress;
 static int pBufferFmt;
 static int pBufferWidth, pBufferHeight;
-static fb fbs[100];
-static int nb_fb = 0;
+static std::deque<fb> fbs;
 static unsigned int curBufferAddr = 0;
 
 struct TMU_USAGE { int min, max; } tmu_usage[2] = { {0xfffffff, 0}, {0xfffffff, 0} };
@@ -801,7 +800,7 @@ grSstWinClose( GrContext_t context )
 
   if (clear_texbuff)
   {
-    for (i=0; i<nb_fb; i++)
+    for (i=0; i<fbs.size(); i++)
     {
       glDeleteTextures( 1, &(fbs[i].texid) );
       glDeleteFramebuffersEXT( 1, &(fbs[i].fbid) );
@@ -809,7 +808,6 @@ grSstWinClose( GrContext_t context )
     }
   }
 #endif
-  nb_fb = 0;
   delete [] frameBuffer;
   delete [] depthBuffer;
 
@@ -858,8 +856,6 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
                                          FxU32 				evenOdd)
 {
   int i;
-  static int fbs_init = 0;
-
   //printf("grTextureBufferExt(%d, %d, %d, %d, %d, %d, %d)\r\n", tmu, startAddress, lodmin, lodmax, aspect, fmt, evenOdd);
   LOG("grTextureBufferExt(%d, %d, %d, %d %d, %d, %d)\r\n", tmu, startAddress, lodmin, lodmax, aspect, fmt, evenOdd);
   if (lodmin != lodmax) display_warning("grTextureBufferExt : loading more than one LOD");
@@ -983,12 +979,6 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
   } else {
     if (!render_to_texture) //initialization
     {
-      if(!fbs_init)
-      {
-        for(i=0; i<100; i++) fbs[i].address = 0;
-        fbs_init = 1;
-        nb_fb = 0;
-      }
       return; //no need to allocate FBO if render buffer is not texture buffer
     }
 
@@ -1012,7 +1002,7 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
     widtho = width/2;
     heighto = height/2;
 
-    for (i=0; i<nb_fb; i++)
+    for (i=0; i<fbs.size(); i++)
     {
       if (fbs[i].address == pBufferAddress)
       {
@@ -1039,9 +1029,8 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
         {
           glDeleteFramebuffersEXT( 1, &(fbs[i].fbid) );
           glDeleteRenderbuffersEXT( 1, &(fbs[i].zbid) );
-          if (nb_fb > 1)
-            memmove(&(fbs[i]), &(fbs[i+1]), sizeof(fb)*(nb_fb-i));
-          nb_fb--;
+          if (fbs.size() > 1)
+            fbs.erase(fbs.begin()+i);
           break;
         }
       }
@@ -1049,26 +1038,27 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
 
     remove_tex(pBufferAddress, pBufferAddress + width*height*2/*grTexFormatSize(fmt)*/);
     //create new FBO
-    glGenFramebuffersEXT( 1, &(fbs[nb_fb].fbid) );
-    glGenRenderbuffersEXT( 1, &(fbs[nb_fb].zbid) );
-    glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, fbs[nb_fb].zbid );
+    fb newFb;
+    glGenFramebuffersEXT( 1, &(newFb.fbid) );
+    glGenRenderbuffersEXT( 1, &(newFb.zbid) );
+    glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, newFb.zbid );
     glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
-    fbs[nb_fb].address = pBufferAddress;
-    fbs[nb_fb].width = width;
-    fbs[nb_fb].height = height;
-    fbs[nb_fb].texid = pBufferAddress;
-    fbs[nb_fb].buff_clear = 0;
-    add_tex(fbs[nb_fb].texid);
-    glBindTexture(GL_TEXTURE_2D, fbs[nb_fb].texid);
+    newFb.address = pBufferAddress;
+    newFb.width = width;
+    newFb.height = height;
+    newFb.texid = pBufferAddress;
+    newFb.buff_clear = 0;
+    add_tex(newFb.texid);
+    glBindTexture(GL_TEXTURE_2D, newFb.texid);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
       GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-    glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, fbs[nb_fb].fbid);
+    glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, newFb.fbid);
     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
-      GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, fbs[nb_fb].texid, 0);
-    glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbs[nb_fb].zbid );
+      GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, newFb.texid, 0);
+    glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, newFb.zbid );
     glViewport(0,0,width,height);
     glScissor(0,0,width,height);
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
@@ -1076,7 +1066,7 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
     glClear( GL_DEPTH_BUFFER_BIT );
     CHECK_FRAMEBUFFER_STATUS();
     curBufferAddr = pBufferAddress;
-    nb_fb++;
+    fbs.emplace_back(newFb);
   }
 }
 
@@ -1092,7 +1082,7 @@ int CheckTextureBufferFormat(GrChipID_t tmu, FxU32 startAddress, GrTexInfo *info
       }
   } else {
     found = i = 0;
-    while (i < nb_fb)
+    while (i < fbs.size())
     {
       unsigned int end = fbs[i].address + fbs[i].width*fbs[i].height*2;
       if (startAddress >= fbs[i].address &&  startAddress < end)
@@ -1755,7 +1745,7 @@ grBufferSwap( FxU32 swap_interval )
   }
 
   CoreVideo_GL_SwapBuffers();
-  for (i = 0; i < nb_fb; i++)
+  for (i = 0; i < fbs.size(); i++)
     fbs[i].buff_clear = 1;
 
   // VP debugging

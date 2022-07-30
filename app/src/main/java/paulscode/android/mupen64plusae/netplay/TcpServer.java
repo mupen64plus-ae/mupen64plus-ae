@@ -18,6 +18,7 @@ public class TcpServer {
 
     public static class CoreSettings {
         public int mCountPerOp;
+        public int mCountPerOpDenomPot;
         public int mDisableExtraMem;
         public int mSiDmADuration;
         public int mEmuMode;

@@ -20,6 +20,10 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import android.content.Intent;
+
+import androidx.activity.result.ActivityResultLauncher;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
@@ -72,16 +76,11 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     }
     
     @Override
-    protected void onEditProfile( Profile profile )
+    protected void onEditProfile(ActivityResultLauncher<Intent> launcher, Profile profile )
     {
-        if(mGlobalPrefs.isBigScreenMode)
-        {
-            ActivityHelper.startControllerProfileActivityBigScreen( this, profile.name );
-        }
-        else
-        {
-            ActivityHelper.startControllerProfileActivity( this, profile.name );
-        }
+        Intent intent = new Intent( this, ControllerProfileActivityBigScreen.class );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profile.name );
+        launcher.launch(intent);
     }
 
     @Override

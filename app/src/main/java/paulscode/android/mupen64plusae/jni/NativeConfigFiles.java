@@ -110,6 +110,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.getSramDataDir() + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );
         mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );
+        mupen64plus_cfg.put( "Core", "CountPerOpDenomPot", String.valueOf( game.countPerOpDen ) );
         mupen64plus_cfg.put( "Core", "ForceAlignmentOfPiDma", String.valueOf( game.forceAlignmentOfPiDma ) );
         mupen64plus_cfg.put( "Core", "TlbHack", usingNetplay ? String.valueOf(0) : String.valueOf( game.ignoreTlbExceptions ? 1 : 0 ) );
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf(game.currentStateSlot));
@@ -283,6 +284,8 @@ class NativeConfigFiles
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancedTextureFileStorage", boolToTF( game.glideN64Prefs.txEnhancedTextureFileStorage ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresTextureFileStorage", boolToTF( game.glideN64Prefs.txHiresTextureFileStorage ) );
         }
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txDump", boolToTF( game.glideN64Prefs.txDump ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txDumpPath", global.textureDumpDir);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresVramLimit", String.valueOf(game.glideN64Prefs.txHiresVramLimit) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHresAltCRC", boolToTF( game.glideN64Prefs.txHresAltCRC ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontName", "DroidSans.ttf" );

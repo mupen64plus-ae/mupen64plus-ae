@@ -122,7 +122,13 @@ class RaphnetControllerHandler
 
     void requestDeviceAccess()
     {
-        PendingIntent permissionIntent = PendingIntent.getBroadcast(mContext, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        int flags = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            flags = PendingIntent.FLAG_MUTABLE;
+        }
+
+        PendingIntent permissionIntent = PendingIntent.getBroadcast(mContext, 0, new Intent(ACTION_USB_PERMISSION), flags);
+
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         mContext.registerReceiver(mUsbReceiver, filter);
 

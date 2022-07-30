@@ -249,6 +249,12 @@ public class GamePrefs
     /** Core CountPerOp setting */
     public final int countPerOp;
 
+    /** Use default count per op overclock setting */
+    public final boolean useDefaultCountPerOpDen;
+
+    /** Core CountPerOp overclock setting */
+    public final int countPerOpDen;
+
     /** Use default VI refresh rate */
     public final boolean useDefaultViRefreshRate;
 
@@ -382,7 +388,10 @@ public class GamePrefs
         // profile instead
         if (headerName.toLowerCase().contains("indiana jones") ||
                 headerName.toLowerCase().contains("rogue squadron") ||
-                headerName.toLowerCase().contains("battle for naboo")) {
+                headerName.toLowerCase().contains("battle for naboo") ||
+                headerName.toLowerCase().contains("gauntlet legends")
+
+        ) {
             Plugin tempVideoPlugin = new Plugin( tempEmulationProfile, "videoPlugin" );
 
             if (tempVideoPlugin.name.toLowerCase().contains("glide64mk2") ||
@@ -626,6 +635,10 @@ public class GamePrefs
         } else {
             countPerOp = useDefaultCountPerOp ? 0 : mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
         }
+
+        useDefaultCountPerOpDen = mPreferences.getBoolean( "screenAdvancedUseDefaultCountPerOpDen", true );
+        countPerOpDen = useDefaultCountPerOpDen ? 0 : mPreferences.getInt( "screenAdvancedCountPerOpDen", 1542 );
+
         useDefaultViRefreshRate = mPreferences.getBoolean( "screenAdvancedUseDefaultViRefresh", true );
         viRefreshRate = useDefaultViRefreshRate ? 0 : mPreferences.getInt( "screenAdvancedViRefreshRate", 1542 );
 

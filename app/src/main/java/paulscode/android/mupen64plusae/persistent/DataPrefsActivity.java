@@ -20,12 +20,15 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
@@ -33,8 +36,6 @@ import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import org.mupen64plusae.v3.alpha.R;
-
-import java.io.File;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
@@ -44,21 +45,78 @@ import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-    SharedPreferences.OnSharedPreferenceChangeListener
+        SharedPreferences.OnSharedPreferenceChangeListener
 {
-    public static final int FOLDER_PICKER_REQUEST_CODE = 1;
-    public static final int LEGACY_FOLDER_PICKER_REQUEST_CODE = 2;
-    public static final int LEGACY_FILE_PICKER_REQUEST_CODE = 3;
-    public static final int FILE_PICKER_REQUEST_CODE = 4;
-
-    // These constants must match the keys used in res/xml/preferences.xml
-    private static final String SCREEN_ROOT = "screenRoot";
-
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
 
     private SharedPreferences mPrefs = null;
+
+    ActivityResultLauncher<Intent> mLaunchGameDataFolderPicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+
+                    Uri fileUri = getUri(data);
+
+                    Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
+                    if (currentPreference != null && fileUri != null) {
+
+                        if (!mAppData.useLegacyFileBrowser) {
+                            getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        }
+
+                        DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
+                        String summary = file.getName();
+                        currentPreference.setSummary(summary);
+                        mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
+                    }
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchIdlFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+
+                    Uri fileUri = getUri(data);
+
+                    Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
+                    if (currentPreference != null && fileUri != null) {
+
+                        if (!mAppData.useLegacyFileBrowser) {
+                            getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+
+                        DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
+                        String summary = file == null ? "" : file.getName();
+                        currentPreference.setSummary(summary);
+                        mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
+                    }
+                }
+            });
+
+    private Uri getUri(Intent data)
+    {
+        AppData appData = new AppData( this );
+        Uri returnValue = null;
+        if (appData.useLegacyFileBrowser) {
+            final Bundle extras = data.getExtras();
+
+            if (extras != null) {
+                final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+                returnValue = Uri.parse(searchUri);
+            }
+        } else {
+            returnValue = data.getData();
+        }
+
+        return returnValue;
+    }
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -82,9 +140,17 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+    }
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_data);
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_data;
     }
 
     @Override
@@ -166,112 +232,37 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     private void startFolderPicker()
     {
         Intent intent;
-        int requestCode;
+
         if (mAppData.useLegacyFileBrowser) {
             intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, false);
-            requestCode = LEGACY_FOLDER_PICKER_REQUEST_CODE;
         } else {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION|
                     Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            requestCode = FOLDER_PICKER_REQUEST_CODE;
         }
-        startActivityForResult(intent, requestCode);
+        mLaunchGameDataFolderPicker.launch(intent);
     }
 
     private void startFilePicker()
     {
+        Intent intent;
         if (mAppData.useLegacyFileBrowser) {
-            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-            startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == FOLDER_PICKER_REQUEST_CODE) {
-                // The result data contains a URI for the document or directory that
-                // the user selected.
-                if (data != null) {
-                    Uri fileUri = data.getData();
-
-                    Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
-                    if (currentPreference != null && fileUri != null) {
-
-                        getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-                        DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
-                        String summary = file.getName();
-                        currentPreference.setSummary(summary);
-                        mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-                    }
-                }
-            } else if (requestCode == LEGACY_FOLDER_PICKER_REQUEST_CODE) {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                    Uri fileUri = Uri.parse(searchUri);
-                    Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
-
-                    if (currentPreference != null && fileUri != null) {
-                        DocumentFile file = FileUtil.getDocumentFileTree(this, fileUri);
-                        String summary = file.getName();
-                        currentPreference.setSummary(summary);
-                        mGlobalPrefs.putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-                    }
-                }
-            } else if (requestCode == FILE_PICKER_REQUEST_CODE) {
-                // The result data contains a URI for the document or directory that
-                // the user selected.
-                if (data != null) {
-                    Uri fileUri = data.getData();
-
-                    Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
-                    if (currentPreference != null && fileUri != null) {
-
-                        getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                        DocumentFile file = FileUtil.getDocumentFileSingle(this, fileUri);
-                        String summary = file == null ? "" : file.getName();
-                        currentPreference.setSummary(summary);
-                        mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                    }
-                }
-            }else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                    Uri fileUri = Uri.parse(searchUri);
-
-                    Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
-                    if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
-                        File file = new File(fileUri.getPath());
-                        currentPreference.setSummary(file.getName());
-                        mGlobalPrefs.putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                    }
-                }
-            }
-        }
+        mLaunchIdlFilePicker.launch(intent);
     }
 }

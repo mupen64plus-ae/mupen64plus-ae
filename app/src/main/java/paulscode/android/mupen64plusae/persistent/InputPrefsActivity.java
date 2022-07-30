@@ -69,9 +69,17 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
         // Get app data and user preferences
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
+    }
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_input);
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_input;
     }
 
     @Override

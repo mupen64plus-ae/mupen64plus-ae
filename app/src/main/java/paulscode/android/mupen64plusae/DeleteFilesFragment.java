@@ -23,10 +23,14 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -48,35 +52,39 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
     //Progress dialog for delete files
     private ProgressDialog mProgress = null;
 
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
-    private ArrayList<String> mDeleteFilesPath = new ArrayList<>();
-    private ArrayList<String> mFilter = new ArrayList<>();
+    public static class DataViewModel extends ViewModel {
 
-    private boolean mInProgress = false;
+        public DataViewModel() {}
 
-    // this method is only called once for this fragment
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+        //Service connection for the progress dialog
+        private ServiceConnection mServiceConnection;
+        LocalBinder mBinder = null;
+
+        private ArrayList<String> mDeleteFilesPath = new ArrayList<>();
+        private ArrayList<String> mFilter = new ArrayList<>();
+        private boolean mInProgress = false;
+        DeleteFilesFragment mCurrentFragment = null;
     }
 
+    DataViewModel mViewModel;
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
-        if (mInProgress) {
-            try {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.pathDeletingFilesTask_title);
-                CharSequence message = getString(R.string.toast_pleaseWait);
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
-                mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
-                mProgress.show();
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
+        if (mViewModel.mInProgress) {
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.pathDeletingFilesTask_title);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+
+            mProgress = new ProgressDialog(mProgress, activity, title, "", message, false);
+            mProgress.show();
+
+            if (mViewModel.mBinder != null) {
+                mViewModel.mBinder.getService().setDeleteFilesListener(mViewModel.mCurrentFragment);
             }
         }
     }
@@ -89,19 +97,6 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         }
 
         super.onDetach();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mServiceConnection != null && mInProgress) {
-            try {
-                ActivityHelper.stopDeleteFilesService(requireActivity().getApplicationContext(), mServiceConnection);
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-
-        super.onDestroy();
     }
 
     @Override
@@ -118,7 +113,7 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
     @Override
     public void onDeleteFilesServiceDestroyed() {
-        mInProgress = false;
+        mViewModel.mInProgress = false;
         mProgress.dismiss();
     }
 
@@ -129,8 +124,8 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
     public void deleteFiles(ArrayList<String> deletePath, ArrayList<String> filter) throws RuntimeException
     {
-        this.mDeleteFilesPath = deletePath;
-        this.mFilter = filter;
+        mViewModel.mDeleteFilesPath = deletePath;
+        mViewModel.mFilter = filter;
 
         if (deletePath.size() != filter.size()) {
             throw new RuntimeException("Both arrays must be the same size");
@@ -143,7 +138,7 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
     }
 
     private void actuallyDeleteFiles(Activity activity) {
-        mInProgress = true;
+        mViewModel.mInProgress = true;
 
         CharSequence title = getString(R.string.pathDeletingFilesTask_title);
         CharSequence message = getString(R.string.toast_pleaseWait);
@@ -152,15 +147,15 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         mProgress.show();
 
         // Defines callbacks for service binding, passed to bindService() */
-        mServiceConnection = new ServiceConnection() {
+        mViewModel.mServiceConnection = new ServiceConnection() {
 
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                DeleteFilesService deleteFilesService = binder.getService();
-                deleteFilesService.setDeleteFilesListener(DeleteFilesFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                DeleteFilesService deleteFilesService = mViewModel.mBinder.getService();
+                deleteFilesService.setDeleteFilesListener(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -170,11 +165,11 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
         };
 
         // Asynchronously delete files
-        ActivityHelper.startDeleteFilesService(activity.getApplicationContext(), mServiceConnection,
-                mDeleteFilesPath, mFilter);
+        ActivityHelper.startDeleteFilesService(activity.getApplicationContext(), mViewModel.mServiceConnection,
+                mViewModel.mDeleteFilesPath, mViewModel.mFilter);
     }
 
     public boolean IsInProgress() {
-        return mInProgress;
+        return mViewModel != null && mViewModel.mInProgress;
     }
 }

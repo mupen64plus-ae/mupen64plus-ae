@@ -38,8 +38,7 @@ import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.AUDIO_SAMPLING_TYPE;
 
-public class AudioPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
-{
+public class AudioPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener {
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -49,28 +48,32 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
-        {
+        if (TextUtils.isEmpty(LocaleContextWrapper.getLocalCode())) {
             super.attachBaseContext(newBase);
-        }
-        else
-        {
-            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        } else {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase, LocaleContextWrapper.getLocalCode()));
         }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Get app data and user preferences
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
+    }
 
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_audio);
+    @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_audio;
     }
 
     @Override

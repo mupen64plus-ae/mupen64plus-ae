@@ -135,9 +135,6 @@ public class GlobalPrefs
     /** Legacy location of user generated configuration data */
     public final String legacyProfilesDir;
 
-    /** The subdirectory containing unzipped 64DD files. */
-    public final String unzippedRomsDir;
-
     /** The subdirectory containing screenshot files. */
     public final String screenshotsDir;
 
@@ -149,6 +146,9 @@ public class GlobalPrefs
 
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
+
+    /** The subdirectory where to dump textures */
+    public final String textureDumpDir;
 
     /** Directory where texture cache htc files are stored */
     public final String textureCacheDir;
@@ -390,6 +390,15 @@ public class GlobalPrefs
      * some functions to take effect */
     public final boolean holdControllerButtons;
 
+    /** True if we should use UPnP or NAT/PMP to map external ports */
+    public final boolean useUpnpToMapNetplayPorts;
+
+    /** Room TCP port number */
+    public final int netplayRoomTcpPort;
+
+    /** Server UDP/TCP port number */
+    public final int netplayServerUdpTcpPort;
+
     // Shared preferences keys and key templates
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -406,12 +415,15 @@ public class GlobalPrefs
     public static final String PATH_GAME_SAVES = "gameDataStoragePath";
     public static final String PATH_JAPAN_IPL_ROM = "japanIdlPath64dd";
 
+    public static final String ROOM_TCP_PORT = "roomTcpPort";
+    public static final String SERVER_UDP_TCP_PORT = "serverTcpUdpPort";
+
     public static final String AUDIO_SAMPLING_TYPE = "audioSamplingType";
     public static final String AUDIO_LOW_PERFORMANCE_MODE = "lowPerformanceMode";
     // ... add more as needed
 
     // Shared preferences default values
-    static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
+    static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Accurate";
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
     public static final String DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "Everything";
     static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
@@ -477,10 +489,10 @@ public class GlobalPrefs
         final String coreConfigDir = context.getFilesDir().getAbsolutePath() + "/CoreConfig";
         coreUserDataDir = coreConfigDir + "/UserData";
         coreUserCacheDir = coreConfigDir + "/UserCache";
-        unzippedRomsDir = context.getCacheDir().getAbsolutePath() + "/UnzippedRoms";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
+        textureDumpDir = context.getFilesDir().getAbsolutePath() + "/TextureDump";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             screenshotsDir = context.getCacheDir().getAbsolutePath() + "/" + AppData.CORE_WORKING_DIR_NAME;
         } else {
@@ -781,6 +793,12 @@ public class GlobalPrefs
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
         holdControllerButtons = mPreferences.getBoolean( "holdButtonForMenu", true );
 
+        useUpnpToMapNetplayPorts = mPreferences.getBoolean( "useUpnpToMapPorts", true );
+        int tempRoomTcpPort = getSafeInt( mPreferences, ROOM_TCP_PORT, 43821 );
+        netplayRoomTcpPort = tempRoomTcpPort > 1024 ? tempRoomTcpPort : 43821;
+        int tempServerUdpTcpPort = getSafeInt( mPreferences, SERVER_UDP_TCP_PORT, 43822 );
+        netplayServerUdpTcpPort = tempServerUdpTcpPort > 1024 && tempServerUdpTcpPort != tempRoomTcpPort ? tempServerUdpTcpPort : 43822;
+
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
         gpuRenderer = AppData.getOpenGlEsRenderer();
     }
@@ -894,9 +912,9 @@ public class GlobalPrefs
         {
             defaultEmulationProfile = "GlideN64-Very-Accurate";
         }
-        else if(supportedGlesVersion.equals("3.1") || supportedGlesVersion.equals("3.2"))
+        else if(AppData.isAngleRenderer())
         {
-            defaultEmulationProfile = "Glide64-Accurate";
+            defaultEmulationProfile = "GlideN64-Very-Accurate";
         }
 
         return defaultEmulationProfile;
@@ -1083,5 +1101,10 @@ public class GlobalPrefs
         }
 
         putString(KEY_SHADER_PASS, sb.toString());
+    }
+
+    public void putShaderScaleFactor(int factor) {
+
+        mPreferences.edit().putInt( "shaderScaleFactor", factor).apply();
     }
 }

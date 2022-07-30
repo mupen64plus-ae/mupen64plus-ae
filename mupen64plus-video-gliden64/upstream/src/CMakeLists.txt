@@ -11,15 +11,29 @@ option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
 option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
 
 # run script to generate Revision.h
-set(PATH_REVISION "Revision.h")
-add_custom_command(
-        OUTPUT ${PATH_REVISION}
-        COMMAND ${CMAKE_SOURCE_DIR}/getRevision.sh
-        COMMENT "Generate Git version"
-)
+set(PATH_REVISION "${CMAKE_CURRENT_BINARY_DIR}/inc/Revision.h")
+find_package(Git)
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+	add_custom_command(
+		OUTPUT ${PATH_REVISION}
+		COMMAND
+		env OUTPUT=${PATH_REVISION} ${CMAKE_SOURCE_DIR}/getRevision.sh
+		COMMENT "Generate Git version"
+	)
+else(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+	add_custom_command(
+		OUTPUT ${PATH_REVISION}
+		COMMAND
+		env OUTPUT=${PATH_REVISION} ${CMAKE_SOURCE_DIR}/getRevision.sh --nogit
+		COMMENT "Generate version"
+	)
+endif(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
 set_property(SOURCE ${PATH_REVISION} PROPERTY SKIP_AUTOGEN ON)
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/inc")
 
 project( GLideN64 )
+
+include(GNUInstallDirs)
 
 set(GLideN64_SOURCES
   3DMath.cpp
@@ -141,6 +155,8 @@ set(GLideNUI_SOURCES
   GLideNUI/icon.qrc
 )
 
+set(OpenGL_GL_PREFERENCE GLVND)
+
 if(MUPENPLUSAPI_GLIDENUI OR NOT MUPENPLUSAPI)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTORCC ON)
@@ -160,6 +176,25 @@ if(MUPENPLUSAPI_GLIDENUI OR NOT MUPENPLUSAPI)
     )
   endif()
 endif()
+
+# Build type
+
+if( NOT CMAKE_BUILD_TYPE)
+        set( CMAKE_BUILD_TYPE Release)
+endif( NOT CMAKE_BUILD_TYPE)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+        set(GLIDEN64_BUILD_TYPE Release)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set(GLIDEN64_BUILD_TYPE Debug)
+endif()
+
+if( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
+	set( DEBUG_BUILD TRUE)
+	add_definitions(
+		-DGL_DEBUG
+	)
+endif( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
 
 #check if we're running on Raspberry Pi
 if(EXISTS "${CMAKE_FIND_ROOT_PATH}/opt/vc/include/bcm_host.h" AND NOT MESA)
@@ -363,7 +398,7 @@ if(ANDROID)
             SHARED
             IMPORTED )
 
-    if( CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
         set( BUILD_VARIANT "debug" )
     else()
         set( BUILD_VARIANT "release" )
@@ -442,19 +477,12 @@ if(X86_OPT)
   )
 endif(X86_OPT)
 
-# Build type
-
-if( NOT CMAKE_BUILD_TYPE)
-	set( CMAKE_BUILD_TYPE Release)
-endif( NOT CMAKE_BUILD_TYPE)
-
-if( CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set( CMAKE_BUILD_TYPE Debug)
+if( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
 	set( DEBUG_BUILD TRUE)
 	add_definitions(
 	-DGL_DEBUG
 	)
-endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
+endif( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
 
 if(GL_PROFILE)
     add_definitions(
@@ -496,15 +524,36 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES} ${PATH_REVISION})
 
-if( CMAKE_BUILD_TYPE STREQUAL "Debug")
-  SET_TARGET_PROPERTIES(
+set_target_properties(
 	${GLideN64_DLL_NAME}
 	PROPERTIES
 	LINKER_LANGUAGE CXX # Or else we get an error message, because cmake can't figure out from the ".o"-suffix that it is a C-linker we need.
 	PREFIX ""
+)
+
+if(GLIDEN64_BUILD_TYPE STREQUAL "Release")
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT result)
+  if(result)
+    message("Interprocedural optimizations enabled")
+    set_property(TARGET ${GLideN64_DLL_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3")
+  endif()
+  SET_TARGET_PROPERTIES(
+        ${GLideN64_DLL_NAME}
+        PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plugin/Release
+  )
+endif(GLIDEN64_BUILD_TYPE STREQUAL "Release")
+
+if(GLIDEN64_BUILD_TYPE STREQUAL "Debug")
+  SET_TARGET_PROPERTIES(
+	${GLideN64_DLL_NAME}
+	PROPERTIES
 	LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plugin/Debug
   )
 
@@ -521,36 +570,27 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osald GLideNHQd )
 	endif (NOHQ)
   endif(SDL)
-endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
-
-if( CMAKE_BUILD_TYPE STREQUAL "Release")
-  include(CheckIPOSupported)
-  check_ipo_supported(RESULT result)
-  if(result)
-    message("Interprocedural optimizations enabled")
-    set_property(TARGET ${GLideN64_DLL_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3")
-  endif()
-
-  SET_TARGET_PROPERTIES(
-	${GLideN64_DLL_NAME}
-	PROPERTIES
-	LINKER_LANGUAGE CXX # Or else we get an error message, because cmake can't figure out from the ".o"-suffix that it is a C-linker we need.
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plugin/Release
-  )
-
+else(GLIDEN64_BUILD_TYPE STREQUAL "Debug")
   if(SDL)
-	if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal )
-	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ )
-	endif (NOHQ)
+        if (NOHQ)
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal )
+        else (NOHQ)
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ )
+        endif (NOHQ)
   else(SDL)
-	if (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal )
-	else (NOHQ)
-	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ )
-	endif (NOHQ)
+        if (NOHQ)
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal )
+        else (NOHQ)
+          target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${LOG_LIB} ${GLIDENUI_LIBRARIES} osal GLideNHQ )
+        endif (NOHQ)
   endif(SDL)
-endif( CMAKE_BUILD_TYPE STREQUAL "Release")
+endif(GLIDEN64_BUILD_TYPE STREQUAL "Debug")
+
+if(UNIX AND NOT APPLE AND NOT ANDROID)
+	install(TARGETS ${GLideN64_DLL_NAME}
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/mupen64plus"
+	)
+	install(FILES ../ini/${PROJECT_NAME}.custom.ini
+		DESTINATION "${CMAKE_INSTALL_DATADIR}/mupen64plus"
+	)
+endif(UNIX AND NOT APPLE AND NOT ANDROID)

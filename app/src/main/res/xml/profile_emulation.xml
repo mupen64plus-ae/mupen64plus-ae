@@ -633,6 +633,11 @@
             android:key="txHiresTextureFileStorage"
             android:summary="@string/gliden64_tx_hires_texture_file_storage_summary"
             android:title="@string/gliden64_tx_hires_texture_file_storage_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="txDump"
+            android:summary="@string/gliden64_tx_dump_summary"
+            android:title="@string/gliden64_tx_dump_title" />
     </androidx.preference.PreferenceCategory>
         
     <androidx.preference.PreferenceCategory

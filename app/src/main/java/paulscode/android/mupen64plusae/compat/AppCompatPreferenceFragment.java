@@ -26,14 +26,14 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         /**
          * Called when a preference dialog is being displayed. This must return
          * the appropriate DialogFragment for the preference.
-         * 
+         *
          * @param preference
          *            The preference dialog
          * @return The dialog fragment for the preference
          */
         DialogFragment getPreferenceDialogFragment(Preference preference);
     }
-    
+
     public interface OnFragmentCreationListener
     {
         /**
@@ -71,8 +71,6 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
     {
-        setRetainInstance(true);
-
         Bundle arguments = getArguments();
 
         if (arguments == null) {
@@ -99,6 +97,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         }
     }
     
+    @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -113,7 +112,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onDisplayPreferenceDialog(Preference preference)
+    public void onDisplayPreferenceDialog(@NonNull Preference preference)
     {
         DialogFragment fragment = null;
 
@@ -123,6 +122,8 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 
             if (fragment != null)
             {
+                // TODO: Correct this deprecation once setTargetFragment is no longer required by
+                // PreferenceDialogFragmentCompat in Android preference library
                 fragment.setTargetFragment(this, 0);
 
                 try {
@@ -156,11 +157,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
         {
             ((OnFragmentCreationListener) getActivity()).onViewCreation(getListView());
         }
-    }
-    
-    @Override
-    protected void onBindPreferences()
-    {
+
         // Detect when a view is added to the preference fragment and request focus if it's the first view
         final RecyclerView recyclerView = getListView();
 
@@ -199,7 +196,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 
                     return false;
                 });
-                
+
                 //Make sure all views are focusable
                 childView.setFocusable(true);
 

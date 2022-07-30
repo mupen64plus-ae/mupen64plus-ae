@@ -112,8 +112,6 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-        
         Bundle args = getArguments();
         
         if (args == null) {
@@ -302,7 +300,7 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
                                     if (mOnlineNetplayHandler != null) {
                                         mOnlineNetplayHandler.disconnect();
                                     }
-                                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
+                                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("np.zurita.me"),
                                             37520, -1, code,
                                             new OnlineNetplayHandler.OnOnlineNetplayData() {
 
@@ -344,17 +342,6 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
         });
 
         return dialog;
-    }
-
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
     }
 
     @Override

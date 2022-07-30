@@ -10,11 +10,14 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -52,7 +55,7 @@ public class NetplayRoomServer {
     private int mServerPort;
 
     // TCP server used to communicate game data
-    private ServerSocket mServerSocket;
+    private ServerSocket mServerSocket = null;
 
     // Broadcast service through NSD
     private NsdManager mNsdManager;
@@ -120,8 +123,12 @@ public class NetplayRoomServer {
         mMulticastLock.setReferenceCounted(true);
         mMulticastLock.acquire();
 
+        AppData appData = new AppData(context);
+        GlobalPrefs globalPrefs = new GlobalPrefs(context, appData);
+
         try {
-            mServerSocket = new ServerSocket(0);
+            int port = globalPrefs.useUpnpToMapNetplayPorts ? 0 : globalPrefs.netplayRoomTcpPort;
+            mServerSocket = new ServerSocket(port);
 
             // Thread used to listen for new connections
             Thread serverThread = new Thread(this::runTcpServer);
@@ -136,10 +143,14 @@ public class NetplayRoomServer {
 
     public int getServerPort()
     {
-        return mServerSocket.getLocalPort();
+        return mServerSocket != null ? mServerSocket.getLocalPort() : 0;
     }
 
     public void registerService() {
+        if (mServerSocket == null) {
+            return;
+        }
+
         mRegistrationListener = new NsdManager.RegistrationListener() {
 
             @Override
@@ -205,9 +216,11 @@ public class NetplayRoomServer {
 
                 mRegistrationIds.add(regId);
 
+                Socket socketAccepted = mServerSocket.accept();
+
                 synchronized (mClientSyncObject) {
                     mClients.add(new NetplayRoomClientHandler(mDeviceName, mRomMd5, mVideoPlugin, mRspPlugin,
-                            regId, mServerPort, mServerSocket.accept(),
+                            regId, mServerPort, socketAccepted,
                             new NetplayRoomClientHandler.OnClientRegistered() {
                                 @Override
                                 public void onClientRegistration(int playerNumber, String deviceName) {
@@ -255,7 +268,9 @@ public class NetplayRoomServer {
     {
         mRunning = false;
         try {
-            mServerSocket.close();
+            if (mServerSocket != null) {
+                mServerSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

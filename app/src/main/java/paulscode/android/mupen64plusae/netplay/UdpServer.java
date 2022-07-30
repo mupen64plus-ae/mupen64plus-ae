@@ -120,6 +120,11 @@ public class UdpServer {
     private void handleKeyInfoMessage()
     {
         int playerNum = mReceiveBuffer.get();
+
+        if (mSendPackets[playerNum] == null) {
+            return;
+        }
+
         mSendPackets[playerNum].setAddress(mReceivePacket.getAddress());
         mSendPackets[playerNum].setPort(mReceivePacket.getPort());
 

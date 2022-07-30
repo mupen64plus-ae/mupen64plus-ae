@@ -158,6 +158,9 @@
     <string name="screenAdvanced_CountPerOpDefault_title">Cuenta por operación</string>
     <string name="screenAdvanced_CountPerOpDefault_summary">Modificar esto cambia el tiempo del juego, los valores más bajos pueden hacer overclock en el juego pero pueden causar inestabilidad.</string>
     <string name="screenAdvanced_CountPerOp_title">Cuenta por operación</string>
+    <string name="screenAdvanced_CountPerOpDenDefault_title">Usar factor de overclocking predeterminado</string>
+    <string name="screenAdvanced_CountPerOpDenDefault_summary">Modificar este parámetro overclocks al procesador R4300 por un factor de 2 cada vez que se incrementa el valor, 0 es no overclock.</string>
+    <string name="screenAdvanced_CountPerOpDen_title">Factor de Overclocking</string>
     <string name="screenAdvanced_ViRefreshRateDefault_title">Frecuencia de actualización de VI</string>
     <string name="screenAdvanced_ViRefreshRateDefault_summary">Modificar esto cambia el tiempo del juego, esto puede afectar algunos relojes del juego, es necesario reiniciar el juego para que esto tome efecto.</string>
     <string name="screenAdvanced_ViRefreshRate_title">Frecuencia de actualización de VI</string>
@@ -180,6 +183,7 @@
     <string name="categoryTouchscreen_title">Pantalla táctil</string>
     <string name="categoryInput_title">Entrada</string>
     <string name="categoryData_title">Datos</string>
+    <string name="categoryNetplay_title">Netplay</string>
     <!--Checkbox Preferences-->
     <string name="playShowCheats_title">Habilitar trucos</string>
     <string name="touchscreenFeedback_title">Retroalimentación háptica</string>
@@ -353,7 +357,7 @@
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-puntos</string>
     <string name="gliden64_bilinear_mode_entry_standard">Estandar</string>
     <string name="gliden64_enable_halos_removal_title">Eliminar halos alrededor de texturas filtradas</string>
-    <string name="gliden64_enable_halos_removal_summary">This can clean up odd colors around text but it can break other textures.</string>
+    <string name="gliden64_enable_halos_removal_summary">Esto puede limpiar colores extraños alrededor del texto pero puede romper otras texturas.</string>
     <string name="gliden64_max_anisotropic_filtering_title">Esto puede limpiar colores extraños alrededor del texto pero puede romper otras texturas.</string>
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Hack de pantalla ancha</string>
@@ -454,6 +458,8 @@
     <string name="gliden64_tx_enhanced_texture_file_storage_summary">Almanezar cache de texturas filtradas directamenet en disco en vez de HTC</string>
     <string name="gliden64_tx_hires_texture_file_storage_title">Almanezar texturas de paquete de texturas en disco</string>
     <string name="gliden64_tx_hires_texture_file_storage_summary">Almanezar cache de paquete de texturas directamente en disco en vez de HTC</string>
+    <string name="gliden64_tx_dump_title">Extraer textures</string>
+    <string name="gliden64_tx_dump_summary">Extaer las texturas del juego a medida que se encuentran</string>
     <string name="gliden64_category_gamma_title">Correccion Gama</string>
     <string name="gliden64_force_gamma_correction_title">Forzar correccion gama</string>
     <string name="gliden64_gamma_correction_level">Valor de correccion gama</string>
@@ -492,6 +498,8 @@
     <string name="shadersFxaa_summary">Anti-aliasing rápido aproximado, impacto de rendimiento medio.</string>
     <string name="shadersCrtGeom_title">Geometría CRT</string>
     <string name="shadersCrtGeom_summary">Se aproxima al aspecto de un CRT, esto puede tener un rendimiento costoso.</string>
+    <string name="shadersScaleFx_title">ScaleFX</string>
+    <string name="shadersScaleFx_summary">ScaleFX es un algoritmo de interpolación de bordes especializado en pixel art.</string>
 
     <string name="audioVolume_title">Volumen de Audio</string>
     <string name="audioBufferSize_title">Tamaño del Búfer de Audio</string>
@@ -551,7 +559,10 @@
     <string name="GameAutoSavesMax_title">Maximos autoguardados por juego</string>
     <string name="useFlatGameDataPath_title">Usar la estructura de carpetas de datos de juegos planos</string>
     <string name="useFlatGameDataPath_summary">Mantener todas las guardas de ranura, capturas de pantalla, y guardas dentro del juego en la misma carpeta</string>
-
+    <string name="useUpnpToMapPort_title">Automaticamente mapear puertos externos</string>
+    <string name="useUpnpToMapPort_summary">Usar UPnP o NAT/PMP para mapear puertos externos automaticamente</string>
+    <string name="roomTcpPort_title">Puerto de TCP para el cuerto</string>
+    <string name="serverTcpUdpPort_title">Puero de UDP/TCP para el servidor</string>
     <!--**************************************************************************-->
     <!--Dialogs and Other Feedback-->
     <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -603,7 +614,8 @@
 
     <!--Scan Roms Dialog-->
     <string name="scanRomsDialog_selectRom">Seleccionar un ROM o Carpeta para Escanear (se soporta archivos n64/z64/zip/7zip)</string>
-    <string name="scanRomsDialog_start_file_picker">Iniciar buscador de archivos</string>
+    <string name="scanRomsDialog_select_folder">Seleccionar Carpeta</string>
+    <string name="scanRomsDialog_select_file">Seleccionar ROM</string>
     <string name="scanRomsDialog_no_saf">No se detectó ningún buscador de archivos en el sistema, por favor coloque sus ROMs en la siguiente carpeta: </string>
     <string name="scanRomsDialog_searchZips">Buscar archivos ZIP</string>
     <string name="scanRomsDialog_downloadArt">Descargar Portada</string>
@@ -615,11 +627,14 @@
     <string name="importExportActivity_exportDialogTitle">Exportando Datos</string>
     <string name="importExportActivity_exportGameData">Exportar datos de los juegos</string>
     <string name="importExportActivity_exportCheatsAndProfiles">Exportar trucos y perfiles</string>
+    <string name="importExportActivity_exportDumpedTextures">Exportar textures extraidas</string>
     <string name="importExportActivity_importDialogTitle">Importando Datos</string>
     <string name="importExportActivity_importGameData">Importar datos de los juegos</string>
     <string name="importExportActivity_importCheatsAndProfiles">Importar trucos y perfiles</string>
     <string name="importExportActivity_importTouchscreenGraphics">Importar graficos de pantalla tactil</string>
     <string name="importExportActivity_invalidCustomSkinFile">Archivo de graficos de pantalla tactil no es válido</string>
+    <string name="importExportActivity_invalidGameDataFolder">Carpeta GameData no válida, la carpeta debe ser la carpeta GameData exportada.</string>
+    <string name="importExportActivity_invalidProfilesFolder">Carpeta de Perfiles no válida, la carpeta debe ser la carpeta de Perfiles exportada.</string>
 
     <!-- Netplay -->
     <string name="startNetplay_title">Iniciar</string>

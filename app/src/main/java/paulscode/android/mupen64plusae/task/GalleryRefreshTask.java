@@ -46,7 +46,7 @@ public class GalleryRefreshTask
 {
     public interface GalleryRefreshFinishedListener
     {
-        void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems);
+        void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> allItems, List<GalleryItem> recentItems);
     }
 
     private final GalleryRefreshFinishedListener mListener;
@@ -54,6 +54,7 @@ public class GalleryRefreshTask
     private final WeakReference<Context> mContext;
     private final String mSearchQuery;
     private final List<GalleryItem> mItems = new ArrayList<>();
+    private final List<GalleryItem> mAllItems = new ArrayList<>();
     private final List<GalleryItem> mRecentItems = new ArrayList<>();
     private final ConfigFile mConfig;
 
@@ -70,8 +71,8 @@ public class GalleryRefreshTask
     public void doInBackground()
     {
         Thread refreshThread = new Thread(() -> {
-            generateGridItemsAndSaveConfig(mItems, mRecentItems);
-            mListener.onGalleryRefreshFinished( mItems, mRecentItems );
+            generateGridItemsAndSaveConfig(mItems, mAllItems, mRecentItems);
+            mListener.onGalleryRefreshFinished( mItems, mAllItems, mRecentItems );
         });
         refreshThread.setDaemon(true);
         refreshThread.start();
@@ -183,7 +184,7 @@ public class GalleryRefreshTask
      * @param items Items will be populated here
      * @param recentItems Recent items will be populated here.
      */
-    public void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
+    public void generateGridItemsAndSaveConfig(List<GalleryItem> items, List<GalleryItem> allItems, @NonNull List<GalleryItem> recentItems)
     {
         final String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;
@@ -231,6 +232,10 @@ public class GalleryRefreshTask
 
                     if ( matchesSearch && displayName != null) {
                         GalleryItem item = createGalleryItem(mConfig, md5, displayName);
+
+                        if (item != null) {
+                            allItems.add(item);
+                        }
 
                         if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
                                 searches != null)) {

@@ -63,6 +63,7 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.ExtractAssetsListener;
 import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask.Failure;
 import paulscode.android.mupen64plusae.task.SyncProgramsJobService;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -148,6 +149,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         Log.i("SplashActivity", "onCreate");
 
         super.onCreate( savedInstanceState );
+
+        // Clear logcat on app first start
+        DeviceUtil.clearLogCat();
 
         // Get app data and user preferences
         mAppData = new AppData( this );

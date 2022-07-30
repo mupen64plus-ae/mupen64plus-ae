@@ -80,14 +80,22 @@ public class ProgressDialog implements OnClickListener
     
     public void show()
     {
-        mAbortDialog.show();
-        mDialog.show();
+        try {
+            mAbortDialog.show();
+            mDialog.show();
+        } catch (android.view.WindowManager.BadTokenException e) {
+            e.printStackTrace();
+        }
     }
     
     public void dismiss()
     {
-        mAbortDialog.dismiss();
-        mDialog.dismiss();
+        try {
+            mAbortDialog.dismiss();
+            mDialog.dismiss();
+        } catch (android.view.WindowManager.BadTokenException e) {
+            e.printStackTrace();
+        }
     }
     
     public void setOnCancelListener(OnCancelListener onCancelListener)
@@ -157,6 +165,18 @@ public class ProgressDialog implements OnClickListener
             if( mMaxProgress > 0 )
             {
                 mProgress += inc;
+                int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
+                        / mMaxProgress );
+                mProgressTotal.setProgress( pctProgress );
+            }
+        });
+    }
+
+    public void setProgress(final long progress) {
+        mActivity.runOnUiThread(() -> {
+            if( mMaxProgress > 0 )
+            {
+                mProgress = progress;
                 int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
                         / mMaxProgress );
                 mProgressTotal.setProgress( pctProgress );

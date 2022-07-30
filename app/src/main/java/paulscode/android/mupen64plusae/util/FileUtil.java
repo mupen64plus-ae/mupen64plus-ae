@@ -323,10 +323,11 @@ public final class FileUtil
      * @param context     Context to use to read the URI
      * @param src         Source file
      * @param dest        Desired destination
+     * @param overwrite True if files should be overwritten
      *
      * @return True if the copy succeeded, false otherwise.
      */
-    public static boolean copyFolder( Context context, DocumentFile src, File dest )
+    public static boolean copyFolder( Context context, DocumentFile src, File dest, boolean overwrite )
     {
         if(src == null)
         {
@@ -346,21 +347,24 @@ public final class FileUtil
             DocumentFile[] files = src.listFiles();
             for (DocumentFile file : files) {
                 File newDest = new File(dest.getAbsolutePath() + "/" + file.getName());
-                copyFolder(context, file, newDest );
+                copyFolder(context, file, newDest, overwrite );
             }
         } else {
-            try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src.getUri(), "r");
-                 FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
-                 FileChannel out = new FileOutputStream(dest).getChannel()) {
 
-                long bytesTransferred = 0;
+            if (!dest.exists() || overwrite) {
+                try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(src.getUri(), "r");
+                     FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
+                     FileChannel out = new FileOutputStream(dest).getChannel()) {
 
-                while (bytesTransferred < in.size()) {
-                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                    long bytesTransferred = 0;
+
+                    while (bytesTransferred < in.size()) {
+                        bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                    }
+
+                } catch (Exception|OutOfMemoryError e) {
+                    Log.e("copyFile", "Exception: " + e.getMessage());
                 }
-
-            } catch (Exception|OutOfMemoryError e) {
-                Log.e("copyFile", "Exception: " + e.getMessage());
             }
         }
 
@@ -375,10 +379,11 @@ public final class FileUtil
      * @param src         Source folder
      * @param dest        Desired destination
      * @param startsWith What the file must start with for it to be copied
+     * @param overwrite True if we should overwrite files
      *
      * @return True if the copy succeeded, false otherwise.
      */
-    public static boolean copyFilesThatStartWith( Context context, DocumentFile src, File dest, String startsWith )
+    public static boolean copyFilesThatStartWith( Context context, DocumentFile src, File dest, String startsWith, boolean overwrite )
     {
         if(src == null)
         {
@@ -403,7 +408,7 @@ public final class FileUtil
             }
 
             File destFile = new File(dest.getAbsolutePath() + "/" + fileName);
-            if (!file.isDirectory() && fileName.startsWith(startsWith)) {
+            if (!file.isDirectory() && fileName.startsWith(startsWith) && (!destFile.exists() || overwrite)) {
 
                 try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(file.getUri(), "r");
                      FileChannel in = new FileInputStream(parcelFileDescriptor.getFileDescriptor()).getChannel();
@@ -572,10 +577,11 @@ public final class FileUtil
 
             } catch (Exception|OutOfMemoryError e) {
                 Log.e("copyFile", "Exception: " + e.getMessage());
+                success = false;
             }
         }
 
-        return true;
+        return success;
     }
 
     /**
@@ -1407,7 +1413,8 @@ public final class FileUtil
 
     public static String getFileName(Context context, Uri uri) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
+
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
 
             try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {

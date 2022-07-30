@@ -201,6 +201,9 @@
     <string name="screenAdvanced_CountPerOpDefault_title">Use default count per operation</string>
     <string name="screenAdvanced_CountPerOpDefault_summary">Modifying this changes game timing, lower values can overclock the game but can cause instability.</string>
     <string name="screenAdvanced_CountPerOp_title">Count per operation</string>
+    <string name="screenAdvanced_CountPerOpDenDefault_title">Use default overclocking factor</string>
+    <string name="screenAdvanced_CountPerOpDenDefault_summary">Modifying this overclocks the R4300 processor by a factor of 2 each time the value is incremented, 0 is no overclock.</string>
+    <string name="screenAdvanced_CountPerOpDen_title">Overclocking Factor</string>
     <string name="screenAdvanced_ViRefreshRateDefault_title">Use default VI refresh rate</string>
     <string name="screenAdvanced_ViRefreshRateDefault_summary">Modifying this changes game timing, this can affect some in-game clocks, restarting the game is required for this to take effect.</string>
     <string name="screenAdvanced_ViRefreshRate_title">VI refresh rate</string>
@@ -227,6 +230,7 @@
     <string name="categoryInput_title">Input</string>
 
     <string name="categoryData_title">Data</string>
+    <string name="categoryNetplay_title">Netplay</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
@@ -417,7 +421,7 @@
     <string name="gliden64_bilinear_mode_entry_standard">Standard</string>
     <string name="gliden64_enable_halos_removal_title">Remove halos around filtered textures</string>
     <string name="gliden64_enable_halos_removal_summary">This can clean up odd colors around text but it can break other textures.</string>
-    <string name="gliden64_max_anisotropic_filtering_title">Max level of anisotropic filtering</string>
+    <string name="gliden64_max_anisotropic_filtering_title">Nivel máximo de filtrado anisotrópico</string>
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Widescreen hack</string>
     <string name="gliden64_dithering_pattern_title">Dithering pattern</string>
@@ -517,6 +521,8 @@
     <string name="gliden64_tx_enhanced_texture_file_storage_summary">Use file storage instead of memory cache for enhanced textures.</string>
     <string name="gliden64_tx_hires_texture_file_storage_title">Hires texture file storage</string>
     <string name="gliden64_tx_hires_texture_file_storage_summary">Use file storage instead of memory cache for hires textures.</string>
+    <string name="gliden64_tx_dump_title">Dump textures</string>
+    <string name="gliden64_tx_dump_summary">Dump in-game textures as they are encountered</string>
     <string name="gliden64_category_gamma_title">Gamma Correction</string>
     <string name="gliden64_force_gamma_correction_title">Force gamma correction</string>
     <string name="gliden64_gamma_correction_level">Gamma correction value</string>
@@ -675,6 +681,8 @@
     <string name="shadersFxaa_summary">Fast approximate anti-aliasing, medium performance impact.</string>
     <string name="shadersCrtGeom_title">CRT Geometry</string>
     <string name="shadersCrtGeom_summary">Approximates the look of a CRT, this can be expensive in performance.</string>
+    <string name="shadersScaleFx_title">ScaleFX</string>
+    <string name="shadersScaleFx_summary">ScaleFX is an edge interpolation algorithm specialized in pixel art.</string>
 
     <string name="audioVolume_title">Audio Volume</string>
     <string name="audioBufferSize_title">Audio Buffer Size</string>
@@ -743,6 +751,12 @@
     <string name="useFlatGameDataPath_title">Use flat game data folder structure</string>
     <string name="useFlatGameDataPath_summary">Keep all slot saves, screenshots, and in-game saves in the same folder</string>
     <string name="japanIplRom64ddPath_title">64DD IPL (J)</string>
+    <string name="useUpnpToMapPort_title">Automatically map external ports</string>
+    <string name="useUpnpToMapPort_summary">Use UPnP or NAT/PMP to automatically map external ports</string>
+    <string name="roomTcpPort_title">Room TCP Port</string>
+    <string name="serverTcpUdpPort_title">Server UDP/TCP Port</string>
+
+
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback -->
@@ -815,7 +829,8 @@
 
     <!-- Scan Roms Dialog -->
     <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan (zip/7zip/n64/z64 files supported)</string>
-    <string name="scanRomsDialog_start_file_picker">Start file picker</string>
+    <string name="scanRomsDialog_select_folder">Select Folder</string>
+    <string name="scanRomsDialog_select_file">Select File</string>
     <string name="scanRomsDialog_no_saf">No system file picker detected, please place your ROMs in the follow folder: </string>
     <string name="scanRomsDialog_searchZips">Search zip files</string>
     <string name="scanRomsDialog_downloadArt">Download cover art</string>
@@ -827,11 +842,14 @@
     <string name="importExportActivity_exportDialogTitle">Exporting Data</string>
     <string name="importExportActivity_exportGameData">Export Game Data</string>
     <string name="importExportActivity_exportCheatsAndProfiles">Export Cheats and Profiles</string>
+    <string name="importExportActivity_exportDumpedTextures">Export Dumped Textures</string>
     <string name="importExportActivity_importDialogTitle">Importing Data</string>
     <string name="importExportActivity_importGameData">Import Game Data</string>
     <string name="importExportActivity_importCheatsAndProfiles">Import Cheats and Profiles</string>
     <string name="importExportActivity_importTouchscreenGraphics">Import Touchscreen Graphics</string>
     <string name="importExportActivity_invalidCustomSkinFile">Invalid touchscreen graphics skin file</string>
+    <string name="importExportActivity_invalidGameDataFolder">Invalid GameData folder, folder must be the exported GameData folder.</string>
+    <string name="importExportActivity_invalidProfilesFolder">Invalid Profiles folder, folder must be the exported Profiles folder.</string>
 
     <!-- ROM preparation -->
     <string name="extractRomTask_title">Preparing game data…</string>

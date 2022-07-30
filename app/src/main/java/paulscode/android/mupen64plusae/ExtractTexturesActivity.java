@@ -1,7 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -9,11 +7,14 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
@@ -25,19 +26,50 @@ import android.widget.TextView;
 
 public class ExtractTexturesActivity extends AppCompatActivity implements ExtractTexturesFragment.OnFinishListener
 {
-    private static final int LEGACY_FILE_PICKER_REQUEST_CODE = 1;
-    public static final int PICK_TEXTURE_REQUEST_CODE = 2;
-
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
 
     private ExtractTexturesFragment mExtractTexturesFragment = null;
 
-    private File mCurrentPath = null;
     private Uri mFileUri = null;
 
     private TextView mFileDescriptionTextView = null;
     private static final String URI_TO_IMPORT = "URI_TO_IMPORT";
-    private static final String CURRENT_PATH = "CURRENT_PATH";
+
+    ActivityResultLauncher<Intent> mLaunchLegacyFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+
+                    final Bundle extras = data.getExtras();
+
+                    if (extras != null) {
+                        final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+
+                        mFileUri = Uri.parse(searchUri);
+
+                        if (mFileDescriptionTextView != null && mFileUri.getPath() != null) {
+                            DocumentFile file = FileUtil.getDocumentFileSingle(ExtractTexturesActivity.this, mFileUri);
+                            mFileDescriptionTextView.setText(file == null ? "" : file.getName());
+                        }
+                    }
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+
+                    mFileUri = data.getData();
+
+                    if (mFileDescriptionTextView != null && mFileUri != null) {
+                        DocumentFile file = FileUtil.getDocumentFileSingle(ExtractTexturesActivity.this, mFileUri);
+                        mFileDescriptionTextView.setText(file == null ? "" : file.getName());
+                    }
+                }
+            });
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -105,9 +137,6 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
     @Override
     public void onSaveInstanceState( @NonNull Bundle savedInstanceState )
     {
-        if (mCurrentPath != null)
-            savedInstanceState.putString( CURRENT_PATH, mCurrentPath.getAbsolutePath() );
-
         if (mFileUri != null) {
             savedInstanceState.putString( URI_TO_IMPORT, mFileUri.toString() );
         }
@@ -122,45 +151,13 @@ public class ExtractTexturesActivity extends AppCompatActivity implements Extrac
             Intent intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-            startActivityForResult( intent, LEGACY_FILE_PICKER_REQUEST_CODE );
+            mLaunchLegacyFilePicker.launch(intent);
         } else {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            startActivityForResult(intent, PICK_TEXTURE_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && data != null) {
-
-            // Check which request we're responding to
-            if (requestCode == PICK_TEXTURE_REQUEST_CODE)
-            {
-                mFileUri = data.getData();
-
-                if (mFileDescriptionTextView != null && mFileUri != null) {
-                    DocumentFile file = FileUtil.getDocumentFileSingle(this, mFileUri);
-                    mFileDescriptionTextView.setText(file == null ? "" : file.getName());
-                }
-            } else if (requestCode == LEGACY_FILE_PICKER_REQUEST_CODE) {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-
-                    mFileUri = Uri.parse(searchUri);
-
-                    if (mFileDescriptionTextView != null && mFileUri.getPath() != null) {
-                        DocumentFile file = FileUtil.getDocumentFileSingle(this, mFileUri);
-                        mFileDescriptionTextView.setText(file == null ? "" : file.getName());
-                    }
-                }
-            }
+            mLaunchFilePicker.launch(intent);
         }
     }
 

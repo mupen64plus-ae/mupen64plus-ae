@@ -23,12 +23,15 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -52,39 +55,41 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
 
     //Progress dialog for extracting textures
     private ProgressDialog mProgress = null;
-    
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
 
-    private Uri mSource = null;
-    private File mDestination = null;
-    
-    private boolean mInProgress = false;
+    public static class DataViewModel extends ViewModel {
 
-    // this method is only called once for this fragment
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+        public DataViewModel() {}
+
+        //Service connection for the progress dialog
+        ServiceConnection mServiceConnection;
+        LocalBinder mBinder = null;
+
+        Uri mSource = null;
+        File mDestination = null;
+
+        boolean mInProgress = false;
+        CopyFromSdFragment mCurrentFragment = null;
     }
 
+    DataViewModel mViewModel;
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        
-        if(mInProgress)
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
+
+        if(mViewModel.mInProgress)
         {
-            try {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.importExportActivity_importDialogTitle);
-                CharSequence message = getString(R.string.toast_pleaseWait);
-                mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
-                mProgress.show();
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.importExportActivity_importDialogTitle);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+            mProgress = new ProgressDialog(mProgress, activity, title, "", message, true);
+            mProgress.show();
+
+            if (mViewModel.mBinder != null) {
+                mViewModel.mBinder.getService().setCopyFromSdListener(mViewModel.mCurrentFragment);
             }
         }
     }
@@ -99,21 +104,6 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
         }
         
         super.onDetach();
-    }
-    
-    @Override
-    public void onDestroy()
-    {        
-        if(mServiceConnection != null && mInProgress)
-        {
-            try {
-                ActivityHelper.stopCopyFromSdService(requireActivity().getApplicationContext(), mServiceConnection);
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        super.onDestroy();
     }
 
     @Override
@@ -132,7 +122,9 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
     @Override
     public void onCopyFromSdServiceDestroyed()
     {
-        mInProgress = false;
+        if (mViewModel != null) {
+            mViewModel.mInProgress = false;
+        }
         mProgress.dismiss();
     }
 
@@ -144,18 +136,20 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
 
     public void copyFromSd( Uri source, File destination )
     {
-        this.mSource = source;
-        this.mDestination = destination;
-        try {
-            actuallyCopyFiles(requireActivity());
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+        if (mViewModel != null) {
+            mViewModel.mSource = source;
+            mViewModel.mDestination = destination;
+            try {
+                actuallyCopyFiles(requireActivity());
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
     
     private void actuallyCopyFiles(Activity activity)
     {
-        mInProgress = true;
+        mViewModel.mInProgress = true;
         
         CharSequence title = getString( R.string.importExportActivity_importDialogTitle );
         CharSequence message = getString( R.string.toast_pleaseWait );
@@ -163,15 +157,15 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */
-        mServiceConnection = new ServiceConnection() {
+        mViewModel.mServiceConnection = new ServiceConnection() {
             
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
 
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                CopyFromSdService copyFromSdService = binder.getService();
-                copyFromSdService.setCopyFromSdListener(CopyFromSdFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                CopyFromSdService copyFromSdService = mViewModel.mBinder.getService();
+                copyFromSdService.setCopyFromSdListener(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -181,12 +175,12 @@ public class CopyFromSdFragment extends Fragment implements CopyFilesListener
         };
 
         // Asynchronously copy data to SD
-        ActivityHelper.startCopyFromSdService(activity.getApplicationContext(), mServiceConnection,
-                mSource, mDestination);
+        ActivityHelper.startCopyFromSdService(activity.getApplicationContext(), mViewModel.mServiceConnection,
+                mViewModel.mSource, mViewModel.mDestination);
     }
     
     public boolean IsInProgress()
     {
-        return mInProgress;
+        return mViewModel != null && mViewModel.mInProgress;
     }
 }

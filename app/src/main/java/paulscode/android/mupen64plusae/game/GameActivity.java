@@ -82,7 +82,6 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.netplay.room.NetplayClientSetupDialog;
 import paulscode.android.mupen64plusae.netplay.room.NetplayServerSetupDialog;
@@ -140,7 +139,7 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener,
-        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener,
+        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener,
         NetplayClientSetupDialog.OnServerDialogActionListener,
         NetplayServerSetupDialog.OnClientDialogActionListener, NetplayFragment.NetplayListener,
         GameSettingsDialog.OnGameSettingsDialogListener, PromptInputCodeDialog.PromptInputCodeListener{
@@ -148,7 +147,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     // Activity and views
     private GameOverlay mOverlay;
     private FpsOverlay mFpsOverlay;
-    private GameDrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
     private GameSurface mGameSurface;
 
@@ -380,7 +379,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
-        mDrawerLayout.setSwipeGestureEnabled(mGlobalPrefs.inGameMenuIsSwipeGesture);
+
+        if(mGlobalPrefs.inGameMenuIsSwipeGesture)
+        {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+        else
+        {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+
         mDrawerLayout.setBackgroundColor(0xFF000000);
 
         if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists() && FileUtil.isFileImage(new File(mRomArtPath)))
@@ -435,8 +443,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (savedInstanceState == null)
         {
             // Show the drawer at the start and have it hide itself
-            // automatically ... should delete altogether (then wouldn't
-            // have to pass mSettingsReset to GameActivity)
+            // automatically
             mDrawerLayout.openDrawer(GravityCompat.START);
         }
         else // possibly recreate() called
@@ -626,7 +633,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             mDrawerLayout.openDrawer(GravityCompat.START);
-            mGameSidebar.requestFocus();
+            //mGameSidebar.requestFocus();
+            mDrawerLayout.requestFocus();
             ReloadAllMenus();
         }
 
@@ -697,12 +705,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onDestroy()
     {
         Log.i( TAG, "onDestroy" );
-        super.onDestroy();
 
-        if(mCoreFragment != null)
-        {
-            mCoreFragment.clearOnFpsChangedListener();
-        }
+        super.onDestroy();
 
         // This apparently can happen on rare occasion, not sure how, so protect against it
         if(mHandler != null)
@@ -821,6 +825,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         finishAndRemoveTask();
     }
 
+    @Override
+    public void onBindService()
+    {
+        if(mCoreFragment.isShuttingDown())
+        {
+            Log.i(TAG, "Shutting down because previous instance hasn't finished");
+
+            runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_not_done_shutting_down ));
+
+            finishActivity();
+        }
+    }
+
     private void gameSettingsDialogPrompt(){
         final FragmentManager fm = this.getSupportFragmentManager();
         GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
@@ -835,6 +852,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onGameSidebarAction(MenuItem menuItem)
     {
         if(mCoreFragment == null) return;
+
+        if (menuItem.getTitle() != null) {
+            Log.i(TAG, "User selected: " + menuItem.getTitle().toString());
+        }
 
         if (menuItem.getItemId() ==  R.id.menuItem_exit) {
             mCoreFragment.exit();
@@ -999,7 +1020,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             } else {
                 mCoreFragment.resumeEmulator();
             }
-            mCoreFragment.setOnFpsChangedListener(this, 30);
         }
     }
 
@@ -1456,16 +1476,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             finish();
         }
 
-        if(mCoreFragment.isShuttingDown())
-        {
-            Log.i(TAG, "Shutting down because previous instance hasn't finished");
-
-            runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_not_done_shutting_down ));
-
-            finishActivity();
-        }
-        else
-        {
+        if(!mCoreFragment.isShuttingDown()) {
             //This can happen if GameActivity is killed while service is running
             tryRunning();
         }
@@ -1488,7 +1499,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // Making sure the cpu recompiler/interpreter is initiated before setting the
             // screen orientation
             while ((mCoreFragment.getEmuModeInit() == 0)
-                && startingGameAttempt++ < 100) {
+                    && startingGameAttempt++ < 100) {
                 try {
                     Thread.sleep(100);
                 } catch (Exception e) {
@@ -1553,7 +1564,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             shutdownEmulator();
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && mCoreFragment != null &&
-        !mResolutionReset)
+                !mResolutionReset)
         {
             mCoreFragment.resumeEmulator();
         }
@@ -1730,7 +1741,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis,
                     mGamePrefs.isTouchscreenAnalogRelative );
             inputSource.setOnTouchListener(this);
-            mDrawerLayout.setTouchMap( mTouchscreenMap );
         }
 
         // Popup the multi-player dialog if necessary and abort if any players are unassigned

@@ -124,40 +124,6 @@ public:
 	}
 };
 
-class VertexShaderTexturedRect : public ShaderPart
-{
-public:
-	VertexShaderTexturedRect(const opengl::GLInfo & _glinfo)
-	{
-		m_part =
-			"IN highp vec4 aRectPosition;						\n"
-			"IN highp vec2 aTexCoord0;							\n"
-			"IN highp vec2 aTexCoord1;							\n"
-			"IN highp vec2 aBaryCoords;							\n"
-			"													\n"
-			"OUT highp vec2 vTexCoord0;							\n"
-			"OUT highp vec2 vTexCoord1;							\n"
-			"OUT lowp vec4 vShadeColor;							\n"
-			"OUT highp vec4 vBaryCoords;						\n"
-			;
-		if (!_glinfo.isGLESX || _glinfo.noPerspective)
-			m_part += "noperspective OUT lowp vec4 vShadeColorNoperspective;\n";
-		else
-			m_part += "OUT lowp vec4 vShadeColorNoperspective;				\n";
-		m_part +=
-			"uniform lowp vec4 uRectColor;						\n"
-			"void main()										\n"
-			"{													\n"
-			"  gl_Position = aRectPosition;						\n"
-			"  vShadeColor = uRectColor;						\n"
-			"  vShadeColorNoperspective = uRectColor;			\n"
-			"  vTexCoord0 = aTexCoord0;							\n"
-			"  vTexCoord1 = aTexCoord1;							\n"
-			"  vBaryCoords = vec4(aBaryCoords, vec2(1.0) - aBaryCoords);	\n"
-			;
-	}
-};
-
 class VertexShaderRect : public ShaderPart
 {
 public:
@@ -729,8 +695,13 @@ public:
 
 		if (config.frameBufferEmulation.N64DepthCompare == Config::dcFast && _glinfo.n64DepthWithFbFetch) {
 			m_part +=
-				"layout(location = 1) inout highp vec4 depthZ;	\n"
-				"layout(location = 2) inout highp vec4 depthDeltaZ;	\n"
+				"layout(location = 1) inout highp vec4 depthZ;			\n"
+				"layout(location = 2) inout highp vec4 depthDeltaZ;		\n"
+				;
+			if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0u)
+				m_part +=
+				"layout(location = 3) inout highp vec4 depthZCopy;		\n"
+				"layout(location = 4) inout highp vec4 depthDeltaZCopy;	\n"
 				;
 		}
 	}
@@ -820,8 +791,13 @@ public:
 				;
 			if (_glinfo.imageTextures & !_glinfo.n64DepthWithFbFetch) {
 				m_part +=
-					"layout(binding = 2, r32f) highp uniform restrict image2D uDepthImageZ;		\n"
+					"layout(binding = 2, r32f) highp uniform restrict image2D uDepthImageZ;			\n"
 					"layout(binding = 3, r32f) highp uniform restrict image2D uDepthImageDeltaZ;	\n"
+					;
+				if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0u)
+					m_part +=
+					"layout(binding = 4, r32f) highp uniform restrict image2D uDepthImageZCopy;		\n"
+					"layout(binding = 5, r32f) highp uniform restrict image2D uDepthImageDeltaZCopy;\n"
 					;
 			}
 		}
@@ -974,16 +950,33 @@ public:
 	ShaderFragmentRenderTarget(const opengl::GLInfo & _glinfo)
 	{
 		if (config.generalEmulation.enableFragmentDepthWrite != 0) {
-			m_part =
-				"  if (uRenderTarget != 0) {					\n"
-				"    if (uRenderTarget > 1) {					\n"
-				"      ivec2 coord = ivec2(gl_FragCoord.xy);	\n"
-				"      if (fragDepth >= texelFetch(uDepthTex, coord, 0).r) discard;	\n"
-				"    }											\n"
-				"    fragDepth = fragColor.r;				\n"
-				"  }											\n"
-				"  gl_FragDepth = fragDepth;	\n"
-			;
+			if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0)
+				// Zelda MM depth buffer copy
+				m_part =
+					"  if (uRenderTarget == 1 || uRenderTarget == 3) {\n"
+					"    fragDepth = fragColor.r;					\n"
+					"  } else if (uRenderTarget == 2) {				\n"
+					"    ivec2 coord = ivec2(gl_FragCoord.xy);		\n"
+					"    if (fragDepth >= texelFetch(uDepthTex, coord, 0).r) discard;	\n"
+					"    fragDepth = fragColor.r;					\n"
+					"  } else if (uRenderTarget == 4) {				\n"
+					"    ivec2 coord = ivec2(gl_FragCoord.xy);		\n"
+					"    if (texelFetch(uDepthTex, coord, 0).r > 0.0) discard;	\n"
+					"    fragDepth = fragColor.r;					\n"
+					"  }											\n"
+					"  gl_FragDepth = fragDepth;					\n"
+				;
+			else
+				m_part =
+					"  if (uRenderTarget == 1) {					\n"
+					"    fragDepth = fragColor.r;					\n"
+					"  } else if (uRenderTarget == 2) {				\n"
+					"    ivec2 coord = ivec2(gl_FragCoord.xy);		\n"
+					"    if (fragDepth >= texelFetch(uDepthTex, coord, 0).r) discard;	\n"
+					"    fragDepth = fragColor.r;					\n"
+					"  }											\n"
+					"  gl_FragDepth = fragDepth;	\n"
+				;
 		}
 	}
 };
@@ -1319,10 +1312,52 @@ public:
 	{
 		if (config.frameBufferEmulation.N64DepthCompare != Config::dcDisable) {
 			m_part =
-				"bool depth_render(highp float Z, highp float curZ)						\n"
-				"{														\n"
-				"  ivec2 coord = ivec2(gl_FragCoord.xy);				\n"
-				"  if (uEnableDepthCompare != 0) {						\n"
+				"bool depth_render(highp float Z, highp float curZ)			\n"
+				"{															\n"
+				"  ivec2 coord = ivec2(gl_FragCoord.xy);					\n"
+				;
+
+			if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0u) {
+				// Zelda MM depth buffer copy
+				if (_glinfo.imageTextures && !_glinfo.n64DepthWithFbFetch) {
+					m_part +=
+						"  if (uRenderTarget == 3) {							\n"
+						"    highp vec4 copyZ = imageLoad(uDepthImageZ,coord);	\n"
+						"    imageStore(uDepthImageZCopy, coord, copyZ);		\n"
+						"    copyZ = imageLoad(uDepthImageDeltaZ, coord);		\n"
+						"    imageStore(uDepthImageDeltaZCopy, coord, copyZ);	\n"
+						"    return true;										\n"
+						"  }													\n"
+						"  if (uRenderTarget == 4) {							\n"
+						"    highp vec4 testZ = imageLoad(uDepthImageZCopy,coord);	\n"
+						"    if (testZ.r > 0.0) return false;					\n"
+						"    highp vec4 copyZ = imageLoad(uDepthImageZ, coord);	\n"
+						"    imageStore(uDepthImageZCopy, coord, copyZ);		\n"
+						"    copyZ = imageLoad(uDepthImageDeltaZ, coord);		\n"
+						"    imageStore(uDepthImageDeltaZCopy, coord, copyZ);	\n"
+						"    return true;										\n"
+						"  }													\n"
+						;
+				}
+				else {
+					m_part +=
+						"  if (uRenderTarget == 3) {							\n"
+						"    depthZCopy.r = depthZ.r;							\n"
+						"    depthDeltaZCopy.r = depthDeltaZ.r;					\n"
+						"    return true;										\n"
+						"  }													\n"
+						"  if (uRenderTarget == 4) {							\n"
+						"    if (depthZCopy.r > 0.0) return false;				\n"
+						"    depthZCopy.r = depthZ.r;							\n"
+						"    depthDeltaZCopy.r = depthDeltaZ.r;					\n"
+						"    return true;										\n"
+						"  }													\n"
+						;
+				}
+			}
+
+			m_part +=
+				"  if (uEnableDepthCompare != 0) {							\n"
 				;
 			if (_glinfo.imageTextures && !_glinfo.n64DepthWithFbFetch) {
 				m_part +=
@@ -1330,14 +1365,14 @@ public:
 					;
 			}
 			m_part +=
-				"    highp float bufZ = depthZ.r;						\n"
-				"    if (curZ >= bufZ) return false;					\n"
-				"  }													\n"
+				"    highp float bufZ = depthZ.r;							\n"
+				"    if (curZ >= bufZ) return false;						\n"
+				"  }														\n"
 				;
 			if (_glinfo.n64DepthWithFbFetch) {
 				m_part +=
-					"  depthZ.r = Z;	\n"
-					"  depthDeltaZ.r = 0.0;	\n"
+					"  depthZ.r = Z;										\n"
+					"  depthDeltaZ.r = 0.0;									\n"
 					;
 			} else if (_glinfo.imageTextures) {
 				m_part +=
@@ -1349,26 +1384,10 @@ public:
 			}
 
 			m_part +=
-				"  return true;											\n"
-				"}														\n"
+				"  return true;												\n"
+				"}															\n"
 				;
 		}
-	}
-};
-
-class ShaderFragmentCorrectTexCoords : public ShaderPart {
-public:
-	ShaderFragmentCorrectTexCoords() {
-		m_part +=
-			" highp vec2 mTexCoord0 = vTexCoord0 + vec2(0.0001);						\n"
-			" highp vec2 mTexCoord1 = vTexCoord1 + vec2(0.0001);						\n"
-			" mTexCoord0 += uTexCoordOffset[0];											\n"
-			" mTexCoord1 += uTexCoordOffset[1];											\n"
-			" if (uUseTexCoordBounds != 0) {											\n"
-			" mTexCoord0 = clamp(mTexCoord0, uTexCoordBounds0.xy, uTexCoordBounds0.zw); \n"
-			" mTexCoord1 = clamp(mTexCoord1, uTexCoordBounds1.xy, uTexCoordBounds1.zw); \n"
-			" }																			\n"
-			;
 	}
 };
 
@@ -1394,7 +1413,7 @@ public:
 /*---------------ShaderPartsEnd-------------*/
 
 static
-GLuint _createVertexShader(ShaderPart * _header, ShaderPart * _body, ShaderPart * _footer)
+GLuint _createVertexShader(const ShaderPart* _header, const ShaderPart* _body, const ShaderPart* _footer)
 {
 	std::stringstream ssShader;
 	_header->write(ssShader);
@@ -1416,8 +1435,7 @@ GLuint _createVertexShader(ShaderPart * _header, ShaderPart * _body, ShaderPart 
 namespace glsl {
 
 CombinerProgramBuilderCommon::CombinerProgramBuilderCommon(const opengl::GLInfo & _glinfo, opengl::CachedUseProgram * _useProgram,
-	std::unique_ptr<CombinerProgramUniformFactory> _uniformFactory,
-	std::unique_ptr<ShaderPart> _vertexTexturedTriangle)
+	std::unique_ptr<CombinerProgramUniformFactory> _uniformFactory)
 : CombinerProgramBuilder(_glinfo, _useProgram, std::move(_uniformFactory))
 , m_blender1(new ShaderBlender1(_glinfo))
 , m_blender2(new ShaderBlender2(_glinfo))
@@ -1433,7 +1451,6 @@ CombinerProgramBuilderCommon::CombinerProgramBuilderCommon(const opengl::GLInfo 
 , m_vertexHeader(new VertexShaderHeader(_glinfo))
 , m_vertexEnd(new VertexShaderEnd(_glinfo))
 , m_vertexRect(new VertexShaderRect(_glinfo))
-, m_vertexTexturedRect(new VertexShaderTexturedRect(_glinfo))
 , m_vertexTriangle(new VertexShaderTriangle(_glinfo))
 , m_fragmentHeader(new FragmentShaderHeader(_glinfo))
 , m_fragmentGlobalVariablesNotex(new ShaderFragmentGlobalVariablesNotex(_glinfo))
@@ -1446,7 +1463,6 @@ CombinerProgramBuilderCommon::CombinerProgramBuilderCommon(const opengl::GLInfo 
 , m_fragmentMain(new ShaderFragmentMain(_glinfo))
 , m_fragmentMain2Cycle(new ShaderFragmentMain2Cycle(_glinfo))
 , m_fragmentBlendMux(new ShaderFragmentBlendMux(_glinfo))
-, m_fragmentCorrectTexCoords(new ShaderFragmentCorrectTexCoords())
 , m_fragmentReadTexMipmap(new ShaderFragmentReadTexMipmap(_glinfo))
 , m_fragmentCallN64Depth(new ShaderFragmentCallN64Depth(_glinfo))
 , m_fragmentRenderTarget(new ShaderFragmentRenderTarget(_glinfo))
@@ -1460,10 +1476,6 @@ CombinerProgramBuilderCommon::CombinerProgramBuilderCommon(const opengl::GLInfo 
 , m_shaderCoverage(new ShaderCoverage())
 , m_combinerOptionsBits(graphics::CombinerProgram::getShaderCombinerOptionsBits())
 {
-	m_vertexShaderRect = _createVertexShader(m_vertexHeader.get(), m_vertexRect.get(), m_vertexEnd.get());
-	m_vertexShaderTriangle = _createVertexShader(m_vertexHeader.get(), m_vertexTriangle.get(), m_vertexEnd.get());
-	m_vertexShaderTexturedRect = _createVertexShader(m_vertexHeader.get(), m_vertexTexturedRect.get(), m_vertexEnd.get());
-	m_vertexShaderTexturedTriangle = _createVertexShader(m_vertexHeader.get(), _vertexTexturedTriangle.get(), m_vertexEnd.get());
 }
 
 CombinerProgramBuilderCommon::~CombinerProgramBuilderCommon()
@@ -1496,21 +1508,29 @@ bool CombinerProgramBuilderCommon::isObsolete() const
 
 GLuint CombinerProgramBuilderCommon::_getVertexShaderRect() const
 {
+	if (m_vertexShaderRect == 0)
+		m_vertexShaderRect = _createVertexShader(m_vertexHeader.get(), m_vertexRect.get(), m_vertexEnd.get());
 	return m_vertexShaderRect;
 }
 
 GLuint CombinerProgramBuilderCommon::_getVertexShaderTriangle() const
 {
+	if (m_vertexShaderTriangle == 0)
+		m_vertexShaderTriangle = _createVertexShader(m_vertexHeader.get(), m_vertexTriangle.get(), m_vertexEnd.get());
 	return m_vertexShaderTriangle;
 }
 
 GLuint CombinerProgramBuilderCommon::_getVertexShaderTexturedRect() const
 {
+	if (m_vertexShaderTexturedRect == 0)
+		m_vertexShaderTexturedRect = _createVertexShader(m_vertexHeader.get(), getVertexShaderTexturedRect(), m_vertexEnd.get());
 	return m_vertexShaderTexturedRect;
 }
 
 GLuint CombinerProgramBuilderCommon::_getVertexShaderTexturedTriangle() const
 {
+	if (m_vertexShaderTexturedTriangle == 0)
+		m_vertexShaderTexturedTriangle = _createVertexShader(m_vertexHeader.get(), getVertexShaderTexturedTriangle(), m_vertexEnd.get());
 	return m_vertexShaderTexturedTriangle;
 }
 
@@ -1627,11 +1647,6 @@ void CombinerProgramBuilderCommon::_writeFragmentBlendMux(std::stringstream& ssS
 void CombinerProgramBuilderCommon::_writeShaderCoverage(std::stringstream& ssShader)const
 {
 	 m_shaderCoverage->write(ssShader);
-}
-
-void CombinerProgramBuilderCommon::_writeFragmentCorrectTexCoords(std::stringstream& ssShader)const
-{
-	 m_fragmentCorrectTexCoords->write(ssShader);
 }
 
 void CombinerProgramBuilderCommon::_writeFragmentReadTexMipmap(std::stringstream& ssShader)const

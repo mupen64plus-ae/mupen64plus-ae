@@ -30,7 +30,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -49,13 +48,9 @@ import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
-import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
-import paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen;
-import paulscode.android.mupen64plusae.profile.EmulationProfileActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
-import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.CopyFromSdService;
 import paulscode.android.mupen64plusae.task.CopyToSdService;
@@ -97,6 +92,7 @@ public class ActivityHelper
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
+        public static final String SEARCH_SINGLE_FILE   = NAMESPACE + "SEARCH_SINGLE_FILE";
         public static final String CAN_SELECT_FILE      = NAMESPACE + "CAN_SELECT_FILE";
         public static final String CAN_VIEW_EXT_STORAGE = NAMESPACE + "CAN_VIEW_EXT_STORAGE";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
@@ -121,7 +117,6 @@ public class ActivityHelper
         //@formatter:on
     }
     public static final int GAME_ACTIVITY_CODE = 3;
-    public static final int MANAGE_PROFILE_ACTIVITY = 4321;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
@@ -143,7 +138,7 @@ public class ActivityHelper
         }
         catch(java.lang.SecurityException|ActivityNotFoundException e)
         {
-            Log.e("ActivityHelper", "Failed to launch link to due exception: " + e.toString());
+            Log.e("ActivityHelper", "Failed to launch link to due exception: " + e);
         }
     }
     
@@ -206,6 +201,7 @@ public class ActivityHelper
         }
     }
 
+
     static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
                                   boolean doRestart, boolean doSettingsReset, boolean doResolutionReset, boolean isNetplayEnabled,
@@ -259,6 +255,12 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, DataPrefsActivity.class );
         context.startActivity( intent );    
+    }
+
+    static void startNetplayPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, NetplayPrefsActivity.class );
+        context.startActivity( intent );
     }
     
     static void startDisplayPrefsActivity( Context context )
@@ -326,34 +328,6 @@ public class ActivityHelper
     {
         context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
     }
-    
-    public static void startEmulationProfileActivity( Activity activity, String profileName )
-    {
-        Intent intent = new Intent( activity, EmulationProfileActivity.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
-    }
-    
-    public static void startTouchscreenProfileActivity( Activity activity, String profileName )
-    {
-        Intent intent = new Intent( activity, TouchscreenProfileActivity.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
-    }
-    
-    public static void startControllerProfileActivity( Activity activity, String profileName )
-    {
-        Intent intent = new Intent( activity, ControllerProfileActivity.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        activity.startActivityForResult( intent, MANAGE_PROFILE_ACTIVITY );
-    }
-    
-    public static void startControllerProfileActivityBigScreen( Context context, String profileName )
-    {
-        Intent intent = new Intent( context, ControllerProfileActivityBigScreen.class );
-        intent.putExtra( Keys.PROFILE_NAME, profileName );
-        context.startActivity( intent );
-    }
 
     public static void startImportExportActivity( Context context )
     {
@@ -370,32 +344,25 @@ public class ActivityHelper
     {
         context.startActivity( new Intent( context, LogcatActivity.class) );
     }
-    
+
     static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
-        String searchUri, String databasePath, String configPath, String artDir, String unzipDir,
-        boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
+                                         String searchUri, String databasePath, String configPath, String artDir,
+                                         boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
+                                         boolean singleFile)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
         intent.putExtra(Keys.SEARCH_PATH, searchUri);
         intent.putExtra(Keys.DATABASE_PATH, databasePath);
         intent.putExtra(Keys.CONFIG_PATH, configPath);
         intent.putExtra(Keys.ART_DIR, artDir);
-        intent.putExtra(Keys.UNZIP_DIR, unzipDir);
         intent.putExtra(Keys.SEARCH_ZIPS, searchZips);
         intent.putExtra(Keys.DOWNLOAD_ART, downloadArt);
         intent.putExtra(Keys.CLEAR_GALLERY, clearGallery);
         intent.putExtra(Keys.SEARCH_SUBDIR, searchSubdirectories);
+        intent.putExtra(Keys.SEARCH_SINGLE_FILE, singleFile);
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
-    }
-
-    static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, CacheRomInfoService.class);
-        
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
     }
 
     static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,
@@ -408,14 +375,6 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, ExtractTexturesService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
-    }
-
     static void startDeleteFilesService(Context context, ServiceConnection serviceConnection,
                                             ArrayList<String> deletePath, ArrayList<String> deleteFilter)
     {
@@ -426,15 +385,6 @@ public class ActivityHelper
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
     }
-
-    static void stopDeleteFilesService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, DeleteFilesService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
-    }
-
     static void startCopyToSdService(Context context, ServiceConnection serviceConnection,
                                         File source, Uri destination)
     {
@@ -444,14 +394,6 @@ public class ActivityHelper
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
-    }
-
-    static void stopCopyToSdService(Context context, ServiceConnection serviceConnection)
-    {
-        Intent intent = new Intent(context, CopyToSdService.class);
-
-        context.unbindService(serviceConnection);
-        context.stopService(intent);
     }
 
     static void startCopyFromSdService(Context context, ServiceConnection serviceConnection,

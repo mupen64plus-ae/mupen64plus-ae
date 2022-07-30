@@ -1,52 +1,41 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2013 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: Paul Lamb, lioncash, littleguy77
  */
 package paulscode.android.mupen64plusae.util;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,25 +43,23 @@ import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.input.map.AxisMap;
 
-import static android.content.Context.WIFI_SERVICE;
-
 public final class DeviceUtil
 {
     /**
      * Gets the hardware information from /proc/cpuinfo.
-     * 
+     *
      * @return The hardware string.
      */
     public static String getCpuInfo()
     {
         // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
         String result = Utility.executeShellCommand( "/system/bin/cat", "/proc/cpuinfo" );
-        
+
         // Remove the serial number for privacy
         Pattern pattern = Pattern.compile( "^serial\\s*?:.*?$", Pattern.CASE_INSENSITIVE
                 | Pattern.MULTILINE );
         result = pattern.matcher( result ).replaceAll( "Serial : XXXX" );
-        
+
         // Additional information in android.os.Build may be useful
         result += "\n";
         result += "Board: " + Build.BOARD + "\n";
@@ -92,7 +79,11 @@ public final class DeviceUtil
         String deviceName = Settings.System.getString(resolver, "device_name");
 
         if (deviceName == null) {
-            deviceName = Settings.Secure.getString(resolver, "bluetooth_name");
+            try {
+                deviceName = Settings.Secure.getString(resolver, "bluetooth_name");
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
         }
 
         if (deviceName == null) {
@@ -101,7 +92,11 @@ public final class DeviceUtil
             if (manager != null) {
                 BluetoothAdapter adapter = manager.getAdapter();
                 if (adapter != null) {
-                    deviceName = adapter.getName();
+                    try {
+                        deviceName = adapter.getName();
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -136,6 +131,11 @@ public final class DeviceUtil
                        itself). we want to return the first non-loopback address. */
                     if (!inetAddress.isLoopbackAddress()) {
                         String ipAddr = inetAddress.getHostAddress();
+
+                        if (ipAddr == null) {
+                            continue;
+                        }
+
                         boolean isIPv4 = ipAddr.indexOf(':') < 0;
 
                         if (ipAddr.toLowerCase().contains("dummy")) {

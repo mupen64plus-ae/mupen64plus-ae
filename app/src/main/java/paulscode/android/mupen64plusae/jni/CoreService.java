@@ -25,19 +25,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -45,7 +40,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -59,10 +53,8 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
@@ -173,7 +165,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     private GameDataManager mGameDataManager = null;
 
-    private final CoreInterface mCoreInterface = new CoreInterface();
+    private static final CoreInterface mCoreInterface = new CoreInterface();
 
     /**
      * Last time we received an FPS changed callback. This is used to determine if the core
@@ -245,8 +237,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void resumeEmulator()
     {
+        Log.e(TAG, "resume emulator");
+
         if(!mIsShuttingDown)
         {
+            Log.e(TAG, "Actually resume emulator");
+
             mIsPaused = false;
             mCoreInterface.emuResume();
 
@@ -283,6 +279,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mIsShuttingDown = true;
 
             mCoreInterface.setVolume(0);
+            Log.e(TAG, "Autosave started");
         }
 
         //Resume to allow save to take place
@@ -474,16 +471,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.emuGameShark(pressed);
     }
 
-    void removeOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener )
-    {
-        mCoreInterface.removeOnFpsChangedListener( fpsListener );
-    }
-
-    void addOnFpsChangedListener(CoreInterface.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
-    {
-        mCoreInterface.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod, mCoreInterface );
-    }
-
     void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital )
     {
         if (!mUseRaphnetDevicesIfAvailable) {
@@ -601,13 +588,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             // Clean up the working directory
             FileUtil.deleteFolder(new File(workingDir));
 
+            // Cleanup previously dumped textures
+            FileUtil.deleteFolder(new File(mGlobalPrefs.textureDumpDir));
+
             // Copy game data from external storage
-            if (mGlobalPrefs.useExternalStorage) {
+            if (mGlobalPrefs.useExternalStorge) {
                 copyGameContentsFromSdCard();
             }
 
             FileUtil.makeDirs(workingDir);
             mCoreInterface.setWorkingPath(workingDir);
+            FileUtil.makeDirs(mGlobalPrefs.textureDumpDir);
 
             SparseArray<String> gbRomPaths = new SparseArray<>(4);
             SparseArray<String> gbRamPaths = new SparseArray<>(4);
@@ -675,28 +666,29 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mResolutionReset = false;
                 mCoreInterface.setResetResolution(false);
             }
-
             boolean loadingSuccess;
 
-            // Disk only games still require a ROM image, so use a dummy test ROM
-            if (isNdd) {
-                loadingSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
+            loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
+                    mGlobalPrefs.coreUserCacheDir,mResolutionReset) == 0;
 
-                InputStream inputStream ;
-                try {
-                    inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
-                    loadingSuccess = loadingSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
-                } catch (IOException e) {
-                    loadingSuccess = false;
-                }
-            } else {
-                if (TextUtils.isEmpty(mZipPath))
-                {
-                    loadingSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
-                }
-                else
-                {
-                    loadingSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+            // Disk only games still require a ROM image, so use a dummy test ROM
+            if (loadingSuccess) {
+                if (isNdd) {
+                    loadingSuccess = !TextUtils.isEmpty(mGlobalPrefs.japanIplPath);
+
+                    InputStream inputStream;
+                    try {
+                        inputStream = getApplicationContext().getAssets().open(mAppData.mupen64plus_test_rom_v64);
+                        loadingSuccess = loadingSuccess && mCoreInterface.openRom(getApplicationContext(), inputStream);
+                    } catch (IOException e) {
+                        loadingSuccess = false;
+                    }
+                } else {
+                    if (TextUtils.isEmpty(mZipPath)) {
+                        loadingSuccess = mCoreInterface.openRom(getApplicationContext(), mRomPath);
+                    } else {
+                        loadingSuccess = mCoreInterface.openZip(getApplicationContext(), mZipPath, mRomPath);
+                    }
                 }
             }
 
@@ -791,21 +783,17 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             // Clean up the working directory
             FileUtil.deleteFolder(new File(workingDir));
-            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
 
             if (loadingSuccess) {
                 mGameDataManager.clearOldest();
 
-                if (mGlobalPrefs.useExternalStorage) {
+                if (mGlobalPrefs.useExternalStorge) {
                     copyGameContentsToSdCard();
                 }
 
                 mCoreInterface.closeRom();
+                mCoreInterface.emuShutdown();
             }
-
-            mCoreInterface.emuShutdown();
-
-            mIsRunning = false;
 
             if(mListener != null && !mIsShuttingDown)
             {
@@ -839,11 +827,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (gameDataDir != null) {
                 DocumentFile gameDataDirSpecific = gameDataDir.findFile(mGamePrefs.getGameDataDirName());
 
-                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomGoodName);
-                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomHeaderName);
+                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomGoodName, false);
+                FileUtil.copyFilesThatStartWith(getApplicationContext(), gameDataDir, gameDataFolder, mRomHeaderName, false);
 
                 if (gameDataDirSpecific != null) {
-                    FileUtil.copyFolder(getApplicationContext(), gameDataDirSpecific, new File(mGamePrefs.getGameDataDir()));
+                    FileUtil.copyFolder(getApplicationContext(), gameDataDirSpecific, new File(mGamePrefs.getGameDataDir()), false);
                 }
             }
         }
@@ -1253,8 +1241,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         public void run() {
             long seconds = System.currentTimeMillis() / 1000L;
 
-            //Use a 5 second timeout to save before killing the core process
-            if(seconds - mLastFpsChangedTime > 15)
+            //Use a 60 second timeout to save before killing the core process
+            if(seconds - mLastFpsChangedTime > 60)
             {
                 Log.e(TAG, "Killing Core due to no response");
                 forceExit();
@@ -1271,5 +1259,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+
+        if (mListener != null) {
+            mListener.onFpsChanged(newValue);
+        }
     }
 }

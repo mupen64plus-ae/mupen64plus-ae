@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -133,8 +135,6 @@ public class NetplayServerSetupDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         Bundle args = getArguments();
 
         if (args == null) {
@@ -291,7 +291,11 @@ public class NetplayServerSetupDialog extends DialogFragment
         }
 
         if (mNetplayRoomService != null) {
-            SpannableString port1SpanString = new SpannableString(String.format(Locale.getDefault(), "%d", mNetplayRoomService.getServerPort()));
+            AppData appData = new AppData(mActivity);
+            GlobalPrefs globalPrefs = new GlobalPrefs(mActivity, appData);
+
+            int port = globalPrefs.useUpnpToMapNetplayPorts ? mNetplayRoomService.getServerPort() : globalPrefs.netplayRoomTcpPort;
+            SpannableString port1SpanString = new SpannableString(String.format(Locale.getDefault(), "%d", port));
             port1SpanString.setSpan(new UnderlineSpan(), 0, port1SpanString.length(), 0);
             port1SpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, port1SpanString.length(), 0);
 
@@ -327,7 +331,7 @@ public class NetplayServerSetupDialog extends DialogFragment
                     if (TextUtils.isEmpty(mNetplayCode)) {
                         Notifier.showToast(mActivity, R.string.netplay_codeRetrieveFailure);
                     }
-                }, 5000);
+                }, 20000);
 
             } else {
                 Log.e(TAG, "Invalid activity, expected OnClientDialogActionListener");
@@ -343,17 +347,6 @@ public class NetplayServerSetupDialog extends DialogFragment
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return dialog;
-    }
-
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
     }
 
     static class NetplayClient implements Comparable<NetplayClient>
@@ -424,7 +417,7 @@ public class NetplayServerSetupDialog extends DialogFragment
         if (mOnlineNetplayHandler == null && tcpPort1 != -1) {
             Thread onlineNetplayThread = new Thread(() -> {
                 try {
-                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("zurita.me"),
+                    mOnlineNetplayHandler = new OnlineNetplayHandler(InetAddress.getByName("np.zurita.me"),
                             37520, tcpPort1, -1,
                             new OnlineNetplayHandler.OnOnlineNetplayData() {
 

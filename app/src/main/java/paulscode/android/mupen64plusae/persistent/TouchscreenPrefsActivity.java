@@ -20,22 +20,24 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
-
 import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -73,6 +75,16 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     private static final int FEEDBACK_VIBRATE_TIME = 50;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
 
+    ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    importCustomSkin(fileUri);
+                }
+            });
+
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -104,9 +116,6 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
             vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         }
         mVibrator = vibrator;
-
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource(null, R.xml.preferences_touchscreen);
 
         mValidSkinFiles.add("analog-back.png");
         mValidSkinFiles.add("analog-fore.png");
@@ -171,6 +180,17 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     }
 
     @Override
+    protected String getSharedPrefsName() {
+        return null;
+    }
+
+    @Override
+    protected int getSharedPrefsId()
+    {
+        return R.xml.preferences_touchscreen;
+    }
+
+    @Override
     protected void onPause()
     {
         super.onPause();
@@ -200,7 +220,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         refreshViews();
 
         if(key.equals("touchscreenFeedback") && mGlobalPrefs.isTouchscreenFeedbackEnabled &&
-        mVibrator != null){
+                mVibrator != null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
             } else {
@@ -303,32 +323,29 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
             Uri fileUri = getUri(data);
 
             if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                if(importCustomSkin(fileUri)){
-                    mGlobalPrefs.putBoolean("isCustomTouchscreenSkin",true);
-                    mGlobalPrefs.putString("touchscreenSkin_v2","Custom");
-                    resetPreferences();
-                }
+                importCustomSkin(fileUri);
             }
         }
     }
 
-    private void startFilePickerForSingle(int requestCode, int permissions)
+    private void startFilePickerForSingle(int permissions)
     {
         AppData appData = new AppData( this );
+        Intent intent;
         if (appData.useLegacyFileBrowser) {
-            Intent intent = new Intent(this, LegacyFilePicker.class);
+            intent = new Intent(this, LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
-            startActivityForResult( intent, requestCode );
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.addFlags(permissions);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-            startActivityForResult(intent, requestCode);
         }
+
+        mLaunchFilePicker.launch(intent);
     }
 
     private Uri getUri(Intent data)

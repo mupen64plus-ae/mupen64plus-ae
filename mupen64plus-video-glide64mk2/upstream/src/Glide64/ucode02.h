@@ -230,10 +230,21 @@ static void uc2_culldl ()
 {
   wxUint16 vStart = (wxUint16)(rdp.cmd0 & 0xFFFF) >> 1;
   wxUint16 vEnd = (wxUint16)(rdp.cmd1 & 0xFFFF) >> 1;
+
+  // Protect against out of bounds access
+  vStart &= MAX_VTX - 1;
+  vEnd &= MAX_VTX - 1;
+
   wxUint32 cond = 0;
   FRDP ("uc2:culldl start: %d, end: %d\n", vStart, vEnd);
 
-  if (vEnd < vStart) return;
+  if (vEnd < vStart) {
+    // Aidyn Chronicles - The First Mage seems to pass parameters in reverse order.
+    const wxUint16 vTemp = vStart;
+    vStart = vEnd;
+    vEnd = vTemp;
+  }
+
   for (wxUint16 i=vStart; i<=vEnd; i++)
   {
   /*

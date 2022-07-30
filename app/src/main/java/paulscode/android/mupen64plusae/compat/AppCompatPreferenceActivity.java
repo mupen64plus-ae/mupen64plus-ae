@@ -20,33 +20,33 @@
  */
 package paulscode.android.mupen64plusae.compat;
 
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AlertDialog.Builder;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
 import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
+
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
 
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.View;
-
-public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
+public abstract class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
     public interface OnPreferenceDialogListener
     {
@@ -82,28 +82,9 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
             frag.setArguments(args);
             return frag;
         }
-        
-        @Override
-        public void onCreate(Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
-
-            setRetainInstance(true);
-        }
 
         @Override
-        public void onDestroyView()
-        {
-            // This is needed because of this:
-            // https://code.google.com/p/android/issues/detail?id=17423
-
-            if (getDialog() != null && getRetainInstance())
-                getDialog().setDismissMessage(null);
-            super.onDestroyView();
-        }
-
-        @Override
-        public void onPrepareDialogBuilder(Builder builder)
+        public void onPrepareDialogBuilder(@NonNull Builder builder)
         {
             super.onPrepareDialogBuilder(builder);
 
@@ -118,7 +99,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
         }
 
         @Override
-        public void onBindDialogView(View view)
+        public void onBindDialogView(@NonNull View view)
         {
             super.onBindDialogView(view);
 
@@ -165,6 +146,7 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
 
     private int mBottomInset = 0;
     private int mRightInset = 0;
+    private int mLeftInset = 0;
     private int mTopInset = 0;
 
     // Preference fragment
@@ -176,11 +158,21 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
 
         DisplayWrapper.drawBehindSystemBars(this);
 
-        if(savedInstanceState != null)
-        {
-            final FragmentManager fm = getSupportFragmentManager();
-            mPrefFrag = (AppCompatPreferenceFragment) fm.findFragmentById(android.R.id.content);   
+        mSharedPrefsName = getSharedPrefsName();
+        mPreferencesResId = getSharedPrefsId();
+
+        final FragmentManager fm = getSupportFragmentManager();
+
+
+        Fragment contentFragment = fm.findFragmentById(android.R.id.content);
+
+        if (!(contentFragment instanceof AppCompatPreferenceFragment)) {
+            mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
+            fm.beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+        } else {
+            mPrefFrag = (AppCompatPreferenceFragment) contentFragment;
         }
+
     }
 
     public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
@@ -195,7 +187,11 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
                 .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
         }
     }
-    
+
+    protected abstract String getSharedPrefsName();
+
+    protected abstract int getSharedPrefsId();
+
     public void resetPreferences()
     {        
         getSupportFragmentManager().beginTransaction().remove(mPrefFrag);
@@ -223,8 +219,8 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
     }
 
     @Override
-    public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat,
-        PreferenceScreen preferenceScreen)
+    public boolean onPreferenceStartScreen(@NonNull PreferenceFragmentCompat preferenceFragmentCompat,
+                                           PreferenceScreen preferenceScreen)
     {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         AppCompatPreferenceFragment fragment = AppCompatPreferenceFragment.newInstance(mSharedPrefsName,
@@ -272,15 +268,16 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
 
             mBottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
             mRightInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).right;
+            mLeftInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).left;
             mTopInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
 
-            view.setPadding(0, mTopInset, mRightInset, mBottomInset);
+            view.setPadding(mLeftInset, mTopInset, mRightInset, mBottomInset);
             
             return insets;
         });
 
         // Call this a second time since the callback only happens on the first screen
-        view.setPadding(0, mTopInset, mRightInset, mBottomInset);
+        view.setPadding(mLeftInset, mTopInset, mRightInset, mBottomInset);
     }
 
     protected Context getPreferenceManagerContext()

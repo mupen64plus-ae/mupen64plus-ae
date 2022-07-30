@@ -1,15 +1,11 @@
 #include "glsl_CombinerProgramUniformFactoryAccurate.h"
-
 #include <Config.h>
+#include <FrameBuffer.h>
 #include <Textures.h>
 #include <DisplayWindow.h>
 #include <Debugger.h>
 
 #include <cmath>
-
-#ifdef min
-#undef min
-#endif
 
 namespace {
 using namespace glsl;
@@ -18,17 +14,15 @@ class URasterInfo : public UniformGroup {
 public:
 	URasterInfo(GLuint _program) {
 		LocateUniform(uVertexOffset);
-		LocateUniform(uTexCoordOffset[0]);
-		LocateUniform(uTexCoordOffset[1]);
+		LocateUniform(uTexCoordOffset);
 		LocateUniform(uUseTexCoordBounds);
-		LocateUniform(uTexCoordBounds0);
-		LocateUniform(uTexCoordBounds1);
+		LocateUniform(uTexCoordBounds);
 	}
 
 	void update(bool _force) override {
 		const bool isNativeRes = config.frameBufferEmulation.nativeResFactor == 1 && config.video.multisampling == 0;
 		const bool isTexRect = dwnd().getDrawer().getDrawingState() == DrawingState::TexRect;
-		const bool useTexCoordBounds = isTexRect && !isNativeRes && config.graphics2D.enableTexCoordBounds;
+		const bool useTexCoordBounds = gDP.m_texCoordBounds.valid && !isNativeRes;
 		/* At rasterization stage, the N64 places samples on the top left of the fragment while OpenGL		*/
 		/* places them in the fragment center. As a result, a normal approach results in shifted texture	*/
 		/* coordinates. In native resolution, this difference can be negated by shifting vertices by 0.5.	*/
@@ -36,7 +30,7 @@ public:
 		/* effective. Still, an heuristic is applied to render texture rectangles as correctly as possible  */
 		/* in higher resolutions too. See issue #2324 for details. 											*/
 		const float vertexOffset = isNativeRes ? 0.5f : 0.0f;
-		float texCoordOffset[2][2] = { 0.0f, 0.0f };
+		float texCoordOffset[2] = { 0.0f, 0.0f };
 		if (isTexRect && !isNativeRes) {
 			float scale[2] = { 0.0f, 0.0f };
 			if (config.graphics2D.enableNativeResTexrects != 0 && gDP.otherMode.textureFilter != G_TF_POINT) {
@@ -45,74 +39,53 @@ public:
 				scale[0] = scale[1] = static_cast<float>(config.frameBufferEmulation.nativeResFactor);
 			}
 
-			for (int t = 0; t < 2; t++) {
-				const CachedTexture* _pTexture = textureCache().current[t];
-				if (_pTexture != nullptr) {
-					if (config.frameBufferEmulation.nativeResFactor != 0) {
-						if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
-							texCoordOffset[t][0] = -0.5f * gDP.lastTexRectInfo.dsdx;
-							texCoordOffset[t][1] = -0.5f * gDP.lastTexRectInfo.dtdy;
-						} else {
-							texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? -0.5f / scale[0] : -1.0f + 0.5f / scale[0]) * gDP.lastTexRectInfo.dsdx;
-							texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? -0.5f / scale[1] : -1.0f + 0.5f / scale[1]) * gDP.lastTexRectInfo.dtdy;
-						}
-					} else {
-						texCoordOffset[t][0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dsdx;
-						texCoordOffset[t][1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dtdy;
-						if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
-							texCoordOffset[t][0] -= 0.5f;
-							texCoordOffset[t][1] -= 0.5f;
-						}
-					}
+			if (config.frameBufferEmulation.nativeResFactor != 0) {
+				if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
+					texCoordOffset[0] = -0.5f * gDP.lastTexRectInfo.dsdx;
+					texCoordOffset[1] = -0.5f * gDP.lastTexRectInfo.dtdy;
+				} else {
+					texCoordOffset[0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? -0.5f / scale[0] : -1.0f + 0.5f / scale[0]) * gDP.lastTexRectInfo.dsdx;
+					texCoordOffset[1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? -0.5f / scale[1] : -1.0f + 0.5f / scale[1]) * gDP.lastTexRectInfo.dtdy;
+				}
+			} else {
+				texCoordOffset[0] = (gDP.lastTexRectInfo.dsdx >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dsdx;
+				texCoordOffset[1] = (gDP.lastTexRectInfo.dtdy >= 0.0f ? 0.0f : -1.0f) * gDP.lastTexRectInfo.dtdy;
+				if (gDP.otherMode.textureFilter != G_TF_POINT && gDP.otherMode.cycleType != G_CYC_COPY) {
+					texCoordOffset[0] -= 0.5f;
+					texCoordOffset[1] -= 0.5f;
 				}
 			}
 		}
 		/* Hack for framebuffer textures. See #519 and #2112 */
 		if ((config.generalEmulation.hacks & hack_fbTextureOffset) != 0) {
-			for (int t = 0; t < 2; t++) {
-				const CachedTexture* _pTexture = textureCache().current[t];
-				if (_pTexture != nullptr) {
-					if (gDP.otherMode.textureFilter != G_TF_POINT && _pTexture->frameBufferTexture != CachedTexture::fbNone) {
-						texCoordOffset[t][0] -= 1.0f;
-						texCoordOffset[t][1] -= 1.0f;
-					}
+			const CachedTexture* _pTexture = textureCache().current[0];
+			if (_pTexture != nullptr) {
+				if (gDP.otherMode.textureFilter != G_TF_POINT && _pTexture->frameBufferTexture != CachedTexture::fbNone) {
+					texCoordOffset[0] -= 1.0f;
+					texCoordOffset[1] -= 1.0f;
 				}
 			}
 		}
-		float tcbounds[2][4] = {};
+		float tcbounds[4] = {};
 		if (useTexCoordBounds) {
-			f32 uls, lrs, ult, lrt, S, T;
-			for (int t = 0; t < 2; t++) {
-				const CachedTexture * _pTexture = textureCache().current[t];
-				if (_pTexture != nullptr) {
-					S = _FIXED2FLOAT(gDP.lastTexRectInfo.s, 5);
-					T = _FIXED2FLOAT(gDP.lastTexRectInfo.t, 5);
-					uls = S + (ceilf(gDP.lastTexRectInfo.ulx) - gDP.lastTexRectInfo.ulx) * gDP.lastTexRectInfo.dsdx;
-					lrs = S + (ceilf(gDP.lastTexRectInfo.lrx) - gDP.lastTexRectInfo.ulx - 1.0f) * gDP.lastTexRectInfo.dsdx;
-					ult = T + (ceilf(gDP.lastTexRectInfo.uly) - gDP.lastTexRectInfo.uly) * gDP.lastTexRectInfo.dtdy;
-					lrt = T + (ceilf(gDP.lastTexRectInfo.lry) - gDP.lastTexRectInfo.uly - 1.0f) * gDP.lastTexRectInfo.dtdy;
-					tcbounds[t][0] = fmin(uls, lrs);
-					tcbounds[t][1] = fmin(ult, lrt);
-					tcbounds[t][2] = fmax(uls, lrs);
-					tcbounds[t][3] = fmax(ult, lrt);
-				}
-			}
+			tcbounds[0] = gDP.m_texCoordBounds.uls;
+			tcbounds[1] = gDP.m_texCoordBounds.ult;
+			tcbounds[2] = gDP.m_texCoordBounds.lrs;
+			tcbounds[3] = gDP.m_texCoordBounds.lrt;
 		}
 
 		uVertexOffset.set(vertexOffset, vertexOffset, _force);
-		uTexCoordOffset[0].set(texCoordOffset[0][0], texCoordOffset[0][1], _force);
-		uTexCoordOffset[1].set(texCoordOffset[1][0], texCoordOffset[1][1], _force);
+		uTexCoordOffset.set(texCoordOffset[0], texCoordOffset[1], _force);
 		uUseTexCoordBounds.set(useTexCoordBounds ? 1 : 0, _force);
-		uTexCoordBounds0.set(tcbounds[0], _force);
-		uTexCoordBounds1.set(tcbounds[1], _force);
+		uTexCoordBounds.set(tcbounds, _force);
+		gDP.m_texCoordBounds.valid = false;
 	}
 
 private:
 	fv2Uniform uVertexOffset;
-	fv2Uniform uTexCoordOffset[2];
+	fv2Uniform uTexCoordOffset;
 	iUniform uUseTexCoordBounds;
-	fv4Uniform uTexCoordBounds0;
-	fv4Uniform uTexCoordBounds1;
+	fv4Uniform uTexCoordBounds;
 };
 
 class UMipmap : public UniformGroup
@@ -122,26 +95,34 @@ public:
 		LocateUniform(uMinLod);
 		LocateUniform(uMaxTile);
 		LocateUniform(uEnableLod);
+		LocateUniform(uNoAtlasTex);
 		LocateUniform(uTextureDetail);
 	}
 
 	void update(bool _force) override
 	{
 		uMinLod.set(gDP.primColor.m, _force);
-		const CachedTexture * _pTexture = textureCache().current[1];
-		if (_pTexture == nullptr)
-			uMaxTile.set(gSP.texture.level, _force);
-		else
-			uMaxTile.set(_pTexture->max_level > 0 ? gSP.texture.level : std::min(gSP.texture.level, 1u), _force);
-		const int uCalcLOD = (gDP.otherMode.textureLOD == G_TL_LOD) ? 1 : 0;
-		uEnableLod.set(uCalcLOD, _force);
+		uEnableLod.set(gDP.otherMode.textureLOD == G_TL_LOD ? 1 : 0, _force);
 		uTextureDetail.set(gDP.otherMode.textureDetail, _force);
+
+		u32 maxTile = gSP.texture.level;
+		const CachedTexture * _pTexture = textureCache().current[1];
+		if (_pTexture != nullptr && _pTexture->max_level == 0)
+			maxTile = std::min(gSP.texture.level, 1u); // Hack for HD textures
+		uMaxTile.set(maxTile, _force);
+
+		bool bNoAtlasTex = (_pTexture != nullptr && _pTexture->bHDTexture) ||
+							maxTile == 0 ||
+							gDP.otherMode.textureLOD != G_TL_LOD ||
+							(gDP.otherMode.textureDetail != G_TD_DETAIL && maxTile == 1);
+		uNoAtlasTex.set(bNoAtlasTex ? 1 : 0, _force);
 	}
 
 private:
 	fUniform uMinLod;
 	iUniform uMaxTile;
 	iUniform uEnableLod;
+	iUniform uNoAtlasTex;
 	iUniform uTextureDetail;
 };
 
@@ -266,7 +247,7 @@ public:
 			if (!m_useTile[t])
 				continue;
 
-			const gDPTile * pTile = gSP.textureTile[t];
+			gDPTile * pTile = gSP.textureTile[t];
 			CachedTexture * pTexture = cache.current[t];
 			if (pTile == nullptr || pTexture == nullptr)
 				continue;
@@ -274,12 +255,26 @@ public:
 			aTexSize[t][0] = pTexture->width * pTexture->hdRatioS;
 			aTexSize[t][1] = pTexture->height * pTexture->hdRatioT;
 
-			aShiftScale[t][0] = calcShiftScaleS(*pTile);
-			aShiftScale[t][1] = calcShiftScaleT(*pTile);
 
 			if (pTile->textureMode != TEXTUREMODE_BGIMAGE && pTile->textureMode != TEXTUREMODE_FRAMEBUFFER_BG) {
-				aTexOffset[t][0] = pTile->fuls;
-				aTexOffset[t][1] = pTile->fult;
+				float fuls = pTile->fuls;
+				float fult = pTile->fult;
+				if (pTile->frameBufferAddress > 0u) {
+					FrameBuffer * pBuffer = frameBufferList().getBuffer(pTile->frameBufferAddress);
+					if (pBuffer != nullptr) {
+						if (pTile->masks > 0 && pTile->clamps == 0u)
+							fuls = float(pTile->uls % (1 << pTile->masks));
+						if (pTile->maskt > 0 && pTile->clampt == 0u)
+							fult = float(pTile->ult % (1 << pTile->maskt));
+					} else {
+						pTile->frameBufferAddress = 0u;
+					}
+				}
+				aTexOffset[t][0] = fuls;
+				aTexOffset[t][1] = fult;
+
+				aShiftScale[t][0] = calcShiftScaleS(*pTile);
+				aShiftScale[t][1] = calcShiftScaleT(*pTile);
 			}
 
 			aHDRatio[t][0] = pTexture->hdRatioS;

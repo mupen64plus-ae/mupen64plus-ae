@@ -4,6 +4,8 @@ import paulscode.android.mupen64plusae.MenuListView;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.MenuItem;
@@ -44,12 +46,11 @@ public class MenuDialogFragment extends DialogFragment
         return frag;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
-        final int dialogId = getArguments().getInt(STATE_DIALOG_ID);
+        final int dialogId = getArguments() != null ? getArguments().getInt(STATE_DIALOG_ID) : 0;
         String title = getArguments().getString(STATE_TITLE);
         final int menuResourceId = getArguments().getInt(STATE_MENU_RESOURCE_ID);
         MenuListView menuList = new MenuListView(getContext(), null);
@@ -77,16 +78,5 @@ public class MenuDialogFragment extends DialogFragment
         builder.setView(menuList);
 
         return builder.create();
-    }
-
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
     }
 }

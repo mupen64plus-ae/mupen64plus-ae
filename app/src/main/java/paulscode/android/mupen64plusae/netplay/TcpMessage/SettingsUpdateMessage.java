@@ -11,7 +11,7 @@ import paulscode.android.mupen64plusae.netplay.TcpServer;
 
 public class SettingsUpdateMessage implements TcpMessage {
 
-    private static final int MESSAGE_SIZE = 21 - 1;
+    private static final int MESSAGE_SIZE = 25 - 1;
     TcpServer mTcpServer;
     ByteBuffer mReceiveBuffer = ByteBuffer.allocate(MESSAGE_SIZE);
 
@@ -34,12 +34,14 @@ public class SettingsUpdateMessage implements TcpMessage {
             offset += bytesRead != -1 ? bytesRead : 0;
         }
         mSettings.mCountPerOp = mReceiveBuffer.getInt();
+        mSettings.mCountPerOpDenomPot = mReceiveBuffer.getInt();
         mSettings.mDisableExtraMem = mReceiveBuffer.getInt();
         mSettings.mSiDmADuration = mReceiveBuffer.getInt();
         mSettings.mEmuMode = mReceiveBuffer.getInt();
         mSettings.mNoCompiledJump = mReceiveBuffer.getInt();
 
         Log.i("Netplay", "GOT SETTINGS: count_per_op=" + mSettings.mCountPerOp +
+                " count_per_op_denom_pot=" + mSettings.mCountPerOpDenomPot +
                 " disable_extra_mem=" + mSettings.mDisableExtraMem +
                 " si_dma_duration=" + mSettings.mSiDmADuration +
                 " emu_mode=" + mSettings.mEmuMode +

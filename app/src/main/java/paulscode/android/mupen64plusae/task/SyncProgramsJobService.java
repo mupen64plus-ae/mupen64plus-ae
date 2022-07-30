@@ -273,7 +273,7 @@ public class SyncProgramsJobService extends JobService implements GalleryRefresh
     }
 
     @Override
-    public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems)
+    public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> allItems, List<GalleryItem> recentItems)
     {
         syncPrograms(mChannelId, recentItems);
         // Daisy chain listening for the next change to the channel.

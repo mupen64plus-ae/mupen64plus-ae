@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -21,13 +21,15 @@
 package paulscode.android.mupen64plusae.jni;
 
 
+import android.os.Build;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 /**
  * Calls made between the native input-android library and Java. Any function names changed here
  * should also be changed in the corresponding C code, and vice versa.
  * 
- * @see jni/mupen64plus-input-android/plugin.c
+ * @see mupen64plus-input-android/plugin.c
  * @see CoreInterface
  */
 public class NativeInput
@@ -64,24 +66,28 @@ public class NativeInput
      * @param controllerNum Controller index, in the range [0,3].
      * @param plugged Whether the controller is plugged in.
      * @param pakType The type of controller pak used.
-     * @see #PAK_TYPE_NONE
-     * @see #PAK_TYPE_MEMORY
-     * @see #PAK_TYPE_RUMBLE
      */
     static native void setConfig( int controllerNum, boolean plugged, int pakType );
     
     /**
-     * @deprecated This method should only be called by native code.
-     * @see jni/input-android/plugin.c
+     * This method should only be called by native code.
+     * @see mupen64plus-input-android/plugin.c
      */
+    @Deprecated
     static void rumble( int controllerNum, boolean active )
     {
         if( sVibrators[controllerNum] == null )
             return;
         
-        if( active )
-            sVibrators[controllerNum].vibrate( VIBRATE_TIMEOUT );
-        else
+        if( active ) {
+            sVibrators[controllerNum].vibrate(VIBRATE_TIMEOUT);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                sVibrators[controllerNum].vibrate(VibrationEffect.createOneShot(VIBRATE_TIMEOUT, 100));
+            } else {
+                sVibrators[controllerNum].vibrate(VIBRATE_TIMEOUT);
+            }
+        }else
             sVibrators[controllerNum].cancel();
     }
 

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
-    <height>715</height>
+    <width>597</width>
+    <height>661</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,11 +21,11 @@
     <normaloff>:/Icon.ico</normaloff>:/Icon.ico</iconset>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
+    <enum>QLayout::SetDefaultConstraint</enum>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
@@ -76,7 +76,24 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLabel" name="fullScreenResolutionLabel">
+                <widget class="QRadioButton" name="borderlessRadioButton">
+                 <property name="text">
+                  <string>Borderless window</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="borderlessComboBox"/>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="fullScreenRadioButton">
+                 <property name="text">
+                  <string>Full screen resolution:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="fullscreenResolutionLabel">
                  <property name="text">
                   <string>Full screen resolution:</string>
                  </property>
@@ -3644,17 +3661,39 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="fontPreviewNoteLabel">
-                 <property name="text">
-                  <string>The font preview only shows the regular style for the font family. Some styles like bold and italic display only in game.</string>
-                 </property>
-                 <property name="wordWrap">
+                <widget class="QPlainTextEdit" name="fontPreviewNotePlainTextEdit">
+                 <property name="readOnly">
                   <bool>true</bool>
+                 </property>
+                 <property name="plainText">
+                  <string>1. The font preview only shows the regular style for the font family. Some styles like bold and italic display only in game.
+
+2. If the desired font is not listed above:
+* navigate to your installation where GLideN64.ini is located, and open it with a text editor.
+* find your active profile [Default = User],
+* change the value of &quot;font\name=NAME.ttf&quot; to &quot;font\name=Full Name of Font.ttf&quot;
+   do not include the path to where the font is located before the name.
+* save the file.
+
+The font's full name can be found in Settings&gt;Personalization&gt;Fonts</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <spacer name="verticalSpacer_3">
@@ -4057,11 +4096,74 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fullScreenResolutionComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fullScreenRefreshRateLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fullScreenRefreshRateComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>borderlessComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="fixTexrectCoordsButtonGroup"/>
-  <buttongroup name="screenshotButtonGroup"/>
-  <buttongroup name="osdButtonGroup"/>
   <buttongroup name="factorButtonGroup"/>
+  <buttongroup name="fixTexrectCoordsButtonGroup"/>
+  <buttongroup name="osdButtonGroup"/>
  </buttongroups>
 </ui>

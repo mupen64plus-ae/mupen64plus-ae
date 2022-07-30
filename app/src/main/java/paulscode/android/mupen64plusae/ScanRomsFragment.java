@@ -23,13 +23,17 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -46,50 +50,57 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 {    
     //Progress dialog for ROM scan
     private ProgressDialog mProgress = null;
-    
-    //Service connection for the progress dialog
-    private ServiceConnection mServiceConnection;
-    
-    private AppData mAppData = null;
-    
-    private GlobalPrefs mGlobalPrefs = null;
 
-    private String mSearchUri = null;
-    private boolean mSearchZips = false;
-    private boolean mDownloadArt = false;
-    private boolean mClearGallery = false;
-    private boolean mSearchSubdirectories = false;
-    
-    private boolean mInProgress = false;
+    public static class DataViewModel extends ViewModel {
 
-    // this method is only called once for this fragment
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
+        public DataViewModel() { }
+
+        //Service connection for the progress dialog
+        LocalBinder mBinder = null;
+
+        AppData mAppData = null;
+
+        GlobalPrefs mGlobalPrefs = null;
+
+        String mSearchUri = null;
+        boolean mSearchZips = false;
+        boolean mDownloadArt = false;
+        boolean mClearGallery = false;
+        boolean mSearchSubdirectories = false;
+        boolean mSearchSingleFile = false;
+
+        boolean mInProgress = false;
+
+        boolean mScanRomsOnActivityCreated = false;
+        ScanRomsFragment mCurrentFragment = null;
     }
+    DataViewModel mViewModel;
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        
-        if(mInProgress)
-        {
-            try {
-                Activity activity = requireActivity();
-                CharSequence title = getString(R.string.scanning_title);
-                CharSequence message = getString(R.string.toast_pleaseWait);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
-                DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
-                String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
+        mViewModel = new ViewModelProvider(requireActivity()).get(ScanRomsFragment.DataViewModel.class);
+        mViewModel.mCurrentFragment = this;
 
-                mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
-                mProgress.show();
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
+        if (mViewModel.mScanRomsOnActivityCreated) {
+            mViewModel.mScanRomsOnActivityCreated = false;
+            ActuallyRefreshRoms(requireActivity());
+        } else if(mViewModel.mInProgress) {
+            Activity activity = requireActivity();
+            CharSequence title = getString(R.string.scanning_title);
+            CharSequence message = getString(R.string.toast_pleaseWait);
+
+            DocumentFile rootDocumentFile = mViewModel.mSearchSingleFile ? FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mSearchUri)) :
+                    FileUtil.getDocumentFileTree(activity, Uri.parse(mViewModel.mSearchUri));
+            String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
+
+            mProgress = new ProgressDialog(mProgress, activity, title, text, message, true);
+            mProgress.show();
+
+            if (mViewModel.mBinder != null) {
+                CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
+                cacheRomInfoService.SetCacheRomInfoListener(mViewModel.mCurrentFragment);
             }
         }
     }
@@ -98,39 +109,21 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     public void onDetach()
     {
         //This can be null if this fragment is never utilized and this will be called on shutdown
-        if(mProgress != null)
-        {
+        if(mProgress != null) {
             mProgress.dismiss();
         }
-        
         super.onDetach();
-    }
-    
-    @Override
-    public void onDestroy()
-    {        
-        if(mServiceConnection != null && mInProgress)
-        {
-            try {
-                ActivityHelper.stopCacheRomInfoService(requireActivity().getApplicationContext(), mServiceConnection);
-            } catch (java.lang.IllegalStateException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        super.onDestroy();
     }
 
     @Override
     public void onCacheRomInfoFinished()
     {
-
     }
     
     @Override
     public void onCacheRomInfoServiceDestroyed()
     {
-        mInProgress = false;
+        mViewModel.mInProgress = false;
 
         try {
             Activity activity = requireActivity();
@@ -149,47 +142,48 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     }
 
     public void refreshRoms( String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery,
-        boolean searchSubdirectories, AppData appData, GlobalPrefs globalPrefs )
+        boolean searchSubdirectories, boolean searchSingleFile, AppData appData, GlobalPrefs globalPrefs )
     {
-        this.mSearchUri = searchUri;
-        this.mSearchZips = searchZips;
-        this.mDownloadArt = downloadArt;
-        this.mClearGallery = clearGallery;
-        this.mSearchSubdirectories = searchSubdirectories;
-        this.mAppData = appData;
-        this.mGlobalPrefs = globalPrefs;
+        mViewModel.mSearchUri = searchUri;
+        mViewModel.mSearchZips = searchZips;
+        mViewModel.mDownloadArt = downloadArt;
+        mViewModel.mClearGallery = clearGallery;
+        mViewModel.mSearchSubdirectories = searchSubdirectories;
+        mViewModel.mSearchSingleFile = searchSingleFile;
+        mViewModel.mAppData = appData;
+        mViewModel.mGlobalPrefs = globalPrefs;
 
         try {
             ActuallyRefreshRoms(requireActivity());
         } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
+            Log.w("ScanRomsFragment", "Activity not created yet, scan later");
+            mViewModel.mScanRomsOnActivityCreated = true;
         }
     }
     
     private void ActuallyRefreshRoms(Activity activity)
     {
-        mInProgress = true;
+        mViewModel.mInProgress = true;
         
         CharSequence title = getString( R.string.scanning_title );
         CharSequence message = getString( R.string.toast_pleaseWait );
 
-        DocumentFile rootDocumentFile = FileUtil.getDocumentFileTree(activity, Uri.parse(mSearchUri));
+        DocumentFile rootDocumentFile = mViewModel.mSearchSingleFile ? FileUtil.getDocumentFileSingle(activity, Uri.parse(mViewModel.mSearchUri)) :
+                FileUtil.getDocumentFileTree(activity, Uri.parse(mViewModel.mSearchUri));
 
         String text = rootDocumentFile != null ? rootDocumentFile.getName() : "";
         mProgress = new ProgressDialog( mProgress, activity, title, text, message, true );
         mProgress.show();
         
         /* Defines callbacks for service binding, passed to bindService() */
-        mServiceConnection = new ServiceConnection() {
+        ServiceConnection serviceConnection = new ServiceConnection() {
             
             @Override
-            public void onServiceConnected(ComponentName className,
-                    IBinder service) {
-
+            public void onServiceConnected(ComponentName className, IBinder service) {
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                CacheRomInfoService cacheRomInfoService = binder.getService();
-                cacheRomInfoService.SetCacheRomInfoListener(ScanRomsFragment.this);
+                mViewModel.mBinder = (LocalBinder) service;
+                CacheRomInfoService cacheRomInfoService = mViewModel.mBinder.getService();
+                cacheRomInfoService.SetCacheRomInfoListener(mViewModel.mCurrentFragment);
             }
 
             @Override
@@ -199,14 +193,14 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         };
 
         // Asynchronously search for ROMs
-        ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
-            mSearchUri, mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCacheCfg,
-            mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
-            mDownloadArt, mClearGallery, mSearchSubdirectories);
+        ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), serviceConnection,
+                mViewModel.mSearchUri, mViewModel.mAppData.mupen64plus_ini, mViewModel.mGlobalPrefs.romInfoCacheCfg,
+                mViewModel.mGlobalPrefs.coverArtDir, mViewModel.mSearchZips,
+                mViewModel.mDownloadArt, mViewModel.mClearGallery, mViewModel.mSearchSubdirectories, mViewModel.mSearchSingleFile);
     }
     
     public boolean IsInProgress()
     {
-        return mInProgress;
+        return mViewModel.mInProgress;
     }
 }

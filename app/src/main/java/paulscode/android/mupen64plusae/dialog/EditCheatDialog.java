@@ -187,8 +187,6 @@ public class EditCheatDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         String title;
 
         if (getArguments() == null)  {
@@ -615,16 +613,5 @@ public class EditCheatDialog extends DialogFragment
         boolean isUnique = !cheatNames.contains(newName) || isSameName;
 
         return isNotEmpty && isLegal && isUnique;
-    }
-
-    @Override
-    public void onDestroyView()
-    {
-        // This is needed because of this:
-        // https://code.google.com/p/android/issues/detail?id=17423
-
-        if (getDialog() != null && getRetainInstance())
-            getDialog().setDismissMessage(null);
-        super.onDestroyView();
     }
 }

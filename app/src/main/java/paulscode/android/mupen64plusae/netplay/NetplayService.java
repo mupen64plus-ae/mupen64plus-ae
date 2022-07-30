@@ -26,6 +26,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.net.RouteInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -39,22 +45,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import org.fourthline.cling.android.AndroidUpnpServiceConfiguration;
-import org.fourthline.cling.binding.xml.ServiceDescriptorBinder;
-import org.fourthline.cling.binding.xml.UDA10ServiceDescriptorBinderImpl;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.registry.Registry;
-import org.fourthline.cling.registry.RegistryListener;
-import org.fourthline.cling.support.igd.PortMappingListener;
-import org.fourthline.cling.support.model.PortMapping;
+import com.sun.jna.Native;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.List;
 
-import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.UpnpServiceImpl;
-
-import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NetplayService extends Service
@@ -91,6 +92,8 @@ public class NetplayService extends Service
 
     public static final String SERVICE_QUIT = "M64P_NETPLAY_SERVICE_QUIT";
 
+    private GlobalPrefs mGlobalPrefs = null;
+
     private int mStartId;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
@@ -100,9 +103,12 @@ public class NetplayService extends Service
     private NetplayServiceListener mNetplayServiceListener;
     private boolean mPortMappingEnabled = false;
     private int mRoomPort = -1;
-    private UpnpService mUpnpService = null;
+    private final MiniUpnpLibrary mMiniUpnpLibrary = Native.load("miniupnp-bridge", MiniUpnpLibrary.class);
     private final Object mUpnpSyncObject = new Object();
     private boolean mShuttingDown = false;
+
+    // Set to true if we are currently using UPnP for port forwarding false if we are using NAT-PMP
+    private boolean mUsingUpnp = true;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -142,7 +148,11 @@ public class NetplayService extends Service
 
             Log.i(TAG, "Netplay service started");
 
-            mTcpServer.setPort(0);
+            AppData appData = new AppData(getApplicationContext());
+            mGlobalPrefs = new GlobalPrefs(getApplicationContext(), appData);
+            int port = mGlobalPrefs.useUpnpToMapNetplayPorts ? 0 : mGlobalPrefs.netplayServerUdpTcpPort;
+
+            mTcpServer.setPort(port);
             mNetplayServiceListener.onPortObtained(mTcpServer.getPort());
             mUdpServer.setPort(mTcpServer.getPort());
 
@@ -156,17 +166,13 @@ public class NetplayService extends Service
 
             synchronized (mUpnpSyncObject) {
                 mShuttingDown = true;
+                Log.i(TAG, "Shutting down ports");
 
-                if (mUpnpService != null) {
-                    mUpnpService.shutdown();
+                if (mUsingUpnp) {
+                    mMiniUpnpLibrary.UPnPShutdown();
+                } else {
+                    mMiniUpnpLibrary.NATPMP_Shutdown();
                 }
-            }
-
-            // Sleep for a bit to let the UPnP service close all the ports since it runs async
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -208,7 +214,7 @@ public class NetplayService extends Service
         Intent stopIntent = new Intent(this, NetplayService.class);
         stopIntent.setAction(SERVICE_QUIT);
         PendingIntent stopPendingIntent = PendingIntent.getService(this, 1, stopIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         //Show the notification
         initChannels(getApplicationContext());
@@ -281,13 +287,59 @@ public class NetplayService extends Service
 
     public void mapPorts(int roomPort)
     {
-        if (!mPortMappingEnabled) {
+        if (!mPortMappingEnabled && mGlobalPrefs.useUpnpToMapNetplayPorts) {
             mPortMappingEnabled = true;
             mRoomPort = roomPort;
 
             Thread mappingThread = new Thread(this::mapPorts);
             mappingThread.setDaemon(true);
             mappingThread.start();
+        }
+
+        if (!mGlobalPrefs.useUpnpToMapNetplayPorts) {
+            mNetplayServiceListener.onUpnpPortsObtained(mGlobalPrefs.netplayRoomTcpPort,
+                    mGlobalPrefs.netplayServerUdpTcpPort, mGlobalPrefs.netplayServerUdpTcpPort);
+        }
+    }
+
+    private boolean mapPortsUpnp()
+    {
+        mUsingUpnp = true;
+
+        mMiniUpnpLibrary.UPnPInit(2000);
+        boolean port1Success = mMiniUpnpLibrary.UPnP_Add("TCP","M64Plus Room", mRoomPort, mRoomPort);
+        boolean port2Success = mMiniUpnpLibrary.UPnP_Add("TCP", "M64Plus Core TCP", mTcpServer.getPort(), mTcpServer.getPort());
+        boolean port3Success = mMiniUpnpLibrary.UPnP_Add("UDP", "M64Plus Core UDP", mTcpServer.getPort(), mTcpServer.getPort());
+
+        return port1Success && port2Success && port3Success;
+    }
+
+    private boolean mapPortsNatPmp(int gatewayAddress)
+    {
+        mUsingUpnp = false;
+
+        mMiniUpnpLibrary.NATPMP_Init(gatewayAddress);
+        boolean port1Success = mMiniUpnpLibrary.NATPMP_Add("TCP", mRoomPort, mRoomPort);
+        boolean port2Success = mMiniUpnpLibrary.NATPMP_Add("TCP", mTcpServer.getPort(), mTcpServer.getPort());
+        boolean port3Success = mMiniUpnpLibrary.NATPMP_Add("UDP", mTcpServer.getPort(), mTcpServer.getPort());
+
+        return port1Success && port2Success && port3Success;
+    }
+
+    private void actuallyMapPorts(int gatewayAddress)
+    {
+        boolean success = mapPortsNatPmp(gatewayAddress);
+
+        if (!success) {
+            Log.w(TAG, "NAT-PMP port forwading failed, trying NAT-PMP");
+            success = mapPortsUpnp();
+        }
+
+        if (success) {
+            mNetplayServiceListener.onUpnpPortsObtained(mRoomPort, mTcpServer.getPort(), mTcpServer.getPort());
+        } else {
+            Log.w(TAG, "UPnP port forwading failed");
+            mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
         }
     }
 
@@ -297,53 +349,48 @@ public class NetplayService extends Service
             if (mShuttingDown) {
                 return;
             }
-            InetAddress wifiAddress = DeviceUtil.getIPAddress();
 
-            if (wifiAddress != null) {
-                String myIp = wifiAddress.getHostAddress();
+            final ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                //creates a port mapping configuration with the external/internal port, an internal host IP, the protocol and an optional description
-                PortMapping[] desiredMapping = new PortMapping[3];
-                desiredMapping[0] = new PortMapping(mRoomPort,myIp, PortMapping.Protocol.TCP, "M64Plus FZ port1");
-                desiredMapping[1] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.TCP, "M64Plus FZ port2");
-                desiredMapping[2] = new PortMapping(mTcpServer.getPort(), myIp, PortMapping.Protocol.UDP, "M64Plus FZ port2");
+            NetworkRequest.Builder builder = new NetworkRequest.Builder();
+            builder.addTransportType(NetworkCapabilities.TRANSPORT_ETHERNET);
+            builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
 
-                //starting the UPnP service
-                //UpnpService upnpService = new UpnpServiceImpl(new AndroidUpnpServiceConfiguration());
-                mUpnpService = new UpnpServiceImpl(
-                        new AndroidUpnpServiceConfiguration() {
-                            @Override
-                            public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
-                                return new UDA10ServiceDescriptorBinderImpl();
+            final NetworkRequest networkRequest = builder.build();
+
+            ConnectivityManager.NetworkCallback callback = new ConnectivityManager.NetworkCallback()
+            {
+                public void onAvailable(Network network)
+                {
+                    super.onAvailable(network);
+
+                    LinkProperties linkProperties = connectivityManager.getLinkProperties(network);
+                    List<RouteInfo> routes = linkProperties.getRoutes();
+                    for (RouteInfo route : routes) {
+                        if (route.getGateway() != null)
+                        {
+                            InetAddress gatewayAddress = route.getGateway();
+
+                            byte[] addressBytes = gatewayAddress.getAddress();
+                            ByteBuffer addressBuffer = ByteBuffer.allocate(addressBytes.length);
+                            addressBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                            addressBuffer.put(addressBytes);
+                            addressBuffer.position(0);
+                            int addressInt = addressBuffer.getInt();
+
+                            if (addressInt != 0) {
+                                Log.i(TAG, "Received gateway address=" + gatewayAddress);
+
+                                actuallyMapPorts(addressInt);
                             }
                         }
-                );
-
-                RegistryListener registryListener = new PortMappingListener(desiredMapping) {
-                    @Override
-                    public synchronized void deviceAdded(Registry registry, Device device) {
-                        super.deviceAdded(registry, device);
-                        mNetplayServiceListener.onUpnpPortsObtained(desiredMapping[0].getExternalPort().getValue().intValue(),
-                                desiredMapping[1].getExternalPort().getValue().intValue(),
-                                desiredMapping[2].getExternalPort().getValue().intValue());
                     }
 
-                    @Override
-                    protected void handleFailureMessage(String s) {
-                        super.handleFailureMessage(s);
-
-                        // Failure
-                        mNetplayServiceListener.onUpnpPortsObtained(-1, -1, -1);
-                    }
-                };
-
-
-                mUpnpService.getRegistry().addListener(registryListener);
-                mUpnpService.getControlPoint().search();
-
-                desiredMapping[0].getExternalPort();
-
-            }
+                    connectivityManager.unregisterNetworkCallback(this);
+                }
+            };
+            
+            connectivityManager.registerNetworkCallback(networkRequest, callback);
         }
     }
 

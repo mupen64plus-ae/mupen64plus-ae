@@ -238,7 +238,8 @@ public class GalleryItem
         {
             return mObjects.get( position ).isHeading ? 1 : 0;
         }
-        
+
+        @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position )
         {
             // Clear the now-offscreen bitmap to conserve memory, also cancel any tasks reading the bitmap

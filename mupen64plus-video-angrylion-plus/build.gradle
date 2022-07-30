@@ -19,6 +19,8 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
+        android {
+        }
     }
 
     externalNativeBuild {
@@ -32,8 +34,8 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DGLES=1", "-DENABLE_IPO=1", "-DANDROID=1", "-DCMAKE_BUILD_TYPE=Release", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
-                cppFlags "-fexceptions", "-ffast-math", "-ftree-vectorize"
-                cFlags "-ffast-math", "-ftree-vectorize"
+                cppFlags "-fexceptions", "-ffast-math", "-ftree-vectorize", "-O3", "-g"
+                cFlags "-ffast-math", "-ftree-vectorize", "-O3", "-g"
                 abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
@@ -44,13 +46,13 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
         }
     }
-
     packagingOptions {
-        exclude 'lib/x86/libc++_shared.so'
-        exclude 'lib/x86_64/libc++_shared.so'
-        exclude 'lib/armeabi-v7a/libc++_shared.so'
-        exclude 'lib/arm64-v8a/libc++_shared.so'
+        jniLibs {
+            excludes += ['lib/x86/libc++_shared.so', 'lib/x86_64/libc++_shared.so', 'lib/armeabi-v7a/libc++_shared.so', 'lib/arm64-v8a/libc++_shared.so']
+            useLegacyPackaging = true
+        }
     }
+
 }
 
 dependencies {

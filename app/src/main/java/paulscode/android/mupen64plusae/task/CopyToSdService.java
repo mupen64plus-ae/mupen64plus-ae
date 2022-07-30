@@ -35,7 +35,9 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.os.Process;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -44,11 +46,13 @@ import androidx.documentfile.provider.DocumentFile;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.ImportExportActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 
@@ -57,6 +61,7 @@ public class CopyToSdService extends Service
 {
     private File mSourcePath = null;
     private Uri mDestinationPath = null;
+    private boolean mCancelled = false;
     
     private int mStartId;
     private Looper mServiceLooper;
@@ -99,9 +104,9 @@ public class CopyToSdService extends Service
         
         @Override
         public void handleMessage(@NonNull Message msg) {
+            mCancelled = false;
 
             //Check for error conditions
-
             if( mSourcePath == null || mDestinationPath == null)
             {
                 if (mListener != null)
@@ -118,7 +123,7 @@ public class CopyToSdService extends Service
             if (destLocation != null) {
                 destLocation = FileUtil.createFolderIfNotPresent(getApplicationContext(), destLocation, AppData.applicationPath);
                 if (destLocation != null) {
-                    FileUtil.copyFolder(getApplicationContext(), mSourcePath, destLocation);
+                    copyFolder(getApplicationContext(), mSourcePath, destLocation);
                 }
             }
             
@@ -131,6 +136,87 @@ public class CopyToSdService extends Service
             // the service in the middle of handling another job
             stopSelf(msg.arg1);
         }
+    }
+
+    /**
+     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
+     * {@link Uri}.
+     *
+     * @param context     Context to use to read the URI
+     * @param src         Source file
+     * @param dest        Desired destination
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
+    public boolean copyFolder( Context context, File src, DocumentFile dest )
+    {
+        if( src == null)
+        {
+            Log.e( "copyFile", "src null" );
+            return false;
+        }
+
+        if(dest == null )
+        {
+            Log.e( "copyFile", "dest null" );
+            return false;
+        }
+
+        // Do this instead for directly accessible files
+        if(dest.getUri().getScheme().equals("file")) {
+
+            File destFile = new File(dest.getUri().getPath() + "/" + src.getName());
+            return FileUtil.copyFile( src, destFile, false );
+        }
+
+        boolean success = true;
+
+        if( src.isDirectory() )
+        {
+            DocumentFile childFile = FileUtil.createFolderIfNotPresent(context, dest, src.getName());
+
+            File[] files = src.listFiles();
+
+            if (files != null) {
+                for( File file : files ) {
+                    success = success && copyFolder( context, file, childFile );
+
+                    if (mCancelled) {
+                        break;
+                    }
+                }
+            }
+
+            return success;
+        }
+        else
+        {
+            DocumentFile targetFile = dest.findFile(src.getName());
+
+            if(targetFile == null){
+                targetFile = dest.createFile("", src.getName());
+            }
+
+            if (targetFile == null) {
+                return false;
+            }
+
+            try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(targetFile.getUri(), "w");
+                 FileChannel in = new FileInputStream(src).getChannel();
+                 FileChannel out = new FileOutputStream(parcelFileDescriptor.getFileDescriptor()).getChannel()) {
+
+                long bytesTransferred = 0;
+
+                while (bytesTransferred < in.size()) {
+                    bytesTransferred += in.transferTo(bytesTransferred, in.size(), out);
+                }
+
+            } catch (Exception|OutOfMemoryError e) {
+                Log.e("copyFile", "Exception: " + e.getMessage());
+            }
+        }
+
+        return true;
     }
 
     public void initChannels(Context context) {
@@ -217,10 +303,10 @@ public class CopyToSdService extends Service
     
     public void setCopyToSdListener(CopyFilesListener copyFilesListener)
     {
-        mListener = copyFilesListener;
-        mListener.GetProgressDialog().setOnCancelListener(() -> {
+        mCancelled = false;
 
-        });
+        mListener = copyFilesListener;
+        mListener.GetProgressDialog().setOnCancelListener(() -> mCancelled = true);
         
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
