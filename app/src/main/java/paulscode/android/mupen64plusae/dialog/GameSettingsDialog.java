@@ -91,6 +91,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static final String STATE_RECREATE_LATER = "STATE_RECREATE_LATER";
     private static final String STATE_SCREEN_ROTATING = "STATE_SCREEN_ROTATING";
     private static final String STATE_DELETE_EXTRA_DIALOG = "STATE_DELETE_EXTRA_DIALOG";
+    private static final String STATE_LAUNCHING_ACTIVITY = "STATE_LAUNCHING_ACTIVITY";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
     private static final int FEEDBACK_VIBRATE_TIME = 50;
@@ -354,7 +355,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mValidSkinFiles.add("buttonCu-mask.png");
         mValidSkinFiles.add("buttonCu.png");
         mValidSkinFiles.add("skin.ini");
-        mLaunchingActivity = false;
 
         Bundle args = getArguments();
         if( args != null ){
@@ -372,6 +372,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mScreenRotating = savedInstanceState.getBoolean(STATE_SCREEN_ROTATING, false);
             mDeleteExtraDialog = savedInstanceState.getInt(STATE_DELETE_EXTRA_DIALOG,0);
             mCurrentResourceId = savedInstanceState.getInt(STATE_CURRENT_RESOURCE_ID,0);
+            mLaunchingActivity = savedInstanceState.getBoolean(STATE_LAUNCHING_ACTIVITY, false);
         }
     }
 
@@ -382,6 +383,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         outState.putBoolean(STATE_SCREEN_ROTATING,mScreenRotating);
         outState.putInt(STATE_DELETE_EXTRA_DIALOG, mDeleteExtraDialog);
         outState.putInt(STATE_CURRENT_RESOURCE_ID,mCurrentResourceId);
+        outState.putBoolean(STATE_LAUNCHING_ACTIVITY, mLaunchingActivity);
         super.onSaveInstanceState(outState);
     }
 
@@ -465,6 +467,21 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     {
         Log.i(TAG,"onResume");
         super.onResume();
+
+        // Since merging in_game_settings with the master branch, this is needed
+        // if a resolution reset occurs and then the user tries to open an activity
+        // from the in game settings, the game will resume upon returning from that
+        // activity even though that's not desired, should be a temporary fix but may stay
+        if(!mGameActivity.getResolutionReset() && mLaunchingActivity) {
+            try{
+                Thread.sleep(500);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+            mGameActivity.onComplete("pauseEmulator");
+            mLaunchingActivity = false;
+        }
 
         mPrefs.registerOnSharedPreferenceChangeListener(this);
     }
