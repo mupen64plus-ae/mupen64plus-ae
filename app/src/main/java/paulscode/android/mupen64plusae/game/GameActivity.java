@@ -158,6 +158,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private SensorController mSensorController;
     private long mLastTouchTime;
     private Handler mHandler;
+    private final Object mSaveLock = new Object();
 
     // args data
     private boolean mShouldExit = false;
@@ -646,9 +647,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             // locking to load data properly
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
-            runOnUiThread(() -> {
-                gameSettingsDialogPrompt();
-            });
+            runOnUiThread(this::gameSettingsDialogPrompt);
         }
     }
 
@@ -936,9 +935,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mGameSidebar.setVisibility(View.GONE);
 
 
-            runOnUiThread(() -> {
-                gameSettingsDialogPrompt();
-            });
+            runOnUiThread(this::gameSettingsDialogPrompt);
         } else if (menuItem.getItemId() ==  R.id.menuItem_reset) {
             mCoreFragment.restart();
         }
@@ -1047,12 +1044,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             return;
 
         if(mCoreFragment.getEmuMode() == 1){
-            while(mCoreFragment.getEmuModeInit() == 0){
-                try{
-                    Thread.sleep(100);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
+            synchronized (mSaveLock) {
+                while (mCoreFragment.getEmuModeInit() == 0) {
+                    try {
+                        mSaveLock.wait(100);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1067,17 +1065,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             // no sleep on ui thread
             final Thread handler = new Thread(() -> {
-                while (mCoreFragment.checkOnStateCallbackListeners()) {
-                    try {
-                        Log.i(TAG, "Sleeping tryingcount = " + safeSaveTryingCount);
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        Log.i(TAG, "Can't sleep");
+                synchronized (mSaveLock) {
+                    while (mCoreFragment.checkOnStateCallbackListeners()) {
+                        try {
+                            Log.i(TAG, "Sleeping tryingcount = " + safeSaveTryingCount);
+                            mSaveLock.wait(1000);
+                        } catch (Exception e) {
+                            Log.i(TAG, "Can't sleep");
+                        }
+                        if (safeSaveTryingCount > 5)
+                            break;
+                        safeSaveTryingCount++;
+                        // do something after 1000ms
                     }
-                    if (safeSaveTryingCount > 5)
-                        break;
-                    safeSaveTryingCount++;
-                    // do something after 1000ms
                 }
                 safeSaveTryingCount = 8;
             });
@@ -1085,14 +1085,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             handler.start();
 
             while(safeSaveTryingCount != 8) {
-                try {
-                    Thread.sleep(100);
-                    if(!saveNotifier && safeSaveTryingCount != 8){
-                        saveNotifier = true;
-                        runOnUiThread(() -> Notifier.showToast( getApplicationContext(), R.string.toast_savingFile,"to reset properly"));
+                synchronized (mSaveLock) {
+                    try {
+                        mSaveLock.wait(100);
+                        if (!saveNotifier && safeSaveTryingCount != 8) {
+                            saveNotifier = true;
+                            runOnUiThread(() -> Notifier.showToast(getApplicationContext(), R.string.toast_savingFile, "to reset properly"));
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "Can't sleep");
                     }
-                } catch (Exception e) {
-                    Log.i(TAG, "Can't sleep");
                 }
             }
             safeSaveTryingCount = 0;
@@ -1952,7 +1954,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
         if(gameSettings == null)
             return;
-        final PlayerMapPreference playerPref = (PlayerMapPreference) gameSettings.findPlayerMapPreferenceSettings();
+        final PlayerMapPreference playerPref = gameSettings.findPlayerMapPreferenceSettings();
         if (playerPref == null)
             return;
         playerPref.onDialogClosed(hardwareId, which);

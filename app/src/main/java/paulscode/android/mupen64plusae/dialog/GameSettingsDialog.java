@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae.dialog;
 
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.AUDIO_SAMPLING_TYPE;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -115,8 +116,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     // Preferences
 
     private static SharedPreferences mPrefs;
-    private static String mSharedPrefsName = null;
-    private static int mPreferencesResId;
+    private static final String mSharedPrefsName = null;
+    private static final int mPreferencesResId = 0;
 
     public interface OnGameSettingsDialogListener {
         void settingsViewReset();
@@ -409,7 +410,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 final PlayerMapPreference playerPref = (PlayerMapPreference) preference;
                 if (playerPref != null) {
                     playerPref.setValue(mGameActivity.getGamePrefs().playerMap.serialize());
-                    playerPref.dismissFragments((FragmentActivity) getActivity());// causing issues
+                    playerPref.dismissFragments(getActivity());// causing issues
                 }
             }
             catch(Exception e){
@@ -482,7 +483,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
     public void OnPreferenceScreenChange(String key)
     {
-        mCategoryPasses = (PreferenceGroup) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference( CATEGORY_PASSES );
+        mCategoryPasses = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference( CATEGORY_PASSES );
 
         if (mCategoryPasses == null) {
             resetPreferences();
@@ -499,7 +500,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
                 mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4] == null)
             return null;
-        return (PlayerMapPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
+        return mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
     }
 
     private void setPreference(String preferenceString, boolean value){
@@ -526,16 +527,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     public boolean keyboardOpen(){
         if(!mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset"))
             return false;
-        if(mImm != null && mImm.isActive()) {
-            return true;
-        }
-        return false;
+        return mImm != null && mImm.isActive();
     }
 
     private void disableSettingsThatReset(int currentResource){
-        boolean setBool = true;
-        if(mGameActivity.getGlobalPrefs().maxAutoSaves == 0)
-            setBool = false;
+        boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0;
 
         switch(currentResource) {
             // Display
@@ -614,7 +610,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 setPreference("inputBackMappable",false);
                 setPreference("inputMenuMappable",false);
 
-                final PlayerMapPreference playerPref = (PlayerMapPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
+                final PlayerMapPreference playerPref = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[4].findPreference(GlobalPrefs.PLAYER_MAP);
                 if (playerPref != null)
                 {
                     // Check null in case preference has been removed
@@ -769,8 +765,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private void refreshShaderViews(){
         // Refresh the preferences object
         refreshViews();
-        PreferenceGroup screenRoot = (PreferenceGroup) this.mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(SCREEN_ROOT);
-        PreferenceGroup categoryPasses = (PreferenceGroup) this.mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(CATEGORY_PASSES);
+        PreferenceGroup screenRoot = this.mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(SCREEN_ROOT);
+        PreferenceGroup categoryPasses = this.mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(CATEGORY_PASSES);
 
         if (mCategoryPasses != null) {
             mCategoryPasses.removeAll();
@@ -796,7 +792,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mGameActivity.onComplete("resetAppData");
     }
 
-    private void startFilePickerForSingle(int permissions)
+    private void startFilePickerForSingle()
     {
         mLaunchingActivity = true;
         AppData appData = new AppData( mGameActivity.getApplicationContext() );
@@ -809,7 +805,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
-            intent.addFlags(permissions);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
         }
@@ -862,7 +858,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         final String key = preference.getKey();
 
         if (ACTION_IMPORT_TOUCHSCREEN_GRAPHICS.equals(key)) {
-            startFilePickerForSingle(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startFilePickerForSingle();
         }
         else if (GlobalPrefs.PATH_GAME_SAVES.equals(key)) {
             startFolderPicker();
@@ -1125,7 +1121,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
             if(!mGameActivity.getDialogFragmentKey().equals("")) {
                 Log.i("GameSettingsDialogPref","DialogFragmentKey = "+mGameActivity.getDialogFragmentKey());
-                DialogFragment fragment = null;
+                DialogFragment fragment;
                 Preference preference = findPreference(mGameActivity.getDialogFragmentKey());
 
                 if(mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset")) {
@@ -1153,16 +1149,17 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
                         playerPref.setValue( mGameActivity.getGamePrefs().playerMap.serialize() );
                         playerPref.rePromptPlayer(mGameActivity.getAssociatedDialogFragment(),
-                                (FragmentActivity) getActivity());// change 1 with int of whichever we change
+                                getActivity());// change 1 with int of whichever we change
                     }
                 }
             }
         }
 
+        @SuppressLint("NonConstantResourceId")
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
             mGameActivity.setDialogFragmentKey(preference.getKey());
-            DialogFragment fragment = null;
+            DialogFragment fragment;
             switch(resourceId){
                 case R.xml.preferences_display: default:
                     fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new DisplayPrefsActivity()).
@@ -1194,7 +1191,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             else super.onDisplayPreferenceDialog(preference);
         }
 
-        private void startFilePickerForSingle(int permissions)
+        private void startFilePickerForSingle()
         {
             gameSettingsDialog.mLaunchingActivity = true;
             AppData appData = new AppData( requireActivity());
@@ -1207,7 +1204,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                intent.addFlags(permissions);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             }
@@ -1259,11 +1256,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             final String key = preference.getKey();
 
             if (ACTION_IMPORT_TOUCHSCREEN_GRAPHICS.equals(key)) {
-                startFilePickerForSingle(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startFilePickerForSingle();
             }
             else if (ADD_PREFERENCE.equals(key)) {
                 if(gameSettingsDialog.mCategoryPasses == null){
-                    gameSettingsDialog.mCategoryPasses = (PreferenceGroup) findPreference( CATEGORY_PASSES );
+                    gameSettingsDialog.mCategoryPasses = findPreference( CATEGORY_PASSES );
                 }
                 ArrayList<ShaderLoader> shaderPasses = mGameActivity.getGlobalPrefs().getShaderPasses();
                 if (shaderPasses.size() < MAX_SHADER_PASSES) {
@@ -1298,9 +1295,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         private void disableSettingsThatReset(int currentResource){
-            boolean setBool = true;
-            if(mGameActivity.getGlobalPrefs().maxAutoSaves == 0)
-                setBool = false;
+            boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0;
 
             switch(currentResource){
                 // Display
@@ -1378,7 +1373,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     setPreference("inputBackMappable",false);
                     setPreference("inputMenuMappable",false);
 
-                    final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
+                    final PlayerMapPreference playerPref = findPreference(GlobalPrefs.PLAYER_MAP);
                     if (playerPref != null)
                     {
                         // Check null in case preference has been removed
@@ -1548,7 +1543,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         @Override
-        public void onPrepareDialogBuilder(AlertDialog.Builder builder)
+        public void onPrepareDialogBuilder(@NonNull AlertDialog.Builder builder)
         {
             super.onPrepareDialogBuilder(builder);
 
@@ -1563,7 +1558,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         @Override
-        public void onBindDialogView(View view)
+        public void onBindDialogView(@NonNull View view)
         {
             super.onBindDialogView(view);
 
@@ -1605,7 +1600,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     }
 
     @Override
-    public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat,
+    public boolean onPreferenceStartScreen(@NonNull PreferenceFragmentCompat preferenceFragmentCompat,
                                            PreferenceScreen preferenceScreen)
     {
         FragmentTransaction ft = getParentFragmentManager().beginTransaction();

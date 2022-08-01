@@ -200,7 +200,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                             // Waiting for service to quit
                             try {
-                                Thread.sleep(1000);
+                                Thread.sleep(1500);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -225,9 +225,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                                     isNetplayServer);
                             return;
                         }
-                        else{
+//                        else{
                             // Reset preferences
-                        }
+//                        }
                     }
                     else
                         mGameRunning = false;
