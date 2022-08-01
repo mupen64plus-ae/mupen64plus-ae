@@ -172,8 +172,10 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
     ticksInitialize();
     if( config.autoFrameSkip )
         frameSkipper.setSkips( FrameSkipper::AUTO, config.maxFrameSkip );
-    else
-        frameSkipper.setSkips( FrameSkipper::MANUAL, config.maxFrameSkip );
+    else {
+        frameSkipper.setSkips(FrameSkipper::MANUAL, config.maxFrameSkip);
+        l_resolutionResetGlnCounter = 3-config.maxFrameSkip;// 0 - config.maxFrameSkip;
+    }
 
     OGL_Start();
     return 1;

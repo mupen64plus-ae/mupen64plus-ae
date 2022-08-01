@@ -95,6 +95,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
          * Called when the service has been destroyed
          */
         void onCoreServiceDestroyed();
+
+        /**
+         * Called when the frame rate has changed.
+         *
+         * @param newValue The new FPS value.
+         */
+        void onFpsChanged( int newValue );
     }
 
     interface LoadingDataListener
@@ -592,7 +599,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             FileUtil.deleteFolder(new File(mGlobalPrefs.textureDumpDir));
 
             // Copy game data from external storage
-            if (mGlobalPrefs.useExternalStorge) {
+            if (mGlobalPrefs.useExternalStorage) {
                 copyGameContentsFromSdCard();
             }
 
@@ -656,8 +663,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mCoreInterface.setDdDiskPath(getApplicationContext(), mRomHeaderName, mGamePrefs.diskPath64Dd);
             }
 
-            mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
-                    mGlobalPrefs.coreUserCacheDir, mResolutionReset);
+            boolean loadingSuccess;
+
+            loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
+                    mGlobalPrefs.coreUserCacheDir,mResolutionReset) == 0;
 
             if(mResolutionReset || mSettingsReset)
                 mLoadLatestAutoSave = true;
@@ -666,11 +675,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 mResolutionReset = false;
                 mCoreInterface.setResetResolution(false);
             }
-            boolean loadingSuccess;
-
-            loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
-                    mGlobalPrefs.coreUserCacheDir,mResolutionReset) == 0;
-
             // Disk only games still require a ROM image, so use a dummy test ROM
             if (loadingSuccess) {
                 if (isNdd) {
@@ -787,7 +791,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (loadingSuccess) {
                 mGameDataManager.clearOldest();
 
-                if (mGlobalPrefs.useExternalStorge) {
+                if (mGlobalPrefs.useExternalStorage) {
                     copyGameContentsToSdCard();
                 }
 
@@ -1261,7 +1265,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
 
         if (mListener != null) {
-            mListener.onFpsChanged(newValue);
+//            mListener.onFpsChanged(newValue);
         }
     }
 }

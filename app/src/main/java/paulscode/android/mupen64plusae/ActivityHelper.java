@@ -46,6 +46,7 @@ import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.NetplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;

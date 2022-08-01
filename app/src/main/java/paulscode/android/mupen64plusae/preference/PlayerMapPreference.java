@@ -178,7 +178,7 @@ public class PlayerMapPreference extends DialogPreference implements
         if(mAssociatedActivity != null) {
             GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
                     getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
-            if (gameSettings != null) {
+            if (gameSettings != null && mSelectedPlayer != 0) {
                 gameSettings.playerMapDialogCheck(mSelectedPlayer);
             }
         }

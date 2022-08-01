@@ -82,8 +82,6 @@ public class PromptInputCodeDialog extends DialogFragment
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        setRetainInstance(true);
-
         final String title = getArguments().getString(STATE_TITLE);
         final String message = getArguments().getString(STATE_MESSAGE);
         final String neutralButtonText = getArguments().getString(STATE_NEUTRAL_BUTTON_TEXT);
@@ -230,7 +228,7 @@ public class PromptInputCodeDialog extends DialogFragment
         // This is needed because of this:
         // https://code.google.com/p/android/issues/detail?id=17423
 
-        if (getDialog() != null && getRetainInstance())
+        if (getDialog() != null)
             getDialog().setDismissMessage(null);
         super.onDestroyView();
     }

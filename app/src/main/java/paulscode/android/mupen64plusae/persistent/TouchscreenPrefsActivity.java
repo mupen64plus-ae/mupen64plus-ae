@@ -81,7 +81,11 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
                 Intent data = result.getData();
                 if (result.getResultCode() == Activity.RESULT_OK && data != null) {
                     Uri fileUri = getUri(data);
-                    importCustomSkin(fileUri);
+                    if(importCustomSkin(fileUri)){
+                        mGlobalPrefs.putBoolean("isCustomTouchscreenSkin",true);
+                        mGlobalPrefs.putString("touchscreenSkin_v2","Custom");
+                        resetPreferences();
+                    }
                 }
             });
 
@@ -98,6 +102,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -213,6 +218,15 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         PrefUtil.setOnPreferenceClickListener(this, ACTION_IMPORT_TOUCHSCREEN_GRAPHICS, this);
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
+        } else {
+            mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
+        }
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
@@ -221,11 +235,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
 
         if(key.equals("touchscreenFeedback") && mGlobalPrefs.isTouchscreenFeedbackEnabled &&
                 mVibrator != null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
-            } else {
-                mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
-            }
+            vibrate();
         }
     }
 
@@ -246,7 +256,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         final String key = preference.getKey();
 
         if (ACTION_IMPORT_TOUCHSCREEN_GRAPHICS.equals(key)) {
-            startFilePickerForSingle(PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startFilePickerForSingle(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         } else {// Let Android handle all other preference clicks
             return false;
         }
@@ -313,19 +323,6 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         FileUtil.makeDirs(mGlobalPrefs.touchscreenCustomSkinsDir);
         FileUtil.unzipAll(getApplicationContext(), uri, mGlobalPrefs.touchscreenCustomSkinsDir);
         return true;
-    }
-
-    @Override
-    protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && data != null) {
-            Uri fileUri = getUri(data);
-
-            if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                importCustomSkin(fileUri);
-            }
-        }
     }
 
     private void startFilePickerForSingle(int permissions)

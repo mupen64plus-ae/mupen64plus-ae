@@ -36,7 +36,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -838,6 +837,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    public Vibrator getVibrator(){
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        }
+
+        // if statement?
+        if (vibrator != null) {
+            mCoreFragment.registerVibrator(1, vibrator);
+        }
+        return vibrator;
+    }
+
     private void gameSettingsDialogPrompt(){
         final FragmentManager fm = this.getSupportFragmentManager();
         GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
@@ -1143,20 +1159,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private void resetMoreTouchscreenControls(){
         resetAppData();
         // By default, send Player 1 rumbles through phone vibrator
-        Vibrator vibrator;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-            vibrator = manager.getDefaultVibrator();
-        } else {
-            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        }
+//        Vibrator vibrator;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+//            vibrator = manager.getDefaultVibrator();
+//        } else {
+//            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+//        }
+        Vibrator vibrator = getVibrator();
         // Create the touchscreen controller
         mTouchscreenController = new TouchController(mCoreFragment, mTouchscreenMap,
                 mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
                 mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenNotAutoHoldables,
                 mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis,
                 mGamePrefs.isTouchscreenAnalogRelative );
-        mDrawerLayout.setTouchMap( mTouchscreenMap );
+//        mDrawerLayout.setTouchMap( mTouchscreenMap );
         resetAppData();
         resetTouchscreenControls();
     }
@@ -1310,10 +1327,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 break;
             case "inGameMenu":
                 resetAppData();
-                mDrawerLayout.setSwipeGestureEnabled(mGlobalPrefs.inGameMenuIsSwipeGesture);
+                if(mGlobalPrefs.inGameMenuIsSwipeGesture)
+                {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                }
+                else
+                {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                }
                 break;
             case "allEmulatedControllersPlugged": case "inputShareController": case "autoPlayerMapping":
-            case "holdButtonForMenu": case "useRaphnetAdapter":
+            case "holdButtonForMenu": case "useRaphnetAdapter": case "initiateControllers":
                 //reset core service
                 resetAppData();
                 mCoreFragment.resetCoreServiceAppData();
@@ -1325,6 +1349,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 break;
             case "settingsRecreate":
                 mSettingsRecreate = true;
+                break;
+            case "openDrawerState":
+                mDrawerOpenState = false;
                 break;
             case "gameSettingDialogClosed":
                 // Checking orientation lock
@@ -1386,16 +1413,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode,resultCode,data);
-
-        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
     public void onRestart(boolean shouldRestart)
     {
         if(shouldRestart)
@@ -1418,24 +1435,24 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onCoreServiceStarted()
     {
         Log.i(TAG, "onCoreServiceStarted");
 
         if(mCoreFragment == null) return;
 
-        Vibrator vibrator;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-            vibrator = manager.getDefaultVibrator();
-        } else {
-            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        }
-
-        if (vibrator != null) {
-            mCoreFragment.registerVibrator(1, vibrator);
-        }
+//        Vibrator vibrator;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+//            vibrator = manager.getDefaultVibrator();
+//        } else {
+//            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+//        }
+//
+//        if (vibrator != null) {
+//            mCoreFragment.registerVibrator(1, vibrator);
+//        }
+        getVibrator();
 
         ReloadAllMenus();
 
@@ -1707,17 +1724,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @SuppressLint( "InlinedApi" )
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private void initControllers( View inputSource )
     {
         // By default, send Player 1 rumbles through phone vibrator
-        Vibrator vibrator;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-            vibrator = manager.getDefaultVibrator();
-        } else {
-            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        }
+//        Vibrator vibrator;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+//            vibrator = manager.getDefaultVibrator();
+//        } else {
+//            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+//        }
+        Vibrator vibrator = getVibrator();
 
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
@@ -1741,6 +1758,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis,
                     mGamePrefs.isTouchscreenAnalogRelative );
             inputSource.setOnTouchListener(this);
+//            mDrawerLayout.setTouchMap( mTouchscreenMap );
         }
 
         // Popup the multi-player dialog if necessary and abort if any players are unassigned
@@ -1990,6 +2008,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public boolean getResolutionReset(){
         return mResolutionReset;
     }
+
+    public AppData getAppData() { return mAppData; }
 
     public GlobalPrefs getGlobalPrefs(){
         return mGlobalPrefs;

@@ -1,7 +1,5 @@
 package paulscode.android.mupen64plusae.dialog;
 
-import static android.app.Activity.RESULT_OK;
-
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.AUDIO_SAMPLING_TYPE;
 
 import android.app.Activity;
@@ -15,6 +13,9 @@ import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.preference.EditTextPreference;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,7 +27,6 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -56,7 +56,6 @@ import java.util.zip.ZipInputStream;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment;
-import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
@@ -87,13 +86,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static final String STATE_CURRENT_RESOURCE_ID = "STATE_CURRENT_RESOURCE_ID";
     private static final String STATE_SHARED_PREFS_NAME = "STATE_SHARED_PREFS_NAME";
     private static final String STATE_RESOURCE_ID = "STATE_RESOURCE_ID";
-    private static final String STATE_PREFERENCE_FRAGMENT = "STATE_PREFERENCE_FRAGMENT";
     private static final String STATE_SETTINGS_RESET = "STATE_SETTINGS_RESET";
     private static final String STATE_RECREATE_LATER = "STATE_RECREATE_LATER";
     private static final String STATE_SCREEN_ROTATING = "STATE_SCREEN_ROTATING";
     private static final String STATE_DELETE_EXTRA_DIALOG = "STATE_DELETE_EXTRA_DIALOG";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
-    private static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
     private static final int FEEDBACK_VIBRATE_TIME = 50;
     private static int mCurrentResourceId = 0;
@@ -128,6 +125,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         Context getApplicationContext();
         Object getSystemService(String name);
         FragmentManager getSupportFragmentManager();
+        AppData getAppData();
         GlobalPrefs getGlobalPrefs();
         GamePrefs getGamePrefs();
         boolean isChangingConfigurations();
@@ -141,6 +139,64 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
     private static OnGameSettingsDialogListener mGameActivity;
 
+    /* Activity Results */
+    ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+
+                    if(importCustomSkin(fileUri)){
+                        mGameActivity.getGlobalPrefs().putBoolean("isCustomTouchscreenSkin",true);
+                        mGameActivity.getGlobalPrefs().putString("touchscreenSkin_v2","Custom");
+                    }
+                    mGameActivity.onComplete("resetTouchscreenController");
+                    mGameActivity.recreateSurface();
+                    recreateAndPause();
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchGameDataFolderPicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+
+                    // The result data contains a URI for the document or directory that
+                    // the user selected.
+                    Uri fileUri = data.getData();
+                    if (fileUri != null) {
+                        if (!mGameActivity.getAppData().useLegacyFileBrowser) {
+                            requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        }
+                        mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
+                        mGameActivity.onComplete("resetAppData");
+                        mGameActivity.onComplete("gameDataStoragePath");
+                        recreateAndPause();
+                    }
+                }
+            });
+
+    ActivityResultLauncher<Intent> mLaunchIdlFilePicker = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = getUri(data);
+                    if (fileUri != null) {
+                        if (!mGameActivity.getAppData().useLegacyFileBrowser) {
+                            requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+                        requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
+                        mGameActivity.onComplete("resetAppData");
+                        recreateAndPause();
+                    }
+                }
+            });
+
     public static GameSettingsDialog newInstance() {
         GameSettingsDialog frag = new GameSettingsDialog();
         Bundle args = new Bundle();
@@ -148,19 +204,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
         frag.setArguments(args);
         return frag;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        Bundle args = getArguments();
-        if( args != null ){
-            mCurrentResourceId = args.getInt(STATE_CURRENT_RESOURCE_ID,0);
-            mSettingsReset = args.getBoolean(STATE_SETTINGS_RESET, false);
-            mRecreateLater = args.getBoolean(STATE_RECREATE_LATER, false);
-            mScreenRotating = args.getBoolean(STATE_SCREEN_ROTATING, false);
-        }
     }
 
     @Override
@@ -188,6 +231,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     mGameActivity.onComplete("settingsRecreate");
                     mGameActivity.settingsViewReset();
                 }
+                mGameActivity.onComplete("openDrawerState");
             } catch (Exception e) {
                 mScreenRotating = true;
                 mGameActivity.onComplete("pauseEmulator");
@@ -248,8 +292,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
 
         mValidSkinFiles.add("analog-back.png");
         mValidSkinFiles.add("analog-fore.png");
@@ -328,6 +370,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mRecreateLater = savedInstanceState.getBoolean(STATE_RECREATE_LATER, false);
             mScreenRotating = savedInstanceState.getBoolean(STATE_SCREEN_ROTATING, false);
             mDeleteExtraDialog = savedInstanceState.getInt(STATE_DELETE_EXTRA_DIALOG,0);
+            mCurrentResourceId = savedInstanceState.getInt(STATE_CURRENT_RESOURCE_ID,0);
         }
     }
 
@@ -337,11 +380,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         outState.putBoolean(STATE_RECREATE_LATER,mRecreateLater);
         outState.putBoolean(STATE_SCREEN_ROTATING,mScreenRotating);
         outState.putInt(STATE_DELETE_EXTRA_DIALOG, mDeleteExtraDialog);
+        outState.putInt(STATE_CURRENT_RESOURCE_ID,mCurrentResourceId);
         super.onSaveInstanceState(outState);
     }
 
     @Nullable
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         mImm = (InputMethodManager) requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -406,6 +451,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
         else{
             Log.i(TAG,"Set stuff needed from orientation change but that's not as necessary.");
+            mScreenRotating = true;
         }
     }
 
@@ -424,7 +470,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         // This is needed because of this:
         // https://code.google.com/p/android/issues/detail?id=17423
 
-        if (getDialog() != null && getRetainInstance())
+        if (getDialog() != null)
             getDialog().setDismissMessage(null);
         super.onDestroyView();
     }
@@ -457,6 +503,15 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(preferenceString);
         if (preference != null)
             preference.setEnabled(value);
+    }
+
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
+        } else {
+            mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
+        }
     }
 
     public void showKeyboard(Context context, View view) {
@@ -638,16 +693,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 dialogDeleted();
             else
                 mLongClick = false;
+            mGameActivity.onComplete("initiateControllers");
         }
 
         // Vibrating if they activate haptic feedback
         if(key.equals("touchscreenFeedback") && mGameActivity.getGlobalPrefs().isTouchscreenFeedbackEnabled &&
                 mVibrator != null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
-            } else {
-                mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
-            }
+            vibrate();
         }
 
         // Checking shaders
@@ -740,67 +792,64 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mGameActivity.onComplete("resetAppData");
     }
 
-    private void startFilePickerForSingle(int requestCode, int permissions)
+    private void startFilePickerForSingle(int permissions)
     {
         mLaunchingActivity = true;
         AppData appData = new AppData( mGameActivity.getApplicationContext() );
+        Intent intent;
         if (appData.useLegacyFileBrowser) {
-            Intent intent = new Intent(getActivity(), LegacyFilePicker.class);
+            intent = new Intent(getActivity(), LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
-            requireActivity().startActivityForResult( intent, requestCode );
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.addFlags(permissions);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-            requireActivity().startActivityForResult( intent, requestCode );
         }
+        mLaunchFilePicker.launch(intent);
     }
 
     private void startFolderPicker()
     {
         mLaunchingActivity = true;
         Intent intent;
-        int requestCode;
         AppData appData = new AppData( mGameActivity.getApplicationContext() );
         if (appData.useLegacyFileBrowser) {
             intent = new Intent(getActivity(), LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, false);
-            requestCode = DataPrefsActivity.LEGACY_FOLDER_PICKER_REQUEST_CODE;
         } else {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION|
                     Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            requestCode = DataPrefsActivity.FOLDER_PICKER_REQUEST_CODE;
         }
-        requireActivity().startActivityForResult(intent, requestCode);
+        mLaunchGameDataFolderPicker.launch(intent);
     }
 
     private void startFilePicker()
     {
         mLaunchingActivity = true;
         AppData appData = new AppData( mGameActivity.getApplicationContext() );
+        Intent intent;
         if (appData.useLegacyFileBrowser) {
-            Intent intent = new Intent(getActivity(), LegacyFilePicker.class);
+            intent = new Intent(getActivity(), LegacyFilePicker.class);
             intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
             intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-            requireActivity().startActivityForResult( intent, DataPrefsActivity.LEGACY_FILE_PICKER_REQUEST_CODE );
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                     Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-            requireActivity().startActivityForResult(intent, DataPrefsActivity.FILE_PICKER_REQUEST_CODE);
         }
+        mLaunchIdlFilePicker.launch(intent);
     }
 
     @Override
@@ -809,7 +858,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         final String key = preference.getKey();
 
         if (ACTION_IMPORT_TOUCHSCREEN_GRAPHICS.equals(key)) {
-            startFilePickerForSingle(PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startFilePickerForSingle(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
         else if (GlobalPrefs.PATH_GAME_SAVES.equals(key)) {
             startFolderPicker();
@@ -910,103 +959,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mGameActivity.onComplete("pauseEmulator");
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        Uri fileUri;
-        if (resultCode == RESULT_OK && data != null) {
-            fileUri = getUri(data);
-
-            if (requestCode == PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE) {
-                if(importCustomSkin(fileUri)){
-                    mGameActivity.getGlobalPrefs().putBoolean("isCustomTouchscreenSkin",true);
-                    mGameActivity.getGlobalPrefs().putString("touchscreenSkin_v2","Custom");
-                }
-                mGameActivity.onComplete("resetTouchscreenController");
-                mGameActivity.recreateSurface();
-                recreateAndPause();
-            }
-
-            if (requestCode == DataPrefsActivity.FOLDER_PICKER_REQUEST_CODE) {
-                // The result data contains a URI for the document or directory that
-                // the user selected.
-                fileUri = data.getData();
-
-                if (fileUri != null) {
-                    requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-
-                    mGameActivity.onComplete("resetAppData");
-
-                    mGameActivity.onComplete("gameDataStoragePath");
-                    recreateAndPause();
-                }
-            } else if (requestCode == DataPrefsActivity.LEGACY_FOLDER_PICKER_REQUEST_CODE) {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                    fileUri = Uri.parse(searchUri);
-
-                    if (fileUri != null) {
-                        DocumentFile file = FileUtil.getDocumentFileTree(getActivity(), fileUri);
-                        mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-
-                        mGameActivity.onComplete("resetAppData");
-                        recreateAndPause();
-                    }
-                }
-            } else if (requestCode == DataPrefsActivity.FILE_PICKER_REQUEST_CODE) {
-                // The result data contains a URI for the document or directory that
-                // the user selected.
-                if (data != null) {
-                    fileUri = data.getData();
-
-                    if (fileUri != null) {
-
-                        requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                        DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), fileUri);
-                        mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                        mGameActivity.onComplete("resetAppData");
-                        recreateAndPause();
-                    }
-                }
-            }else if (requestCode == DataPrefsActivity.LEGACY_FILE_PICKER_REQUEST_CODE) {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                    fileUri = Uri.parse(searchUri);
-
-                    if (fileUri != null && fileUri.getPath() != null) {
-                        mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                        mGameActivity.onComplete("resetAppData");
-                        recreateAndPause();
-                    }
-                }
-            }
-
-        }
-        else {
-            recreateAndPause();
-        }
-    }
-
-    public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
-    {
-        mSharedPrefsName = sharedPrefsName;
-        mPreferencesResId = preferencesResId;
-
-        if(mSettingsFragment == null)
-        {
-            mSettingsFragment = SettingsFragment.newInstance(mPreferencesResId);
-            getParentFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, mSettingsFragment, STATE_PREFERENCE_FRAGMENT).commit();
-        }
-    }
     public static class SettingsFragment extends Fragment {
         public GameSettingsDialog gameSettingsDialog;
         public SettingsFragmentAdapter fragmentAdapter;
@@ -1145,6 +1097,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
 
         @Override
+        @SuppressWarnings({"deprecation"})
         public void onCreate(Bundle savedInstanceState) {
             Log.i("GameSettingsDialogPref","onCreate");
             if(savedInstanceState != null) {
@@ -1200,6 +1153,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         @Override
+        @SuppressWarnings({"deprecation"})
         public void onDisplayPreferenceDialog(Preference preference) {
             mGameActivity.setDialogFragmentKey(preference.getKey());
             DialogFragment fragment = null;
@@ -1245,67 +1199,64 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             else super.onDisplayPreferenceDialog(preference);
         }
 
-        private void startFilePickerForSingle(int requestCode, int permissions)
+        private void startFilePickerForSingle(int permissions)
         {
             gameSettingsDialog.mLaunchingActivity = true;
             AppData appData = new AppData( requireActivity());
+            Intent intent;
             if (appData.useLegacyFileBrowser) {
-                Intent intent = new Intent(getActivity(), LegacyFilePicker.class);
+                intent = new Intent(getActivity(), LegacyFilePicker.class);
                 intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
                 intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
-                requireActivity().startActivityForResult(intent, requestCode);
             } else {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
                 intent.addFlags(permissions);
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-                requireActivity().startActivityForResult(intent, requestCode);
             }
+            gameSettingsDialog.mLaunchFilePicker.launch(intent);
         }
 
         private void startFolderPicker()
         {
             gameSettingsDialog.mLaunchingActivity = true;
             Intent intent;
-            int requestCode;
             AppData appData = new AppData( mGameActivity.getApplicationContext() );
             if (appData.useLegacyFileBrowser) {
                 intent = new Intent(getActivity(), LegacyFilePicker.class);
                 intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, false );
                 intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, false);
-                requestCode = DataPrefsActivity.LEGACY_FOLDER_PICKER_REQUEST_CODE;
             } else {
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
                 intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                         Intent.FLAG_GRANT_READ_URI_PERMISSION|
                         Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                requestCode = DataPrefsActivity.FOLDER_PICKER_REQUEST_CODE;
             }
-            requireActivity().startActivityForResult(intent, requestCode);
+            gameSettingsDialog.mLaunchGameDataFolderPicker.launch(intent);
         }
 
         private void startFilePicker()
         {
             gameSettingsDialog.mLaunchingActivity = true;
             AppData appData = new AppData( mGameActivity.getApplicationContext() );
+            Intent intent;
             if (appData.useLegacyFileBrowser) {
-                Intent intent = new Intent(getActivity(), LegacyFilePicker.class);
+                intent = new Intent(getActivity(), LegacyFilePicker.class);
                 intent.putExtra( ActivityHelper.Keys.CAN_SELECT_FILE, true );
                 intent.putExtra( ActivityHelper.Keys.CAN_VIEW_EXT_STORAGE, true);
-                startActivityForResult( intent, DataPrefsActivity.LEGACY_FILE_PICKER_REQUEST_CODE );
             } else {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
                 intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
                         Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
-                requireActivity().startActivityForResult(intent, DataPrefsActivity.FILE_PICKER_REQUEST_CODE);
             }
+            gameSettingsDialog.mLaunchIdlFilePicker.launch(intent);
         }
 
         @Override
@@ -1313,7 +1264,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             final String key = preference.getKey();
 
             if (ACTION_IMPORT_TOUCHSCREEN_GRAPHICS.equals(key)) {
-                startFilePickerForSingle(PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startFilePickerForSingle(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
             else if (ADD_PREFERENCE.equals(key)) {
                 if(gameSettingsDialog.mCategoryPasses == null){
@@ -1342,88 +1293,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
             // Tell Android that we handled the click
             return super.onPreferenceTreeClick(preference);
-        }
-
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-
-            if (resultCode == RESULT_OK && data != null) {
-                Uri fileUri;
-                if (requestCode == DataPrefsActivity.FOLDER_PICKER_REQUEST_CODE) {
-                    // The result data contains a URI for the document or directory that
-                    // the user selected.
-                    fileUri = data.getData();
-
-                    Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
-                    if (currentPreference != null && fileUri != null) {
-                        requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-                        DocumentFile file = FileUtil.getDocumentFileTree(getActivity(), fileUri);
-                        String summary = file.getName();
-                        currentPreference.setSummary(summary);
-                        mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-
-                        resetPreferences();
-                        mGameActivity.onComplete("resetAppData");
-                    }
-                } else if (requestCode == DataPrefsActivity.LEGACY_FOLDER_PICKER_REQUEST_CODE) {
-                    final Bundle extras = data.getExtras();
-                    if (extras != null) {
-                        final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                        fileUri = Uri.parse(searchUri);
-                        Preference currentPreference = findPreference(GlobalPrefs.PATH_GAME_SAVES);
-
-                        if (currentPreference != null && fileUri != null) {
-                            DocumentFile file = FileUtil.getDocumentFileTree(getActivity(), fileUri);
-                            String summary = file.getName();
-                            currentPreference.setSummary(summary);
-                            mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-
-                            resetPreferences();
-                            mGameActivity.onComplete("resetAppData");
-                        }
-                    }
-                } else if (requestCode == DataPrefsActivity.FILE_PICKER_REQUEST_CODE) {
-                    // The result data contains a URI for the document or directory that
-                    // the user selected.
-                    if (data != null) {
-                        fileUri = data.getData();
-
-                        Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
-                        if (currentPreference != null && fileUri != null) {
-
-                            requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                            DocumentFile file = FileUtil.getDocumentFileSingle(getActivity(), fileUri);
-                            String summary = file == null ? "" : file.getName();
-                            currentPreference.setSummary(summary);
-                            mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                        }
-                    }
-                }else if (requestCode == DataPrefsActivity.LEGACY_FILE_PICKER_REQUEST_CODE) {
-                    final Bundle extras = data.getExtras();
-
-                    if (extras != null) {
-                        final String searchUri = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-                        fileUri = Uri.parse(searchUri);
-
-                        Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
-                        if (currentPreference != null && fileUri != null && fileUri.getPath() != null) {
-                            File file = new File(fileUri.getPath());
-                            currentPreference.setSummary(file.getName());
-                            mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                        }
-                    }
-                }
-            }
-        }
-
-        public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
-        {
-            mSharedPrefsName = sharedPrefsName;
-            mPreferencesResId = preferencesResId;
         }
 
         private void setPreference(String preferenceString, boolean value){
@@ -1554,8 +1423,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-            setRetainInstance(true);
-
             Bundle arguments = getArguments();
 
             if (arguments == null) {
@@ -1672,8 +1539,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         public void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
-
-            setRetainInstance(true);
         }
 
         @Override
@@ -1682,7 +1547,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             // This is needed because of this:
             // https://code.google.com/p/android/issues/detail?id=17423
 
-            if (getDialog() != null && getRetainInstance())
+            if (getDialog() != null) //&& getRetainInstance())
                 getDialog().setDismissMessage(null);
             super.onDestroyView();
         }
@@ -1762,9 +1627,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     public void extraDialogCheck(){
         Log.i("GameSettingsDialog","Dialog Check DeleteExtraDialog = "+mDeleteExtraDialog+
                 " DialogFragmentKey = "+mGameActivity.getDialogFragmentKey());
-        if(mDeleteExtraDialog == 1)
-            mDeleteExtraDialog++;
-        else if(mDeleteExtraDialog >= 2)
+        if(mDeleteExtraDialog >= 1)
             mDeleteExtraDialog = 0;
         else if(!mScreenRotating) {
             Log.i("GameSettingsDialog","extraDialogCheck resetting dialogFragmentKey which is currently "+mGameActivity.getDialogFragmentKey());

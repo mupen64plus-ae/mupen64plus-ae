@@ -70,6 +70,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         void onCoreServiceStarted();
 
         /**
+         * Will be called once the game has started
+         */
+        void onGameStarted();
+
+        /**
          * Called when a game is requested to exited
          * @param shouldExit True if we want to exit
          */
@@ -298,16 +303,21 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     @Override
     public void onFpsChanged(int newValue) {
 
-        try {
-            requireActivity().runOnUiThread(() -> {
-                if (mCoreEventListener != null) {
-                    mCoreEventListener.onFpsChanged(newValue);
-                }
-            });
-        } catch (java.lang.IllegalStateException e) {
-            e.printStackTrace();
-        }
     }
+
+//    @Override
+//    public void onFpsChanged(int newValue) {
+//
+//        try {
+//            requireActivity().runOnUiThread(() -> {
+//                if (mCoreEventListener != null) {
+//                    mCoreEventListener.onFpsChanged(newValue);
+//                }
+//            });
+//        } catch (java.lang.IllegalStateException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void loadingStarted()
