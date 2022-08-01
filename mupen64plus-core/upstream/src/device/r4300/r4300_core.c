@@ -164,6 +164,7 @@ void run_r4300(struct r4300_core* r4300)
             l_resolutionResetCoreCounter=5; // if black screen from settings reset then get rid of this
 #ifdef NEW_DYNAREC
         new_dynarec_init();
+        l_emuModeInitiated = 1;
         new_dyna_start();
         new_dynarec_cleanup();
 #else

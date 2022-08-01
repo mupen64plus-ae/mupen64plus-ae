@@ -205,11 +205,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                                 e.printStackTrace();
                             }
 
+                            Log.i("GalleryActivity", "Waiting on previous instance to exit");
                             int currentAttempt = 0;
-                            while (ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName) &&
-                                    currentAttempt++ < 100) {
-                                Log.i("GalleryActivity", "Waiting on previous instance to exit");
-
+                            while (ActivityHelper.isProcessRunning(this, ":EmulationProcess") &&
+                                    currentAttempt++ < 800) {
                                 // Sleep for 10 ms to prevent a tight loop
                                 try {
                                     Thread.sleep(10);

@@ -478,4 +478,23 @@ public class ActivityHelper
 
         return false;
     }
+
+    static boolean isProcessRunning(Context context, String processName) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningAppProcessInfo> processInfos = null;
+        if (manager != null) {
+            processInfos = manager.getRunningAppProcesses();
+        }
+
+        if (processInfos != null) {
+            for (ActivityManager.RunningAppProcessInfo process : processInfos){
+                if(process.processName.contains(processName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
