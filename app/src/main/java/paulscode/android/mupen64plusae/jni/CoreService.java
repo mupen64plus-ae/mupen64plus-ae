@@ -1265,7 +1265,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
 
         if (mListener != null) {
-//            mListener.onFpsChanged(newValue);
+            mListener.onFpsChanged(newValue);
         }
     }
 }

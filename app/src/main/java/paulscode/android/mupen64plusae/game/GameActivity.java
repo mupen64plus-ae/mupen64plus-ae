@@ -1159,13 +1159,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private void resetMoreTouchscreenControls(){
         resetAppData();
         // By default, send Player 1 rumbles through phone vibrator
-//        Vibrator vibrator;
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-//            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-//            vibrator = manager.getDefaultVibrator();
-//        } else {
-//            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-//        }
         Vibrator vibrator = getVibrator();
         // Create the touchscreen controller
         mTouchscreenController = new TouchController(mCoreFragment, mTouchscreenMap,
@@ -1173,7 +1166,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenNotAutoHoldables,
                 mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis,
                 mGamePrefs.isTouchscreenAnalogRelative );
-//        mDrawerLayout.setTouchMap( mTouchscreenMap );
         resetAppData();
         resetTouchscreenControls();
     }
@@ -1441,17 +1433,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(mCoreFragment == null) return;
 
-//        Vibrator vibrator;
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-//            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-//            vibrator = manager.getDefaultVibrator();
-//        } else {
-//            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-//        }
-//
-//        if (vibrator != null) {
-//            mCoreFragment.registerVibrator(1, vibrator);
-//        }
         getVibrator();
 
         ReloadAllMenus();
@@ -1726,14 +1707,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @SuppressLint( "InlinedApi" )
     private void initControllers( View inputSource )
     {
-        // By default, send Player 1 rumbles through phone vibrator
-//        Vibrator vibrator;
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-//            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-//            vibrator = manager.getDefaultVibrator();
-//        } else {
-//            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-//        }
         Vibrator vibrator = getVibrator();
 
         // Create the touchscreen controls

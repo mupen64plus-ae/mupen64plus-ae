@@ -384,9 +384,20 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onSaveInstanceState(outState);
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private Vibrator getVibrator(){
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) requireActivity().getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) requireActivity().getSystemService( Context.VIBRATOR_SERVICE );
+        }
+        return vibrator;
+    }
+
     @Nullable
     @Override
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         mImm = (InputMethodManager) requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -409,14 +420,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mScreenRotating = false;
 
         // By default, send Player 1 rumbles through phone vibrator
-        Vibrator vibrator;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            VibratorManager manager = (VibratorManager) requireActivity().getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-            vibrator = manager.getDefaultVibrator();
-        } else {
-            vibrator = (Vibrator) requireActivity().getSystemService( Context.VIBRATOR_SERVICE );
-        }
-        mVibrator = vibrator;
+        mVibrator = getVibrator();
 
         if(mGameActivity.getDialogFragmentKey().equals("videoPolygonOffset") && container != null)
             showKeyboard(requireContext(),container.findFocus());
@@ -1095,9 +1099,21 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             return frag;
         }
 
+        @SuppressWarnings({"deprecation"})
+        private void setTargetFragment(DialogFragment fragment){
+            if (fragment != null) {
+                fragment.setTargetFragment(this, 0);
+
+                try {
+                    FragmentManager fm = getParentFragmentManager();
+                    fragment.show(fm, "androidx.preference.PreferenceFragment.DIALOG");
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         @Override
-        @SuppressWarnings({"deprecation"})
         public void onCreate(Bundle savedInstanceState) {
             Log.i("GameSettingsDialogPref","onCreate");
             if(savedInstanceState != null) {
@@ -1121,16 +1137,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
                 fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new DisplayPrefsActivity()).
                         getPreferenceDialogFragment(preference);
-                if (fragment != null) {
-                    fragment.setTargetFragment(this, 0);
-
-                    try {
-                        FragmentManager fm = getParentFragmentManager();
-                        fragment.show(fm, "androidx.preference.PreferenceFragment.DIALOG");
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    }
-                }
+                setTargetFragment(fragment);
 
                 // make another
                 if(mGameActivity.getAssociatedDialogFragment() != 0){
@@ -1153,12 +1160,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         @Override
-        @SuppressWarnings({"deprecation"})
         public void onDisplayPreferenceDialog(Preference preference) {
             mGameActivity.setDialogFragmentKey(preference.getKey());
             DialogFragment fragment = null;
             switch(resourceId){
-                case R.xml.preferences_display:
+                case R.xml.preferences_display: default:
                     fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new DisplayPrefsActivity()).
                             getPreferenceDialogFragment(preference);
                     break;
@@ -1182,20 +1188,9 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     fragment = ((AppCompatPreferenceFragment.OnDisplayDialogListener) new InputPrefsActivity()).
                             getPreferenceDialogFragment(preference);
                     break;
-                default:
-                    fragment = null;
-                    break;
             }
-            if (fragment != null) {
-                fragment.setTargetFragment(this, 0);
-
-                try {
-                    FragmentManager fm = getParentFragmentManager();
-                    fragment.show(fm, "androidx.preference.PreferenceFragment.DIALOG");
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
-            }
+            if(fragment != null)
+                setTargetFragment(fragment);
             else super.onDisplayPreferenceDialog(preference);
         }
 
@@ -1547,7 +1542,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             // This is needed because of this:
             // https://code.google.com/p/android/issues/detail?id=17423
 
-            if (getDialog() != null) //&& getRetainInstance())
+            if (getDialog() != null)
                 getDialog().setDismissMessage(null);
             super.onDestroyView();
         }

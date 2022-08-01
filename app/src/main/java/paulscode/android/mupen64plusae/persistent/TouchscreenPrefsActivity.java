@@ -101,8 +101,19 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         }
     }
 
-    @Override
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private Vibrator getVibrator(){
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        }
+        return vibrator;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -113,14 +124,7 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Vibrator to show on haptic feedback
-        Vibrator vibrator;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-            vibrator = manager.getDefaultVibrator();
-        } else {
-            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        }
-        mVibrator = vibrator;
+        mVibrator = getVibrator();
 
         mValidSkinFiles.add("analog-back.png");
         mValidSkinFiles.add("analog-fore.png");
