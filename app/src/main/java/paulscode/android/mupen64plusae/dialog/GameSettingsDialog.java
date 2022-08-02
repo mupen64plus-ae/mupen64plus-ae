@@ -509,13 +509,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     /* When setting the preferences for the player map, this will be the last check and sets the
     *  available controller input ports based on who is currently on the server */
     public boolean checkOnlinePlayers(int playerNumber){
-        for (int playerIndex = 0; playerIndex < 4; ++playerIndex)
-        {
-            TcpServer.PlayerData playerData = mGameActivity.getNetplayFragment().getTcpServer().getPlayerData(playerIndex);
-            if(playerIndex == playerNumber && playerData != null)
-                return true;
-        }
-        return false;
+        if(playerNumber > 3 || playerNumber < 0)
+            return false;
+        TcpServer.PlayerData playerData = mGameActivity.getNetplayFragment().getTcpServer().getPlayerData(playerNumber);
+        return playerData != null;
     }
 
     public void OnPreferenceScreenChange(String key)

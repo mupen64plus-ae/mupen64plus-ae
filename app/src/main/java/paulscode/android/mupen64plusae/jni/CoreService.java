@@ -952,13 +952,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     }
 
     private boolean checkOnlinePlayers(NetplayFragment fragment, int playerNumber){
-        for (int playerIndex = 0; playerIndex < 4; ++playerIndex)
-        {
-            TcpServer.PlayerData playerData = fragment.getTcpServer().getPlayerData(playerIndex);
-            if(playerIndex == playerNumber && playerData != null)
-                return true;
-        }
-        return false;
+        if(playerNumber > 3 || playerNumber < 0)
+            return false;
+        TcpServer.PlayerData playerData = fragment.getTcpServer().getPlayerData(playerNumber);
+        return playerData != null;
     }
 
     public void resetControllersNetplay(NetplayFragment fragment){
