@@ -1858,9 +1858,9 @@ m64p_error main_run(void)
 
     poweron_device(&g_dev);
 
-    // PS2 needs additional frame count when resetting from in game settings (can use this count as
-    // default if more games get black screen when restarting from in game settings
-    if( get_r4300_emumode(&g_dev.r4300) >= 2 && strncmp(ROM_PARAMS.headername,"POKEMON STADIUM 2",17) == 0){
+    // PS2 & PS1 needs additional frame count when resetting from in game settings (can use this
+    // count as default if more games get black screen when restarting from in game settings)
+    if( get_r4300_emumode(&g_dev.r4300) >= 2 && strncmp(ROM_PARAMS.headername,"POKEMON STADIUM",15) == 0){
         l_resolutionResetCoreCounter = 1;
     }
 
