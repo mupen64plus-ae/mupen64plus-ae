@@ -854,6 +854,9 @@
     <!-- ROM preparation -->
     <string name="extractRomTask_title">Preparing game data…</string>
 
+    <!-- Game preparation -->
+    <string name="relaunchGame_title">Reloading…</string>
+
     <!-- Netplay -->
     <string name="startNetplay_title">Start</string>
     <string name="netplay_enterIp">Enter IP</string>

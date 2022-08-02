@@ -79,6 +79,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -150,6 +151,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     boolean mGameRunning = false;
 
+    boolean mGameResetting = false;
+
     String mPathToDelete = null;
 
     private int mCurrentVisiblePosition = 0;
@@ -157,6 +160,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     // Launch a game after searching is complete
     private String mLaunchGameAfterScan = "";
     private String mScanForGameOnResume = "";
+
+    //Progress dialog for restarting game
+    private ProgressDialog mProgress = null;
 
     private ConfigFile mConfig;
 
@@ -176,7 +182,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     if(result.getData() != null) {
                         // Checking to see if we're coming back from game setting refresh
                         if (result.getData().getBooleanExtra("gameOpenReset", false)) {
-
+                            mGameResetting = true;
                             final Bundle extras = result.getData().getExtras();
 
                             String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
@@ -193,40 +199,44 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             boolean isNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
                             boolean isNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
 
+                            createDialog(romDisplayName);
 
                             Intent intent = new Intent(CoreService.SERVICE_EVENT);
                             intent.putExtra(CoreService.SERVICE_QUIT, true);
                             sendBroadcast(intent);
 
-                            // Waiting for service to quit
-                            try {
-                                Thread.sleep(1500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            final Thread handler = new Thread(() -> {
+                                // Waiting for service to quit
+//                                try {
+//                                    Thread.sleep(1500);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
 
-                            Log.i("GalleryActivity", "Waiting on previous instance to exit");
-                            int currentAttempt = 0;
-                            while (ActivityHelper.isProcessRunning(this, ":EmulationProcess") &&
-                                    currentAttempt++ < 800) {
-                                // Sleep for 10 ms to prevent a tight loop
-                                try {
-                                    Thread.sleep(10);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                Log.i("GalleryActivity", "Waiting on previous instance to exit");
+                                int currentAttempt = 0;
+                                while (ActivityHelper.isProcessRunning(this, ":EmulationProcess") &&
+                                        currentAttempt++ < 800) {
+                                    // Sleep for 10 ms to prevent a tight loop
+                                    try {
+                                        Thread.sleep(10);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
+                                if (mProgress != null)
+                                    mProgress.dismiss();
 
-                            refreshGrid();
-
-                            launchGameActivity( romPath, zipPath,  romMd5, romCrc, romHeaderName, romCountryCode, romArtPath,
-                                    romGoodName, romDisplayName, doRestart, true, doResolutionReset, isNetplayEnabled,
-                                    isNetplayServer);
+                                if(mGameResetting)
+                                    launchGameActivity(romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode, romArtPath,
+                                            romGoodName, romDisplayName, doRestart, true, doResolutionReset, isNetplayEnabled,
+                                            isNetplayServer);
+                                else
+                                    refreshGrid();
+                            });
+                            handler.start();
                             return;
                         }
-//                        else{
-                            // Reset preferences
-//                        }
                     }
                     else
                         mGameRunning = false;
@@ -247,6 +257,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         finishAffinity();
                     }
                 }
+                else
+                    mGameRunning = false;
             });
 
     ActivityResultLauncher<Intent> mLaunchScanRoms = registerForActivityResult(
@@ -568,7 +580,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // Don't call the async version otherwise the scroll position is lost
-        refreshGrid();
+        if(!mGameRunning)
+            refreshGrid();
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
         {
@@ -637,6 +650,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         super.onPause();
 
+        if(mGameResetting){
+            mGameRunning = false;
+            mGameResetting = false;
+            if(mProgress != null)
+                mProgress.dismiss();
+            refreshGrid();
+        }
+
         GridLayoutManager layoutManager = (GridLayoutManager)mGridView.getLayoutManager();
         if (layoutManager != null) {
             mCurrentVisiblePosition = ((GridLayoutManager)mGridView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
@@ -654,7 +675,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if(mRefreshNeeded)
         {
             mRefreshNeeded = false;
-            reloadCacheAndRefreshGrid();
+            if(!mGameRunning)
+                reloadCacheAndRefreshGrid();
 
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
@@ -1291,6 +1313,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         mSelectedItem = null;
         mGameRunning = true;
+        mGameResetting = false;
         // Launch the game activity
         startGameActivity(romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
                 romArtPath, romGoodName, romDisplayName, isRestarting, settingsReset, resolutionReset, isNetplayEnabled, isNetplayServer);
@@ -1331,5 +1354,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         Intent intent = new Intent(this, ScanRomsActivity.class);
         mLaunchScanRoms.launch(intent);
+    }
+
+    private void createDialog(String displayName){
+        CharSequence title = getString(R.string.relaunchGame_title);
+        CharSequence message = getString(R.string.toast_pleaseWait);
+
+        mProgress = new ProgressDialog( mProgress, this, title, displayName, message, false );
+        mProgress.show();
     }
 }
