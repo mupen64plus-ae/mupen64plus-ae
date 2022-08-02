@@ -62,6 +62,8 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameDataManager;
+import paulscode.android.mupen64plusae.netplay.NetplayFragment;
+import paulscode.android.mupen64plusae.netplay.TcpServer;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -946,6 +948,25 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             NativeInput.setConfig( 1, mGamePrefs.isPlugged[1], mGamePrefs.getPakType(2).ordinal() );
             NativeInput.setConfig( 2, mGamePrefs.isPlugged[2], mGamePrefs.getPakType(3).ordinal() );
             NativeInput.setConfig( 3, mGamePrefs.isPlugged[3], mGamePrefs.getPakType(4).ordinal() );
+        }
+    }
+
+    private boolean checkOnlinePlayers(NetplayFragment fragment, int playerNumber){
+        for (int playerIndex = 0; playerIndex < 4; ++playerIndex)
+        {
+            TcpServer.PlayerData playerData = fragment.getTcpServer().getPlayerData(playerIndex);
+            if(playerIndex == playerNumber && playerData != null)
+                return true;
+        }
+        return false;
+    }
+
+    public void resetControllersNetplay(NetplayFragment fragment){
+        if (!mUseRaphnetDevicesIfAvailable) {
+            NativeInput.setConfig( 0, checkOnlinePlayers(fragment,0), mGamePrefs.getPakType(1).ordinal() );
+            NativeInput.setConfig( 1, checkOnlinePlayers(fragment,1), mGamePrefs.getPakType(2).ordinal() );
+            NativeInput.setConfig( 2, checkOnlinePlayers(fragment,2), mGamePrefs.getPakType(3).ordinal() );
+            NativeInput.setConfig( 3, checkOnlinePlayers(fragment,3), mGamePrefs.getPakType(4).ordinal() );
         }
     }
 

@@ -53,6 +53,7 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
 import paulscode.android.mupen64plusae.jni.CoreService.LocalBinder;
+import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -257,6 +258,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void resetCoreServiceControllers(){
         if(mCoreService != null)
             mCoreService.resetControllers();
+    }
+
+    public void resetCoreServiceControllersNetplay(NetplayFragment fragment){
+        if(mCoreService != null)
+            mCoreService.resetControllersNetplay(fragment);
     }
 
     @Override

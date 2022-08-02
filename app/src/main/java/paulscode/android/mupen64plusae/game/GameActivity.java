@@ -1334,7 +1334,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 //reset core service
                 resetAppData();
                 mCoreFragment.resetCoreServiceAppData();
-                mCoreFragment.resetCoreServiceControllers();
+                if(!mIsNetplayEnabled)
+                    mCoreFragment.resetCoreServiceControllers();
+                else
+                    mCoreFragment.resetCoreServiceControllersNetplay(mNetplayFragment);
                 resetGlContext();
                 break;
             case "settingsReset": case "gameDataStorageType": case "gameDataStoragePath":
@@ -1982,6 +1985,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public boolean getResolutionReset(){
         return mResolutionReset;
     }
+
+    public boolean getNetplayEnabled() { return mIsNetplayEnabled; }
+
+    public NetplayFragment getNetplayFragment() { return mNetplayFragment; }
 
     public AppData getAppData() { return mAppData; }
 

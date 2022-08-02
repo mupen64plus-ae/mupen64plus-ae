@@ -394,6 +394,10 @@ public class NetplayService extends Service
         }
     }
 
+    public TcpServer getTcpServer(){
+        return mTcpServer;
+    }
+
     @Override
     public void onDestroy()
     {

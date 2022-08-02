@@ -58,6 +58,8 @@ import java.util.zip.ZipInputStream;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
+import paulscode.android.mupen64plusae.netplay.NetplayFragment;
+import paulscode.android.mupen64plusae.netplay.TcpServer;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.DataPrefsActivity;
@@ -127,11 +129,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         Context getApplicationContext();
         Object getSystemService(String name);
         FragmentManager getSupportFragmentManager();
+        NetplayFragment getNetplayFragment();
         AppData getAppData();
         GlobalPrefs getGlobalPrefs();
         GamePrefs getGamePrefs();
         boolean isChangingConfigurations();
         boolean getResolutionReset();
+        boolean getNetplayEnabled();
         void setDialogFragmentKey(String key);
         String getDialogFragmentKey();
         void setAssociatedDialogFragment(int associatedDialogFragment);
@@ -497,6 +501,15 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onDestroyView();
     }
 
+    public boolean checkOnlinePlayers(int playerNumber){
+        for (int playerIndex = 0; playerIndex < 4; ++playerIndex)
+        {
+            TcpServer.PlayerData playerData = mGameActivity.getNetplayFragment().getTcpServer().getPlayerData(playerIndex);
+            if(playerIndex == playerNumber && playerData != null)
+                return true;
+        }
+        return false;
+    }
 
     public void OnPreferenceScreenChange(String key)
     {
@@ -631,10 +644,16 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 if (playerPref != null)
                 {
                     // Check null in case preference has been removed
-                    final boolean enable1 = mGameActivity.getGlobalPrefs().controllerProfile1 != null;
-                    final boolean enable2 = mGameActivity.getGlobalPrefs().controllerProfile2 != null;
-                    final boolean enable3 = mGameActivity.getGlobalPrefs().controllerProfile3 != null;
-                    final boolean enable4 = mGameActivity.getGlobalPrefs().controllerProfile4 != null;
+                    boolean enable1 = mGameActivity.getGlobalPrefs().controllerProfile1 != null;
+                    boolean enable2 = mGameActivity.getGlobalPrefs().controllerProfile2 != null;
+                    boolean enable3 = mGameActivity.getGlobalPrefs().controllerProfile3 != null;
+                    boolean enable4 = mGameActivity.getGlobalPrefs().controllerProfile4 != null;
+                    if(mGameActivity.getNetplayEnabled()){
+                        enable1 = checkOnlinePlayers(0);
+                        enable2 = checkOnlinePlayers(1);
+                        enable3 = checkOnlinePlayers(2);
+                        enable4 = checkOnlinePlayers(3);
+                    }
                     playerPref.setControllersEnabled(enable1, enable2, enable3, enable4);
 
 
@@ -1158,10 +1177,16 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     if (playerPref != null)
                     {
                         // Check null in case preference has been removed
-                        final boolean enable1 = mGameActivity.getGlobalPrefs().controllerProfile1 != null;
-                        final boolean enable2 = mGameActivity.getGlobalPrefs().controllerProfile2 != null;
-                        final boolean enable3 = mGameActivity.getGlobalPrefs().controllerProfile3 != null;
-                        final boolean enable4 = mGameActivity.getGlobalPrefs().controllerProfile4 != null;
+                        boolean enable1 = mGameActivity.getGlobalPrefs().controllerProfile1 != null;
+                        boolean enable2 = mGameActivity.getGlobalPrefs().controllerProfile2 != null;
+                        boolean enable3 = mGameActivity.getGlobalPrefs().controllerProfile3 != null;
+                        boolean enable4 = mGameActivity.getGlobalPrefs().controllerProfile4 != null;
+                        if(mGameActivity.getNetplayEnabled()){
+                            enable1 = gameSettingsDialog.checkOnlinePlayers(0);
+                            enable2 = gameSettingsDialog.checkOnlinePlayers(1);
+                            enable3 = gameSettingsDialog.checkOnlinePlayers(2);
+                            enable4 = gameSettingsDialog.checkOnlinePlayers(3);
+                        }
                         playerPref.setControllersEnabled(enable1, enable2, enable3, enable4);
 
                         playerPref.setValue( mGameActivity.getGamePrefs().playerMap.serialize() );
@@ -1394,10 +1419,16 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     if (playerPref != null)
                     {
                         // Check null in case preference has been removed
-                        final boolean enable1 = mGameActivity.getGlobalPrefs().controllerProfile1 != null;
-                        final boolean enable2 = mGameActivity.getGlobalPrefs().controllerProfile2 != null;
-                        final boolean enable3 = mGameActivity.getGlobalPrefs().controllerProfile3 != null;
-                        final boolean enable4 = mGameActivity.getGlobalPrefs().controllerProfile4 != null;
+                        boolean enable1 = mGameActivity.getGlobalPrefs().controllerProfile1 != null;
+                        boolean enable2 = mGameActivity.getGlobalPrefs().controllerProfile2 != null;
+                        boolean enable3 = mGameActivity.getGlobalPrefs().controllerProfile3 != null;
+                        boolean enable4 = mGameActivity.getGlobalPrefs().controllerProfile4 != null;
+                        if(mGameActivity.getNetplayEnabled()){
+                            enable1 = gameSettingsDialog.checkOnlinePlayers(0);
+                            enable2 = gameSettingsDialog.checkOnlinePlayers(1);
+                            enable3 = gameSettingsDialog.checkOnlinePlayers(2);
+                            enable4 = gameSettingsDialog.checkOnlinePlayers(3);
+                        }
                         playerPref.setControllersEnabled(enable1, enable2, enable3, enable4);
 
                         playerPref.setValue( mGameActivity.getGamePrefs().playerMap.serialize() );
