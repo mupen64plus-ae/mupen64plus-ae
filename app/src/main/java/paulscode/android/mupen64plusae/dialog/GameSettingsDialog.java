@@ -33,6 +33,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
@@ -146,6 +147,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static OnGameSettingsDialogListener mGameActivity;
 
     /* Activity Results */
+
+    // Used in Touchscreen for graphic import
     ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -163,6 +166,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 }
             });
 
+    // Used in Data for save location
     ActivityResultLauncher<Intent> mLaunchGameDataFolderPicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -185,6 +189,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 }
             });
 
+    // Used in Data for 64DD IPL
     ActivityResultLauncher<Intent> mLaunchIdlFilePicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -501,6 +506,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onDestroyView();
     }
 
+    /* When setting the preferences for the player map, this will be the last check and sets the
+    *  available controller input ports based on who is currently on the server */
     public boolean checkOnlinePlayers(int playerNumber){
         for (int playerIndex = 0; playerIndex < 4; ++playerIndex)
         {
@@ -560,14 +567,15 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         return mImm != null && mImm.isActive();
     }
 
+    /* Used to disable settings that reset the game (needed to prevent disconnection in netplay
+    *  and data loss if user chooses not to use auto saves) */
     private void disableSettingsThatReset(int currentResource){
-        boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0;
+        boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0 && !mGameActivity.getNetplayEnabled();
 
         switch(currentResource) {
             // Display
             case 0:
                 setPreference("displayResolution", setBool);
-                setPreference("displayOrientation", setBool);
                 setPreference("displayScaling", setBool);
                 setPreference("videoHardwareType", setBool);
                 setPreference("hybridTextureFilter_v2", setBool);
@@ -600,6 +608,23 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
     }
 
+    /* Used to remove "Auto" choice in displayOrientation preference to prevent resetting */
+    private void disableOrientationListPreference(){
+        if (mGameActivity.getGlobalPrefs().maxAutoSaves == 0 || mGameActivity.getNetplayEnabled()) {
+            ListPreference displayOri = (ListPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference("displayOrientation");
+            if(displayOri != null) {
+                displayOri.setEntries(new String[]{"Landscape","Reverse Landscape","Portrait","Reverse Portrait"});
+                displayOri.setEntryValues(new String[]{"0", "8", "1", "9"});
+                if(displayOri.getValue().equals("-1"))
+                    displayOri.setSummary("Auto");
+                else
+                    displayOri.setSummary(displayOri.getEntry());
+            }
+        }
+    }
+
+    /* Resets the preferences after the game has successfully reset and there is visual feedback
+    *  from the graphics output */
     public void resetPreferencesFromResolutionReset(){
         if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
                 mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId] == null)
@@ -608,7 +633,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         resetPreferences();
     }
 
-    // This gets updated as soon as a change in settings occurs
+    /* This gets updated as soon as a change in settings occurs */
     public void resetPreferences(){
         switch(mCurrentResourceId) {
             case 0:
@@ -617,6 +642,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 else
                     setPreference(VIDEO_POLYGON_OFFSET,mGameActivity.getGlobalPrefs().videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
                 disableSettingsThatReset(mCurrentResourceId);
+                disableOrientationListPreference();
                 break;
             case 1:
                 if(mRemoveShader != -1)
@@ -667,6 +693,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 else
                     setPreference("gameDataStoragePath",
                             mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                if(mGameActivity.getNetplayEnabled()) {
+                    setPreference("gameDataStoragePath",false);
+                    setPreference("gameAutoSaves", false);
+                }
                 disableSettingsThatReset(mCurrentResourceId);
                 break;
             default:
@@ -828,6 +858,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mGameActivity.onComplete("resetAppData");
     }
 
+    /* Used in Touchscreen for graphic import */
     private void startFilePickerForSingle()
     {
         mLaunchingActivity = true;
@@ -848,6 +879,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mLaunchFilePicker.launch(intent);
     }
 
+    /* Used in Data for save location */
     private void startFolderPicker()
     {
         mLaunchingActivity = true;
@@ -867,6 +899,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mLaunchGameDataFolderPicker.launch(intent);
     }
 
+    /* Used in Data for 64DD IPL */
     private void startFilePicker()
     {
         mLaunchingActivity = true;
@@ -988,8 +1021,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         return true;
     }
 
-    // Prevents emulator resuming when coming back from Activity after settings like
-    // inputShareController and holdButtonForMenu have been changed
+    /* Prevents emulator resuming when coming back from Activity after settings like
+    /  inputShareController and holdButtonForMenu have been changed */
     private void recreateAndPause(){
         mGameActivity.recreate();
         mGameActivity.onComplete("pauseEmulator");
@@ -1337,13 +1370,12 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         private void disableSettingsThatReset(int currentResource){
-            boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0;
+            boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0 && !mGameActivity.getNetplayEnabled();
 
             switch(currentResource){
                 // Display
                 case 0:
                     setPreference("displayResolution",setBool);
-                    setPreference("displayOrientation",setBool);
                     setPreference("displayScaling",setBool);
                     setPreference("videoHardwareType",setBool);
                     setPreference("hybridTextureFilter_v2",setBool);
@@ -1376,6 +1408,20 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             }
         }
 
+        private void disableOrientationListPreference(){
+            if (mGameActivity.getGlobalPrefs().maxAutoSaves == 0 || mGameActivity.getNetplayEnabled()) {
+                ListPreference displayOri = (ListPreference)findPreference("displayOrientation");
+                if(displayOri != null) {
+                    displayOri.setEntries(new String[]{"Landscape","Reverse Landscape","Portrait","Reverse Portrait"});
+                    displayOri.setEntryValues(new String[]{"0", "8", "1", "9"});
+                    if(displayOri.getValue().equals("-1"))
+                        displayOri.setSummary("Auto");
+                    else
+                        displayOri.setSummary(displayOri.getEntry());
+                }
+            }
+        }
+
         public void resetPreferences(){
             switch(mCurrentResourceId){
                 case 0:
@@ -1386,6 +1432,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     else
                         setPreference(VIDEO_POLYGON_OFFSET,mGameActivity.getGlobalPrefs().videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
                     disableSettingsThatReset(mCurrentResourceId);
+                    disableOrientationListPreference();
                     break;
                 case 1:
                     if(gameSettingsDialog != null)
@@ -1443,6 +1490,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     else
                         setPreference("gameDataStoragePath",
                                 mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                    if(mGameActivity.getNetplayEnabled()) {
+                        setPreference("gameDataStoragePath",false);
+                        setPreference("gameAutoSaves", false);
+                    }
                     disableSettingsThatReset(mCurrentResourceId);
                     break;
                 default:
