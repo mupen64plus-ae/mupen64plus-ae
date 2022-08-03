@@ -1863,11 +1863,17 @@ m64p_error main_run(void)
     // count as default if more games get black screen when restarting from in game settings)
     if( get_r4300_emumode(&g_dev.r4300) >= 2 && strncmp(ROM_PARAMS.headername,"POKEMON STADIUM",15) == 0 )
         l_resolutionResetCoreCounter = 1;
+    // Kirby c:
+    else if( strncmp(ROM_PARAMS.headername,"Kirby64",7) == 0)
+        l_resolutionResetCoreCounter = 1;
     // Mario Party (maybe just with pure interpreter?)
     else if( strncmp(ROM_PARAMS.headername,"MarioParty",10) == 0 )
         l_resolutionResetCoreCounter = -5;
     // Mario Kart (lessening frames needed when using pure interpreter)
     else if( get_r4300_emumode(&g_dev.r4300) == 0 && strncmp(ROM_PARAMS.headername,"MARIOKART64",11) == 0 )
+        l_resolutionResetCoreCounter = 5;
+    // Conker (lessening frames needed when using pure interpreter)
+    else if( get_r4300_emumode(&g_dev.r4300) == 0 && strncmp(ROM_PARAMS.headername,"CONKER BFD",9) == 0 )
         l_resolutionResetCoreCounter = 5;
 
     pif_bootrom_hle_execute(&g_dev.r4300);
