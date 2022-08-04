@@ -267,7 +267,7 @@ public class GlobalPrefs
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
 
-    /** The action bar transparency value. */
+    /** The in game settings menu transparency value. */
     public final int displayGameSettingsTransparency;
 
     /** True if the FPS indicator is displayed. */

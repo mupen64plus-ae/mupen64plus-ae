@@ -449,9 +449,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         mSettingsFragment = new SettingsFragment(this);
         transaction.replace(R.id.settings_view, mSettingsFragment).commit();
-
-        int alpha = mGameActivity.getGlobalPrefs().displayGameSettingsTransparency;
-        mView.setBackground(new DrawerDrawable(alpha));
+        mView.setBackground(new DrawerDrawable(mGameActivity.getGlobalPrefs().displayGameSettingsTransparency));
     }
 
     public void recreateView(){
@@ -614,7 +612,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     /* Used to remove "Auto" choice in displayOrientation preference to prevent resetting */
     private void disableOrientationListPreference(){
         if (mGameActivity.getGlobalPrefs().maxAutoSaves == 0 || mGameActivity.getNetplayEnabled()) {
-            ListPreference displayOri = (ListPreference) mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference("displayOrientation");
+            ListPreference displayOri = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference("displayOrientation");
             if(displayOri != null) {
                 displayOri.setEntries(new String[]{"Landscape","Reverse Landscape","Portrait","Reverse Portrait"});
                 displayOri.setEntryValues(new String[]{"0", "8", "1", "9"});
@@ -1418,7 +1416,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
         private void disableOrientationListPreference(){
             if (mGameActivity.getGlobalPrefs().maxAutoSaves == 0 || mGameActivity.getNetplayEnabled()) {
-                ListPreference displayOri = (ListPreference)findPreference("displayOrientation");
+                ListPreference displayOri = findPreference("displayOrientation");
                 if(displayOri != null) {
                     displayOri.setEntries(new String[]{"Landscape","Reverse Landscape","Portrait","Reverse Portrait"});
                     displayOri.setEntryValues(new String[]{"0", "8", "1", "9"});
