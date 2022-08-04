@@ -57,6 +57,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.DrawerDrawable;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.netplay.NetplayFragment;
@@ -84,6 +85,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private SettingsFragment mSettingsFragment;
     private Vibrator mVibrator;
     private InputMethodManager mImm;
+    private View mView;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
     private final String TAG = "GameSettingsDialog";
     private static final String ACTION_IMPORT_TOUCHSCREEN_GRAPHICS = "actionImportTouchscreenGraphics";
@@ -442,10 +444,14 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        mView = view;
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction().setReorderingAllowed(true);
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         mSettingsFragment = new SettingsFragment(this);
         transaction.replace(R.id.settings_view, mSettingsFragment).commit();
+
+        int alpha = mGameActivity.getGlobalPrefs().displayGameSettingsTransparency;
+        mView.setBackground(new DrawerDrawable(alpha));
     }
 
     public void recreateView(){
@@ -757,6 +763,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             else
                 mLongClick = false;
             mGameActivity.onComplete("initiateControllers");
+        }
+
+        if(key.equals("displayGameSettingsTransparency")){
+            mGameActivity.onComplete("resetAppData");
+            mView.setBackground(new DrawerDrawable(mGameActivity.getGlobalPrefs().displayGameSettingsTransparency));
         }
 
         // Vibrating if they activate haptic feedback

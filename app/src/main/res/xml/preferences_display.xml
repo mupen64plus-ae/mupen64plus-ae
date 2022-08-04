@@ -92,6 +92,15 @@
         mupen64:stepSize="1"
         mupen64:units="%" />
 
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="75"
+        android:key="displayGameSettingsTransparency"
+        android:title="@string/displayGameSettingsTransparency_title"
+        mupen64:maximumValue="95"
+        mupen64:minimumValue="25"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
+
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayFps_default"
         android:entries="@array/displayFps_entries"

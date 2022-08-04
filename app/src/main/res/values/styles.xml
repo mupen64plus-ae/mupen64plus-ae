@@ -68,7 +68,7 @@
     <style name="MupenTheme_Dark_Translucent" parent="ThemeOverlay.AppCompat.Dark">
         <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/mupen_white</item>
-        <item name="android:windowBackground">#bf000000</item>
+        <item name="android:windowBackground">#00000000</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>

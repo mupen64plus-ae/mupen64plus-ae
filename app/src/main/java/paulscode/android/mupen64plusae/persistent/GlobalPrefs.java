@@ -267,6 +267,9 @@ public class GlobalPrefs
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
 
+    /** The action bar transparency value. */
+    public final int displayGameSettingsTransparency;
+
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
 
@@ -592,6 +595,8 @@ public class GlobalPrefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
+        final int transparencyPercentSettings = mPreferences.getInt( "displayGameSettingsTransparency", 75 );
+        displayGameSettingsTransparency = ( 255 * transparencyPercentSettings ) / 100;
 
         String fpsPosition = mPreferences.getString( "displayFpsV2", "off" );
 
