@@ -99,7 +99,6 @@ public class ActivityHelper
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
         public static final String ART_DIR              = NAMESPACE + "GALLERY_ART_PATH";
-        public static final String UNZIP_DIR            = NAMESPACE + "GALLERY_UNZIP_PATH";
         public static final String SEARCH_ZIPS          = NAMESPACE + "GALLERY_SEARCH_ZIP";
         public static final String DOWNLOAD_ART         = NAMESPACE + "GALLERY_DOWNLOAD_ART";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
