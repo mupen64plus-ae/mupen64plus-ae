@@ -1120,6 +1120,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
     }
 
+    private void resetCoreServiceAppData(){
+        resetAppData();
+        mCoreFragment.resetCoreServiceAppData();
+    }
+
     private void resetGameSurfaceResolutionData(){
         resetAppData();
 
@@ -1332,8 +1337,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "allEmulatedControllersPlugged": case "inputShareController": case "autoPlayerMapping":
             case "holdButtonForMenu": case "useRaphnetAdapter": case "initiateControllers":
                 //reset core service
-                resetAppData();
-                mCoreFragment.resetCoreServiceAppData();
+                resetCoreServiceAppData();
                 if(!mIsNetplayEnabled)
                     mCoreFragment.resetCoreServiceControllers();
                 else
@@ -1341,8 +1345,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 resetGlContext();
                 break;
             case "gameAutoSaves":
-                resetAppData();
-                mCoreFragment.resetCoreServiceAppData();
+                resetCoreServiceAppData();
                 break;
             case "settingsReset": case "gameDataStorageType": case "gameDataStoragePath":
                 mSettingsReset = true;
@@ -1398,7 +1401,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 // auto save once and then set maxAutoSaves to 0 after reset
                 if(mGlobalPrefs.maxAutoSaves == 0) {
                     mGlobalPrefs.putInt("gameAutoSaves",11);
-                    resetAppData();
+                    resetCoreServiceAppData();
                 }
                 safeAutoSave();
                 getIntent().putExtra("gameOpenReset", true);
@@ -1567,8 +1570,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // data loss and are setting it back to 0 here
             if(mGlobalPrefs.maxAutoSaves == 11) {
                 mGlobalPrefs.putInt("gameAutoSaves", 0);
-                resetAppData();
-                mCoreFragment.resetCoreServiceAppData(); // deleting leftover auto saves
+                // deleting leftover auto saves
+                resetCoreServiceAppData();
             }
         });
 
