@@ -381,9 +381,9 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mSettingsReset = savedInstanceState.getBoolean(STATE_SETTINGS_RESET, false);
             mRecreateLater = savedInstanceState.getBoolean(STATE_RECREATE_LATER, false);
             mScreenRotating = savedInstanceState.getBoolean(STATE_SCREEN_ROTATING, false);
+            mLaunchingActivity = savedInstanceState.getBoolean(STATE_LAUNCHING_ACTIVITY, false);
             mDeleteExtraDialog = savedInstanceState.getInt(STATE_DELETE_EXTRA_DIALOG,0);
             mCurrentResourceId = savedInstanceState.getInt(STATE_CURRENT_RESOURCE_ID,0);
-            mLaunchingActivity = savedInstanceState.getBoolean(STATE_LAUNCHING_ACTIVITY, false);
         }
     }
 
@@ -392,9 +392,9 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         outState.putBoolean(STATE_SETTINGS_RESET,mSettingsReset);
         outState.putBoolean(STATE_RECREATE_LATER,mRecreateLater);
         outState.putBoolean(STATE_SCREEN_ROTATING,mScreenRotating);
+        outState.putBoolean(STATE_LAUNCHING_ACTIVITY, mLaunchingActivity);
         outState.putInt(STATE_DELETE_EXTRA_DIALOG, mDeleteExtraDialog);
         outState.putInt(STATE_CURRENT_RESOURCE_ID,mCurrentResourceId);
-        outState.putBoolean(STATE_LAUNCHING_ACTIVITY, mLaunchingActivity);
         super.onSaveInstanceState(outState);
     }
 
@@ -749,7 +749,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 key.equals("useRaphnetAdapter") ||
                 (key.equals("displayImmersiveMode_v2") && mGameActivity.getGlobalPrefs().isImmersiveModeEnabled) ||
                 mSettingsFragment.viewPager.getCurrentItem() == 2 ||
-                (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType"))) {
+                (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType") && !key.equals("gameAutoSaves"))) {
             mSettingsReset = true;
         }
 

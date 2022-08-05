@@ -223,7 +223,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_ASSOCIATED_DIALOG_FRAGMENT = "STATE_ASSOCIATED_DIALOG_FRAGMENT";
     private int mAssociatedDialogFragment = 0;
 
-    // when using landscape and resetting from the in game settings
+    // When using landscape and resetting from the in game settings
     // the activity will automatically be recreated so we use this
     // to prevent a loop of the activity being recreated continuously.
     private static final String STATE_SETTINGS_BREAKOUT = "STATE_SETTINGS_BREAKOUT";
@@ -1340,6 +1340,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mCoreFragment.resetCoreServiceControllersNetplay(mNetplayFragment);
                 resetGlContext();
                 break;
+            case "gameAutoSaves":
+                resetAppData();
+                mCoreFragment.resetCoreServiceAppData();
+                break;
             case "settingsReset": case "gameDataStorageType": case "gameDataStoragePath":
                 mSettingsReset = true;
                 break;
@@ -1390,6 +1394,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if(mSettingsReset) {
                 mSettingsReset = false;
                 mSettingsRecreate = false;
+                // User triggered reset and then set max auto saves after,
+                // auto save once and then set maxAutoSaves to 0 after reset
+                if(mGlobalPrefs.maxAutoSaves == 0) {
+                    mGlobalPrefs.putInt("gameAutoSaves",11);
+                    resetAppData();
+                }
                 safeAutoSave();
                 getIntent().putExtra("gameOpenReset", true);
                 setResult(RESULT_OK, getIntent());
@@ -1552,6 +1562,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mDialogFragmentKey = "";
                 }
             });
+
+            // User set max auto save to 0 after setting something to recreate, so we auto saved to prevent
+            // data loss and are setting it back to 0 here
+            if(mGlobalPrefs.maxAutoSaves == 11) {
+                mGlobalPrefs.putInt("gameAutoSaves", 0);
+                resetAppData();
+                mCoreFragment.resetCoreServiceAppData(); // deleting leftover auto saves
+            }
         });
 
         handler.start();
