@@ -204,7 +204,8 @@
             android:exported="false"
             android:label="@string/menuItem_select_profiles"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess">
             <intent-filter>
                 <action android:name=".persistent.DefaultsPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

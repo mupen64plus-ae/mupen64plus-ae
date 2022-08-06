@@ -385,6 +385,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mDeleteExtraDialog = savedInstanceState.getInt(STATE_DELETE_EXTRA_DIALOG,0);
             mCurrentResourceId = savedInstanceState.getInt(STATE_CURRENT_RESOURCE_ID,0);
         }
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
     }
 
     @Override
@@ -413,7 +415,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         mImm = (InputMethodManager) requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         if (mScreenRotating && mGameActivity != null) {
@@ -1059,7 +1060,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
             return inflater.inflate(R.layout.game_settings_menu, container, false);
         }
 
@@ -1127,7 +1127,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
         private GameSettingsDialog gameSettingsDialog;
         private int resourceId;
-        private static SharedPreferences mPrefs;
 
         public SettingsFragmentPreference() {}
 
@@ -1139,16 +1138,12 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         public void onPause()
         {
             super.onPause();
-
-            mPrefs.unregisterOnSharedPreferenceChangeListener(this);
         }
 
         @Override
         public void onResume()
         {
             super.onResume();
-
-            mPrefs.registerOnSharedPreferenceChangeListener(this);
         }
 
         @Override
@@ -1191,8 +1186,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 resourceId = savedInstanceState.getInt("resourceId");
             }
             super.onCreate(savedInstanceState);
-
-            mPrefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
 
             if(!mGameActivity.getDialogFragmentKey().equals("")) {
                 Log.i("GameSettingsDialogPref","DialogFragmentKey = "+mGameActivity.getDialogFragmentKey());
