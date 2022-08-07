@@ -207,16 +207,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                             final Thread handler = new Thread(() -> {
                                 // Waiting for service to quit
-//                                try {
-//                                    Thread.sleep(1500);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
 
                                 Log.i("GalleryActivity", "Waiting on previous instance to exit");
                                 int currentAttempt = 0;
                                 while (ActivityHelper.isProcessRunning(this, ":EmulationProcess") &&
-                                        currentAttempt++ < 800) {
+                                        currentAttempt++ < 1000) {
                                     // Sleep for 10 ms to prevent a tight loop
                                     try {
                                         Thread.sleep(10);
