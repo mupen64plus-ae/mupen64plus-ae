@@ -229,6 +229,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private static final String STATE_SETTINGS_BREAKOUT = "STATE_SETTINGS_BREAKOUT";
     private boolean mSettingsBreakout = false;
 
+    // If the user closes the GameActivity during a resolution reset then
+    // the mResetMalfunction will be triggered and reset the game to prevent
+    // the game continuing when it shouldn't / having other problems
+    private static final String STATE_RESET_MALFUNCTION = "STATE_RESET_MALFUNCTION";
+    private boolean mResetMalfunction = false;
+
     private int safeSaveTryingCount = 0;
 
     @Override
@@ -454,6 +460,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mReOpenSidebar = savedInstanceState.getBoolean(STATE_REOPEN_SIDEBAR);
             mSettingsBreakout = savedInstanceState.getBoolean(STATE_SETTINGS_BREAKOUT);
             mResolutionReset = savedInstanceState.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET);
+            mResetMalfunction = savedInstanceState.getBoolean(STATE_RESET_MALFUNCTION);
             mDialogFragmentKey = savedInstanceState.getString(STATE_DIALOG_FRAGMENT_KEY);
             mAssociatedDialogFragment = savedInstanceState.getInt(STATE_ASSOCIATED_DIALOG_FRAGMENT);
 
@@ -638,7 +645,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             ReloadAllMenus();
         }
 
-        if(mResolutionReset){
+        if(mResolutionReset && !mResetMalfunction){
             mSettingsView = true;
             mGameSidebar.setVisibility(View.GONE);
 
@@ -649,12 +656,29 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
             runOnUiThread(this::gameSettingsDialogPrompt);
         }
+        else if(mResetMalfunction){
+            runOnUiThread(() -> Notifier.showToast(this, R.string.toast_unexpectedExit));
+            settingsViewReset();
+            resolutionRefresh();
+            unlockOrientation();
+            mSettingsReset = false;
+            mSettingsRecreate = false;
+            mResetMalfunction = false;
+            getIntent().putExtra("gameOpenReset", true);
+            setResult(RESULT_OK, getIntent());
+            finish();
+        }
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.i(TAG, "onPause");
+        if(!isChangingConfigurations()){
+            if(mResolutionReset)
+                mResetMalfunction = true;
+        }
     }
 
     @Override
@@ -668,6 +692,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         savedInstanceState.putInt(STATE_ASSOCIATED_DIALOG_FRAGMENT, mAssociatedDialogFragment);
         savedInstanceState.putBoolean(STATE_REOPEN_SIDEBAR, mReOpenSidebar);
         savedInstanceState.putBoolean(STATE_SETTINGS_BREAKOUT,mSettingsBreakout);
+        savedInstanceState.putBoolean(STATE_RESET_MALFUNCTION,mResetMalfunction);
 
         super.onSaveInstanceState( savedInstanceState );
     }

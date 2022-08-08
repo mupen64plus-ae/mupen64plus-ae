@@ -142,6 +142,8 @@
     <string name="toast_savingScreenshot">Saving screenshot…</string>
     <string name="toast_canceling">Canceling…</string>
     <string name="toast_pleaseWait">Please wait…</string>
+    <string name="toast_unexpectedChange">Unexpected change while resetting</string>
+    <string name="toast_unexpectedExit">Unexpected exit, please wait…</string>
     <string name="toast_paused">Paused…</string>
     <string name="toast_running">Running…</string>
     <string name="toast_shutting_down">Saving texture cache…</string>

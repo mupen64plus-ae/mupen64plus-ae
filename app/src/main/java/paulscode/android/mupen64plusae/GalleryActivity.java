@@ -645,7 +645,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         super.onPause();
 
+        // We don't resume resetting the game if something happens here because we
+        // set the gallery grid to a blank state which could be saved if not loaded
+        // properly. So to avoid the issue we just stop the reset
         if(mGameResetting){
+            // Could retain and show notification onResume but the data might not be retained
+            // so we'd have to write to disk which becomes a problem because the user could
+            // exit for good, we wouldn't know which could cause some confusing/false notifications
+            if(isChangingConfigurations())
+                runOnUiThread(() -> Notifier.showToast(this, R.string.toast_unexpectedChange));
             mGameRunning = false;
             mGameResetting = false;
             if(mProgress != null)
