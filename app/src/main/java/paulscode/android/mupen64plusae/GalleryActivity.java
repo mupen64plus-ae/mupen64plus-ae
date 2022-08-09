@@ -227,7 +227,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                                             romGoodName, romDisplayName, doRestart, true, doResolutionReset, isNetplayEnabled,
                                             isNetplayServer);
                                 // Making sure we haven't already reset the grid
-                                else if(mRecentItemsCache == null || mRecentItemsCache.size() < 1 || mRecentItemsCache.get(0) == null)
+                                else if(mAllItems == null || mAllItems.size() < 1 || mAllItems.get(0) == null)
                                     refreshGrid();
                             });
                             handler.start();
