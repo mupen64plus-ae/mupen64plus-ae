@@ -1202,28 +1202,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         resetTouchscreenControls();
     }
 
-    // Helps reset the auto hide feature
-    private void resetTouchscreenControlsAutoHide(){
-        // Check periodically for touch input to determine if we should
-        // hide the controls
-        mHandler = new Handler(Looper.getMainLooper());
-        mLastTouchTime = System.currentTimeMillis() / 1000L;
-
-        if(mGlobalPrefs.touchscreenAutoHideEnabled)
-            mHandler.postDelayed(mPeriodicChecker, 500);
-
-        mDrawerLayout.setOnHoverListener((v, event) -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    mHandler.postDelayed(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GameActivity.this, PointerIcon.TYPE_ARROW)), 100);
-                } else {
-                    mHandler.postDelayed(() -> v.setPointerIcon(PointerIcon.getSystemIcon(GameActivity.this, PointerIcon.TYPE_NULL)), 100);
-                }
-            }
-            return false;
-        });
-    }
-
     // Used to reset and pause the game upon restarting
     private void resolutionResetOnComplete(){
         safeAutoSave();
@@ -1345,8 +1323,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 resetMoreTouchscreenControls();
                 break;
             case "touchscreenAutoHideSeconds":
-                resetMoreTouchscreenControls();
-                resetTouchscreenControlsAutoHide();
+                recreate();
                 break;
             case "inGameMenu":
                 resetAppData();
