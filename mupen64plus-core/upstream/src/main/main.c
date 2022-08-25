@@ -974,6 +974,14 @@ static void pause_loop(void)
     {
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
 
+        // using estimated frame skip settings with gfx plugin causes black screen
+        if(l_resolutionReset == 0 && l_resolutionResetCoreCounter != 0){
+            if(l_resolutionResetCoreCounter == -6)
+                l_resolutionResetCoreCounter = -5;
+            else
+                VidExt_GL_SwapBuffers();
+        }
+
         while(g_rom_pause)
         {
             SDL_Delay(10);

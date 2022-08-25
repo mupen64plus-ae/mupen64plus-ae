@@ -186,7 +186,7 @@ void resolution_reset_check(){
             }
             else{
                 main_toggle_pause();
-                l_resolutionResetCoreCounter = 0;
+                l_resolutionResetCoreCounter = -6;//0;
                 l_resolutionReset = 0;
             }
         }

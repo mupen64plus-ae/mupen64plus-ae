@@ -206,7 +206,7 @@ EXPORT void CALL ProcessRDPList(void)
 
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
-    if(Width <= 0)
+    if(Width <= 0 || Height <= 0)
         l_resolutionResetGln = Height;
 }
 
