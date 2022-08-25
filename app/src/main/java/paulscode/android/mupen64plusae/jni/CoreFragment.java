@@ -675,13 +675,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         return mCoreService.getEmuModeInit();
     }
 
-    public int getEmuMode()
-    {
-        if(mCoreService == null)
-            return 0;
-        return mCoreService.getEmuMode();
-    }
-
     public void incrementSlot()
     {
         Log.i(TAG, "incrementSlot");

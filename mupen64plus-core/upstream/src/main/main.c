@@ -597,6 +597,10 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
     switch (param)
     {
         case M64CORE_EMU_STATE:
+            if (l_emuModeInitiated != 1) {
+                *rval = -2;
+                break;
+            }
             if (!g_EmulatorRunning)
                 *rval = M64EMU_STOPPED;
             else if (g_rom_pause)
@@ -611,13 +615,6 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
                 *rval = M64VIDEO_FULLSCREEN;
             else
                 *rval = M64VIDEO_WINDOWED;
-            break;
-        case M64CORE_EMU_MODE:
-            if (l_emuModeInitiated != 1) {
-                *rval = -2;
-                break;
-            }
-            *rval = get_r4300_emumode(&g_dev.r4300);
             break;
         case M64CORE_SAVESTATE_SLOT:
             *rval = savestates_get_slot();

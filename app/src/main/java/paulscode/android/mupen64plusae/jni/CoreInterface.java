@@ -858,18 +858,11 @@ class CoreInterface
     int emuGetEmuModeInitiated()
     {
         IntByReference emuModeInit = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_MODE.ordinal(), emuModeInit.getPointer());
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_STATE.ordinal(), emuModeInit.getPointer());
         if(emuModeInit.getValue() == -2)
             return 0;
         else
             return 1;
-    }
-
-    int emuGetEmuMode()
-    {
-        IntByReference emuMode = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_MODE.ordinal(), emuMode.getPointer());
-        return emuMode.getValue();
     }
 
     void emuReset()

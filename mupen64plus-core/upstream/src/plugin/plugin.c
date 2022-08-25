@@ -120,7 +120,6 @@ static int l_RspAttached = 0;
 static int l_InputAttached = 0;
 static int l_AudioAttached = 0;
 static int l_GfxAttached = 0;
-static char s_GfxName[48];
 
 static unsigned int dummy;
 
@@ -155,7 +154,6 @@ static void plugin_disconnect_gfx(void)
     gfx = dummy_gfx;
     l_GfxAttached = 0;
     l_mainRenderCallback = NULL;
-    memset(s_GfxName,0,48);
 }
 
 static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
@@ -218,13 +216,6 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
         {
             DebugMessage(M64MSG_WARNING, "Fallback for Video plugin API (%02i.%02i.%02i) < 2.2.0. Resizable video will not work", VERSION_PRINTF_SPLIT(APIVersion));
             gfx.resizeVideoOutput = dummyvideo_ResizeVideoOutput;
-        }
-
-        /* checking for certain plugins */
-        ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(plugin_handle, "PluginGetVersion");
-        if (PluginGetVersion == NULL)
-        {
-            DebugMessage(M64MSG_STATUS,"Error can't find PluginGetVersion in plugin.");
         }
 
         l_GfxAttached = 1;

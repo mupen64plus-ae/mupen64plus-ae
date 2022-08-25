@@ -414,11 +414,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mCoreInterface.emuGetEmuModeInitiated();
     }
 
-    int getEmuMode()
-    {
-        return mCoreInterface.emuGetEmuMode();
-    }
-
     int getSlotQuantity()
     {
         return NUM_SLOTS;

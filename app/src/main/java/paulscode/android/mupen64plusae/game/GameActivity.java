@@ -1068,14 +1068,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mCoreFragment == null)
             return;
 
-        if(mCoreFragment.getEmuMode() == 1){
-            synchronized (mSaveLock) {
-                while (mCoreFragment.getEmuModeInit() == 0) {
-                    try {
-                        mSaveLock.wait(100);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        synchronized (mSaveLock) {
+            while (mCoreFragment.getEmuModeInit() == 0) {
+                try {
+                    mSaveLock.wait(100);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

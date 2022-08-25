@@ -69,7 +69,6 @@ public class CoreTypes {
         M64CORE_EMU_STATE,
         M64CORE_VIDEO_MODE,
         M64CORE_SAVESTATE_SLOT,
-        M64CORE_EMU_MODE,
         M64CORE_SPEED_FACTOR,
         M64CORE_SPEED_LIMITER,
         M64CORE_VIDEO_SIZE,
