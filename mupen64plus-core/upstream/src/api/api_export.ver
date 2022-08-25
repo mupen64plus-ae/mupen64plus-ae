@@ -77,6 +77,5 @@ VidExt_SetVideoMode;
 VidExt_SetVideoModeWithRate;
 VidExt_ToggleFullScreen;
 VidExt_ResizeWindow;
-VidExt_ResolutionReset;
 VidExt_GL_GetDefaultFramebuffer;
 local: *; };

@@ -131,17 +131,6 @@ void run_r4300(struct r4300_core* r4300)
 
     *r4300_stop(r4300) = 0;
 
-    // Set g_rom_pause to 1 so the graphics plugin can pause the emulator properly
-    // if the user changes settings in game & the gfx plugin just so happens to
-    // initialize first.
-    char c[9] = "GLideN64";
-    c[8] = '\0';
-
-    if(strncmp(c, main_get_gfx_name(),8) == 0)
-        g_rom_pause = 0;
-    else
-        g_rom_pause = 1;
-
     /* clear instruction counters */
 #if defined(COUNT_INSTR)
     memset(instr_count, 0, 131*sizeof(instr_count[0]));
@@ -160,8 +149,6 @@ void run_r4300(struct r4300_core* r4300)
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Dynamic Recompiler");
         r4300->emumode = EMUMODE_DYNAREC;
         init_blocks(&r4300->cached_interp);
-        if(l_resolutionResetCoreCounter == 0)
-            l_resolutionResetCoreCounter=5; // if black screen from settings reset then get rid of this
 #ifdef NEW_DYNAREC
         new_dynarec_init();
         l_emuModeInitiated = 1;

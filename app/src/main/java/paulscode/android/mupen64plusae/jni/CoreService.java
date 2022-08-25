@@ -374,23 +374,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mIsPaused;
     }
 
-    void pluginResolutionReset()
-    {
-        mCoreInterface.pluginResolutionReset();
-    }
-
-    boolean getPluginResolutionReset()
-    {
-        return mCoreInterface.getPluginResolutionReset();
-    }
-
-    public boolean getResolutionResetCore(){
-        return mCoreInterface.emuGetResetResolutionCore();
-    }
 
     public void setResolutionReset(boolean resolutionReset){
         this.mResolutionReset = resolutionReset;
-        mCoreInterface.setResetResolution(resolutionReset);
+        mCoreInterface.setResolutionReset(resolutionReset);
     }
 
     void toggleFramelimiter()
@@ -668,15 +655,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             boolean loadingSuccess;
 
             loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
-                    mGlobalPrefs.coreUserCacheDir,mResolutionReset) == 0;
+                    mGlobalPrefs.coreUserCacheDir) == 0;
 
             if(mResolutionReset || mSettingsReset)
                 mLoadLatestAutoSave = true;
 
-            if(!mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-GLideN64")){
-                mResolutionReset = false;
-                mCoreInterface.setResetResolution(false);
-            }
             // Disk only games still require a ROM image, so use a dummy test ROM
             if (loadingSuccess) {
                 if (isNdd) {
@@ -719,6 +702,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     }
 
                     mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
+
+                    mCoreInterface.setResolutionReset(mResolutionReset);
 
                 } catch (IllegalArgumentException e) {
                     loadingSuccess = false;

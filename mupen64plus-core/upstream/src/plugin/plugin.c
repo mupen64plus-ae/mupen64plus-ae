@@ -69,8 +69,6 @@ static const gfx_plugin_functions dummy_gfx = {
     dummyvideo_ReadScreen2,
     dummyvideo_SetRenderingCallback,
     dummyvideo_ResizeVideoOutput,
-    dummyvideo_PluginResolutionReset,
-    dummyvideo_GetPluginResolutionReset,
     dummyvideo_FBRead,
     dummyvideo_FBWrite,
     dummyvideo_FBGetFrameBufferInfo
@@ -185,8 +183,6 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
             !GET_FUNC(ptr_ViStatusChanged, gfx.viStatusChanged, "ViStatusChanged") ||
             !GET_FUNC(ptr_ViWidthChanged, gfx.viWidthChanged, "ViWidthChanged") ||
             !GET_FUNC(ptr_ReadScreen2, gfx.readScreen, "ReadScreen2") ||
-            !GET_FUNC(ptr_PluginResolutionReset, gfx.pluginResolutionReset, "PluginResolutionReset") ||
-            !GET_FUNC(ptr_GetPluginResolutionReset, gfx.getPluginResolutionReset, "GetPluginResolutionReset") ||
             !GET_FUNC(ptr_SetRenderingCallback, gfx.setRenderingCallback, "SetRenderingCallback") ||
             !GET_FUNC(ptr_FBRead, gfx.fBRead, "FBRead") ||
             !GET_FUNC(ptr_FBWrite, gfx.fBWrite, "FBWrite") ||
@@ -229,22 +225,6 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
         if (PluginGetVersion == NULL)
         {
             DebugMessage(M64MSG_STATUS,"Error can't find PluginGetVersion in plugin.");
-        }
-        else
-        {
-            m64p_plugin_type plugin_type = (m64p_plugin_type)0;
-            int plugin_version = 0;
-            const char *plugin_name = NULL;
-            int api_version = 0;
-
-            (*PluginGetVersion)(&plugin_type, &plugin_version, &api_version, &plugin_name, NULL);
-            DebugMessage(M64MSG_STATUS,"Graphics plugin version = %s",plugin_name);
-            strncpy((char *) s_GfxName,plugin_name,47);
-            s_GfxName[47] = '\0';
-
-            /* this plugin always needs to swap buffers on pause */
-            if(strncmp(main_get_gfx_name(),"Glide64mk2 Video Plugin",23) == 0)
-                l_inMenuAfterResetting = 0;
         }
 
         l_GfxAttached = 1;
@@ -601,8 +581,4 @@ m64p_error plugin_check(void)
         DebugMessage(M64MSG_WARNING, "No input plugin attached.  You won't be able to control the game.");
 
     return M64ERR_SUCCESS;
-}
-
-const char *get_gfx_name(){
-    return s_GfxName;
 }

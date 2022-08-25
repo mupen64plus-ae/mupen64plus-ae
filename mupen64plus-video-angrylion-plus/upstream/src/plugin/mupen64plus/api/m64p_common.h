@@ -67,9 +67,9 @@ EXPORT const char * CALL CoreErrorMessage(m64p_error);
  * This function initializes a plugin for use by allocating memory, creating
  * data structures, and loading the configuration data.
 */
-typedef m64p_error (*ptr_PluginStartup)(m64p_dynlib_handle, void *, void (*)(void *, int, const char *), int resolutionReset);
+typedef m64p_error (*ptr_PluginStartup)(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
 #if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
-EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle, void *, void (*)(void *, int, const char *), int resolutionReset);
+EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
 #endif
 
 /* PluginShutdown()
@@ -80,25 +80,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle, void *, void (*)(void *
 typedef m64p_error (*ptr_PluginShutdown)(void);
 #if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
 EXPORT m64p_error CALL PluginShutdown(void);
-#endif
-
-/* PluginResolutionReset()
- *
- * This function tells the plugin to continue the emulation in case the
- * settings menu exits.
-*/
-typedef void (*ptr_PluginResolutionReset)(void);
-#if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
-EXPORT void CALL PluginResolutionReset(void);
-#endif
-
-/* GetPluginResolutionReset()
- *
- * This function gets the PluginResolutionReset settings
-*/
-typedef void (*ptr_GetPluginResolutionReset)(int *pluginResolutionReset);
-#if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
-EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset);
 #endif
 
 #ifdef __cplusplus

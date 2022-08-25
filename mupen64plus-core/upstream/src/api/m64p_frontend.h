@@ -46,9 +46,9 @@ EXPORT void CALL StateCallback(void *Context, m64p_core_param param_type, int ne
  * This function initializes libmupen64plus for use by allocating memory,
  * creating data structures, and loading the configuration file.
  */
-typedef m64p_error (*ptr_CoreStartup)(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback, int);
+typedef m64p_error (*ptr_CoreStartup)(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback);
 #if defined(M64P_CORE_PROTOTYPES)
-EXPORT m64p_error CALL CoreStartup(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback, int);
+EXPORT m64p_error CALL CoreStartup(int, const char *, const char *, void *, ptr_DebugCallback, void *, ptr_StateCallback);
 #endif
 
 /* CoreShutdown()
@@ -141,13 +141,8 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *, int, int, int);
 int l_resolutionReset;
 /* Counts frames to make sure the video plugin is showing when resetting via resolution reset */
 int l_resolutionResetCoreCounter;
-/* We set this as l_resolutionReset but don't set it back to 0 so we can load properly with the
- * interpreter even if other processes have finished */
-int l_usingAutoSaves;
 /* We use this to help the plugin wait before initializing when resetting from in game settings */
 int l_emuModeInitiated;
-/* We use this to see if we need to swap buffer on pause */
-int l_inMenuAfterResetting;
 /* We use this to help the plugin wait before initializing */
 int l_audioInitiated;
 /* Holds the latest auto save file name to use if we reset from in game settings */

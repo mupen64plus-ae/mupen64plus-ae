@@ -67,9 +67,9 @@ EXPORT const char * CALL CoreErrorMessage(m64p_error);
  * This function initializes a plugin for use by allocating memory, creating
  * data structures, and loading the configuration data.
 */
-typedef m64p_error (*ptr_PluginStartup)(m64p_dynlib_handle, void *, void (*)(void *, int, const char *), int);
+typedef m64p_error (*ptr_PluginStartup)(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
 #if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
-EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle, void *, void (*)(void *, int, const char *), int);
+EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
 #endif
 
 /* PluginShutdown()

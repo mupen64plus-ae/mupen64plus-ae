@@ -657,7 +657,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             runOnUiThread(this::gameSettingsDialogPrompt);
         }
         else if(mResetMalfunction){
-            runOnUiThread(() -> Notifier.showToast(this, R.string.toast_unexpectedExit));
+            Notifier.showToast(this, R.string.toast_unexpectedExit);
             settingsViewReset();
             resolutionRefresh();
             unlockOrientation();
@@ -1230,12 +1230,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.setResolutionReset(false);
         getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
         getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
-
-        //if not gliden64 then update those values
-        if(!mGamePrefs.videoPluginLib.getPluginLib().equals("mupen64plus-video-GLideN64")){
-            if(mCoreFragment != null)
-                mCoreFragment.pluginResolutionReset();
-        }
     }
 
     private void unlockOrientation(){
@@ -1530,11 +1524,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if(mResolutionReset) {
                 startingGameAttempt = 0;
 
-                // Only the glide64 plugin needs the audio initialized to pause properly (parallel and glideN specifically don't)
-                // And when using glideN there is no plugin to get the plugin resolution reset setting from so we don't ask for it
-                // when using that video plugin
-                while((mCoreFragment == null || (mCoreFragment.getAudioInit() == 0 && mGamePrefs.videoPlugin.name.equals("glide64mk2")) ||
-                        mCoreFragment.getResolutionResetCore() || (mCoreFragment.getPluginResolutionReset() && !mGamePrefs.videoPlugin.name.equals("GLideN64")))
+
+                while((mCoreFragment == null || (mCoreFragment.getAudioInit() == 0))
                         && startingGameAttempt++ < 50){
                     try {
                         Thread.sleep(100);

@@ -118,8 +118,7 @@ void DebugMessage(int level, const char *message, ...) {
 }
 
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Context,
-                                     void (*DebugCallback)(void *, int, const char *),
-                                     int resolutionReset)
+                                     void (*DebugCallback)(void *, int, const char *))
 {
     if (plugin_initialized)
     {
@@ -161,7 +160,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
     ConfigSetDefaultBool(configVideoParallel, KEY_NATIVETEXTRECT, 1, "Native resolution TEX_RECT. TEX_RECT primitives should generally be rendered at native resolution to avoid seams");
     ConfigSaveSection("Video-Parallel");
 
-    resolution_reset = resolutionReset;
     plugin_initialized = true;
     vk_initialized = false;
     return M64ERR_SUCCESS;
@@ -324,18 +322,12 @@ EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 
 EXPORT void CALL ResizeVideoOutput(int width, int height)
 {
+    if (width <= 0 || height <= 0) {
+        resolution_reset = height;
+        return;
+    }
     window_width = width;
     window_height = height;
-}
-
-EXPORT void CALL PluginResolutionReset(void)
-{
-    resolution_reset = 0;
-}
-
-EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
-{
-    *pluginResolutionReset = resolution_reset;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

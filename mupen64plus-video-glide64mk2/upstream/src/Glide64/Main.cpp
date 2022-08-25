@@ -117,7 +117,6 @@ ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
 ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
-ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
@@ -1524,13 +1523,11 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 int    resolutionResetGlide = 0;
 int    resolutionResetGlideCount = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                   void (*DebugCallback)(void *, int, const char *),
-                                   int resolutionReset)
+                                   void (*DebugCallback)(void *, int, const char *))
 {
   VLOG("CALL PluginStartup ()\n");
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
-    resolutionResetGlide = resolutionReset;
 
     /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
@@ -1587,13 +1584,12 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResizeWindow");
-    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
     if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
-        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_ResizeWindow || !CoreVideo_ResolutionReset ||
+        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_ResizeWindow ||
         !CoreVideo_GL_GetProcAddress || !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
     {
         ERRLOG("Couldn't connect to Core video functions");
@@ -1876,6 +1872,10 @@ output:   none
 *******************************************************************/
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
+  if (Width <= 0 || Height <= 0) {
+    resolutionResetGlide = Height;
+    return;
+  }
 }
 
 /******************************************************************
@@ -2114,7 +2114,7 @@ void ResolutionResetInternal(){
     }
     DebugMessage(M64MSG_STATUS,"glide64 ResolutionResetInternal");
     resolutionResetGlide = 0;
-    CoreVideo_ResolutionReset();
+    CoreVideo_ResizeWindow(-1,-1);
   }
 }
 
@@ -2237,19 +2237,6 @@ static void GetGammaTable()
     voodoo.gamma_table_b = new FxU32[voodoo.gamma_table_size];
     grGetGammaTableExt(voodoo.gamma_table_size, voodoo.gamma_table_r, voodoo.gamma_table_g, voodoo.gamma_table_b);
   }
-}
-
-EXPORT void CALL PluginResolutionReset (void)
-{
-//  DebugMessage(M64MSG_STATUS,"PluginResolutionReset Glide64");
-  resolutionResetGlide = 0;
-  resolutionResetGlideCount = 0;
-}
-
-
-EXPORT void CALL GetPluginResolutionReset (int *pluginResolutionReset)
-{
-  *pluginResolutionReset = resolutionResetGlide;
 }
 
 }

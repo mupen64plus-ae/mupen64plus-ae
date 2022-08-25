@@ -185,8 +185,7 @@ extern "C"
 	}
 
 	EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-									 void (*DebugCallback)(void *, int, const char *),
-									 int resolutionReset)
+									 void (*DebugCallback)(void *, int, const char *))
 	{
         /* first thing is to set the callback function for debug info */
         l_DebugCallback = DebugCallback;

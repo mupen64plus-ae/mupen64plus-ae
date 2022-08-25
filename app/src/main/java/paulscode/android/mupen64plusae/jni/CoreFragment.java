@@ -554,20 +554,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         return mCoreService != null && mCoreService.isShuttingDown();
     }
 
-    public void pluginResolutionReset()
-    {
-        Log.i(TAG, "pluginResolutionReset");
-        if(mCoreService != null)
-            mCoreService.pluginResolutionReset();
-    }
-
-    public boolean getPluginResolutionReset()
-    {
-        if(mCoreService == null)
-            return false;
-        return mCoreService.getPluginResolutionReset();
-    }
-
     public void exit()
     {
         Log.i(TAG, "exit");
@@ -1134,12 +1120,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     }
 
     public void setRecreateSurface(boolean recreateSurface){ mRecreateSurface = recreateSurface; }
-
-    public boolean getResolutionResetCore(){
-        if(mCoreService == null)
-            return true;
-        return mCoreService.getResolutionResetCore();
-    }
 
     public void setResolutionReset(boolean resolutionReset){
         mViewModel.mResolutionReset = resolutionReset;

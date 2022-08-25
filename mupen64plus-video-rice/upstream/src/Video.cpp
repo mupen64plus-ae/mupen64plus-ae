@@ -101,7 +101,6 @@ ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
 ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
-ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
@@ -177,7 +176,7 @@ void ResolutionResetInternal(){
             return;
         }
         l_ResolutionResetRice = 0;
-        CoreVideo_ResolutionReset();
+        CoreVideo_ResizeWindow(-1,-1);
     }
     else if(frameBufferOptions.ResolutionResetRiceCounter != 0){
         frameBufferOptions.ResolutionResetRiceCounter=0;
@@ -600,8 +599,7 @@ extern "C" {
 
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                   void (*DebugCallback)(void *, int, const char *),
-                                   int resolutionReset)
+                                   void (*DebugCallback)(void *, int, const char *))
 {
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
@@ -609,7 +607,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     /* first thing is to set the callback function for debug info */
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
-    l_ResolutionResetRice = resolutionReset;
 
     /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
@@ -678,15 +675,14 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResizeWindow");
-    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
     if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
-        !CoreVideo_ResizeWindow || !CoreVideo_ResolutionReset || !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen ||
-        !CoreVideo_GL_GetProcAddress || !CoreVideo_GL_SetAttribute || !CoreVideo_GL_GetAttribute || !CoreVideo_GL_SwapBuffers)
+        !CoreVideo_ResizeWindow || !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_GL_GetProcAddress ||
+        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_GetAttribute || !CoreVideo_GL_SwapBuffers)
     {
         DebugMessage(M64MSG_ERROR, "Couldn't connect to Core video extension functions");
         return M64ERR_INCOMPATIBLE;
@@ -865,22 +861,15 @@ EXPORT int CALL InitiateGFX(GFX_INFO Gfx_Info)
     return(TRUE);
 }
 
-EXPORT void CALL ResizeVideoOutput(int width, int height)
-{
+EXPORT void CALL ResizeVideoOutput(int width, int height) {
+    if (width <= 0 || height <= 0) {
+        l_ResolutionResetRice = height;
+        return;
+    }
     // save the new window resolution.  actual resizing operation is asynchronous (it happens later)
     status.gNewResizeWidth = width;
     status.gNewResizeHeight = height;
     status.ToResize = true;
-}
-
-EXPORT void CALL PluginResolutionReset(void)
-{
-    l_ResolutionResetRice = 0;
-}
-
-EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
-{
-    *pluginResolutionReset = l_ResolutionResetRice;
 }
 
 //---------------------------------------------------------------------------------------

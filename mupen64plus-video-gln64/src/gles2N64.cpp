@@ -29,7 +29,6 @@ ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
 ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
-ptr_VidExt_ResolutionReset       CoreVideo_ResolutionReset = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
@@ -64,8 +63,7 @@ extern "C" {
 int l_resolutionResetGln;
 int l_resolutionResetGlnCounter = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
-        void *Context, void (*DebugCallback)(void *, int, const char *),
-        int resolutionReset)
+        void *Context, void (*DebugCallback)(void *, int, const char *))
 {
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
@@ -80,12 +78,10 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
     CoreVideo_SetCaption = (ptr_VidExt_SetCaption) dlsym(CoreLibHandle, "VidExt_SetCaption");
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) dlsym(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) dlsym(CoreLibHandle, "VidExt_ResizeWindow");
-    CoreVideo_ResolutionReset = (ptr_VidExt_ResolutionReset) dlsym(CoreLibHandle, "VidExt_ResolutionReset");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) dlsym(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) dlsym(CoreLibHandle, "VidExt_GL_SetAttribute");
     CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
-    l_resolutionResetGln = resolutionReset;
 
 #ifdef __NEON_OPT
     MathInitNeon();
@@ -174,22 +170,11 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
         frameSkipper.setSkips( FrameSkipper::AUTO, config.maxFrameSkip );
     else {
         frameSkipper.setSkips(FrameSkipper::MANUAL, config.maxFrameSkip);
-        l_resolutionResetGlnCounter = 3-config.maxFrameSkip;// 0 - config.maxFrameSkip;
+        l_resolutionResetGlnCounter = 0-config.maxFrameSkip;// 3 - config.maxFrameSkip;
     }
 
     OGL_Start();
     return 1;
-}
-
-EXPORT void CALL PluginResolutionReset(void)
-{
-    l_resolutionResetGlnCounter = 0;
-    l_resolutionResetGln = 0;
-}
-
-EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
-{
-    *pluginResolutionReset = l_resolutionResetGln;
 }
 
 EXPORT void CALL ProcessDList(void)
@@ -221,6 +206,8 @@ EXPORT void CALL ProcessRDPList(void)
 
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
+    if(Width <= 0)
+        l_resolutionResetGln = Height;
 }
 
 EXPORT void CALL RomClosed (void)
@@ -254,7 +241,7 @@ EXPORT void CALL UpdateScreen (void)
         l_resolutionResetGlnCounter = 0;
         l_resolutionResetGln = 0;
 
-        CoreVideo_ResolutionReset();
+        CoreVideo_ResizeWindow(-1,-1);
     }
     frameSkipper.update();
 

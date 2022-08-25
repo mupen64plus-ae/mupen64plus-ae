@@ -85,8 +85,7 @@ int resolution_reset = 0;
 int resolution_reset_counter = 0; // need this for pokemon stadium 2 in my testing
 
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Context,
-                                     void (*DebugCallback)(void *, int, const char *),
-                                     int resolutionReset)
+                                     void (*DebugCallback)(void *, int, const char *))
 {
     if (plugin_initialized) {
         return M64ERR_ALREADY_INIT;
@@ -128,8 +127,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Co
 
     ConfigSaveSection("Video-General");
     ConfigSaveSection("Video-Angrylion-Plus");
-
-    resolution_reset = resolutionReset;
 
     plugin_initialized = true;
     return M64ERR_SUCCESS;
@@ -304,19 +301,12 @@ EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 
 EXPORT void CALL ResizeVideoOutput(int width, int height)
 {
+    if (width <= 0 || height <= 0) {
+        resolution_reset = height;
+        return;
+    }
     win_width = width;
     win_height = height;
-}
-
-EXPORT void CALL PluginResolutionReset(void)
-{
-    resolution_reset = 0;
-    resolution_reset_counter = 0;
-}
-
-EXPORT void CALL GetPluginResolutionReset(int *pluginResolutionReset)
-{
-    *pluginResolutionReset = resolution_reset;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

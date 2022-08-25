@@ -654,7 +654,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             // so we'd have to write to disk which becomes a problem because the user could
             // exit for good, we wouldn't know which could cause some confusing/false notifications
             if(isChangingConfigurations())
-                runOnUiThread(() -> Notifier.showToast(this, R.string.toast_unexpectedChange));
+                Notifier.showToast(this, R.string.toast_unexpectedChange);
             mGameRunning = false;
             mGameResetting = false;
             if(mProgress != null)

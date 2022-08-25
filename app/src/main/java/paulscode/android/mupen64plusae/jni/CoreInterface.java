@@ -110,8 +110,7 @@ class CoreInterface
             void invoke(Pointer Context, int level, String message);
         }
 
-        int PluginStartup(Pointer CoreLibHandle, Pointer Context, DebugCallback debugCallBack
-                , boolean resolutionReset);
+        int PluginStartup(Pointer CoreLibHandle, Pointer Context, DebugCallback debugCallBack);
 
         int PluginGetVersion(IntByReference PluginType, IntByReference PluginVersion, IntByReference APIVersion, PointerByReference PluginNamePtr, IntByReference Capabilities);
 
@@ -537,8 +536,7 @@ class CoreInterface
      * This function initializes libmupen64plus for use by allocating memory,
      * creating data structures, and loading the configuration file.
      */
-    int coreStartup(String configDirPath, String dataDirPath, String userDataPath, String userCachePath,
-                    boolean resolutionReset)
+    int coreStartup(String configDirPath, String dataDirPath, String userDataPath, String userCachePath)
     {
         LibC.INSTANCE.setenv("XDG_DATA_HOME", userDataPath, 1);
         LibC.INSTANCE.setenv("XDG_CACHE_HOME", userCachePath, 1);
@@ -556,10 +554,8 @@ class CoreInterface
             Log.i(TAG, "Disable core debug due to 64DD ROM found");
         }
 
-        mResolutionReset = resolutionReset;
-
         int returnValue = mMupen64PlusLibrary.CoreStartup(CoreLibrary.coreAPIVersion, configDirPath,
-                dataDirPath, mCoreContext, debugCallback, null, mStateCallBack, resolutionReset);
+                dataDirPath, mCoreContext, debugCallback, null, mStateCallBack);
         mAeBridgeLibrary.overrideAeVidExtFuncs();
         mAeBridgeLibrary.registerFpsCounterCallback(mFpsCounterCallback);
         return returnValue;
@@ -596,16 +592,10 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CLOSE.ordinal(), 0, parameter);
     }
 
-    boolean emuGetResetResolutionCore()
-    {
-        IntByReference resetResolution = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_RESOLUTION_RESET.ordinal(), resetResolution.getPointer());
-        return resetResolution.getValue() != 0;
-    }
-
-    void setResetResolution(boolean resetResolution){
+    void setResolutionReset(boolean resetResolution){
+        mResolutionReset = resetResolution;
         IntByReference parameter = new IntByReference(resetResolution ? -1 : 0);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_SET_RESOLUTION_RESET.ordinal(), 0, parameter.getPointer());
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_VIDEO_SIZE.ordinal(),parameter.getPointer());
     }
 
     /* coreAttachPlugin()
@@ -637,8 +627,7 @@ class CoreInterface
         mPluginContext.put(pluginType, new Memory(bytes.length + 1));
 
         mPluginContext.get(pluginType).setString(0, pluginName);
-        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), loggingEnabled ? mDebugCallBackPlugin : null,
-                mResolutionReset);
+        mPlugins.get(pluginType).PluginStartup(coreHandle, mPluginContext.get(pluginType), loggingEnabled ? mDebugCallBackPlugin : null);
 
         Pointer handle = mAeBridgeLibrary.loadLibrary(pluginName);
         return mMupen64PlusLibrary.CoreAttachPlugin(pluginType.ordinal(), handle);
@@ -859,15 +848,21 @@ class CoreInterface
     int emuGetAudioInitiated()
     {
         IntByReference audioInit = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_AUDIO_INIT.ordinal(), audioInit.getPointer());
-        return audioInit.getValue();
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_AUDIO_VOLUME.ordinal(), audioInit.getPointer());
+        if(audioInit.getValue() == -2)
+            return 0;
+        else
+            return 1;
     }
 
     int emuGetEmuModeInitiated()
     {
         IntByReference emuModeInit = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_MODE_INIT.ordinal(), emuModeInit.getPointer());
-        return emuModeInit.getValue();
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_MODE.ordinal(), emuModeInit.getPointer());
+        if(emuModeInit.getValue() == -2)
+            return 0;
+        else
+            return 1;
     }
 
     int emuGetEmuMode()
@@ -886,19 +881,6 @@ class CoreInterface
     void setNativeWindow(Surface surface)
     {
         mAeBridgeLibrary.setNativeWindow(JNIEnv.CURRENT, surface);
-    }
-
-    void pluginResolutionReset()
-    {
-        Pointer parameter = null;
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_PLUGIN_RESOLUTION_RESET.ordinal(),0,parameter);
-    }
-
-    boolean getPluginResolutionReset()
-    {
-        IntByReference getPluginResolutionReset = new IntByReference(1);
-        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_GET_PLUGIN_RESOLUTION_RESET.ordinal(), 0,getPluginResolutionReset.getPointer());
-        return getPluginResolutionReset.getValue() != 0;
     }
 
     void setLatestSave(String save){

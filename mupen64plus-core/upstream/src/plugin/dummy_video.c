@@ -127,12 +127,5 @@ void dummyvideo_ResizeVideoOutput(int width, int height)
 {
 }
 
-void dummyvideo_PluginResolutionReset(void){
-
-}
-
-void dummyvideo_GetPluginResolutionReset(int *pluginResolutionReset){
-    return;
-}
 
 

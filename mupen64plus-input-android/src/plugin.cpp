@@ -280,7 +280,7 @@ extern "C" EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType,
     return M64ERR_SUCCESS;
 }
 
-extern "C" EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle coreLibHandle, void* context, void (*DebugCallback)(void*, int, const char*), int resolutionReset)
+extern "C" EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle coreLibHandle, void* context, void (*DebugCallback)(void*, int, const char*))
 {
     if (pluginInitialized)
         return M64ERR_ALREADY_INIT;

@@ -57,8 +57,7 @@ static int l_CallerUsingSDL = 0;
 /* functions exported outside of libmupen64plus to front-end application */
 EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const char *DataPath, void *Context,
                                    void (*DebugCallback)(void *, int, const char *), void *Context2,
-                                   void (*StateCallback)(void *, m64p_core_param, int),
-                                   int resolutionReset)
+                                   void (*StateCallback)(void *, m64p_core_param, int))
 {
     if (l_CoreInit)
         return M64ERR_ALREADY_INIT;
@@ -70,9 +69,6 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     SetDebugCallback(DebugCallback, Context);
     SetStateCallback(StateCallback, Context2);
 
-    l_resolutionReset = resolutionReset;
-    l_usingAutoSaves = resolutionReset;
-    l_inMenuAfterResetting = resolutionReset;
     l_emuModeInitiated = 0;
 
     /* check front-end's API version */
@@ -335,21 +331,6 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
             if (ParamInt < 1 || ParamPtr == NULL)
                 return M64ERR_INPUT_INVALID;
             return netplay_start(ParamPtr, ParamInt);
-        case M64CMD_SET_RESOLUTION_RESET:
-            if(ParamPtr == NULL)
-                return M64ERR_INPUT_INVALID;
-            if (ParamInt == 0)
-                l_resolutionReset = 0;
-            else
-                l_resolutionReset = -1;
-            return M64ERR_SUCCESS;
-        case M64CMD_PLUGIN_RESOLUTION_RESET:
-            l_inMenuAfterResetting = 0;
-            main_plugin_resolution_reset();
-            return M64ERR_SUCCESS;
-        case M64CMD_GET_PLUGIN_RESOLUTION_RESET:
-            main_get_plugin_resolution_reset((int *)ParamPtr);
-            return M64ERR_SUCCESS;
         case M64CMD_NETPLAY_CONTROL_PLAYER:
             if (ParamInt < 1 || ParamInt > 4 || ParamPtr == NULL)
                 return M64ERR_INPUT_INVALID;

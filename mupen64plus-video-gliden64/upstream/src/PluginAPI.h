@@ -66,10 +66,6 @@ public:
 
 	void DllAbout(/*HWND _hParent*/);
 
-	void PluginResolutionReset();
-
-	void GetPluginResolutionReset(long *_pluginResolutionReset);
-
 	// FrameBufferInfo extension
 	void FBWrite(unsigned int addr, unsigned int size);
 	void FBWList(FrameBufferModifyEntry *plist, unsigned int size);
@@ -77,8 +73,6 @@ public:
 	void FBGetFrameBufferInfo(void *pinfo);
 #else
 	// MupenPlus
-	void PluginResolutionReset();
-	void GetPluginResolutionReset(int * _pluginResolutionReset);
 	void ResizeVideoOutput(int _Width, int _Height);
 	void ReadScreen2(void * _dest, int * _width, int * _height, int _front);
 
