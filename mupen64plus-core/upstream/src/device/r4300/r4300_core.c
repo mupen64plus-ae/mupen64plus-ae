@@ -130,6 +130,7 @@ void run_r4300(struct r4300_core* r4300)
 #endif
 
     *r4300_stop(r4300) = 0;
+    g_rom_pause = 0;
 
     /* clear instruction counters */
 #if defined(COUNT_INSTR)

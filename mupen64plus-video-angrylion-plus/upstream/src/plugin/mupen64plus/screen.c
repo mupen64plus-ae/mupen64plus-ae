@@ -86,7 +86,7 @@ void screen_toggle_fullscreen(void)
 }
 
 void screen_resolution_reset(void){
-    CoreVideo_ResizeWindow(0,-1);
+    CoreVideo_ResizeWindow(-1,-1);
 }
 
 void screen_close(void)
