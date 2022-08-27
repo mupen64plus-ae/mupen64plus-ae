@@ -1523,7 +1523,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 startingGameAttempt = 0;
 
 
-                while((mCoreFragment == null || (mCoreFragment.getAudioInit() == 0))
+                while((mCoreFragment == null || mCoreFragment.getAudioInit() == 0)
                         && startingGameAttempt++ < 50){
                     try {
                         Thread.sleep(100);

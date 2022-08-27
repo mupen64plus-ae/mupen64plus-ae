@@ -1435,22 +1435,6 @@ void ReleaseGfx ()
   rdp.window_changed = TRUE;
 }
 
-/* Global functions */
-static void DebugMessage(int level, const char *message, ...) {
-  char msgbuf[1024];
-  va_list args;
-
-  if (l_DebugCallback == nullptr)
-    return;
-
-  va_start(args, message);
-  vsprintf(msgbuf, message, args);
-
-  (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
-
-  va_end(args);
-}
-
 // new API code begins here!
 
 #ifdef __cplusplus
@@ -1589,8 +1573,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
     if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
-        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_ResizeWindow ||
-        !CoreVideo_GL_GetProcAddress || !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
+        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_ResizeWindow || !CoreVideo_GL_GetProcAddress ||
+        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
     {
         ERRLOG("Couldn't connect to Core video functions");
         return M64ERR_INCOMPATIBLE;
@@ -2112,7 +2096,6 @@ void ResolutionResetInternal(){
       resolutionResetGlideCount--;
       return;
     }
-    DebugMessage(M64MSG_STATUS,"glide64 ResolutionResetInternal");
     resolutionResetGlide = 0;
     CoreVideo_ResizeWindow(-1,-1);
   }

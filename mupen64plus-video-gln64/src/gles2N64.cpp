@@ -39,25 +39,6 @@ static FrameSkipper frameSkipper;
 u32         last_good_ucode = (u32) -1;
 void        (*CheckInterrupts)( void );
 void        (*renderCallback)() = NULL;
-static void (*l_DebugCallback)(void *, int, const char *) = NULL;
-static void *l_DebugCallContext = NULL;
-
-
-void DebugMessage(int level, const char *message, ...)
-{
-    char msgbuf[1024];
-    va_list args;
-
-    if (l_DebugCallback == NULL)
-        return;
-
-    va_start(args, message);
-    vsprintf(msgbuf, message, args);
-
-    (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
-
-    va_end(args);
-}
 
 extern "C" {
 int l_resolutionResetGln;
@@ -65,8 +46,6 @@ int l_resolutionResetGlnCounter = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
         void *Context, void (*DebugCallback)(void *, int, const char *))
 {
-    l_DebugCallback = DebugCallback;
-    l_DebugCallContext = Context;
     ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)
             dlsym(CoreLibHandle, "ConfigGetSharedDataFilepath");
 
@@ -174,6 +153,7 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
     }
 
     OGL_Start();
+
     return 1;
 }
 
@@ -257,7 +237,7 @@ EXPORT void CALL UpdateScreen (void)
         OGL.screenUpdate=true;
         VI_UpdateScreen();
         OGL.mustRenderDlist = false;
-        if(l_resolutionResetGln != 0 && l_resolutionResetGlnCounter < 50) //&& l_emuModeInitiated == 1)
+        if(l_resolutionResetGln != 0 && l_resolutionResetGlnCounter < 50)
             l_resolutionResetGlnCounter++;
     }
 }

@@ -13,7 +13,6 @@
 extern uint32_t rdram_size;
 extern GFX_INFO gfx;
 extern m64p_dynlib_handle CoreLibHandle;
-extern void DebugMessage(int level, const char *message, ...);
 extern void (*render_callback)(int);
 extern void (*debug_callback)(void *, int, const char *);
 extern void *debug_call_context;

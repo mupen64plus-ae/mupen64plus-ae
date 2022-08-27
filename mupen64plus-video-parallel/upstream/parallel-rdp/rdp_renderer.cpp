@@ -36,10 +36,6 @@
 
 #endif
 
-extern "C"{
-#include "../gfx_m64p.h" // Debug messages
-}
-
 namespace RDP
 {
 Renderer::Renderer(CommandProcessor &processor_)

@@ -104,19 +104,6 @@ void plugin_close(void)
 {
 }
 
-/* Global functions */
-void DebugMessage(int level, const char *message, ...) {
-    char msgbuf[1024];
-    va_list args;
-
-    va_start(args, message);
-    vsprintf(msgbuf, message, args);
-
-    (*debug_callback)(debug_call_context, level, msgbuf);
-
-    va_end(args);
-}
-
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle _CoreLibHandle, void *Context,
                                      void (*DebugCallback)(void *, int, const char *))
 {
