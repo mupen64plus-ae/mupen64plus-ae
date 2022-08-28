@@ -1270,7 +1270,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case 120:
                 return 160;
             case 0:
-                return 0;
+                return mDisplayResolutionData.getNativeResolutionWidth();
             case -1:
                 return -1;
         }
@@ -1311,8 +1311,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 int volume = mCoreFragment.getVolume();
                 mCoreFragment.setVolume(0);
                 resetGameSurfaceResolutionData();
+
                 int width = getResolutionWidth(mGlobalPrefs.displayResolution);
-                int resolution = (width << 16) | mGlobalPrefs.displayResolution;
+                int resolution = 0;
+                if(mGlobalPrefs.displayResolution == 0)
+                    resolution = (width << 16) | mDisplayResolutionData.getNativeResolutionHeight();
+                else
+                    resolution = (width << 16) | mGlobalPrefs.displayResolution;
 
                 mCoreFragment.setResolution(resolution);
 
