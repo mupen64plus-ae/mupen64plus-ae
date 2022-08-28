@@ -122,14 +122,4 @@ public class DisplayResolutionData {
     {
         return videoSurfaceWidthOriginal;
     }
-
-    public int getNativeResolutionHeight()
-    {
-        return videoRenderHeightNative;
-    }
-
-    public int getNativeResolutionWidth()
-    {
-        return videoRenderWidthNative;
-    }
 }

@@ -1239,43 +1239,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    private int getResolutionWidth(int height){
-        switch(height){
-            case 4320:
-                return 5760;
-            case 3840:
-                return 5120;
-            case 3240:
-                return 4320;
-            case 2880:
-                return 3840;
-            case 2160:
-                return 2880;
-            case 1620:
-                return 2160;
-            case 1440:
-                return 1920;
-            case 1080:
-                return 1440;
-            case 720:
-                return 960;
-            case 600:
-                return 800;
-            case 480: default:
-                return 640;
-            case 360:
-                return 480;
-            case 240:
-                return 320;
-            case 120:
-                return 160;
-            case 0:
-                return mDisplayResolutionData.getNativeResolutionWidth();
-            case -1:
-                return -1;
-        }
-    }
-
     // After the dialog fragment completes, it calls this callback.
     public void onComplete(String string) {
         switch(string){
@@ -1312,12 +1275,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.setVolume(0);
                 resetGameSurfaceResolutionData();
 
-                int width = getResolutionWidth(mGlobalPrefs.displayResolution);
-                int resolution = 0;
-                if(mGlobalPrefs.displayResolution == 0)
-                    resolution = (width << 16) | mDisplayResolutionData.getNativeResolutionHeight();
-                else
-                    resolution = (width << 16) | mGlobalPrefs.displayResolution;
+                int width = mDisplayResolutionData.getResolutionWidth(mGlobalPrefs.displayResolution);
+                int resolution = (width << 16) | mDisplayResolutionData.getResolutionHeight(mGlobalPrefs.displayResolution);
 
                 mCoreFragment.setResolution(resolution);
 
