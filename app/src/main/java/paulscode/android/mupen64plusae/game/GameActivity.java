@@ -81,6 +81,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
+import paulscode.android.mupen64plusae.jni.CoreTypes;
 import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.netplay.room.NetplayClientSetupDialog;
 import paulscode.android.mupen64plusae.netplay.room.NetplayServerSetupDialog;
@@ -1238,6 +1239,43 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
+    private int getResolutionWidth(int height){
+        switch(height){
+            case 4320:
+                return 5760;
+            case 3840:
+                return 5120;
+            case 3240:
+                return 4320;
+            case 2880:
+                return 3840;
+            case 2160:
+                return 2880;
+            case 1620:
+                return 2160;
+            case 1440:
+                return 1920;
+            case 1080:
+                return 1440;
+            case 720:
+                return 960;
+            case 600:
+                return 800;
+            case 480: default:
+                return 640;
+            case 360:
+                return 480;
+            case 240:
+                return 320;
+            case 120:
+                return 160;
+            case 0:
+                return 0;
+            case -1:
+                return -1;
+        }
+    }
+
     // After the dialog fragment completes, it calls this callback.
     public void onComplete(String string) {
         switch(string){
@@ -1262,8 +1300,61 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "resolutionRefresh":
                 resolutionRefresh();
                 break;
-            case "displayResolution": case "displayScaling": case "videoHardwareType":
-            case "videoPolygonOffset":
+            case "displayResolution":
+                if(mGamePrefs.videoPlugin.name.equals("angrylion-plus"))
+                    break;
+                else if(mGamePrefs.videoPlugin.name.toLowerCase().contains("glide64")) {
+                    resolutionResetOnComplete();
+                    break;
+                }
+
+                int volume = mCoreFragment.getVolume();
+                mCoreFragment.setVolume(0);
+                resetGameSurfaceResolutionData();
+                int width = getResolutionWidth(mGlobalPrefs.displayResolution);
+                int resolution = (width << 16) | mGlobalPrefs.displayResolution;
+
+                mCoreFragment.setResolution(resolution);
+
+                mCoreFragment.resumeEmulator();
+
+                mCoreFragment.resetCoreServiceAppData();
+
+                mDrawerLayout.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                    int oldWidth = oldRight - oldLeft;
+                    int oldHeight = oldBottom - oldTop;
+                    if( v.getWidth() != oldWidth || v.getHeight() != oldHeight )
+                    {
+                        DisplayResolutionData resolutionData = new DisplayResolutionData(mGlobalPrefs, this, mDrawerLayout, mGamePrefs.displayScaling);
+                        FrameLayout.LayoutParams newParams = (FrameLayout.LayoutParams) mGameSurface.getLayoutParams();
+                        newParams.width = Math.round ( resolutionData.getSurfaceResolutionWidth() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
+                        newParams.height = Math.round ( resolutionData.getSurfaceResolutionHeight() * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
+                        mGameSurface.setLayoutParams( newParams );
+                    }
+                });
+
+                mCoreFragment.setResolutionReset(true);
+                recreate();
+
+                if(!mIsNetplayEnabled) {
+                    int waitingAttempt = 0;
+                    while (mCoreFragment.getState() != CoreTypes.m64p_emu_state.M64EMU_PAUSED &&
+                        waitingAttempt++ < 30) {
+                        if(waitingAttempt <= 1)
+                            Notifier.showToast(this,R.string.toast_pleaseWait);
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                tryRunning(); // probably not needed
+
+                mCoreFragment.setVolume(volume);
+                break;
+            case "displayScaling": case "videoHardwareType": case "videoPolygonOffset":
                 resolutionResetOnComplete();
                 return;
             case "displayZoomSeek":

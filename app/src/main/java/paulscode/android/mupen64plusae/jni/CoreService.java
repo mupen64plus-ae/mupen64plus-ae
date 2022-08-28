@@ -374,10 +374,36 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mIsPaused;
     }
 
+    public int getVolume(){
+        return mCoreInterface.getVolume();
+    }
+
+    public void setVolume(int volume){
+        mCoreInterface.setVolume(volume);
+    }
 
     public void setResolutionReset(boolean resolutionReset){
         this.mResolutionReset = resolutionReset;
         mCoreInterface.setResolutionReset(resolutionReset);
+    }
+
+    public void setResolution(int resolution){
+        int width = (resolution >> 16) & 0xffff;
+        int height = resolution & 0xffff;
+        if(width > 0 && height > 0) {
+            mVideoRenderWidth = width;
+            mVideoRenderHeight = height;
+        }
+        mCoreInterface.setResolution(resolution);
+        // This must happen here instead of OnCreate because we only find out the rendering
+        // resolution here.
+        if(width > 0 && height > 0) {
+            mPixelBuffer.releaseSurfaceTexture();
+            mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);
+            setSurface(mPixelBuffer.getSurface());
+            mPixelBuffer.destroyGlContext();
+        }
+//        loadLatestSave();
     }
 
     void toggleFramelimiter()

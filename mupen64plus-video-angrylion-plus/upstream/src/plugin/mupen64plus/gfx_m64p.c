@@ -305,8 +305,8 @@ EXPORT void CALL ResizeVideoOutput(int width, int height)
         resolution_reset = height;
         return;
     }
-    win_width = width;
-    win_height = height;
+//    win_width = width;
+//    win_height = height;
 }
 
 EXPORT void CALL FBWrite(unsigned int addr, unsigned int size)

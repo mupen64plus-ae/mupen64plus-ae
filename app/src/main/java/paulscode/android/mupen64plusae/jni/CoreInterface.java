@@ -598,6 +598,12 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_VIDEO_SIZE.ordinal(),parameter.getPointer());
     }
 
+    void setResolution(int resolution){
+        IntByReference parameter = new IntByReference(resolution);
+
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_VIDEO_SIZE.ordinal(),parameter.getPointer());
+    }
+
     /* coreAttachPlugin()
      *
      * This function attaches the given plugin to the emulator core. There can only
@@ -734,6 +740,13 @@ class CoreInterface
         } else if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID_FP) {
             mAndroidAudioLibraryFp.setVolume(volume);
         }
+    }
+
+    int getVolume(){
+        IntByReference audioInit = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_AUDIO_VOLUME.ordinal(), audioInit.getPointer());
+
+        return audioInit.getValue();
     }
 
     void usingNetplay(boolean isUsingNetplay) {

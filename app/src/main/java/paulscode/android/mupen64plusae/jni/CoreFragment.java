@@ -1114,9 +1114,32 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void setRecreateSurface(boolean recreateSurface){ mRecreateSurface = recreateSurface; }
 
+    public int getVolume(){
+        if(mCoreService == null)
+            return 0;
+        else
+            return mCoreService.getVolume();
+    }
+
+    public void setVolume(int volume){
+        if(mCoreService != null)
+            mCoreService.setVolume(volume);
+    }
+
     public void setResolutionReset(boolean resolutionReset){
         mViewModel.mResolutionReset = resolutionReset;
         if(mCoreService != null)
             mCoreService.setResolutionReset(resolutionReset);
+    }
+
+    public void setResolution(int resolution){
+        int width = (resolution >> 16) & 0xffff;
+        int height = resolution & 0xffff;
+        if(width > 0 && height > 0) {
+            mViewModel.mVideoRenderWidth = width;
+            mViewModel.mVideoRenderHeight = height;
+        }
+        if(mCoreService != null)
+            mCoreService.setResolution(resolution);
     }
 }

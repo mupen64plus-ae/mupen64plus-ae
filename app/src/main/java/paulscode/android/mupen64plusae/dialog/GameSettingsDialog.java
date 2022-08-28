@@ -577,7 +577,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         switch(currentResource) {
             // Display
             case 0:
-                setPreference("displayResolution", setBool);
+                if(mGameActivity.getGamePrefs().videoPlugin.name.toLowerCase().contains("glide64"))
+                    setPreference("displayResolution", setBool);
                 setPreference("displayScaling", setBool);
                 setPreference("videoHardwareType", setBool);
                 setPreference("hybridTextureFilter_v2", setBool);
@@ -1374,7 +1375,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             switch(currentResource){
                 // Display
                 case 0:
-                    setPreference("displayResolution",setBool);
+                    if(mGameActivity.getGamePrefs().videoPlugin.name.toLowerCase().contains("glide64"))
+                        setPreference("displayResolution",setBool);
                     setPreference("displayScaling",setBool);
                     setPreference("videoHardwareType",setBool);
                     setPreference("hybridTextureFilter_v2",setBool);

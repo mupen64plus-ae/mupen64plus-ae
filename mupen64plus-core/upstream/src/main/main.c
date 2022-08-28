@@ -716,7 +716,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
             // we should try to update the video plugin accordingly.  First, check state
             if (val <= 0){
                 l_resolutionReset = val;
-                gfx.resizeVideoOutput(-1,l_resolutionReset);
+//                gfx.resizeVideoOutput(-1,l_resolutionReset);
                 return M64ERR_SUCCESS;
             }
             int width, height;

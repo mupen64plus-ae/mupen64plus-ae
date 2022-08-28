@@ -186,8 +186,28 @@ EXPORT void CALL ProcessRDPList(void)
 
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
-    if(Width <= 0 || Height <= 0)
+    if(Width <= 0 || Height <= 0){
         l_resolutionResetGln = Height;
+        return;
+    }
+
+    const float ratio = (config.romPAL ? 9.0f/11.0f : 0.75f);
+    int videoWidth = Width;
+    int videoHeight = Height;
+
+    if (!config.stretchVideo) {
+        videoWidth = (int) (Height / ratio);
+        if (videoWidth > Width) {
+            videoWidth = Width;
+            videoHeight = (int) (Width * ratio);
+        }
+    }
+    int x = (Width - videoWidth) / 2;
+    int y = (Height - videoHeight) / 2;
+
+    OGL_ResizeWindow(x, y, videoWidth, videoHeight);
+    l_resolutionResetGln=1;
+    l_resolutionResetGlnCounter=-7;
 }
 
 EXPORT void CALL RomClosed (void)

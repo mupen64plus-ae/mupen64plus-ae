@@ -117,7 +117,7 @@ public class CoreTypes {
         M64MSG_VERBOSE
     }
 
-    enum m64p_emu_state{
+    public enum m64p_emu_state{
         M64EMU_UNKNOWN,
         M64EMU_STOPPED,
         M64EMU_RUNNING,
