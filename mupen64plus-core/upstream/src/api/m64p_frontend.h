@@ -137,16 +137,5 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *, int, int, int);
 }
 #endif
 
-/* Used to check if the game needs to pause before starting because of in game settings being changed */
-int l_resolutionReset;
-/* Counts frames to make sure the video plugin is showing when resetting via resolution reset */
-int l_resolutionResetCoreCounter;
-/* We use this to help the plugin wait before initializing when resetting from in game settings */
-int l_emuModeInitiated;
-/* We use this to help the plugin wait before initializing */
-int l_audioInitiated;
-/* Holds the latest auto save file name to use if we reset from in game settings */
-char * l_FileName;
-
 #endif /* #define M64P_FRONTEND_H */
 

@@ -34,9 +34,6 @@
 
 /** static (local) variables **/
 static uint32_t   l_countPerScanlineOverride = 0;
-/** external variables **/
-extern int        l_resolutionReset;
-extern int        l_resolutionResetCoreCounter = 0;
 
 unsigned int vi_clock_from_tv_standard(m64p_system_type tv_standard)
 {
@@ -177,17 +174,17 @@ void write_vi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
 
 
 void resolution_reset_check(){
-    if(l_resolutionReset != 0){
+    if(g_ResolutionReset != 0){
         // Making sure to pause once the core has started up;
         // sometimes the graphics plugin finishes first
         if(g_EmulatorRunning && !g_rom_pause) {
-            if(l_resolutionResetCoreCounter < 12) {
+            if(g_ResolutionResetCoreCounter < 12) {
 //                l_resolutionCounter++;
             }
             else{
                 main_toggle_pause();
-                l_resolutionResetCoreCounter = -6;//0;
-                l_resolutionReset = 0;
+                g_ResolutionResetCoreCounter = -6;//0;
+                g_ResolutionReset = 0;
             }
         }
         else{

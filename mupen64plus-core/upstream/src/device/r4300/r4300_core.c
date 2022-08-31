@@ -141,7 +141,7 @@ void run_r4300(struct r4300_core* r4300)
     {
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Pure Interpreter");
         r4300->emumode = EMUMODE_PURE_INTERPRETER;
-        l_emuModeInitiated = 1;
+        g_EmuModeInitiated = 1;
         run_pure_interpreter(r4300);
     }
 #if defined(DYNAREC)
@@ -152,7 +152,7 @@ void run_r4300(struct r4300_core* r4300)
         init_blocks(&r4300->cached_interp);
 #ifdef NEW_DYNAREC
         new_dynarec_init();
-        l_emuModeInitiated = 1;
+        g_EmuModeInitiated = 1;
         new_dyna_start();
         new_dynarec_cleanup();
 #else
@@ -194,7 +194,7 @@ void run_r4300(struct r4300_core* r4300)
 
         r4300->cp0.last_addr = *r4300_pc(r4300);
 
-        l_emuModeInitiated = 1;
+        g_EmuModeInitiated = 1;
 
         run_cached_interpreter(r4300);
 

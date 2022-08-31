@@ -51,6 +51,8 @@ static void (*l_DebugCallback)(void *, int, const char *) = nullptr;
 
 static void *l_DebugCallContext = nullptr;
 static int l_PluginInit = 0;
+/* We use this to help the plugin wait before initializing after startup */
+static int l_AudioInitiated = 0;
 static m64p_handle l_ConfigAudio;
 
 // This sets default frequency what is used if rom doesn't want to change it.
@@ -251,7 +253,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-Android");
 
-    l_audioInitiated = 0;
+    l_AudioInitiated = 0;
     l_PluginInit = 1;
 
     return M64ERR_SUCCESS;
@@ -268,6 +270,7 @@ EXPORT m64p_error CALL PluginShutdown(void)
     l_DebugCallback = nullptr;
     l_DebugCallContext = nullptr;
     l_PluginInit = 0;
+    l_AudioInitiated = 0;
 
     return M64ERR_SUCCESS;
 }
@@ -320,7 +323,7 @@ EXPORT void CALL AiDacrateChanged(int SystemType) {
     ReadConfig();
     GameFreq = freq;
     AudioHandler::get().initializeAudio(freq);
-    l_audioInitiated = 1;
+    l_AudioInitiated = 1;
 }
 
 bool isSpeedLimiterEnabled() {
@@ -499,7 +502,7 @@ EXPORT void CALL VolumeDown(void) {
 }
 
 EXPORT int CALL VolumeGetLevel(void) {
-    if (l_audioInitiated != 1)
+    if (l_AudioInitiated != 1)
         return -2;
     return 100;
 }
