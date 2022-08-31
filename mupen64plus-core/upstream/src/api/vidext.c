@@ -31,7 +31,6 @@
 #include "osal/preproc.h"
 #include "../osd/osd.h"
 #include "callbacks.h"
-#include "m64p_frontend.h"
 #include "m64p_types.h"
 #include "m64p_vidext.h"
 #include "vidext.h"

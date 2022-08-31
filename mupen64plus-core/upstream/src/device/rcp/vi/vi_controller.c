@@ -22,9 +22,6 @@
 #include "vi_controller.h"
 
 #include <string.h>
-#include <api/callbacks.h>
-
-#include "api/m64p_frontend.h"
 #include "api/m64p_types.h"
 #include "device/memory/memory.h"
 #include "device/r4300/r4300_core.h"
@@ -186,9 +183,6 @@ void resolution_reset_check(){
                 g_ResolutionResetCoreCounter = -6;//0;
                 g_ResolutionReset = 0;
             }
-        }
-        else{
-            DebugMessage(M64MSG_STATUS, "graphics plugin finished too quickly.");
         }
     }
 }
