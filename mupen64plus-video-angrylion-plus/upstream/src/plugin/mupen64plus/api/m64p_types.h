@@ -360,7 +360,6 @@ typedef struct {
   m64p_error (*VidExtFuncSetCaption)(const char *);
   m64p_error (*VidExtFuncToggleFS)(void);
   m64p_error (*VidExtFuncResizeWindow)(int, int);
-  m64p_error (*VidExtFuncResolutionReset)(void);
 } m64p_video_extension_functions;
 
 #endif /* define M64P_TYPES_H */

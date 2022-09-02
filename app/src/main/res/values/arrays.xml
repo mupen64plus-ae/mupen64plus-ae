@@ -352,8 +352,6 @@
 
     <string name="pakType_default" translatable="false">2</string>
 
-
-
     <!-- Settings In Game List -->
     <string-array name="settingsGame_entries" translatable="false">
         <item>@string/categoryDisplay_title</item>
