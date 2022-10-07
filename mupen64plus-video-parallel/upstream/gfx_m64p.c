@@ -309,10 +309,6 @@ EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 
 EXPORT void CALL ResizeVideoOutput(int width, int height)
 {
-    if (width <= 0 || height <= 0) {
-        resolution_reset = height;
-        return;
-    }
     window_width = width;
     window_height = height;
 }

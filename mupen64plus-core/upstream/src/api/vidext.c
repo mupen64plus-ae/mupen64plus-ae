@@ -424,10 +424,6 @@ EXPORT m64p_error CALL VidExt_SetVideoModeWithRate(int Width, int Height, int Re
 
 EXPORT m64p_error CALL VidExt_ResizeWindow(int Width, int Height)
 {
-    if( Width <= 0 || Height <= 0){
-        StateChanged(M64CORE_VIDEO_SIZE,-1);
-        return M64ERR_SUCCESS;
-    }
     const SDL_VideoInfo *videoInfo;
     int videoFlags = 0;
 

@@ -99,6 +99,7 @@ int         g_EmulatorRunning = 0;      // need separate boolean to tell if emul
 int         g_EmuModeInitiated = 0;     // we use this to help the plugin wait before initializing when resetting from in game settings
 int         g_ResolutionReset = 0;      // used to check if the game needs to pause before starting because of in game settings being changed
 int         g_ResolutionResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via resolution reset
+int         g_LoadOnce = 0;             // used to prevent the interpreter from loading multiple times
 
 
 int g_rom_pause;
@@ -721,7 +722,6 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
             // we should try to update the video plugin accordingly.  First, check state
             if (val <= 0){
                 g_ResolutionReset = val;
-//                gfx.resizeVideoOutput(-1,g_ResolutionReset);
                 return M64ERR_SUCCESS;
             }
             int width, height;

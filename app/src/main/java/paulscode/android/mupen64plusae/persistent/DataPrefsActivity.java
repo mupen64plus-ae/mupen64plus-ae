@@ -45,7 +45,7 @@ import paulscode.android.mupen64plusae.util.LegacyFilePicker;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        SharedPreferences.OnSharedPreferenceChangeListener
+    SharedPreferences.OnSharedPreferenceChangeListener
 {
     // App data and user preferences
     private AppData mAppData = null;

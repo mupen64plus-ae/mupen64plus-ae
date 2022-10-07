@@ -6121,7 +6121,7 @@ static void load_assemble(int i,struct regstat *i_regs)
   tl=get_reg(i_regs->regmap,rt1[i]);
   s=get_reg(i_regs->regmap,rs1[i]);
   offset=imm[i];
-
+  
   for(hr=0;hr<HOST_REGS;hr++) {
     if(i_regs->regmap[hr]>=0) reglist|=1<<hr;
   }

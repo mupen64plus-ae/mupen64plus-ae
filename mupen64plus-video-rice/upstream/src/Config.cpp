@@ -186,8 +186,6 @@ void GenerateFrameBufferOptions(void)
     frameBufferOptions.bProcessCPURead                     = false;
     frameBufferOptions.bAtEachFrameUpdate                  = false;
     frameBufferOptions.bIgnoreRenderTextureIfHeightUnknown = false;
-    frameBufferOptions.bAutoFrameSkipKeep                  = options.bSkipFrame;
-    frameBufferOptions.ResolutionResetRiceCounter          = 1;
 
     switch( currentRomOptions.N64FrameBufferEmuType )
     {
@@ -692,9 +690,6 @@ void GenerateCurrentRomOptions()
     {
         frameBufferOptions.bIgnoreRenderTextureIfHeightUnknown = true;
     }
-
-    if (options.bSkipFrame)
-        options.bSkipFrame = false;
 }
 
 void Ini_GetRomOptions(LPGAMESETTING pGameSetting)

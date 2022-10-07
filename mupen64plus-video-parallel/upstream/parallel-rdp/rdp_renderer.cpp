@@ -32,8 +32,6 @@
 #include "os_filesystem.hpp"
 #else
 #include "shaders/slangmosh.hpp"
-#include "../glguts.h"
-
 #endif
 
 namespace RDP
@@ -2307,7 +2305,6 @@ void Renderer::maintain_queues()
 	    int64_t(Util::get_current_time_nsecs() - last_submit_ns) > 1000000)
 	{
 		submit_to_queue();
-        screen_resolution_reset(); // use
 	}
 }
 

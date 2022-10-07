@@ -41,8 +41,6 @@ void        (*CheckInterrupts)( void );
 void        (*renderCallback)() = NULL;
 
 extern "C" {
-int l_resolutionResetGln;
-int l_resolutionResetGlnCounter = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
         void *Context, void (*DebugCallback)(void *, int, const char *))
 {
@@ -97,6 +95,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType,
     {
         *Capabilities = 0;
     }
+
     return M64ERR_SUCCESS;
 }
 
@@ -147,10 +146,8 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
     ticksInitialize();
     if( config.autoFrameSkip )
         frameSkipper.setSkips( FrameSkipper::AUTO, config.maxFrameSkip );
-    else {
+    else
         frameSkipper.setSkips(FrameSkipper::MANUAL, config.maxFrameSkip);
-        l_resolutionResetGlnCounter = 0-config.maxFrameSkip;// 3 - config.maxFrameSkip;
-    }
 
     OGL_Start();
 
@@ -186,11 +183,6 @@ EXPORT void CALL ProcessRDPList(void)
 
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
-    if(Width <= 0 || Height <= 0){
-        l_resolutionResetGln = Height;
-        return;
-    }
-
     const float ratio = (config.romPAL ? 9.0f/11.0f : 0.75f);
     int videoWidth = Width;
     int videoHeight = Height;
@@ -206,8 +198,6 @@ EXPORT void CALL ResizeVideoOutput(int Width, int Height)
     int y = (Height - videoHeight) / 2;
 
     OGL_ResizeWindow(x, y, videoWidth, videoHeight);
-    l_resolutionResetGln=1;
-    l_resolutionResetGlnCounter=-7;
 }
 
 EXPORT void CALL RomClosed (void)
@@ -237,12 +227,6 @@ EXPORT void CALL ShowCFB (void)
 
 EXPORT void CALL UpdateScreen (void)
 {
-    if (l_resolutionResetGlnCounter > 2) {//5
-        l_resolutionResetGlnCounter = 0;
-        l_resolutionResetGln = 0;
-
-        CoreVideo_ResizeWindow(-1,-1);
-    }
     frameSkipper.update();
 
     //has there been any display lists since last update
@@ -257,8 +241,6 @@ EXPORT void CALL UpdateScreen (void)
         OGL.screenUpdate=true;
         VI_UpdateScreen();
         OGL.mustRenderDlist = false;
-        if(l_resolutionResetGln != 0 && l_resolutionResetGlnCounter < 50)
-            l_resolutionResetGlnCounter++;
     }
 }
 

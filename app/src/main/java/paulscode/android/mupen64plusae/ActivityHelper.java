@@ -27,7 +27,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -116,7 +115,6 @@ public class ActivityHelper
 
         //@formatter:on
     }
-    public static final int GAME_ACTIVITY_CODE = 3;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
@@ -199,29 +197,6 @@ public class ActivityHelper
             context.startActivity( intent );
             intent.replaceExtras((Bundle)null);
         }
-    }
-
-
-    static void startGameActivity(Activity activity, String romPath, String zipPath, String romMd5, String romCrc,
-                                  String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                  boolean doRestart, boolean doSettingsReset, boolean doResolutionReset, boolean isNetplayEnabled,
-                                  boolean isNetplayServer) {
-        Intent intent = new Intent(activity, GameActivity.class);
-        intent.putExtra( Keys.ROM_PATH, romPath );
-        intent.putExtra( Keys.ZIP_PATH, zipPath );
-        intent.putExtra( Keys.ROM_MD5, romMd5 );
-        intent.putExtra( Keys.ROM_CRC, romCrc );
-        intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( Keys.ROM_COUNTRY_CODE, romCountryCode );
-        intent.putExtra( Keys.ROM_ART_PATH, romArtPath );
-        intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
-        intent.putExtra( Keys.ROM_DISPLAY_NAME, romDisplayName );
-        intent.putExtra( Keys.DO_RESTART, doRestart );
-        intent.putExtra( Keys.SETTINGS_RESET, doSettingsReset );
-        intent.putExtra( Keys.RESOLUTION_RESET, doResolutionReset );
-        intent.putExtra( Keys.NETPLAY_ENABLED, isNetplayEnabled );
-        intent.putExtra( Keys.NETPLAY_SERVER, isNetplayServer );
-        activity.startActivityForResult(intent, GAME_ACTIVITY_CODE);
     }
 
     public static void startGameActivity( Context context, String romPath, String zipPath, String romMd5, String romCrc,
@@ -346,9 +321,9 @@ public class ActivityHelper
     }
 
     static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
-                                         String searchUri, String databasePath, String configPath, String artDir,
-                                         boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
-                                         boolean singleFile)
+        String searchUri, String databasePath, String configPath, String artDir,
+        boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
+        boolean singleFile)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
         intent.putExtra(Keys.SEARCH_PATH, searchUri);
@@ -385,6 +360,7 @@ public class ActivityHelper
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
     }
+
     static void startCopyToSdService(Context context, ServiceConnection serviceConnection,
                                         File source, Uri destination)
     {

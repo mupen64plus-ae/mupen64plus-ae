@@ -172,19 +172,12 @@ void write_vi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask
 
 
 void resolution_reset_check(){
-    if(g_ResolutionReset != 0){
-        // Making sure to pause once the core has started up;
-        // sometimes the graphics plugin finishes first
-        if(g_EmulatorRunning && !g_rom_pause) {
-            if(g_ResolutionResetCoreCounter < 12) {
-//                l_resolutionCounter++;
-            }
-            else{
-                main_toggle_pause();
-                g_ResolutionResetCoreCounter = -6;//0;
-                g_ResolutionReset = 0;
-            }
-        }
+    // Making sure to pause once the core has started up;
+    // sometimes the graphics plugin finishes first
+    if(g_EmulatorRunning && !g_rom_pause && g_ResolutionReset != 0 && g_ResolutionResetCoreCounter >= 12){
+        main_toggle_pause();
+        g_ResolutionResetCoreCounter = -6;//0;
+        g_ResolutionReset = 0;
     }
 }
 

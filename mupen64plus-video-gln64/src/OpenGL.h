@@ -78,7 +78,6 @@ struct GLInfo
     int     frame_prevdl;
     int     mustRenderDlist;
     int     renderingToTexture;
-    int     resolutionReset;
 
 
     GLint   defaultProgram;

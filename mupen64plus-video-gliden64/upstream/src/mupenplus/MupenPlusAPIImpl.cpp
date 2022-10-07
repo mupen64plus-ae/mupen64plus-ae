@@ -162,8 +162,6 @@ void PluginAPI::SetRenderingCallback(void (*callback)(int))
 
 void PluginAPI::ResizeVideoOutput(int _Width, int _Height)
 {
-	if(_Width <= 0 || _Height <= 0)
-		return;
 	dwnd().setWindowSize(_Width, _Height);
 }
 

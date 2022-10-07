@@ -34,7 +34,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.preference.PrefUtil;

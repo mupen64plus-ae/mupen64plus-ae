@@ -1327,12 +1327,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "displayOrientation":
                 resetGameSurfaceResolutionData();
                 // Set the screen orientation
-                if (mGlobalPrefs.displayOrientation != -1) {
-                    setRequestedOrientation( mGlobalPrefs.displayOrientation );
-                }
-                else{
+                setRequestedOrientation( mGlobalPrefs.displayOrientation );
+                // If other changes were made then setting to auto will mess up those settings so we reset here
+                if (mGlobalPrefs.displayOrientation == -1)
                     resolutionResetOnComplete();
-                }
                 break;
             case "displayActionBarTransparency":
                 resetAppData();

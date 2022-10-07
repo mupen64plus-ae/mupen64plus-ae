@@ -1504,8 +1504,6 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
   }
 }
 
-int    resolutionResetGlide = 0;
-int    resolutionResetGlideCount = 0;
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *))
 {
@@ -1585,12 +1583,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     {
         SetConfigDir(configDir);
         ReadSettings();
-      if( settings.autoframeskip ){
-//        DebugMessage(M64MSG_STATUS,"config.maxframes = %d",settings.maxframeskip);
-      }
-      else{
-        resolutionResetGlideCount = settings.maxframeskip;
-      }
 		return M64ERR_SUCCESS;
     }
     else
@@ -1856,10 +1848,6 @@ output:   none
 *******************************************************************/
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
-  if (Width <= 0 || Height <= 0) {
-    resolutionResetGlide = Height;
-    return;
-  }
 }
 
 /******************************************************************
@@ -2090,17 +2078,6 @@ void DrawFrameBuffer ()
   }
 }
 
-void ResolutionResetInternal(){
-  if(resolutionResetGlide != 0){
-    if(resolutionResetGlideCount != 0){
-      resolutionResetGlideCount--;
-      return;
-    }
-    resolutionResetGlide = 0;
-    CoreVideo_ResizeWindow(-1,-1);
-  }
-}
-
 extern "C" {
 /******************************************************************
 Function: UpdateScreen
@@ -2149,7 +2126,6 @@ EXPORT void CALL UpdateScreen (void)
     vi_count = 0;
   }
 #endif
-
   //*
   wxUint32 limit = (settings.hacks&hack_Lego) ? 15 : 30;
   if ((settings.frame_buffer&fb_cpu_write_hack) && (update_screen_count > limit) && (rdp.last_bg == 0))
@@ -2159,7 +2135,6 @@ EXPORT void CALL UpdateScreen (void)
     no_dlist = true;
     ClearCache ();
     UpdateScreen();
-    ResolutionResetInternal();
     return;
   }
   //*/
@@ -2180,7 +2155,6 @@ EXPORT void CALL UpdateScreen (void)
   //*/
   if (settings.swapmode == 0)
     newSwapBuffers ();
-  ResolutionResetInternal();
 }
 
 static void DrawWholeFrameBufferToScreen()

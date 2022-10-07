@@ -51,7 +51,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
-int l_ResolutionResetRice = 0;
 
 //=======================================================
 // global variables
@@ -168,22 +167,6 @@ static void ResizeStep2(void)
     status.ToResize = false;
 }
 
-void ResolutionResetInternal(){
-    if(l_ResolutionResetRice != 0){
-        if(frameBufferOptions.ResolutionResetRiceCounter > 0){
-//            DebugMessage(M64MSG_STATUS,"config.maxframes = %d",options.ResolutionResetRiceCounter);
-            frameBufferOptions.ResolutionResetRiceCounter=-1;
-            return;
-        }
-        l_ResolutionResetRice = 0;
-        CoreVideo_ResizeWindow(-1,-1);
-    }
-    else if(frameBufferOptions.ResolutionResetRiceCounter != 0){
-        frameBufferOptions.ResolutionResetRiceCounter=0;
-        options.bSkipFrame = frameBufferOptions.bAutoFrameSkipKeep;
-    }
-}
-
 static void UpdateScreenStep2 (void)
 {
     status.bVIOriginIsUpdated = false;
@@ -229,7 +212,6 @@ static void UpdateScreenStep2 (void)
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
         g_CritialSection.Unlock();
-        ResolutionResetInternal();
         return;
     }
 
@@ -250,7 +232,6 @@ static void UpdateScreenStep2 (void)
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
         DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
         g_CritialSection.Unlock();
-        ResolutionResetInternal();
         return;
     }
 
@@ -283,7 +264,6 @@ static void UpdateScreenStep2 (void)
         }
 
         g_CritialSection.Unlock();
-        ResolutionResetInternal();
         return;
     }
 
@@ -292,7 +272,6 @@ static void UpdateScreenStep2 (void)
         status.bVIOriginIsUpdated=true;
         DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
         g_CritialSection.Unlock();
-        ResolutionResetInternal();
         return;
     }
 
@@ -301,8 +280,6 @@ static void UpdateScreenStep2 (void)
     DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
 
     g_CritialSection.Unlock();
-
-    ResolutionResetInternal();
 }
 
 static void ProcessDListStep2(void)
@@ -589,6 +566,7 @@ void DebugMessage(int level, const char *message, ...)
 
   va_end(args);
 }
+
 //---------------------------------------------------------------------------------------
 // Global functions, exported for use by the core library
 
@@ -861,11 +839,8 @@ EXPORT int CALL InitiateGFX(GFX_INFO Gfx_Info)
     return(TRUE);
 }
 
-EXPORT void CALL ResizeVideoOutput(int width, int height) {
-    if (width <= 0 || height <= 0) {
-        l_ResolutionResetRice = height;
-        return;
-    }
+EXPORT void CALL ResizeVideoOutput(int width, int height)
+{
     // save the new window resolution.  actual resizing operation is asynchronous (it happens later)
     status.gNewResizeWidth = width;
     status.gNewResizeHeight = height;

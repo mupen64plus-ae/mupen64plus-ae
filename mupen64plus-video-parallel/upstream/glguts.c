@@ -71,7 +71,6 @@ static int toggle_buffer;
 int32_t window_width;
 int32_t window_height;
 int32_t window_fullscreen;
-int resolution_reset = 0;
 
 
 
@@ -399,13 +398,6 @@ void screen_swap(bool blank)
 
     (*render_callback)(1);
     CoreVideo_GL_SwapBuffers();
-}
-void screen_resolution_reset()
-{
-    if(resolution_reset != 0) {
-        CoreVideo_ResizeWindow(-1,-1);
-        resolution_reset = 0;
-    }
 }
 
 void screen_set_fullscreen(bool _fullscreen)
