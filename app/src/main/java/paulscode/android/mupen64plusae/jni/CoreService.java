@@ -1082,6 +1082,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void exitGracefully()
     {
         if (mUseRaphnetDevicesIfAvailable) {
@@ -1089,7 +1090,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
 
         //Stop the service
-        stopForeground(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        } else {
+            stopForeground(true);
+        }
         stopSelf();
     }
 

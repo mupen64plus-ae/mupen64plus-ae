@@ -77,6 +77,7 @@ class RaphnetControllerHandler
         mUsbManager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
@@ -84,7 +85,12 @@ class RaphnetControllerHandler
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
-                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    UsbDevice device = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice.class);
+                    } else {
+                        device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    }
 
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if(device != null){
@@ -107,7 +113,14 @@ class RaphnetControllerHandler
             }
 
             if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                UsbDevice device;
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice.class);
+                } else {
+                    device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                }
+
                 if (device != null && device.getVendorId() == RAPHNET_VENDOR_ID) {
                     Log.d("RaphnetController", "Device detached " + device);
 

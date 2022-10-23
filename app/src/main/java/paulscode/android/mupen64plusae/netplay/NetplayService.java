@@ -269,6 +269,7 @@ public class NetplayService extends Service
         }
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void stopServers()
     {
         Log.i("NetplayService", "Stopping netplay service");
@@ -281,7 +282,11 @@ public class NetplayService extends Service
             mTcpServer.stopServer();
         }
 
-        stopForeground(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        } else {
+            stopForeground(true);
+        }
         stopSelf();
     }
 
@@ -395,11 +400,16 @@ public class NetplayService extends Service
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onDestroy()
     {
         // Stop the service using the startId, so that we don't stop
         // the service in the middle of handling another job
-        stopForeground(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        } else {
+            stopForeground(true);
+        }
         stopSelf();
     }
 }
