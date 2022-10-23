@@ -86,6 +86,7 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
+    namespace 'org.mupen64plusae.v3.alpha'
 }
 
 dependencies {
