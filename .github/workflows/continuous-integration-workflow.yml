@@ -40,15 +40,29 @@ jobs:
     - name: Build artifact
       run: ./gradlew assemble
 
-    - name: Declare some variables
-      id: vars
-      shell: bash
+    - name: Declare branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v6
+        
+    - name: Get branch name
+      id: var
       run: |
-        echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
-        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        echo "branch=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+
+    - name: Declare sha name
+      uses: benjlevesque/short-sha@v2.1
+      id: short-sha
+      with:
+        length: 7
+        
+    - name: Get sha name
+      run: |
+        echo $SHA
+      env: 
+        SHA: ${{ steps.short-sha.outputs.sha }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with: 
-        name: mupen64plus-ae-${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+        name: mupen64plus-ae-${{ steps.var.outputs.branch }}-${{ env.SHA }}
         path: ${{ github.workspace }}/app/build/outputs/apk/release/Mupen64PlusAE-release.apk
