@@ -1451,6 +1451,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     resetCoreServiceAppData();
                 }
                 safeAutoSave();
+                mCoreFragment.freeSaveMemory();
                 getIntent().putExtra("gameOpenReset", true);
                 setResult(RESULT_OK, getIntent());
                 finish();

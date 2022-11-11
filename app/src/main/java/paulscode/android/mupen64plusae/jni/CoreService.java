@@ -1292,4 +1292,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mListener.onFpsChanged(newValue);
         }
     }
+
+    public void freeSaveMemory(){
+        if(mCoreInterface != null)
+            mCoreInterface.freeSaveMemory();
+    }
 }
