@@ -1143,8 +1143,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.setResolution(resolution);
     }
 
-    public void freeSaveMemory(){
+    public void freeCurrentSave(){
         if(mCoreService != null)
-            mCoreService.freeSaveMemory();
+            mCoreService.freeCurrentSave();
     }
 }

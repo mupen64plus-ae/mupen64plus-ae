@@ -980,7 +980,7 @@ class CoreInterface
         }
     }
 
-    void freeSaveMemory(){
+    void freeCurrentSave(){
         IntByReference parameter = new IntByReference(5);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_STATE.ordinal(),parameter.getPointer());
     }

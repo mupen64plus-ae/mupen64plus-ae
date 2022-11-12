@@ -310,7 +310,7 @@ static void main_check_inputs(void)
     SDL_PumpEvents();
 }
 
-void freeSaveMemory(void){
+void free_current_save(void){
     if(l_FileName != NULL) {
         free(l_FileName);
         l_FileName = NULL;
@@ -581,7 +581,7 @@ void main_state_load(const char *filename)
 {
 
     if(filename != NULL) {
-        freeSaveMemory();
+        free_current_save();
         l_FileName = malloc(strlen(filename) + 1);
         strcpy(l_FileName, filename);
     }
@@ -695,7 +695,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
                 return M64ERR_SUCCESS;
             }
             else if (val == 5) {
-                freeSaveMemory();
+                free_current_save();
                 return M64ERR_SUCCESS;
             }
             return M64ERR_INPUT_INVALID;
@@ -1902,7 +1902,7 @@ m64p_error main_run(void)
     // clean up
     g_EmulatorRunning = 0;
     g_EmuModeInitiated = 0;
-    freeSaveMemory();
+    free_current_save();
     StateChanged(M64CORE_EMU_STATE, M64EMU_STOPPED);
 
     return M64ERR_SUCCESS;
