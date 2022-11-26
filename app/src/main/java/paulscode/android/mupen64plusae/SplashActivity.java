@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
@@ -255,6 +256,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
     public void requestPermissions()
     {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            checkExtractAssetsOrCleanup();
+            return;
+        }
+
         //This doesn't work reliably with older Android versions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
@@ -287,6 +294,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @SuppressLint("InlinedApi")
     public void actuallyRequestPermissions()
     {
+        Log.i("SplashActivity", "actuallyRequestPermissions");
+
         mRequestingPermissions = true;
         ActivityCompat.requestPermissions(this, new String[] {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -296,14 +305,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         if (requestCode == PERMISSION_REQUEST)
         {
             // If request is cancelled, the result arrays are empty.
-            boolean good = true;
-            if (permissions.length != NUM_PERMISSIONS || grantResults.length != NUM_PERMISSIONS)
-            {
-                good = false;
-            }
+            boolean good = permissions.length == NUM_PERMISSIONS && grantResults.length == NUM_PERMISSIONS;
 
             for (int i = 0; i < grantResults.length && good; i++)
             {
