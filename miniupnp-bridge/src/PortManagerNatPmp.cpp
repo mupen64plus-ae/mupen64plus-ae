@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #include <android/log.h>
 
@@ -51,7 +52,10 @@ bool PortManagerNatPmp::Initialize(int gatewayIp)
 		m_currentNatPmpState = Ssendpub;
 	}
 
-	while(!initFinished) {
+	static const int maxTries = 2000;
+	int currentTry = 0;
+
+	while(!initFinished && currentTry < maxTries) {
 		switch(m_currentNatPmpState) {
 			case Ssendpub:
 				if(sendpublicaddressrequest(&m_natpmp) < 0) {
@@ -65,6 +69,7 @@ bool PortManagerNatPmp::Initialize(int gatewayIp)
 				break;
 			case Srecvpub:
 				r = readnatpmpresponseorretry(&m_natpmp, &response);
+
 				if(r<0 && r!=NATPMP_TRYAGAIN) {
 					m_currentNatPmpState = Serror;
 					__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Failure to read address request");
@@ -78,13 +83,17 @@ bool PortManagerNatPmp::Initialize(int gatewayIp)
 
 					__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "Public address: %s", str);
 				}
+
 				break;
 			default:
 				initFinished = true;
 		}
+
+		usleep(1000);
+		++currentTry;
 	}
 
-	m_initiliazed = m_currentNatPmpState != Serror;
+	m_initiliazed = m_currentNatPmpState != Serror && currentTry < maxTries;
 
 	__android_log_print(ANDROID_LOG_INFO, "miniupnp-bridge", "NATPMP init success=%d",  m_initiliazed);
 

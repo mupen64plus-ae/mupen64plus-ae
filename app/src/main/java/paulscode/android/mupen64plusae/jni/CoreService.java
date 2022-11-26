@@ -675,12 +675,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     synchronized (mWaitForNetPlay) {
                         while (!mNetplayReady) {
                             try {
+                                Log.i(TAG, "Waiting on netplay to start");
                                 mWaitForNetPlay.wait();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
                     }
+
+                    Log.i(TAG, "Netplay is ready!");
 
                     mCoreInterface.emuSetFramelimiter(true);
                     mCoreInterface.usingNetplay(true);
@@ -1151,6 +1154,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if(mIsPaused)
             {
                 mCoreInterface.emuPause();
+            }
+
+            synchronized (mWaitForNetPlay) {
+                if (mNetplayReady) {
+                    mWaitForNetPlay.notify();
+                }
             }
 
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);

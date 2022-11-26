@@ -49,6 +49,7 @@ import com.sun.jna.Native;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -336,7 +337,7 @@ public class NetplayService extends Service
         boolean success = mapPortsNatPmp(gatewayAddress);
 
         if (!success) {
-            Log.w(TAG, "NAT-PMP port forwading failed, trying NAT-PMP");
+            Log.w(TAG, "NAT-PMP port forwading failed, trying UPnP");
             success = mapPortsUpnp();
         }
 
@@ -383,10 +384,12 @@ public class NetplayService extends Service
                             addressBuffer.position(0);
                             int addressInt = addressBuffer.getInt();
 
-                            if (addressInt != 0) {
+                            if (addressInt != 0 && gatewayAddress instanceof Inet4Address) {
                                 Log.i(TAG, "Received gateway address=" + gatewayAddress);
 
                                 actuallyMapPorts(addressInt);
+
+                                break;
                             }
                         }
                     }
