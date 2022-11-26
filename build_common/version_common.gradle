@@ -1,9 +1,9 @@
 
 android {
-    buildToolsVersion '32.0.0'
+    buildToolsVersion '33.0.1'
 
     compileSdkVersion 33
-    ndkVersion "24.0.8215888"
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         minSdkVersion 23
