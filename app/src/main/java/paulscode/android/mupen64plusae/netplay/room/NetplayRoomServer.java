@@ -89,6 +89,8 @@ public class NetplayRoomServer {
     // Called when a client is found
     private final OnClientFound mOnClientFound;
 
+    private Object mOnClientFoundMutex = new Object();
+
     // List of clients
     private final ArrayList<NetplayRoomClientHandler> mClients = new ArrayList<>();
 
@@ -224,17 +226,23 @@ public class NetplayRoomServer {
                             new NetplayRoomClientHandler.OnClientRegistered() {
                                 @Override
                                 public void onClientRegistration(int playerNumber, String deviceName) {
-                                    mOnClientFound.onClientRegistration(playerNumber, deviceName);
+                                    synchronized (mOnClientFoundMutex) {
+                                        mOnClientFound.onClientRegistration(playerNumber, deviceName);
+                                    }
                                 }
 
                                 @Override
                                 public void onClientLeave(int playerNumber) {
-                                    mOnClientFound.onClienLeave(playerNumber);
+                                    synchronized (mOnClientFoundMutex) {
+                                        mOnClientFound.onClienLeave(playerNumber);
+                                    }
                                 }
 
                                 @Override
                                 public void onRoomCode(long roomCode) {
-                                    mOnClientFound.onRoomCode(roomCode);
+                                    synchronized (mOnClientFoundMutex) {
+                                        mOnClientFound.onRoomCode(roomCode);
+                                    }
                                 }
                             }));
                 }
