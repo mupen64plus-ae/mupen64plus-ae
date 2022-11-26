@@ -36,6 +36,7 @@
 -dontwarn org.ietf.jgss.GSSManager
 -dontwarn org.ietf.jgss.GSSName
 -dontwarn org.ietf.jgss.Oid
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
 
 -keep class com.sun.jna.* { *; }
 -keepclassmembers class * extends com.sun.jna.** { public *; }
