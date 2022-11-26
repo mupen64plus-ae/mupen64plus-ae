@@ -118,7 +118,12 @@ public class NetplayClientSetupDialog extends DialogFragment implements AdapterV
             args = new Bundle();
         }
 
-        mActivity = requireActivity();
+        try {
+            mActivity = requireActivity();
+        } catch (IllegalStateException e) {
+            mActivity = null;
+            return super.onCreateDialog(savedInstanceState);
+        }
 
         mRomMd5 = args.getString(ROM_MD5);
 
