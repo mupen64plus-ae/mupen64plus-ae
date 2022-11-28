@@ -61,6 +61,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/controllers/paks/transferpak.c             \
     $(SRCDIR)/device/controllers/paks/biopak.c                  \
     $(SRCDIR)/device/controllers/game_controller.c              \
+    $(SRCDIR)/device/controllers/vru_controller.c               \
     $(SRCDIR)/device/gb/gb_cart.c                               \
     $(SRCDIR)/device/gb/m64282fp.c                              \
     $(SRCDIR)/device/gb/mbc3_rtc.c                              \
