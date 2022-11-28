@@ -59,6 +59,12 @@ struct game_controller
 
     void* pak;
     const struct pak_interface* ipak;
+
+    /* VRU */
+    uint8_t voice_state;
+    uint8_t load_offset;
+    uint8_t voice_init;
+    uint16_t word[40];
 };
 
 void init_game_controller(struct game_controller* cont,

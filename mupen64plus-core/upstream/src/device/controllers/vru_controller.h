@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - mempak.h                                                *
+ *   Mupen64plus - vru_controller.h                                        *
  *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,36 +19,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef M64P_DEVICE_SI_MEMPAK_H
-#define M64P_DEVICE_SI_MEMPAK_H
+#ifndef M64P_DEVICE_SI_VRU_CONTROLLER_H
+#define M64P_DEVICE_SI_VRU_CONTROLLER_H
+
+#include "backends/api/joybus.h"
 
 #include <stddef.h>
 #include <stdint.h>
 
-struct storage_backend_interface;
+/* Controller Joybus interface */
+extern const struct joybus_device_interface
+    g_ijoybus_vru_controller;
 
-#define DEFAULT_MEMPAK_DEVICEID UINT16_C(0x0001)
-#define DEFAULT_MEMPAK_BANKS    UINT8_C(0x01)
-#define DEFAULT_MEMPAK_VERSION  UINT8_C(0x00)
-
-struct mempak
-{
-    void* storage;
-    const struct storage_backend_interface* istorage;
-};
-
-enum { MEMPAK_SIZE = 0x8000 };
-
-void format_mempak(uint8_t* mem,
-    const uint32_t serial[6],
-    uint16_t device_id,
-    uint8_t banks,
-    uint8_t version);
-
-void init_mempak(struct mempak* mpk,
-                 void* storage,
-                 const struct storage_backend_interface* istorage);
-
-extern const struct pak_interface g_imempak;
+/* Controller flavors */
+extern const struct game_controller_flavor g_vru_controller_flavor;
 
 #endif

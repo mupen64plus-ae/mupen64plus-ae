@@ -57,6 +57,7 @@
 #include "cheat.h"
 #include "device/device.h"
 #include "device/dd/disk.h"
+#include "device/controllers/vru_controller.h"
 #include "device/controllers/paks/biopak.h"
 #include "device/controllers/paks/mempak.h"
 #include "device/controllers/paks/rumblepak.h"
@@ -133,6 +134,9 @@ static size_t l_paks_idx[GAME_CONTROLLERS_COUNT];
 static void* l_paks[GAME_CONTROLLERS_COUNT][PAK_MAX_SIZE];
 static const struct pak_interface* l_ipaks[PAK_MAX_SIZE];
 static size_t l_pak_type_idx[6];
+
+/* PRNG state - used for Mempaks ID generation */
+static struct xoshiro256pp_state l_mpk_idgen;
 
 /*********************************************************************************************************
 * static functions
@@ -1016,7 +1020,19 @@ static void open_mpk_file(struct file_storage* fstorage)
     if (ret == (int)file_open_error) {
         /* if file doesn't exists provide default content */
         for(i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
-            format_mempak(fstorage->data + i * MEMPAK_SIZE);
+
+            /* Generate a random serial ID */
+            uint32_t serial[6];
+            size_t k;
+            for (k = 0; k < 6; ++k) {
+                serial[k] = xoshiro256pp_next(&l_mpk_idgen);
+            }
+
+            format_mempak(fstorage->data + i * MEMPAK_SIZE,
+                serial,
+                DEFAULT_MEMPAK_DEVICEID,
+                DEFAULT_MEMPAK_BANKS,
+                DEFAULT_MEMPAK_VERSION);
         }
     }
 }
@@ -1061,8 +1077,14 @@ static void open_eep_file(struct file_storage* fstorage)
     }
 }
 
-static void load_dd_rom(uint8_t* rom, size_t* rom_size)
+static void load_dd_rom(uint8_t* rom, size_t* rom_size, uint8_t* disk_region)
 {
+    /* set the DD rom region */
+    if (g_media_loader.set_dd_rom_region != NULL)
+    {
+        g_media_loader.set_dd_rom_region(g_media_loader.cb_data, *disk_region);
+    }
+
     /* ask the core loader for DD disk filename */
     char* dd_ipl_rom_filename = (g_media_loader.get_dd_rom == NULL)
         ? NULL
@@ -1122,7 +1144,7 @@ no_dd:
     *rom_size = 0;
 }
 
-static void load_dd_disk(struct dd_disk* dd_disk, const struct storage_backend_interface** dd_idisk)
+static int load_dd_disk(struct dd_disk* dd_disk, const struct storage_backend_interface** dd_idisk)
 {
     /* ask the core loader for DD disk filename */
     char* dd_disk_filename = (g_media_loader.get_dd_disk == NULL)
@@ -1169,7 +1191,7 @@ static void load_dd_disk(struct dd_disk* dd_disk, const struct storage_backend_i
     if (save_format == 0)
     {
         if (open_rom_file_storage(fstorage, save_filename) != file_ok) {
-            DebugMessage(M64MSG_ERROR, "Failed to load DD Disk save: %s.", save_filename);
+            DebugMessage(M64MSG_WARNING, "Failed to load DD Disk save: %s.", save_filename);
 
             /* Try loading regular disk file */
             if (open_rom_file_storage(fstorage, dd_disk_filename) != file_ok) {
@@ -1215,7 +1237,7 @@ static void load_dd_disk(struct dd_disk* dd_disk, const struct storage_backend_i
     {
         if (read_from_file(save_filename, &fstorage->data[offset_ram], size_ram) != file_ok)
         {
-            DebugMessage(M64MSG_ERROR, "Failed to load DD Disk RAM area (*.ram): %s.", save_filename);
+            DebugMessage(M64MSG_WARNING, "Failed to load DD Disk RAM area (*.ram): %s.", save_filename);
         }
     }
 
@@ -1248,6 +1270,7 @@ static void load_dd_disk(struct dd_disk* dd_disk, const struct storage_backend_i
     dd_disk->isave_storage = (save_format >= 0) ? &g_ifile_storage : NULL;
     dd_disk->format = format;
     dd_disk->development = development;
+    dd_disk->region = DDREGION_UNKNOWN;
     dd_disk->offset_sys = offset_sys;
     dd_disk->offset_id = offset_id;
     dd_disk->offset_ram = offset_ram;
@@ -1260,13 +1283,27 @@ static void load_dd_disk(struct dd_disk* dd_disk, const struct storage_backend_i
             (*dd_idisk)->size(dd_disk),
             get_disk_format_name(format));
 
+    /* Get region from disk and byteswap it as needed */
     uint32_t w = *(uint32_t*)(*dd_idisk)->data(dd_disk);
+    if (dd_disk->format == DISK_FORMAT_SDK) {
+        swap_buffer(&w, sizeof(w), 1);
+    }
+    
+    /* Set region in dd_disk */
+    if (w == DD_REGION_JP) {
+        dd_disk->region = DDREGION_JAPAN;
+    } else if (w == DD_REGION_US) {
+        dd_disk->region = DDREGION_US;
+    } else if (w == DD_REGION_DV) {
+        dd_disk->region = DDREGION_DEV;
+    }
+
     if (w == DD_REGION_JP || w == DD_REGION_US || w == DD_REGION_DV) {
         DebugMessage(M64MSG_WARNING, "Loading a saved disk");
     }
 
     free(dd_disk_filename);
-    return;
+    return 1;
 
 wrong_disk_format:
     /* no need to close save_storage as it is a child of disk->storage */
@@ -1277,6 +1314,8 @@ free_fstorage:
 no_disk:
     free(dd_disk_filename);
     *dd_idisk = NULL;
+
+    return 0;
 }
 
 static void close_dd_disk(struct dd_disk* disk)
@@ -1476,6 +1515,10 @@ m64p_error main_run(void)
             break;
     }
 
+    /* Seed MPK ID gen using current time */
+    uint64_t mpk_seed = !netplay_is_init() ? (uint64_t)time(NULL) : 0;
+    l_mpk_idgen = xoshiro256pp_seed(mpk_seed);
+
     /* take the r4300 emulator mode from the config file at this point and cache it in a global variable */
     emumode = ConfigGetParamInt(g_CoreConfig, "R4300Emulator");
 
@@ -1583,10 +1626,15 @@ m64p_error main_run(void)
     const struct storage_backend_interface* dd_idisk = NULL;
     memset(&dd_disk, 0, sizeof(dd_disk));
 
-    load_dd_rom((uint8_t*)mem_base_u32(g_mem_base, MM_DD_ROM), &dd_rom_size);
-    if (dd_rom_size > 0) {
+    /* try to load DD disk first, if that succeeds, pass the region to load_dd_rom */
+    if (load_dd_disk(&dd_disk, &dd_idisk))
+    {
         dd_rtc_iclock = &g_iclock_ctime_plus_delta;
-        load_dd_disk(&dd_disk, &dd_idisk);
+        load_dd_rom((uint8_t*)mem_base_u32(g_mem_base, MM_DD_ROM), &dd_rom_size, &dd_disk.region);
+    }
+    else
+    {
+        dd_rom_size = 0;
     }
 
     /* setup pif channel devices */
@@ -1609,6 +1657,27 @@ m64p_error main_run(void)
         if (Controls[i].RawData) {
             joybus_devices[i] = &control_ids[i];
             ijoybus_devices[i] = &g_ijoybus_device_plugin_compat;
+        }
+        else if (Controls[i].Type == CONT_TYPE_VRU) {
+            const struct game_controller_flavor* cont_flavor =
+                &g_vru_controller_flavor;
+            joybus_devices[i] = &g_dev.controllers[i];
+            ijoybus_devices[i] = &g_ijoybus_vru_controller;
+
+            cin_compats[i].control_id = (int)i;
+            cin_compats[i].cont = &g_dev.controllers[i];
+            cin_compats[i].last_pak_type = Controls[i].Plugin;
+            cin_compats[i].last_input = 0;
+            cin_compats[i].netplay_count = 0;
+            cin_compats[i].event_first = NULL;
+
+            Controls[i].Plugin = PLUGIN_NONE;
+
+            /* init vru_controller */
+            init_game_controller(&g_dev.controllers[i],
+                    cont_flavor,
+                    &cin_compats[i], &g_icontroller_input_backend_plugin_compat,
+                    NULL, NULL);
         }
         /* otherwise let the core do the processing */
         else {
@@ -1730,7 +1799,6 @@ m64p_error main_run(void)
         ijoybus_devices[i] = &g_ijoybus_device_cart;
     }
 
-
     init_device(&g_dev,
                 g_mem_base,
                 emumode,
@@ -1741,7 +1809,7 @@ m64p_error main_run(void)
                 g_start_address,
                 force_alignment_pi_dma,
                 tlb_hack,
-                &g_dev.ai, &g_iaudio_out_backend_plugin_compat,
+                &g_dev.ai, &g_iaudio_out_backend_plugin_compat, ((float)ROM_SETTINGS.aidmamodifier / 100.0),
                 si_dma_duration,
                 rdram_size,
                 joybus_devices, ijoybus_devices,
@@ -1822,7 +1890,7 @@ m64p_error main_run(void)
 #endif
     /* release gb_carts */
     for(i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
-        if (!Controls[i].RawData && g_dev.gb_carts[i].read_gb_cart != NULL) {
+        if (!Controls[i].RawData  && (Controls[i].Type == CONT_TYPE_STANDARD) && g_dev.gb_carts[i].read_gb_cart != NULL) {
             release_gb_rom(&l_gb_carts_data[i]);
             release_gb_ram(&l_gb_carts_data[i]);
         }
@@ -1860,7 +1928,7 @@ on_audio_open_failure:
 on_gfx_open_failure:
     /* release gb_carts */
     for(i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
-        if (!Controls[i].RawData && g_dev.gb_carts[i].read_gb_cart != NULL) {
+        if (!Controls[i].RawData  && (Controls[i].Type == CONT_TYPE_STANDARD) && g_dev.gb_carts[i].read_gb_cart != NULL) {
             release_gb_rom(&l_gb_carts_data[i]);
             release_gb_ram(&l_gb_carts_data[i]);
         }
