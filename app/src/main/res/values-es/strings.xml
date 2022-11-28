@@ -389,7 +389,7 @@
     <string name="gliden64_correct_texrect_coords_off">Activado</string>
     <string name="gliden64_correct_texrect_coords_auto">Auto</string>
     <string name="gliden64_correct_texrect_coords_force">Forzar</string>
-    <string name="gliden64_enable_native_res_texrects_title">Fix texrect image mis-aligment</string>
+    <string name="gliden64_enable_native_res_texrects_title">Arreglar la desalineación de la imagen texrect</string>
     <string name="gliden64_enable_native_res_texrects_summary">Más correcto gráficos 2D, pero mucho más lento y deshabilita las mejoras de textura.</string>
     <string name="gliden64_render_backgrounds_mode_title">Modo de renderizar fondos (solo HLE)</string>
     <string name="gliden64_render_backgrounds_mode_one_piece">Una pieza (rápido)</string>
@@ -459,7 +459,7 @@
     <string name="gliden64_tx_hires_texture_file_storage_title">Almanezar texturas de paquete de texturas en disco</string>
     <string name="gliden64_tx_hires_texture_file_storage_summary">Almanezar cache de paquete de texturas directamente en disco en vez de HTC</string>
     <string name="gliden64_tx_dump_title">Extraer textures</string>
-    <string name="gliden64_tx_dump_summary">Extaer las texturas del juego a medida que se encuentran</string>
+    <string name="gliden64_tx_dump_summary">Extraer las texturas del juego a medida que se encuentran</string>
     <string name="gliden64_category_gamma_title">Correccion Gama</string>
     <string name="gliden64_force_gamma_correction_title">Forzar correccion gama</string>
     <string name="gliden64_gamma_correction_level">Valor de correccion gama</string>
