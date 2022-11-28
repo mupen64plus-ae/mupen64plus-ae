@@ -791,6 +791,8 @@
     <string name="assetExtractor_failed_permissions">This app cannot proceed without these permissions</string>
     <string name="assetExtractor_permissions_title">Permissions</string>
     <string name="assetExtractor_permissions_rationale">Mupen64Plus AE needs to be able to: \nRead your storage to read ROM files, save states, and configuration.\nWrite to your storage to write configuration and save data.</string>
+    <string name="assetExtractor_permissions_rationale_notifications">Mupen64Plus AE needs to be able to show notifications to display status of current foreground services.</string>
+
 
     <!-- Cheats Configuration -->
     <string name="cheats_defaultName">Cheat %1$d</string>

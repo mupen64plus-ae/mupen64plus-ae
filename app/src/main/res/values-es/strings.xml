@@ -593,6 +593,7 @@
     <string name="assetExtractor_failed_permissions">Esta aplicación no puede proceder sin estos permisos</string>
     <string name="assetExtractor_permissions_title">Permisos</string>
     <string name="assetExtractor_permissions_rationale">Mupen64Plus AE debe ser capaz de: \n Leer su almacenamiento para cargar archivos ROM, los estados de guardar, y la configuración también. \n Escribir a su almacenamiento para guardar los datos.</string>
+    <string name="assetExtractor_permissions_rationale_notifications">Mupen64Plus AE necesita poder mostrar notificaciones para mostrar el estado de los servicios corriendos actualmente.</string>
 
     <!--Cheats Configuration-->
     <string name="cheats_defaultName">Truco %1$d</string>
