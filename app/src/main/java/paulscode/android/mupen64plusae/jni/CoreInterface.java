@@ -218,6 +218,7 @@ class CoreInterface
         mMediaLoaderCallbacks.cb_data = null;
         mMediaLoaderCallbacks.gbCartRomCallback = mGbCartRomCallback;
         mMediaLoaderCallbacks.gbCartRamCallback = mGbCartRamCallback;
+        mMediaLoaderCallbacks.ddRomRegionCallback = null;
         mMediaLoaderCallbacks.ddRomCallback = mDdRomCallback;
         mMediaLoaderCallbacks.ddDiskCallback = mDdDiskCallback;
     }
