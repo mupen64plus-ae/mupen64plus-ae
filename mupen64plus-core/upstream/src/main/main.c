@@ -98,7 +98,6 @@ int         g_RomWordsLittleEndian = 0; // after loading, ROM words are in nativ
 int         g_EmulatorRunning = 0;      // need separate boolean to tell if emulator is running, since --nogui doesn't use a thread
 int         g_EmuModeInitiated = 0;     // we use this to help the plugin wait before initializing when resetting from in game settings
 int         g_ResolutionReset = 0;      // used to check if the game needs to pause before starting because of in game settings being changed
-int         g_ResolutionResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via resolution reset
 int         g_LoadOnce = 0;             // used to prevent the interpreter from loading multiple times
 
 
@@ -128,6 +127,7 @@ static int   l_TakeScreenshot = 0;       // Tell OSD Rendering callback to take 
 static int   l_SpeedFactor = 100;        // percentage of nominal game speed at which emulator is running
 static int   l_FrameAdvance = 0;         // variable to check if we pause on next frame
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
+static int   l_ResolutionResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via resolution reset
 
 static osd_message_t *l_msgVol = NULL;
 static osd_message_t *l_msgFF = NULL;
@@ -310,7 +310,8 @@ static void main_check_inputs(void)
     SDL_PumpEvents();
 }
 
-void free_current_save(void){
+static void free_current_save(void)
+{
     if(l_FileName != NULL) {
         free(l_FileName);
         l_FileName = NULL;
@@ -887,7 +888,7 @@ void new_frame(void)
     l_CurrentFrame++;
 
     if(g_ResolutionReset != 0 && g_EmuModeInitiated == 1)
-        g_ResolutionResetCoreCounter++;
+        l_ResolutionResetCoreCounter++;
 
     if (l_FrameAdvance) {
         g_rom_pause = 1;
@@ -989,9 +990,9 @@ static void pause_loop(void)
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
 
         // using estimated frame skip settings with gfx plugin causes black screen
-        if(g_ResolutionReset == 0 && g_ResolutionResetCoreCounter != 0){
-            if(g_ResolutionResetCoreCounter == -6)
-                g_ResolutionResetCoreCounter = -5;
+        if(g_ResolutionReset == 0 && l_ResolutionResetCoreCounter != 0){
+            if(l_ResolutionResetCoreCounter == -6)
+                l_ResolutionResetCoreCounter = -5;
             else
                 VidExt_GL_SwapBuffers();
         }
@@ -1001,6 +1002,17 @@ static void pause_loop(void)
             SDL_Delay(10);
             main_check_inputs();
         }
+    }
+}
+
+/* Making sure to pause once the core has started up if resetting from settings;
+ * sometimes the graphics plugin finishes first */
+static void settings_reset_check(void)
+{
+    if(g_EmulatorRunning && !g_rom_pause && g_ResolutionReset != 0 && l_ResolutionResetCoreCounter >= 12){
+        main_toggle_pause();
+        l_ResolutionResetCoreCounter = -6;
+        g_ResolutionReset = 0;
     }
 }
 
@@ -1020,6 +1032,8 @@ void new_vi(void)
     pause_loop();
 
     netplay_check_sync(&g_dev.r4300.cp0);
+
+    settings_reset_check();
 }
 
 static void main_switch_pak(int control_id)
@@ -1851,11 +1865,10 @@ m64p_error main_run(void)
     osd_new_message(OSD_MIDDLE_CENTER, "Mupen64Plus Started...");
 
     g_EmulatorRunning = 1;
-    g_ResolutionResetCoreCounter = -5;
+    l_ResolutionResetCoreCounter = -5;
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 
     poweron_device(&g_dev);
-
     pif_bootrom_hle_execute(&g_dev.r4300);
 
     if (setjmp(jump_exit) == 0)

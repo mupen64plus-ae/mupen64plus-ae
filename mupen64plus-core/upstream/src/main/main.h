@@ -44,7 +44,6 @@ extern int g_RomWordsLittleEndian;
 extern int g_EmulatorRunning;
 extern int g_EmuModeInitiated;
 extern int g_ResolutionReset;
-extern int g_ResolutionResetCoreCounter;
 extern int g_LoadOnce;
 extern int g_rom_pause;
 
