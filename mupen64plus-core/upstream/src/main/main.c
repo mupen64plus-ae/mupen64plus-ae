@@ -96,9 +96,7 @@ m64p_frame_callback g_FrameCallback = NULL;
 
 int         g_RomWordsLittleEndian = 0; // after loading, ROM words are in native N64 byte order (big endian). We will swap them on x86
 int         g_EmulatorRunning = 0;      // need separate boolean to tell if emulator is running, since --nogui doesn't use a thread
-int         g_EmuModeInitiated = 0;     // we use this to help the plugin wait before initializing when resetting from in game settings
-int         g_ResolutionReset = 0;      // used to check if the game needs to pause before starting because of in game settings being changed
-int         g_LoadOnce = 0;             // used to prevent the interpreter from loading multiple times
+int         g_EmuModeInitiated = 0;     // helps the plugin wait before initializing when resetting from in game settings
 
 
 int g_rom_pause;
@@ -127,7 +125,9 @@ static int   l_TakeScreenshot = 0;       // Tell OSD Rendering callback to take 
 static int   l_SpeedFactor = 100;        // percentage of nominal game speed at which emulator is running
 static int   l_FrameAdvance = 0;         // variable to check if we pause on next frame
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
+static int   l_ResolutionReset = 0;      // checks if the game needs to pause before starting because of in game settings being changed
 static int   l_ResolutionResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via resolution reset
+static int   l_LoadOnce = 0;             // prevents the interpreter from loading multiple times
 
 static osd_message_t *l_msgVol = NULL;
 static osd_message_t *l_msgFF = NULL;
@@ -571,13 +571,6 @@ void main_state_inc_slot(void)
     savestates_inc_slot();
 }
 
-void main_state_load_latest_auto_save()
-{
-    if (netplay_is_init() || l_FileName == NULL)
-        return;
-    savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
-}
-
 void main_state_load(const char *filename)
 {
 
@@ -734,7 +727,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
             // the front-end app is telling us that the user has resized the video output frame, and so
             // we should try to update the video plugin accordingly.  First, check state
             if (val <= 0){
-                g_ResolutionReset = val;
+                l_ResolutionReset = val;
                 return M64ERR_SUCCESS;
             }
             int width, height;
@@ -887,7 +880,7 @@ void new_frame(void)
     /* advance the current frame */
     l_CurrentFrame++;
 
-    if(g_ResolutionReset != 0 && g_EmuModeInitiated == 1)
+    if(l_ResolutionReset != 0 && g_EmuModeInitiated == 1)
         l_ResolutionResetCoreCounter++;
 
     if (l_FrameAdvance) {
@@ -990,7 +983,7 @@ static void pause_loop(void)
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
 
         // using estimated frame skip settings with gfx plugin causes black screen
-        if(g_ResolutionReset == 0 && l_ResolutionResetCoreCounter != 0){
+        if(l_ResolutionReset == 0 && l_ResolutionResetCoreCounter != 0){
             if(l_ResolutionResetCoreCounter == -6)
                 l_ResolutionResetCoreCounter = -5;
             else
@@ -1009,10 +1002,10 @@ static void pause_loop(void)
  * sometimes the graphics plugin finishes first */
 static void settings_reset_check(void)
 {
-    if(g_EmulatorRunning && !g_rom_pause && g_ResolutionReset != 0 && l_ResolutionResetCoreCounter >= 12){
+    if(g_EmulatorRunning && !g_rom_pause && l_ResolutionReset != 0 && l_ResolutionResetCoreCounter >= 12){
         main_toggle_pause();
         l_ResolutionResetCoreCounter = -6;
-        g_ResolutionReset = 0;
+        l_ResolutionReset = 0;
     }
 }
 
@@ -2014,4 +2007,13 @@ m64p_error open_pif(const unsigned char* pifimage, unsigned int size)
 
     g_start_address = UINT32_C(0xbfc00000);
     return M64ERR_SUCCESS;
+}
+
+void main_interpreter_reload()
+{
+    if (netplay_is_init() || l_FileName == NULL ||
+        !(l_ResolutionReset != 0 && get_r4300_emumode(&g_dev.r4300) == 1 && l_LoadOnce == 0))
+        return;
+    l_LoadOnce++;
+    savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
 }
