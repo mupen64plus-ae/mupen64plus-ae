@@ -14,8 +14,8 @@ Please visit [the official forum](http://www.paulscode.com/forum/index.php) for 
 |Download nightly builds from continuous integration: 	| [![Build Status][Build]][Actions] 
 |-------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 
-[Actions]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions/workflows/continuous-integration-workflow.yml
-[Build]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions/workflows/continuous-integration-workflow.yml/badge.svg
+[Actions]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions/workflows/build.yml
+[Build]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions/workflows/build.yml/badge.svg
 
 
 ## Build Instructions
