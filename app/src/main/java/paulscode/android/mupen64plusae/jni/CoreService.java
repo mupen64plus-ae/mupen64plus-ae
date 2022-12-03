@@ -955,7 +955,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     }
 
     private boolean checkOnlinePlayers(NetplayFragment fragment, int playerNumber){
-        if(playerNumber > 3 || playerNumber < 0)
+        if(playerNumber > 3 || playerNumber < 0 || fragment == null)
             return false;
         TcpServer.PlayerData playerData = fragment.getTcpServer().getPlayerData(playerNumber);
         return playerData != null;
