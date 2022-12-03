@@ -223,8 +223,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                                 if(mGameResetting)
                                     launchGameActivity(romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode, romArtPath,
-                                            romGoodName, romDisplayName, doRestart, true, isNetplayEnabled,
-                                            isNetplayServer);
+                                            romGoodName, romDisplayName, doRestart, isNetplayEnabled, isNetplayServer, true);
                                 // Making sure we haven't already reset the grid
                                 else if(mAllItems == null || mAllItems.size() < 1 || mAllItems.get(0) == null)
                                     refreshGrid();
@@ -1021,14 +1020,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     item.md5, item.crc,
                     item.headerName, item.countryCode.getValue(), item.artPath,
                     item.goodName, item.displayName, true,
-                    false, true, false);
+                    true, false, false);
         } else if (menuItem.getItemId() == R.id.menuItem_startNetplayServer) {
             launchGameActivity(item.romUri,
                     item.zipUri,
                     item.md5, item.crc,
                     item.headerName, item.countryCode.getValue(), item.artPath,
                     item.goodName, item.displayName, true,
-                    false, true, true);
+                    true, true, false);
         } else if (menuItem.getItemId() == R.id.menuItem_settings) {
             tagForRefreshNeeded();
             ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romUri,
@@ -1283,8 +1282,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
                                     String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                    boolean isRestarting, boolean settingsReset, boolean isNetplayEnabled,
-                                    boolean isNetplayServer)
+                                    boolean isRestarting, boolean isNetplayEnabled, boolean isNetplayServer, boolean settingsReset)
     {
         Log.i( "GalleryActivity", "launchGameActivity" );
 
@@ -1319,12 +1317,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGameResetting = false;
         // Launch the game activity
         startGameActivity(romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                romArtPath, romGoodName, romDisplayName, isRestarting, settingsReset, isNetplayEnabled, isNetplayServer);
+                romArtPath, romGoodName, romDisplayName, isRestarting, isNetplayEnabled, isNetplayServer, settingsReset);
     }
 
     void startGameActivity(String romPath, String zipPath, String romMd5, String romCrc,
                            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                           boolean doRestart, boolean settingsReset, boolean isNetplayEnabled, boolean isNetplayServer) {
+                           boolean doRestart, boolean isNetplayEnabled, boolean isNetplayServer, boolean settingsReset) {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ZIP_PATH, zipPath );
@@ -1336,9 +1334,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
         intent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, romDisplayName );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
-        intent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, settingsReset );
         intent.putExtra( ActivityHelper.Keys.NETPLAY_ENABLED, isNetplayEnabled );
         intent.putExtra( ActivityHelper.Keys.NETPLAY_SERVER, isNetplayServer );
+        intent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, settingsReset );
         mLaunchGame.launch(intent);
     }
 

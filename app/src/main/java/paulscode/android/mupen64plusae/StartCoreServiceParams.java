@@ -36,11 +36,11 @@ public class StartCoreServiceParams
     private byte romCountryCode;
     private String romArtPath;
     private boolean isRestarting;
-    private boolean settingsReset;
     private boolean useRaphnetDevicesIfAvailable;
     private int videoRenderWidth;
     private int videoRenderHeight;
     private boolean usingNetplay;
+    private boolean settingsReset;
 
     public String getRomGoodName() {
         return romGoodName;
@@ -122,14 +122,6 @@ public class StartCoreServiceParams
         isRestarting = restarting;
     }
 
-    public boolean getSettingsReset(){
-        return settingsReset;
-    }
-
-    public void setSettingsReset(boolean settingsReset) {
-        this.settingsReset = settingsReset;
-    }
-
     public boolean isUseRaphnetDevicesIfAvailable() {
         return useRaphnetDevicesIfAvailable;
     }
@@ -160,6 +152,14 @@ public class StartCoreServiceParams
 
     public boolean isUsingNetplay() {
         return this.usingNetplay;
+    }
+
+    public boolean getSettingsReset(){
+        return settingsReset;
+    }
+
+    public void setSettingsReset(boolean settingsReset) {
+        this.settingsReset = settingsReset;
     }
 
 }

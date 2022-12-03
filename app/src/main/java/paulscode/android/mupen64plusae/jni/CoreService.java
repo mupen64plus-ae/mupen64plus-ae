@@ -1030,12 +1030,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
-        notificationIntent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, mSettingsReset );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT, mVideoRenderHeight );
         notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_ENABLED, mUsingNetplay );
+        notificationIntent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, mSettingsReset );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT |
@@ -1103,7 +1103,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mZipPath = extras.getString( ActivityHelper.Keys.ZIP_PATH );
 
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
-            mSettingsReset = extras.getBoolean( ActivityHelper.Keys.SETTINGS_RESET, false);
             mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
 
             mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
@@ -1114,6 +1113,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mVideoRenderWidth = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_WIDTH );
             mVideoRenderHeight = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT );
             mUsingNetplay = extras.getBoolean(ActivityHelper.Keys.NETPLAY_ENABLED);
+            mSettingsReset = extras.getBoolean( ActivityHelper.Keys.SETTINGS_RESET, false);
 
             mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
                     CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );

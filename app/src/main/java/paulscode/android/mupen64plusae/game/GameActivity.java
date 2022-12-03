@@ -343,9 +343,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
         mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
-        mSettingsReset = extras.getBoolean(ActivityHelper.Keys.SETTINGS_RESET, false);
         mIsNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
         mIsNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
+        mSettingsReset = extras.getBoolean(ActivityHelper.Keys.SETTINGS_RESET, false);
 
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             finish();
@@ -601,10 +601,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart, mSettingsReset,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
-                        mIsNetplayEnabled);
+                        mIsNetplayEnabled, mSettingsReset);
             }
 
             // Try running now in case the core service has already started
@@ -1571,7 +1571,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // to display whatever changes were made
             if(mSettingsReset) {
                 startingGameAttempt = 0;
-
 
                 while((mCoreFragment == null || mCoreFragment.getAudioInit() == 0)
                         && startingGameAttempt++ < 50){

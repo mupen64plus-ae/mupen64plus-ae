@@ -375,8 +375,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, boolean settingsReset, int videoRenderWidth, int videoRenderHeight,
-                          boolean usingNetplay)
+                          boolean isRestarting,  int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean settingsReset)
     {
         Log.i(TAG, "startCore");
 
@@ -386,7 +385,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mViewModel.mRomPath = romPath;
         mViewModel.mZipPath = zipPath;
         mViewModel.mIsRestarting = isRestarting;
-        mViewModel.mSettingsReset = settingsReset;
         mViewModel.mRomMd5 = romMd5;
         mViewModel.mRomCrc = romCrc;
         mViewModel.mRomHeaderName = romHeaderName;
@@ -396,6 +394,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mViewModel.mVideoRenderWidth = videoRenderWidth;
         mViewModel.mVideoRenderHeight = videoRenderHeight;
         mViewModel.mUsingNetplay = usingNetplay;
+        mViewModel.mSettingsReset = settingsReset;
 
         if(!mViewModel.mIsRunning)
         {
@@ -454,11 +453,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomCountryCode(mViewModel.mRomCountryCode);
         params.setRomArtPath(mViewModel.mRomArtPath);
         params.setRestarting(mViewModel.mIsRestarting);
-        params.setSettingsReset(mViewModel.mSettingsReset);
         params.setUseRaphnetDevicesIfAvailable(mViewModel.mUseRaphnetIfAvailable);
         params.setVideoRenderWidth(mViewModel.mVideoRenderWidth);
         params.setVideoRenderHeight(mViewModel.mVideoRenderHeight);
         params.setUsingNetplay(mViewModel.mUsingNetplay);
+        params.setSettingsReset(mViewModel.mSettingsReset);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mViewModel.mServiceConnection, params);
     }

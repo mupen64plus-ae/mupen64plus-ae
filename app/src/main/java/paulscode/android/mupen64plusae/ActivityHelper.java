@@ -86,7 +86,6 @@ public class ActivityHelper
         public static final String ROM_DISPLAY_NAME     = NAMESPACE + "ROM_DISPLAY_NAME";
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
-        public static final String SETTINGS_RESET       = NAMESPACE + "SETTINGS_RESET";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
@@ -110,6 +109,7 @@ public class ActivityHelper
         public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
         public static final String NETPLAY_ENABLED      = NAMESPACE + "NETPLAY_ENABLED";
         public static final String NETPLAY_SERVER       = NAMESPACE + "NETPLAY_SERVER";
+        public static final String SETTINGS_RESET       = NAMESPACE + "SETTINGS_RESET";
 
 
         //@formatter:on
@@ -410,7 +410,6 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_PATH,  params.getRomPath());
         intent.putExtra(Keys.ZIP_PATH,  params.getZipPath());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
-        intent.putExtra(Keys.SETTINGS_RESET,  params.getSettingsReset());
         intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
 
         intent.putExtra(Keys.ROM_MD5, params.getRomMd5());
@@ -421,6 +420,7 @@ public class ActivityHelper
         intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
         intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
         intent.putExtra(Keys.NETPLAY_ENABLED, params.isUsingNetplay());
+        intent.putExtra(Keys.SETTINGS_RESET,  params.getSettingsReset());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
