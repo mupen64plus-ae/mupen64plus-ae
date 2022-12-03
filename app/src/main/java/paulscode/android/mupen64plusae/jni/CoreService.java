@@ -155,7 +155,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private boolean mNetplayReady = false;
     private boolean mUsingNetplay = false;
     private boolean mNetplayInitSuccess = false;
-    private boolean mResolutionReset = false;
     private boolean mSettingsReset = false;
     private boolean mLoadLatestAutoSave = false;
 
@@ -382,9 +381,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.setVolume(volume);
     }
 
-    public void setResolutionReset(boolean resolutionReset){
-        this.mResolutionReset = resolutionReset;
-        mCoreInterface.setResolutionReset(resolutionReset);
+    public void settingsReset(boolean settingsReset){
+        this.mSettingsReset = settingsReset;
+        mCoreInterface.settingsReset(settingsReset);
     }
 
     public void setResolution(int resolution){
@@ -678,7 +677,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir) == 0;
 
-            if(mResolutionReset || mSettingsReset)
+            if(mSettingsReset)
                 mLoadLatestAutoSave = true;
 
             // Disk only games still require a ROM image, so use a dummy test ROM
@@ -724,7 +723,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                     mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
 
-                    mCoreInterface.setResolutionReset(mResolutionReset);
+                    mCoreInterface.settingsReset(mSettingsReset);
 
                 } catch (IllegalArgumentException e) {
                     loadingSuccess = false;
@@ -771,9 +770,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     {
                         loadLatestSave();
                         mLoadLatestAutoSave = false;
-
-                        mResolutionReset = false;//delete?
-                        mSettingsReset = false;//delete?
+                        mSettingsReset = false;
                     }
 
                     // This call blocks until emulation is stopped
@@ -1034,7 +1031,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, mSettingsReset );
-        notificationIntent.putExtra( ActivityHelper.Keys.RESOLUTION_RESET, mResolutionReset );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
@@ -1108,7 +1104,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
             mSettingsReset = extras.getBoolean( ActivityHelper.Keys.SETTINGS_RESET, false);
-            mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
             mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
 
             mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );

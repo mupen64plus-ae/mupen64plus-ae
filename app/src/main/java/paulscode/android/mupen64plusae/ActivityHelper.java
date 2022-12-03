@@ -87,7 +87,6 @@ public class ActivityHelper
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String SETTINGS_RESET       = NAMESPACE + "SETTINGS_RESET";
-        public static final String RESOLUTION_RESET     = NAMESPACE + "RESOLUTION_RESET";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String FILE_PATH            = NAMESPACE + "FILE_PATH";
         public static final String FILE_URI             = NAMESPACE + "FILE_URI";
@@ -412,7 +411,6 @@ public class ActivityHelper
         intent.putExtra(Keys.ZIP_PATH,  params.getZipPath());
         intent.putExtra(Keys.DO_RESTART,  params.isRestarting());
         intent.putExtra(Keys.SETTINGS_RESET,  params.getSettingsReset());
-        intent.putExtra(Keys.RESOLUTION_RESET, params.getResolutionReset());
         intent.putExtra(Keys.USE_RAPHNET_DEVICES, params.isUseRaphnetDevicesIfAvailable());
 
         intent.putExtra(Keys.ROM_MD5, params.getRomMd5());

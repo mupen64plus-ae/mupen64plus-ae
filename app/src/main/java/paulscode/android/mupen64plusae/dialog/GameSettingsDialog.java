@@ -137,7 +137,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         GlobalPrefs getGlobalPrefs();
         GamePrefs getGamePrefs();
         boolean isChangingConfigurations();
-        boolean getResolutionReset();
+        boolean getSettingsReset();
         boolean getNetplayEnabled();
         void setDialogFragmentKey(String key);
         String getDialogFragmentKey();
@@ -223,8 +223,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     public void onStop() {
         super.onStop();
         // check if we're launching activity from settings menu
-        if (!mGameActivity.getResolutionReset() && !mLaunchingActivity) {
-            if(!mSettingsReset && !mRecreateLater)
+        if (!mGameActivity.getSettingsReset() && !mLaunchingActivity) {
+            if(!mRecreateLater)
                 mGameActivity.settingsViewReset();
             try {
                 dismiss();
@@ -232,7 +232,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
                 if(mSettingsReset) {
                     mSettingsReset = false;
-                    mGameActivity.onComplete("resolutionRefresh");
+                    mGameActivity.onComplete("settingsResetFalse"); // reset core variable
                     mGameActivity.onComplete("settingsReset");
                     mGameActivity.settingsViewReset();
                 }
@@ -298,7 +298,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     public void onDestroy() {
         Log.i( TAG, "onDestroy" );
         super.onDestroy();
-        mGameActivity.onComplete("resolutionRefresh");
+        mGameActivity.onComplete("settingsResetFalse");
         mDeleteExtraDialog = 1;
     }
 
@@ -483,10 +483,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onResume();
 
         // Since merging in_game_settings with the master branch, this is needed
-        // if a resolution reset occurs and then the user tries to open an activity
+        // if a settings reset occurs and then the user tries to open an activity
         // from the in game settings, the game will resume upon returning from that
         // activity even though that's not desired, should be a temporary fix but may stay
-        if(!mGameActivity.getResolutionReset() && mLaunchingActivity) {
+        if(!mGameActivity.getSettingsReset() && mLaunchingActivity) {
             try{
                 Thread.sleep(500);
             }
@@ -628,11 +628,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
     /* Resets the preferences after the game has successfully reset and there is visual feedback
     *  from the graphics output */
-    public void resetPreferencesFromResolutionReset(){
+    public void resetPreferencesFromSettingsReset(){
         if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
                 mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId] == null)
             return;
-        mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].resolutionResetPreferences(true);
+        mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].settingsResetPreferences(true);
         resetPreferences();
     }
 
@@ -1501,11 +1501,11 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     break;
             }
 
-            if(mGameActivity.getResolutionReset())
-                resolutionResetPreferences(false);
+            if(mGameActivity.getSettingsReset())
+                settingsResetPreferences(false);
         }
 
-        public void resolutionResetPreferences(boolean enabled){
+        public void settingsResetPreferences(boolean enabled){
             for(int i = 0; i <= getPreferenceScreen().getPreferenceCount()-1; i++)
                 getPreferenceManager().getPreferenceScreen().getPreference(i).setEnabled(enabled);
         }

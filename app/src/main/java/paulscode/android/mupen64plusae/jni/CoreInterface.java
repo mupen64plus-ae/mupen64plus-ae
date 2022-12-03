@@ -146,7 +146,7 @@ class CoreInterface
     private static final String DD_ROM_NAME = "dd_rom.n64";
     private static final String DD_DISK_NAME = "dd_disk.ndd";
     private File mWorkingPath = null;
-    private boolean mResolutionReset = false;
+    private boolean mSettingsReset = false;
 
     private final HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
@@ -592,9 +592,9 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CLOSE.ordinal(), 0, parameter);
     }
 
-    void setResolutionReset(boolean resetResolution){
-        mResolutionReset = resetResolution;
-        IntByReference parameter = new IntByReference(resetResolution ? -1 : 0);
+    void settingsReset(boolean settingsReset){
+        mSettingsReset = settingsReset;
+        IntByReference parameter = new IntByReference(settingsReset ? -1 : 0);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_VIDEO_SIZE.ordinal(),parameter.getPointer());
     }
 

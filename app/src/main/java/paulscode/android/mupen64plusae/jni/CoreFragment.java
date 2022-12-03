@@ -170,7 +170,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         boolean mAskingForExit = false;
         boolean mLoadingInProgress = false;
         boolean mSettingsReset = false;
-        boolean mResolutionReset = false;
         CoreFragment mCurrentFragment = null;
     }
 
@@ -376,7 +375,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, boolean settingsReset, boolean resolutionReset, int videoRenderWidth, int videoRenderHeight,
+                          boolean isRestarting, boolean settingsReset, int videoRenderWidth, int videoRenderHeight,
                           boolean usingNetplay)
     {
         Log.i(TAG, "startCore");
@@ -388,7 +387,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mViewModel.mZipPath = zipPath;
         mViewModel.mIsRestarting = isRestarting;
         mViewModel.mSettingsReset = settingsReset;
-        mViewModel.mResolutionReset = resolutionReset;
         mViewModel.mRomMd5 = romMd5;
         mViewModel.mRomCrc = romCrc;
         mViewModel.mRomHeaderName = romHeaderName;
@@ -457,7 +455,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setRomArtPath(mViewModel.mRomArtPath);
         params.setRestarting(mViewModel.mIsRestarting);
         params.setSettingsReset(mViewModel.mSettingsReset);
-        params.setResolutionReset(mViewModel.mResolutionReset);
         params.setUseRaphnetDevicesIfAvailable(mViewModel.mUseRaphnetIfAvailable);
         params.setVideoRenderWidth(mViewModel.mVideoRenderWidth);
         params.setVideoRenderHeight(mViewModel.mVideoRenderHeight);
@@ -1126,10 +1123,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.setVolume(volume);
     }
 
-    public void setResolutionReset(boolean resolutionReset){
-        mViewModel.mResolutionReset = resolutionReset;
+    public void settingsReset(boolean settingsReset){
+        mViewModel.mSettingsReset = settingsReset;
         if(mCoreService != null)
-            mCoreService.setResolutionReset(resolutionReset);
+            mCoreService.settingsReset(settingsReset);
     }
 
     public void setResolution(int resolution){

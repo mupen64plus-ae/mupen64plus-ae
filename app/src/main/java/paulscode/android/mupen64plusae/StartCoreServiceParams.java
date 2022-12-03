@@ -37,7 +37,6 @@ public class StartCoreServiceParams
     private String romArtPath;
     private boolean isRestarting;
     private boolean settingsReset;
-    private boolean resolutionReset;
     private boolean useRaphnetDevicesIfAvailable;
     private int videoRenderWidth;
     private int videoRenderHeight;
@@ -129,14 +128,6 @@ public class StartCoreServiceParams
 
     public void setSettingsReset(boolean settingsReset) {
         this.settingsReset = settingsReset;
-    }
-
-    public boolean getResolutionReset() {
-        return resolutionReset;
-    }
-
-    public void setResolutionReset(boolean resolutionReset) {
-        this.resolutionReset = resolutionReset;
     }
 
     public boolean isUseRaphnetDevicesIfAvailable() {

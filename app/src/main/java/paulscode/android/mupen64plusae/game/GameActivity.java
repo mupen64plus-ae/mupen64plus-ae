@@ -203,7 +203,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private NetplayFragment mNetplayFragment = null;
 
     private final boolean[] isControllerPlugged = new boolean[4];
-    private boolean mResolutionReset = false;
 
     private static final String STATE_CURRENT_FPS = "STATE_CURRENT_FPS";
     private int currentFps = -1;
@@ -345,7 +344,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         mSettingsReset = extras.getBoolean(ActivityHelper.Keys.SETTINGS_RESET, false);
-        mResolutionReset = extras.getBoolean( ActivityHelper.Keys.RESOLUTION_RESET, false);
         mIsNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
         mIsNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
 
@@ -460,7 +458,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mSettingsView = savedInstanceState.getBoolean(STATE_SETTINGS_VIEW);
             mReOpenSidebar = savedInstanceState.getBoolean(STATE_REOPEN_SIDEBAR);
             mSettingsBreakout = savedInstanceState.getBoolean(STATE_SETTINGS_BREAKOUT);
-            mResolutionReset = savedInstanceState.getBoolean(ActivityHelper.Keys.RESOLUTION_RESET);
             mResetMalfunction = savedInstanceState.getBoolean(STATE_RESET_MALFUNCTION);
             mDialogFragmentKey = savedInstanceState.getString(STATE_DIALOG_FRAGMENT_KEY);
             mAssociatedDialogFragment = savedInstanceState.getInt(STATE_ASSOCIATED_DIALOG_FRAGMENT);
@@ -604,11 +601,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             if (!mCoreFragment.IsInProgress()) {
                 mCoreFragment.startCore(mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath, mZipPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart, mSettingsReset, mResolutionReset,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mDoRestart, mSettingsReset,
                         mDisplayResolutionData.getResolutionWidth(mGamePrefs.verticalRenderResolution),
                         mDisplayResolutionData.getResolutionHeight(mGamePrefs.verticalRenderResolution),
                         mIsNetplayEnabled);
-                mSettingsReset = false;
             }
 
             // Try running now in case the core service has already started
@@ -646,7 +642,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             ReloadAllMenus();
         }
 
-        if(mResolutionReset && !mResetMalfunction){
+        if(mSettingsReset && !mResetMalfunction){
             mSettingsView = true;
             mGameSidebar.setVisibility(View.GONE);
 
@@ -660,9 +656,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         else if(mResetMalfunction){
             Notifier.showToast(this, R.string.toast_unexpectedExit);
             settingsViewReset();
-            resolutionRefresh();
+            settingsReset(false);
             unlockOrientation();
-            mSettingsReset = false;
+            mSettingsReset = false; // delete?
             mSettingsRecreate = false;
             mResetMalfunction = false;
             getIntent().putExtra("gameOpenReset", true);
@@ -677,7 +673,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onPause();
         Log.i(TAG, "onPause");
         if(!isChangingConfigurations()){
-            if(mResolutionReset)
+            if(mSettingsReset)
                 mResetMalfunction = true;
         }
     }
@@ -1202,10 +1198,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     // Used to reset and pause the game upon restarting
-    private void resolutionResetOnComplete(){
+    private void settingsResetOnComplete(){
         safeAutoSave();
         getIntent().putExtra("gameOpenReset", true);
-        getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, true);
+        getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, true);
         setResult(RESULT_OK, getIntent());
 
         if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
@@ -1222,13 +1218,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    // Resets variables involved with resetting the game and pausing on start
-    private void resolutionRefresh(){
-        mResolutionReset = false;
+    // Sets intent & core variable
+    private void settingsReset(boolean settingsReset){
+        mSettingsReset = settingsReset;
         if(mCoreFragment != null)
-            mCoreFragment.setResolutionReset(false);
-        getIntent().removeExtra(ActivityHelper.Keys.RESOLUTION_RESET);
-        getIntent().putExtra(ActivityHelper.Keys.RESOLUTION_RESET, false);
+            mCoreFragment.settingsReset(settingsReset);
+        getIntent().removeExtra(ActivityHelper.Keys.SETTINGS_RESET);
+        getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, settingsReset);
     }
 
     private void unlockOrientation(){
@@ -1249,7 +1245,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 resetGlContext();
                 break;
             case "pauseEmulator":
-                if(mResolutionReset)
+                if(mSettingsReset)
                     break;
                 mSettingsView = true;
                 mGameSidebar.setVisibility(View.GONE);
@@ -1260,14 +1256,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "resumeEmulator":
                 tryRunning();
                 break;
-            case "resolutionRefresh":
-                resolutionRefresh();
+            case "settingsResetFalse":
+                settingsReset(false);
                 break;
             case "displayResolution":
                 if(mGamePrefs.videoPlugin.name.equals("angrylion-plus"))
                     break;
                 else if(mGamePrefs.videoPlugin.name.toLowerCase().contains("glide64")) {
-                    resolutionResetOnComplete();
+                    settingsResetOnComplete();
                     break;
                 }
 
@@ -1297,7 +1293,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     }
                 });
 
-                mCoreFragment.setResolutionReset(true);
+                mCoreFragment.settingsReset(true);
                 recreate();
 
                 if(!mIsNetplayEnabled) {
@@ -1319,7 +1315,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.setVolume(volume);
                 break;
             case "displayScaling": case "videoHardwareType": case "videoPolygonOffset":
-                resolutionResetOnComplete();
+                settingsResetOnComplete();
                 return;
             case "displayZoomSeek":
                 resetGameSurfaceResolutionData();
@@ -1330,7 +1326,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 setRequestedOrientation( mGlobalPrefs.displayOrientation );
                 // If other changes were made then setting to auto will mess up those settings so we reset here
                 if (mGlobalPrefs.displayOrientation == -1)
-                    resolutionResetOnComplete();
+                    settingsResetOnComplete();
                 break;
             case "displayActionBarTransparency":
                 resetAppData();
@@ -1405,13 +1401,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 break;
             case "gameSettingDialogClosed":
                 // Checking orientation lock
-                if(!mResolutionReset){
+                if(!mSettingsReset){
                     if(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LOCKED){
                         unlockOrientation();
                     }
                 }
 
-                resolutionRefresh();
+                settingsReset(false);
                 tryRunning();
 
                 if(mCoreFragment != null){
@@ -1573,7 +1569,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // If we're resetting from changing certain video settings in game, then this will
             // make sure we set the screen orientation after the graphics plugin pauses the game
             // to display whatever changes were made
-            if(mResolutionReset) {
+            if(mSettingsReset) {
                 startingGameAttempt = 0;
 
 
@@ -1586,7 +1582,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     }
                 }
 
-                mResolutionReset = false;
+                mSettingsReset = false;
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             }
 
@@ -1599,13 +1595,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             runOnUiThread(() -> {
                 GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
                 if (gameSettings != null) {
-                    gameSettings.resetPreferencesFromResolutionReset();
+                    gameSettings.resetPreferencesFromSettingsReset();
                 }
                 else{
                     // User has exited the settings fragment before everything initialized so we need to reset
                     // everything that would have if they exited properly (after it initialized)
                     settingsViewReset();
-                    resolutionRefresh();
+                    settingsReset(false);
                     unlockOrientation();
                     mDialogFragmentKey = "";
                 }
@@ -1632,7 +1628,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             shutdownEmulator();
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && mCoreFragment != null &&
-                !mResolutionReset)
+                !mSettingsReset)
         {
             mCoreFragment.resumeEmulator();
         }
@@ -2048,8 +2044,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mAssociatedDialogFragment = associatedDialogFragment;
     }
 
-    public boolean getResolutionReset(){
-        return mResolutionReset;
+    public boolean getSettingsReset(){
+        return mSettingsReset;
     }
 
     public boolean getNetplayEnabled() { return mIsNetplayEnabled; }

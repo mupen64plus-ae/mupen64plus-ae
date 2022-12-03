@@ -125,8 +125,8 @@ static int   l_TakeScreenshot = 0;       // Tell OSD Rendering callback to take 
 static int   l_SpeedFactor = 100;        // percentage of nominal game speed at which emulator is running
 static int   l_FrameAdvance = 0;         // variable to check if we pause on next frame
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
-static int   l_ResolutionReset = 0;      // checks if the game needs to pause before starting because of in game settings being changed
-static int   l_ResolutionResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via resolution reset
+static int   l_SettingsReset = 0;      // checks if the game needs to pause before starting because of in game settings being changed
+static int   l_SettingsResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via settings reset
 static int   l_LoadOnce = 0;             // prevents the interpreter from loading multiple times
 
 static osd_message_t *l_msgVol = NULL;
@@ -727,7 +727,7 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
             // the front-end app is telling us that the user has resized the video output frame, and so
             // we should try to update the video plugin accordingly.  First, check state
             if (val <= 0){
-                l_ResolutionReset = val;
+                l_SettingsReset = val;
                 return M64ERR_SUCCESS;
             }
             int width, height;
@@ -880,8 +880,8 @@ void new_frame(void)
     /* advance the current frame */
     l_CurrentFrame++;
 
-    if(l_ResolutionReset != 0 && g_EmuModeInitiated == 1)
-        l_ResolutionResetCoreCounter++;
+    if(l_SettingsReset != 0 && g_EmuModeInitiated == 1)
+        l_SettingsResetCoreCounter++;
 
     if (l_FrameAdvance) {
         g_rom_pause = 1;
@@ -983,9 +983,9 @@ static void pause_loop(void)
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
 
         // using estimated frame skip settings with gfx plugin causes black screen
-        if(l_ResolutionReset == 0 && l_ResolutionResetCoreCounter != 0){
-            if(l_ResolutionResetCoreCounter == -6)
-                l_ResolutionResetCoreCounter = -5;
+        if(l_SettingsReset == 0 && l_SettingsResetCoreCounter != 0){
+            if(l_SettingsResetCoreCounter == -6)
+                l_SettingsResetCoreCounter = -5;
             else
                 VidExt_GL_SwapBuffers();
         }
@@ -1002,10 +1002,10 @@ static void pause_loop(void)
  * sometimes the graphics plugin finishes first */
 static void settings_reset_check(void)
 {
-    if(g_EmulatorRunning && !g_rom_pause && l_ResolutionReset != 0 && l_ResolutionResetCoreCounter >= 12){
+    if(g_EmulatorRunning && !g_rom_pause && l_SettingsReset != 0 && l_SettingsResetCoreCounter >= 12){
         main_toggle_pause();
-        l_ResolutionResetCoreCounter = -6;
-        l_ResolutionReset = 0;
+        l_SettingsResetCoreCounter = -6;
+        l_SettingsReset = 0;
     }
 }
 
@@ -1858,7 +1858,7 @@ m64p_error main_run(void)
     osd_new_message(OSD_MIDDLE_CENTER, "Mupen64Plus Started...");
 
     g_EmulatorRunning = 1;
-    l_ResolutionResetCoreCounter = -5;
+    l_SettingsResetCoreCounter = -5;
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 
     poweron_device(&g_dev);
@@ -2012,7 +2012,7 @@ m64p_error open_pif(const unsigned char* pifimage, unsigned int size)
 void main_interpreter_reload()
 {
     if (netplay_is_init() || l_FileName == NULL ||
-        !(l_ResolutionReset != 0 && get_r4300_emumode(&g_dev.r4300) == 1 && l_LoadOnce == 0))
+        !(l_SettingsReset != 0 && get_r4300_emumode(&g_dev.r4300) == 1 && l_LoadOnce == 0))
         return;
     l_LoadOnce++;
     savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
