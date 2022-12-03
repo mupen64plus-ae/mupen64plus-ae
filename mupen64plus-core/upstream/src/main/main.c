@@ -117,17 +117,17 @@ m64p_media_loader g_media_loader;
 
 int g_gs_vi_counter = 0;
 
-char * l_FileName = NULL;                // holds the latest auto save file name to use if we reset from in game settings
-
 /** static (local) variables **/
 static int   l_CurrentFrame = 0;         // frame counter
 static int   l_TakeScreenshot = 0;       // Tell OSD Rendering callback to take a screenshot just before drawing the OSD
 static int   l_SpeedFactor = 100;        // percentage of nominal game speed at which emulator is running
 static int   l_FrameAdvance = 0;         // variable to check if we pause on next frame
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
-static int   l_SettingsReset = 0;      // checks if the game needs to pause before starting because of in game settings being changed
+static int   l_SettingsReset = 0;        // checks if the game needs to pause before starting because of in game settings being changed
 static int   l_SettingsResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via settings reset
 static int   l_LoadOnce = 0;             // prevents the interpreter from loading multiple times
+
+static char * l_FileName = NULL;         // holds the latest auto save file name to use if we reset from in game settings
 
 static osd_message_t *l_msgVol = NULL;
 static osd_message_t *l_msgFF = NULL;
