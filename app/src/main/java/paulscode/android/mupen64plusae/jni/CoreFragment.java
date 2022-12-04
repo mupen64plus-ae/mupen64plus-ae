@@ -375,7 +375,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting,  int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean settingsReset)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean settingsReset)
     {
         Log.i(TAG, "startCore");
 

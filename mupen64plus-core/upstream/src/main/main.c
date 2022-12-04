@@ -124,7 +124,7 @@ static int   l_SpeedFactor = 100;        // percentage of nominal game speed at 
 static int   l_FrameAdvance = 0;         // variable to check if we pause on next frame
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
 static int   l_SettingsReset = 0;        // checks if the game needs to pause before starting because of in game settings being changed
-static int   l_SettingsResetCoreCounter = 0;// counts frames to make sure the video plugin is showing when resetting via settings reset
+static int   l_SettingsFrameCounter = 0; // counts frames to make sure the video plugin is showing when resetting via settings reset
 static int   l_LoadOnce = 0;             // prevents the interpreter from loading multiple times
 
 static char * l_FileName = NULL;         // holds the latest auto save file name to use if we reset from in game settings
@@ -881,7 +881,7 @@ void new_frame(void)
     l_CurrentFrame++;
 
     if(l_SettingsReset != 0 && g_EmuModeInitiated == 1)
-        l_SettingsResetCoreCounter++;
+        l_SettingsFrameCounter++;
 
     if (l_FrameAdvance) {
         g_rom_pause = 1;
@@ -983,12 +983,10 @@ static void pause_loop(void)
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
 
         // using estimated frame skip settings with gfx plugin causes black screen
-        if(l_SettingsReset == 0 && l_SettingsResetCoreCounter != 0){
-            if(l_SettingsResetCoreCounter == -6)
-                l_SettingsResetCoreCounter = -5;
-            else
-                VidExt_GL_SwapBuffers();
-        }
+        if(l_SettingsReset == 0 && l_SettingsFrameCounter == -1)
+            l_SettingsFrameCounter = 0;
+        else
+            VidExt_GL_SwapBuffers();
 
         while(g_rom_pause)
         {
@@ -1002,9 +1000,9 @@ static void pause_loop(void)
  * sometimes the graphics plugin finishes first */
 static void settings_reset_check(void)
 {
-    if(g_EmulatorRunning && !g_rom_pause && l_SettingsReset != 0 && l_SettingsResetCoreCounter >= 12){
+    if(g_EmulatorRunning && !g_rom_pause && l_SettingsReset != 0 && l_SettingsFrameCounter >= 17){
         main_toggle_pause();
-        l_SettingsResetCoreCounter = -6;
+        l_SettingsFrameCounter = -1; // set to -1 to avoid swap buffer in case of frame skip settings
         l_SettingsReset = 0;
     }
 }
@@ -1858,7 +1856,7 @@ m64p_error main_run(void)
     osd_new_message(OSD_MIDDLE_CENTER, "Mupen64Plus Started...");
 
     g_EmulatorRunning = 1;
-    l_SettingsResetCoreCounter = -5;
+    l_SettingsFrameCounter = 0;
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 
     poweron_device(&g_dev);
