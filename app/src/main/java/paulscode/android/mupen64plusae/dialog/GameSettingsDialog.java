@@ -573,6 +573,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     *  and data loss if user chooses not to use auto saves) */
     private void disableSettingsThatReset(int currentResource){
         boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0 && !mGameActivity.getNetplayEnabled();
+        if(setBool)
+            return;
 
         switch(currentResource) {
             // Display
@@ -1375,6 +1377,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
 
         private void disableSettingsThatReset(int currentResource){
             boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0 && !mGameActivity.getNetplayEnabled();
+            if(setBool)
+                return;
 
             switch(currentResource){
                 // Display
