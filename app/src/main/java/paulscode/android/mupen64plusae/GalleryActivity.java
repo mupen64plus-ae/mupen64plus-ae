@@ -197,6 +197,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             boolean doRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
                             boolean isNetplayEnabled = extras.getBoolean( ActivityHelper.Keys.NETPLAY_ENABLED, false );
                             boolean isNetplayServer = extras.getBoolean( ActivityHelper.Keys.NETPLAY_SERVER, false );
+                            boolean settingsReset = extras.getBoolean( ActivityHelper.Keys.SETTINGS_RESET, false);
 
                             createDialog(romDisplayName);
 
@@ -223,7 +224,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                                 if(mGameResetting)
                                     launchGameActivity(romPath, zipPath, romMd5, romCrc, romHeaderName, romCountryCode, romArtPath,
-                                            romGoodName, romDisplayName, doRestart, isNetplayEnabled, isNetplayServer, true);
+                                            romGoodName, romDisplayName, doRestart, isNetplayEnabled, isNetplayServer, settingsReset);
                                 // Making sure we haven't already reset the grid
                                 else if(mAllItems == null || mAllItems.size() < 1 || mAllItems.get(0) == null)
                                     refreshGrid();

@@ -224,7 +224,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         super.onStop();
         // check if we're launching activity from settings menu
         if (!mGameActivity.getSettingsReset() && !mLaunchingActivity) {
-            if(!mRecreateLater)
+            if(!mRecreateLater && !mSettingsReset)
                 mGameActivity.settingsViewReset();
             try {
                 dismiss();
@@ -581,8 +581,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     setPreference("displayResolution", setBool);
                 setPreference("displayScaling", setBool);
                 setPreference("videoHardwareType", setBool);
+                setPreference("threadedGLideN64", setBool);
                 setPreference("hybridTextureFilter_v2", setBool);
                 setPreference("displayImmersiveMode_v2", setBool);
+                setPreference("videoPolygonOffset", setBool);
                 break;
             // Audio
             case 2:
@@ -629,10 +631,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     /* Resets the preferences after the game has successfully reset and there is visual feedback
     *  from the graphics output */
     public void resetPreferencesFromSettingsReset(){
-        if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
-                mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId] == null)
+        if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null)
             return;
-        mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].settingsResetPreferences(true);
+        for(int i = 0; i <= 5; i++) {
+            if(mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[i] == null)
+                continue;
+            mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[i].settingsResetPreferences(true);
+        }
         resetPreferences();
     }
 
@@ -740,15 +745,14 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         mGameActivity.onComplete(key);
 
         //CHECK ALL RECREATE VALUES HERE
-        if(key.equals("threadedGLideN64") || key.equals("inputShareController") ||
-                key.equals("holdButtonForMenu") ||
+        if(key.equals("inputShareController") || key.equals("holdButtonForMenu") ||
                 (key.equals("displayOrientation") && mGameActivity.getGlobalPrefs().displayOrientation != -1) ||
                 (key.equals("displayImmersiveMode_v2") && !mGameActivity.getGlobalPrefs().isImmersiveModeEnabled) )
             mGameActivity.onComplete("settingsRecreate");
 
         //CHECK ALL RESET VALUES HERE
-        if(key.equals("hybridTextureFilter_v2") || key.equals("navigationMode") ||
-                key.equals("useRaphnetAdapter") ||
+        if(key.equals("threadedGLideN64") || key.equals("hybridTextureFilter_v2") ||
+                key.equals("navigationMode") || key.equals("useRaphnetAdapter") ||
                 (key.equals("displayImmersiveMode_v2") && mGameActivity.getGlobalPrefs().isImmersiveModeEnabled) ||
                 mSettingsFragment.viewPager.getCurrentItem() == 2 ||
                 (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType") && !key.equals("gameAutoSaves"))) {
@@ -1379,8 +1383,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         setPreference("displayResolution",setBool);
                     setPreference("displayScaling",setBool);
                     setPreference("videoHardwareType",setBool);
+                    setPreference("threadedGLideN64",setBool);
                     setPreference("hybridTextureFilter_v2",setBool);
                     setPreference("displayImmersiveMode_v2",setBool);
+                    setPreference("videoPolygonOffset",setBool);
                     break;
                 // Audio
                 case 2:
@@ -1506,6 +1512,8 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         public void settingsResetPreferences(boolean enabled){
+            if(getPreferenceManager() == null || getPreferenceScreen() == null)
+                return;
             for(int i = 0; i <= getPreferenceScreen().getPreferenceCount()-1; i++)
                 getPreferenceManager().getPreferenceScreen().getPreference(i).setEnabled(enabled);
         }

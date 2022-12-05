@@ -662,6 +662,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mSettingsRecreate = false;
             mResetMalfunction = false;
             getIntent().putExtra("gameOpenReset", true);
+            getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, false);
             setResult(RESULT_OK, getIntent());
             finish();
         }
@@ -1198,7 +1199,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     // Used to reset and pause the game upon restarting
-    private void settingsResetOnComplete(){
+    private void settingsResetImmediately(){
         safeAutoSave();
         getIntent().putExtra("gameOpenReset", true);
         getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, true);
@@ -1263,7 +1264,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 if(mGamePrefs.videoPlugin.name.equals("angrylion-plus"))
                     break;
                 else if(mGamePrefs.videoPlugin.name.toLowerCase().contains("glide64")) {
-                    settingsResetOnComplete();
+                    settingsResetImmediately();
                     break;
                 }
 
@@ -1315,7 +1316,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mCoreFragment.setVolume(volume);
                 break;
             case "displayScaling": case "videoHardwareType": case "videoPolygonOffset":
-                settingsResetOnComplete();
+                settingsResetImmediately();
                 return;
             case "displayZoomSeek":
                 resetGameSurfaceResolutionData();
@@ -1326,7 +1327,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 setRequestedOrientation( mGlobalPrefs.displayOrientation );
                 // If other changes were made then setting to auto will mess up those settings so we reset here
                 if (mGlobalPrefs.displayOrientation == -1)
-                    settingsResetOnComplete();
+                    settingsResetImmediately();
                 break;
             case "displayActionBarTransparency":
                 resetAppData();
@@ -1449,6 +1450,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 safeAutoSave();
                 mCoreFragment.freeCurrentSave();
                 getIntent().putExtra("gameOpenReset", true);
+                getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, false);
                 setResult(RESULT_OK, getIntent());
                 finish();
                 return;
