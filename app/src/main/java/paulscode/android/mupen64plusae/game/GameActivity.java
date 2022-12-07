@@ -1205,8 +1205,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, true);
         setResult(RESULT_OK, getIntent());
 
-        if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
+        if(mCoreFragment != null && mCoreFragment.hasServiceStarted()) {
+            mCoreFragment.freeCurrentSave();
             mCoreFragment.shutdownEmulator();
+        }
 
         finish();
 
@@ -1392,7 +1394,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 resetCoreServiceAppData();
                 recreate(); // enabling preferences
                 break;
-            case "settingsReset": case "gameDataStorageType": case "gameDataStoragePath":
+            case "settingsReset":
                 mSettingsReset = true;
                 break;
             case "settingsRecreate":

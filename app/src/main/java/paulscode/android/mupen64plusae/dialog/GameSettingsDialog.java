@@ -104,7 +104,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static final int FEEDBACK_VIBRATE_TIME = 50;
     private static final int RESET_SETTINGS_CONFIRM_DIALOG_ID = 6;
     private static int mCurrentResourceId = 0;
-    private boolean mLaunchingActivity = false;//delete
+    private boolean mLaunchingActivity = false;
     private boolean mSettingsReset = false;
     private boolean mRecreateLater = false;
     private boolean mScreenRotating = false;
@@ -188,11 +188,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         }
                         mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_GAME_SAVES, fileUri.toString());
-                        mGameActivity.onComplete("resetAppData");
-                        mGameActivity.onComplete("gameDataStoragePath");
-                        recreateAndPause();
+                        mSettingsReset = true;
                     }
+                    else
+                        waitToResetPreferences();
                 }
+                else
+                    waitToResetPreferences();
             });
 
     // Used in Data for 64DD IPL
@@ -796,9 +798,9 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         //CHECK ALL RESET VALUES HERE
         if(key.equals("threadedGLideN64") || key.equals("hybridTextureFilter_v2") ||
                 key.equals("navigationMode") || key.equals("useRaphnetAdapter") ||
+                key.equals("gameDataStorageType") || key.equals("useFlatGameDataPath") ||
                 (key.equals("displayImmersiveMode_v2") && mGameActivity.getGlobalPrefs().isImmersiveModeEnabled) ||
-                mSettingsFragment.viewPager.getCurrentItem() == 2 ||
-                (mSettingsFragment.viewPager.getCurrentItem() == 5 && !key.equals("gameDataStorageType") && !key.equals("gameAutoSaves"))) {
+                mSettingsFragment.viewPager.getCurrentItem() == 2){
             mSettingsReset = true;
         }
 
@@ -1408,7 +1410,6 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             }
             else if (GlobalPrefs.PATH_GAME_SAVES.equals(key)) {
                 startFolderPicker();
-                mGameActivity.onComplete("gameDataStoragePath");
             }
             else if (GlobalPrefs.PATH_JAPAN_IPL_ROM.equals(key)) {
                 try {
