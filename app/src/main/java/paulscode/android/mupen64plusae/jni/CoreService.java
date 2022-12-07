@@ -1289,7 +1289,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     }
 
     public void freeCurrentSave(){
-        if(mCoreInterface != null)
-            mCoreInterface.freeCurrentSave();
+        mCoreInterface.freeCurrentSave();
+    }
+
+    public boolean isDdActive(){
+        if (mRomPath == null)
+            return false;
+        RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mRomPath));
+        return header.isNdd;
     }
 }

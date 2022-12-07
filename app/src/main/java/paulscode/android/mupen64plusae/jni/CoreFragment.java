@@ -49,6 +49,7 @@ import java.net.InetAddress;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
@@ -129,6 +130,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
     private static final int RESET_CONFIRM_DIALOG_ID = 4;
     private static final int EXIT_CONFIRM_DIALOG_ID = 5;
+    private static final int RESET_SETTINGS_CONFIRM_DIALOG_ID = 6;
 
     //Progress dialog for extracting ROMs
     private ProgressDialog mProgress = null;
@@ -1082,6 +1084,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             if(mCoreEventListener != null)
                 mCoreEventListener.onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
+        else if (id == RESET_SETTINGS_CONFIRM_DIALOG_ID){
+            if(which == DialogInterface.BUTTON_POSITIVE) {
+                GameSettingsDialog gameSettings = (GameSettingsDialog)
+                        requireActivity().getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                if (gameSettings != null) {
+                    gameSettings.startFilePicker();
+                }
+            }
+        }
     }
 
     public void forceExit()
@@ -1142,5 +1153,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     public void freeCurrentSave(){
         if(mCoreService != null)
             mCoreService.freeCurrentSave();
+    }
+
+    public boolean isDdActive(){
+        if(mCoreService == null)
+            return false;
+        return mCoreService.isDdActive();
     }
 }

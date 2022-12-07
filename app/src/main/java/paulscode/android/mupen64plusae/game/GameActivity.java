@@ -1390,6 +1390,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 break;
             case "gameAutoSaves":
                 resetCoreServiceAppData();
+                recreate(); // enabling preferences
                 break;
             case "settingsReset": case "gameDataStorageType": case "gameDataStoragePath":
                 mSettingsReset = true;
@@ -1400,6 +1401,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             case "openDrawerState":
                 mDrawerOpenState = false;
                 break;
+            case "iplFile":
+                resetAppData();
+                mCoreFragment.freeCurrentSave();
+                getIntent().putExtra("gameOpenReset", true);
+                getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, false);
+                getIntent().putExtra(ActivityHelper.Keys.DO_RESTART, true);
+                setResult(RESULT_OK, getIntent());
+                finish();
+                return;
             case "gameSettingDialogClosed":
                 // Checking orientation lock
                 if(!mSettingsReset){
@@ -2061,5 +2071,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     public GamePrefs getGamePrefs(){
         return mGamePrefs;
+    }
+
+    public boolean isDdActive(){
+        if(mCoreFragment == null)
+            return false;
+        return mCoreFragment.isDdActive();
     }
 }

@@ -17,6 +17,7 @@ import android.os.VibratorManager;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.EditTextPreference;
 import android.text.TextUtils;
 import android.util.Log;
@@ -98,8 +99,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static final String STATE_DELETE_EXTRA_DIALOG = "STATE_DELETE_EXTRA_DIALOG";
     private static final String STATE_LAUNCHING_ACTIVITY = "STATE_LAUNCHING_ACTIVITY";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
+    private static final String RESET_SETTINGS_CONFIRM_DIALOG = "RESET_SETTINGS_CONFIRM_DIALOG";
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
     private static final int FEEDBACK_VIBRATE_TIME = 50;
+    private static final int RESET_SETTINGS_CONFIRM_DIALOG_ID = 6;
     private static int mCurrentResourceId = 0;
     private boolean mLaunchingActivity = false;//delete
     private boolean mSettingsReset = false;
@@ -139,6 +142,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         boolean isChangingConfigurations();
         boolean getSettingsReset();
         boolean getNetplayEnabled();
+        boolean isDdActive();
         void setDialogFragmentKey(String key);
         String getDialogFragmentKey();
         void setAssociatedDialogFragment(int associatedDialogFragment);
@@ -204,10 +208,13 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                         }
                         requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         mGameActivity.getGlobalPrefs().putString(GlobalPrefs.PATH_JAPAN_IPL_ROM, fileUri.toString());
-                        mGameActivity.onComplete("resetAppData");
-                        recreateAndPause();
+                        mGameActivity.onComplete("iplFile");
                     }
+                    else
+                        waitToResetPreferences();
                 }
+                else
+                    waitToResetPreferences();
             });
 
     public static GameSettingsDialog newInstance() {
@@ -497,6 +504,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             mLaunchingActivity = false;
         }
 
+        // Resetting the IPL preference so it shows
+        if(mCurrentResourceId == 5)
+            waitToResetPreferences();
+
         mPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -543,6 +554,9 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     }
 
     private void setPreference(String preferenceString, boolean value){
+        if(mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
+                mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId] == null)
+            return;
         Preference preference;
         preference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(preferenceString);
         if (preference != null)
@@ -572,7 +586,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     /* Used to disable settings that reset the game (needed to prevent disconnection in netplay
     *  and data loss if user chooses not to use auto saves) */
     private void disableSettingsThatReset(int currentResource){
-        boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0 && !mGameActivity.getNetplayEnabled();
+        boolean setBool = !(mGameActivity.getGlobalPrefs().maxAutoSaves == 0 || mGameActivity.getNetplayEnabled());
         if(setBool)
             return;
 
@@ -628,6 +642,20 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     displayOri.setSummary(displayOri.getEntry());
             }
         }
+    }
+
+    /* Waits before resetting the preferences */
+    private void waitToResetPreferences(){
+        final Thread handler = new Thread(() -> {
+            int count = 0;
+            while(count++ < 500 && (mSettingsFragment == null || mSettingsFragment.fragmentAdapter == null ||
+                    mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId] == null)) {
+                try { Thread.sleep(10); }
+                catch (InterruptedException e) { e.printStackTrace(); }
+            }
+            resetPreferences();
+            recreateView();
+        }); handler.start();
     }
 
     /* Resets the preferences after the game has successfully reset and there is visual feedback
@@ -706,6 +734,19 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 if(mGameActivity.getNetplayEnabled()) {
                     setPreference("gameDataStoragePath",false);
                     setPreference("gameAutoSaves", false);
+                }
+                if(!mGameActivity.isDdActive())
+                    setPreference("japanIdlPath64dd", false);
+                else {
+                    Preference currentPreference = mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
+                    if (currentPreference != null) {
+                        String uri = mGameActivity.getGlobalPrefs().getString(GlobalPrefs.PATH_JAPAN_IPL_ROM, "");
+
+                        if (!TextUtils.isEmpty(uri)) {
+                            DocumentFile file = FileUtil.getDocumentFileSingle(mSettingsFragment.fragmentAdapter.mSettingsFragmentPreference[mCurrentResourceId].getContext(), Uri.parse(uri));
+                            currentPreference.setSummary(file == null ? "" : file.getName());
+                        }
+                    }
                 }
                 disableSettingsThatReset(mCurrentResourceId);
                 break;
@@ -914,7 +955,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     }
 
     /* Used in Data for 64DD IPL */
-    private void startFilePicker()
+    public void startFilePicker()
     {
         mLaunchingActivity = true;
         AppData appData = new AppData( mGameActivity.getApplicationContext() );
@@ -947,7 +988,19 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             startFolderPicker();
         }
         else if (GlobalPrefs.PATH_JAPAN_IPL_ROM.equals(key)) {
-            startFilePicker();
+            try {
+                FragmentActivity activity = requireActivity();
+                String title = activity.getString(R.string.confirm_title);
+                String message = activity.getString(R.string.confirmResetGame_message);
+
+                ConfirmationDialog confirmationDialog =
+                        ConfirmationDialog.newInstance(RESET_SETTINGS_CONFIRM_DIALOG_ID, title, message);
+
+                FragmentManager fm = activity.getSupportFragmentManager();
+                confirmationDialog.show(fm, RESET_SETTINGS_CONFIRM_DIALOG);
+            } catch (java.lang.IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         else {// Let Android handle all other preference clicks
             return false;
@@ -1358,7 +1411,19 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 mGameActivity.onComplete("gameDataStoragePath");
             }
             else if (GlobalPrefs.PATH_JAPAN_IPL_ROM.equals(key)) {
-                startFilePicker();
+                try {
+                    FragmentActivity activity = requireActivity();
+                    String title = activity.getString(R.string.confirm_title);
+                    String message = activity.getString(R.string.confirmResetGame_message);
+
+                    ConfirmationDialog confirmationDialog =
+                            ConfirmationDialog.newInstance(RESET_SETTINGS_CONFIRM_DIALOG_ID, title, message);
+
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    confirmationDialog.show(fm, RESET_SETTINGS_CONFIRM_DIALOG);
+                } catch (java.lang.IllegalStateException e) {
+                    e.printStackTrace();
+                }
             }
             else {// Let Android handle all other preference clicks
                 return false;
@@ -1376,7 +1441,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
         }
 
         private void disableSettingsThatReset(int currentResource){
-            boolean setBool = mGameActivity.getGlobalPrefs().maxAutoSaves != 0 && !mGameActivity.getNetplayEnabled();
+            boolean setBool = !(mGameActivity.getGlobalPrefs().maxAutoSaves == 0 || mGameActivity.getNetplayEnabled());
             if(setBool)
                 return;
 
@@ -1504,6 +1569,19 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     if(mGameActivity.getNetplayEnabled()) {
                         setPreference("gameDataStoragePath",false);
                         setPreference("gameAutoSaves", false);
+                    }
+                    if(!mGameActivity.isDdActive())
+                        setPreference("japanIdlPath64dd", false);
+                    else {
+                        Preference currentPreference = findPreference(GlobalPrefs.PATH_JAPAN_IPL_ROM);
+                        if (currentPreference != null) {
+                            String uri = mGameActivity.getGlobalPrefs().getString(GlobalPrefs.PATH_JAPAN_IPL_ROM, "");
+
+                            if (!TextUtils.isEmpty(uri)) {
+                                DocumentFile file = FileUtil.getDocumentFileSingle(mGameActivity.getApplicationContext(), Uri.parse(uri));
+                                currentPreference.setSummary(file == null ? "" : file.getName());
+                            }
+                        }
                     }
                     disableSettingsThatReset(mCurrentResourceId);
                     break;
