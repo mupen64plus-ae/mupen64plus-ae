@@ -33,6 +33,7 @@ public class PromptInputCodeDialog extends DialogFragment
     private static final String STATE_NEUTRAL_BUTTON_TEXT = "STATE_NEUTRAL_BUTTON_TEXT";
     private static final String STATE_NUM_ITEMS = "STATE_NUM_ITEMS";
     private static final String STATE_ITEMS = "STATE_ITEMS";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
 
     /**
      * The listener interface for receiving an input code provided by the user.
@@ -209,7 +210,7 @@ public class PromptInputCodeDialog extends DialogFragment
     private void nestedDialogCheck(){
         if(getActivity() != null) {
             GameSettingsDialog gameSettings = (GameSettingsDialog) getActivity().
-                    getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
             if (gameSettings != null) {
                 gameSettings.nestedDialogCheck();
             }

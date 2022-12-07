@@ -98,6 +98,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     private static final String STATE_SCREEN_ROTATING = "STATE_SCREEN_ROTATING";
     private static final String STATE_DELETE_EXTRA_DIALOG = "STATE_DELETE_EXTRA_DIALOG";
     private static final String STATE_LAUNCHING_ACTIVITY = "STATE_LAUNCHING_ACTIVITY";
+    private static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final String RESET_SETTINGS_CONFIRM_DIALOG = "RESET_SETTINGS_CONFIRM_DIALOG";
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
@@ -254,7 +255,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     mGameActivity.settingsViewReset();
                 }
                 mGameActivity.onComplete("openDrawerState");
-            } catch (Exception e) {
+            } catch (IllegalStateException e) {
                 mScreenRotating = true;
                 mGameActivity.onComplete("pauseEmulator");
                 e.printStackTrace();
@@ -436,7 +437,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                     playerPref.dismissFragments(getActivity());// causing issues
                 }
             }
-            catch(Exception e){
+            catch(NullPointerException e){
                 e.printStackTrace();
             }
         }
@@ -499,7 +500,7 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
             try{
                 Thread.sleep(500);
             }
-            catch(Exception e){
+            catch(InterruptedException e){
                 e.printStackTrace();
             }
             mGameActivity.onComplete("pauseEmulator");
@@ -1826,16 +1827,12 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
     // Checking for player map dialog when we close the settings fragment
     public void playerMapDialogCheck(int mSelectedPlayer){
         if(!mScreenRotating){
-            try {
-                int associatedFragment = 0;
-                final FragmentManager fm = mGameActivity.getSupportFragmentManager();
-                PromptInputCodeDialog promptInputCodeDialog = (PromptInputCodeDialog) fm.findFragmentByTag("STATE_PROMPT_INPUT_CODE_DIALOG");
-                if (promptInputCodeDialog != null)
-                    associatedFragment = mSelectedPlayer;
-                mGameActivity.setAssociatedDialogFragment(associatedFragment);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            int associatedFragment = 0;
+            final FragmentManager fm = mGameActivity.getSupportFragmentManager();
+            PromptInputCodeDialog promptInputCodeDialog = (PromptInputCodeDialog) fm.findFragmentByTag(STATE_PROMPT_INPUT_CODE_DIALOG);
+            if (promptInputCodeDialog != null)
+                associatedFragment = mSelectedPlayer;
+            mGameActivity.setAssociatedDialogFragment(associatedFragment);
         }
     }
 

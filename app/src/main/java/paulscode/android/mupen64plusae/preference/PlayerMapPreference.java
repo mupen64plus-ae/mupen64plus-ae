@@ -47,6 +47,7 @@ public class PlayerMapPreference extends DialogPreference implements
         View.OnClickListener, OnPreferenceDialogListener, View.OnLongClickListener
 {
     private static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
 
     private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
@@ -177,7 +178,7 @@ public class PlayerMapPreference extends DialogPreference implements
     private void playerMapDialogCheck(){
         if(mAssociatedActivity != null) {
             GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
-                    getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
             if (gameSettings != null && mSelectedPlayer != 0) {
                 gameSettings.playerMapDialogCheck(mSelectedPlayer);
             }
@@ -187,7 +188,7 @@ public class PlayerMapPreference extends DialogPreference implements
     private void setLongClickOnDialog(boolean longClick){
         if(mAssociatedActivity != null) {
             GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
-                    getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
             if (gameSettings != null) {
                 gameSettings.setLongClickOnDialog(longClick);
             }
@@ -260,19 +261,14 @@ public class PlayerMapPreference extends DialogPreference implements
                 title, message, btnText, mUnmappableKeyCodes);
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
 
-        try{
-            GameActivity game = (GameActivity) mAssociatedActivity;
-            game.setAssociatedDialogFragment(mSelectedPlayer);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+        GameActivity game = (GameActivity) mAssociatedActivity;
+        game.setAssociatedDialogFragment(mSelectedPlayer);
     }
 
     private void dialogDeleted(){
         if(mAssociatedActivity != null) {
             GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
-                    getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
             if (gameSettings != null) {
                 gameSettings.dialogDeleted();
             }

@@ -126,6 +126,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
 
     private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
     private static final int RESET_CONFIRM_DIALOG_ID = 4;
@@ -1087,7 +1088,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         else if (id == RESET_SETTINGS_CONFIRM_DIALOG_ID){
             if(which == DialogInterface.BUTTON_POSITIVE) {
                 GameSettingsDialog gameSettings = (GameSettingsDialog)
-                        requireActivity().getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                        requireActivity().getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
                 if (gameSettings != null) {
                     gameSettings.startFilePicker();
                 }

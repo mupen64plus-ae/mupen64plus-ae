@@ -1070,7 +1070,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             while (mCoreFragment.getEmuModeInit() == 0) {
                 try {
                     mSaveLock.wait(100);
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -1080,7 +1080,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.autoSaveState(false);
             try {
                 Thread.sleep(100);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 Log.i(TAG, "Can't sleep");
             }
 
@@ -1091,7 +1091,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         try {
                             Log.i(TAG, "Sleeping tryingcount = " + safeSaveTryingCount);
                             mSaveLock.wait(1000);
-                        } catch (Exception e) {
+                        } catch (InterruptedException e) {
                             Log.i(TAG, "Can't sleep");
                         }
                         if (safeSaveTryingCount > 5)
@@ -1113,7 +1113,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             saveNotifier = true;
                             runOnUiThread(() -> Notifier.showToast(getApplicationContext(), R.string.toast_savingFile, "to reset properly"));
                         }
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
                         Log.i(TAG, "Can't sleep");
                     }
                 }
@@ -1307,7 +1307,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             Notifier.showToast(this,R.string.toast_pleaseWait);
                         try {
                             Thread.sleep(100);
-                        } catch (Exception e) {
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
@@ -1575,7 +1575,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     && startingGameAttempt++ < 100) {
                 try {
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
                     Log.i(TAG, "Can't sleep");
                 }
             }
@@ -1590,7 +1590,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         && startingGameAttempt++ < 50){
                     try {
                         Thread.sleep(100);
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }

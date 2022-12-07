@@ -931,8 +931,8 @@ class CoreInterface
                 try{
                     Thread.sleep(1000);
                 }
-                catch(Exception e){
-
+                catch(InterruptedException e){
+                    e.printStackTrace();
                 }
                 emuSaveFile(newFile);
                 mStateCallBack.invoke(mCoreContext,11,1);

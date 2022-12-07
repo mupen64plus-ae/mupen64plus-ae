@@ -116,7 +116,7 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
         private void extraDialogCheck(){
             if(getActivity() != null) {
                 GameSettingsDialog gameSettings = (GameSettingsDialog) getActivity().
-                        getSupportFragmentManager().findFragmentByTag("STATE_SETTINGS_FRAGMENT");
+                        getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
                 if (gameSettings != null) {
                     gameSettings.extraDialogCheck();
                 }
@@ -140,6 +140,7 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     }
 
     public static final String STATE_PREFERENCE_FRAGMENT = "STATE_PREFERENCE_FRAGMENT";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
     
     private String mSharedPrefsName = null;
     private int mPreferencesResId;
