@@ -125,7 +125,6 @@ static int   l_FrameAdvance = 0;         // variable to check if we pause on nex
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
 static int   l_SettingsReset = 0;        // checks if the game needs to pause before starting because of in game settings being changed
 static int   l_SettingsFrameCounter = 0; // counts frames to make sure the video plugin is showing when resetting via settings reset
-static int   l_LoadOnce = 0;             // prevents the interpreter from loading multiple times
 
 static char * l_FileName = NULL;         // holds the latest auto save file name to use if we reset from in game settings
 
@@ -573,7 +572,6 @@ void main_state_inc_slot(void)
 
 void main_state_load(const char *filename)
 {
-
     if(filename != NULL) {
         free_current_save();
         l_FileName = malloc(strlen(filename) + 1);
@@ -2009,9 +2007,9 @@ m64p_error open_pif(const unsigned char* pifimage, unsigned int size)
 
 void main_interpreter_reload()
 {
-    if (netplay_is_init() || l_FileName == NULL ||
-        !(l_SettingsReset != 0 && get_r4300_emumode(&g_dev.r4300) == 1 && l_LoadOnce == 0))
-        return;
-    l_LoadOnce++;
-    savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
+    if (!netplay_is_init() && l_FileName != NULL &&
+        l_SettingsReset != 0 && get_r4300_emumode(&g_dev.r4300) == 1) {
+        savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
+        free_current_save();
+    }
 }
