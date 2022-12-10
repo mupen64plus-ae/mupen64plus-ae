@@ -840,7 +840,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     foundItem.zipUri,
                     foundItem.md5, foundItem.crc,
                     foundItem.headerName, foundItem.countryCode.getValue(), foundItem.artPath,
-                    foundItem.goodName, foundItem.displayName, false,
+                    foundItem.goodName, foundItem.displayName, true,
                     false, false, false);
             finishAffinity();
         } else if (scanOnFailure){
@@ -883,8 +883,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             tagForRefreshNeeded();
             ActivityHelper.startDataPrefsActivity( this );
             return true;
-         } else if (item.getItemId() == R.id.menuItem_categoryNetplay) {
-            ActivityHelper.startNetplayPrefsActivity(this);
+        } else if (item.getItemId() == R.id.menuItem_categoryNetplay) {
+            ActivityHelper.startNetplayPrefsActivity( this );
             return true;
         } else if (item.getItemId() == R.id.menuItem_categoryDefaults) {
             ActivityHelper.startDefaultPrefsActivity( this );
@@ -1282,8 +1282,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
-                                    String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
-                                    boolean isRestarting, boolean isNetplayEnabled, boolean isNetplayServer, boolean settingsReset)
+            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
+            boolean isRestarting, boolean isNetplayEnabled, boolean isNetplayServer, boolean settingsReset)
     {
         Log.i( "GalleryActivity", "launchGameActivity" );
 

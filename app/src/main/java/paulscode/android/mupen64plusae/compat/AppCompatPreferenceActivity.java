@@ -173,20 +173,6 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
         } else {
             mPrefFrag = (AppCompatPreferenceFragment) contentFragment;
         }
-
-    }
-
-    public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
-    {
-        mSharedPrefsName = sharedPrefsName;
-        mPreferencesResId = preferencesResId;
-        
-        if(mPrefFrag == null)
-        {
-            mPrefFrag = AppCompatPreferenceFragment.newInstance(sharedPrefsName, preferencesResId, null);
-            getSupportFragmentManager().beginTransaction()
-                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
-        }
     }
 
     protected abstract String getSharedPrefsName();
