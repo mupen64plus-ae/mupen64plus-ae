@@ -1353,6 +1353,10 @@ public class GameSettingsDialog extends DialogFragment implements SharedPreferen
                 else
                     gameSettingsDialog.resetPreferences();
             }
+
+            // Waiting for plugins to initialize
+            if(mGameActivity.getSettingsReset())
+                settingsResetPreferences(false);
         }
 
         public void settingsResetPreferences(boolean enabled){
