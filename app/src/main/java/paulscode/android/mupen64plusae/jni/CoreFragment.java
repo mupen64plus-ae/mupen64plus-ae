@@ -1151,14 +1151,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             mCoreService.setResolution(resolution);
     }
 
-    public void freeCurrentSave(){
-        if(mCoreService != null)
-            mCoreService.freeCurrentSave();
-    }
-
     public boolean isDdActive(){
         if(mCoreService == null)
             return false;
         return mCoreService.isDdActive();
+    }
+
+    public void loadLatestAutoSave(){
+        if(mCoreService != null) {
+            mCoreService.loadLatestSave();
+            mCoreService.loadLatestSave(); // loading twice for cached interpreter
+        }
     }
 }

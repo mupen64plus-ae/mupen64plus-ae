@@ -126,8 +126,6 @@ static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to 
 static int   l_SettingsReset = 0;        // checks if the game needs to pause before starting because of in game settings being changed
 static int   l_SettingsFrameCounter = 0; // counts frames to make sure the video plugin is showing when resetting via settings reset
 
-static char * l_FileName = NULL;         // holds the latest auto save file name to use if we reset from in game settings
-
 static osd_message_t *l_msgVol = NULL;
 static osd_message_t *l_msgFF = NULL;
 static osd_message_t *l_msgPause = NULL;
@@ -307,14 +305,6 @@ static void main_check_inputs(void)
     lircCheckInput();
 #endif
     SDL_PumpEvents();
-}
-
-static void free_current_save(void)
-{
-    if(l_FileName != NULL) {
-        free(l_FileName);
-        l_FileName = NULL;
-    }
 }
 
 /*********************************************************************************************************
@@ -572,12 +562,6 @@ void main_state_inc_slot(void)
 
 void main_state_load(const char *filename)
 {
-    if(filename != NULL) {
-        free_current_save();
-        l_FileName = malloc(strlen(filename) + 1);
-        strcpy(l_FileName, filename);
-    }
-
     if (netplay_is_init())
         return;
 
@@ -684,10 +668,6 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
             {    
                 if (!main_is_paused())
                     main_toggle_pause();
-                return M64ERR_SUCCESS;
-            }
-            else if (val == 5) {
-                free_current_save();
                 return M64ERR_SUCCESS;
             }
             return M64ERR_INPUT_INVALID;
@@ -1904,7 +1884,6 @@ m64p_error main_run(void)
     // clean up
     g_EmulatorRunning = 0;
     g_EmuModeInitiated = 0;
-    free_current_save();
     StateChanged(M64CORE_EMU_STATE, M64EMU_STOPPED);
 
     return M64ERR_SUCCESS;
@@ -2003,13 +1982,4 @@ m64p_error open_pif(const unsigned char* pifimage, unsigned int size)
 
     g_start_address = UINT32_C(0xbfc00000);
     return M64ERR_SUCCESS;
-}
-
-void main_interpreter_reload()
-{
-    if (!netplay_is_init() && l_FileName != NULL &&
-        l_SettingsReset != 0 && get_r4300_emumode(&g_dev.r4300) == 1) {
-        savestates_set_job(savestates_job_load, savestates_type_unknown, l_FileName);
-        free_current_save();
-    }
 }

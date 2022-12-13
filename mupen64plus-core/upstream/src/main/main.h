@@ -105,7 +105,5 @@ m64p_error main_reset(int do_hard_reset);
 
 m64p_error open_pif(const unsigned char* pifimage, unsigned int size);
 
-void main_interpreter_reload(void);
-
 #endif /* __MAIN_H__ */
 

@@ -553,10 +553,6 @@ void gen_interrupt(struct r4300_core* r4300)
         if (savestates_get_job() == savestates_job_load)
         {
             savestates_load();
-
-            // Doing this because the interpreter doesn't get initiated properly after resetting from
-            // the in game settings menu (no instructions seem to get executed)
-            main_interpreter_reload();
             return;
         }
 

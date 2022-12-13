@@ -1205,10 +1205,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, true);
         setResult(RESULT_OK, getIntent());
 
-        if(mCoreFragment != null && mCoreFragment.hasServiceStarted()) {
-            mCoreFragment.freeCurrentSave();
+        if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
             mCoreFragment.shutdownEmulator();
-        }
 
         finish();
 
@@ -1405,7 +1403,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 break;
             case "iplFile":
                 resetAppData();
-                mCoreFragment.freeCurrentSave();
                 getIntent().putExtra("gameOpenReset", true);
                 getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, false);
                 getIntent().putExtra(ActivityHelper.Keys.DO_RESTART, true);
@@ -1460,9 +1457,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     resetCoreServiceAppData();
                 }
                 safeAutoSave();
-                mCoreFragment.freeCurrentSave();
                 getIntent().putExtra("gameOpenReset", true);
                 getIntent().putExtra(ActivityHelper.Keys.SETTINGS_RESET, false);
+                getIntent().putExtra(ActivityHelper.Keys.DO_RESTART, false);
                 setResult(RESULT_OK, getIntent());
                 finish();
                 return;
@@ -1585,15 +1582,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // to display whatever changes were made
             if(mSettingsReset) {
                 startingGameAttempt = 0;
+                int loadAttempt = 0;
 
                 while((mCoreFragment == null || mCoreFragment.getAudioInit() == 0)
                         && startingGameAttempt++ < 50){
                     try {
+                        if (mCoreFragment != null && loadAttempt == 0) {
+                            mCoreFragment.loadLatestAutoSave();
+                            loadAttempt = 1;
+                        }
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+
+                if (mCoreFragment != null && loadAttempt == 0)
+                    mCoreFragment.loadLatestAutoSave();
 
                 mSettingsReset = false;
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);

@@ -1288,10 +1288,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
-    public void freeCurrentSave(){
-        mCoreInterface.freeCurrentSave();
-    }
-
     public boolean isDdActive(){
         if (mRomPath == null)
             return false;
