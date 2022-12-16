@@ -261,8 +261,11 @@ public class PlayerMapPreference extends DialogPreference implements
                 title, message, btnText, mUnmappableKeyCodes);
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
 
-        GameActivity game = (GameActivity) mAssociatedActivity;
-        game.setAssociatedDialogFragment(mSelectedPlayer);
+        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+        if(gameSettings != null) {
+            GameActivity game = (GameActivity) mAssociatedActivity;
+            game.setAssociatedDialogFragment(mSelectedPlayer);
+        }
     }
 
     private void dialogDeleted(){
