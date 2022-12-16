@@ -70,6 +70,11 @@
         android:id="@+id/menuItem_setIme"
         android:title="@string/menuItem_setIme"/>
     <item
+        android:id="@+id/menuItem_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menuItem_settings">
+    </item>
+    <item
         android:id="@+id/menuItem_reset"
         android:title="@string/inputMapActivity_reset"/>
 

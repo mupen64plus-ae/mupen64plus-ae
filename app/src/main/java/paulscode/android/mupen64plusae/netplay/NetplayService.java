@@ -402,6 +402,10 @@ public class NetplayService extends Service
         }
     }
 
+    public TcpServer getTcpServer(){
+        return mTcpServer;
+    }
+
     @Override
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onDestroy()

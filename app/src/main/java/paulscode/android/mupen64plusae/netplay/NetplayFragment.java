@@ -91,6 +91,12 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
     {
         return mViewModel != null && mViewModel.mIsNetplayRunning;
     }
+
+    public TcpServer getTcpServer(){
+        if (mViewModel != null && mViewModel.mNetplayServiceBinder != null)
+            return mViewModel.mNetplayServiceBinder.getService().getTcpServer();
+        return null;
+    }
     
     private void actuallyStartNetplayService(Activity activity)
     {
@@ -106,7 +112,7 @@ public class NetplayFragment extends Fragment implements NetplayService.NetplayS
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
                 //Nothing to do here
-                Log.i("NetplayFragment", "Netplay servic has been unbound");
+                Log.i("NetplayFragment", "Netplay service has been unbound");
             }
         };
 

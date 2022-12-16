@@ -50,12 +50,14 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     }
     
     public void initialize(VisibleTouchMap touchMap, boolean drawingEnabled,
-                           boolean isAnalogHiddenWhenSensor, boolean joystickAnimated )
+                           boolean isAnalogHiddenWhenSensor, int joystickAnimated )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
         mIsAnalogHiddenWhenSensor = isAnalogHiddenWhenSensor;
-        mHatRefreshPeriod = joystickAnimated ? 3 : 0;
+
+        // Inverse joystickAnimated for refresh period
+        mHatRefreshPeriod = (joystickAnimated == 0) ? 0 : 6-joystickAnimated;
     }
     
     @Override

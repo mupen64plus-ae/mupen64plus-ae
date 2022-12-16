@@ -97,6 +97,7 @@ m64p_frame_callback g_FrameCallback = NULL;
 
 int         g_RomWordsLittleEndian = 0; // after loading, ROM words are in native N64 byte order (big endian). We will swap them on x86
 int         g_EmulatorRunning = 0;      // need separate boolean to tell if emulator is running, since --nogui doesn't use a thread
+int         g_EmuModeInitiated = 0;     // helps the plugin wait before initializing when resetting from in game settings
 
 
 int g_rom_pause;
@@ -123,6 +124,8 @@ static int   l_TakeScreenshot = 0;       // Tell OSD Rendering callback to take 
 static int   l_SpeedFactor = 100;        // percentage of nominal game speed at which emulator is running
 static int   l_FrameAdvance = 0;         // variable to check if we pause on next frame
 static int   l_MainSpeedLimit = 1;       // insert delay during vi_interrupt to keep speed at real-time
+static int   l_SettingsReset = 0;        // checks if the game needs to pause before starting because of in game settings being changed
+static int   l_SettingsFrameCounter = 0; // counts frames to make sure the video plugin is showing when resetting via settings reset
 
 static osd_message_t *l_msgVol = NULL;
 static osd_message_t *l_msgFF = NULL;
@@ -588,6 +591,10 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
     switch (param)
     {
         case M64CORE_EMU_STATE:
+            if (g_EmuModeInitiated != 1) {
+                *rval = -2;
+                break;
+            }
             if (!g_EmulatorRunning)
                 *rval = M64EMU_STOPPED;
             else if (g_rom_pause)
@@ -623,8 +630,6 @@ m64p_error main_core_state_query(m64p_core_param param, int *rval)
         }
         case M64CORE_AUDIO_VOLUME:
         {
-            if (!g_EmulatorRunning)
-                return M64ERR_INVALID_STATE;    
             return main_volume_get_level(rval);
         }
         case M64CORE_AUDIO_MUTE:
@@ -703,6 +708,10 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
         {
             // the front-end app is telling us that the user has resized the video output frame, and so
             // we should try to update the video plugin accordingly.  First, check state
+            if (val <= 0){
+                l_SettingsReset = val;
+                return M64ERR_SUCCESS;
+            }
             int width, height;
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
@@ -716,7 +725,9 @@ m64p_error main_core_state_set(m64p_core_param param, int val)
         case M64CORE_AUDIO_VOLUME:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
-            if (val < 0 || val > 100)
+            if (val == -2)
+                return M64ERR_SUCCESS;
+            else if (val < 0 || val > 100)
                 return M64ERR_INPUT_INVALID;
             return main_volume_set_level(val);
         case M64CORE_AUDIO_MUTE:
@@ -851,6 +862,9 @@ void new_frame(void)
     /* advance the current frame */
     l_CurrentFrame++;
 
+    if(l_SettingsReset != 0 && g_EmuModeInitiated == 1)
+        l_SettingsFrameCounter++;
+
     if (l_FrameAdvance) {
         g_rom_pause = 1;
         l_FrameAdvance = 0;
@@ -949,12 +963,29 @@ static void pause_loop(void)
     if(g_rom_pause)
     {
         osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
-        VidExt_GL_SwapBuffers();
+
+        // using estimated frame skip settings with gfx plugin causes black screen
+        if(l_SettingsReset == 0 && l_SettingsFrameCounter == -1)
+            l_SettingsFrameCounter = 0;
+        else
+            VidExt_GL_SwapBuffers();
+
         while(g_rom_pause)
         {
             SDL_Delay(10);
             main_check_inputs();
         }
+    }
+}
+
+/* Making sure to pause once the core has started up if resetting from settings;
+ * sometimes the graphics plugin finishes first */
+static void settings_reset_check(void)
+{
+    if(g_EmulatorRunning && !g_rom_pause && l_SettingsReset != 0 && l_SettingsFrameCounter >= 17){
+        main_toggle_pause();
+        l_SettingsFrameCounter = -1; // set to -1 to avoid swap buffer in case of frame skip settings
+        l_SettingsReset = 0;
     }
 }
 
@@ -974,6 +1005,8 @@ void new_vi(void)
     pause_loop();
 
     netplay_check_sync(&g_dev.r4300.cp0);
+
+    settings_reset_check();
 }
 
 static void main_switch_pak(int control_id)
@@ -1869,6 +1902,7 @@ m64p_error main_run(void)
     osd_new_message(OSD_MIDDLE_CENTER, "Mupen64Plus Started...");
 
     g_EmulatorRunning = 1;
+    l_SettingsFrameCounter = 0;
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 
     poweron_device(&g_dev);
@@ -1917,6 +1951,7 @@ m64p_error main_run(void)
 
     // clean up
     g_EmulatorRunning = 0;
+    g_EmuModeInitiated = 0;
     StateChanged(M64CORE_EMU_STATE, M64EMU_STOPPED);
 
     return M64ERR_SUCCESS;

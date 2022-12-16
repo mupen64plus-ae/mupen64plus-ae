@@ -133,7 +133,8 @@
             android:exported="false"
             android:label="@string/categoryAudio_title"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess" >
             <intent-filter>
                 <action android:name=".persistent.AudioPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -144,7 +145,8 @@
             android:exported="false"
             android:label="@string/categoryData_title"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess" >
             <intent-filter>
                 <action android:name=".persistent.DataPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -166,7 +168,8 @@
             android:exported="false"
             android:label="@string/categoryDisplay_title"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess" >
             <intent-filter>
                 <action android:name=".persistent.DisplayPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -177,7 +180,8 @@
             android:exported="false"
             android:label="@string/categoryShaders_title"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess" >
             <intent-filter>
                 <action android:name=".persistent.ShaderPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -188,7 +192,8 @@
             android:exported="false"
             android:label="@string/categoryInput_title"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess" >
             <intent-filter>
                 <action android:name=".persistent.InputPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -199,7 +204,8 @@
             android:exported="false"
             android:label="@string/menuItem_select_profiles"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess">
             <intent-filter>
                 <action android:name=".persistent.DefaultsPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -221,7 +227,8 @@
             android:exported="false"
             android:label="@string/categoryTouchscreen_title"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            android:theme="@style/Theme.Mupen64plusaeTheme"
+            android:process=":EmulationProcess" >
             <intent-filter>
                 <action android:name=".persistent.TouchscreenPrefsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -301,7 +301,7 @@ public class VisibleTouchMap extends TouchMap
      * @param scale      The factor to scale images by.
      * @param alpha      The opacity of the visible elements.
      */
-    public void load(Context context, String skinDir, Profile profile, boolean animated, float scale, int alpha )
+    public void load(Context context, String skinDir, Profile profile, int animated, float scale, int alpha )
     {
         mScalingFactor = scale;
         mTouchscreenTransparency = alpha;
@@ -332,7 +332,7 @@ public class VisibleTouchMap extends TouchMap
      * .profile.Profile, boolean)
      */
     @Override
-    protected void loadAllAssets( Context context, Profile profile, boolean animated )
+    protected void loadAllAssets( Context context, Profile profile, int animated )
     {
         super.loadAllAssets( context, profile, animated );
         

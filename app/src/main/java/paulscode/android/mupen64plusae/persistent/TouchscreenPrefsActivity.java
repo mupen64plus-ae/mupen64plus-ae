@@ -25,8 +25,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -64,8 +68,11 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
+    private Vibrator mVibrator = null;
 
     private static final String ACTION_IMPORT_TOUCHSCREEN_GRAPHICS = "actionImportTouchscreenGraphics";
+    private static final int PICK_FILE_IMPORT_TOUCHSCREEN_GRAPHICS_REQUEST_CODE = 5;
+    private static final int FEEDBACK_VIBRATE_TIME = 50;
     private final ArrayList<String> mValidSkinFiles = new ArrayList<>();
 
     ActivityResultLauncher<Intent> mLaunchFilePicker = registerForActivityResult(
@@ -74,7 +81,11 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
                 Intent data = result.getData();
                 if (result.getResultCode() == Activity.RESULT_OK && data != null) {
                     Uri fileUri = getUri(data);
-                    importCustomSkin(fileUri);
+                    if(importCustomSkin(fileUri)){
+                        mGlobalPrefs.putBoolean("isCustomTouchscreenSkin",true);
+                        mGlobalPrefs.putString("touchscreenSkin_v2","Custom");
+                        resetPreferences();
+                    }
                 }
             });
 
@@ -90,6 +101,18 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         }
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private Vibrator getVibrator(){
+        Vibrator vibrator;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            VibratorManager manager = (VibratorManager) this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = manager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        }
+        return vibrator;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -99,6 +122,9 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Vibrator to show on haptic feedback
+        mVibrator = getVibrator();
 
         mValidSkinFiles.add("analog-back.png");
         mValidSkinFiles.add("analog-fore.png");
@@ -196,11 +222,25 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         PrefUtil.setOnPreferenceClickListener(this, ACTION_IMPORT_TOUCHSCREEN_GRAPHICS, this);
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    private void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
+        } else {
+            mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
+        }
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         // Just refresh the preference screens in place
         refreshViews();
+
+        if(key.equals("touchscreenFeedback") && mGlobalPrefs.isTouchscreenFeedbackEnabled &&
+                mVibrator != null){
+            vibrate();
+        }
     }
 
     private void refreshViews()
@@ -229,14 +269,14 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         return true;
     }
 
-    private void importCustomSkin(Uri uri) {
+    private boolean importCustomSkin(Uri uri) {
 
         RomHeader header = new RomHeader( getApplicationContext(), uri );
 
         if (!header.isZip) {
             Log.e(TAG, "Invalid custom skin file");
             Notifier.showToast(getApplicationContext(), R.string.importExportActivity_invalidCustomSkinFile);
-            return;
+            return false;
         }
 
         boolean validZip = true;
@@ -279,13 +319,14 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity implem
         if (!validZip) {
             Notifier.showToast(getApplicationContext(), R.string.importExportActivity_invalidCustomSkinFile);
             Log.e(TAG, "Invalid custom skin zip");
-            return;
+            return false;
         }
 
         File customSkinDir = new File(mGlobalPrefs.touchscreenCustomSkinsDir);
         FileUtil.deleteFolder(customSkinDir);
         FileUtil.makeDirs(mGlobalPrefs.touchscreenCustomSkinsDir);
         FileUtil.unzipAll(getApplicationContext(), uri, mGlobalPrefs.touchscreenCustomSkinsDir);
+        return true;
     }
 
     private void startFilePickerForSingle(int permissions)

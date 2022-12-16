@@ -69,10 +69,15 @@
         android:summary="@string/touchscreenFeedback_summary"
         android:title="@string/touchscreenFeedback_title" />
 
-    <androidx.preference.CheckBoxPreference
-        android:defaultValue="true"
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="3"
         android:key="touchscreenAnimated_v2"
-        android:title="@string/touchscreenAnimation_summary" />
+        android:title="@string/touchscreenAnimation_summary"
+        mupen64:maximumValue="5"
+        mupen64:minimumValue="0"
+        mupen64:minimumValueString="None"
+        mupen64:stepSize="1"
+        mupen64:units="x" />
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/touchscreenButtonStyle_default"
         android:entries="@array/touchscreenButtonStyle_entries"
@@ -95,17 +100,13 @@
         android:key="touchscreenAnalogRelative_global"
         android:summary="@string/relativeAnalog_summary"
         android:title="@string/relativeAnalog_title" />
-    <androidx.preference.CheckBoxPreference
-        android:defaultValue="true"
-        android:key="touchscreenAutoHideEnabled"
-        android:summary="@string/touchscreenAutoHideEnabled_summary"
-        android:title="@string/touchscreenAutoHideEnabled_title" />
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="5"
         android:key="touchscreenAutoHideSeconds"
         android:title="@string/touchscreenAutoHide_title"
-        mupen64:maximumValue="20"
+        mupen64:maximumValue="21"
         mupen64:stepSize="1"
-        mupen64:units="sec" />
+        mupen64:units="sec"
+        mupen64:maximumValueString="Never" />
 
 </androidx.preference.PreferenceScreen>

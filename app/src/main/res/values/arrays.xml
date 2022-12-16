@@ -352,6 +352,25 @@
 
     <string name="pakType_default" translatable="false">2</string>
 
+    <!-- Settings In Game List -->
+    <string-array name="settingsGame_entries" translatable="false">
+        <item>@string/categoryDisplay_title</item>
+        <item>@string/categoryShaders_title</item>
+        <item>@string/categoryAudio_title</item>
+        <item>@string/categoryTouchscreen_title</item>
+        <item>@string/categoryInput_title</item>
+        <item>@string/categoryData_title</item>
+    </string-array>
+    <string-array name="settingsGame_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="settingsGame_default" translatable="false">0</string>
+
     <!-- Gln64 Frameskip List -->
     <string-array name="gln64Frameskip_entries" translatable="false">
         <item>@string/gln64Frameskip_entryNever</item>

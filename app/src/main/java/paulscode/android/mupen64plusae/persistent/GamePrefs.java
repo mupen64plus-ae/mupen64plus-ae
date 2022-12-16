@@ -441,9 +441,9 @@ public class GamePrefs
         for(int index = 0; index < NUM_CONTROLLERS; ++index) {
 
             if(controllerProfile[index] != null) {
-                Log.i("GamePrefs", "controler " + index + " profile found: " + controllerProfile[index].getName());
+                Log.i("GamePrefs", "controller " + index + " profile found: " + controllerProfile[index].getName());
             }else  {
-                Log.i("GamePrefs", "controler " + index + " profile NOT found");
+                Log.i("GamePrefs", "controller " + index + " profile NOT found");
             }
         }
 

@@ -213,8 +213,8 @@ public class GlobalPrefs
     /** How long before auto hiding touchscreen buttons */
     public final int touchscreenAutoHideSeconds;
 
-    /** True if the touchscreen joystick is animated. */
-    public final boolean isTouchscreenAnimated;
+    /** Refresh rate of the joystick. */
+    public final int touchscreenAnimated;
 
     /** True if the touchscreen joystick is relative. */
     public final boolean isTouchscreenAnalogRelative;
@@ -252,7 +252,7 @@ public class GlobalPrefs
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
 
-    /** Surface scale facor for shaders */
+    /** Surface scale factor for shaders */
     public final int shaderScaleFactor;
 
     /** User selected shader passes */
@@ -266,6 +266,9 @@ public class GlobalPrefs
 
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
+
+    /** The in game settings menu transparency value. */
+    public final int displayGameSettingsTransparency;
 
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
@@ -286,7 +289,7 @@ public class GlobalPrefs
     public final boolean isPolygonOffsetHackEnabled;
 
     /** The manually-overridden hardware type, used for flicker reduction. */
-    final int videoHardwareType;
+    public final int videoHardwareType;
 
     /** The polygon offset to use. */
     public final float videoPolygonOffset;
@@ -328,7 +331,7 @@ public class GlobalPrefs
     public final boolean isBigScreenMode;
 
     /** True if we are using the swipe gesture for the in-game menu, false if we are using the back key */
-    public final boolean inGameMenuIsSwipGesture;
+    public final boolean inGameMenuIsSwipeGesture;
 
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
@@ -337,7 +340,7 @@ public class GlobalPrefs
     final boolean useFlatGameDataPath;
 
     /** True if the app should use external storage to save game data */
-    public final boolean useExternalStorge;
+    public final boolean useExternalStorage;
 
     /** Where to store external game data */
     public final String externalFileStoragePath;
@@ -349,19 +352,19 @@ public class GlobalPrefs
     public final boolean volKeysMappable;
 
     /** The input profile for Player 1. */
-    final ControllerProfile controllerProfile1;
+    public final ControllerProfile controllerProfile1;
 
     /** The input profile for Player 2. */
-    final ControllerProfile controllerProfile2;
+    public final ControllerProfile controllerProfile2;
 
     /** The input profile for Player 3. */
-    final ControllerProfile controllerProfile3;
+    public final ControllerProfile controllerProfile3;
 
     /** The input profile for Player 4. */
-    final ControllerProfile controllerProfile4;
+    public final ControllerProfile controllerProfile4;
 
     /** True if auto player mapping is enabled */
-    final boolean autoPlayerMapping;
+    public final boolean autoPlayerMapping;
 
     /** True if we want to tell the cores 4 N64 controllers are always plugged in
      * regardless if 4 controllers are actually attached.
@@ -369,7 +372,7 @@ public class GlobalPrefs
     public final boolean allEmulatedControllersPlugged;
 
     /** True if one controller can control multiple players */
-    final boolean isControllerShared;
+    public final boolean isControllerShared;
 
     /** True if we want to show built in emulation profiles */
     final boolean showBuiltInEmulationProfiles;
@@ -388,7 +391,7 @@ public class GlobalPrefs
 
     /** True if we should hold controller buttons for a certain amount of time for
      * some functions to take effect */
-    public final boolean holdControllerBottons;
+    public final boolean holdControllerButtons;
 
     /** True if we should use UPnP or NAT/PMP to map external ports */
     public final boolean useUpnpToMapNetplayPorts;
@@ -528,9 +531,8 @@ public class GlobalPrefs
         touchscreenScale = ( mPreferences.getInt( "touchscreenScaleV2", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparencyV2", 60 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", 0 );
-        touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
-        isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated_v2", true );
+        touchscreenAnimated = mPreferences.getInt( "touchscreenAnimated_v2", 3 );
         isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative_global", false );
         // Determine the touchscreen layout
         touchscreenSkin = mPreferences.getString( "touchscreenSkin_v2", "WiiU" );
@@ -541,6 +543,11 @@ public class GlobalPrefs
             tempTouchscreenPath = touchscreenCustomSkinsDir;
         else
             tempTouchscreenPath = appData.touchscreenSkinsDir + touchscreenSkin;
+
+        if(touchscreenAutoHideSeconds < 21)
+            touchscreenAutoHideEnabled = true;
+        else
+            touchscreenAutoHideEnabled = false;
 
         // Verify that at least a single image exists for the touchscreen style,
         // and if not, then revert to the Outline style
@@ -588,6 +595,8 @@ public class GlobalPrefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
+        final int transparencyPercentSettings = mPreferences.getInt( "displayGameSettingsTransparency", 75 );
+        displayGameSettingsTransparency = ( 255 * transparencyPercentSettings ) / 100;
 
         String fpsPosition = mPreferences.getString( "displayFpsV2", "off" );
 
@@ -729,7 +738,7 @@ public class GlobalPrefs
         useFlatGameDataPath = mPreferences.getBoolean( "useFlatGameDataPath", false );
 
         externalFileStoragePath = mPreferences.getString(PATH_GAME_SAVES, "");
-        useExternalStorge = mPreferences.getString(GAME_DATA_STORAGE_TYPE, "internal").equals("external") &&
+        useExternalStorage = mPreferences.getString(GAME_DATA_STORAGE_TYPE, "internal").equals("external") &&
                 !TextUtils.isEmpty(externalFileStoragePath);
 
         japanIplPath = mPreferences.getString(PATH_JAPAN_IPL_ROM, "");
@@ -739,7 +748,7 @@ public class GlobalPrefs
         final boolean backKeyMappable = mPreferences.getBoolean( "inputBackMappable", false );
         final boolean menuKeyMappable = mPreferences.getBoolean( "inputMenuMappable", false );
 
-        inGameMenuIsSwipGesture = inGameMenuMode.equals("swipe") || menuKeyMappable || backKeyMappable;
+        inGameMenuIsSwipeGesture = inGameMenuMode.equals("swipe") || menuKeyMappable || backKeyMappable;
 
         final List<Integer> unmappables = new ArrayList<>();
 
@@ -787,7 +796,7 @@ public class GlobalPrefs
 
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread_v2", true );
         useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
-        holdControllerBottons = mPreferences.getBoolean( "holdButtonForMenu", true );
+        holdControllerButtons = mPreferences.getBoolean( "holdButtonForMenu", true );
 
         useUpnpToMapNetplayPorts = mPreferences.getBoolean( "useUpnpToMapPorts", true );
         int tempRoomTcpPort = getSafeInt( mPreferences, ROOM_TCP_PORT, 43821 );
@@ -972,6 +981,16 @@ public class GlobalPrefs
     public void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).apply();
+    }
+
+    public void putBoolean( String key, boolean value )
+    {
+        mPreferences.edit().putBoolean( key, value ).apply();
+    }
+
+    public void putInt( String key, int value )
+    {
+        mPreferences.edit().putInt( key, value ).apply();
     }
 
     private Locale createLocale( String code )

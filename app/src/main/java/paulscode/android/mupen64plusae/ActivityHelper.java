@@ -109,6 +109,7 @@ public class ActivityHelper
         public static final String VIDEO_RENDER_HEIGHT  = NAMESPACE + "VIDEO_RENDER_HEIGHT";
         public static final String NETPLAY_ENABLED      = NAMESPACE + "NETPLAY_ENABLED";
         public static final String NETPLAY_SERVER       = NAMESPACE + "NETPLAY_SERVER";
+        public static final String SETTINGS_RESET       = NAMESPACE + "SETTINGS_RESET";
 
 
         //@formatter:on
@@ -269,7 +270,7 @@ public class ActivityHelper
     public static void startTouchscreenPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, TouchscreenPrefsActivity.class );
-        context.startActivity( intent );    
+        context.startActivity( intent );
     }
     
     static void startGamePrefsActivity( Context context, String romPath, String romMd5,
@@ -317,7 +318,7 @@ public class ActivityHelper
     {
         context.startActivity( new Intent( context, LogcatActivity.class) );
     }
-    
+
     static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
         String searchUri, String databasePath, String configPath, String artDir,
         boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
@@ -419,6 +420,7 @@ public class ActivityHelper
         intent.putExtra(Keys.VIDEO_RENDER_WIDTH, params.getVideoRenderWidth());
         intent.putExtra(Keys.VIDEO_RENDER_HEIGHT, params.getVideoRenderHeight());
         intent.putExtra(Keys.NETPLAY_ENABLED, params.isUsingNetplay());
+        intent.putExtra(Keys.SETTINGS_RESET,  params.getSettingsReset());
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);
@@ -442,6 +444,25 @@ public class ActivityHelper
         if (processInfos != null) {
             for (ActivityManager.RunningAppProcessInfo process : processInfos){
                 if(processName.equals(process.processName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    static boolean isProcessRunning(Context context, String processName) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningAppProcessInfo> processInfos = null;
+        if (manager != null) {
+            processInfos = manager.getRunningAppProcesses();
+        }
+
+        if (processInfos != null) {
+            for (ActivityManager.RunningAppProcessInfo process : processInfos){
+                if(process.processName.contains(processName)) {
                     return true;
                 }
             }

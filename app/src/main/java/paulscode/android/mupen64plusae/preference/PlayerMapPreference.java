@@ -25,7 +25,9 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
+import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
+import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -45,6 +47,7 @@ public class PlayerMapPreference extends DialogPreference implements
         View.OnClickListener, OnPreferenceDialogListener, View.OnLongClickListener
 {
     private static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
 
     private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
@@ -78,6 +81,15 @@ public class PlayerMapPreference extends DialogPreference implements
         mValue = value;
         if( shouldPersist() )
             persistString( mValue );
+    }
+
+    public void rePromptPlayer(int player, FragmentActivity associatedActivity){
+        mAssociatedActivity = associatedActivity;
+        final AppData appData = new AppData( getContext() );
+        final GlobalPrefs prefs = new GlobalPrefs( getContext(), appData );
+        mUnmappableKeyCodes = prefs.unmappableKeyCodes;
+        mMap.deserialize( mValue );
+        promptPlayer(player);
     }
 
     public String getValue()
@@ -149,13 +161,44 @@ public class PlayerMapPreference extends DialogPreference implements
             setValue( value );
 
         updateViews();
+        setLongClickOnDialog(true);
         return true;
+    }
+
+    public void dismissFragments(FragmentActivity associatedActivity){
+        if(mAssociatedActivity == null)
+            mAssociatedActivity = associatedActivity;
+        final FragmentManager fm = mAssociatedActivity.getSupportFragmentManager();
+        PromptInputCodeDialog promptInputCodeDialog = (PromptInputCodeDialog) fm.findFragmentByTag(STATE_PROMPT_INPUT_CODE_DIALOG);
+        if(promptInputCodeDialog != null){
+            promptInputCodeDialog.dismiss();
+        }
+    }
+
+    private void playerMapDialogCheck(){
+        if(mAssociatedActivity != null) {
+            GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+            if (gameSettings != null && mSelectedPlayer != 0) {
+                gameSettings.playerMapDialogCheck(mSelectedPlayer);
+            }
+        }
+    }
+
+    private void setLongClickOnDialog(boolean longClick){
+        if(mAssociatedActivity != null) {
+            GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+            if (gameSettings != null) {
+                gameSettings.setLongClickOnDialog(longClick);
+            }
+        }
     }
 
     @Override
     public void onDialogClosed( boolean positiveResult )
     {
-
+        playerMapDialogCheck();
     }
 
     @Override
@@ -208,11 +251,31 @@ public class PlayerMapPreference extends DialogPreference implements
         final String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
 
 
-        final PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
-            title, message, btnText, mUnmappableKeyCodes);
-
         final FragmentManager fm = mAssociatedActivity.getSupportFragmentManager();
+
+        PromptInputCodeDialog p = (PromptInputCodeDialog) fm.findFragmentByTag(STATE_PROMPT_INPUT_CODE_DIALOG);
+        if (p != null)
+            p.dismiss();
+
+        final PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
+                title, message, btnText, mUnmappableKeyCodes);
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
+
+        GameSettingsDialog gameSettings = (GameSettingsDialog) fm.findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+        if(gameSettings != null) {
+            GameActivity game = (GameActivity) mAssociatedActivity;
+            game.setAssociatedDialogFragment(mSelectedPlayer);
+        }
+    }
+
+    private void dialogDeleted(){
+        if(mAssociatedActivity != null) {
+            GameSettingsDialog gameSettings = (GameSettingsDialog) mAssociatedActivity.
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+            if (gameSettings != null) {
+                gameSettings.dialogDeleted();
+            }
+        }
     }
 
     public void onDialogClosed(int hardwareId, int which)
@@ -221,7 +284,12 @@ public class PlayerMapPreference extends DialogPreference implements
         {
             if( which == DialogInterface.BUTTON_POSITIVE ) {
                 mMap.map(hardwareId, mSelectedPlayer);
+                dialogDeleted();
             } else {
+//                Log.i("TAG","Unmapping "+mMap.getDeviceSummary( getContext(), mSelectedPlayer ));
+                if(mMap.getDeviceSummary( getContext(), mSelectedPlayer ) != null &&
+                        !mMap.getDeviceSummary( getContext(), mSelectedPlayer ).equals(""))
+                    dialogDeleted();
                 mMap.unmapPlayer(mSelectedPlayer);
             }
             updateViews();

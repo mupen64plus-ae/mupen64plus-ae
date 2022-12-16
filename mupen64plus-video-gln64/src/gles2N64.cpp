@@ -41,7 +41,6 @@ void        (*CheckInterrupts)( void );
 void        (*renderCallback)() = NULL;
 
 extern "C" {
-
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
         void *Context, void (*DebugCallback)(void *, int, const char *))
 {
@@ -96,7 +95,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType,
     {
         *Capabilities = 0;
     }
-                    
+
     return M64ERR_SUCCESS;
 }
 
@@ -148,7 +147,7 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
     if( config.autoFrameSkip )
         frameSkipper.setSkips( FrameSkipper::AUTO, config.maxFrameSkip );
     else
-        frameSkipper.setSkips( FrameSkipper::MANUAL, config.maxFrameSkip );
+        frameSkipper.setSkips(FrameSkipper::MANUAL, config.maxFrameSkip);
 
     OGL_Start();
 
@@ -184,6 +183,21 @@ EXPORT void CALL ProcessRDPList(void)
 
 EXPORT void CALL ResizeVideoOutput(int Width, int Height)
 {
+    const float ratio = (config.romPAL ? 9.0f/11.0f : 0.75f);
+    int videoWidth = Width;
+    int videoHeight = Height;
+
+    if (!config.stretchVideo) {
+        videoWidth = (int) (Height / ratio);
+        if (videoWidth > Width) {
+            videoWidth = Width;
+            videoHeight = (int) (Width * ratio);
+        }
+    }
+    int x = (Width - videoWidth) / 2;
+    int y = (Height - videoHeight) / 2;
+
+    OGL_ResizeWindow(x, y, videoWidth, videoHeight);
 }
 
 EXPORT void CALL RomClosed (void)

@@ -65,6 +65,15 @@
         <item name="android:statusBarColor">@color/mupen_black</item>
     </style>
 
+    <style name="MupenTheme_Dark_Translucent" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/mupen_white</item>
+        <item name="android:windowBackground">#00000000</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+    </style>
+
     <style name="MupenTheme_Dark_Sidebar" parent="MupenTheme_Dark">
         <item name="android:background">@color/mupen_black</item>
         <item name="android:textColor">@color/mupen_white</item>

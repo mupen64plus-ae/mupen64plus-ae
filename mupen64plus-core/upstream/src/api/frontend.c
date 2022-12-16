@@ -69,6 +69,8 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     SetDebugCallback(DebugCallback, Context);
     SetStateCallback(StateCallback, Context2);
 
+    g_EmuModeInitiated = 0;
+
     /* check front-end's API version */
     if ((APIVersion & 0xffff0000) != (FRONTEND_API_VERSION & 0xffff0000))
     {

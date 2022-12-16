@@ -33,6 +33,7 @@ public class PromptInputCodeDialog extends DialogFragment
     private static final String STATE_NEUTRAL_BUTTON_TEXT = "STATE_NEUTRAL_BUTTON_TEXT";
     private static final String STATE_NUM_ITEMS = "STATE_NUM_ITEMS";
     private static final String STATE_ITEMS = "STATE_ITEMS";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
 
     /**
      * The listener interface for receiving an input code provided by the user.
@@ -204,6 +205,33 @@ public class PromptInputCodeDialog extends DialogFragment
     private boolean compareStrengths(float strengths1, float strengths2, float delta)
     {
         return Math.abs(strengths1 - strengths2) < delta;
+    }
+
+    private void nestedDialogCheck(){
+        if(getActivity() != null) {
+            GameSettingsDialog gameSettings = (GameSettingsDialog) getActivity().
+                    getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+            if (gameSettings != null) {
+                gameSettings.nestedDialogCheck();
+            }
+        }
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        nestedDialogCheck();
+        super.onDismiss(dialog);
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        // This is needed because of this:
+        // https://code.google.com/p/android/issues/detail?id=17423
+
+        if (getDialog() != null)
+            getDialog().setDismissMessage(null);
+        super.onDestroyView();
     }
 
     private void onInputCommon(final ArrayList<AbstractProvider> providers, Activity activity, int inputCode, int hardwareId,

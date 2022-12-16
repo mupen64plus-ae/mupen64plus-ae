@@ -49,10 +49,12 @@ import java.net.InetAddress;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.StartCoreServiceParams;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
 import paulscode.android.mupen64plusae.jni.CoreService.LocalBinder;
+import paulscode.android.mupen64plusae.netplay.NetplayFragment;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -97,6 +99,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         void onSaveLoad();
 
         /**
+         * Called when a setting has changed the game's surface
+         */
+        void onRecreateSurface();
+
+        /**
          * Called when we should exit the application
          */
         void onExitFinished();
@@ -119,10 +126,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
 
     private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
     private static final int RESET_CONFIRM_DIALOG_ID = 4;
     private static final int EXIT_CONFIRM_DIALOG_ID = 5;
+    private static final int RESET_SETTINGS_CONFIRM_DIALOG_ID = 6;
 
     //Progress dialog for extracting ROMs
     private ProgressDialog mProgress = null;
@@ -163,6 +172,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         int mCustomSpeed = DEFAULT_SPEED;
         boolean mAskingForExit = false;
         boolean mLoadingInProgress = false;
+        boolean mSettingsReset = false;
         CoreFragment mCurrentFragment = null;
     }
 
@@ -171,6 +181,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
     private CoreService mCoreService = null;
 
     private CoreEventListener mCoreEventListener = null;
+
+    private boolean mRecreateSurface = false;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -238,6 +250,21 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
             Log.e( TAG, "Launch failure: " + message );
         }
+    }
+
+    public void resetCoreServiceAppData(){
+        if(mCoreService != null)
+            mCoreService.resetAppData();
+    }
+
+    public void resetCoreServiceControllers(){
+        if(mCoreService != null)
+            mCoreService.resetControllers();
+    }
+
+    public void resetCoreServiceControllersNetplay(NetplayFragment fragment){
+        if(mCoreService != null)
+            mCoreService.resetControllersNetplay(fragment);
     }
 
     @Override
@@ -351,7 +378,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public void startCore(GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
                           String romPath, String zipPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay)
+                          boolean isRestarting, int videoRenderWidth, int videoRenderHeight, boolean usingNetplay, boolean settingsReset)
     {
         Log.i(TAG, "startCore");
 
@@ -370,6 +397,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         mViewModel.mVideoRenderWidth = videoRenderWidth;
         mViewModel.mVideoRenderHeight = videoRenderHeight;
         mViewModel.mUsingNetplay = usingNetplay;
+        mViewModel.mSettingsReset = settingsReset;
 
         if(!mViewModel.mIsRunning)
         {
@@ -403,6 +431,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
                 if (mViewModel.mCurrentFragment.mCoreEventListener != null) {
                     mViewModel.mCurrentFragment.mCoreEventListener.onBindService();
                 }
+
+                if(mRecreateSurface) {
+                    mCoreEventListener.onRecreateSurface();//mViewModel?
+                    mRecreateSurface = false;
+                }
             }
 
             @Override
@@ -427,6 +460,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         params.setVideoRenderWidth(mViewModel.mVideoRenderWidth);
         params.setVideoRenderHeight(mViewModel.mVideoRenderHeight);
         params.setUsingNetplay(mViewModel.mUsingNetplay);
+        params.setSettingsReset(mViewModel.mSettingsReset);
 
         ActivityHelper.startCoreService(activity.getApplicationContext(), mViewModel.mServiceConnection, params);
     }
@@ -626,6 +660,20 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
+    public int getAudioInit()
+    {
+        if(mCoreService == null)
+            return 0;
+        return mCoreService.getAudioInit();
+    }
+
+    public int getEmuModeInit()
+    {
+        if(mCoreService == null)
+            return 0;
+        return mCoreService.getEmuModeInit();
+    }
+
     public void incrementSlot()
     {
         Log.i(TAG, "incrementSlot");
@@ -817,6 +865,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         if (mCoreService != null) {
             mCoreService.loadState(file);
         }
+    }
+
+    public boolean checkOnStateCallbackListeners(){
+        if(mCoreService == null)
+            return false;
+        return mCoreService.checkOnStateCallbackListeners();
     }
 
     public void autoSaveState(boolean shutdownOnFinish)
@@ -1031,6 +1085,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             if(mCoreEventListener != null)
                 mCoreEventListener.onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
+        else if (id == RESET_SETTINGS_CONFIRM_DIALOG_ID){
+            if(which == DialogInterface.BUTTON_POSITIVE) {
+                GameSettingsDialog gameSettings = (GameSettingsDialog)
+                        requireActivity().getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+                if (gameSettings != null) {
+                    gameSettings.startFilePicker();
+                }
+            }
+        }
     }
 
     public void forceExit()
@@ -1055,5 +1118,49 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
     public PixelBuffer.SurfaceTextureWithSize getSurfaceTexture() {
         return mCoreService != null ? mCoreService.getSurfaceTexture() : null;
+    }
+
+    public void setRecreateSurface(boolean recreateSurface){ mRecreateSurface = recreateSurface; }
+
+    public int getVolume(){
+        if(mCoreService == null)
+            return 0;
+        else
+            return mCoreService.getVolume();
+    }
+
+    public void setVolume(int volume){
+        if(mCoreService != null)
+            mCoreService.setVolume(volume);
+    }
+
+    public void settingsReset(boolean settingsReset){
+        mViewModel.mSettingsReset = settingsReset;
+        if(mCoreService != null)
+            mCoreService.settingsReset(settingsReset);
+    }
+
+    public void setResolution(int resolution){
+        int width = (resolution >> 16) & 0xffff;
+        int height = resolution & 0xffff;
+        if(width > 0 && height > 0) {
+            mViewModel.mVideoRenderWidth = width;
+            mViewModel.mVideoRenderHeight = height;
+        }
+        if(mCoreService != null)
+            mCoreService.setResolution(resolution);
+    }
+
+    public boolean isDdActive(){
+        if(mCoreService == null)
+            return false;
+        return mCoreService.isDdActive();
+    }
+
+    public void loadLatestAutoSave(){
+        if(mCoreService != null) {
+            mCoreService.loadLatestSave();
+            mCoreService.loadLatestSave(); // loading twice for cached interpreter
+        }
     }
 }

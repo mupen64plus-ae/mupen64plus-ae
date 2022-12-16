@@ -40,6 +40,7 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceScreen;
+import paulscode.android.mupen64plusae.dialog.GameSettingsDialog;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
@@ -112,9 +113,20 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
             }
         }
 
+        private void extraDialogCheck(){
+            if(getActivity() != null) {
+                GameSettingsDialog gameSettings = (GameSettingsDialog) getActivity().
+                        getSupportFragmentManager().findFragmentByTag(STATE_SETTINGS_FRAGMENT);
+                if (gameSettings != null) {
+                    gameSettings.extraDialogCheck();
+                }
+            }
+        }
+
         @Override
         public void onDialogClosed(boolean result)
         {
+            extraDialogCheck();
             if (getPreference() instanceof OnPreferenceDialogListener)
             {
 
@@ -128,6 +140,7 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     }
 
     public static final String STATE_PREFERENCE_FRAGMENT = "STATE_PREFERENCE_FRAGMENT";
+    private static final String STATE_SETTINGS_FRAGMENT = "STATE_SETTINGS_FRAGMENT";
     
     private String mSharedPrefsName = null;
     private int mPreferencesResId;
@@ -165,12 +178,13 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     protected abstract String getSharedPrefsName();
 
     protected abstract int getSharedPrefsId();
-    
+
     public void resetPreferences()
     {        
         getSupportFragmentManager().beginTransaction().remove(mPrefFrag);
         mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
     }
 
 
@@ -263,6 +277,6 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     {
         return mPrefFrag;
     }
-    
+
     
 }

@@ -46,6 +46,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     private static final int DEFAULT_STEP = 10;
     private static final String DEFAULT_UNITS = "%";
     private static final String DEFAULT_SAVE_TYPE = "int";
+    private static final String DEFAULT_MIN_STRING = "";
+    private static final String DEFAULT_MAX_STRING = "";
 
     private int mValue = DEFAULT_VALUE;
     private int mMinValue = DEFAULT_MIN;
@@ -53,6 +55,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     private int mStepSize = DEFAULT_STEP;
     private String mUnits = DEFAULT_UNITS;
     private String mSaveType = DEFAULT_SAVE_TYPE;
+    private String mMinValueString = DEFAULT_MIN_STRING;
+    private String mMaxValueString = DEFAULT_MAX_STRING;
 
     private TextView mTextView;
     private SeekBar mSeekBar;
@@ -74,6 +78,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         setStepSize( a.getInteger( R.styleable.SeekBarPreference_stepSize, DEFAULT_STEP ) );
         setUnits( a.getString( R.styleable.SeekBarPreference_units ) );
         setSaveType( a.getString( R.styleable.SeekBarPreference_saveType ) );
+        setMinValueString( a.getString( R.styleable.SeekBarPreference_minimumValueString ) );
+        setMaxValueString( a.getString( R.styleable.SeekBarPreference_maximumValueString ) );
 
         a.recycle();
 
@@ -170,6 +176,30 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
             mSaveType = saveType;
         }
     }
+    /**
+     * Sets the type of minimum value string type this SeekBarPreference uses (e.g. "None").
+     *
+     * @param minValueString The save type ("int" or "string") for this SeekBarPreference to use.
+     */
+    public void setMinValueString( String minValueString )
+    {
+        if(minValueString != null)
+        {
+            mMinValueString = minValueString;
+        }
+    }
+    /**
+     * Sets the type of maximum value string type this SeekBarPreference uses (e.g. "Full").
+     *
+     * @param maxValueString The save type ("int" or "string") for this SeekBarPreference to use.
+     */
+    public void setMaxValueString( String maxValueString )
+    {
+        if(maxValueString != null)
+        {
+            mMaxValueString = maxValueString;
+        }
+    }
 
     /**
      * Gets the currently set value.
@@ -230,7 +260,12 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
      */
     public String getValueString( int value )
     {
-        return getContext().getString( R.string.seekBarPreference_summary, value, mUnits );
+        if(!mMinValueString.equals("") && value == mMinValue)
+            return mMinValueString;
+        else if(!mMaxValueString.equals("") && value == mMaxValue)
+            return  mMaxValueString;
+        else
+            return getContext().getString( R.string.seekBarPreference_summary, value, mUnits );
     }
 
     @Override

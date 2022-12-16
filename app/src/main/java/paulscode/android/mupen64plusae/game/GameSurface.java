@@ -733,7 +733,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 
             if (createGLContext(2, false)) {
                 Looper.loop();
-            // Try a seecond time
+            // Try a second time
             } else if (createGLContext(2, true)) {
                 Looper.loop();
             }
@@ -803,7 +803,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
-         * Handles incoming fram
+         * Handles incoming frame
          */
         private void frameAvailable() {
             mShaderDrawer.onDrawFrame();
@@ -975,7 +975,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
 
         /**
-         * Sends the "surface texture available" message
+         * Sends the "surface texture destroyed" message
          * <p>
          * Call from UI thread.
          */

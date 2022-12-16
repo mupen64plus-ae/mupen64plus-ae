@@ -42,6 +42,7 @@ extern m64p_handle g_CoreConfig;
 
 extern int g_RomWordsLittleEndian;
 extern int g_EmulatorRunning;
+extern int g_EmuModeInitiated;
 extern int g_rom_pause;
 
 extern struct cheat_ctx g_cheat_ctx;

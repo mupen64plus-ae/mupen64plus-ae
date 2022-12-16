@@ -50,8 +50,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -135,6 +138,7 @@ class CoreInterface
 
     private final SparseArray<String> mGbRomPaths = new SparseArray<>(4);
     private final SparseArray<String> mGbRamPaths = new SparseArray<>(4);
+    private String latestSave = "";
     private String mDdRom = null;
     private String mDdDisk = null;
     private static final String GB_ROM_NAME = "gb_rom.gb";
@@ -142,6 +146,7 @@ class CoreInterface
     private static final String DD_ROM_NAME = "dd_rom.n64";
     private static final String DD_DISK_NAME = "dd_disk.ndd";
     private File mWorkingPath = null;
+    private boolean mSettingsReset = false;
 
     private final HashMap<CoreTypes.m64p_plugin_type, Pointer> mPluginContext = new HashMap<>();
 
@@ -588,6 +593,18 @@ class CoreInterface
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_NETPLAY_CLOSE.ordinal(), 0, parameter);
     }
 
+    void settingsReset(boolean settingsReset){
+        mSettingsReset = settingsReset;
+        IntByReference parameter = new IntByReference(settingsReset ? -1 : 0);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_VIDEO_SIZE.ordinal(),parameter.getPointer());
+    }
+
+    void setResolution(int resolution){
+        IntByReference parameter = new IntByReference(resolution);
+
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_SET.ordinal(), CoreTypes.m64p_core_param.M64CORE_VIDEO_SIZE.ordinal(),parameter.getPointer());
+    }
+
     /* coreAttachPlugin()
      *
      * This function attaches the given plugin to the emulator core. There can only
@@ -726,6 +743,13 @@ class CoreInterface
         }
     }
 
+    int getVolume(){
+        IntByReference audioInit = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_AUDIO_VOLUME.ordinal(), audioInit.getPointer());
+
+        return audioInit.getValue();
+    }
+
     void usingNetplay(boolean isUsingNetplay) {
         if (mSelectedAudioPlugin == AppData.AudioPlugin.ANDROID) {
             mAndroidAudioLibrary.usingNetplay(isUsingNetplay ? 1 : 0);
@@ -835,6 +859,26 @@ class CoreInterface
         return slot.getValue();
     }
 
+    int emuGetAudioInitiated()
+    {
+        IntByReference audioInit = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_AUDIO_VOLUME.ordinal(), audioInit.getPointer());
+        if(audioInit.getValue() == -2)
+            return 0;
+        else
+            return 1;
+    }
+
+    int emuGetEmuModeInitiated()
+    {
+        IntByReference emuModeInit = new IntByReference(1);
+        mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_CORE_STATE_QUERY.ordinal(), CoreTypes.m64p_core_param.M64CORE_EMU_STATE.ordinal(), emuModeInit.getPointer());
+        if(emuModeInit.getValue() == -2)
+            return 0;
+        else
+            return 1;
+    }
+
     void emuReset()
     {
         Pointer parameter = null;
@@ -844,6 +888,14 @@ class CoreInterface
     void setNativeWindow(Surface surface)
     {
         mAeBridgeLibrary.setNativeWindow(JNIEnv.CURRENT, surface);
+    }
+
+    void setLatestSave(String save){
+        latestSave = save;
+    }
+
+    String getLatestSave(){
+        return latestSave;
     }
 
     void unsetNativeWindow()
@@ -859,6 +911,36 @@ class CoreInterface
     void FPSEnabled(int recalc)
     {
         mAeBridgeLibrary.FPSEnabled(recalc);
+    }
+
+    public boolean checkOnStateCallbackListener(String filename, String directory)
+    {
+        synchronized(mStateCallbackLock)
+        {
+            File fileCheck = new File(filename);
+            if(fileCheck.exists())
+                return false;
+            else {
+                final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
+                final DateFormat dateFormat = new SimpleDateFormat(sFormatString, java.util.Locale.getDefault());
+                final String dateAndTime = dateFormat.format(new Date());
+                final String fileName = dateAndTime + "." + "v2" + ".sav";
+                final String newFile = directory + fileName;
+                latestSave = newFile;
+
+                emuResume();
+                try{
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+                emuSaveFile(newFile);
+                mStateCallBack.invoke(mCoreContext,11,1);
+                emuPause();
+                return true;
+            }
+        }
     }
 
     void addOnStateCallbackListener( OnStateCallbackListener listener )

@@ -62,6 +62,8 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameDataManager;
+import paulscode.android.mupen64plusae.netplay.NetplayFragment;
+import paulscode.android.mupen64plusae.netplay.TcpServer;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -153,6 +155,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private boolean mNetplayReady = false;
     private boolean mUsingNetplay = false;
     private boolean mNetplayInitSuccess = false;
+    private boolean mSettingsReset = false;
+    private boolean mLoadLatestAutoSave = false;
 
     //Service attributes
     private int mStartId;
@@ -254,9 +258,21 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
     }
 
+    public boolean checkOnStateCallbackListeners(){
+        return mCoreInterface.checkOnStateCallbackListener(mCoreInterface.getLatestSave(),mGamePrefs.getAutoSaveDir() + "/");
+    }
+
+    void loadLatestSave(){
+        resetAppData();
+        final String latestSave = mGameDataManager.getLatestAutoSave();
+        mCoreInterface.emuLoadFile(latestSave);
+    }
+
     void autoSaveState(final boolean shutdownOnFinish)
     {
         final String latestSave = mGameDataManager.getAutoSaveFileName();
+        mCoreInterface.setLatestSave(latestSave);
+        int timer = 500;
 
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
@@ -271,40 +287,43 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mIsShuttingDown = true;
 
             mCoreInterface.setVolume(0);
-
             Log.e(TAG, "Autosave started");
         }
+
+        //Resume to allow save to take place
+        resumeEmulator();
 
         CoreInterface.OnStateCallbackListener saveComplete = new CoreInterface.OnStateCallbackListener() {
             @Override
             public void onStateCallback(int paramChanged, int newValue) {
                 if (paramChanged == CoreTypes.m64p_core_param.M64CORE_STATE_SAVECOMPLETE.ordinal()) {
-                    Log.e(TAG, "Save completed: " + latestSave);
 
                     //newValue == 1, then it was successful
                     if (newValue == 1) {
+                        Log.i(TAG, "trying to write " + mCoreInterface.getLatestSave());
                         try {
-                            if (!new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
-                                Log.e(TAG, "Unable to save file due to file write failure: " + latestSave);
+                            if (!new File(mCoreInterface.getLatestSave() + "." + COMPLETE_EXTENSION).createNewFile()) {
+                                Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.getLatestSave());
                             }
                         } catch (IOException e) {
-                            Log.e(TAG, "Unable to save file due to file write failure: " + latestSave);
+                            Log.e(TAG, "Unable to save file due to file write failure: " + mCoreInterface.getLatestSave());
                         }
                     } else {
-                        Log.e(TAG, "Unable to save file due to bad return: " + latestSave);
+                        Log.e(TAG, "Unable to save file due to bad return: " + mCoreInterface.getLatestSave());
                     }
 
                     final CoreInterface.OnStateCallbackListener saveCompleteListener = this;
 
-                    // Don't do this on teh same thread since the core doesn't like to be called
+                    // Don't do this on the same thread since the core doesn't like to be called
                     // back to again on a call back
                     mShutdownHandler.postDelayed(() -> {
                         mCoreInterface.removeOnStateCallbackListener(this);
+                        mCoreInterface.setLatestSave("");
 
                         if (shutdownOnFinish) {
                             shutdownEmulator();
                         }
-                    }, 500);
+                    }, timer);
 
                 } else {
                     Log.i(TAG, "Param changed = " + paramChanged + " value = " + newValue);
@@ -354,6 +373,38 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return mIsPaused;
     }
 
+    public int getVolume(){
+        return mCoreInterface.getVolume();
+    }
+
+    public void setVolume(int volume){
+        mCoreInterface.setVolume(volume);
+    }
+
+    public void settingsReset(boolean settingsReset){
+        this.mSettingsReset = settingsReset;
+        mCoreInterface.settingsReset(settingsReset);
+    }
+
+    public void setResolution(int resolution){
+        int width = (resolution >> 16) & 0xffff;
+        int height = resolution & 0xffff;
+        if(width > 0 && height > 0) {
+            mVideoRenderWidth = width;
+            mVideoRenderHeight = height;
+        }
+        mCoreInterface.setResolution(resolution);
+        // This must happen here instead of OnCreate because we only find out the rendering
+        // resolution here.
+        if(width > 0 && height > 0) {
+            mPixelBuffer.releaseSurfaceTexture();
+            mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);
+            setSurface(mPixelBuffer.getSurface());
+            mPixelBuffer.destroyGlContext();
+        }
+//        loadLatestSave();
+    }
+
     void toggleFramelimiter()
     {
         if (!mUsingNetplay) {
@@ -376,6 +427,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     int getSlot()
     {
         return mCoreInterface.emuGetSlot();
+    }
+
+    int getAudioInit()
+    {
+        return mCoreInterface.emuGetAudioInitiated();
+    }
+
+    int getEmuModeInit()
+    {
+        return mCoreInterface.emuGetEmuModeInitiated();
     }
 
     int getSlotQuantity()
@@ -547,7 +608,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             FileUtil.deleteFolder(new File(mGlobalPrefs.textureDumpDir));
 
             // Copy game data from external storage
-            if (mGlobalPrefs.useExternalStorge) {
+            if (mGlobalPrefs.useExternalStorage) {
                 copyGameContentsFromSdCard();
             }
 
@@ -616,6 +677,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir) == 0;
 
+            if(mSettingsReset)
+                mLoadLatestAutoSave = true;
+
             // Disk only games still require a ROM image, so use a dummy test ROM
             if (loadingSuccess) {
                 if (isNdd) {
@@ -658,6 +722,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     }
 
                     mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
+
+                    mCoreInterface.settingsReset(mSettingsReset);
 
                 } catch (IllegalArgumentException e) {
                     loadingSuccess = false;
@@ -703,10 +769,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
 
                 if (!mIsShuttingDown) {
-                    if (!mIsRestarting)
+                    if (!mIsRestarting || mLoadLatestAutoSave)
                     {
-                        final String latestSave = mGameDataManager.getLatestAutoSave();
-                        mCoreInterface.emuLoadFile(latestSave);
+                        loadLatestSave();
+                        mLoadLatestAutoSave = false;
+                        mSettingsReset = false;
                     }
 
                     // This call blocks until emulation is stopped
@@ -732,7 +799,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             if (loadingSuccess) {
                 mGameDataManager.clearOldest();
 
-                if (mGlobalPrefs.useExternalStorge) {
+                if (mGlobalPrefs.useExternalStorage) {
                     copyGameContentsToSdCard();
                 }
 
@@ -870,6 +937,42 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         return codes;
     }
 
+    public void resetAppData(){
+        mAppData = new AppData(this);
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
+        mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
+        mGameDataManager.clearOldest();
+
+        updateNotification();
+    }
+
+    public void resetControllers(){
+        if (!mUseRaphnetDevicesIfAvailable) {
+            NativeInput.setConfig( 0, mGamePrefs.isPlugged[0], mGamePrefs.getPakType(1).ordinal() );
+            NativeInput.setConfig( 1, mGamePrefs.isPlugged[1], mGamePrefs.getPakType(2).ordinal() );
+            NativeInput.setConfig( 2, mGamePrefs.isPlugged[2], mGamePrefs.getPakType(3).ordinal() );
+            NativeInput.setConfig( 3, mGamePrefs.isPlugged[3], mGamePrefs.getPakType(4).ordinal() );
+        }
+    }
+
+    private boolean checkOnlinePlayers(NetplayFragment fragment, int playerNumber){
+        if(playerNumber > 3 || playerNumber < 0 || fragment == null)
+            return false;
+        TcpServer.PlayerData playerData = fragment.getTcpServer().getPlayerData(playerNumber);
+        return playerData != null;
+    }
+
+    public void resetControllersNetplay(NetplayFragment fragment){
+        if (!mUseRaphnetDevicesIfAvailable) {
+            NativeInput.setConfig( 0, checkOnlinePlayers(fragment,0), mGamePrefs.getPakType(1).ordinal() );
+            NativeInput.setConfig( 1, checkOnlinePlayers(fragment,1), mGamePrefs.getPakType(2).ordinal() );
+            NativeInput.setConfig( 2, checkOnlinePlayers(fragment,2), mGamePrefs.getPakType(3).ordinal() );
+            NativeInput.setConfig( 3, checkOnlinePlayers(fragment,3), mGamePrefs.getPakType(4).ordinal() );
+        }
+    }
+
     @Override
     public void onCreate() {
 
@@ -935,6 +1038,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_WIDTH, mVideoRenderWidth );
         notificationIntent.putExtra( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT, mVideoRenderHeight );
         notificationIntent.putExtra( ActivityHelper.Keys.NETPLAY_ENABLED, mUsingNetplay );
+        notificationIntent.putExtra( ActivityHelper.Keys.SETTINGS_RESET, mSettingsReset );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT |
@@ -1012,6 +1116,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mVideoRenderWidth = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_WIDTH );
             mVideoRenderHeight = extras.getInt( ActivityHelper.Keys.VIDEO_RENDER_HEIGHT );
             mUsingNetplay = extras.getBoolean(ActivityHelper.Keys.NETPLAY_ENABLED);
+            mSettingsReset = extras.getBoolean( ActivityHelper.Keys.SETTINGS_RESET, false);
 
             mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
                     CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs );
@@ -1045,7 +1150,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
             mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
 
-            // This must happen here instead of OnCreate because we only find out the redering
+            // This must happen here instead of OnCreate because we only find out the rendering
             // resolution here.
             if (mPixelBuffer == null) {
                 mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);
@@ -1130,7 +1235,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     public void setLoadingDataListener(LoadingDataListener loadingDataListener)
     {
         Log.i(TAG, "setLoadingDataListener");
-        mLoadingDataListener = loadingDataListener;
+        if(mLoadingDataListener == null)                // gets stuck on landscape
+            mLoadingDataListener = loadingDataListener;
     }
 
     @Override
@@ -1194,5 +1300,12 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         if (mListener != null) {
             mListener.onFpsChanged(newValue);
         }
+    }
+
+    public boolean isDdActive(){
+        if (mRomPath == null)
+            return false;
+        RomHeader header = new RomHeader(getApplicationContext(), Uri.parse(mRomPath));
+        return header.isNdd;
     }
 }
