@@ -141,7 +141,7 @@ public class CoreTypes {
         }
     }
 
-    @Structure.FieldOrder({ "cb_data", "gbCartRomCallback", "gbCartRamCallback", "ddRomCallback", "ddDiskCallback" })
+    @Structure.FieldOrder({ "cb_data", "gbCartRomCallback", "gbCartRamCallback", "ddRomRegionCallback", "ddRomCallback", "ddDiskCallback" })
     public static class m64p_media_loader extends Structure {
 
         interface get_gb_cart_rom extends Callback {
@@ -150,6 +150,10 @@ public class CoreTypes {
 
         interface get_gb_cart_ram extends Callback {
             String invoke(Pointer cb_data, int controller_num);
+        }
+
+        interface set_dd_rom_region extends Callback {
+            String invoke(Pointer cb_data, int region);
         }
 
         interface get_dd_rom extends Callback {
@@ -178,6 +182,12 @@ public class CoreTypes {
          * Empty or NULL string results in the core generating a default save file with empty content.
          */
         public get_gb_cart_ram gbCartRamCallback;
+
+        /* Allow the frontend to know what DD IPL ROM region file to load
+         * cb_data: points to frontend-defined callback data.
+         * region: a region from m64p_system_type
+         */
+        public set_dd_rom_region ddRomRegionCallback;
 
         /* Allow the frontend to specify the DD IPL ROM file to load
          * cb_data: points to frontend-defined callback data.

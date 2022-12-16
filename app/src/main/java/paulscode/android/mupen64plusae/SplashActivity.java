@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
@@ -79,7 +80,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     static final int PERMISSION_REQUEST = 177;
 
     //Total number of permissions requested
-    static final int NUM_PERMISSIONS = 2;
+    static final int NUM_PERMISSIONS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU? 1 : 2;
 
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
@@ -200,7 +201,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             Drawable randomDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_u, null);
 
             if (randomDrawable != null) {
-                Log.i("SplashActivity", "Resource found: " + randomDrawable.toString());
+                Log.i("SplashActivity", "Resource found: " + randomDrawable);
             }
         } catch (android.content.res.Resources.NotFoundException e) {
             Log.e("SplashActivity", "Resource NOT found");
@@ -255,7 +256,40 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
     public void requestPermissions()
     {
-        //This doesn't work reliably with older Android versions
+        // Notification permissions for Android 13 and up
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            // Android 13 needs notification permissions
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS))
+                {
+                    //Show dialog asking for permissions
+                    //Show dialog stating that the app can't continue without proper permissions
+                    mPermissionsNeeded = new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.assetExtractor_permissions_title))
+                            .setMessage(getString(R.string.assetExtractor_permissions_rationale_notifications))
+                            .setPositiveButton(getString(android.R.string.ok), (dialog, which) -> actuallyRequestPermissions()).setNegativeButton(getString(android.R.string.cancel), (dialog, which) -> mPermissionsNeeded = new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
+                                    .setMessage(getString(R.string.assetExtractor_failed_permissions))
+                                    .setPositiveButton(getString( android.R.string.ok ), (dialog1, which1) -> SplashActivity.this.finish()).setCancelable(false).show()).setCancelable(false).show();
+                }
+                else
+                {
+                    // No explanation needed, we can request the permission.
+                    actuallyRequestPermissions();
+                }
+            }
+            else
+            {
+                checkExtractAssetsOrCleanup();
+            }
+
+            return;
+        }
+
+        // Request storage permissions for older android version only without scoped storage
+        // This doesn't work reliably with older Android versions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
@@ -288,6 +322,15 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     public void actuallyRequestPermissions()
     {
         mRequestingPermissions = true;
+
+        // Notification permissions for Android 13 and up
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        {
+            ActivityCompat.requestPermissions(this, new String[] {
+                    Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST);
+            return;
+        }
+
         ActivityCompat.requestPermissions(this, new String[] {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSION_REQUEST);
@@ -296,14 +339,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         if (requestCode == PERMISSION_REQUEST)
         {
             // If request is cancelled, the result arrays are empty.
-            boolean good = true;
-            if (permissions.length != NUM_PERMISSIONS || grantResults.length != NUM_PERMISSIONS)
-            {
-                good = false;
-            }
+            boolean good = permissions.length == NUM_PERMISSIONS && grantResults.length == NUM_PERMISSIONS;
 
             for (int i = 0; i < grantResults.length && good; i++)
             {

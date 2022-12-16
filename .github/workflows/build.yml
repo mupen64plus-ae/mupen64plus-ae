@@ -1,0 +1,123 @@
+name: Mupen64Plus-AE
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container: cirrusci/android-sdk:30-ndk
+
+    steps:
+    - name: Checkout mupen64plus-ae repo 
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Decode debug keystore
+      env:
+        DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
+      run: |
+        if [ -z "$DEBUG_KEYSTORE" ]
+        then
+           echo "No debug keystore value"
+        else
+           echo $DEBUG_KEYSTORE > debug.keystore.base64
+           base64 --decode debug.keystore.base64 > debug.keystore
+           sudo cp -f debug.keystore /root/.android/.
+        fi 
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends file gawk
+        echo y | sdkmanager "cmake;3.18.1"
+        
+    - name: Set up environment
+      run: |
+        echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/23.1.7779620" >> $GITHUB_ENV
+
+    - name: Build artifact
+      run: ./gradlew assemble
+
+    - name: Declare branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v6
+        
+    - name: Get branch name
+      id: var
+      run: |
+        echo "branch=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+
+    - name: Declare sha name
+      uses: benjlevesque/short-sha@v2.1
+      id: short-sha
+      with:
+        length: 7
+        
+    - name: Get sha name
+      run: |
+        echo $SHA
+      env: 
+        SHA: ${{ steps.short-sha.outputs.sha }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with: 
+        name: mupen64plus-ae-${{ steps.var.outputs.branch }}-${{ env.SHA }}
+        path: ${{ github.workspace }}/app/build/outputs/apk/release/Mupen64PlusAE-release.apk
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+    - uses: actions/checkout@v3
+      name: Download Artifacts
+
+    - uses: actions/download-artifact@v3
+      with:
+        path: dist
+
+    - name: Declare branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v6
+
+    - name: Get branch name
+      id: var
+      run: |
+        echo "branch=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+
+    - name: Declare sha name
+      uses: benjlevesque/short-sha@v2.1
+      id: short-sha
+      with:
+        length: 7
+        
+    - name: Get sha name
+      run: |
+        echo $SHA
+      env: 
+        SHA: ${{ steps.short-sha.outputs.sha }}
+
+    - name: Re-zip artifacts
+      run: |
+        cd dist
+        zip -r mupen64plus-ae-${{ steps.var.outputs.branch }}-${{ env.SHA }}.zip mupen64plus-ae*
+        
+    - name: Update Git Tag
+      run: |
+        git tag -f Pre-release
+        git push -f origin Pre-release
+    
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        prerelease: true
+        allowUpdates: true
+        removeArtifacts: true
+        replacesArtifacts: false
+        tag: Pre-release
+        artifacts: "dist/*.zip"

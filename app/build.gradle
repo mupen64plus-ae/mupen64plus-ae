@@ -86,6 +86,7 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
+    namespace 'org.mupen64plusae.v3.alpha'
 }
 
 dependencies {
@@ -94,10 +95,11 @@ dependencies {
     implementation 'androidx.tvprovider:tvprovider:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.documentfile:documentfile:1.0.1'
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
 
-    def lifecycle_version = "2.4.1"
+    def lifecycle_version = "2.5.1"
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"

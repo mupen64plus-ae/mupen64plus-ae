@@ -67,7 +67,7 @@ public class ExtractAssetsOrCleanupTask
             mAssetVersions.put("mupen64plus_data/font.ttf", 1);
             mAssetVersions.put("mupen64plus_data/gln64.conf", 1);
             mAssetVersions.put("mupen64plus_data/gln64rom.conf", 1);
-            mAssetVersions.put("mupen64plus_data/mupen64plus.ini", 12);
+            mAssetVersions.put("mupen64plus_data/mupen64plus.ini", 13);
             mAssetVersions.put("mupen64plus_data/mupencheat.default", 1);
         }
     }

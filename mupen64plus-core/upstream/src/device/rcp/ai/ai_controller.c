@@ -100,19 +100,19 @@ static void do_dma(struct ai_controller* ai, struct ai_dma* dma)
 
 static void fifo_push(struct ai_controller* ai)
 {
-    unsigned int duration = get_dma_duration(ai);
+    unsigned int duration = get_dma_duration(ai) * ai->dma_modifier;
 
     if (ai->regs[AI_STATUS_REG] & AI_STATUS_BUSY)
     {
         ai->fifo[1].address = ai->regs[AI_DRAM_ADDR_REG];
-        ai->fifo[1].length = ai->regs[AI_LEN_REG];
+        ai->fifo[1].length = ai->regs[AI_LEN_REG] & ~UINT32_C(7);
         ai->fifo[1].duration = duration;
         ai->regs[AI_STATUS_REG] |= AI_STATUS_FULL;
     }
     else
     {
         ai->fifo[0].address = ai->regs[AI_DRAM_ADDR_REG];
-        ai->fifo[0].length = ai->regs[AI_LEN_REG];
+        ai->fifo[0].length = ai->regs[AI_LEN_REG] & ~UINT32_C(7);
         ai->fifo[0].duration = duration;
         ai->regs[AI_STATUS_REG] |= AI_STATUS_BUSY;
 
@@ -144,13 +144,15 @@ void init_ai(struct ai_controller* ai,
              struct ri_controller* ri,
              struct vi_controller* vi,
              void* aout,
-             const struct audio_out_backend_interface* iaout)
+             const struct audio_out_backend_interface* iaout,
+             float dma_modifier)
 {
     ai->mi = mi;
     ai->ri = ri;
     ai->vi = vi;
     ai->aout = aout;
     ai->iaout = iaout;
+    ai->dma_modifier = dma_modifier;
 }
 
 void poweron_ai(struct ai_controller* ai)

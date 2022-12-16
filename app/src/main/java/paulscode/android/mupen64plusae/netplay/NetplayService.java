@@ -49,6 +49,7 @@ import com.sun.jna.Native;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -269,6 +270,7 @@ public class NetplayService extends Service
         }
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void stopServers()
     {
         Log.i("NetplayService", "Stopping netplay service");
@@ -281,7 +283,11 @@ public class NetplayService extends Service
             mTcpServer.stopServer();
         }
 
-        stopForeground(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        } else {
+            stopForeground(true);
+        }
         stopSelf();
     }
 
@@ -331,7 +337,7 @@ public class NetplayService extends Service
         boolean success = mapPortsNatPmp(gatewayAddress);
 
         if (!success) {
-            Log.w(TAG, "NAT-PMP port forwading failed, trying NAT-PMP");
+            Log.w(TAG, "NAT-PMP port forwading failed, trying UPnP");
             success = mapPortsUpnp();
         }
 
@@ -378,10 +384,12 @@ public class NetplayService extends Service
                             addressBuffer.position(0);
                             int addressInt = addressBuffer.getInt();
 
-                            if (addressInt != 0) {
+                            if (addressInt != 0 && gatewayAddress instanceof Inet4Address) {
                                 Log.i(TAG, "Received gateway address=" + gatewayAddress);
 
                                 actuallyMapPorts(addressInt);
+
+                                break;
                             }
                         }
                     }
@@ -399,11 +407,16 @@ public class NetplayService extends Service
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void onDestroy()
     {
         // Stop the service using the startId, so that we don't stop
         // the service in the middle of handling another job
-        stopForeground(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        } else {
+            stopForeground(true);
+        }
         stopSelf();
     }
 }

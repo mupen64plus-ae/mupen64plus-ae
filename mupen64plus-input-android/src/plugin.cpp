@@ -196,6 +196,11 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
         jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isDigital)
 {
     jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, nullptr);
+    jsize len = env->GetArrayLength(mp64pButtons);
+    if (len < 16)
+    {
+        return;
+    }
     int b;
     for (b = 0; b < 16; b++)
     {

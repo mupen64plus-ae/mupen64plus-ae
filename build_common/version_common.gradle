@@ -1,13 +1,13 @@
 
 android {
-    buildToolsVersion '32.0.0'
+    buildToolsVersion '33.0.1'
 
-    compileSdkVersion 32
-    ndkVersion "24.0.8215888"
+    compileSdkVersion 33
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode = 249
         versionName = "3.0.249 (beta)"
 

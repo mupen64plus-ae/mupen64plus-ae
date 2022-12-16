@@ -574,7 +574,7 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
                 COPYARRAY(cam_regs, curr, uint8_t, POCKET_CAM_REGS_COUNT);
             }
 
-            if (ROM_SETTINGS.transferpak && !Controls[i].RawData) {
+            if (ROM_SETTINGS.transferpak && !Controls[i].RawData && (Controls[i].Type == CONT_TYPE_STANDARD)) {
 
                 /* init transferpak state if enabled and not controlled by input plugin */
                 dev->transferpaks[i].enabled = enabled;
@@ -684,7 +684,7 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
             uint8_t rpk_state = GETDATA(curr, uint8_t);
 
             /* init rumble pak state if enabled and not controlled by the input plugin */
-            if (ROM_SETTINGS.rumble && !Controls[i].RawData) {
+            if (ROM_SETTINGS.rumble && !Controls[i].RawData && (Controls[i].Type == CONT_TYPE_STANDARD)) {
                 set_rumble_reg(&dev->rumblepaks[i], rpk_state);
             }
         }
@@ -719,7 +719,7 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
                 COPYARRAY(cam_regs, curr, uint8_t, POCKET_CAM_REGS_COUNT);
             }
 
-            if (ROM_SETTINGS.transferpak && !Controls[i].RawData) {
+            if (ROM_SETTINGS.transferpak && !Controls[i].RawData && (Controls[i].Type == CONT_TYPE_STANDARD)) {
 
                 /* init transferpak state if enabled and not controlled by input plugin */
                 dev->transferpaks[i].enabled = enabled;
@@ -901,10 +901,10 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
 
             dev->controllers[i].flavor->reset(&dev->controllers[i]);
 
-            if (ROM_SETTINGS.rumble) {
+            if (ROM_SETTINGS.rumble && (Controls[i].Type == CONT_TYPE_STANDARD)) {
                 poweron_rumblepak(&dev->rumblepaks[i]);
             }
-            if (ROM_SETTINGS.transferpak) {
+            if (ROM_SETTINGS.transferpak && (Controls[i].Type == CONT_TYPE_STANDARD)) {
                 poweron_transferpak(&dev->transferpaks[i]);
             }
         }
@@ -1280,10 +1280,10 @@ static int savestates_load_pj64(struct device* dev,
 
         dev->controllers[i].flavor->reset(&dev->controllers[i]);
 
-        if (ROM_SETTINGS.rumble) {
+        if (ROM_SETTINGS.rumble && (Controls[i].Type == CONT_TYPE_STANDARD)) {
             poweron_rumblepak(&dev->rumblepaks[i]);
         }
-        if (ROM_SETTINGS.transferpak) {
+        if (ROM_SETTINGS.transferpak && (Controls[i].Type == CONT_TYPE_STANDARD)) {
             poweron_transferpak(&dev->transferpaks[i]);
         }
     }
