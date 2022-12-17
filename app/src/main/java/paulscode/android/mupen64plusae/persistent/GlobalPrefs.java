@@ -20,11 +20,8 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -47,9 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.game.ShaderLoader;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
@@ -432,8 +427,6 @@ public class GlobalPrefs
 
     private final SharedPreferences mPreferences;
     private final String mLocaleCode;
-    private final String[] mLocaleNames;
-    private final String[] mLocaleCodes;
 
     public final String supportedGlesVersion;
     public final String gpuRenderer;
@@ -444,7 +437,6 @@ public class GlobalPrefs
      * @param context
      *            The application context.
      */
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public GlobalPrefs( Context context, AppData appData )
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
@@ -452,31 +444,6 @@ public class GlobalPrefs
         // Locale
         mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
         LocaleContextWrapper.setLocaleCode(mLocaleCode);
-        final Locale[] availableLocales = Locale.getAvailableLocales();
-        String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
-        String[] entries = new String[values.length];
-        for( int i = values.length - 1; i > 0; i-- )
-        {
-            final Locale locale = createLocale( values[i] );
-
-            // Get intersection of languages (available on device) and (translated for Mupen)
-            if( locale != null && ArrayUtils.contains( availableLocales, locale ) )
-            {
-                // Get the name of the language, as written natively
-                entries[i] = WordUtils.capitalize( locale.getDisplayName( locale ) );
-            }
-            else
-            {
-                // Remove the item from the list
-                entries = ArrayUtils.remove( entries, i );
-                values = ArrayUtils.remove( values, i );
-            }
-        }
-        entries[0] = context.getString( R.string.localeOverride_entrySystemDefault );
-        values[0] = Resources.getSystem().getConfiguration().locale.getLanguage();
-
-        mLocaleNames = entries;
-        mLocaleCodes = values;
 
         // Files
         String galleryCacheDir = appData.legacyUserDataDir + "/GalleryCache";
@@ -799,26 +766,6 @@ public class GlobalPrefs
         gpuRenderer = AppData.getOpenGlEsRenderer();
     }
 
-    public void changeLocale( final Activity activity )
-    {
-        // Get the index of the current locale
-        final int currentIndex = ArrayUtils.indexOf( mLocaleCodes, mLocaleCode );
-
-        // Populate and show the language menu
-        final Builder builder = new Builder( activity );
-        builder.setTitle( R.string.menuItem_localeOverride );
-        builder.setSingleChoiceItems( mLocaleNames, currentIndex, (dialog, which) -> {
-            dialog.dismiss();
-            if( which >= 0 && which != currentIndex )
-            {
-                mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).apply();
-                activity.finishAffinity();
-                ActivityHelper.startSplashActivity(activity);
-            }
-        });
-        builder.create().show();
-    }
-
     private void fillAllowedCountryCodes()
     {
         boolean showUnknownCountryCode = mPreferences.getBoolean( "libraryCountryFilterUnknown", true );
@@ -972,22 +919,6 @@ public class GlobalPrefs
     public void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).apply();
-    }
-
-    private Locale createLocale( String code )
-    {
-        final String[] codes = code.split( "_" );
-        switch( codes.length )
-        {
-            case 1: // Language code provided
-                return new Locale( codes[0] );
-            case 2: // Language and country code provided
-                return new Locale( codes[0], codes[1] );
-            case 3: // Language, country, and variant code provided
-                return new Locale( codes[0], codes[1], codes[2] );
-            default: // Invalid input
-                return null;
-        }
     }
 
     /**
