@@ -78,6 +78,7 @@ import java.util.List;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.LocaleDialog;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.jni.CoreService;
@@ -108,6 +109,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     private static final String STATE_CLEAR_SHADERCACHE_DIALOG = "STATE_CLEAR_SHADERCACHE_DIALOG";
+    private static final String STATE_LOCALE_DIALOG = "STATE_LOCALE_DIALOG";
+    private static final String STATE_HARDWARE_INFO_POPUP = "STATE_HARDWARE_INFO_POPUP";
+    private static final String STATE_SHOW_APP_VERSION_POPUP = "STATE_SHOW_APP_VERSION_POPUP";
+    private static final String STATE_FAQ_POPUP = "STATE_FAQ_POPUP";
     public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
     public static final String KEY_IS_SHORTCUT = "KEY_IS_SHORTCUT";
 
@@ -811,7 +816,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ActivityHelper.startManageControllerProfilesActivity(this);
             return true;
         } else if (item.getItemId() == R.id.menuItem_faq) {
-            Popups.showFaq(this);
+            final Popups pop = Popups.newInstance(this, STATE_FAQ_POPUP);
+            final FragmentManager fm = getSupportFragmentManager();
+            pop.show(fm, STATE_FAQ_POPUP);
             return true;
         } else if (item.getItemId() == R.id.menuItem_helpForum) {
             ActivityHelper.launchUri(this, R.string.uri_forum);
@@ -823,19 +830,26 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ActivityHelper.launchUri(this, R.string.uri_bugReport);
             return true;
         } else if (item.getItemId() == R.id.menuItem_appVersion) {
-            Popups.showAppVersion(this);
+            final Popups pop = Popups.newInstance(this, STATE_SHOW_APP_VERSION_POPUP);
+            final FragmentManager fm = getSupportFragmentManager();
+            pop.show(fm, STATE_SHOW_APP_VERSION_POPUP);
             return true;
         } else if (item.getItemId() == R.id.menuItem_logcat) {
             ActivityHelper.startLogcatActivity(this);
             return true;
         } else if (item.getItemId() == R.id.menuItem_hardwareInfo) {
-            Popups.showHardwareInfo(this);
+            final Popups pop = Popups.newInstance(this, STATE_HARDWARE_INFO_POPUP);
+            final FragmentManager fm = getSupportFragmentManager();
+            pop.show(fm, STATE_HARDWARE_INFO_POPUP);
             return true;
         } else if (item.getItemId() == R.id.menuItem_credits) {
             ActivityHelper.launchUri(GalleryActivity.this, R.string.uri_credits);
             return true;
         } else if (item.getItemId() == R.id.menuItem_localeOverride) {
-            mGlobalPrefs.changeLocale(this);
+            final CharSequence title = getText( R.string.menuItem_localeOverride );
+            final LocaleDialog localeDialog = LocaleDialog.newInstance(title.toString());
+            final FragmentManager fm = getSupportFragmentManager();
+            localeDialog.show(fm, STATE_LOCALE_DIALOG);
             return true;
         } else if (item.getItemId() == R.id.menuItem_extract) {
             ActivityHelper.starExtractTextureActivity(this);
@@ -1091,7 +1105,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         // This is called once ROM scan is finished, so no longer require the screen to remain on at this point
         getWindow().setFlags( 0, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
-        
+
         mConfig = new ConfigFile(mGlobalPrefs.romInfoCacheCfg);
 
         refreshGridAsync();
