@@ -92,6 +92,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         void onCoreServiceStarted();
 
         /**
+         * Called when we are ready for netplay
+         */
+        void onNetplayReady();
+
+        /**
          * Called when the service has been destroyed
          */
         void onCoreServiceDestroyed();
@@ -153,6 +158,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private boolean mNetplayReady = false;
     private boolean mUsingNetplay = false;
     private boolean mNetplayInitSuccess = false;
+    private String netplayVideoPlugin;
+    private String netplayRspPlugin;
 
     //Service attributes
     private int mStartId;
@@ -447,16 +454,8 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void connectForNetplay(int regId, int player, String videoPlugin, String rspPlugin, InetAddress address, int port) {
 
-        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, videoPlugin, true);
-        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
-
-        if (mUseRaphnetDevicesIfAvailable) {
-            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
-        } else {
-            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
-        }
-
-        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, rspPlugin, false);
+        netplayVideoPlugin = videoPlugin;
+        netplayRspPlugin = rspPlugin;
 
         mNetplayInitSuccess = address.getHostAddress() != null && mCoreInterface.netplayInit(address.getHostAddress(), port);
 
@@ -655,6 +654,35 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                         }
 
                         mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, mGamePrefs.rspPluginLib.getPluginLib(), false);
+
+                    } else {
+                        if (mListener != null) {
+                            mListener.onNetplayReady();
+                        }
+
+                        synchronized (mWaitForNetPlay) {
+                            while (!mNetplayReady) {
+                                try {
+                                    Log.i(TAG, "Waiting on netplay to start");
+                                    mWaitForNetPlay.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        Log.i(TAG, "Netplay is ready!");
+
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, netplayVideoPlugin, true);
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
+
+                        if (mUseRaphnetDevicesIfAvailable) {
+                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
+                        } else {
+                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
+                        }
+
+                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, netplayRspPlugin, false);
                     }
 
                     mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
@@ -664,27 +692,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                 }
             }
 
-            if (mListener != null) {
-                mListener.onCoreServiceStarted();
-            }
-
             if (loadingSuccess) {
 
                 if (mUsingNetplay) {
-
-                    synchronized (mWaitForNetPlay) {
-                        while (!mNetplayReady) {
-                            try {
-                                Log.i(TAG, "Waiting on netplay to start");
-                                mWaitForNetPlay.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    Log.i(TAG, "Netplay is ready!");
-
                     mCoreInterface.emuSetFramelimiter(true);
                     mCoreInterface.usingNetplay(true);
                 } else {
@@ -700,6 +710,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                             }
                         }
                     }
+                }
+
+                if (mListener != null) {
+                    mListener.onCoreServiceStarted();
                 }
 
                 if (!mIsShuttingDown) {
@@ -1045,7 +1059,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             mPeriodicActionHandler.removeCallbacks(mPeriodicAction);
             mPeriodicActionHandler.postDelayed(mPeriodicAction, 500);
 
-            // This must happen here instead of OnCreate because we only find out the redering
+            // This must happen here instead of OnCreate because we only find out the rendering
             // resolution here.
             if (mPixelBuffer == null) {
                 mPixelBuffer = new PixelBuffer(mVideoRenderWidth, mVideoRenderHeight);

@@ -984,6 +984,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mOverlay.requestFocus();
         mGameSurface.setSurfaceTexture(mCoreFragment.getSurfaceTexture());
 
+        if(mShouldExit)
+        {
+            mCoreFragment.shutdownEmulator();
+            finish();
+        }
+
+        if(!mCoreFragment.isShuttingDown()) {
+            //This can happen if GameActivity is killed while service is running
+            tryRunning();
+        }
+    }
+
+    @Override
+    public void onNetplayReady()
+    {
         if (mIsNetplayEnabled) {
             final FragmentManager fm = this.getSupportFragmentManager();
 
@@ -1009,17 +1024,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     e.printStackTrace();
                 }
             }
-        }
-
-        if(mShouldExit)
-        {
-            mCoreFragment.shutdownEmulator();
-            finish();
-        }
-
-        if(!mCoreFragment.isShuttingDown()) {
-            //This can happen if GameActivity is killed while service is running
-            tryRunning();
         }
     }
 

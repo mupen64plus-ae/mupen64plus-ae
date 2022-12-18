@@ -70,6 +70,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         void onCoreServiceStarted();
 
         /**
+         * Will be called once netplay dialog is ready to show
+         */
+        void onNetplayReady();
+
+        /**
          * Will be called once the game has started
          */
         void onGameStarted();
@@ -266,6 +271,22 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
             requireActivity().runOnUiThread(() -> {
                 if (mCoreEventListener != null) {
                     mCoreEventListener.onCoreServiceStarted();
+                }
+            });
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onNetplayReady()
+    {
+        Log.i(TAG, "onNetplayReady");
+
+        try {
+            requireActivity().runOnUiThread(() -> {
+                if (mCoreEventListener != null) {
+                    mCoreEventListener.onNetplayReady();
                 }
             });
         } catch (java.lang.IllegalStateException e) {
