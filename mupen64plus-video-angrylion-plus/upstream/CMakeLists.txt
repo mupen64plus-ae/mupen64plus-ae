@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.22)
 
 option(GLES "Set to ON to use OpenGL ES 3.0 renderer instead of OpenGL 3.3 core")
 

@@ -6,7 +6,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    container: cirrusci/android-sdk:30-ndk
 
     steps:
     - name: Checkout mupen64plus-ae repo 
@@ -31,11 +30,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends file gawk
-        echo y | sdkmanager "cmake;3.18.1"
-        
-    - name: Set up environment
-      run: |
-        echo "ANDROID_NDK_PATH=/opt/android-sdk-linux/ndk/23.1.7779620" >> $GITHUB_ENV
 
     - name: Build artifact
       run: ./gradlew assemble
@@ -74,10 +68,13 @@ jobs:
     if: github.ref == 'refs/heads/master'
 
     steps:
-    - uses: actions/checkout@v3
-      name: Download Artifacts
-
-    - uses: actions/download-artifact@v3
+    - name: Checkout mupen64plus-ae repo 
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        
+    - name: Download Artifacts
+      uses: actions/download-artifact@v3
       with:
         path: dist
 
