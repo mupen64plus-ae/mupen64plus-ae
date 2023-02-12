@@ -673,16 +673,20 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
                         Log.i(TAG, "Netplay is ready!");
 
-                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, netplayVideoPlugin, true);
-                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
+                        if (mNetplayInitSuccess) {
+                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_GFX, netplayVideoPlugin, true);
+                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_AUDIO, mGamePrefs.audioPluginLib.getPluginLib(), true);
 
-                        if (mUseRaphnetDevicesIfAvailable) {
-                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
+                            if (mUseRaphnetDevicesIfAvailable) {
+                                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.RAPHNET.getPluginLib(), false);
+                            } else {
+                                mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
+                            }
+
+                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, netplayRspPlugin, false);
                         } else {
-                            mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_INPUT, AppData.InputPlugin.ANDROID.getPluginLib(), true);
+                            loadingSuccess = false;
                         }
-
-                        mCoreInterface.coreAttachPlugin(CoreTypes.m64p_plugin_type.M64PLUGIN_RSP, netplayRspPlugin, false);
                     }
 
                     mCoreInterface.setSelectedAudioPlugin(mGamePrefs.audioPluginLib);
