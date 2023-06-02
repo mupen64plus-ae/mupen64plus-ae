@@ -11312,7 +11312,7 @@ gn Mario Party (U)
   cd By: gamemasterplc.
   800ED5C7 ???? 0001:"1 Turn",0005:"5 Turn",000A:"10 Turns",000F:"15 Turns",0019:"25 Turns",001E:"30 Turn",0028 "40 Turns",002D:"45 Turns",0032:"50 Turns",0037:"55 Turns",003C:"60 Turns",0041:"65 Turns",0046:"70 Turns",004B:"75 Turns",0050:"80 Turns",0055:"85 Turns",005A:"90 Turns",005F:"95 Turns",0063:"99 Turns",
  cn Mechanics: Always Recieve a Hidden Block
-  cdBy: gamemasterplc. Hidden blocks appear every time a player lands.
+  cd By: gamemasterplc. Hidden blocks appear every time a player lands.
   81057BF8 2400
  cn Mechanics: Always Win Mushroom Space Rolls
   cd By: Celery. Makes the Mushroom/Poison Mushroom roll always result in a Mushroom.
@@ -11365,7 +11365,7 @@ gn Mario Party (U)
   81057D84 1100
   81057D86 0003
   81057D88 3410
-  81057D8A 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  81057D8A ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   81057D8C 5440
   81057D8E 0001
   81057D90 0010
@@ -11386,7 +11386,7 @@ gn Mario Party (U)
   81057DDC 1100
   81057DDE 0003
   81057DE0 3410
-  81057DE2 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  81057DE2 ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   81057DE4 5440
   81057DE6 0001
   81057DE8 0010
@@ -11398,7 +11398,7 @@ gn Mario Party (U)
   81057DDC 1100
   81057DDE 0003
   81057DE0 3410
-  81057DE2 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  81057DE2 ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   81057DE4 5440
   81057DE6 0001
   81057DE8 0010
@@ -11988,7 +11988,7 @@ gn Mario Party 2 (U)
   81066304 1100
   81066306 0003
   81066308 3410
-  8106630A 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  8106630A ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   8106630C 5440
   8106630E 0001
   81066310 0010
@@ -12000,7 +12000,7 @@ gn Mario Party 2 (U)
   81066304 1100
   81066306 0003
   81066308 3410
-  8106630A 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  8106630A ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   8106630C 5440
   8106630E 0001
   81066310 0010
@@ -12029,7 +12029,7 @@ gn Mario Party 2 (U)
   81066350 1100
   81066352 0003
   81066354 3410
-  81066356 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  81066356 ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   81066358 5440
   8106635A 0001
   8106635C 0010
@@ -12041,7 +12041,7 @@ gn Mario Party 2 (U)
   81066350 1100
   81066352 0003
   81066354 3410
-  81066356 00?? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
+  81066356 ???? 0000:"1 Coin",05: "5 Coins",0A: "10 Coins",,14: "20 Coins",28: "40 Coins"
   81066358 5440
   8106635A 0001
   8106635C 0010
