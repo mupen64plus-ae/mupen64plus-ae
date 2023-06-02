@@ -17,7 +17,7 @@
         tools:ignore="ContentDescription" />
 
 
-    <paulscode.android.mupen64plusae-mpn.game.GameOverlay
+    <paulscode.android.mupen64plusae_mpn.game.GameOverlay
         android:id="@+id/gameOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

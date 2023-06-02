@@ -140,7 +140,7 @@
         android:fitsSystemWindows="true"
         style="@style/MupenTheme_Dark_Sidebar">
 
-        <paulscode.android.mupen64plusae-mpn.GameSidebar
+        <paulscode.android.mupen64plusae_mpn.GameSidebar
             android:id="@+id/drawerNavigation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -151,7 +151,7 @@
             android:nextFocusUp="@+id/drawerNavigation"
             style="@style/MupenTheme_Dark_Sidebar" />
 
-        <paulscode.android.mupen64plusae-mpn.GameSidebar
+        <paulscode.android.mupen64plusae_mpn.GameSidebar
             android:id="@+id/gameSidebar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

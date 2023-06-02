@@ -1,7 +1,7 @@
 <class-diagram version="1.0.11" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.AbstractController" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/AbstractController.java" 
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.AbstractController" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/AbstractController.java" 
     binary="false">    
     <position height="-1" width="-1" x="360" y="77"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -9,8 +9,8 @@
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.PeripheralController" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/PeripheralController.java" 
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.PeripheralController" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/PeripheralController.java" 
     binary="false">    
     <position height="-1" width="-1" x="615" y="263"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -18,8 +18,8 @@
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.TouchController" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/TouchController.java" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.TouchController" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/TouchController.java" 
     binary="false">    
     <position height="-1" width="-1" x="86" y="263"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -27,16 +27,16 @@
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.map.InputMap" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/map/InputMap.java" binary="false">    
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.map.InputMap" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/map/InputMap.java" binary="false">    
     <position height="-1" width="-1" x="724" y="468"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="5" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.provider.AxisProvider" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/provider/AxisProvider.java" 
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.provider.AxisProvider" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/provider/AxisProvider.java" 
     binary="false">    
     <position height="-1" width="-1" x="215" y="891"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -44,8 +44,8 @@
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="6" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.provider.KeyProvider" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/provider/KeyProvider.java" 
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.provider.KeyProvider" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/provider/KeyProvider.java" 
     binary="false">    
     <position height="-1" width="-1" x="500" y="908"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -53,8 +53,8 @@
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="7" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.map.TouchMap" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/map/TouchMap.java" binary="false">    
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.map.TouchMap" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/map/TouchMap.java" binary="false">    
     <position height="-1" width="-1" x="207" y="476"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -97,8 +97,8 @@
     </display>  
   </interface>  
   <class id="12" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae-mpn.input.provider.SensorProvider" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/provider/SensorProvider.java" binary="false">    
+    name="paulscode.android.mupen64plusae_mpn.input.provider.SensorProvider" project="mupen64plus" 
+    file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/provider/SensorProvider.java" binary="false">    
     <position height="-1" width="-1" x="772" y="882"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -115,8 +115,8 @@
     </display>  
   </interface>  
   <class id="14" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae-mpn.input.provider.AbstractProvider" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/provider/AbstractProvider.java" binary="false">    
+    name="paulscode.android.mupen64plusae_mpn.input.provider.AbstractProvider" project="mupen64plus" 
+    file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/provider/AbstractProvider.java" binary="false">    
     <position height="-1" width="-1" x="500" y="626"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -124,8 +124,8 @@
     </display>  
   </class>  
   <interface id="15" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae-mpn.input.provider.AbstractProvider.OnInputListener" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/provider/AbstractProvider.java" binary="false">    
+    name="paulscode.android.mupen64plusae_mpn.input.provider.AbstractProvider.OnInputListener" project="mupen64plus" 
+    file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/provider/AbstractProvider.java" binary="false">    
     <position height="-1" width="-1" x="500" y="417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -133,8 +133,8 @@
     </display>  
   </interface>  
   <class id="16" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae-mpn.input.provider.AxisProvider.GenericMotionListener" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/provider/AxisProvider.java" binary="false">    
+    name="paulscode.android.mupen64plusae_mpn.input.provider.AxisProvider.GenericMotionListener" project="mupen64plus" 
+    file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/provider/AxisProvider.java" binary="false">    
     <position height="-1" width="-1" x="215" y="1009"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
@@ -149,8 +149,8 @@
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="18" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae-mpn.input.map.PlayerMap" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/map/PlayerMap.java" 
+  <class id="18" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae_mpn.input.map.PlayerMap" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/map/PlayerMap.java" 
     binary="false">    
     <position height="-1" width="-1" x="947" y="476"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -159,8 +159,8 @@
     </display>  
   </class>  
   <class id="19" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae-mpn.input.AbstractController.State" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae-mpn/input/AbstractController.java" binary="false">    
+    name="paulscode.android.mupen64plusae_mpn.input.AbstractController.State" project="mupen64plus" 
+    file="/mupen64plus/src/paulscode/android/mupen64plusae_mpn/input/AbstractController.java" binary="false">    
     <position height="-1" width="-1" x="609" y="85"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      

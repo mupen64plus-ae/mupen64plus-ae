@@ -15,14 +15,14 @@
             android:summary="@string/myKey_summary"
             ...
             />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             ...
             android:entries="@array/myKey_entries"
             android:entryValues="@array/myKey_values"
             android:defaultValue="@string/myKey_default"
             ...
             />
-        <paulscode.android.mupen64plusae-mpn.MyCustomPreference
+        <paulscode.android.mupen64plusae_mpn.MyCustomPreference
             ...
             mupen64:myAttribute="@string/myKey_myAttribute"
             ...
@@ -47,49 +47,49 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_sliders"
         android:key="emulationProfileDefault"
         android:summary="@string/selectedValue"
         android:title="@string/emulationProfile_title"
         mupen64:allowDisable="false"
         mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_sliders"
         android:key="touchscreenProfileDefault"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenProfile_title"
         mupen64:allowDisable="false"
         mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_sliders"
         android:key="touchscreenProfileDpadDefault"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenProfileDpad_title"
         mupen64:allowDisable="false"
         mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_gamepad"
         android:key="controllerProfile1"
         android:summary="@string/selectedValue"
         android:title="@string/controllerProfile1_title"
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_gamepad"
         android:key="controllerProfile2"
         android:summary="@string/selectedValue"
         android:title="@string/controllerProfile2_title"
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_gamepad"
         android:key="controllerProfile3"
         android:summary="@string/selectedValue"
         android:title="@string/controllerProfile3_title"
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <paulscode.android.mupen64plusae-mpn.preference.ProfilePreference
+    <paulscode.android.mupen64plusae_mpn.preference.ProfilePreference
         android:icon="@drawable/ic_gamepad"
         android:key="controllerProfile4"
         android:summary="@string/selectedValue"

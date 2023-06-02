@@ -15,14 +15,14 @@
             android:summary="@string/myKey_summary"
             ...
             />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             ...
             android:entries="@array/myKey_entries"
             android:entryValues="@array/myKey_values"
             android:defaultValue="@string/myKey_default"
             ...
             />
-        <paulscode.android.mupen64plusae-mpn.MyCustomPreference
+        <paulscode.android.mupen64plusae_mpn.MyCustomPreference
             ...
             mupen64:myAttribute="@string/myKey_myAttribute"
             ...

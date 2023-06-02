@@ -18,7 +18,7 @@
 
 -dontobfuscate
 
--keep, includedescriptorclasses class paulscode.android.mupen64plusae-mpn.jni.** { *; }
+-keep, includedescriptorclasses class paulscode.android.mupen64plusae_mpn.jni.** { *; }
 
 -dontwarn java.awt.event.*
 -dontwarn java.awt.dnd.*

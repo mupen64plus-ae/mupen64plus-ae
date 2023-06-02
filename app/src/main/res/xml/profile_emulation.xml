@@ -3,25 +3,25 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+    <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
         android:defaultValue="@string/r4300Emulator_default"
         android:entries="@array/r4300Emulator_entries"
         android:entryValues="@array/r4300Emulator_values"
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
-    <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+    <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
         android:defaultValue="False"
         android:key="DisableExtraMem"
         android:title="@string/disableExtraMem_title" />
-    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+    <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
         android:defaultValue="@string/rsp_default"
         android:entries="@array/rsp_entries"
         android:entryValues="@array/rsp_values"
         android:key="rspSetting"
         android:summary="@string/selectedValue"
         android:title="@string/rsp_title" />
-    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+    <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
         android:entryValues="@array/videoPlugin_values"
@@ -32,7 +32,7 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGln64"
         android:title="@string/categoryGln64_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gln64Frameskip_default"
             android:entries="@array/gln64Frameskip_entries"
             android:entryValues="@array/gln64Frameskip_values"
@@ -40,33 +40,33 @@
             android:summary="@string/selectedValue"
             android:title="@string/gln64Frameskip_title" />
 
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="gln64Fog"
             android:summary="@string/gln64Fog_summary"
             android:title="@string/gln64Fog_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="gln64Sai"
             android:summary="@string/gln64Sai_summary"
             android:title="@string/gln64Sai_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="gln64ScreenClear"
             android:summary="@string/gln64ScreenClear_summary"
             android:title="@string/gln64ScreenClear_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="gln64AlphaTest"
             android:summary="@string/gln64AlphaTest_summary"
             android:title="@string/gln64AlphaTest_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="gln64HackDepth"
             android:summary="@string/gln64HackDepth_summary"
@@ -77,35 +77,35 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryRice"
         android:title="@string/categoryRice_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="riceAutoFrameskip"
             android:summary="@string/riceAutoFrameskip_summary"
             android:title="@string/riceAutoFrameskip_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="riceFog"
             android:summary="@string/riceFog_summary"
             android:title="@string/riceFog_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="riceFastTexture"
             android:summary="@string/riceFastTexture_summary"
             android:title="@string/riceFastTexture_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="riceForceTextureFilter"
             android:summary="@string/riceForceTextureFilter_summary"
             android:title="@string/riceForceTextureFilter_title" />
 
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/riceScreenUpdate_default"
             android:entries="@array/riceScreenUpdate_entries"
             android:entryValues="@array/riceScreenUpdate_values"
             android:key="riceScreenUpdate"
             android:summary="@string/selectedValue"
             android:title="@string/riceScreenUpdate_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/riceTextureEnhancement_default"
             android:entries="@array/riceTextureEnhancement_entries"
             android:entryValues="@array/riceTextureEnhancement_values"
@@ -113,7 +113,7 @@
             android:summary="@string/selectedValue"
             android:title="@string/riceTextureEnhancement_title" />
 
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="riceHiResTextures"
             android:summary="@string/riceHiResTextures_summary"
@@ -122,7 +122,7 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGlide64"
         android:title="@string/categoryGlide64_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64Frameskip_default"
             android:entries="@array/glide64Frameskip_entries"
             android:entryValues="@array/glide64Frameskip_values"
@@ -133,259 +133,259 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGlide64Advanced"
         android:title="@string/categoryGlide64Advanced_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_filtering_default"
             android:entries="@array/glide64mk2_filtering_entries"
             android:entryValues="@array/glide64mk2_filtering_values"
             android:key="glide64mk2_filtering"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_filtering_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fog_default"
             android:entries="@array/glide64mk2_fog_entries"
             android:entryValues="@array/glide64mk2_fog_values"
             android:key="glide64mk2_fog"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fog_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_buff_clear_default"
             android:entries="@array/glide64mk2_buff_clear_entries"
             android:entryValues="@array/glide64mk2_buff_clear_values"
             android:key="glide64mk2_buff_clear"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_buff_clear_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_swapmode_default"
             android:entries="@array/glide64mk2_swapmode_entries"
             android:entryValues="@array/glide64mk2_swapmode_values"
             android:key="glide64mk2_swapmode"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_swapmode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_lodmode_default"
             android:entries="@array/glide64mk2_lodmode_entries"
             android:entryValues="@array/glide64mk2_lodmode_values"
             android:key="glide64mk2_lodmode"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_lodmode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_smart_default"
             android:entries="@array/glide64mk2_fb_smart_entries"
             android:entryValues="@array/glide64mk2_fb_smart_values"
             android:key="glide64mk2_fb_smart"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_smart_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_hires_default"
             android:entries="@array/glide64mk2_fb_hires_entries"
             android:entryValues="@array/glide64mk2_fb_hires_values"
             android:key="glide64mk2_fb_hires"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_hires_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_render_default"
             android:entries="@array/glide64mk2_fb_render_entries"
             android:entryValues="@array/glide64mk2_fb_render_values"
             android:key="glide64mk2_fb_render"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_render_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_crc_mode_default"
             android:entries="@array/glide64mk2_fb_crc_mode_entries"
             android:entryValues="@array/glide64mk2_fb_crc_mode_values"
             android:key="glide64mk2_fb_crc_mode"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_crc_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_read_back_to_screen_default"
             android:entries="@array/glide64mk2_read_back_to_screen_entries"
             android:entryValues="@array/glide64mk2_read_back_to_screen_values"
             android:key="glide64mk2_read_back_to_screen"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_read_back_to_screen_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_detect_cpu_write_default"
             android:entries="@array/glide64mk2_detect_cpu_write_entries"
             android:entryValues="@array/glide64mk2_detect_cpu_write_values"
             android:key="glide64mk2_detect_cpu_write"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_detect_cpu_write_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_alt_tex_size_default"
             android:entries="@array/glide64mk2_alt_tex_size_entries"
             android:entryValues="@array/glide64mk2_alt_tex_size_values"
             android:key="glide64mk2_alt_tex_size"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_alt_tex_size_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_use_sts1_only_default"
             android:entries="@array/glide64mk2_use_sts1_only_entries"
             android:entryValues="@array/glide64mk2_use_sts1_only_values"
             android:key="glide64mk2_use_sts1_only"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_use_sts1_only_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fast_crc_default"
             android:entries="@array/glide64mk2_fast_crc_entries"
             android:entryValues="@array/glide64mk2_fast_crc_values"
             android:key="glide64mk2_fast_crc"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fast_crc_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_force_microcheck_default"
             android:entries="@array/glide64mk2_force_microcheck_entries"
             android:entryValues="@array/glide64mk2_force_microcheck_values"
             android:key="glide64mk2_force_microcheck"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_force_microcheck_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_force_quad3d_default"
             android:entries="@array/glide64mk2_force_quad3d_entries"
             android:entryValues="@array/glide64mk2_force_quad3d_values"
             android:key="glide64mk2_force_quad3d"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_force_quad3d_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_optimize_texrect_default"
             android:entries="@array/glide64mk2_optimize_texrect_entries"
             android:entryValues="@array/glide64mk2_optimize_texrect_values"
             android:key="glide64mk2_optimize_texrect"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_optimize_texrect_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_hires_buf_clear_default"
             android:entries="@array/glide64mk2_hires_buf_clear_entries"
             android:entryValues="@array/glide64mk2_hires_buf_clear_values"
             android:key="glide64mk2_hires_buf_clear"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_hires_buf_clear_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_read_alpha_default"
             android:entries="@array/glide64mk2_fb_read_alpha_entries"
             android:entryValues="@array/glide64mk2_fb_read_alpha_values"
             android:key="glide64mk2_fb_read_alpha"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_read_alpha_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_force_calc_sphere_default"
             android:entries="@array/glide64mk2_force_calc_sphere_entries"
             android:entryValues="@array/glide64mk2_force_calc_sphere_values"
             android:key="glide64mk2_force_calc_sphere"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_force_calc_sphere_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_texture_correction_default"
             android:entries="@array/glide64mk2_texture_correction_entries"
             android:entryValues="@array/glide64mk2_texture_correction_values"
             android:key="glide64mk2_texture_correction"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_texture_correction_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_increase_texrect_edge_default"
             android:entries="@array/glide64mk2_increase_texrect_edge_entries"
             android:entryValues="@array/glide64mk2_increase_texrect_edge_values"
             android:key="glide64mk2_increase_texrect_edge"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_increase_texrect_edge_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_decrease_fillrect_edge_default"
             android:entries="@array/glide64mk2_decrease_fillrect_edge_entries"
             android:entryValues="@array/glide64mk2_decrease_fillrect_edge_values"
             android:key="glide64mk2_decrease_fillrect_edge"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_decrease_fillrect_edge_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_stipple_mode_default"
             android:entries="@array/glide64mk2_stipple_mode_entries"
             android:entryValues="@array/glide64mk2_stipple_mode_values"
             android:key="glide64mk2_stipple_mode"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_stipple_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_clip_zmax_default"
             android:entries="@array/glide64mk2_clip_zmax_entries"
             android:entryValues="@array/glide64mk2_clip_zmax_values"
             android:key="glide64mk2_clip_zmax"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_clip_zmax_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_clip_zmin_default"
             android:entries="@array/glide64mk2_clip_zmin_entries"
             android:entryValues="@array/glide64mk2_clip_zmin_values"
             android:key="glide64mk2_clip_zmin"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_clip_zmin_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_adjust_aspect_default"
             android:entries="@array/glide64mk2_adjust_aspect_entries"
             android:entryValues="@array/glide64mk2_adjust_aspect_values"
             android:key="glide64mk2_adjust_aspect"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_adjust_aspect_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_correct_viewport_default"
             android:entries="@array/glide64mk2_correct_viewport_entries"
             android:entryValues="@array/glide64mk2_correct_viewport_values"
             android:key="glide64mk2_correct_viewport"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_correct_viewport_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_aspect_default"
             android:entries="@array/glide64mk2_aspect_entries"
             android:entryValues="@array/glide64mk2_aspect_values"
             android:key="glide64mk2_aspect"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_aspect_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_zmode_compare_less_default"
             android:entries="@array/glide64mk2_zmode_compare_less_entries"
             android:entryValues="@array/glide64mk2_zmode_compare_less_values"
             android:key="glide64mk2_zmode_compare_less"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_zmode_compare_less_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_old_style_adither_default"
             android:entries="@array/glide64mk2_old_style_adither_entries"
             android:entryValues="@array/glide64mk2_old_style_adither_values"
             android:key="glide64mk2_old_style_adither"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_old_style_adither_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_n64_z_scale_default"
             android:entries="@array/glide64mk2_n64_z_scale_entries"
             android:entryValues="@array/glide64mk2_n64_z_scale_values"
             android:key="glide64mk2_n64_z_scale"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_n64_z_scale_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_pal230_default"
             android:entries="@array/glide64mk2_pal230_entries"
             android:entryValues="@array/glide64mk2_pal230_values"
             android:key="glide64mk2_pal230"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_pal230_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_ignore_aux_copy_default"
             android:entries="@array/glide64mk2_ignore_aux_copy_entries"
             android:entryValues="@array/glide64mk2_ignore_aux_copy_values"
             android:key="glide64mk2_ignore_aux_copy"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_ignore_aux_copy_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_useless_is_useless_default"
             android:entries="@array/glide64mk2_useless_is_useless_entries"
             android:entryValues="@array/glide64mk2_useless_is_useless_values"
             android:key="glide64mk2_useless_is_useless"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_useless_is_useless_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_read_always_default"
             android:entries="@array/glide64mk2_fb_read_always_entries"
             android:entryValues="@array/glide64mk2_fb_read_always_values"
             android:key="glide64mk2_fb_read_always"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_read_always_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_wrpAnisotropic_default"
             android:entries="@array/glide64mk2_wrpAnisotropic_entries"
             android:entryValues="@array/glide64mk2_wrpAnisotropic_values"
@@ -396,19 +396,19 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGliden64Texture"
         android:title="@string/gliden64_category_texture_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_bilinear_default"
             android:entries="@array/gliden64_bilinear_entries"
             android:entryValues="@array/gliden64_bilinear_values"
             android:key="bilinearMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_bilinear_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="enableHalosRemoval"
             android:title="@string/gliden64_enable_halos_removal_title"
             android:summary="@string/gliden64_enable_halos_removal_summary" />
-        <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
+        <paulscode.android.mupen64plusae_mpn.preference.SeekBarPreference
             android:defaultValue="0"
             android:key="MaxAnisotropy"
             android:title="@string/gliden64_max_anisotropic_filtering_title"
@@ -421,61 +421,61 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGliden64General"
         android:title="@string/gliden64_category_general_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="WidescreenHack"
             android:title="@string/gliden64_widescreen_hack_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableDitheringPattern"
             android:summary="@string/gliden64_dithering_pattern_summary"
             android:title="@string/gliden64_dithering_pattern_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableHiresNoiseDithering"
             android:summary="@string/gliden64_hires_noise_dithering_summary"
             android:title="@string/gliden64_hires_noise_dithering_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableDitheringQuantization"
             android:summary="@string/gliden64_dithering_quantization_summary"
             android:title="@string/gliden64_dithering_quantization_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_dithering_mode_rdram_default"
             android:entries="@array/gliden64_dithering_mode_rdram_entries"
             android:entryValues="@array/gliden64_dithering_mode_rdram_values"
             android:key="RdramImageDitheringMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_dithering_mode_rdram_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableLOD"
             android:title="@string/gliden64_enable_lod_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableHWLighting"
             android:title="@string/gliden64_enable_hw_lighting_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableCoverage"
             android:title="@string/gliden64_enable_coverage_title"
             android:summary="@string/gliden64_enable_coverage_summary"/>
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableClipping"
             android:title="@string/gliden64_enable_softclip_title"
             android:summary="@string/gliden64_enable_softclip_summary"/>
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableLegacyBlending"
             android:summary="@string/gliden64_enable_legacy_blending_summary"
             android:title="@string/gliden64_enable_legacy_blending_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableFragmentDepthWrite"
             android:summary="@string/gliden64_enable_fragment_depth_write_summary"
             android:title="@string/gliden64_enable_fragment_depth_write_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableInaccurateTextureCoordinates"
             android:summary="@string/gliden64_enable_fast_inaccurate_shaders_summary"
@@ -485,26 +485,26 @@
     <androidx.preference.PreferenceCategory
     android:key="categoryGliden642d"
     android:title="@string/gliden64_category_2d_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableNativeResTexrects"
             android:summary="@string/gliden64_enable_native_res_texrects_summary"
             android:title="@string/gliden64_enable_native_res_texrects_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_texrect_coords_default"
             android:entries="@array/gliden64_texrect_coords_entries"
             android:entryValues="@array/gliden64_texrect_coords_values"
             android:key="CorrectTexrectCoords"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_correct_texrect_coords_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_render_backgrounds_mode_default"
             android:entries="@array/gliden64_render_backgrounds_mode_entries"
             android:entryValues="@array/gliden64_render_backgrounds_mode_values"
             android:key="BackgroundsMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_render_backgrounds_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableTexCoordBounds_v2"
             android:summary="@string/gliden64_bound_texture_rectangle_coordinates_summary"
@@ -515,48 +515,48 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGliden64FrameBuffer"
         android:title="@string/gliden64_category_fb_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableFBEmulation"
             android:title="@string/gliden64_enable_fb_emulation_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_swap_frame_buffer_default"
             android:entries="@array/gliden64_swap_frame_buffer_entries"
             android:entryValues="@array/gliden64_swap_frame_buffer_values"
             android:key="BufferSwapMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_swap_frame_buffers_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_color_buffer_copy_to_RDRAM_default"
             android:entries="@array/gliden64_color_buffer_copy_to_RDRAM_entries"
             android:entryValues="@array/gliden64_color_buffer_copy_to_RDRAM_values"
             android:key="EnableCopyColorToRDRAM"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_color_buffer_copy_to_RDRAM_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableCopyAuxiliaryToRDRAM"
             android:title="@string/gliden64_enable_copy_auxiliary_to_RDRAM_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_depth_buffer_copy_to_RDRAM_default"
             android:entries="@array/gliden64_depth_buffer_copy_to_RDRAM_entries"
             android:entryValues="@array/gliden64_depth_buffer_copy_to_RDRAM_values"
             android:key="EnableCopyDepthToRDRAM"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_enable_copy_depth_to_RDRAM_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableCopyColorFromRDRAM"
             android:title="@string/gliden64_enable_color_buffer_from_RDRAM_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableN64DepthCompare"
             android:title="@string/gliden64_enable_n64_depth_compare_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="ForceDepthBufferClear"
             android:title="@string/gliden64_enable_force_depth_buffer_clear" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_use_native_resolution_factor_default"
             android:entries="@array/gliden64_use_native_resolution_factor_entries"
             android:entryValues="@array/gliden64_use_native_resolution_factor_values"
@@ -567,29 +567,29 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGliden64TextureFiltering"
         android:title="@string/gliden64_category_texture_filtering_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_texture_filter_default"
             android:entries="@array/gliden64_texture_filter_entries"
             android:entryValues="@array/gliden64_texture_filter_values"
             android:key="txFilterMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_tx_filter_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/gliden64_texture_enhancement_default"
             android:entries="@array/gliden64_texture_enhancement_entries"
             android:entryValues="@array/gliden64_texture_enhancement_values"
             android:key="txEnhancementMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_tx_enhancement_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txDeposterize"
             android:title="@string/gliden64_tx_deposterize_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="txFilterIgnoreBG"
             android:title="@string/gliden64_tx_filter_ignore_BG_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
+        <paulscode.android.mupen64plusae_mpn.preference.SeekBarPreference
             android:defaultValue="128"
             android:key="txCacheSize"
             android:title="@string/gliden64_tx_cache_size_title"
@@ -598,42 +598,42 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="MB" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txHiresEnable"
             android:title="@string/gliden64_tx_hi_res_enable_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txHiresFullAlphaChannel"
             android:title="@string/gliden64_tx_hi_res_full_alpha_channel_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txHresAltCRC"
             android:title="@string/gliden64_tx_hi_res_alt_crc_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="txCacheCompression"
             android:title="@string/gliden64_tx_cache_compression_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txForce16bpp"
             android:title="@string/gliden64_tx_force_16bpp_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txSaveCache"
             android:summary="@string/gliden64_tx_save_cache_summary"
             android:title="@string/gliden64_tx_save_cache_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txEnhancedTextureFileStorage"
             android:summary="@string/gliden64_tx_enhanced_texture_file_storage_summary"
             android:title="@string/gliden64_tx_enhanced_texture_file_storage_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txHiresTextureFileStorage"
             android:summary="@string/gliden64_tx_hires_texture_file_storage_summary"
             android:title="@string/gliden64_tx_hires_texture_file_storage_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txDump"
             android:summary="@string/gliden64_tx_dump_summary"
@@ -643,11 +643,11 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGliden64Gamma"
         android:title="@string/gliden64_category_gamma_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="ForceGammaCorrection"
             android:title="@string/gliden64_force_gamma_correction_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
+        <paulscode.android.mupen64plusae_mpn.preference.SeekBarPreference
             android:defaultValue="10"
             android:key="GammaCorrectionLevel"
             android:title="@string/gliden64_gamma_correction_level"
@@ -660,11 +660,11 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryAngrylion"
         android:title="@string/categoryAngrylion_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="ParallelMode"
             android:title="@string/angrylion_parallel_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
+        <paulscode.android.mupen64plusae_mpn.preference.SeekBarPreference
             android:defaultValue="1"
             android:key="WorkerThreads"
             android:title="@string/angrylion_num_workers_title"
@@ -673,33 +673,33 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="BusyLoop"
             android:title="@string/angrylion_busyloop_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/angrylion_vi_mode_default"
             android:entries="@array/angrylion_vi_mode_entries"
             android:entryValues="@array/angrylion_vi_mode_values"
             android:key="viMode"
             android:summary="@string/selectedValue"
             android:title="@string/angrylion_vi_mode_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/angrylion_vi_interpolation_default"
             android:entries="@array/angrylion_vi_interpolation_entries"
             android:entryValues="@array/angrylion_vi_interpolation_values"
             android:key="viInterpolation"
             android:summary="@string/selectedValue"
             android:title="@string/angrylion_vi_interpolation_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="viHideOverscan"
             android:title="@string/angrylion_hide_overscan_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="viIntegerScaling"
             android:title="@string/angrylion_vi_integer_scaling_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/angrylion_compatibility_mode_default"
             android:entries="@array/angrylion_compatibility_mode_entries"
             android:entryValues="@array/angrylion_compatibility_mode_values"
@@ -711,33 +711,33 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryParallel"
         android:title="@string/categoryParallel_title" >
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/parallel_upscaling_default"
             android:entries="@array/parallel_upscaling_entries"
             android:entryValues="@array/parallel_upscaling_values"
             android:key="parallelUpscaling"
             android:summary="@string/selectedValue"
             android:title="@string/parallel_upscaling_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="parallelSuperscaledReads"
             android:title="@string/parallel_superscaling_readbacks_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelSuperscaledDither"
             android:title="@string/parallel_superscaling_dithering_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="parallelSynchronousRDP"
             android:title="@string/parallel_synchronous_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/parallel_deinterlacing_default"
             android:entries="@array/parallel_deinterlacing_entries"
             android:entryValues="@array/parallel_deinterlacing_values"
             android:key="parallelDeinterlaceMode"
             android:summary="@string/selectedValue"
             android:title="@string/parallel_deinterlacing_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
+        <paulscode.android.mupen64plusae_mpn.preference.SeekBarPreference
             android:defaultValue="0"
             android:key="parallelCropOverscan"
             android:title="@string/parallel_overscan_crop_title"
@@ -746,41 +746,41 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelVIAA"
             android:title="@string/parallel_vi_antialiasing_title"
             android:summary="@string/parallel_vi_antialiasing_summary" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelDivot"
             android:title="@string/parallel_vi_divot_filter_title"
             android:summary="@string/parallel_vi_divot_filter_summary" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelGammaDither"
             android:title="@string/parallel_vi_gamma_dither_title"/>
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelVIBilerp"
             android:title="@string/parallel_vi_bilinear_scaling_title"/>
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelVIDither"
             android:title="@string/parallel_vi_dedither_title"/>
-        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
+        <paulscode.android.mupen64plusae_mpn.preference.CompatListPreference
             android:defaultValue="@string/parallel_downscale_default"
             android:entries="@array/parallel_downscale_entries"
             android:entryValues="@array/parallel_downscale_values"
             android:key="parallelDownScale"
             android:summary="@string/selectedValue"
             android:title="@string/parallel_downscale_title" />
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="parallelNativeTextLOD"
             android:title="@string/parallel_native_texture_lod_title"
             android:summary="@string/parallel_native_texture_lod_summary"/>
-        <paulscode.android.mupen64plusae-mpn.preference.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae_mpn.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="parallelNativeTextRECT"
             android:title="@string/parallel_native_res_text_rect_title"

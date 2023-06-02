@@ -18,7 +18,7 @@ android {
     buildFeatures.viewBinding = true
 
     defaultConfig {
-        applicationId = "org.mupen64plusae-mpn.v3.alpha"
+        applicationId = "org.mupen64plusae_mpn.v3.alpha"
     }
     buildTypes {
         release {
@@ -85,7 +85,7 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
-    namespace 'org.mupen64plusae-mpn.v3.alpha'
+    namespace 'org.mupen64plusae_mpn.v3.alpha'
 }
 
 dependencies {

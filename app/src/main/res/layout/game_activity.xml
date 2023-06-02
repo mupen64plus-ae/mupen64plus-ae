@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-        <paulscode.android.mupen64plusae-mpn.game.GameSurface
+        <paulscode.android.mupen64plusae_mpn.game.GameSurface
             android:id="@+id/shaderSurface"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,7 +20,7 @@
         <LinearLayout android:orientation="vertical"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
-            <paulscode.android.mupen64plusae-mpn.game.FpsOverlay
+            <paulscode.android.mupen64plusae_mpn.game.FpsOverlay
                 android:id="@+id/fpsOverlay"
                 android:layout_weight="3"
                 android:layout_height="0dp"
@@ -29,7 +29,7 @@
                 android:focusableInTouchMode="false"
                 android:background="@drawable/overlay_color"/>
 
-            <paulscode.android.mupen64plusae-mpn.game.GameOverlay
+            <paulscode.android.mupen64plusae_mpn.game.GameOverlay
                 android:id="@+id/gameOverlay"
                 android:layout_weight="4"
                 android:layout_height="0dp"
@@ -48,7 +48,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true" >
 
-        <paulscode.android.mupen64plusae-mpn.GameSidebar
+        <paulscode.android.mupen64plusae_mpn.GameSidebar
             android:id="@+id/gameSidebar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
