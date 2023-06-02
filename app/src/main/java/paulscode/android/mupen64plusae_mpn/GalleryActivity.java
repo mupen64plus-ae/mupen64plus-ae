@@ -18,7 +18,7 @@
  *
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae_mpn;
+package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.Context;
@@ -66,7 +66,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.mupen64plusae_mpn.v3.alpha.R;
+import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -75,24 +75,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import paulscode.android.mupen64plusae_mpn.GameSidebar.GameSidebarActionHandler;
-import paulscode.android.mupen64plusae_mpn.dialog.ConfirmationDialog;
-import paulscode.android.mupen64plusae_mpn.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae_mpn.dialog.Popups;
-import paulscode.android.mupen64plusae_mpn.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae_mpn.jni.CoreService;
-import paulscode.android.mupen64plusae_mpn.persistent.AppData;
-import paulscode.android.mupen64plusae_mpn.persistent.ConfigFile;
-import paulscode.android.mupen64plusae_mpn.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae_mpn.task.ExtractAssetsOrCleanupTask;
-import paulscode.android.mupen64plusae_mpn.task.GalleryRefreshTask;
-import paulscode.android.mupen64plusae_mpn.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
-import paulscode.android.mupen64plusae_mpn.task.SyncProgramsJobService;
-import paulscode.android.mupen64plusae_mpn.util.CountryCode;
-import paulscode.android.mupen64plusae_mpn.util.DisplayWrapper;
-import paulscode.android.mupen64plusae_mpn.util.FileUtil;
-import paulscode.android.mupen64plusae_mpn.util.LocaleContextWrapper;
-import paulscode.android.mupen64plusae_mpn.util.Notifier;
+import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.LocaleDialog;
+import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.jni.CoreService;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.task.ExtractAssetsOrCleanupTask;
+import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
+import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
+import paulscode.android.mupen64plusae.task.SyncProgramsJobService;
+import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.DisplayWrapper;
+import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
+import paulscode.android.mupen64plusae.util.Notifier;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
         GalleryRefreshFinishedListener

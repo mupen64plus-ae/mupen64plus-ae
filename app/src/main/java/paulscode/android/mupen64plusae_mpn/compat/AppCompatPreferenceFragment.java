@@ -1,4 +1,4 @@
-package paulscode.android.mupen64plusae_mpn.compat;
+package paulscode.android.mupen64plusae.compat;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener;
 
-import org.mupen64plusae_mpn.v3.alpha.R;
+import org.mupen64plusae.v3.alpha.R;
 
 public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 {
