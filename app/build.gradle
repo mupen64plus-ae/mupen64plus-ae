@@ -18,7 +18,7 @@ android {
     buildFeatures.viewBinding = true
 
     defaultConfig {
-        applicationId = "org.mupen64plusae.v3.alpha"
+        applicationId = "org.mupen64plusae-mpn.v3.alpha"
     }
     buildTypes {
         release {
@@ -41,8 +41,7 @@ android {
 		
         android.applicationVariants.all { variant ->
             variant.outputs.all { output ->
-                def builtType = variant.buildType.name
-                outputFileName = "Mupen64PlusAE-${builtType}.apk"
+                outputFileName = "Mupen64PlusAE-MPN.apk"
             }
         }
     }
@@ -86,7 +85,7 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
-    namespace 'org.mupen64plusae.v3.alpha'
+    namespace 'org.mupen64plusae-mpn.v3.alpha'
 }
 
 dependencies {

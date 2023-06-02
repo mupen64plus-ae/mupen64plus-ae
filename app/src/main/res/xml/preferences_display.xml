@@ -15,14 +15,14 @@
             android:summary="@string/myKey_summary"
             ...
             />
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
+        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
             ...
             android:entries="@array/myKey_entries"
             android:entryValues="@array/myKey_values"
             android:defaultValue="@string/myKey_default"
             ...
             />
-        <paulscode.android.mupen64plusae.MyCustomPreference
+        <paulscode.android.mupen64plusae-mpn.MyCustomPreference
             ...
             mupen64:myAttribute="@string/myKey_myAttribute"
             ...
@@ -46,14 +46,14 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
         android:defaultValue="@string/displayResolution_default"
         android:entries="@array/displayResolution_entries"
         android:entryValues="@array/displayResolution_values"
         android:key="displayResolution"
         android:summary="@string/selectedValue"
         android:title="@string/displayResolution_title" />
-    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+    <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
         android:defaultValue="100"
         android:key="displayZoomSeek"
         android:title="@string/displayZoom_title"
@@ -61,7 +61,7 @@
         mupen64:minimumValue="70"
         mupen64:stepSize="1"
         mupen64:units="%" />
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
         android:defaultValue="@string/displayScaling_default"
         android:entries="@array/displayScaling_entries"
         android:entryValues="@array/displayScaling_values"
@@ -69,7 +69,7 @@
         android:summary="@string/selectedValue"
         android:title="@string/displayScaling_title" />
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
         android:defaultValue="@string/displayOrientation_default"
         android:entries="@array/displayOrientation_entries"
         android:entryValues="@array/displayOrientation_values"
@@ -83,7 +83,7 @@
         android:summary="@string/displayImmersiveMode_summary"
         android:title="@string/displayImmersiveMode_title" />
 
-    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+    <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
         android:defaultValue="80"
         android:key="displayActionBarTransparency"
         android:title="@string/displayActionBarTransparency_title"
@@ -92,7 +92,7 @@
         mupen64:stepSize="1"
         mupen64:units="%" />
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
         android:defaultValue="@string/displayFps_default"
         android:entries="@array/displayFps_entries"
         android:entryValues="@array/displayFps_values"
@@ -112,7 +112,7 @@
         android:summary="@string/gliden64_hybrid_filter_summary"
         android:title="@string/gliden64_hybrid_filter_title" />
 
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
         android:defaultValue="@string/videoHardwareType_default"
         android:entries="@array/videoHardwareType_entries"
         android:entryValues="@array/videoHardwareType_values"

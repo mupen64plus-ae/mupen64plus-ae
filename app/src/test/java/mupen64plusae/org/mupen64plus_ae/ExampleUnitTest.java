@@ -1,4 +1,4 @@
-package mupen64plusae.org.mupen64plus_ae;
+package mupen64plusae-mpn.org.mupen64plus_ae;
 
 import org.junit.Test;
 

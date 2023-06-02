@@ -15,14 +15,14 @@
             android:summary="@string/myKey_summary"
             ...
             />
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
+        <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
             ...
             android:entries="@array/myKey_entries"
             android:entryValues="@array/myKey_values"
             android:defaultValue="@string/myKey_default"
             ...
             />
-        <paulscode.android.mupen64plusae.MyCustomPreference
+        <paulscode.android.mupen64plusae-mpn.MyCustomPreference
             ...
             mupen64:myAttribute="@string/myKey_myAttribute"
             ...
@@ -52,7 +52,7 @@
         android:key="showRecentlyPlayed"
         android:summary="@string/showRecentlyPlayed_summary"
         android:title="@string/showRecentlyPlayed_title" />
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
+    <paulscode.android.mupen64plusae-mpn.preference.CompatListPreference
         android:defaultValue="@string/gallerySortingMethod_default"
         android:entries="@array/gallerySortingMethod_entries"
         android:entryValues="@array/gallerySortingMethod_values"
@@ -64,7 +64,7 @@
         android:key="showFullNames"
         android:summary="@string/showFullNames_summary"
         android:title="@string/showFullNames_title" />
-    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+    <paulscode.android.mupen64plusae-mpn.preference.SeekBarPreference
         android:defaultValue="100"
         android:key="libraryArtScale"
         android:title="@string/libraryScale_title"
