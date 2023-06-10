@@ -48,7 +48,7 @@ public class NativeInput
      * Initialize input-android plugin.
      */
     static native void init();
-    
+
     /**
      * Set the button/axis state of a controller.
      * 
@@ -57,8 +57,9 @@ public class NativeInput
      * @param axisX The analog value of the x-axis, in the range [-80,80].
      * @param axisY The analog value of the y-axis, in the range [-80,80].
      * @param isDigital True if input cones frim a keyboard
+     * @param inputDeviceDeadzone The deadzone of the given input device
      */
-    static native void setState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital );
+    static native void setState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital, double inputDeviceDeadzone );
     
     /**
      * Set the plugged state and pak type of a controller.

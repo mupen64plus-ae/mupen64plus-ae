@@ -68,6 +68,9 @@ public abstract class AbstractController
         
         /** The fractional value of the analog-y axis, between -1 and 1, inclusive. */
         float axisFractionY = 0;
+
+        /** Deadzone of the input device */
+        float inputDeviceDeadzone = 0.0f;
     }
     
     // Constants must match EButton listing in plugin.h! (input-sdl plug-in)
@@ -150,7 +153,7 @@ public abstract class AbstractController
      */
     void notifyChanged(boolean isDigital)
     {
-        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, mState.axisFractionX, mState.axisFractionY, isDigital );
+        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, mState.axisFractionX, mState.axisFractionY, isDigital, mState.inputDeviceDeadzone );
     }
     
     /**

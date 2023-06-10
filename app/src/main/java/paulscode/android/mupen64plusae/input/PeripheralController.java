@@ -276,7 +276,6 @@ public class PeripheralController extends AbstractController implements
             // Calculate the net position of the analog stick
             float rawX = mSensitivityFractionX * ( mStrengthXpos - mStrengthXneg );
             float rawY = mSensitivityFractionY * ( mStrengthYpos - mStrengthYneg );
-            float magnitude = (float) Math.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
             
             // Update controller state
             float deadzone = mDeadzoneFraction;
@@ -301,6 +300,7 @@ public class PeripheralController extends AbstractController implements
 
             mState.axisFractionX = rawX;
             mState.axisFractionY = rawY;
+            mState.inputDeviceDeadzone = deadzone;
 
         } else if(mPlayerNumber == 1) {
             // Button must be held for some inputs to prevent accidental presses

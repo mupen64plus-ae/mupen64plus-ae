@@ -482,11 +482,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
         }
     }
 
-    public void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital )
+    public void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital, double inputDeviceDeadzone )
     {
         if(mCoreService != null)
         {
-            mCoreService.setControllerState( controllerNum, buttons, axisX, axisY, isDigital );
+            mCoreService.setControllerState( controllerNum, buttons, axisX, axisY, isDigital, inputDeviceDeadzone );
         }
     }
 

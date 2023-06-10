@@ -594,7 +594,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 mState.axisFractionY = -p * dY / displacement * (mInvertYAxis ? -1.0f:1.0f);
 
                 // Scale to a square deadzone of 0.07 to simulate a real N64 controller
-                float deadzone = 0.07f;
+                float deadzone = 0.082f;
                 // Use a square deadzone to simulate original N64 controllers more closely
                 if (Math.abs(mState.axisFractionX) > deadzone) {
                     mState.axisFractionX = Math.signum(mState.axisFractionX)*(Math.abs(mState.axisFractionX) - deadzone) / (1.0f - deadzone);
@@ -606,6 +606,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                 } else {
                     mState.axisFractionY = 0;
                 }
+
+                mState.inputDeviceDeadzone = deadzone;
             }
             
             // Analog state changed

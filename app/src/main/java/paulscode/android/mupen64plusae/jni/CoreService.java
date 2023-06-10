@@ -433,10 +433,10 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         mCoreInterface.emuGameShark(pressed);
     }
 
-    void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital )
+    void setControllerState( int controllerNum, boolean[] buttons, double axisX, double axisY, boolean isDigital, double inputDeviceDeadzone )
     {
         if (!mUseRaphnetDevicesIfAvailable) {
-            NativeInput.setState( controllerNum, buttons, axisX, axisY, isDigital );
+            NativeInput.setState( controllerNum, buttons, axisX, axisY, isDigital, inputDeviceDeadzone );
         }
     }
 

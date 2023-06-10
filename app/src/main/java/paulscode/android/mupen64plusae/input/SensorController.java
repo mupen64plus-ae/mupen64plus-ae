@@ -173,6 +173,8 @@ public class SensorController extends AbstractController implements SensorEventL
             mState.axisFractionY = 0;
         }
 
+        mState.inputDeviceDeadzone = mDeadZone;
+
         notifyChanged(false);
         mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
     }

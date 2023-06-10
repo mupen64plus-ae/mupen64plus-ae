@@ -110,6 +110,7 @@ static double androidAnalogY[4];
 static bool isAnalogDigital[4];
 static int pluginInitialized = 0;
 static CONTROL* controllerInfos = nullptr;
+static double inputDeviceDeadzone = 0.0;
 
 static const double maxAxis = 85.0;
 
@@ -193,7 +194,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
 }
 
 extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
-        jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isDigital)
+        jdouble mp64pXAxis, jdouble mp64pYAxis, jboolean isDigital, jdouble providedInputDeviceDeadzone)
 {
     jboolean* elements = env->GetBooleanArrayElements(mp64pButtons, nullptr);
     jsize len = env->GetArrayLength(mp64pButtons);
@@ -211,6 +212,7 @@ extern "C" JNIEXPORT void Java_paulscode_android_mupen64plusae_jni_NativeInput_s
     androidAnalogX[controllerNum] = mp64pXAxis;
     androidAnalogY[controllerNum] = mp64pYAxis;
     isAnalogDigital[controllerNum] = isDigital;
+    inputDeviceDeadzone = providedInputDeviceDeadzone;
 }
 
 //*****************************************************************************
@@ -324,14 +326,19 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
 // Credit: MerryMage
 void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
 {
-    //scale to {-84 ... +84}
-    double ax = inputX * maxAxis;
-    double ay = inputY * maxAxis;
+    double deadzone = inputDeviceDeadzone * maxAxis; //assuming deadzone from Java is something like 0.07 or 7% -- this needs to be converted to a control stick position count (so some fraction of maxAxis)
+        
+    //determine radius of outer deadzone
+    double maxRadiusOuterDeadzone = 2.0 / std::sqrt(2.0) * (69.0 / maxAxis * (maxAxis - deadzone) + deadzone);
+        
+    //scale to {-maxRadiusOuterDeadzone ... +maxRadiusOuterDeadzone}
+    double ax = inputX * maxRadiusOuterDeadzone;
+    double ay = inputY * maxRadiusOuterDeadzone;
 
     // Crop to a circle
     double len = std::sqrt(ax*ax+ay*ay);
-    if (len > maxAxis) {
-        len = maxAxis / len;
+    if (len > maxRadiusOuterDeadzone) {
+        len = maxRadiusOuterDeadzone / len;
         ax *= len;
         ay *= len;
     }
@@ -343,11 +350,19 @@ void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
         double edgey = copysign(std::min(std::abs(edgex * slope), maxAxis / (1.0 / std::abs(slope) + 16.0 / 69.0)), ay);
         edgex = edgey / slope;
 
-        double scale = std::sqrt(edgex*edgex+edgey*edgey) / maxAxis;
+        double scale = std::sqrt(edgex*edgex+edgey*edgey) / maxRadiusOuterDeadzone;
         ax *= scale;
         ay *= scale;
     }
-
+    
+    //keep cardinal input within positive and negative bounds of maxAxis
+    if(std::abs(ax) > maxAxis) ax = copysign(maxAxis, ax);
+    if(std::abs(ay) > maxAxis) ay = copysign(maxAxis, ay);
+        
+    //prevent floating point precision error keeping values lower than they should be prior to truncation
+    ax = copysign(std::abs(ax) + 1e-03, ax);
+    ay = copysign(std::abs(ay) + 1e-03, ay);
+        
     outputX = static_cast<int>(ax);
     outputY = static_cast<int>(ay);
 }
