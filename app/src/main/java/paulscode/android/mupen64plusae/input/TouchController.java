@@ -580,41 +580,32 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Compute the pythagorean displacement of the stick
             int dX = point.x;
             int dY = point.y;
-            float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
-            
-            // Fraction of full-throttle, between 0 and 1, inclusive
-            float p = mTouchMap.getAnalogStrength( displacement );
 
-            if (displacement == 0.0) {
-                mState.axisFractionX = 0.0f;
-                mState.axisFractionY = 0.0f;
+            // Store the axis values in the super fields (screen y is inverted)
+            mState.axisFractionX =  dX * (mInvertXAxis ? -1.0f:1.0f);
+            mState.axisFractionY = -dY * (mInvertYAxis ? -1.0f:1.0f);
+
+            // Scale to a square deadzone of 0.07 to simulate a real N64 controller
+            float deadzone = 0.082f * 360.0f; // Multiplied by analogMaximum defined in TouchMap.java
+            // Use a square deadzone to simulate original N64 controllers more closely
+            if (Math.abs(mState.axisFractionX) > deadzone) {
+                mState.axisFractionX = Math.signum(mState.axisFractionX)*(Math.abs(mState.axisFractionX) - deadzone) / (1.0f - deadzone);
             } else {
-                // Store the axis values in the super fields (screen y is inverted)
-                mState.axisFractionX = p * dX / displacement * (mInvertXAxis ? -1.0f:1.0f);
-                mState.axisFractionY = -p * dY / displacement * (mInvertYAxis ? -1.0f:1.0f);
-
-                // Scale to a square deadzone of 0.07 to simulate a real N64 controller
-                float deadzone = 0.082f;
-                // Use a square deadzone to simulate original N64 controllers more closely
-                if (Math.abs(mState.axisFractionX) > deadzone) {
-                    mState.axisFractionX = Math.signum(mState.axisFractionX)*(Math.abs(mState.axisFractionX) - deadzone) / (1.0f - deadzone);
-                } else {
-                    mState.axisFractionX = 0;
-                }
-                if (Math.abs(mState.axisFractionY) > deadzone) {
-                    mState.axisFractionY = Math.signum(mState.axisFractionY)*(Math.abs(mState.axisFractionY) - deadzone) / (1.0f - deadzone);
-                } else {
-                    mState.axisFractionY = 0;
-                }
-
-                mState.inputDeviceDeadzone = deadzone;
+                mState.axisFractionX = 0;
             }
-            
-            // Analog state changed
-            return true;
+            if (Math.abs(mState.axisFractionY) > deadzone) {
+                mState.axisFractionY = Math.signum(mState.axisFractionY)*(Math.abs(mState.axisFractionY) - deadzone) / (1.0f - deadzone);
+            } else {
+                mState.axisFractionY = 0;
+            }
+
+            mState.inputDeviceDeadzone = deadzone / 360.0f;
         }
-        
-        // Analog state did not change
-        return false;
+            
+        // Analog state changed
+        return true;
     }
+        
+    // Analog state did not change
+    return false;
 }
