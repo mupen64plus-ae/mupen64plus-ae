@@ -580,11 +580,11 @@ public class TouchController extends AbstractController implements OnTouchListen
             int dY = point.y;
 
             // Store the axis values in the super fields (screen y is inverted)
-            mState.axisFractionX = dX * (mInvertXAxis ? -1.0f : 1.0f);
-            mState.axisFractionY = -dY * (mInvertYAxis ? -1.0f : 1.0f);
+            mState.axisFractionX = -dX * (mInvertXAxis ? -1.0f : 1.0f);
+            mState.axisFractionY = dY * (mInvertYAxis ? -1.0f : 1.0f);
 
-            // Scale to a square deadzone of 0.07 to simulate a real N64 controller
-            float deadzone = 0.082f * 360.0f; // Multiplied by analogMaximum defined in TouchMap.java
+            // Scale to a square deadzone of 0.082 (multiplied by analogMaximum defined in TouchMap.java) to simulate a real N64 controller
+            float deadzone = 0.082f * 360.0f;
             // Use a square deadzone to simulate original N64 controllers more closely
             if (Math.abs(mState.axisFractionX) > deadzone) {
                 mState.axisFractionX = Math.signum(mState.axisFractionX) * (Math.abs(mState.axisFractionX) - deadzone) / (1.0f - deadzone);
