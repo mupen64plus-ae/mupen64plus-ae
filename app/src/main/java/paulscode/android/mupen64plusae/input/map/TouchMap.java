@@ -244,7 +244,7 @@ public class TouchMap
         originalAnalogX = 0;
         originalAnalogY = 0;
         analogPadding = 32;
-        analogDeadzone = 2;
+        analogDeadzone = 0;
         analogMaximum = 360;
 
         //Defaults in case skin.ini is not present
@@ -475,20 +475,6 @@ public class TouchMap
         if( analogBackImage != null )
             return new Rect( analogBackImage.drawRect );
         return new Rect(0, 0, 0, 0);
-    }
-    
-    /**
-     * Gets the analog strength, accounting for deadzone and motion limits.
-     *
-     * @param displacement The Pythagorean displacement of the analog stick, in pixels.
-     *
-     * @return The analog strength, between 0 and 1, inclusive.
-     */
-    public float getAnalogStrength( float displacement )
-    {
-        displacement /= ( analogBackScaling * scale );
-        float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
-        return Utility.clamp( p, 0.0f, 1.0f );
     }
 
     /**
