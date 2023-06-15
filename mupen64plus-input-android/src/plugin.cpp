@@ -326,9 +326,9 @@ extern "C" EXPORT void CALL InitiateControllers(CONTROL_INFO controlInfo)
 // Credit: MerryMage
 void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
 {
-    double deadzone = inputDeviceDeadzone * maxAxis; //assuming deadzone from Java is something like 0.07 or 7% -- this needs to be converted to a control stick position count (so some fraction of maxAxis)
+    double deadzone = inputDeviceDeadzone * maxAxis; //get deadzone control stick position count from product with maxAxis
         
-    //determine radius of outer deadzone
+    //determine max radius of outer deadzone
     double maxRadiusOuterDeadzone = 2.0 / std::sqrt(2.0) * (69.0 / maxAxis * (maxAxis - deadzone) + deadzone);
         
     //scale to {-maxRadiusOuterDeadzone ... +maxRadiusOuterDeadzone}
@@ -343,7 +343,7 @@ void simulateOctagon(double inputX, double inputY, int& outputX, int& outputY)
         ay *= len;
     }
 
-    //bound diagonals to an octagonal range {-68 ... +68}
+    //bound diagonals to an octagonal range {-69 ... +69}
     if(ax != 0.0 && ay != 0.0) {
         double slope = ay / ax;
         double edgex = copysign(maxAxis / (std::abs(slope) + 16.0 / 69.0), ax);
