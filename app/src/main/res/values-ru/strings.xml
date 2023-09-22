@@ -26,65 +26,85 @@
 
    <!-- In-Game Menu -->
    <string name="menuItem_toggleSpeed">Скорость %1$d %%</string>
-   <string name="menuItem_slotSave">Сохранить в ячейку</string>
-   <string name="menuItem_slotLoad">Загрузить из ячейки</string>
-   <string name="menuItem_setSlot">Номер ячейки %1$d</string>
-   <string name="menuItem_selectSlot">Выбери номер ячейки</string>
+   <string name="menuItem_slotSave">Сохранить в слот</string>
+   <string name="menuItem_slotLoad">Загрузить из слота</string>
+   <string name="menuItem_setSlot">Слот %1$d</string>
+   <string name="menuItem_selectSlot">Выберите слот</string>
    <string name="menuItem_fileSave">Сохранить в файл…</string>
    <string name="menuItem_fileLoad">Загрузить из файла…</string>
-   <string name="menuItem_fileLoadAutoSave">Загрузить из автосохранения…</string>
+   <string name="menuItem_fileLoadAutoSave">Загрузить автосохранение…</string>
    <string name="menuItem_screenshot">Скриншот</string>
    <string name="menuItem_setSpeed">Скорость игры</string>
-   <string name="menuItem_enableFramelimiter">Синхр. аудио</string>
-   <string name="menuItem_disableFramelimiter">Десинхр. аудио</string>
+   <string name="menuItem_enableFramelimiter">Синхр. звук</string>
+   <string name="menuItem_disableFramelimiter">Рассинхр. звук</string>
    <string name="menuItem_player_one">Игрок 1</string>
    <string name="menuItem_player_two">Игрок 2</string>
    <string name="menuItem_player_three">Игрок 3</string>
    <string name="menuItem_player_four">Игрок 4</string>
-   <string name="menuItem_paks">Профили контроллера</string>
+   <string name="menuItem_paks">Расширения контроллера</string>
    <!-- capitalize since trademark -->
-   <string name="menuItem_pak_empty">Пусто</string>
+   <string name="menuItem_pak_empty">Нет</string>
    <!-- capitalize since trademark -->
-   <string name="menuItem_pak_mem">Memory Pak (карта памяти)</string>
+   <string name="menuItem_pak_mem">Memory Pak (модуль памяти)</string>
    <!-- capitalize since trademark -->
-   <string name="menuItem_pak_rumble">Rumble Pak (вибро)</string>
-   <string name="menuItem_setIme">Сменить IME</string>
+   <string name="menuItem_pak_rumble">Rumble Pak (модуль виброотдачи)</string>
+    <!-- capitalize since trademark -->
+   <string name="menuItem_pak_transfer">Transfer Pak (модуль обмена)</string>
+   <string name="menuItem_paks_transfer">Модули обмена</string>
+   <string name="menuItem_paks_transfer_player1_rom">Gameboy ROM Игрока 1</string>
+   <string name="menuItem_paks_transfer_player1_ram">Gameboy RAM Игрока 1</string>
+   <string name="menuItem_paks_transfer_player2_rom">Gameboy ROM Игрока 2</string>
+   <string name="menuItem_paks_transfer_player2_ram">Gameboy RAM Игрока 2</string>
+   <string name="menuItem_paks_transfer_player3_rom">Gameboy ROM Игрока 3</string>
+   <string name="menuItem_paks_transfer_player3_ram">Gameboy RAM Игрока 3</string>
+   <string name="menuItem_paks_transfer_player4_rom">Gameboy ROM Игрока 4</string>
+   <string name="menuItem_paks_transfer_player4_ram">Gameboy RAM Игрока 4</string>
+   <string name="menuItem_setIme">Выбор IME</string>
    <string name="menuItem_exit">Выход</string>
 
    <!-- Input Mapping Activity -->
    <string name="menuItem_deadzone">Мёртвая зона</string>
+   <string name="menuItem_auto">Авто</string>
    <string name="menuItem_sensitivity">Чувствительность</string>
    <string name="menuItem_sensitivity_x">Чувствительность оси Х</string>
    <string name="menuItem_sensitivity_y">Чувствительность оси Y</string>
-   <string name="menuItem_unmapAll">сбросить весь маппинг</string>
+   <string name="menuItem_unmapAll">Отвязать все</string>
 
    <!-- Menu Activity -->
-   <string name="menuItem_search">Искать</string>
+   <string name="menuItem_search">Поиск</string>
    <string name="menuItem_play">Играть</string>
-   <string name="menuItem_refreshRoms">Обновить РОМы</string>
+   <string name="menuItem_refreshRoms">Обновить игры</string>
    <string name="menuItem_settings">Настройки</string>
    <string name="menuItem_globalSettings">Глобальные настройки</string>
-   <string name="menuItem_sensorConfiguration">Конфигурации сенсора</string>
+   <string name="menuItem_sensorConfiguration">Конфигурация сенсора</string>
+   <string name="menuItem_buttonsConfiguration">Конфигурация кнопок</string>
    <string name="menuItem_profiles">Профили</string>
+   <string name="menuItem_emulationProfiles">Эмуляция</string>
+   <string name="menuItem_touchscreenProfiles">Тачскрин</string>
+   <string name="menuItem_controllerProfiles">Контроллер</string>
+   <string name="menuItem_select_profiles">Выбор профилей</string>
    <string name="menuItem_help">Помощь</string>
-   <string name="menuItem_faq">Вопросы-ответы</string>
-   <string name="menuItem_helpForum">Форум помощи</string>
+   <string name="menuItem_faq">Вопрос-ответ</string>
+   <string name="menuItem_helpForum">Поддержка на форуме</string>
    <string name="menuItem_controllerDiagnostics">Диагностика контроллера</string>
    <string name="menuItem_reportBug">Сообщить об ошибке</string>
-   <string name="menuItem_about">Информация</string>
+   <string name="menuItem_about">О приложении</string>
    <string name="menuItem_credits">Разработчики</string>
    <string name="menuItem_appVersion">Версия приложения</string>
-   <string name="menuItem_logcat">Просмотр логов</string>
-   <string name="menuItem_hardwareInfo">Системная информация</string>
+   <string name="menuItem_logcat">Просмотр лога</string>
+   <string name="menuItem_hardwareInfo">Сведения о системе</string>
    <string name="menuItem_Tools">Инструменты</string>
-   <string name="menuItem_Extract">Добавить текстурный пак</string>
+   <string name="menuItem_Extract">Загрузить пакет текстур</string>
+   <string name="menuItem_Clear">Удалить пакет текстур</string>
+   <string name="menuItem_ClearShaderCache">Очистить кэш шейдеров</string>
+   <string name="menuItem_ConfirmationClearShaderCache">Вы действительно хотите очистить кэш шейдеров?</string>
    <string name="menuItem_localeOverride">Язык</string>
 
    <!-- ManageProfilesActivity -->
    <string name="menuItem_new">Новый</string>
-   <string name="menuItem_hideBuiltins">Спрятать встроенные модули</string>
-   <string name="menuItem_showBuiltins">Показать встроенные модули</string>
-   <string name="popup_titleBuiltin">%1$s (встроенные модули)</string>
+   <string name="menuItem_hideBuiltins">Скрывать встроенные</string>
+   <string name="menuItem_showBuiltins">Показывать встроенные</string>
+   <string name="popup_titleBuiltin">%1$s (встроенные)</string>
    <string name="popup_titleCustom">%1$s</string>
    <string name="profile_name_cannot_be_empty">Имя не может быть пустым</string>
    <string name="profile_name_cannot_contain_brackets">Имя не может содержать скобки</string>
@@ -92,19 +112,19 @@
    <string name="profile_manage_profiles">Управление профилями</string>
 
     <!-- Popup Dialogs -->
-    <string name="popup_faq">Mupen64Plus разработано и поддерживается добровольцами.<small>\n\nЧтобы исправить ошибки в графике, попробуйте сменить <i>видео плагин</i>.\n\nЧтобы исправить лаги, попробуйте сменить <i>пропуск кадров</i> или <i> видео плагин</i>.\n\nПри незапускающихся ромах, попробуйте вначале разархивировать их, или другую версию рома.\n\nПри проблемах сенсорного упавления, попробуйте сменить <i>маштаб кнопок</i> или <i>расположение кнопок</i>.\n\nПри других проблемах, если вы всё ещё застряли, пожалуйста нажните кнопку <i>вопросы-ответы</i> ниже.  Для неигровых багов, нажмите кнопку <i>Сообщить об ошибке</i> ниже.  Мы отвечаем на большинство постов за 24 часа.  Честно :)).\n\n</small>Спасибо за помощь в улучшении приложения!</string>
+    <string name="popup_faq">Mupen64Plus AE разрабатывается и поддерживается на добровольной основе.<small>\n\nДля исправления проблем с графикой попробуйте сменить <i>видеоплагин</i>.\n\nПри просадках скорости настройте <i>пропуск кадров</i> или смените <i>видеоплагин</i>.\n\nДля решения проблем с запуском игр извлеките их из архивов или перекачайте образы игр.\n\nПри неполадках с сенсорным управлением попробуйте настроить <i>расположение</i> или <i>размер кнопок</i>.\n\nЕсли ничего не помогло или возникли другие проблемы, пожалуйста, нажмите кнопку <i>Вопрос-ответ</i>. При ошибках, не связанных с играми нажмите кнопку <i>Сообщить об ошибке</i>. На большинство постов мы отвечаем в течение 24 часов.\n\n</small>Благодарим за помощь по улучшению приложения!</string>
     <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
 
    <!-- Lists -->
-   <string name="listItem_edit">Изменить</string>
+   <string name="listItem_edit">Редактировать</string>
    <string name="listItem_rename">Переименовать</string>
-   <string name="listItem_copy">Скопировать</string>
+   <string name="listItem_copy">Копировать</string>
    <string name="listItem_delete">Удалить</string>
-   <string name="listItem_disabled">(Отключено)</string>
+   <string name="listItem_disabled">(Откл.)</string>
 
    <!-- ManageProfilesActivity Name/Comment Dialog -->
    <string name="hint_profileName">Имя профиля</string>
-   <string name="hint_profileComment">Описание (не обязательно)</string>
+   <string name="hint_profileComment">Описание (необязательно)</string>
 
    <!-- ************************************************************************** -->
    <!-- Toast Messages -->
@@ -113,16 +133,22 @@
 
 
    <!-- Something happening (typically use '-ing' and '…') -->
-   <string name="toast_loadingSlot">Слот загрузки %1$d…</string>
-   <string name="toast_savingSlot">Слот сохранения %1$d…</string>
+   <string name="toast_loadingSlot">Загрузка из слота %1$d…</string>
+   <string name="toast_savingSlot">Сохранение в слот %1$d…</string>
+   <string name="toast_movingSlot">Перемещение в слот %1$d…</string>
    <string name="toast_loadingFile">Загрузка %1$s…</string>
    <string name="toast_savingFile">Сохранение %1$s…</string>
    <string name="toast_overwritingFile">Перезапись %1$s…</string>
    <string name="toast_savingScreenshot">Сохранение скриншота…</string>
    <string name="toast_canceling">Отмена…</string>
-   <string name="toast_pleaseWait">Пожалуйста подождите…</string>
+   <string name="toast_pleaseWait">Пожалуйста, подождите…</string>\
+   <string name="toast_paused">Пауза…</string>
+   <string name="toast_running">Выполняется…</string>
+   <string name="toast_shutting_down">Сохранение кэша текстур…</string>
+   <string name="toast_not_done_shutting_down">Сохранение кэша текстур. Пожалуйста, подождите</string>
+   
    <!-- Something happened (use '.') -->
-   <string name="toast_nativeMainFailure07">Ошибка открытия рома для чтения.</string>
+   <string name="toast_nativeMainFailure07">Не удалось прочитать образ игры.</string>
    <string name="toast_sdInaccessible">Данные приложения отсутствуют, попытка перезагрузки.</string>
 
    <!-- ************************************************************************** -->
@@ -134,133 +160,219 @@
 
    <!-- Actions (simply launch an action, aren't related to persistent data) -->
    <string name="actionResume_title">Продолжить</string>
-   <string name="actionResume_summary">Непредсказуемо при использовании читов</string>
-   <string name="actionStart_title">Старт</string>
-   <string name="actionRemove_title">Убрать</string>
-   <string name="actionRemove_summary">Убрать из библиотеки</string>
+   <string name="actionResume_summary">Запуск с последнего автосохранения</string>
+   <string name="actionStart_title">Запустить</string>
+   <string name="actionStart_summary">Перезапуск игры</string>
+   <string name="actionConnectNetplay_title">Подключиться к netplay</string>
+   <string name="actionConnectNetplay_summary">Подключение к серверу netplay для данной игры.</string>
+   <string name="actionStartNetplay_title">Сервер netplay</string>
+   <string name="actionStartNetplay_summary">Создать netplay-сервер для данной игры.</string>
+   <string name="actionRemove_title">Удалить</string>
+   <string name="actionRemove_summary">Удалить из библиотеки</string>
+   <string name="actionCreateShortcut_title">Создать ярлык</string>
+   <string name="actionCreateShortcut_summary">Добавить ярлык игры в лаунчер приложений</string>
    <string name="actionWiki_title">Вики</string>
-   <string name="actionWiki_summary">Сообщество этой игры</string>
+   <string name="actionWiki_summary">Помощь сообщества по игре</string>
    <string name="actionReloadAssets_title">Перезагрузка ресурсов приложения</string>
-   <string name="actionReloadAssets_summary">НЕ затрагивает пользовательские настройки, ромы, игровые сохранения или других пользовательские данные</string>
-   <string name="actionResetUserPrefs_title">Умолчания</string>
-   <string name="actionResetUserPrefs_summary">Восстановить умолчания глобальных настроек</string>
-   <string name="actionResetUserPrefs_popupMessage">Вернуть все установки глобальных настроек к умолчаниям?</string>
-   <string name="actionResetGamePrefs_title"> Умолчания </string>
-   <string name="actionResetGamePrefs_summary">Восстановить настройки игры по умолчанию</string>
-   <string name="actionResetGamePrefs_popupMessage">Вернуть все настройки к умолчаниям?<small>\n\nЛюбые пользовательские изменения, применённые к файлу конфигураций, будут перезаписаны.</small></string>
-   <string name="actionCheatEditor_title">Управление чит кодами</string>
-   <string name="actionCheatEditor_summary">Добавить, изменить или удалить пользовательские читы</string>
+   <string name="actionReloadAssets_summary">Не затрагивает настройки, образы игр, сохранения и прочие файлы пользователя</string>
+   <string name="actionResetUserPrefs_title">Настройки по умолчанию</string>
+   <string name="actionResetUserPrefs_summary">Сброс к глобальным значениям по умолчанию</string>
+   <string name="actionResetUserPrefs_popupMessage">Восстановить глобальные предустановки?</string>
+   <string name="actionResetGamePrefs_title">Настройки по умолчанию</string>
+   <string name="actionResetGamePrefs_summary">Сброс к значениям по умолчанию для игры</string>
+   <string name="actionResetGamePrefs_popupMessage">Восстановить предустановки для игры?<small>\n\nЛюбые изменения в файле конфигурации будут перезаписаны.</small></string>
+   <string name="actionCheatEditor_title">Управление чит-кодами</string>
+   <string name="actionCheatEditor_summary">Добавить, редактировать или удалить чит-коды</string>
    <string name="actionShare_title">Поделиться</string>
+   <string name="actionSetGameCoverArt_title">Сменить обложку</string>
+   <string name="actionSetGameCoverArt_summary">Установка изображения по выбору пользователя</string>
+   <string name="actionClearGameCoverArt_title">Удалить обложку</string>
+   <string name="actionClearGameCoverArt_summary">Удаление установленной ранее обложки</string>
+   <string name="actionClearGameCoverArt_toast">Обложка удалена</string>
+   <string name="actionDeleteGameData_title">Удалить данные</string>
+   <string name="actionDeleteGameData_summary">Удаление данных игры с внутреннего хранилища. Файлы на внешнем хранилище не затрагиваются.</string>
+   <string name="actionDeleteGameData_confirmation">Вы действительно хотите удалить все данные игры с внутреннего хранилища?</string>
+   
    <!-- Preference Screens -->
-   <string name="screenCheats_title">Читы</string>
-   <string name="screenCheats_summaryEnabled">Включено</string>
-   <string name="screenCheats_summaryDisabled">Отключено</string>
-   <string name="screenAdvanced_title">Продвинутые</string>
-   <string name="screenAdvanced_CountPerOp_title">Количество на операцию</string>
+   <string name="screenCheats_title">Чит-коды</string>
+   <string name="screenCheats_summaryEnabled">Вкл.</string>
+   <string name="screenCheats_summaryDisabled">Откл.</string>
+   <string name="screenAdvanced_title">Расширенные</string>
+   <string name="screenAdvanced_CountPerOpDefault_title">Станд. количество тактов на операцию</string>
+   <string name="screenAdvanced_CountPerOpDefault_summary">Влияет на тайминг игры. Низкие значения могут ускорять игру, но снижают стабильность.</string>
+   <string name="screenAdvanced_CountPerOp_title">Тактов на операцию</string>
+   <string name="screenAdvanced_CountPerOpDenDefault_title">Станд. коэффициент разгона</string>
+   <string name="screenAdvanced_CountPerOpDenDefault_summary">Каждое повышение значения удваивает разгон процессора R4300. Значение 0 откл. разгон.</string>
+   <string name="screenAdvanced_CountPerOpDen_title">Коэффциент разгона</string>
+   <string name="screenAdvanced_ViRefreshRateDefault_title">Станд. частота обновления VI</string>
+   <string name="screenAdvanced_ViRefreshRateDefault_summary">Изменяет тайминг игры. Может влиять на внутриигровые таймеры. Требуется перезапуск игры.</string>
+   <string name="screenAdvanced_ViRefreshRate_title">Частота обновления VI</string>
+   <string name="screenAdvanced_ForceAlignmentOfPiDma_title">Принуд. выравнивание DMA PI</string>
+   <string name="screenAdvanced_ForceAlignmentOfPiDma_summary">Требуется для некоторых хаков. Оставьте вкл., чтобы использовать предустановку игры.</string>
+   <string name="screenAdvanced_IgnoreTlbExceptions_title">Игнорировать исключения TLB</string>
+   <string name="screenAdvanced_IgnoreTlbExceptions_summary">Требуется для некоторых хаков или игр серии Zelda. В других случаях оставьте выключенным.</string>
+   <string name="screenAdvanced_RandomizeInterrupts_title">Случайные прерывания</string>
+   <string name="screenAdvanced_RandomizeInterrupts_summary">Исп. случайные прерывания для правильной работы рандомных событий внутри игры.</string>
+   
    <!-- Preference Categories -->
-   <string name="categoryCheats_title">Настройки читов (долгое нажатие для заметок)</string>
+   <string name="categoryCheats_title">Настройки чит-кодов (долгий тап для описания)</string>
+   <string name="categoryGln64_title">Настройки Gln64</string>
    <string name="categoryRice_title">Настройки Rice</string>
-   <string name="categoryGlide64_title">Настройки Glide64 </string>
+   <string name="categoryGlide64_title">Настройки Glide64</string>
    <string name="categoryGlide64Advanced_title">Расширенные настройки Glide64</string>
+   <string name="categoryAngrylion_title">Настройки Angrylion RDP Plus</string>
+   <string name="categoryParallel_title">Настройки Parallel RDP</string>
    <string name="categoryLibrary_title">Библиотека</string>
-   <string name="categoryDisplay_title">Отображение</string>
+   <string name="categoryDisplay_title">Графика</string>
+   <string name="categoryShaders_title">Шейдеры</string>
    <string name="categoryAudio_title">Аудио</string>
    <string name="categoryTouchscreen_title">Тачскрин</string>
    <string name="categoryInput_title">Ввод</string>
 
    <string name="categoryData_title">Данные</string>
+   <string name="categoryNetplay_title">Netplay</string>
 
    <!-- Checkbox Preferences -->
-   <string name="playShowCheats_title">Включить читы</string>
-   <string name="touchscreenFeedback_title">Тактильная обратная связь</string>
-   <string name="touchscreenFeedback_summary">Вибрировать при нажатии клавиш</string>
-   <string name="touchscreenAutoHideEnabled_title">Скрывать кнопки при неиспользовании</string>
-   <string name="touchscreenAutoHideEnabled_summary">Скрывать кнопки при неиспользовании определённого количества секунд.</string>
-   <string name="useHighPriorityThread_title">Использовать поток высокого приоритета</string>
-   <string name="useHighPriorityThread_summary">Ядро будет выполняться, используя поток высокого приоритета, что может вызвать задержки на некоторых устройствах</string>
-   <string name="inputVolumeMappable_title">Назначаемые кнопки громкости</string>
-   <string name="inputVolumeMappable_summary">Разрешить назначать управление на кнопки громкости</string>
-   <string name="inputBackMappable_title">Назначаемая кнопка НАЗАД</string>
-   <string name="inputBackMappable_summary">Разрешить назначать управление на кнопку назад. Это также включит жест \"свайп\" для открытия меню</string>
-   <string name="inputMenuMappable_title">Назначаемая кнопка МЕНЮ</string>
-   <string name="inputMenuMappable_summary">Разрешить назначать управление на кнопку меню. Это также включит жест \"свайп\" для открытия меню </string>
-   <string name="displayImmersiveMode_title">Режим захвата</string>
-   <string name="displayImmersiveMode_summary">Полностью спрятать панель навигации и статус бар</string>
+   <string name="playShowCheats_title">Включить чит-коды</string>
+   <string name="touchscreenFeedback_title">Тактильная отдача</string>
+   <string name="touchscreenFeedback_summary">Вибрация при нажатии клавиш</string>
+   <string name="touchscreenAutoHideEnabled_title">Скрывать кнопки при бездействии</string>
+   <string name="touchscreenAutoHideEnabled_summary">Откл. кнопки, если не было нажатий в течение заданного периода времени</string>
+   <string name="useHighPriorityThread_title">Поток с высоким приоритетом</string>
+   <string name="useHighPriorityThread_summary">Ядро будет выполняться в потоке с высоким приоритетом. Возможны лаги на некоторых устройствах</string>
+   <string name="inputVolumeMappable_title">Привязка к кнопкам громкости</string>
+   <string name="inputVolumeMappable_summary">Позволяет назначать действия на кнопки громкости</string>
+   <string name="inputBackMappable_title">Привязка к кнопке назад</string>
+   <string name="inputBackMappable_summary">Позволяет назначать действия на кнопку назад. Принудительно вкл. свайп для вызова меню во время игры</string>
+   <string name="inputMenuMappable_title">Привязка к кнопке меню</string>
+   <string name="inputMenuMappable_summary">Позволяет назначать действия на кнопку меню. Принудительно вкл. свайп для вызова меню во время игры</string>
+   <string name="inputUseRaphnetAdapter_title">Необработанный доступ по USB для адаптера Raphnet</string>
+   <string name="inputUseRaphnetAdapter_summary">При обнаружении адаптера Raphnet он будет исп. в режиме необработанного доступа по USB поверх других контроллеров.</string>
+   <string name="inputHoldControllerMenuKey_title">Удерживать кнопки контроллера для действий</string>
+   <string name="inputHoldControllerMenuKey_summary">Удерживайте кнопки контроллера 3 сек. для срабатывания определённых действий, таких как вызов меню.</string>
+   <string name="displayImmersiveMode_title">Режим погружения</string>
+   <string name="displayImmersiveMode_summary">Полностью скрывать строку состояния и панель навигации</string>
+   <string name="defaultsAutoPlayerMapping_title">Автом. привязка игроков</string>
+   <string name="defaultsAutoPlayerMapping_summary">Привязывать контроллер к след. доступному игроку N64 по нажатию кнопки во время игры</string>
+   <string name="defaultsAllEmulatedControllersAlwaysAttached_title">Все эмулируемые контроллеры всегда подключены</string>
+   <string name="defaultsAllEmulatedControllersAlwaysAttached_summary">Если вкл., все эмулируемые контроллеры будут подключены к эмулируемой N64, независимо от наличия физ. контроллеров.</string>
    <string name="gln64Fog_title">Туман</string>
-   <string name="gln64Fog_summary">(Требует доработки)</string>
-   <string name="gln64ScreenClear_title">Принудительно очистить экран</string>
-   <string name="riceAutoFrameskip_title">Авто пропуск кадров</string>
-   <string name="riceAutoFrameskip_summary">Повышает скорость игры за счёт частоты кадров</string>
+   <string name="gln64Fog_summary">(требуется доработка)</string>
+   <string name="gln64Sai_title">2xSaI фильтрация текстур</string>
+   <string name="gln64Sai_summary">Уменьшает пиксельность текстур</string>
+   <string name="gln64ScreenClear_title">Принудительная очистка экрана</string>
+   <string name="gln64ScreenClear_summary">Отключите для скорости (возможны искажения графики)</string>
+   <string name="gln64AlphaTest_title">Альфа тест</string>
+   <string name="gln64AlphaTest_summary">Отключите для скорости (вызывает чёрные текстуры)</string>
+   <string name="gln64HackDepth_title">Хак координат глубины</string>
+   <string name="gln64HackDepth_summary">Помогает исправить мерцание текстур в некоторых играх</string>
+   <string name="riceAutoFrameskip_title">Автопропуск кадров</string>
+   <string name="riceAutoFrameskip_summary">Улучшает скорость игры, но снижает частоту кадров</string>
    <string name="riceFastTexture_title">Быстрая загрузка текстур</string>
-   <string name="riceFastTexture_summary">Исправляет кольцевые переходы</string>
+   <string name="riceFastTexture_summary">Исправляет круговые переходы</string>
    <string name="riceForceTextureFilter_title">Фильтрация текстур</string>
-   <string name="riceForceTextureFilter_summary">Исправляет текстурное мерцание и размытие дальних обьектов</string>
+   <string name="riceForceTextureFilter_summary">Исправляет мерцание и размытие текстур для объектов вдали</string>
    <string name="riceHiResTextures_title">Текстуры высокого разрешения</string>
-   <string name="riceHiResTextures_summary">Использовать импортированные текстурные паки</string>
+   <string name="riceHiResTextures_summary">Исп. загруженные пакеты текстур</string>
    <string name="riceFog_title">Туман</string>
-   <string name="riceFog_summary">Отображать эффект тумана</string>
+   <string name="riceFog_summary">Отображать эффекты тумана</string>
    <string name="audioSynchronize_title">Синхронизировать аудио и видео</string>
-   <string name="audioSynchronize_summary">Минимизирует задержку, но может привести к треску в звуке на некоторых играх/устройствах</string>
-   <string name="audioSwapChannels_title">Поменять аудио каналы</string>
-   <string name="audioSwapChannels_summary">Поменять местами левый и правы аудио каналы</string>
-   <string name="audioTimeStretch_title">Растягивать аудио</string>
-   <string name="audioTimeStretch_summary">Включение растягивания аудио уменьшает треск в звуке, но может привести к новым ошибкам</string>
+   <string name="audioSynchronize_summary">Минимизирует задержку, но на некоторых устройствах/играх вызывает треск</string>
+   <string name="audioSwapChannels_title">Поменять аудиоканалы</string>
+   <string name="audioSwapChannels_summary">Меняет местами левый и правый звуковые каналы</string>
+   <string name="audioTimeStretch_title">Растягивать звук</string>
+   <string name="audioTimeStretch_summary">Включает растяжение звука по времени. Уменьшает треск, но повышает задержку</string>
+   <string name="audioLowPerformanceMode_title">Режим низкой производительности</string>
+   <string name="audioLowPerformanceMode_summary">Улучшает производительность за счёт повышения задержки звука.</string>
    <string name="showRecentlyPlayed_title">Недавние игры</string>
-   <string name="showRecentlyPlayed_summary">Показывает игры, которые игрались за последнюю неделю.</string>
+   <string name="showRecentlyPlayed_summary">Показывать игры, запущенные за последнюю неделю.</string>
    <string name="showFullNames_title">Полные имена</string>
-   <string name="showFullNames_summary">Показать регион и сбросить информацию для каждой игры</string>
+   <string name="showFullNames_summary">Показывать регион и сохранять сведения для каждой игры</string>
 
    <!-- Gallery sections -->
-   <string name="galleryRecentlyPlayed"> Недавние игры </string>
+   <string name="galleryRecentlyPlayed">Недавние игры</string>
    <string name="galleryLibrary">Библиотека</string>
 
-   <string name="touchscreenAutoHold_title">Авто удерживание кнопки</string>
-   <string name="touchscreenAutoHold_entryDisabled">Отключено</string>
+   <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
+   <string name="preferenceAdd_title">Добавить</string>
+   <string name="preferenceRemove_title">Удалить</string>
+   <string name="gallerySortingMethod_title">Сортировка</string>
+   <string name="gallerySortingMethod_entryRomName">По названию игры</string>
+   <string name="gallerySortingMethod_entryFileName">По имени файла</string>
+   <string name="touchscreenAutoHold_title">Автоудержание кнопок</string>
+   <string name="touchscreenAutoHold_entryDisabled">Откл.</string>
    <string name="touchscreenAutoHold_entryLongPress">При долгом нажатии</string>
-   <string name="touchscreenAutoHold_entrySlideOut">При проведении</string>
+   <string name="touchscreenAutoHold_entrySlideOut">При скольжении и отрыве</string>
    <string name="touchscreenAnimation_summary">Анимировать джойстик</string>
-   <string name="touchscreenInvertTouchXAxis_summary">Инвертировать ось Х</string>
-   <string name="touchscreenInvertTouchYAxis_summary">Инвертировать ось Y</string>
+   <string name="touchscreenInvertTouchXAxis_summary">Инверсия оси Х</string>
+   <string name="touchscreenInvertTouchYAxis_summary">Инверсия оси Y</string>
    <string name="touchscreenStyle_title">Стиль кнопок</string>
    <string name="touchscreenStyle_entryOutline">Контуры</string>
-   <string name="touchscreenStyle_entryShaded">Затенение</string>
-   <string name="touchscreenStyle_entryJoshaGibs">Стиль JoshaGibs</string>
-   <string name="touchscreenStyle_entryCustom">Пользовательский</string>
+   <string name="touchscreenStyle_entryShaded">Затенённые</string>
+   <string name="touchscreenStyle_entryJoshaGibs">JoshaGibs</string>
+   <string name="touchscreenStyle_entryFlat">Плоские</string>
+   <string name="touchscreenStyle_entryHiRes">HiRes</string>
+   <string name="touchscreenStyle_entryNewd">NewD</string>
+   <string name="touchscreenStyle_entry3DSXL">3DS XL</string>
+   <string name="touchscreenStyle_entryGameCube">Gamecube</string>
+   <string name="touchscreenStyle_entrySwitch">Switch</string>
+   <string name="touchscreenStyle_entryWiiU">WiiU</string>
+   <string name="touchscreenStyle_entryColored">Цветные</string>
+   <string name="touchscreenStyle_entryBlack">Чёрные</string>
+   <string name="touchscreenStyle_entryWhite">Белые</string>
+   <string name="touchscreenStyle_entryCustom">Ручной выбор</string>
 
    <string name="displayOrientation_title">Ориентация экрана</string>
-   <string name="displayOrientation_entryLandscape">Горизонтальная</string>
-   <string name="displayOrientation_entryReverseLandscape">Перевёрнутая Горизонтальная</string>
-   <string name="displayOrientation_entryPortrait">Вертикальная</string>
-   <string name="displayOrientation_entryReversePortrait">Перевёрнутая Вертикальная</string>
-   <string name="displayResolution_title">Разрешение рэндера</string>
-   <string name="displayResolution_entryNative">Родное (Высшее качество)</string>
+   <string name="displayOrientation_entryLandscape">Ландшафтная</string>
+   <string name="displayOrientation_entryReverseLandscape">Перевёрнутая ландшафтная</string>
+   <string name="displayOrientation_entryPortrait">Портретная</string>
+   <string name="displayOrientation_entryReversePortrait">Перевёрнутая портретная</string>
+   <string name="displayOrientation_entryAuto">Авто</string>
+   <string name="displayResolution_title">Разрешение рендеринга</string>
+   <string name="displayResolution_entryNative">Нативное (лучшее качество)</string>
+   <string name="displayResolution_entry5760x4320">5760 x 4320</string>
+   <string name="displayResolution_entry5120x3840">5120 x 3840</string>
+   <string name="displayResolution_entry4320x3240">4320 x 3240</string>
+   <string name="displayResolution_entry3840x2880">3840 x 2880</string>
+   <string name="displayResolution_entry2880x2160">2880 x 2160</string>
+   <string name="displayResolution_entry2160x1620">2160 x 1620</string>
+   <string name="displayResolution_entry1920x1440">1920 x 1440</string>
+   <string name="displayResolution_entry1440x1080">1440 x 1080</string>
    <string name="displayResolution_entry960x720">960 x 720</string>
    <string name="displayResolution_entry800x600">800 x 600</string>
    <string name="displayResolution_entry640x480">640 x 480</string>
    <string name="displayResolution_entry480x360">480 x 360</string>
    <string name="displayResolution_entry320x240">320 x 240</string>
-   <string name="displayResolution_entry160x120">160 x 120 (Лучшая частота кадров)</string>
-   <string name="displayScaling_title">Маштабирование экрана</string>
-   <string name="displayScaling_entryOriginal">Оригинальное\n<small>Заполнение экрана, не искажает изображение (чёрные полосы по краям)</small></string>
-   <string name="displayScaling_entryStretch">Растягивание\n<small> Заполнение экрана, нарушение пропорций изображения (нет чёрных полос) </small></string>
-   <string name="displayFps_title">Частота кадров</string>
-   <string name="displayFps_entryOff">Выключить</string>
+   <string name="displayResolution_entry160x120">160 x 120 (лучшая частота кадров)</string>
+   <string name="displayScaling_title">Масштабирование изображения</string>
+   <string name="displayScaling_entryOriginal">Оригинал\n<small>Заполнять экран без искажения пропорций (с чёрными полосами по краям)</small></string>
+   <string name="displayScaling_entryStretch">Во весь экран\n<small>Заполнять экран с нарушением пропорций (без чёрных полос)</small></string>
+   <string name="displayScaling_entryStretch169">Растягивать до 16:9\n<small>Изменять пропорции до 16:9 (приводит к искажениям)</small></string>
+   <string name="displayFps_title">Счётчик частоты кадров</string>
+   <string name="displayFps_entryOff">Откл.</string>
    <string name="displayFps_entryTopLeft">Вверху слева</string>
    <string name="displayFps_entryTopCenter">Вверху по центру</string>
    <string name="displayFps_entryTopRight">Вверху справа</string>
    <string name="displayFps_entryBottomLeft">Внизу слева</string>
    <string name="displayFps_entryBottomCenter">Внизу по центру</string>
    <string name="displayFps_entryBottomRight">Внизу справа</string>
-   <string name="fix_GLideN64_title">Исправить перевёрнутый экран</string>
-   <string name="fix_GLideN64_summary">Исправляет проблемы с перевёрнутым экраном, которые возникают на некоторых устройствах при использовании GLideN64</string>
-   <string name="videoPlugin_title">Видео плагин</string>
-   <string name="videoPlugin_entryNone">Нет (Видео отключено)</string>
+   <string name="fix_GLideN64_title">Исправление перевёрнутого экрана</string>
+   <string name="fix_GLideN64_summary">Исправляет проблему перевёрнутого изображения с GLideN64 на некоторых устройствах</string>
+   <string name="gliden64_hybrid_filter_title">Гибридный фильтр GLideN64</string>
+   <string name="gliden64_hybrid_filter_summary">Вкл. для GlideN64 гибридную фильтрацию текстур с целочисленным масштабированием. Может снижать производительность.</string>
+   <string name="gliden64_threaded_video_title">Многопоточное видео GLideN64</string>
+   <string name="gliden64_threaded_video_summary">Вкл. многопоточный графический бэкенд OpenGL</string>
+   <string name="videoPlugin_title">Видеоплагин</string>
+   <string name="videoPlugin_entryNone">Нет (без изображения)</string>
+   <string name="videoPlugin_entryGln64">gln64\n<small>(адаптация GLN64 v0.4.1)</small></string>
    <string name="videoPlugin_entryRice">rice\n<small>(адаптация Rice Video v6.1.0(b))</small></string>
+   <string name="videoPlugin_entryAngrylion">angrylion-rdp-plus\n<small>(программый рендер angrylion-rdp-plus)</small></string>
+   <string name="videoPlugin_entryParallel">Parallel\n<small>(vulkan-рендер Parallel)</small></string>
    <string name="videoPlugin_entryGlide64">glide64\n<small>(адаптация Glide64 Final (10th Anniversary))</small></string>
    <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
-   <string name="videoHardwareType_title">Уменьшение мерцания</string>
-   <string name="videoHardwareType_entryDisableHack">Хак отключения уменьшения мерцания</string>
-   <string name="videoHardwareType_entryAuto">Автоматическое считывание модели смартфона/планшета</string>
+   <string name="videoHardwareType_title">Снижение мерцания</string>
+   <string name="videoHardwareType_entryDisableHack">Откл. хак снижения мерцания</string>
+   <string name="videoHardwareType_entryAuto">Автоопределение по модели устройства</string>
    <string name="videoHardwareType_entryStandard">Стандартный профиль</string>
    <string name="videoHardwareType_entryI">I профиль</string>
    <string name="videoHardwareType_entryO1">O-1 профиль</string>
@@ -269,124 +381,258 @@
    <string name="videoHardwareType_entryT">T профиль</string>
    <string name="videoHardwareType_entryCustom">Кастомный профиль</string>
    <string name="videoPolygonOffset_title">Смещение полигонов</string>
-   <string name="videoPolygonOffset_summary">Кастомное уменьшение мерцания смещения</string>
+   <string name="videoPolygonOffset_summary">Значение сдвига для снижения мерцания</string>
    <string name="gln64Frameskip_title">Пропуск кадров</string>
-   <string name="gln64Frameskip_entryNever">Никогда не пропускать кадры</string>
+   <string name="gln64Frameskip_entryNever">Без пропуска кадров</string>
+    <string name="gln64Frameskip_entryUpTo1">Не более 1 кадра</string>
+    <string name="gln64Frameskip_entryUpTo2">Не более 2 кадров</string>
+    <string name="gln64Frameskip_entryUpTo3">Не более 3 кадров</string>
+    <string name="gln64Frameskip_entryUpTo4">Не более 4 кадров</string>
+    <string name="gln64Frameskip_entryUpTo5">Не более 5 кадров</string>
+    <string name="gln64Frameskip_entryExactly1">Точно 1 кадр</string>
+    <string name="gln64Frameskip_entryExactly2">Точно 2 кадра</string>
+    <string name="gln64Frameskip_entryExactly3">Точно 3 кадра</string>
+    <string name="gln64Frameskip_entryExactly4">Точно 4 кадра</string>
+    <string name="gln64Frameskip_entryExactly5">Точно 5 кадров</string>
    <string name="riceScreenUpdate_title">Метод обновления экрана</string>
-   <string name="riceScreenUpdate_entryRomDefault">Ром стандарт</string>
-   <string name="riceScreenUpdate_entryVIOriginUpdate">VI обновление источника</string>
-   <string name="riceScreenUpdate_entryVIOriginChange">VI перемена источника</string>
-   <string name="riceScreenUpdate_entryCIChange">CI смена</string>
-   <string name="riceScreenUpdate_entryFirstCIChange">Первая CI смена</string>
-   <string name="riceScreenUpdate_entryFirstPrimDraw">Первая примитивная рисовка</string>
-   <string name="riceScreenUpdate_entryBeforeScreenClear">До очистки экрана</string>
-   <string name="riceScreenUpdate_entryAfterScreenDrawn">После отработки экрана</string>
-   <string name="riceTextureEnhancement_title">Увеличение/масштабирование текстуры</string>
+   <string name="riceScreenUpdate_entryRomDefault">Предустановка игры</string>
+   <string name="riceScreenUpdate_entryVIOriginUpdate">Обновление источника VI</string>
+   <string name="riceScreenUpdate_entryVIOriginChange">Изменение источника VI</string>
+   <string name="riceScreenUpdate_entryCIChange">Изменение CI</string>
+   <string name="riceScreenUpdate_entryFirstCIChange">Первое изменение CI</string>
+   <string name="riceScreenUpdate_entryFirstPrimDraw">Первая отрисовка примитива</string>
+   <string name="riceScreenUpdate_entryBeforeScreenClear">Перед очисткой экрана</string>
+   <string name="riceScreenUpdate_entryAfterScreenDrawn">После очистки экрана</string>
+   <string name="riceTextureEnhancement_title">Апскейлинг/сглаживание текстур</string>
    <string name="riceTextureEnhancement_entryNone">Нет</string>
-   <string name="riceTextureEnhancement_entryScale2x">Масштаб 2x</string>
+   <string name="riceTextureEnhancement_entryScale2x">Scale 2x</string>
    <string name="riceTextureEnhancement_entry2xsai">2x SaI</string>
    <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
    <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
    <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
-   <string name="riceTextureEnhancement_entrySharpen">Отточенное</string>
-   <string name="riceTextureEnhancement_entrySharpen_more">Более отточенное</string>
+   <string name="riceTextureEnhancement_entrySharpen">Повыс. чёткость</string>
+   <string name="riceTextureEnhancement_entrySharpen_more">Сильнее повыс. чёткость</string>
 
-    <string name="gliden64_category_texture_title">Текстура</string>
-    <string name="gliden64_bilinear_mode_title">Режим билинейной фильтрации</string>
-    <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
-    <string name="gliden64_bilinear_mode_entry_standard">Стандартный</string>
-    <string name="gliden64_max_anisotropic_filtering_title">Максимальный уровень анизотропической фильтрации</string>
-    <string name="gliden64_category_general_title">Главные</string>
-    <string name="gliden64_widescreen_hack_title">Хак широкого экрана</string>
-    <string name="gliden64_enable_lod_title">Включить LOD эмуляцию</string>
-    <string name="gliden64_enable_hw_lighting_title">Включить аппаратную подсветку на каждый пиксель</string>
-    <string name="gliden64_correct_texrect_coords_title">сделать координаты texrect непрерывными</string>
-    <string name="gliden64_correct_texrect_coords_off">Выключить</string>
-    <string name="gliden64_correct_texrect_coords_auto">Авто</string>
-    <string name="gliden64_correct_texrect_coords_force">Принудительно</string>
-    <string name="gliden64_enable_native_res_texrects_title">исправить разрегулированность изображения texrect</string>
-    <string name="gliden64_enable_native_res_texrects_summary">Более правильное отображение 2D, но намного медленнее, и не позволяет установить текстурное улучшение.</string>
-    <string name="gliden64_enable_legacy_blending_title">Включить наследственное смешение</string>
-    <string name="gliden64_enable_legacy_blending_summary">Отключение этого производит более корректное отображение света и тумана, но замедляет некоторые устройства.</string>
-    <string name="gliden64_enable_fragment_depth_write_title">Включить глубину на основе фрагментов</string>
-    <string name="gliden64_enable_fragment_depth_write_summary">Позволяет записывать глубину на основе фрагментов. Не поддерживается некоторыми устройствами.</string>
-    <string name="gliden64_category_fb_title">Эмуляция кадрового буффера</string>
-    <string name="gliden64_enable_fb_emulation_title">Включает эмуляцию кадрового и/или глубинного буфера</string>
-    <string name="gliden64_swap_frame_buffers_title">Поменять глубинные буферы</string>
-    <string name="gliden64_swap_frame_buffers_entry_on_vi_update">На VI вызов обновления</string>
-    <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">На VI Смена источника</string>
-    <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">По буферная смена</string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_title">Копировать цветовой буфер в RDRAM</string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">Не копировать</string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Копировать в режиме синхронности </string>
-    <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Включить копирование вспомогательных буферов в RDRAM</string>
-    <string name="gliden64_enable_copy_depth_to_RDRAM_title">Копировать глубинный буфер в RDRAM</string>
-    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Не копировать</string>
-    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Программный рендер</string>
-    <string name="gliden64_enable_color_buffer_from_RDRAM_title">Включить копию цветового буфера из  RDRAM</string>
-    <string name="gliden64_enable_n64_depth_compare_title">Включить N64 сравнение глубины</string>
-    <string name="gliden64_use_native_resolution_factor_title">Использовать родной фактор разрешения </string>
-    <string name="gliden64_use_native_resolution_factor_off">Выключено</string>
-    <string name="gliden64_use_native_resolution_factor_1x">1x</string>
-    <string name="gliden64_use_native_resolution_factor_2x">2x</string>
-    <string name="gliden64_use_native_resolution_factor_3x">3x</string>
-    <string name="gliden64_use_native_resolution_factor_4x">4x</string>
-    <string name="gliden64_category_texture_filtering_title">Текстурная фильтрация</string>
-    <string name="gliden64_tx_filter_mode_title">Режим текстурной фильтрации</string>
-    <string name="gliden64_tx_filter_mode_entry_none">Нет</string>
-    <string name="gliden64_tx_filter_mode_entry_smooth1">Гладкий 1</string>
-    <string name="gliden64_tx_filter_mode_entry_smooth2">Гладкий 2</string>
-    <string name="gliden64_tx_filter_mode_entry_smooth3">Гладкий 3</string>
-    <string name="gliden64_tx_filter_mode_entry_sharp1">Угловатый 1</string>
-    <string name="gliden64_tx_filter_mode_entry_sharp2">Угловатый 2</string>
-    <string name="gliden64_tx_enhancement_title">Усиление текстур</string>
-    <string name="gliden64_tx_enhancement_entry_none">Нет</string>
-    <string name="gliden64_tx_enhancement_entry_store_as_is">Хранить как есть</string>
-    <string name="gliden64_tx_enhancement_entry_X2">X2</string>
-    <string name="gliden64_tx_enhancement_entry_X2SAI">X2SAI</string>
-    <string name="gliden64_tx_enhancement_entry_HQ2X">HQ2X</string>
-    <string name="gliden64_tx_enhancement_entry_HQ2XS">HQ2XS</string>
-    <string name="gliden64_tx_enhancement_entry_LQ2X">LQ2X</string>
-    <string name="gliden64_tx_enhancement_entry_LQ2XS">LQ2XS</string>
-    <string name="gliden64_tx_enhancement_entry_HQ4X">HQ4X</string>
-    <string name="gliden64_tx_enhancement_entry_2xBRZ">2xBRZ</string>
-    <string name="gliden64_tx_enhancement_entry_3xBRZ">3xBRZ</string>
-    <string name="gliden64_tx_enhancement_entry_4xBRZ">4xBRZ</string>
-    <string name="gliden64_tx_enhancement_entry_5xBRZ">5xBRZ</string>
-    <string name="gliden64_tx_enhancement_entry_6xBRZ">6xBRZ</string>
-    <string name="gliden64_tx_deposterize_title">Депостеризировать текстуры до усиления</string>
-    <string name="gliden64_tx_filter_ignore_BG_title">НЕ фильтровать бекграундные текстуры</string>
-    <string name="gliden64_tx_cache_size_title">Размер кэша фильтрованных текстур в мегабайтах</string>
-    <string name="gliden64_tx_hi_res_enable_title">Использовать текстурные паки высокого разрешения если доступно</string>
-    <string name="gliden64_tx_hi_res_full_alpha_channel_title">Позволить альфа каналу полное использование текстур высокого разрешения</string>
-    <string name="gliden64_tx_hi_res_alt_crc_title">Использовать альтернативный CRC расчёт</string>
-    <string name="gliden64_tx_cache_compression_title">Архивировать текстурный кеш</string>
-    <string name="gliden64_tx_force_16bpp_title">Принудительное 16-битное текстурное форматирование для HD текстур </string>
-    <string name="gliden64_tx_save_cache_title">Сохранить кэш текстур на диск</string>
-    <string name="gliden64_tx_save_cache_summary">Сохранение кэша текстур на диск, приводит к задержке при выходе.</string>
-    <string name="gliden64_category_gamma_title">Коррекция гаммы</string>
-    <string name="gliden64_force_gamma_correction_title">Принудительная коррекция гаммы</string>
-    <string name="gliden64_gamma_correction_level">Значение коррекции гаммы</string>
+   <string name="gliden64_category_texture_title">Текстуры</string>
+   <string name="gliden64_fxaa_title">FXAA</string>
+   <string name="gliden64_fxaa_summary">Быстрое приближенное сглаживание FXAA</string>
+   <string name="gliden64_bilinear_mode_title">Режим билинейной фильтрации</string>
+   <string name="gliden64_bilinear_mode_entry_n64_3point">N64 по трём точкам</string>
+   <string name="gliden64_bilinear_mode_entry_standard">Стандартный</string>
+   <string name="gliden64_enable_halos_removal_title">Убирать свечение сглаженных текстур</string>
+   <string name="gliden64_enable_halos_removal_summary">Помогает избавиться от посторонних цветов вокруг текста, но может искажать другие текстуры.</string>
+   <string name="gliden64_max_anisotropic_filtering_title">Макс. уровень анизотропной фильтрации</string>
+   <string name="gliden64_category_general_title">Общие</string>
+   <string name="gliden64_widescreen_hack_title">Широкоформатный хак</string>
+   <string name="gliden64_dithering_pattern_title">Шаблон дизеринга</string>
+   <string name="gliden64_dithering_pattern_summary">Вкл. паттерн дизеринга для выходного изображения.</string>
+   <string name="gliden64_hires_noise_dithering_title">Дизеринг высокого разрешения</string>
+   <string name="gliden64_hires_noise_dithering_summary">Применять дизеринг с шумом высокого разрешения.</string>
+   <string name="gliden64_dithering_quantization_title">Квантование дизеринга</string>
+   <string name="gliden64_dithering_quantization_summary">Применять дизеринг с квантованием цветов.</string>
+   <string name="gliden64_dithering_mode_rdram_title">Режим дизеринга для изображения в RDRAM</string>
+   <string name="gliden64_dithering_mode_rdram_entry_disable">Откл.</string>
+   <string name="gliden64_dithering_mode_rdram_entry_bayer">Bayer</string>
+   <string name="gliden64_dithering_mode_rdram_entry_magic_square">Magic Square</string>
+   <string name="gliden64_dithering_mode_rdram_entry_blue_noise">Blue Noise</string>
+   <string name="gliden64_enable_lod_title">Эмуляция LOD</string>
+   <string name="gliden64_enable_hw_lighting_title">Аппаратное попиксельное освещение</string>
+   <string name="gliden64_enable_coverage_title">Эмуляция покрытия</string>
+   <string name="gliden64_enable_coverage_summary">Вкл. вычисление покрытия пикселей. Используется для улучшенной эмуляции смешивания и в каркасном режиме. Требуется быстрый GPU.</string>
+   <string name="gliden64_enable_softclip_title">Программное отсечение вершин</string>
+   <string name="gliden64_enable_softclip_summary">Выполнять отсечение вершин программно, что, как правило, повышает точность. Отключите при появлении ошибок.</string>
+   <string name="gliden64_enable_legacy_blending_title">Старый метод смешивания</string>
+   <string name="gliden64_enable_legacy_blending_summary">Если откл., обеспечивает более правильное освещение и туман, но снижает скорость для некоторых устройств.</string>
+   <string name="gliden64_enable_fragment_depth_write_title">Глубина на основе фрагмента</string>
+   <string name="gliden64_enable_fragment_depth_write_summary">Вкл. запись глубины фрагмента. Несовместимо с некоторыми устройствами.</string>
+   <string name="gliden64_enable_fast_inaccurate_shaders_title">Использовать быстрые шейдеры</string>
+   <string name="gliden64_enable_fast_inaccurate_shaders_summary">При включении повышает скорость, особенно для отрисовки 2D, но может немного снижать точность рендеринга текстур.</string>
+   <string name="gliden64_category_2d_title">Настройки 2D</string>
+   <string name="gliden64_correct_texrect_coords_title">Делать непрерывными координаты texrect</string>
+   <string name="gliden64_correct_texrect_coords_off">Откл.</string>
+   <string name="gliden64_correct_texrect_coords_auto">Авто</string>
+   <string name="gliden64_correct_texrect_coords_force">Принудительно</string>
+   <string name="gliden64_enable_native_res_texrects_title">Исправлять отклонение изображения texrect</string>
+   <string name="gliden64_enable_native_res_texrects_summary">Повышает точность 2D-графики, но значительно снижает скорость и отключает улучшение текстур.</string>
+   <string name="gliden64_render_backgrounds_mode_title">Режим рендеринга фона (только для HLE)</string>
+   <string name="gliden64_render_backgrounds_mode_one_piece">Одним куском (быстро)</string>
+   <string name="gliden64_render_backgrounds_mode_stripped">Полосами (точно)</string>
+   <string name="gliden64_bound_texture_rectangle_coordinates_title">Привязка координат texrect</string>
+   <string name="gliden64_bound_texture_rectangle_coordinates_summary">Привязка координат texrect к их значениям в нативном разрешении. За счёт выборки на границе текстуры исключает появление мусора, но может приводить к жёстким контурам.</string>
+   <string name="gliden64_category_fb_title">Эмуляция фреймбуфера</string>
+   <string name="gliden64_enable_fb_emulation_title">Эмуляция кадрового и/или буфера глубины</string>
+   <string name="gliden64_swap_frame_buffers_title">Смена фреймбуфера</string>
+   <string name="gliden64_swap_frame_buffers_entry_on_vi_update">При вызове обновления VI</string>
+   <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">При изменении источника VI</string>
+   <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">При обновлении буфера</string>
+   <string name="gliden64_color_buffer_copy_to_RDRAM_title">Копировать цветовой буфер в RDRAM</string>
+   <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">Не копировать</string>
+   <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Копировать в синх. режиме</string>
+   <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Копировать в асинх. режиме (2 буфера)</string>
+   <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode_3buffers">Копировать в асинх. режиме (3 буфера)</string>
+   <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Копировать вспом. буферы в RDRAM</string>
+   <string name="gliden64_enable_copy_depth_to_RDRAM_title">Копировать буфер глубины в RDRAM</string>
+   <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Не копировать</string>
+   <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Аппаратный рендер</string>
+   <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Программный рендер</string>
+   <string name="gliden64_enable_color_buffer_from_RDRAM_title">Копия цветового буфера из RDRAM</string>
+   <string name="gliden64_enable_n64_depth_compare_title">Сравнение глубины N64</string>
+   <string name="gliden64_enable_force_depth_buffer_clear">Принуд. очистка буфера глубины</string>
+   <string name="gliden64_use_native_resolution_factor_title">Исп. нативный множитель разрешения</string>
+   <string name="gliden64_use_native_resolution_factor_off">Откл.</string>
+   <string name="gliden64_use_native_resolution_factor_1x">1x</string>
+   <string name="gliden64_use_native_resolution_factor_2x">2x</string>
+   <string name="gliden64_use_native_resolution_factor_3x">3x</string>
+   <string name="gliden64_use_native_resolution_factor_4x">4x</string>
+   <string name="gliden64_category_texture_filtering_title">Сглаживание текстур</string>
+   <string name="gliden64_tx_filter_mode_title">Режим сглаживания текстур</string>
+   <string name="gliden64_tx_filter_mode_entry_none">Нет</string>
+   <string name="gliden64_tx_filter_mode_entry_smooth1">Сглаженный 1</string>
+   <string name="gliden64_tx_filter_mode_entry_smooth2">Сглаженный 2</string>
+   <string name="gliden64_tx_filter_mode_entry_smooth3">Сглаженный 3</string>
+   <string name="gliden64_tx_filter_mode_entry_sharp1">Чёткий 1</string>
+   <string name="gliden64_tx_filter_mode_entry_sharp2">Чёткий 2</string>
+   <string name="gliden64_tx_enhancement_title">Улучшение текстур</string>
+   <string name="gliden64_tx_enhancement_entry_none">Нет</string>
+   <string name="gliden64_tx_enhancement_entry_store_as_is">В исходном виде</string>
+   <string name="gliden64_tx_enhancement_entry_X2">X2</string>
+   <string name="gliden64_tx_enhancement_entry_X2SAI">X2SAI</string>
+   <string name="gliden64_tx_enhancement_entry_HQ2X">HQ2X</string>
+   <string name="gliden64_tx_enhancement_entry_HQ2XS">HQ2XS</string>
+   <string name="gliden64_tx_enhancement_entry_LQ2X">LQ2X</string>
+   <string name="gliden64_tx_enhancement_entry_LQ2XS">LQ2XS</string>
+   <string name="gliden64_tx_enhancement_entry_HQ4X">HQ4X</string>
+   <string name="gliden64_tx_enhancement_entry_2xBRZ">2xBRZ</string>
+   <string name="gliden64_tx_enhancement_entry_3xBRZ">3xBRZ</string>
+   <string name="gliden64_tx_enhancement_entry_4xBRZ">4xBRZ</string>
+   <string name="gliden64_tx_enhancement_entry_5xBRZ">5xBRZ</string>
+   <string name="gliden64_tx_enhancement_entry_6xBRZ">6xBRZ</string>
+   <string name="gliden64_tx_deposterize_title">Депостеризация текстур до улучшения</string>
+   <string name="gliden64_tx_filter_ignore_BG_title">Не сглаживать текстуры фона</string>
+   <string name="gliden64_tx_cache_size_title">Размер кэша сглаженных текстур (МБ)</string>
+   <string name="gliden64_tx_hi_res_enable_title">Исп. пакеты hd-текстур (если доступно)</string>
+   <string name="gliden64_tx_hi_res_full_alpha_channel_title">Разрешить полностью исп. альфа-канал hd-текстур</string>
+   <string name="gliden64_tx_hi_res_alt_crc_title">Исп. альтернативный расчёт CRC</string>
+   <string name="gliden64_tx_cache_compression_title">Сжимать текстурный кэш</string>
+   <string name="gliden64_tx_force_16bpp_title">Принуд. 16-битный формат для hd-текстур </string>
+   <string name="gliden64_tx_save_cache_title">Сохранять текстурный кэш в память</string>
+   <string name="gliden64_tx_save_cache_summary">При выходе сохраняет текстурный кэш на диск, немного замедляя закрытие игры.</string>
+   <string name="gliden64_tx_enhanced_texture_file_storage_title">Хранилище файлов сглаженных текстур</string>
+   <string name="gliden64_tx_enhanced_texture_file_storage_summary">Исп. для сглаженных текстур хранилище файлов вместо кэш-памяти.</string>
+   <string name="gliden64_tx_hires_texture_file_storage_title">Хранилище файлов hd-текстур</string>
+   <string name="gliden64_tx_hires_texture_file_storage_summary">Исп. для hd-текстур хранилище файлов вместо кэш-памяти.</string>
+   <string name="gliden64_tx_dump_title">Дамп текстур</string>
+   <string name="gliden64_tx_dump_summary">По мере подгрузки создавать дамп текстур игры</string>
+   <string name="gliden64_category_gamma_title">Гамма-коррекция</string>
+   <string name="gliden64_force_gamma_correction_title">Принуд. гамма-коррекция</string>
+   <string name="gliden64_gamma_correction_level">Значение гамма-коррекции</string>
 
-   <string name="glide64mk2_game_default">По-умолчанию</string>
-   <string name="glide64mk2_disable">Отключить</string>
-   <string name="glide64mk2_enable">Включить</string>
+   <string name="angrylion_parallel_mode_title">Многопоточный режим</string>
+   <string name="angrylion_num_workers_title">Число рабочих потоков</string>
+   <string name="angrylion_busyloop_title">Холостой цикл в ожидании работы</string>
+   <string name="angrylion_vi_mode_title">Режим VI</string>
+   <string name="angrylion_vi_mode_entry_filtered">С фильтрацией</string>
+   <string name="angrylion_vi_mode_entry_unfiltered">Без фильтрации</string>
+   <string name="angrylion_vi_mode_entry_depth">Глубина</string>
+   <string name="angrylion_vi_mode_entry_coverage">Покрытие</string>
+   <string name="angrylion_vi_interpolation_title">Интерполяция VI</string>
+   <string name="angrylion_vi_interpolation_entry_nearest_neighbor">Ближайший сосед</string>
+   <string name="angrylion_vi_interpolation_entry_linear">Линейная</string>
+   <string name="angrylion_hide_overscan_title">Скрывать вылеты развёртки</string>
+   <string name="angrylion_vi_integer_scaling_title">Целочисл. масштабирование</string>
+   <string name="angrylion_compatibility_mode_title">Режим совместимости</string>
+   <string name="angrylion_compatibility_mode_fast">Быстрый</string>
+   <string name="angrylion_compatibility_mode_moderate">Средний</string>
+   <string name="angrylion_compatibility_mode_slow">Медленный</string>
+
+   <string name="parallel_upscaling_title">Апскейлинг</string>
+   <string name="parallel_upscaling_entry_None">Нет</string>
+   <string name="parallel_upscaling_entry_2x">2x</string>
+   <string name="parallel_upscaling_entry_4x">4x</string>
+   <string name="parallel_upscaling_entry_8x">8x</string>
+   <string name="parallel_superscaling_readbacks_title">Суперскейлинг обратных считываний при апсэмплинге</string>
+   <string name="parallel_superscaling_dithering_title">Суперскейлинг дизеринга при апсэмплинге</string>
+   <string name="parallel_synchronous_title">Синхронизировать RDP и CPU (медленно)</string>
+   <string name="parallel_deinterlacing_title">Метод удаления чересстрочности</string>
+   <string name="parallel_deinterlacing_entry_bob">Bob</string>
+   <string name="parallel_deinterlacing_entry_weave">Weave</string>
+   <string name="parallel_overscan_crop_title">Число кадрируемых пикселей вылетов развёртки</string>
+   <string name="parallel_vi_antialiasing_title">Сглаживание VI</string>
+   <string name="parallel_vi_antialiasing_summary">Смягчает контуры полигонов</string>
+   <string name="parallel_vi_divot_filter_title">Divot-фильтр VI</string>
+   <string name="parallel_vi_divot_filter_summary">Удаляет случайные чёрные пиксели</string>
+   <string name="parallel_vi_gamma_dither_title">Гамма-дизеринг VI</string>
+   <string name="parallel_vi_bilinear_scaling_title">Билинейное масштабирование VI</string>
+   <string name="parallel_vi_dedither_title">Дедизеринг VI</string>
+   <string name="parallel_downscale_title">Степень даунсэмплинга. Уменьшает масштаб на выходе VI, эквивалентно SSAA</string>
+   <string name="parallel_downscale_entry_disabled">Откл.</string>
+   <string name="parallel_downscale_entry_half">1/2</string>
+   <string name="parallel_downscale_entry_fourth">1/4</string>
+   <string name="parallel_downscale_entry_eight">1/8</string>
+   <string name="parallel_native_texture_lod_title">Нативный LOD текстур</string>
+   <string name="parallel_native_texture_lod_summary">Исп. нативное вычисление уровня детализации текстур при апскейлинге</string>
+   <string name="parallel_native_res_text_rect_title">Нативное разрешение для TEX_RECT</string>
+   <string name="parallel_native_res_text_rect_summary">Рендеринг примитивов TEX_RECT рекомендуется выполнять в нативном разрешении, чтобы избежать швов</string>
+   
+   <string name="glide64mk2_game_default">Преднастройка игры</string>
+   <string name="glide64mk2_disable">Откл.</string>
+   <string name="glide64mk2_enable">Вкл.</string>
    <string name="glide64mk2_filtering_title">Режим фильтрации</string>
-   <string name="glide64mk2_filtering_automatic">Автоматически</string>
-   <string name="glide64mk2_filtering_force_bilinear">Билинейный принудительно</string>
+   <string name="glide64mk2_filtering_automatic">Автоматический</string>
+   <string name="glide64mk2_filtering_force_bilinear">Принуд. билинейный</string>
+   <string name="glide64mk2_filtering_force_point_samples">Принуд. по точкам выборки</string>
    <string name="glide64mk2_fog_title">Туман</string>
-   <string name="glide64mk2_buff_clear_title">Очистка буфера каждый кадр</string>
+   <string name="glide64mk2_buff_clear_title">Очистка буфера на каждом кадре</string>
+   <string name="glide64mk2_swapmode_title">Метод смены буфера</string>
+   <string name="glide64mk2_swapmode_vi_ocurred">Менять буферы при верт. прерывании</string>
+   <string name="glide64mk2_swapmode_conditional">Менять буферы при определённых условиях. Убирает мерцание в некоторых играх</string>
+   <string name="glide64mk2_swapmode_mix">Сочетание двух первых методов</string>
+   <string name="glide64mk2_lodmode_title">Вычисление LOD</string>
    <string name="glide64mk2_lodmode_fast">Быстро</string>
-   <string name="glide64mk2_fb_crc_mode_fast">Быстрый CRC подсчет</string>
-   <string name="glide64mk2_fb_crc_mode_safe">Безопасный CRC подсчет</string>
-   <string name="glide64mk2_fast_crc_title">Использовать быстрый CRC алгоритм</string>
-   <string name="glide64mk2_stipple_mode_disable">Отключить</string>
-   <string name="glide64mk2_stipple_mode_rotate">Повернуть</string>
+   <string name="glide64mk2_lodmode_precise">Точно</string>
+   <string name="glide64mk2_fb_smart_title">Умный фреймбуфер</string>
+   <string name="glide64mk2_fb_hires_title">Аппаратная эмуляция фреймбуфера</string>
+   <string name="glide64mk2_fb_render_title">Вкл. программный рендер глубины</string>
+   <string name="glide64mk2_fb_crc_mode_title">Задать режим CRC фреймбуфера</string>
+   <string name="glide64mk2_fb_crc_mode_disable">Откл. расчёт CRC</string>
+   <string name="glide64mk2_fb_crc_mode_fast">Быстрый расчёт CRC</string>
+   <string name="glide64mk2_fb_crc_mode_safe">Безопасный расчёт CRC</string>
+   <string name="glide64mk2_read_back_to_screen_title">Отрисовка фреймбуфера N64 в виде текстуры</string>
+   <string name="glide64mk2_read_back_to_screen_mode1">Режим 1</string>
+   <string name="glide64mk2_read_back_to_screen_mode2">Режим 2</string>
+   <string name="glide64mk2_detect_cpu_write_title">Показывать изображения, взятые напрямую с CPU</string>
+   <string name="glide64mk2_alt_tex_size_title">Альт. расчёт размера текстур</string>
+   <string name="glide64mk2_use_sts1_only_title">Исп. только первый SETTILESIZE</string>
+   <string name="glide64mk2_fast_crc_title">Исп. быстрый алгоритм CRC</string>
+   <string name="glide64mk2_force_microcheck_title">Проверять микрокод на каждом кадре</string>
+   <string name="glide64mk2_force_quad3d_title">Форс. команду 0xb5 в виде квада вместо прямой 3D</string>
+   <string name="glide64mk2_optimize_texrect_title">Быстрый рендеринг texrect с hwfbe</string>
+   <string name="glide64mk2_hires_buf_clear_title">Очищать вспом. текстурные фреймбуферы</string>
+   <string name="glide64mk2_fb_read_alpha_title">Считывать альфу из фреймбуфера</string>
+   <string name="glide64mk2_force_calc_sphere_title">Исп. только сферическое наложение</string>
+   <string name="glide64mk2_texture_correction_title">Эмуляция перспективной коррекции текстур</string>
+   <string name="glide64mk2_increase_texrect_edge_title">Приводить размер texrect к целому числу</string>
+   <string name="glide64mk2_decrease_fillrect_edge_title">Уменьшать размер fillrect на 1</string>
+   <string name="glide64mk2_stipple_mode_title">Режим эмуляции альфа-дизеринга 3DFX</string>
+   <string name="glide64mk2_stipple_mode_disable">Откл.</string>
+   <string name="glide64mk2_stipple_mode_pattern">Шаблон</string>
+   <string name="glide64mk2_stipple_mode_rotate">Чередовать</string>
+   <string name="glide64mk2_clip_zmax_title">Вкл. отсечение дальней плоскости</string>
+   <string name="glide64mk2_clip_zmin_title">Вкл. отсечение ближней плоскости</string>
+   <string name="glide64mk2_adjust_aspect_title">Подстройка соотношения сторон под широкоэкранный режим</string>
+   <string name="glide64mk2_correct_viewport_title">Принуд. исправление области отображения</string>
    <string name="glide64mk2_aspect_title">Соотношение сторон</string>
    <string name="glide64mk2_aspect_force_4_3">Принудительно 4:3</string>
    <string name="glide64mk2_aspect_force_16_9">Принудительно 16:9</string>
    <string name="glide64mk2_aspect_stretch">Растянутое</string>
-   <string name="glide64mk2_aspect_original">Исходное</string>
+   <string name="glide64mk2_aspect_original">Оригинальное</string>
+   <string name="glide64mk2_zmode_compare_less_title">Исп. строгую проверку в тесте буфера глубины</string>
+   <string name="glide64mk2_old_style_adither_title">Применять альфа-дизеринг независимо от alpha_dither_mode</string>
+   <string name="glide64mk2_n64_z_scale_title">Масштабировать z-значения вершин перед записью в буфер глубины</string>
+   <string name="glide64mk2_pal230_title">Установка особого масштаба для игр PAL</string>
+   <string name="glide64mk2_ignore_aux_copy_title">Не копировать вспом. фреймбуферы</string>
+   <string name="glide64mk2_useless_is_useless_title">Обрабатывать исходный фреймбуфер</string>
+   <string name="glide64mk2_fb_read_always_title">Чтение фреймбуфера на каждом кадре. Может снижать скорость. Исп. только для некоторых эффектов, напр. переходов в Banjo Kazooie, DK64</string>
    <string name="glide64mk2_wrpAnisotropic_title">Настройки анизотропной фильтрации</string>
    <string name="glide64mk2_wrpAnisotropic_1x">1x</string>
    <string name="glide64mk2_wrpAnisotropic_2x">2x</string>
@@ -394,57 +640,124 @@
    <string name="glide64mk2_wrpAnisotropic_8x">8x</string>
    <string name="glide64mk2_wrpAnisotropic_16x">16x</string>
 
-   <string name="navigationMode_title">Доступность</string>
-   <string name="navigationMode_summary">Режим меню навигации: %1$s</string>
-   <string name="navigationMode_entryAuto">Авто выбор из настроек устройства</string>
-   <string name="navigationMode_entryStandard">Стандартный режим</string>
-   <string name="navigationMode_entryBigScreen">Режим большого экрана (Никакого тачскрина, ввод только с геймпада/клавиатуры)</string>
-   <string name="inGameMenuSetting_title">Показать внутриигровое меню</string>
-   <string name="inGameMenuSetting_entryBackKey">По нажатию на кнопку возврата</string>
-   <string name="inGameMenuSetting_entrySwipe">По проведению по экрану</string>
+   <string name="navigationMode_title">Спец. возможности</string>
+   <string name="navigationMode_summary">Режим навигации в меню: %1$s</string>
+   <string name="navigationMode_entryAuto">По выбору системы</string>
+   <string name="navigationMode_entryStandard">Стандартный</string>
+   <string name="navigationMode_entryBigScreen">Режим большого экрана (без тачскрина, ввод только с геймпада/клавиатуры)</string>
+   <string name="inGameMenuSetting_title">Вызов быстрого меню</string>
+   <string name="inGameMenuSetting_entryBackKey">Нажатие кнопки назад</string>
+   <string name="inGameMenuSetting_entrySwipe">Скольжение по экрану</string>
 
-   <string name="r4300Emulator_title">R4300 эмулятор</string>
+   <string name="r4300Emulator_title">Эмулятор R4300</string>
    <string name="r4300Emulator_entryPureInterpreter">Чистый интерпретатор</string>
    <string name="r4300Emulator_entryCachedInterpreter">Кэшированный интерпретатор</string>
    <string name="r4300Emulator_entryDynarec">Динамический рекомпилятор (dynarec)</string>
-   <string name="disableExtraMem_title">Отключить пак расширения</string>
+   <string name="disableExtraMem_title">Откл. модуль расширения</string>
    <string name="rsp_title">RSP</string>
    <string name="rsp_hle">HLE</string>
    <string name="rsp_cxd4_hle">CXD4 HLE Video</string>
    <string name="rsp_cxd4_lle">CXD4 LLE Video</string>
-   <string name="displayZoom_title">Увеличение</string>
-   <string name="audioFloatingPoint_title">Значения с плавающей точкой</string>
-   <string name="audioFloatingPoint_summary">более высокое качество FP аудио. Не поддерживается на некоторых устройствах.</string>
-   <string name="localeOverride_entrySystemDefault">Системные умолчанья</string>
+   <string name="rsp_parallel">Parallel</string>
+   
+   <string name="displayZoom_title">Приближение</string>
+   <string name="displayZoomDefault_title">Исп. стандартное приближение</string>
+   <string name="displayZoomDefault_summary">Отключите, чтобы вручную задать приближение для данной игры</string>
+
+   <string name="shadersScale_title">Масштаб шейдера</string>
+   <string name="shadersPasses_title">Проходы шейдера</string>
+   <string name="shadersPass_title">Проход</string>
+   <string name="shadersNone_title">Нет</string>
+   <string name="shadersNone_summary">Исходное изображение игры</string>
+   <string name="shadersScanlines_title">Линии развёртки</string>
+   <string name="shadersScanlines_summary">Простые линии развёртки. Практически не влияет на производительность.</string>
+   <string name="shadersTestPattern_title">Тестовый шаблон</string>
+   <string name="shadersTestPattern_summary">Тестовый шаблон для оценки эффекта шейдера. Отключает выходное изображение игры.</string>
+   <string name="shadersBlur9x9_title">Размытие</string>
+   <string name="shadersBlur9x9_summary">Эффект размытия. Может сильно снижать производительность.</string>
+   <string name="shadersN64Dither_title">Дизеринг N64</string>
+   <string name="shadersN64Dither_summary">Имитация VI-фильтра N64. Умеренно влияет на производительность.</string>
+   <string name="shadersFxaa_title">FXAA</string>
+   <string name="shadersFxaa_summary">Быстрое приближенное сглаживание. Умеренно влияет на производительность.</string>
+   <string name="shadersCrtGeom_title">Геометрия CRT</string>
+   <string name="shadersCrtGeom_summary">Имитация эффекта ЭЛТ. Может сильно снижать производительность.</string>
+   <string name="shadersScaleFx_title">ScaleFX</string>
+   <string name="shadersScaleFx_summary">Алгоритм интерполяции по контуру, предназначенный для пиксель-арта.</string>
+
+   <string name="audioVolume_title">Громкость звука</string>
+   <string name="audioBufferSize_title">Размер аудио буфера</string>
+   <string name="audioSamplingType_title">Тип сэмплирования</string>
+   <string name="audioSamplingType_trivial">Простой</string>
+   <string name="audioSamplingType_soundtouch">SoundTouch</string>
+   <string name="audioFloatingPoint_title">Сэмплы с плавающей запятой</string>
+   <string name="audioFloatingPoint_summary">Более качественный звук с плавающей запятой. Не поддерживается на некоторых устройствах.</string>
+   <string name="localeOverride_entrySystemDefault">По выбору системы</string>
 
    <!-- Seek Bar Preferences (selected value and units will become the summary -->
-   <string name="touchscreenTransparency_title">Непрозрачность кнопок</string>
-   <string name="touchscreenScale_title">Масштаб кнопок</string>
-   <string name="touchscreenAutoHide_title">Количество секунд до скрытия экранных кнопок</string>
-   <string name="libraryScale_title">Масштаб обложки</string>
-   <string name="displayActionBarTransparency_title">Непрозрачность панели действий</string>
+   <string name="touchscreenTransparency_title">Видимость кнопок</string>
+   <string name="touchscreenScale_title">Размер кнопок</string>
+   <string name="touchscreenAutoHide_title">Время отключения кнопок</string>
+   <string name="libraryScale_title">Размер обложки</string>
+   <string name="libraryCountryFilter_title">Фильтрация по стране</string>
+   <string name="libraryCountryFilterUnknown_title">Неизвестно</string>
+   <string name="libraryCountryFilterUsa_title">США</string>
+   <string name="libraryCountryFilterJapan_title">Япония</string>
+   <string name="libraryCountryFilterEurope_title">Европа</string>
+   <string name="libraryCountryFilterAustralia_title">Австралия</string>
+   <string name="libraryCountryFilterKorea_title">Корея</string>
+   <string name="libraryCountryFilterGermany_title">Германия</string>
+   <string name="libraryCountryFilterFrance_title">Франция</string>
+   <string name="libraryCountryFilterItaly_title">Италия</string>
+   <string name="libraryCountryFilterSpain_title">Испания</string>
+   <string name="displayActionBarTransparency_title">Видимость панели действий</string>
 
+   <!-- Path Preferences (selected path will become the summary) -->
+   <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
+   <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
+   <string name="support64dd_title">Поддержка 64DD</string>
+   <string name="support64dd_summary">Вкл. совместимость с 64DD</string>
+   <string name="iplRom64ddPath_title">64DD IPL</string>
+   <string name="disk64ddPath_title">Диск 64DD (ndd)</string>
+   
    <!-- Player Map Preferences -->
    <string name="playerMap_title">Мультиплеер</string>
-   <string name="playerMap_summary">Определить контроллер(ы) каждого игрока</string>
-   <string name="playerMap_needed">Пожалуйста определите расположение клавиш мультиплеерных контроллеров в игровых настройках </string>
-   <string name="inputShareController_title">Поделится контроллером</string>
-   <string name="inputShareController_summary">Позволить устройству одного ввода контролировать несколько игроков за раз</string>
-   <string name="playerMap_useDefaultPlayerMap_title">Использовать стандартное расположение клавиш игрока</string>
-   <string name="playerMap_useDefaultPlayerMap_summary">Снимите отметку с этого пункта, чтобы назначить пользовательское расположение клавиш игрока для этой игры</string>
+   <string name="playerMap_summary">Привязка контроллеров для каждого игрока</string>
+   <string name="playerMap_needed">Пожалуйста, настройте привязки контроллеров для каждого игрока в настройках игры</string>
+   <string name="inputShareController_title">Общий контроллер</string>
+   <string name="inputShareController_summary">Разрешить одно устройство ввода для управления несколькими игроками</string>
+   <string name="inputShareController_entryYes">Да</string>
+   <string name="inputShareController_entryNo">Нет</string>
+   <string name="relativeAnalog_title">Относительный режим экранного стика</string>
+   <string name="relativeAnalog_summary">Каждое касание к экранному аналог. стику приводит к его повторной центровке</string>
+   <string name="playerMap_useDefaultPlayerMap_title">Станд. раскладка для игрока</string>
+   <string name="playerMap_useDefaultPlayerMap_summary">Откл. для выбора пользовательской раскладки игры</string>
 
    <!-- Profile Preferences -->
    <string name="emulationProfile_title">Профиль эмуляции</string>
    <string name="touchscreenProfile_title">Профиль тачскрина</string>
-   <string name="controllerProfile1_title">Профиль 1-го контроллера</string>
-   <string name="controllerProfile2_title">Профиль 2-го контроллера</string>
-   <string name="controllerProfile3_title">Профиль 3-го контроллера</string>
-   <string name="controllerProfile4_title">Профиль 4-го контроллера</string>
-   <string name="default_profile_title">Глобальные умолчания</string>
+   <string name="touchscreenProfileDpad_title">Профиль тачскрина (D-pad)</string>
+   <string name="controllerProfile1_title">Профиль контроллера 1</string>
+   <string name="controllerProfile2_title">Профиль контроллера 2</string>
+   <string name="controllerProfile3_title">Профиль контроллера 3</string>
+   <string name="controllerProfile4_title">Профиль контроллера 4</string>
+   <string name="default_profile_title">Глобальные предустановки</string>
 
-   <string name="GameAutoSavesMax_title">Максимальное число автосохранений за игру</string>
-   <string name="useFlatGameDataPath_title">Использовать плоскую структуру папок с данными</string>
-   <string name="useFlatGameDataPath_summary">Держать все сохранения, скриншоты и внутриигровые сохранения в одной и той же папке</string>
+   <!-- Other Preferences -->
+   <string name="gameDataStorageLocation_title">Хранилище данных игр</string>
+   <string name="gameDataStorageLocation_entryInternal">Внутреннее</string>
+   <string name="gameDataStorageLocation_entryExternal">Внешнее</string>
+   <string name="gameDataStorageExternalPath_title">Внешнее хранилище данных игр</string>
+   <string name="GameAutoSavesMax_title">Макс. автосохранений для игры</string>
+   <string name="useFlatGameDataPath_title">Плоская структура папок с данными игр</string>
+   <string name="useFlatGameDataPath_summary">Хранить скриншоты, внутриигровые и быстрые сохранения в одном каталоге</string>
+   <string name="japanIplRom64ddPath_title">64DD IPL (J)</string>
+   <string name="useUpnpToMapPort_title">Автом. привязка внешних портов</string>
+   <string name="useUpnpToMapPort_summary">Исп. UPnP или NAT/PMP для автоматической привязки внешних портов</string>
+   <string name="roomTcpPort_title">TCP-порт комнаты</string>
+   <string name="serverTcpUdpPort_title">UDP/TCP-порт сервера</string>
+
+
+   
    <!-- ************************************************************************** -->
    <!-- Dialogs and Other Feedback -->
    <!-- Developers: Use formatting arguments rather than string concatenation: -->
@@ -453,113 +766,178 @@
 
 
    <!-- Confirmation Dialogs -->
-   <string name="confirm_title">Конфигурации</string>
-   <string name="confirmResetGame_message">Перезагрузить игру? Весь прогресс с вашего последнего сохранения будет утерян.</string>
-   <string name="confirmExitGame_message">Вы уверены что хотите прекратить игру?</string>
+   <string name="confirm_title">Подтверждение</string>
+   <string name="confirmResetGame_message">Перезагрузить игру? Прогресс с последнего сохранения будет утерян.</string>
+   <string name="confirmExitGame_message">Вы действительно хотите завершить игру?</string>
    <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
-   <string name="confirmUnmapAll_message">Сбросить все вводы для %1$s?</string>
+   <string name="confirmUnmapAll_message">Сбросить привязки для %1$s?</string>
    <string name="confirmDeleteProfile_message">Удалить профиль \"%1$s\"?</string>
-   <string name="confirmRemoveFromLibrary_message">Вы уверены, что хотите убрать эту игру из библиотеки?</string>
+   <string name="clearTexturePack_message">Выберите пакет текстур для удаления</string>
+   <string name="confirmClearData_message">Вы действительно хотите удалить указанный пакет текстур?</string>
+   <string name="confirmRemoveFromLibrary_message">Вы действительно хотите удалить игру из библиотеки?</string>
 
+   <!-- Corrupt Installation Warning -->
+   <string name="invalidInstall_message">Неправильная установка Mupen64 Plus AE. Пожалуйста, переустановите приложение.</string>
+   
    <!-- Text Editor Hints (start lower-case) -->
-   <string name="hintFileSave">Имя файла</string>
+   <string name="hintFileSave">имя файла</string>
 
    <!-- Asset Extractor -->
-   <string name="assetExtractor_initializing">Инициализируется</string>
+   <string name="assetExtractor_initializing">Инициализация</string>
    <string name="assetExtractor_progress">%1$.0f%% выполнено: %2$s</string>
    <string name="assetExtractor_finished">Завершено</string>
-   <string name="assetExtractor_failed">Ошибка извлечения данных приложения.\nПожалуйста отключите USB кабель, перезагрузите устройство и перезапустите устройство.\nДля поддержи посетите %1$s.</string>
+   <string name="assetExtractor_failed">Ошибка извлечения данных приложения.</string>
    <string name="assetExtractor_error">Ошибка</string>
-   <string name="assetExtractor_failed_permissions">Это приложение не может продолжить без этих разрешений</string>
+   <string name="assetExtractor_failed_permissions">Приложение не может работать без следующих разрешений</string>
    <string name="assetExtractor_permissions_title">Разрешения</string>
-   <string name="assetExtractor_permissions_rationale">Mupen64Plus AE должен иметь доступ к: \nЧтению памяти для считывания файлов ромов,файлов сохранений и конфигураций. \nЗаписи на память для записи конфигураций и данных сохранений.</string>
+   <string name="assetExtractor_permissions_rationale">Mupen64Plus AE требуется доступ на: \nчтение памяти для загрузки игр, сохранений состояния и конфигураций. \nЗаписи в память для хранения конфигураций и файлов сохранений.</string>
+   <string name="assetExtractor_permissions_rationale_notifications">Mupen64Plus AE требуется разрешение на показ уведомлений для отображения статуса текущих служб переднего плана.</string>
 
+   
    <!-- Cheats Configuration -->
-   <string name="cheats_defaultName">Чит %1$d</string>
-   <string name="cheats_longPress">(долгое нажатие для полого текста)</string>
-   <string name="cheat_disabled">(отключено)</string>
+   <string name="cheats_defaultName">Чит-код %1$d</string>
+   <string name="cheats_longPress">(долгий тап для полного описания)</string>
+   <string name="cheat_disabled">(откл.)</string>
    <string name="cheatOption_title">Полный текст</string>
-   <string name="cheatNotes_title">Заметки</string>
-   <string name="cheatNotes_none">(заметки недоступны для этого чита)</string>
+   <string name="cheatNotes_title">Описание</string>
+   <string name="cheatNotes_none">(описание чит-кода отсутствует)</string>
 
    <!-- Cheat Editor -->
-   <string name="menuItem_cheatEditor">Редактор читов</string>
-   <string name="cheatEditor_confirm">Вы уверенны?</string>
-   <string name="cheatEditor_edit1">Редактировать чит</string>
-   <string name="cheatEditor_edit2">Расширенная редактировка чита</string>
-   <string name="cheatEditor_invalid_value">N/A</string>
-   <string name="cheatEditor_delete">Удалить чит</string>
-   <string name="cheatEditor_add">Дабавить чит</string>
-   <string name="cheatEditor_add_advanced">Добавить расширенный чит</string>
-   <string name="cheatEditor_hint_cheatTitle">Название чита</string>
-   <string name="cheatEditor_hint_cheatNotes">Заметки чита (не обязательно)</string>
+   <string name="menuItem_cheatEditor">Редактор чит-кодов</string>
+   <string name="cheatEditor_confirm">Вы уверены?</string>
+   <string name="cheatEditor_edit1">Редактировать чит-код</string>
+   <string name="cheatEditor_edit2">Расширенный редактор чит-кода</string>
+   <string name="cheatEditor_invalid_value">Н/Д</string>
+   <string name="cheatEditor_delete">Удалить чит-код</string>
+   <string name="cheatEditor_add">Добавить чит-код</string>
+   <string name="cheatEditor_add_advanced">Добавить расширенный чит-код</string>
+   <string name="cheatEditor_hint_cheatTitle">Название чит-кода</string>
+   <string name="cheatEditor_hint_cheatNotes">Описание чит-кода (необязательно)</string>
    <string name="cheatEditor_hint_cheatAddress">Адрес</string>
-   <string name="cheatEditor_hint_cheatData">Введите данные чита</string>
-   <string name="cheatEditor_hint_optionData">Введите данные опций</string>
+   <string name="cheatEditor_hint_cheatData">Введите данные чит-кода</string>
+   <string name="cheatEditor_hint_optionData">Введите данные опции</string>
    <string name="cheatEditor_hint_value">Значение</string>
    <string name="cheatEditor_hint_value_description">Описание</string>
    <string name="cheatEditor_add_option">Добавить опцию</string>
-   <string name="cheatEditor_add_cheats">Добавить чит</string>
-   <string name="cheatEditor_remove_option">Убрать опцию</string>
+   <string name="cheatEditor_add_cheats">Добавить чит-код</string>
+   <string name="cheatEditor_remove_option">Удалить опцию</string>
 
-   <string name="pathHiResTexturesTask_errorMessage">Возникла проблема во время распаковки текстур!</string>
-   <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Ошибка: HTC должен быть следующего формата [Название_Игры]__HIRESTEXTURES.htc</string>
+   <!-- Hi-Res Texture Unpacking -->
+   <string name="pathHiResTexturesTask_select_zip">Выберите файл ZIP, 7Zip, HTS или HTC с пакетом hd-текстур</string>
+   <string name="pathHiResTexturesTask_start_file_picker">Выбрать файл</string>
+   <string name="pathHiResTexturesTask_title">Распаковка текстур…</string>
+   <string name="pathHiResTexturesTask_errorMessage">Проблема при распаковке текстур!</string>
+   <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Ошибка: файл HTC должен быть в формате [НАЗВАНИЕ_ИГРЫ]__HIRESTEXTURES.htc</string>
 
-   <string name="scanRomsDialog_searchZips">Искать zip файлы</string>
-   <string name="scanRomsDialog_downloadArt">Загрузить обложку</string>
-   <string name="scanRomsDialog_clearGallery">Очистить галерею перед добавлением</string>
-   <string name="scanRomsDialog_scanSubdirectories">Сканировать подпапки</string>
+   <!-- Scan Roms Dialog -->
+   <string name="scanRomsDialog_selectRom">Выберите файл или каталог для поиска игр (поддерживаются файлы zip/7zip/n64/z64)</string>
+   <string name="scanRomsDialog_select_folder">Выбрать каталог</string>
+   <string name="scanRomsDialog_select_file">Выбрать файл</string>
+   <string name="scanRomsDialog_no_saf">Не обнаружено системное средство выбора файлов. Поместите игры в следующий каталог: </string>
+   <string name="scanRomsDialog_searchZips">Искать в zip-файлах</string>
+   <string name="scanRomsDialog_downloadArt">Скачивать обложки</string>
+   <string name="scanRomsDialog_clearGallery">Очищать галерею перед добавлением</string>
+   <string name="scanRomsDialog_scanSubdirectories">Сканировать подкаталоги</string>
 
+   <!-- Import/Export Activity -->
+   <string name="importExportActivity_title">Импорт/экспорт данных</string>
+   <string name="importExportActivity_exportDialogTitle">Экспортирование данных</string>
+   <string name="importExportActivity_exportGameData">Экспорт данных игры</string>
+   <string name="importExportActivity_exportCheatsAndProfiles">Экспорт чит-кодов и профилей</string>
+   <string name="importExportActivity_exportDumpedTextures">Экспорт дампа текстур</string>
+   <string name="importExportActivity_importDialogTitle">Импортирование данных</string>
+   <string name="importExportActivity_importGameData">Импорт данных игры</string>
+   <string name="importExportActivity_importCheatsAndProfiles">Импорт чит-кодов и профилей</string>
+   <string name="importExportActivity_importTouchscreenGraphics">Импорт графики тачскрина</string>
+   <string name="importExportActivity_invalidCustomSkinFile">Неправильный файл с графикой тачскрина</string>
+   <string name="importExportActivity_invalidGameDataFolder">Неправильный каталог GameData. Каталог должен быть экспортированным каталогом GameData.</string>
+   <string name="importExportActivity_invalidProfilesFolder">Неправильный каталог Profiles. Каталог должен быть экспортированным каталогом Profiles.</string>
+
+   <!-- ROM preparation -->
+   <string name="extractRomTask_title">Подготовка данных игры…</string>
+
+   <!-- Netplay -->
+   <string name="startNetplay_title">Запуск</string>
+   <string name="netplay_enterIp">Введите IP</string>
+   <string name="netplayServers_title">Серверы Netplay</string>
+   <string name="netplayServerInfo_title">Данные сервера</string>
+   <string name="netplayPlayers_title">Игроки</string>
+   <string name="netplayWaitingOnServer_title">Ожидание запуска игры хостом&#8230;</string>
+   <string name="netplay_toastDesyncDetected">Рассинхронизация игроков! Пожалуйста, при обнаружении проблем выйдите из игры.</string>
+   <string name="netplay_romMd5Mismatch">Игра на стороне сервера не совпадает!</string>
+   <string name="netplay_serverVersionMismatch">Версии netplay сервера и клиента не совпадают!</string>
+   <string name="netplay_hostAddress">Адрес</string>
+   <string name="netplay_hostPort1">Порт 1</string>
+   <string name="netplay_hostPort2">Порт 2</string>
+   <string name="netplay_connect">Подключение</string>
+   <string name="netplay_getCode">Получить код</string>
+   <string name="netplay_enterCode">Введите код</string>
+   <string name="netplay_code">Код</string>
+   <string name="netplay_codeNotFound">Код не найден!</string>
+   <string name="netplay_codeRetrieveFailure">Не удалось получить код!</string>
+   <string name="netplay_advanced">Расширенные</string>
+   
    <!-- ROM Scanning -->
    <string name="scanning_title">Сканирование…</string>
 
+   <!-- Deleting Files -->
+   <string name="pathDeletingFilesTask_title">Удаление файлов…</string>
+
+   <!-- Netplay Running-->
+   <string name="netplay_running_title">Netplay запущен</string>
+
    <!-- ROM information calculation -->
    <string name="cacheRomInfo_searching">Поиск…</string>
-   <string name="cacheRomInfo_searchingZip">Поиск zip файла…</string>
-   <string name="cacheRomInfo_computingMD5">Обрабатывается MD5…</string>
-   <string name="cacheRomInfo_searchingDB">Поиск базы данных ROM…</string>
-   <string name="cacheRomInfo_downloadingArt">Загрузка обложки…</string>
-   <string name="cacheRomInfo_refreshingUI">Обновлене UI…</string>
-   <string name="cacheRomInfo_extractingZip">Распаковка zip прохода…</string>
+   <string name="cacheRomInfo_searchingZip">Поиск в zip-файле…</string>
+   <string name="cacheRomInfo_computingMD5">Вычисление MD5…</string>
+   <string name="cacheRomInfo_searchingDB">Поиск в базе данных игр…</string>
+   <string name="cacheRomInfo_downloadingArt">Скачивание обложек…</string>
+   <string name="cacheRomInfo_refreshingUI">Обновление интерфейса…</string>
+   <string name="cacheRomInfo_extractingZip">Распаковка файла zip…</string>
 
    <!-- Seek Bar Preference -->
    <string name="seekBarPreference_summary">%1$d %2$s</string>
 
    <!-- Path Preference -->
-   <string name="pathPreference_parentFolder">Родительская папка</string>
+   <string name="pathPreference_parentFolder">Родительский каталог</string>
 
    <!-- Player Mapping -->
    <string name="playerMap_deviceWithName">Устройство %1$d (%2$s)</string>
    <string name="playerMap_deviceWithoutName">Устройство %1$d</string>
-   <string name="playerMap_deviceNotConnected">Не подсоединено</string>
+   <string name="playerMap_deviceNotConnected">Не подключено</string>
    <string name="playerMapPreference_popupTitle">Игрок %1$d</string>
-   <string name="playerMapPreference_popupMessage">Игрок %1$d, нажмите кнопку или стик на вашем контроллере …\n\nТекущие устройства:\n%2$s</string>
-   <string name="playerMapPreference_popupUnmap">Сбросить значение клавиш</string>
+   <string name="playerMapPreference_popupMessage">Игрок %1$d, нажмите кнопку или джойстик контроллера…\n\nТекущие устройства:\n%2$s</string>
+   <string name="playerMapPreference_popupUnmap">Отвязать</string>
    <string name="playerMapPreference_button">Игрок %1$d\n%2$s</string>
 
    <!-- Touchscreen Profile Activity -->
-   <string name="touchscreenProfileActivity_menuTitle">Выберите вариант</string>
+   <string name="touchscreenProfileActivity_menuTitle">Выбор опции</string>
    <string name="touchscreenProfileActivity_buttons">Кнопки</string>
-   <string name="touchscreenProfileActivity_remove">Убрать</string>
-   <string name="touchscreenProfileActivity_horizontalSlider">Горизонталь: %1$d %%</string>
-   <string name="touchscreenProfileActivity_verticalSlider">Вертикаль: %1$d %%</string>
-   <string name="touchscreenProfileActivity_ScaleSlider">Маштаб: %1$d %%</string>
-   <string name="touchscreenProfileActivity_autoHoldable">Авто удержание</string>
+   <string name="touchscreenProfileActivity_remove">Удалить</string>
+   <string name="touchscreenProfileActivity_horizontalSlider">По горизонтали: %1$d %%</string>
+   <string name="touchscreenProfileActivity_verticalSlider">По вертикали: %1$d %%</string>
+   <string name="touchscreenProfileActivity_ScaleSlider">Размер: %1$d %%</string>
+   <string name="touchscreenProfileActivity_autoHoldable">Автоудержание</string>
 
    <!-- Sensor configuration -->
-   <string name="sensorConfig_hideJoystick">Спрятать, когда сенсор активен</string>
+   <string name="sensorConfig_hideJoystick">Скрывать при активном сенсоре</string>
    <string name="sensorConfig_activateOnStart">Активировать при запуске игры</string>
    <string name="sensorConfig_joystickXEmulation">Эмуляция оси Х джойстика</string>
    <string name="sensorConfig_joystickYEmulation">Эмуляция оси Y джойстика</string>
-   <string name="sensorConfig_sensorX">Использовать ось Х акселерометра</string>
-   <string name="sensorConfig_sensorY"> Использовать ось Y акселерометра </string>
+   <string name="sensorConfig_sensorX">Исп. ось Х акселерометра</string>
+   <string name="sensorConfig_sensorY"> Исп. ось Y акселерометра </string>
    <string name="sensorConfig_angle">Пустой угол (°)</string>
-   <string name="sensorConfig_invertAxis">Инвертировать ось</string>
-   <string name="sensorConfig_axisCustom">Пользовавельский</string>
-   <string name="sensorConfig_axisDisabled">Отключено</string>
+   <string name="sensorConfig_invertAxis">Инверсия оси</string>
+   <string name="sensorConfig_axisCustom">Ручной выбор</string>
+   <string name="sensorConfig_axisDisabled">Откл.</string>
+
+   <!-- Buttons configuration -->
+   <string name="buttonsConfig_buttonsAB">Кнопки A/B</string>
+   <string name="buttonsConfig_buttonsC">Кнопки C</string>
+   <string name="buttonsConfig_separate">Исп. раздельные кнопки</string>
 
    <!-- Controller button names -->
-   <string name="controller_analog">Анологовый стик</string>
+   <string name="controller_analog">Аналоговый стик</string>
    <string name="controller_dpad">D-pad</string>
    <string name="controller_groupAB">Кнопки A/B</string>
    <string name="controller_buttonA">Кнопка A</string>
@@ -576,8 +954,8 @@
    <string name="controller_buttonSensor">Кнопка переключения на сенсор</string>
 
    <!-- Input Mapping -->
-   <string name="inputMapActivity_popupMessage">Нажмите кнопку, клавишу, или клавишу для считывания…\n\nТекущий маппинг:\n%1$s</string>
-   <string name="inputMapActivity_popupUnmap">Сбросить маппинг</string>
+   <string name="inputMapActivity_popupMessage">Нажмите кнопку, клавишу или джойстик для считывания…\n\nТекущая привязка:\n%1$s</string>
+   <string name="inputMapActivity_popupUnmap">Удалить</string>
    <string name="inputMapActivity_btnA">A</string>
    <string name="inputMapActivity_btnB">B</string>
    <string name="inputMapActivity_btnC">C</string>
@@ -585,34 +963,41 @@
    <string name="inputMapActivity_btnR">R</string>
    <string name="inputMapActivity_btnZ">Z</string>
    <string name="inputMapActivity_btnS">S</string>
-   <string name="inputMapActivity_btnCR">C-pad ></string>
-   <string name="inputMapActivity_btnCL">C-pad &lt;</string>
-   <string name="inputMapActivity_btnCD">C-pad v</string>
-   <string name="inputMapActivity_btnCU">C-pad ^</string>
-   <string name="inputMapActivity_btnDR">D-pad ></string>
-   <string name="inputMapActivity_btnDL">D-pad &lt;</string>
-   <string name="inputMapActivity_btnDD">D-pad v</string>
-   <string name="inputMapActivity_btnDU">D-pad ^</string>
-   <string name="inputMapActivity_btnAR">Analog ></string>
-   <string name="inputMapActivity_btnAL">Analog &lt;</string>
-   <string name="inputMapActivity_btnAD">Analog v</string>
-   <string name="inputMapActivity_btnAU">Analog ^</string>
-   <string name="inputMapActivity_incrementSlot">Слот повышения</string>
-   <string name="inputMapActivity_reset">Reset</string>
-   <string name="inputMapActivity_pause">Pause</string>
-   <string name="inputMapActivity_stop">Stop</string>
-   <string name="inputMapActivity_frameAdvance">Расширенный кадр</string>
-   <string name="inputMapActivity_fastForward">Ускореная перемотка</string>
+   <string name="inputMapActivity_btnCR">C-pad →</string>
+   <string name="inputMapActivity_btnCL">C-pad ←</string>
+   <string name="inputMapActivity_btnCD">C-pad ↓</string>
+   <string name="inputMapActivity_btnCU">C-pad ↑</string>
+   <string name="inputMapActivity_btnDR">D-pad →</string>
+   <string name="inputMapActivity_btnDL">D-pad ←</string>
+   <string name="inputMapActivity_btnDD">D-pad ↓</string>
+   <string name="inputMapActivity_btnDU">D-pad ↑</string>
+   <string name="inputMapActivity_btnAR">Analog →</string>
+   <string name="inputMapActivity_btnAL">Analog ←</string>
+   <string name="inputMapActivity_btnAD">Analog ↓</string>
+   <string name="inputMapActivity_btnAU">Analog ↑</string>
+   <string name="inputMapActivity_incrementSlot">Повысить номер слота</string>
+   <string name="inputMapActivity_decrementSlot">Понизить номер слота</string>
+   <string name="inputMapActivity_reset">Сброс</string>
+   <string name="inputMapActivity_pause">Пауза</string>
+   <string name="inputMapActivity_stop">Стоп</string>
+   <string name="inputMapActivity_frameAdvance">Покадровый запуск</string>
+   <string name="inputMapActivity_fastForward">Ускоренная перемотка</string>
    <string name="inputMapActivity_speedDown">Замедление</string>
    <string name="inputMapActivity_speedUp">Ускорение</string>
    <string name="inputMapActivity_gameshark">Gameshark</string>
-   <string name="inputMapActivity_simulateBack">Кнопка Back</string>
-   <string name="inputMapActivity_simulateMenu">Кнопка Menu</string>
+   <string name="inputMapActivity_simulateBack">Кнопка Назад</string>
+   <string name="inputMapActivity_simulateMenu">Кнопка Меню</string>
    <string name="inputMapActivity_screenshot">Скриншот</string>
    <string name="inputMapActivity_toggle_sensor">Переключить на сенсор</string>
 
    <!-- Controller Diagnostics -->
-   <string name="diagnosticActivity_textKey_text">Нажмине кнопку или клавишу…</string>
-   <string name="diagnosticActivity_textMotion_text">Коснитесь к экрану или джойстику…</string>
+   <string name="diagnosticActivity_textKey_text">Нажмите кнопку или клавишу…</string>
+   <string name="diagnosticActivity_textMotion_text">Коснитесь экрана или джойстика…</string>
 
+   <!-- Misc -->
+   <string name="coreFragment_sdcard_write_error">Не удалось записать конфигурацию на SD-карту</string>
+   <string name="actionOpenMenu">Открыть главное меню</string>
+   <string name="actionSearchRoms">Поиск игр</string>
+
+   
 </resources>
