@@ -157,7 +157,7 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "rsp-cxd4", "SupportCPUSemaphoreLock", "0" );
             
         mupen64plus_cfg.put( "Rsp-HLE", "Version", "1" );
-        mupen64plus_cfg.put( "Rsp-HLE", "RspFallback", "libmupen64plus-rsp-cxd4.so" );
+        mupen64plus_cfg.put( "Rsp-HLE", "RspFallback", "libmupen64plus-rsp-parallel.so" );
         mupen64plus_cfg.put( "Rsp-HLE", "DisplayListToGraphicsPlugin", "1" );
         mupen64plus_cfg.put( "Rsp-HLE", "AudioListToAudioPlugin", "0" );
 
