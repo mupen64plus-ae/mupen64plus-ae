@@ -54,7 +54,7 @@ endif
 endif
 
 COMMON_CFLAGS := $(COMMON_FLAGS)    \
-    -fvisibility=hidden
+    -fvisibility=hidden -Wno-error=implicit-function-declaration
 
 COMMON_CPPFLAGS := $(COMMON_FLAGS)    \
     -fvisibility-inlines-hidden

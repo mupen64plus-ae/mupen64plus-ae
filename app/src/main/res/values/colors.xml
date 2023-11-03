@@ -24,4 +24,10 @@
     <color name="mupen_primary">#00DFDF</color>
     <color name="mupen_highlight">#22808080</color>
 
+
+
+    <color name="accent_material_dark">#ff80cbc4</color>
+    <color name="dim_foreground_disabled_material_dark">#80bebebe</color>
+
+
 </resources>

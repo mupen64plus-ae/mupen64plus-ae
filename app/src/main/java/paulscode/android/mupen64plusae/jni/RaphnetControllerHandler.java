@@ -31,6 +31,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.Nullable;
 
@@ -143,7 +144,7 @@ class RaphnetControllerHandler
         PendingIntent permissionIntent = PendingIntent.getBroadcast(mContext, 0, new Intent(ACTION_USB_PERMISSION), flags);
 
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        mContext.registerReceiver(mUsbReceiver, filter);
+        ContextCompat.registerReceiver(mContext, mUsbReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 
         synchronized (this) {
             if (mUsbManager != null) {

@@ -47,6 +47,7 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -911,7 +912,11 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "SERVICE_EVENT".
-        registerReceiver(mMessageReceiver, new IntentFilter(SERVICE_EVENT));
+        ContextCompat.registerReceiver(
+                this,
+                mMessageReceiver,
+                new IntentFilter(SERVICE_EVENT),
+                ContextCompat.RECEIVER_EXPORTED);
     }
 
     public void initChannels(Context context) {

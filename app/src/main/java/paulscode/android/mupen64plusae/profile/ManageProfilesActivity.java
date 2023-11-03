@@ -41,9 +41,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
+import androidx.multidex.BuildConfig;
 import androidx.preference.PreferenceManager;
 
-import org.mupen64plusae.v3.alpha.BuildConfig;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.util.ArrayList;
@@ -151,6 +151,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     private static final String STATE_CURRENT_SELECTED_OPERATION = "STATE_CURRENT_SELECTED_OPERATION";
     private static final int DELETE_PROFILE_CONFIRM_DIALOG_ID = 0;
     private static final String DELETE_PROFILE_CONFIRM_DIALOG_STATE = "DELETE_PROFILE_CONFIRM_DIALOG_STATE";
+
+    private static final int RESID = R.layout.list_item_two_text_icon;
     
     /** The back-end store for the built-in profiles, which subclasses should read from. */
     protected ConfigFile mConfigBuiltin;
@@ -514,8 +516,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     
     private class ProfileListAdapter extends ArrayAdapter<Profile>
     {
-        private static final int RESID = R.layout.list_item_two_text_icon;
-        
         ProfileListAdapter( Context context, List<Profile> profiles )
         {
             super( context, RESID, profiles );

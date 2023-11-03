@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply from: '../build_common/version_common.gradle'
 
 android {
+    namespace = "org.mupen64plusae.v3.alpha"
 
     buildTypes {
         release {

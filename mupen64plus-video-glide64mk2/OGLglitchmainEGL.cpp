@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
+#include <deque>
 #include <SDL.h>
 #endif // _WIN32
 #include <stdlib.h>

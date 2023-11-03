@@ -1,6 +1,7 @@
 apply from: '../build_common/native_common.gradle'
 
 android {
+    namespace = "org.mupen64plusae.v3.alpha"
     packagingOptions {
         jniLibs {
             excludes += ['lib/x86/libc++_shared.so', 'lib/x86_64/libc++_shared.so', 'lib/armeabi-v7a/libc++_shared.so', 'lib/arm64-v8a/libc++_shared.so']

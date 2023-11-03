@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -358,23 +360,31 @@
         <activity android:name="paulscode.android.mupen64plusae.profile.ProfileActivity" />
 
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService"
-                 android:exported="false" />
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService"
+            android:foregroundServiceType="dataSync"
                  android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.DeleteFilesService"
+            android:foregroundServiceType="dataSync"
                  android:exported="false" />
         <service
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
+            android:foregroundServiceType="connectedDevice"
             android:exported="false"
             android:process=":EmulationProcess"/>
         <service android:name="paulscode.android.mupen64plusae.task.CopyToSdService"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.CopyFromSdService"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.netplay.NetplayService"
+            android:foregroundServiceType="connectedDevice"
             android:process=":EmulationProcess"
             android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.SyncProgramsJobService"
+            android:foregroundServiceType="shortService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
