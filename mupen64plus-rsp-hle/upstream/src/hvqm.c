@@ -60,7 +60,14 @@ struct HVQM2Arg {
     uint16_t hmcus;
     uint16_t vmcus;
     uint8_t alpha;
-    uint8_t nest[HVQM2_NESTSIZE];
+    uint32_t nest;
+};
+
+struct RGBA {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
 };
 
 static struct HVQM2Arg arg;
@@ -103,22 +110,20 @@ static int process_info(struct hle_t* hle, uint8_t* base, int16_t* out)
     else if ((block.nbase & 0xf) == 0)
     {
         //LABEL7
-        uint8_t vec[16];
-        dram_load_u8(hle, vec, arg.info, 16);
-        arg.info += 16;
-
         for (int i = 0; i < 16; i++)
-            out[i] = vec[i];
+        {
+            out[i] = *dram_u8(hle, arg.info);
+            arg.info++;
+        }
     }
     else if (*base == 0)
     {
         //LABEL6
-        int8_t vec[16];
-        dram_load_u8(hle, (uint8_t*)vec, arg.info, 16);
-        arg.info += 16;
-
         for (int i = 0; i < 16; i++)
-            out[i] = (int16_t)vec[i] + block.dc;
+        {
+            out[i] = *(int8_t*)dram_u8(hle, arg.info) + block.dc;
+            arg.info++;
+        }
     }
     else
     {
@@ -130,41 +135,30 @@ static int process_info(struct hle_t* hle, uint8_t* base, int16_t* out)
 
         for (; *base != 0; (*base)--)
         {
-            dram_load_u8(hle, &basis.sx, arg.info, 1);
+            basis.sx = *dram_u8(hle, arg.info);
             arg.info++;
-            dram_load_u8(hle, &basis.sy, arg.info, 1);
+            basis.sy = *dram_u8(hle, arg.info);
             arg.info++;
-            dram_load_u16(hle, (uint16_t*)&basis.scale, arg.info, 1);
+            basis.scale = *dram_u16(hle, arg.info);
             arg.info += 2;
-            dram_load_u16(hle, &basis.offset, arg.info, 1);
+            basis.offset = *dram_u16(hle, arg.info);
             arg.info += 2;
-            dram_load_u16(hle, &basis.lineskip, arg.info, 1);
+            basis.lineskip = *dram_u16(hle, arg.info);
             arg.info += 2;
 
             int16_t vec[16];
-            if (basis.sx != 0)
+            uint32_t addr = arg.nest + basis.offset;
+            int shift = (basis.sx != 0) ? 1 : 0;
+
+            //LABEL9
+            //LABEL10
+            for (int i = 0; i < 16; i += 4)
             {
-                //LABEL9
-                for (int i = 0; i < 16; i += 4)
-                {
-                    vec[i] = arg.nest[basis.offset];
-                    vec[i + 1] = arg.nest[basis.offset + 2];
-                    vec[i + 2] = arg.nest[basis.offset + 4];
-                    vec[i + 3] = arg.nest[basis.offset + 6];
-                    basis.offset += basis.lineskip;
-                }
-            }
-            else
-            {
-                //LABEL10
-                for (int i = 0; i < 16; i += 4)
-                {
-                    vec[i] = arg.nest[basis.offset];
-                    vec[i + 1] = arg.nest[basis.offset + 1];
-                    vec[i + 2] = arg.nest[basis.offset + 2];
-                    vec[i + 3] = arg.nest[basis.offset + 3];
-                    basis.offset += basis.lineskip;
-                }
+                vec[i] = *dram_u8(hle, addr);
+                vec[i + 1] = *dram_u8(hle, addr + (1 << shift));
+                vec[i + 2] = *dram_u8(hle, addr + (2 << shift));
+                vec[i + 3] = *dram_u8(hle, addr + (3 << shift));
+                addr += basis.lineskip;
             }
 
             //LABEL11
@@ -199,24 +193,41 @@ static int process_info(struct hle_t* hle, uint8_t* base, int16_t* out)
     return 1;
 }
 
-#define SATURATE(x) ((unsigned int) x <= 31 ? x : (x < 0 ? 0 : 31))
-static uint16_t YCbCr_to_BGRA5551(int16_t Y, int16_t Cb, int16_t Cr, uint8_t alpha)
+#define SATURATE8(x) ((unsigned int) x <= 255 ? x : (x < 0 ? 0: 255))
+static struct RGBA YCbCr_to_RGBA(int16_t Y, int16_t Cb, int16_t Cr, uint8_t alpha)
 {
-    int r, g, b;
+    struct RGBA color;
 
-    //Format S7.9
-    r = (int)(((double)Y * 0.125 + 0.0625) + (0.220703125 * (double)(Cr - 128)));
-    g = (int)(((double)Y * 0.125 + 0.0625) - (0.04296875 * (double)(Cr - 128)) - (0.08984375 * (double)(Cb - 128)));
-    b = (int)(((double)Y * 0.125 + 0.0625) + (0.17578125 * (double)(Cb - 128)));
+    //Format S10.6
+    int r = (int)(((double)Y + 0.5) + (1.765625 * (double)(Cr - 128)));
+    int g = (int)(((double)Y + 0.5) - (0.34375 * (double)(Cr - 128)) - (0.71875 * (double)(Cb - 128)));
+    int b = (int)(((double)Y + 0.5) + (1.40625 * (double)(Cb - 128)));
 
-    r = SATURATE(r);
-    g = SATURATE(g);
-    b = SATURATE(b);
+    color.r = SATURATE8(r);
+    color.g = SATURATE8(g);
+    color.b = SATURATE8(b);
+    color.a = alpha;
 
-    return (b << 11) | (g << 6) | (r << 1) | (alpha & 1);
+    return color;
 }
 
-void hvqm2_decode_sp1_task(struct hle_t* hle)
+void store_rgba5551(struct hle_t* hle, struct RGBA color, uint32_t * addr)
+{
+    uint16_t pixel = ((color.b >> 3) << 11) | ((color.g >> 3) << 6) | ((color.r >> 3) << 1) | (color.a & 1);
+    dram_store_u16(hle, &pixel, *addr, 1);
+    *addr += 2;
+}
+
+void store_rgba8888(struct hle_t* hle, struct RGBA color, uint32_t * addr)
+{
+    uint32_t pixel = (color.b << 24) | (color.g << 16) | (color.r << 8) | color.a;
+    dram_store_u32(hle, &pixel, *addr, 1);
+    *addr += 4;
+}
+
+typedef void(*store_pixel_t)(struct hle_t* hle, struct RGBA color, uint32_t * addr);
+
+static void hvqm2_decode(struct hle_t* hle, int is32)
 {
     //uint32_t uc_data_ptr = *dmem_u32(hle, TASK_UCODE_DATA);
     uint32_t data_ptr = *dmem_u32(hle, TASK_DATA_PTR);
@@ -224,43 +235,54 @@ void hvqm2_decode_sp1_task(struct hle_t* hle)
     assert((*dmem_u32(hle, TASK_FLAGS) & 0x1) == 0);
 
     /* Fill HVQM2Arg struct */
-    dram_load_u32(hle, &arg.info, data_ptr, 1);
+    arg.info = *dram_u32(hle, data_ptr);
     data_ptr += 4;
-    dram_load_u32(hle, &arg.buf, data_ptr, 1);
+    arg.buf = *dram_u32(hle, data_ptr);
     data_ptr += 4;
-    dram_load_u16(hle, &arg.buf_width, data_ptr, 1);
+    arg.buf_width = *dram_u16(hle, data_ptr);
     data_ptr += 2;
-    dram_load_u8(hle, &arg.chroma_step_h, data_ptr, 1);
-    data_ptr += 1;
-    dram_load_u8(hle, &arg.chroma_step_v, data_ptr, 1);
-    data_ptr += 1;
-    dram_load_u16(hle, &arg.hmcus, data_ptr, 1);
+    arg.chroma_step_h = *dram_u8(hle, data_ptr);
+    data_ptr++;
+    arg.chroma_step_v = *dram_u8(hle, data_ptr);
+    data_ptr++;
+    arg.hmcus = *dram_u16(hle, data_ptr);
     data_ptr += 2;
-    dram_load_u16(hle, &arg.vmcus, data_ptr, 1);
+    arg.vmcus = *dram_u16(hle, data_ptr);
     data_ptr += 2;
-    dram_load_u8(hle, &arg.alpha, data_ptr, 1);
-    data_ptr += 1;
-    dram_load_u8(hle, arg.nest, data_ptr, HVQM2_NESTSIZE);
+    arg.alpha = *dram_u8(hle, data_ptr);
+    arg.nest = data_ptr + 1;
 
-    //int length = 0x10;
-    //int count = arg.chroma_step_v << 2;
-    int skip = arg.buf_width << 1;
+    assert(arg.chroma_step_h == 2);
+    assert((arg.chroma_step_v == 1) || (arg.chroma_step_v == 2));
+    assert((*hle->sp_status & 0x80) == 0);  //SP_STATUS_YIELD
 
-    if ((arg.chroma_step_v - 1) != 0)
+    int length, skip;
+    store_pixel_t store_pixel;
+
+    if (is32)
     {
-        assert(arg.chroma_step_v == 2);
+        length = 0x20;
+        skip = arg.buf_width << 2;
+        arg.buf_width <<= 4;
+        store_pixel = &store_rgba8888;
+    }
+    else
+    {
+        length = 0x10;
+        skip = arg.buf_width << 1;
         arg.buf_width <<= 3;
-        arg.buf_width += arg.buf_width;
+        store_pixel = &store_rgba5551;
     }
 
-    assert((*hle->sp_status & 0x80) == 0);  //SP_STATUS_YIELD
+    if (arg.chroma_step_v == 2)
+        arg.buf_width += arg.buf_width;
 
     for (int i = arg.vmcus; i != 0; i--)
     {
         uint32_t out;
         int j;
 
-        for (j = arg.hmcus, out = arg.buf; j != 0; j--, out += 0x10)
+        for (j = arg.hmcus, out = arg.buf; j != 0; j--, out += length)
         {
             uint8_t base = 0x80;
             int16_t Cb[16], Cr[16], Y1[32], Y2[32];
@@ -269,7 +291,7 @@ void hvqm2_decode_sp1_task(struct hle_t* hle)
             int16_t* pY1 = Y1;
             int16_t* pY2 = Y2;
 
-            if ((arg.chroma_step_v - 1) != 0)
+            if (arg.chroma_step_v == 2)
             {
                 if (process_info(hle, &base, pY1) == 0)
                     continue;
@@ -300,15 +322,13 @@ void hvqm2_decode_sp1_task(struct hle_t* hle)
                     uint32_t addr = out_buf;
                     for (int l = 0; l < 4; l++)
                     {
-                        uint16_t pixel = YCbCr_to_BGRA5551(pY1[l], pCb[l >> 1], pCr[l >> 1], arg.alpha);
-                        dram_store_u16(hle, &pixel, addr, 1);
-                        addr += 2;
+                        struct RGBA color = YCbCr_to_RGBA(pY1[l], pCb[l >> 1], pCr[l >> 1], arg.alpha);
+                        store_pixel(hle, color, &addr);
                     }
                     for (int l = 0; l < 4; l++)
                     {
-                        uint16_t pixel = YCbCr_to_BGRA5551(pY2[l], pCb[(l + 4) >> 1], pCr[(l + 4) >> 1], arg.alpha);
-                        dram_store_u16(hle, &pixel, addr, 1);
-                        addr += 2;
+                        struct RGBA color = YCbCr_to_RGBA(pY2[l], pCb[(l + 4) >> 1], pCr[(l + 4) >> 1], arg.alpha);
+                        store_pixel(hle, color, &addr);
                     }
                     out_buf += skip;
                     pY1 += 4;
@@ -321,4 +341,14 @@ void hvqm2_decode_sp1_task(struct hle_t* hle)
         arg.buf += arg.buf_width;
     }
     rsp_break(hle, SP_STATUS_TASKDONE);
+}
+
+void hvqm2_decode_sp1_task(struct hle_t* hle)
+{
+    hvqm2_decode(hle, 0);
+}
+
+void hvqm2_decode_sp2_task(struct hle_t* hle)
+{
+    hvqm2_decode(hle, 1);
 }

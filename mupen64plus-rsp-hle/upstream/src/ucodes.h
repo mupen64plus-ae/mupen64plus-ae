@@ -24,8 +24,23 @@
 
 #include <stdint.h>
 
+#define CACHED_UCODES_MAX_SIZE 16
+
 struct hle_t;
 
+typedef void(*ucode_func_t)(struct hle_t* hle);
+
+struct ucode_info_t {
+    uint32_t     uc_start;
+    uint32_t     uc_dstart;
+    uint16_t     uc_dsize;
+    ucode_func_t uc_pfunc;
+};
+
+struct cached_ucodes_t {
+    struct ucode_info_t infos[CACHED_UCODES_MAX_SIZE];
+    int count;
+};
 
 /* cic_x105 ucode */
 void cicx105_ucode(struct hle_t* hle);
@@ -150,6 +165,7 @@ void fill_video_double_buffer_task(struct hle_t* hle);
 
 /* hvqm2 ucode */
 void hvqm2_decode_sp1_task(struct hle_t* hle);
+void hvqm2_decode_sp2_task(struct hle_t* hle);
 
 #endif
 

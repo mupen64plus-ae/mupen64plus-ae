@@ -263,6 +263,16 @@ static void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2)
     mp3_task(hle, index, address);
 }
 
+static void OVERLOAD(struct hle_t* hle, uint32_t w1, uint32_t w2)
+{
+    /* Overload distortion effect for Conker's Bad Fur Day */
+    uint16_t dmem = (w1 & 0xfff) + NAUDIO_MAIN;
+    int16_t gain = (int16_t)(uint16_t)w2;
+    uint16_t attenuation = w2 >> 16;
+
+    alist_overload(hle, dmem, NAUDIO_COUNT, gain, attenuation);
+}
+
 /* global functions */
 void alist_process_naudio(struct hle_t* hle)
 {
@@ -308,7 +318,7 @@ void alist_process_naudio_dk(struct hle_t* hle)
 void alist_process_naudio_mp3(struct hle_t* hle)
 {
     static const acmd_callback_t ABI[0x10] = {
-        UNKNOWN,        ADPCM,          CLEARBUFF,      ENVMIXER,
+        OVERLOAD,       ADPCM,          CLEARBUFF,      ENVMIXER,
         LOADBUFF,       RESAMPLE,       SAVEBUFF,       MP3,
         MP3ADDY,        SETVOL,         DMEMMOVE,       LOADADPCM,
         MIXER,          INTERLEAVE,     NAUDIO_14,      SETLOOP
@@ -320,9 +330,20 @@ void alist_process_naudio_mp3(struct hle_t* hle)
 
 void alist_process_naudio_cbfd(struct hle_t* hle)
 {
-    /* TODO: see what differs from alist_process_naudio_mp3 */
+    /* What differs from alist_process_naudio_mp3?
+     *
+     * JoshW: It appears that despite being a newer game, CBFD appears to have a slightly older ucode version
+     * compared to JFG, B.T. et al.
+     * For naudio_mp3, the functions DMEM parameters have an additional protective AND on them
+     * (basically dmem & 0xffff).
+     * But there are minor differences are in the RESAMPLE and ENVMIXER functions.
+     * I don't think it is making any noticeable difference, as it could be just a simplification of the logic.
+     *
+     * bsmiles32: The only difference I could remember between mp3 and cbfd variants is in the MP3ADDY command.
+     * And the MP3 overlay is also different.
+     */
     static const acmd_callback_t ABI[0x10] = {
-        UNKNOWN,        ADPCM,          CLEARBUFF,      ENVMIXER,
+        OVERLOAD,       ADPCM,          CLEARBUFF,      ENVMIXER,
         LOADBUFF,       RESAMPLE,       SAVEBUFF,       MP3,
         MP3ADDY,        SETVOL,         DMEMMOVE,       LOADADPCM,
         MIXER,          INTERLEAVE,     NAUDIO_14,      SETLOOP

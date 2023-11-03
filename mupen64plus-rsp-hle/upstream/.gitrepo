@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
 	branch = master
-	commit = fa00bf82fdf590f58df08a781af3696df37f80e5
-	parent = 49cf41671004180e8bb076cdce98afefd3716ed1
+	commit = f22dc143771f1a0784c7d62977722a68fa0bdf85
+	parent = 1b926c6aaf87f889a6d9fd8dfbc1872a721fb9ff
 	method = merge
-	cmdver = 0.4.0
+	cmdver = 0.4.3

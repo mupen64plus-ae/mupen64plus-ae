@@ -130,14 +130,24 @@ ifneq ("$(filter aarch64,$(HOST_CPU))","")
     NEW_DYNAREC := 1
     NO_ASM := 1
 endif
+ifneq ("$(filter riscv64,$(HOST_CPU))","")
+    CPU := RISCV64
+    ARCH_DETECTED := 64BITS
+    PIC ?= 1
+    NO_ASM := 1
+    $(warning Architecture "$(HOST_CPU)" not officially supported.)
+endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'https://github.com/mupen64plus/mupen64plus-core/issues')
 endif
 
+SRCDIR = ../../src
+OBJDIR = _obj$(POSTFIX)
+
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I$(SRCDIR)
 LDFLAGS += $(SHARED)
 
 # Since we are building a shared library, we must compile with -fPIC on some architectures
@@ -157,8 +167,20 @@ ifeq ($(ARCH_DETECTED), 64BITS_32)
   ifeq ($(OS), FREEBSD)
     $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
   endif
-  CFLAGS += -m32
-  LDFLAGS += -Wl,-m,elf_i386
+  ifneq ($(OS), OSX)
+    ifeq ($(OS), MINGW)
+      LDFLAGS += -Wl,-m,i386pe
+    else
+      CFLAGS += -m32
+      LDFLAGS += -Wl,-m,elf_i386
+    endif
+  endif
+endif
+
+ifeq ($(ARCH_DETECTED), 64BITS)
+  ifeq ($(OS), MINGW)
+    LDFLAGS += -Wl,-m,i386pep
+  endif
 endif
 
 # set special flags per-system
@@ -172,7 +194,7 @@ ifeq ($(OS), OSX)
 
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.9 -isysroot $(OSX_SDK_PATH)
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
       LDFLAGS += -read_only_relocs suppress
@@ -244,10 +266,6 @@ endif
 ifeq ($(DUMP), 1)
 	CFLAGS += -DENABLE_TASK_DUMP
 endif
-
-
-SRCDIR = ../../src
-OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
