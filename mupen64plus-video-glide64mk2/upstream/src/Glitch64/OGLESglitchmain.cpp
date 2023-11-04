@@ -28,12 +28,12 @@
 #include <stdarg.h>
 #include <string.h>
 #include <SDL.h>
-#include <deque>
 #endif // _WIN32
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <deque>
 #include <math.h>
 #include "glide.h"
 #include "g3ext.h"
