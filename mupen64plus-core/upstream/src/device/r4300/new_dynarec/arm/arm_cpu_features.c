@@ -22,8 +22,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "osal/files.h"
 
+#include "osal/files.h"
 #include "api/callbacks.h"
 #include "arm_cpu_features.h"
 
