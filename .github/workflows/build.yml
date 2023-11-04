@@ -8,6 +8,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: android-actions/setup-android@v2
+      with:
+        java-version: 17
+        sdk: '34.0.1'
+        ndk: '26.1.2977051'
+        build-tools: 34.0.1
+        platforms: android-34
+
+    - uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: 'adopt'
+
+    - name: Set up environment variables
+      run: |
+        echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+
     - name: Checkout mupen64plus-ae repo 
       uses: actions/checkout@v3
       with:
