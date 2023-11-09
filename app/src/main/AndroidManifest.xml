@@ -54,8 +54,7 @@
         android:requestLegacyExternalStorage="true"
         android:hasFragileUserData="true"
         tools:ignore="UnusedAttribute"
-        android:fullBackupContent="@xml/backup_descriptor"
-        android:extractNativeLibs="true">
+        android:fullBackupContent="@xml/backup_descriptor">
 
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
