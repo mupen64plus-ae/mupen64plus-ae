@@ -16,7 +16,7 @@ jobs:
         build-tools: 34.0.1
         platforms: android-34
 
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v3
       with:
         java-version: 17
         distribution: 'adopt'
@@ -26,7 +26,7 @@ jobs:
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
         echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
 
-    - name: Checkout mupen64plus-ae repo 
+    - name: Checkout mupen64plus-ae repo
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
@@ -42,7 +42,7 @@ jobs:
            echo $DEBUG_KEYSTORE > debug.keystore.base64
            base64 --decode debug.keystore.base64 > debug.keystore
            sudo cp -f debug.keystore /root/.android/.
-        fi 
+        fi
 
     - name: Install build dependencies
       run: |
@@ -55,7 +55,7 @@ jobs:
     - name: Declare branch name
       id: branch-name
       uses: tj-actions/branch-names@v6
-        
+
     - name: Get branch name
       id: var
       run: |
@@ -66,16 +66,16 @@ jobs:
       id: short-sha
       with:
         length: 7
-        
+
     - name: Get sha name
       run: |
         echo $SHA
-      env: 
+      env:
         SHA: ${{ steps.short-sha.outputs.sha }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
-      with: 
+      with:
         name: mupen64plus-ae-${{ steps.var.outputs.branch }}-${{ env.SHA }}
         path: ${{ github.workspace }}/app/build/outputs/apk/release/Mupen64PlusAE-release.apk
 
@@ -86,11 +86,11 @@ jobs:
     if: github.ref == 'refs/heads/master'
 
     steps:
-    - name: Checkout mupen64plus-ae repo 
+    - name: Checkout mupen64plus-ae repo
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        
+
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
@@ -110,23 +110,23 @@ jobs:
       id: short-sha
       with:
         length: 7
-        
+
     - name: Get sha name
       run: |
         echo $SHA
-      env: 
+      env:
         SHA: ${{ steps.short-sha.outputs.sha }}
 
     - name: Re-zip artifacts
       run: |
         cd dist
         zip -r mupen64plus-ae-${{ steps.var.outputs.branch }}-${{ env.SHA }}.zip mupen64plus-ae*
-        
+
     - name: Update Git Tag
       run: |
         git tag -f Pre-release
         git push -f origin Pre-release
-    
+
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
