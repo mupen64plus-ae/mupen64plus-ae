@@ -9,12 +9,6 @@ jobs:
 
     steps:
     - uses: android-actions/setup-android@v2
-      with:
-        java-version: 17
-        sdk: '34.0.1'
-        ndk: '26.1.2977051'
-        build-tools: 34.0.1
-        platforms: android-34
 
     - uses: actions/setup-java@v3
       with:
