@@ -67,10 +67,11 @@
 -dontwarn org.objectweb.asm.MethodVisitor
 -dontwarn org.objectweb.asm.Type
 
-
 -keep class com.sun.jna.** { *; }
 -keepclassmembers class * extends com.sun.jna.** { public *; }
 -keep class org.apache.http.** { *; }
 -keep class org.apache.commons.compress.** { *; }
+-keep class java.nio.file.** { *; }
+-keep class java.nio.file.attribute.FileTime.** { *; }
 -keep class org.eclipse.** { *; }
 -keep class androidx.core.app.CoreComponentFactory { *; }
