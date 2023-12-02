@@ -32,7 +32,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;

@@ -29,7 +29,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.Locale;
 

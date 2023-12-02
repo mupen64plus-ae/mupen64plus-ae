@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 {

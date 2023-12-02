@@ -4,10 +4,10 @@ apply from: '../build_common/version_common.gradle'
 
 android {
 
-    namespace = "org.mupen64plusae.v3.alpha"
+    namespace = "paulscode.android.mupen64plusae"
 
     allprojects {
-        tasks.withType(JavaCompile) {
+        tasks.withType(JavaCompile).configureEach {
             options.compilerArgs << "-Xlint:deprecation"
         }
 
@@ -64,10 +64,10 @@ android {
     sourceSets {
         main {
             debug {
-                jniLibs.srcDirs '../ndkLibs/libs/debug'
+                jniLibs.srcDirs += '../ndkLibs/libs/debug'
             }
             release {
-                jniLibs.srcDirs '../ndkLibs/libs/release'
+                jniLibs.srcDirs += '../ndkLibs/libs/release'
             }
         }
     }

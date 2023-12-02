@@ -53,8 +53,6 @@ import androidx.tvprovider.media.tv.Channel;
 import androidx.tvprovider.media.tv.TvContractCompat;
 import androidx.tvprovider.media.tv.ChannelLogoUtils;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.util.List;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;

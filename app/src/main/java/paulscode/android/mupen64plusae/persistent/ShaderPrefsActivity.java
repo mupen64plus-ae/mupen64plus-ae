@@ -30,7 +30,7 @@ import android.util.Log;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.ArrayList;
 

@@ -33,7 +33,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.List;
 

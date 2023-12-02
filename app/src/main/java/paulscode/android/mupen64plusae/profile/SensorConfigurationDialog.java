@@ -2,7 +2,7 @@ package paulscode.android.mupen64plusae.profile;
 
 import java.util.Locale;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,8 +19,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 
 class SensorConfigurationDialog implements OnClickListener {
 

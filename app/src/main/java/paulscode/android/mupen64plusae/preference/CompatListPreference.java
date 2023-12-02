@@ -19,12 +19,10 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.preference.ListPreference;

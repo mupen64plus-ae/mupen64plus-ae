@@ -4,7 +4,7 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class CoreTypes {

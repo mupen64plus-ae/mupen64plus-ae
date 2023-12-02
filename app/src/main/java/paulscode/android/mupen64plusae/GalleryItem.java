@@ -41,8 +41,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Comparator;

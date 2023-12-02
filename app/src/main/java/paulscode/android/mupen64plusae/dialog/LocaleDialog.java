@@ -12,7 +12,7 @@ import androidx.preference.PreferenceManager;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.WordUtils;
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.Locale;
 

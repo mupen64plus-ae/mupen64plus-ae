@@ -1,7 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;

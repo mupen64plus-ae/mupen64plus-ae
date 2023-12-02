@@ -66,8 +66,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

@@ -29,7 +29,7 @@ import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.ListPreference;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.ArrayList;
 

@@ -29,8 +29,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.R;
-
 public class GameSidebar extends MenuListView
 {
     private ImageView mInfoArt;

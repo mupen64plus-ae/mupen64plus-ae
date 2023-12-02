@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import android.content.Context;

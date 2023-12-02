@@ -44,7 +44,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.multidex.BuildConfig;
 import androidx.preference.PreferenceManager;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

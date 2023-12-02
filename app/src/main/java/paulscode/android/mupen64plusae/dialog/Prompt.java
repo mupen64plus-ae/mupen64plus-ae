@@ -41,7 +41,7 @@ import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

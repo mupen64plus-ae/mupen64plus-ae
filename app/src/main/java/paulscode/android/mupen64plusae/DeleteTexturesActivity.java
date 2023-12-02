@@ -13,8 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

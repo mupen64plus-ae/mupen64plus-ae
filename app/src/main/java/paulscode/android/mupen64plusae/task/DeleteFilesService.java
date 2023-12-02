@@ -39,7 +39,7 @@ import android.text.TextUtils;
 
 import androidx.core.app.NotificationCompat;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.io.File;
 import java.util.ArrayList;

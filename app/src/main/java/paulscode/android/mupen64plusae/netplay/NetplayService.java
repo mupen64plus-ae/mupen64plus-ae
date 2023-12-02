@@ -47,7 +47,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.sun.jna.Native;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;

@@ -35,7 +35,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.io.BufferedInputStream;
 import java.io.File;

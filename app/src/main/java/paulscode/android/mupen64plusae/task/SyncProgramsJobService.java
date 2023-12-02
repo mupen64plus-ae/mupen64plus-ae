@@ -39,7 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.tvprovider.media.tv.PreviewProgram;
 import androidx.tvprovider.media.tv.TvContractCompat;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.io.File;
 import java.util.List;

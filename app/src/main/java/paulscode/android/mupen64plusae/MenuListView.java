@@ -43,8 +43,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.R;
-
 /* ExpandableListView which stores its data set as a Menu hierarchy */
 
 @SuppressWarnings({"unused", "RedundantSuppression"})

@@ -50,7 +50,6 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,7 +61,7 @@ import paulscode.android.mupen64plusae.util.PixelBuffer;
 
 import static android.view.Surface.FRAME_RATE_COMPATIBILITY_DEFAULT;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 /**
  * Represents a graphical area of memory that can be drawn to.

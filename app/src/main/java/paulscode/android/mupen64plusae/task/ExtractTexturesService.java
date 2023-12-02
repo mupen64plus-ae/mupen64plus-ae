@@ -42,10 +42,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.io.File;
 

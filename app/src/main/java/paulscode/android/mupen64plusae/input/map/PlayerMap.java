@@ -21,10 +21,9 @@
 package paulscode.android.mupen64plusae.input.map;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.Collection;
 import java.util.HashMap;

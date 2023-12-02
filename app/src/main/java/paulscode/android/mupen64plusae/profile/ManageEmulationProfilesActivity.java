@@ -26,7 +26,7 @@ import android.os.Build;
 
 import androidx.activity.result.ActivityResultLauncher;
 
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -34,8 +34,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;

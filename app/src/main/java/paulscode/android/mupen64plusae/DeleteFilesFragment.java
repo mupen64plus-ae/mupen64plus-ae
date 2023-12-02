@@ -32,8 +32,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;

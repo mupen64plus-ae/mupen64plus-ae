@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.view.View;
 import android.widget.CheckBox;
-import org.mupen64plusae.v3.alpha.R;
+import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 
 class ButtonsConfigurationDialog implements OnClickListener {
