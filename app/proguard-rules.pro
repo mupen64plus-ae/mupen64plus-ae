@@ -17,6 +17,7 @@
 #}
 
 -dontobfuscate
+#-whyareyoukeeping
 
 -keep, includedescriptorclasses class paulscode.android.mupen64plusae.jni.** { *; }
 
@@ -75,3 +76,6 @@
 -keep class java.nio.file.attribute.FileTime.** { *; }
 -keep class org.eclipse.** { *; }
 -keep class androidx.core.app.CoreComponentFactory { *; }
+
+#App specific code
+-keep class paulscode.android.mupen64plusae.** { *; }
