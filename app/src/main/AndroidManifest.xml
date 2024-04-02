@@ -11,6 +11,15 @@
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch"
+        android:required="false"/>
+    <uses-feature android:name="android.hardware.sensor"
+        android:required="false"/>
+    <!-- Some TV devices have an ethernet connection only -->
+    <uses-feature android:name="android.hardware.wifi"
+        android:required="false"/>
+    <uses-feature android:name="android.hardware.screen.portrait"
+        android:required="false"/>
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.INTERNET" />
