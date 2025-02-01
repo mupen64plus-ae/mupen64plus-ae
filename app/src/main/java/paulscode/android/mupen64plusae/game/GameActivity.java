@@ -34,6 +34,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.view.GravityCompat;
@@ -504,6 +506,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mNetplayClientDialog = (NetplayClientSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_CLIENT_DIALOG);
         mNetplayServerDialog = (NetplayServerSetupDialog) fm.findFragmentByTag(STATE_NETPLAY_SERVER_DIALOG);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK);
+                event.setSource(InputDevice.SOURCE_KEYBOARD);
+                onKey(mOverlay, KeyEvent.KEYCODE_BACK, event);
+            }
+        });
     }
 
     @Override
@@ -1060,14 +1071,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         setResult(RESULT_OK, null);
         finish();
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK);
-        event.setSource(InputDevice.SOURCE_KEYBOARD);
-        onKey(mOverlay, KeyEvent.KEYCODE_BACK, event);
     }
 
     /**

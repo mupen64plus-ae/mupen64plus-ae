@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -570,6 +571,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName)) {
             Log.i("GalleryActivity", "CoreService is running");
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+                {
+                    mDrawerLayout.closeDrawer( GravityCompat.START );
+                }
+                else if(mSearchView != null && !TextUtils.isEmpty(mSearchQuery)) {
+                    mSearchQuery = "";
+                    mSearchView.setQuery( mSearchQuery, true );
+                }
+            }
+        });
+
     }
 
     @Override
@@ -1040,23 +1056,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             item.md5, item.crc, item.headerName, item.countryCode.getValue(),
             item.artPath, item.goodName, item.displayName, false, false, false );
         return true;
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
-        {
-            mDrawerLayout.closeDrawer( GravityCompat.START );
-        }
-        else if(mSearchView != null && !TextUtils.isEmpty(mSearchQuery)) {
-            mSearchQuery = "";
-            mSearchView.setQuery( mSearchQuery, true );
-        }
-        else
-        {
-            super.onBackPressed();
-        }
     }
 
     private void refreshRoms(final String searchUri, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories,
