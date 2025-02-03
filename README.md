@@ -11,12 +11,16 @@ Please visit [the official forum](http://www.paulscode.com/forum/index.php) for 
 
 ## Nightly Builds
 
-|Download nightly builds from continuous integration: 	| [![Build Status][Build]][Actions] 
-|-------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+### Download the latest builds from continuous integration:
+
+| Name           | Status                            | File                                       |
+|----------------|-----------------------------------|--------------------------------------------|
+| Mupen64Plus-AE | [![Build Status][Build]][Actions] | [![Emulator][Download]][mupen64plus-ae]  |
 
 [Actions]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions/workflows/build.yml
 [Build]: https://github.com/mupen64plus-ae/mupen64plus-ae/actions/workflows/build.yml/badge.svg
-
+[Download]: https://img.shields.io/badge/Download-blue
+[mupen64plus-ae]: https://github.com/mupen64plus-ae/mupen64plus-ae/releases/download/Pre-release/mupen64plus-ae-master.zip
 
 ## Build Instructions
 
