@@ -31,11 +31,11 @@ jobs:
       run: |
         if [ -z "$DEBUG_KEYSTORE" ]
         then
-           echo "No debug keystore value"
+          echo "No debug keystore value"
         else
-           echo $DEBUG_KEYSTORE > debug.keystore.base64
-           base64 --decode debug.keystore.base64 > debug.keystore
-           sudo cp -f debug.keystore /root/.android/.
+          echo $DEBUG_KEYSTORE > debug.keystore.base64
+          base64 --decode debug.keystore.base64 > debug.keystore
+          sudo cp -f debug.keystore /root/.android/.
         fi
 
     - name: Install build dependencies
@@ -114,7 +114,7 @@ jobs:
     - name: Re-zip artifacts
       run: |
         cd dist
-        zip -r mupen64plus-ae-${{ steps.var.outputs.branch }}-${{ env.SHA }}.zip mupen64plus-ae*
+        zip -r mupen64plus-ae-${{ steps.var.outputs.branch }}.zip mupen64plus-ae*
 
     - name: Update Git Tag
       run: |
