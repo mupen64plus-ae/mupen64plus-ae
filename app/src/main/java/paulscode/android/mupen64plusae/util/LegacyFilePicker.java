@@ -84,6 +84,9 @@ public class LegacyFilePicker extends AppCompatActivity implements OnItemClickLi
             // Pick the root of the storage directory by default
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+            } else if (Environment.isExternalStorageManager()) {
+                // MANAGE_EXTERNAL_STORAGE granted, can browse full filesystem
+                mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
             } else {
                 AppData appData = new AppData( this );
                 GlobalPrefs globalPrefs = new GlobalPrefs( this, appData );

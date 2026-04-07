@@ -2,21 +2,31 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
+import android.text.InputType;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.io.File;
+
+import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.LegacyFilePicker;
@@ -30,8 +40,10 @@ public class ScanRomsActivity extends AppCompatActivity {
     private CheckBox mCheckBox4;
 
     private Uri mFileUri = null;
+    private Runnable mPendingAction = null;
 
     private static final String URI_TO_IMPORT = "URI_TO_IMPORT";
+    private static final String TAG = "ScanRomsActivity";
 
     ActivityResultLauncher<Intent> mLaunchLegacyFilePicker = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -69,6 +81,19 @@ public class ScanRomsActivity extends AppCompatActivity {
                 }
             });
 
+    ActivityResultLauncher<Intent> mManageStorageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+                    if (mPendingAction != null) {
+                        mPendingAction.run();
+                        mPendingAction = null;
+                    }
+                } else {
+                    Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     @Override
     protected void attachBaseContext(Context newBase) {
         if (TextUtils.isEmpty(LocaleContextWrapper.getLocalCode())) {
@@ -98,6 +123,8 @@ public class ScanRomsActivity extends AppCompatActivity {
         folderPickerButton.setOnClickListener(v -> startFolderPicker());
         Button filePickerButton = findViewById(R.id.buttonFilePicker);
         filePickerButton.setOnClickListener(v -> startFilePicker());
+        Button enterPathButton = findViewById(R.id.buttonEnterPath);
+        enterPathButton.setOnClickListener(v -> ensureManageStoragePermission(this::startManualPathEntry));
 
         AppData appData = new AppData(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && appData.useLegacyFileBrowser) {
@@ -233,5 +260,56 @@ public class ScanRomsActivity extends AppCompatActivity {
             setResult(RESULT_OK, scanData);
             finish();
         }
+    }
+
+    private void ensureManageStoragePermission(Runnable onGranted) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.scanRomsDialog_storage_permission_title)
+                    .setMessage(R.string.scanRomsDialog_storage_permission_message)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        mPendingAction = onGranted;
+                        mManageStorageLauncher.launch(intent);
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        } else {
+            onGranted.run();
+        }
+    }
+
+    private void startManualPathEntry() {
+        Prompt.promptText(this,
+                getString(R.string.scanRomsDialog_enter_path_title),
+                null,
+                "/storage/emulated/0/",
+                getString(R.string.scanRomsDialog_enter_path_hint),
+                InputType.TYPE_CLASS_TEXT,
+                (text, which) -> {
+                    if (which == DialogInterface.BUTTON_POSITIVE && text != null) {
+                        String path = text.toString().trim();
+                        File dir = new File(path);
+                        Log.i(TAG, "Manual path entry: " + path + ", exists=" + dir.exists() + ", isDir=" + dir.isDirectory());
+                        if (dir.exists() && dir.isDirectory()) {
+                            Intent scanData = new Intent();
+                            scanData.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
+                            scanData.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
+                            scanData.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
+                            scanData.putExtra(ActivityHelper.Keys.SEARCH_SUBDIR, mCheckBox4.isChecked());
+                            Uri fileUri = Uri.fromFile(dir);
+                            mFileUri = fileUri;
+                            scanData.putExtra(ActivityHelper.Keys.SEARCH_PATH, fileUri.toString());
+                            scanData.putExtra(ActivityHelper.Keys.SEARCH_SINGLE_FILE, false);
+                            setResult(RESULT_OK, scanData);
+                            finish();
+                        } else {
+                            Toast.makeText(ScanRomsActivity.this,
+                                    String.format(getString(R.string.scanRomsDialog_path_not_found), path),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }

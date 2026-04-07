@@ -30,9 +30,9 @@
     <string name="menuItem_slotLoad">Load slot</string>
     <string name="menuItem_setSlot">Slot %1$d</string>
     <string name="menuItem_selectSlot">Select Slot</string>
-    <string name="menuItem_fileSave">Save to file…</string>
-    <string name="menuItem_fileLoad">Load from file…</string>
-    <string name="menuItem_fileLoadAutoSave">Load from auto save…</string>
+    <string name="menuItem_fileSave">Save to file&#8230;</string>
+    <string name="menuItem_fileLoad">Load from file&#8230;</string>
+    <string name="menuItem_fileLoadAutoSave">Load from auto save&#8230;</string>
     <string name="menuItem_screenshot">Screenshot</string>
     <string name="menuItem_setSpeed">Game speed</string>
     <string name="menuItem_enableFramelimiter">Sync audio</string>
@@ -132,19 +132,19 @@
     <!-- ************************************************************************** -->
 
 
-    <!-- Something happening (typically use '-ing' and '…') -->
-    <string name="toast_loadingSlot">Loading slot %1$d…</string>
-    <string name="toast_savingSlot">Saving slot %1$d…</string>
-    <string name="toast_movingSlot">Moving to slot %1$d…</string>
-    <string name="toast_loadingFile">Loading %1$s…</string>
-    <string name="toast_savingFile">Saving %1$s…</string>
-    <string name="toast_overwritingFile">Overwriting %1$s…</string>
-    <string name="toast_savingScreenshot">Saving screenshot…</string>
-    <string name="toast_canceling">Canceling…</string>
-    <string name="toast_pleaseWait">Please wait…</string>
-    <string name="toast_paused">Paused…</string>
-    <string name="toast_running">Running…</string>
-    <string name="toast_shutting_down">Saving texture cache…</string>
+    <!-- Something happening (typically use '-ing' and '&#8230;') -->
+    <string name="toast_loadingSlot">Loading slot %1$d&#8230;</string>
+    <string name="toast_savingSlot">Saving slot %1$d&#8230;</string>
+    <string name="toast_movingSlot">Moving to slot %1$d&#8230;</string>
+    <string name="toast_loadingFile">Loading %1$s&#8230;</string>
+    <string name="toast_savingFile">Saving %1$s&#8230;</string>
+    <string name="toast_overwritingFile">Overwriting %1$s&#8230;</string>
+    <string name="toast_savingScreenshot">Saving screenshot&#8230;</string>
+    <string name="toast_canceling">Canceling&#8230;</string>
+    <string name="toast_pleaseWait">Please wait&#8230;</string>
+    <string name="toast_paused">Paused&#8230;</string>
+    <string name="toast_running">Running&#8230;</string>
+    <string name="toast_shutting_down">Saving texture cache&#8230;</string>
     <string name="toast_not_done_shutting_down">Please wait, saving texture cache</string>
 
     <!-- Something happened (use '.') -->
@@ -345,9 +345,9 @@
     <string name="displayResolution_entry320x240">320 x 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
     <string name="displayScaling_title">Screen scaling</string>
-    <string name="displayScaling_entryOriginal">Original\n<small>Fill screen, no distortion (adds black bars)</small></string>
-    <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
-    <string name="displayScaling_entryStretch169">Stretch 16:9\n<small>Changes the aspect ratio of the image to 16:9 (adds distortion)</small></string>
+    <string name="displayScaling_entryOriginal">Original\n&lt;small>Fill screen, no distortion (adds black bars)&lt;/small></string>
+    <string name="displayScaling_entryStretch">Stretch\n&lt;small>Fill screen, no black bars (adds distortion)&lt;/small></string>
+    <string name="displayScaling_entryStretch169">Stretch 16:9\n&lt;small>Changes the aspect ratio of the image to 16:9 (adds distortion)&lt;/small></string>
     <string name="displayFps_title">Framerate</string>
     <string name="displayFps_entryOff">Off</string>
     <string name="displayFps_entryTopLeft">Top left</string>
@@ -364,12 +364,12 @@
     <string name="gliden64_threaded_video_summary">Enable threaded OpenGL video backend</string>
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>
-    <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
-    <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
-    <string name="videoPlugin_entryAngrylion">angrylion-rdp-plus\n<small>(angrylion-rdp-plus software renderer)</small></string>
-    <string name="videoPlugin_entryParallel">Parallel\n<small>(Parallel vulkan renderer)</small></string>
-    <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
-    <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
+    <string name="videoPlugin_entryGln64">gln64\n&lt;small>(adaptation of GLN64 v0.4.1)&lt;/small></string>
+    <string name="videoPlugin_entryRice">rice\n&lt;small>(adaptation of Rice Video v6.1.0(b))&lt;/small></string>
+    <string name="videoPlugin_entryAngrylion">angrylion-rdp-plus\n&lt;small>(angrylion-rdp-plus software renderer)&lt;/small></string>
+    <string name="videoPlugin_entryParallel">Parallel\n&lt;small>(Parallel vulkan renderer)&lt;/small></string>
+    <string name="videoPlugin_entryGlide64">glide64\n&lt;small>(adaptation of Glide64 Final (10th Anniversary))&lt;/small></string>
+    <string name="videoPlugin_entryGliden64">gliden64\n&lt;small>(GLideN64 beta)&lt;/small></string>
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryDisableHack">Disable flicker reduction hack</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
@@ -712,8 +712,8 @@
     <string name="displayActionBarTransparency_title">Action bar opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->
-    <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
-    <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
+    <!-- '~' indicates rel path &amp; use storage dir if path doesn't exist -->
+    <!-- '!' indicates rel path &amp; create parent dirs if path doesn't exist -->
     <string name="support64dd_title">Support 64DD</string>
     <string name="support64dd_summary">Enables support for 64DD</string>
     <string name="iplRom64ddPath_title">64DD IPL</string>
@@ -825,7 +825,7 @@
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesTask_select_zip">Select the ZIP, 7Zip, HTS, or HTC file containing the high resolution texture pack</string>
     <string name="pathHiResTexturesTask_start_file_picker">Select file</string>
-    <string name="pathHiResTexturesTask_title">Unpacking textures…</string>
+    <string name="pathHiResTexturesTask_title">Unpacking textures&#8230;</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: HTC file must match this format [GAME_HEADER]__HIRESTEXTURES.htc</string>
 
@@ -838,6 +838,12 @@
     <string name="scanRomsDialog_downloadArt">Download cover art</string>
     <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
     <string name="scanRomsDialog_scanSubdirectories">Scan subdirectories</string>
+    <string name="scanRomsDialog_enter_path">Enter Path</string>
+    <string name="scanRomsDialog_enter_path_title">Enter folder path</string>
+    <string name="scanRomsDialog_enter_path_hint">/storage/emulated/0/ROMs</string>
+    <string name="scanRomsDialog_path_not_found">Directory not found: %s</string>
+    <string name="scanRomsDialog_storage_permission_title">Storage Permission Required</string>
+    <string name="scanRomsDialog_storage_permission_message">To browse files outside the app sandbox, grant \'All files access\' permission.</string>
 
     <!-- Import/Export Activity -->
     <string name="importExportActivity_title">Import/Export Data</string>
@@ -854,7 +860,7 @@
     <string name="importExportActivity_invalidProfilesFolder">Invalid Profiles folder, folder must be the exported Profiles folder.</string>
 
     <!-- ROM preparation -->
-    <string name="extractRomTask_title">Preparing game data…</string>
+    <string name="extractRomTask_title">Preparing game data&#8230;</string>
 
     <!-- Netplay -->
     <string name="startNetplay_title">Start</string>
@@ -878,22 +884,22 @@
     <string name="netplay_advanced">Advanced</string>
 
     <!-- ROM Scanning -->
-    <string name="scanning_title">Scanning…</string>
+    <string name="scanning_title">Scanning&#8230;</string>
 
     <!-- Deleting Files -->
-    <string name="pathDeletingFilesTask_title">Deleting files…</string>
+    <string name="pathDeletingFilesTask_title">Deleting files&#8230;</string>
 
     <!-- Netplay Running-->
     <string name="netplay_running_title">Netplay is running</string>
 
     <!-- ROM information calculation -->
-    <string name="cacheRomInfo_searching">Searching…</string>
-    <string name="cacheRomInfo_searchingZip">Searching zip file…</string>
-    <string name="cacheRomInfo_computingMD5">Computing MD5…</string>
-    <string name="cacheRomInfo_searchingDB">Searching ROM database…</string>
-    <string name="cacheRomInfo_downloadingArt">Downloading cover art…</string>
-    <string name="cacheRomInfo_refreshingUI">Refreshing UI…</string>
-    <string name="cacheRomInfo_extractingZip">Extracting zip entry…</string>
+    <string name="cacheRomInfo_searching">Searching&#8230;</string>
+    <string name="cacheRomInfo_searchingZip">Searching zip file&#8230;</string>
+    <string name="cacheRomInfo_computingMD5">Computing MD5&#8230;</string>
+    <string name="cacheRomInfo_searchingDB">Searching ROM database&#8230;</string>
+    <string name="cacheRomInfo_downloadingArt">Downloading cover art&#8230;</string>
+    <string name="cacheRomInfo_refreshingUI">Refreshing UI&#8230;</string>
+    <string name="cacheRomInfo_extractingZip">Extracting zip entry&#8230;</string>
 
     <!-- Seek Bar Preference -->
     <string name="seekBarPreference_summary">%1$d %2$s</string>
@@ -906,7 +912,7 @@
     <string name="playerMap_deviceWithoutName">Device %1$d</string>
     <string name="playerMap_deviceNotConnected">Not Connected</string>
     <string name="playerMapPreference_popupTitle">Player %1$d</string>
-    <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
+    <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller&#8230;\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
     <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
 
@@ -926,7 +932,7 @@
     <string name="sensorConfig_joystickYEmulation">Joystick Y axis emulation</string>
     <string name="sensorConfig_sensorX">Use accelerometer\'s X axis</string>
     <string name="sensorConfig_sensorY">Use accelerometer\'s Y axis</string>
-    <string name="sensorConfig_angle">IDLE angle (°)</string>
+    <string name="sensorConfig_angle">IDLE angle (&#176;)</string>
     <string name="sensorConfig_invertAxis">Invert axis</string>
     <string name="sensorConfig_axisCustom">Custom</string>
     <string name="sensorConfig_axisDisabled">Disabled</string>
@@ -943,10 +949,10 @@
     <string name="controller_buttonA">A button</string>
     <string name="controller_buttonB">B button</string>
     <string name="controller_groupC">C buttons</string>
-    <string name="controller_buttonCr">C-pad →</string>
-    <string name="controller_buttonCl">C-pad ←</string>
-    <string name="controller_buttonCd">C-pad ↓</string>
-    <string name="controller_buttonCu">C-pad ↑</string>
+    <string name="controller_buttonCr">C-pad &#8594;</string>
+    <string name="controller_buttonCl">C-pad &#8592;</string>
+    <string name="controller_buttonCd">C-pad &#8595;</string>
+    <string name="controller_buttonCu">C-pad &#8593;</string>
     <string name="controller_buttonL">L button</string>
     <string name="controller_buttonR">R button</string>
     <string name="controller_buttonZ">Z button</string>
@@ -954,7 +960,7 @@
     <string name="controller_buttonSensor">Toggle sensor button</string>
 
     <!-- Input Mapping -->
-    <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
+    <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map&#8230;\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapActivity_popupUnmap">Unmap</string>
     <string name="inputMapActivity_btnA">A</string>
     <string name="inputMapActivity_btnB">B</string>
@@ -963,18 +969,18 @@
     <string name="inputMapActivity_btnR">R</string>
     <string name="inputMapActivity_btnZ">Z</string>
     <string name="inputMapActivity_btnS">S</string>
-    <string name="inputMapActivity_btnCR">C-pad →</string>
-    <string name="inputMapActivity_btnCL">C-pad ←</string>
-    <string name="inputMapActivity_btnCD">C-pad ↓</string>
-    <string name="inputMapActivity_btnCU">C-pad ↑</string>
-    <string name="inputMapActivity_btnDR">D-pad →</string>
-    <string name="inputMapActivity_btnDL">D-pad ←</string>
-    <string name="inputMapActivity_btnDD">D-pad ↓</string>
-    <string name="inputMapActivity_btnDU">D-pad ↑</string>
-    <string name="inputMapActivity_btnAR">Analog →</string>
-    <string name="inputMapActivity_btnAL">Analog ←</string>
-    <string name="inputMapActivity_btnAD">Analog ↓</string>
-    <string name="inputMapActivity_btnAU">Analog ↑</string>
+    <string name="inputMapActivity_btnCR">C-pad &#8594;</string>
+    <string name="inputMapActivity_btnCL">C-pad &#8592;</string>
+    <string name="inputMapActivity_btnCD">C-pad &#8595;</string>
+    <string name="inputMapActivity_btnCU">C-pad &#8593;</string>
+    <string name="inputMapActivity_btnDR">D-pad &#8594;</string>
+    <string name="inputMapActivity_btnDL">D-pad &#8592;</string>
+    <string name="inputMapActivity_btnDD">D-pad &#8595;</string>
+    <string name="inputMapActivity_btnDU">D-pad &#8593;</string>
+    <string name="inputMapActivity_btnAR">Analog &#8594;</string>
+    <string name="inputMapActivity_btnAL">Analog &#8592;</string>
+    <string name="inputMapActivity_btnAD">Analog &#8595;</string>
+    <string name="inputMapActivity_btnAU">Analog &#8593;</string>
     <string name="inputMapActivity_incrementSlot">Increment slot</string>
     <string name="inputMapActivity_decrementSlot">Decrement slot</string>
     <string name="inputMapActivity_reset">Reset</string>
@@ -991,8 +997,8 @@
     <string name="inputMapActivity_toggle_sensor">Toggle sensor</string>
 
     <!-- Controller Diagnostics -->
-    <string name="diagnosticActivity_textKey_text">Press button or key…</string>
-    <string name="diagnosticActivity_textMotion_text">Touch screen or joystick…</string>
+    <string name="diagnosticActivity_textKey_text">Press button or key&#8230;</string>
+    <string name="diagnosticActivity_textMotion_text">Touch screen or joystick&#8230;</string>
 
     <!-- Misc -->
     <string name="coreFragment_sdcard_write_error">Unable to write configuration to SD card</string>

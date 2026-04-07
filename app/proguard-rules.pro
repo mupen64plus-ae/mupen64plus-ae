@@ -55,9 +55,7 @@
 -dontwarn org.ietf.jgss.GSSName
 -dontwarn org.ietf.jgss.Oid
 -dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
--dontwarn com.github.luben.zstd.BufferPool
--dontwarn com.github.luben.zstd.ZstdInputStream
--dontwarn com.github.luben.zstd.ZstdOutputStream
+-dontwarn com.github.luben.zstd.**
 -dontwarn org.brotli.dec.BrotliInputStream
 -dontwarn org.objectweb.asm.AnnotationVisitor
 -dontwarn org.objectweb.asm.Attribute
