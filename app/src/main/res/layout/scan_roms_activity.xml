@@ -48,6 +48,19 @@
                 android:layout_marginBottom="10dp"
                 android:text="@string/scanRomsDialog_select_folder" />
         </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/buttonEnterPath"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/scanRomsDialog_enter_path" />
+        </TableRow>
     </TableLayout>
 
     <TextView
