@@ -126,6 +126,8 @@ class CoreInterface
 
     private final CoreLibrary mMupen64PlusLibrary = Native.load("mupen64plus-core", CoreLibrary.class);
     private final AeBridgeLibrary mAeBridgeLibrary = Native.load("ae-bridge", AeBridgeLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
+
+    public AeBridgeLibrary getAeBridgeLibrary() { return mAeBridgeLibrary; }
     private final AndroidAudioLibrary mAndroidAudioLibrary = Native.load("mupen64plus-audio-android", AndroidAudioLibrary.class);
     private final AndroidAudioLibrary mAndroidAudioLibraryFp = Native.load("mupen64plus-audio-android-fp", AndroidAudioLibrary.class);
     private AppData.AudioPlugin mSelectedAudioPlugin = AppData.AudioPlugin.DUMMY;
@@ -301,6 +303,9 @@ class CoreInterface
         Pointer parameter = new Memory(romLength);
         parameter.write(0, romBuffer, 0, romBuffer.length);
         mMupen64PlusLibrary.CoreDoCommand(CoreTypes.m64p_command.M64CMD_ROM_OPEN.ordinal(), romLength, parameter);
+
+        // Let rcheevos hash the ROM and load its achievement set
+        RetroAchievementsManager.loadGameData(romBuffer);
     }
 
     private byte[] extractZip(Context context, String romFileName, String zipPathUri) {

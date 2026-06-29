@@ -18,6 +18,7 @@ android {
     }
 
     buildFeatures.viewBinding = true
+    buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.alpha"

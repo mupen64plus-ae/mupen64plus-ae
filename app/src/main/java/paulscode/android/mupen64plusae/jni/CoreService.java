@@ -61,11 +61,13 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
+import paulscode.android.mupen64plusae.jni.RetroAchievementsManager;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameDataManager;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.jni.RetroAchievementsManager;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
@@ -322,13 +324,16 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
         mCoreInterface.addOnStateCallbackListener(saveComplete);
 
+        RetroAchievementsManager.saveProgress(latestSave);
         mCoreInterface.emuSaveFile( latestSave );
     }
 
     void saveState(String filename)
     {
         File currentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" + filename );
-        mCoreInterface.emuSaveFile( currentSaveStateFile.getAbsolutePath() );
+        String path = currentSaveStateFile.getAbsolutePath();
+        RetroAchievementsManager.saveProgress(path);
+        mCoreInterface.emuSaveFile( path );
     }
 
     void pauseEmulator()
@@ -403,6 +408,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void loadState(File file)
     {
+        RetroAchievementsManager.loadProgress(file.getAbsolutePath());
         mCoreInterface.emuLoadFile( file.getAbsolutePath() );
     }
 
@@ -616,6 +622,15 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
             loadingSuccess = mCoreInterface.coreStartup(mGamePrefs.getCoreUserConfigDir(), null, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir) == 0;
 
+            if (loadingSuccess && mGlobalPrefs.retroAchievementsEnabled
+                    && !mGlobalPrefs.retroAchievementsUsername.isEmpty()
+                    && !mGlobalPrefs.retroAchievementsToken.isEmpty()) {
+                RetroAchievementsManager.init(mCoreInterface.getAeBridgeLibrary(),
+                        getApplicationContext(),
+                        mGlobalPrefs.retroAchievementsUsername,
+                        mGlobalPrefs.retroAchievementsToken);
+            }
+
             // Disk only games still require a ROM image, so use a dummy test ROM
             if (loadingSuccess) {
                 if (isNdd) {
@@ -725,6 +740,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     if (!mIsRestarting)
                     {
                         final String latestSave = mGameDataManager.getLatestAutoSave();
+                        RetroAchievementsManager.loadProgress(latestSave);
                         mCoreInterface.emuLoadFile(latestSave);
                     }
 
@@ -755,6 +771,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
                     copyGameContentsToSdCard();
                 }
 
+                RetroAchievementsManager.shutdown();
                 mCoreInterface.closeRom();
                 mCoreInterface.emuShutdown();
             }

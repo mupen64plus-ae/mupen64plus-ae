@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="screenRoot">
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="retroAchievementsEnabled"
+        android:summary="@string/retroAchievementsEnabled_summary"
+        android:title="@string/retroAchievementsEnabled_title" />
+
+    <androidx.preference.Preference
+        android:key="retroAchievementsStatus"
+        android:selectable="false"
+        android:title="@string/retroAchievementsStatus_title" />
+
+    <androidx.preference.EditTextPreference
+        android:key="retroAchievementsUsername"
+        android:title="@string/retroAchievementsUsername_title" />
+
+    <androidx.preference.EditTextPreference
+        android:key="retroAchievementsPassword"
+        android:title="@string/retroAchievementsPassword_title" />
+
+    <androidx.preference.Preference
+        android:key="retroAchievementsLogin"
+        android:title="@string/retroAchievementsLogin_title"
+        android:summary="@string/retroAchievementsLogin_summary" />
+
+    <androidx.preference.Preference
+        android:key="retroAchievementsLogout"
+        android:title="@string/retroAchievementsLogout_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="retroAchievementsRichPresence"
+        android:title="@string/retroAchievementsRichPresence_title"
+        android:summary="@string/retroAchievementsRichPresence_summary" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="retroAchievementsUnofficialEnabled"
+        android:title="@string/retroAchievementsUnofficialEnabled_title"
+        android:summary="@string/retroAchievementsUnofficialEnabled_summary" />
+
+</androidx.preference.PreferenceScreen>

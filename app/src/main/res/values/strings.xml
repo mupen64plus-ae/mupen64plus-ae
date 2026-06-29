@@ -231,6 +231,36 @@
 
     <string name="categoryData_title">Data</string>
     <string name="categoryNetplay_title">Netplay</string>
+    <string name="categoryRetroAchievements_title">RetroAchievements</string>
+
+    <!-- RetroAchievements preferences -->
+    <string name="retroAchievementsEnabled_title">Enable RetroAchievements</string>
+    <string name="retroAchievementsEnabled_summary">Unlock achievements while playing N64 games</string>
+    <string name="retroAchievementsStatus_title">Status</string>
+    <string name="retroAchievementsStatus_loggedIn">Logged in as %1$s</string>
+    <string name="retroAchievementsStatus_notLoggedIn">Not logged in</string>
+    <string name="retroAchievementsUsername_title">Username</string>
+    <string name="retroAchievementsPassword_title">Password</string>
+    <string name="retroAchievementsPassword_set">Password saved (tap Log In to authenticate)</string>
+    <string name="retroAchievementsPassword_notset">Not set</string>
+    <string name="retroAchievementsLogin_title">Log In</string>
+    <string name="retroAchievementsLogin_summary">Connect to retroachievements.org</string>
+    <string name="retroAchievementsLogin_missingFields">Enter username and password first</string>
+    <string name="retroAchievementsLogin_loggingIn">Logging in…</string>
+    <string name="retroAchievementsLogin_success">Logged in as %1$s</string>
+    <string name="retroAchievementsLogin_failed">Login failed</string>
+    <string name="retroAchievementsLogin_error">Login error: %1$s</string>
+    <string name="retroAchievementsLogout_title">Log Out</string>
+    <string name="retroAchievementsLogout_done">Logged out</string>
+    <string name="retroAchievementsRichPresence_title">Rich presence</string>
+    <string name="retroAchievementsRichPresence_summary">Report current game activity to RetroAchievements (e.g. which level you are in)</string>
+    <string name="retroAchievementsUnofficialEnabled_title">Test unofficial achievements</string>
+    <string name="retroAchievementsUnofficialEnabled_summary">Load and track unofficial achievements (for developers and testers)</string>
+    <string name="menuItem_achievements">Achievements</string>
+    <string name="ra_achievements_title">%1$s — %2$d/%3$d</string>
+    <string name="ra_achievements_not_loaded">No achievements loaded for this game</string>
+    <string name="ra_achievement_entry_unlocked">✔ %1$s  (%2$d pts)</string>
+    <string name="ra_achievement_entry_locked">○ %1$s  (%2$d pts)</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>

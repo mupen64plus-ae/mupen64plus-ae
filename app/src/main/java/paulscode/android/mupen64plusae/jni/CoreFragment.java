@@ -53,6 +53,7 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.jni.CoreService.CoreServiceListener;
 import paulscode.android.mupen64plusae.jni.CoreService.LocalBinder;
+import paulscode.android.mupen64plusae.jni.RetroAchievementsManager;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -907,6 +908,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener, CoreS
 
         if (mCoreService != null)
         {
+            RetroAchievementsManager.reset();
             mCoreService.restart();
         }
     }

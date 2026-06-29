@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.net.Uri;
 import androidx.preference.PreferenceManager;
 
 import android.os.Build;
@@ -394,6 +395,15 @@ public class GlobalPrefs
     /** Server UDP/TCP port number */
     public final int netplayServerUdpTcpPort;
 
+    /** RetroAchievements: whether achievements are enabled */
+    public final boolean retroAchievementsEnabled;
+
+    /** RetroAchievements: retroachievements.org username */
+    public final String retroAchievementsUsername;
+
+    /** RetroAchievements: API token for the above account */
+    public final String retroAchievementsToken;
+
     // Shared preferences keys and key templates
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -695,9 +705,24 @@ public class GlobalPrefs
 
         useFlatGameDataPath = mPreferences.getBoolean( "useFlatGameDataPath", false );
 
-        externalFileStoragePath = mPreferences.getString(PATH_GAME_SAVES, "");
-        useExternalStorge = mPreferences.getString(GAME_DATA_STORAGE_TYPE, "internal").equals("external") &&
-                !TextUtils.isEmpty(externalFileStoragePath);
+        // Initialise storage type — default to "external" on first launch
+        String storageType = mPreferences.getString(GAME_DATA_STORAGE_TYPE, "");
+        if (storageType.isEmpty()) {
+            storageType = "external";
+            mPreferences.edit().putString(GAME_DATA_STORAGE_TYPE, storageType).apply();
+        }
+
+        String savedPath = mPreferences.getString(PATH_GAME_SAVES, "");
+        if (storageType.equals("external") && savedPath.isEmpty()) {
+            // Default save location: /sdcard/M64Plus
+            File m64PlusDir = new File(Environment.getExternalStorageDirectory(), "M64Plus");
+            if (!m64PlusDir.exists()) m64PlusDir.mkdirs();
+            savedPath = Uri.fromFile(m64PlusDir).toString();
+            mPreferences.edit().putString(PATH_GAME_SAVES, savedPath).apply();
+        }
+        externalFileStoragePath = savedPath;
+
+        useExternalStorge = storageType.equals("external") && !TextUtils.isEmpty(externalFileStoragePath);
 
         japanIplPath = mPreferences.getString(PATH_JAPAN_IPL_ROM, "");
 
@@ -761,6 +786,10 @@ public class GlobalPrefs
         netplayRoomTcpPort = tempRoomTcpPort > 1024 ? tempRoomTcpPort : 43821;
         int tempServerUdpTcpPort = getSafeInt( mPreferences, SERVER_UDP_TCP_PORT, 43822 );
         netplayServerUdpTcpPort = tempServerUdpTcpPort > 1024 && tempServerUdpTcpPort != tempRoomTcpPort ? tempServerUdpTcpPort : 43822;
+
+        retroAchievementsEnabled  = mPreferences.getBoolean( "retroAchievementsEnabled", false );
+        retroAchievementsUsername = mPreferences.getString( "retroAchievementsUsername", "" );
+        retroAchievementsToken    = mPreferences.getString( "retroAchievementsToken", "" );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
         gpuRenderer = AppData.getOpenGlEsRenderer();
