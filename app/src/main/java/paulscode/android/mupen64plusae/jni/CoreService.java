@@ -398,11 +398,13 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
     void saveSlot()
     {
+        RetroAchievementsManager.saveProgress(mGamePrefs.getUserSaveDir() + "/slot" + mCoreInterface.emuGetSlot());
         mCoreInterface.emuSaveSlot();
     }
 
     void loadSlot()
     {
+        RetroAchievementsManager.loadProgress(mGamePrefs.getUserSaveDir() + "/slot" + mCoreInterface.emuGetSlot());
         mCoreInterface.emuLoadSlot();
     }
 
