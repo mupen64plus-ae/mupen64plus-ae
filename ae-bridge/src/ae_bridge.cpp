@@ -73,6 +73,8 @@ static jmethodID   g_ra_login_success          = nullptr;
 
 static std::string g_achievements_json;
 
+static std::string g_ra_host_override;
+
 struct PendingServerCall {
     rc_client_server_callback_t callback;
     void* callback_data;
@@ -304,11 +306,29 @@ extern "C" DECLSPEC void rcheevosInit(const char* username, const char* token) {
     g_rc_client = rc_client_create(ra_read_memory, ra_server_call);
     rc_client_enable_logging(g_rc_client, RC_CLIENT_LOG_LEVEL_INFO, ra_log_callback);
     rc_client_set_hardcore_enabled(g_rc_client, 0);
+    if (!g_ra_host_override.empty()) {
+        rc_client_set_host(g_rc_client, g_ra_host_override.c_str());
+        RALOGI("Host override: %s", g_ra_host_override.c_str());
+    }
     rc_client_set_event_handler(g_rc_client, ra_event_handler);
     // Rich presence disabled by default until explicitly enabled via rcheevosSetRichPresenceEnabled
     ra_set_rich_presence_enabled(g_rc_client, 0);
     RALOGI("Logging in as %s", username);
     rc_client_begin_login_with_token(g_rc_client, username, token, ra_login_callback, nullptr);
+}
+
+extern "C" DECLSPEC void rcheevosSetHost(const char* host) {
+    if (host && host[0] != '\0') {
+        g_ra_host_override = host;
+    } else {
+        g_ra_host_override.clear();
+    }
+    if (g_rc_client) {
+        rc_client_set_host(g_rc_client, g_ra_host_override.empty() ? nullptr
+                                                                   : g_ra_host_override.c_str());
+    }
+    RALOGI("Host override set to '%s'", g_ra_host_override.empty() ? "(default)"
+                                                                   : g_ra_host_override.c_str());
 }
 
 // JNA-callable: enable or disable rich presence reporting to the RA server

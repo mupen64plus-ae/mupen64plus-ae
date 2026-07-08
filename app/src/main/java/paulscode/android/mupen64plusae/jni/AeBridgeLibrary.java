@@ -49,6 +49,8 @@ public interface AeBridgeLibrary extends Library {
     // RetroAchievements: create rc_client and log in with a saved API token
     void rcheevosInit(String username, String token);
 
+    void rcheevosSetHost(String host);
+
     // RetroAchievements: identify ROM from raw bytes and load achievement set
     void rcheevosLoadGameData(byte[] data, int size);
 
