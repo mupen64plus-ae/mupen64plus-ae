@@ -34,6 +34,8 @@ public class RetroAchievementsManager {
 
     private static final String TAG = "RetroAchievements";
 
+    public static final String PREF_HOST_OVERRIDE = "retroAchievementsHostOverride";
+
     public interface GameLoadListener {
         void onRaGameLoaded(String title, int total, int earned, int unsupported, String gameBadgeUrl);
         void onRaAchievementTriggered(String title, String description, int points, String badgeUrl, boolean unofficial);
@@ -122,9 +124,12 @@ public class RetroAchievementsManager {
         sMainHandler = new Handler(Looper.getMainLooper());
         sUsername    = username;
         openLogFile();
-        bridge.rcheevosInit(username, token);
         android.content.SharedPreferences prefs =
                 androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        String hostOverride = prefs.getString(PREF_HOST_OVERRIDE, "");
+        bridge.rcheevosSetHost(hostOverride);
+        if (!hostOverride.isEmpty()) raLog("Using RA host override: " + hostOverride);
+        bridge.rcheevosInit(username, token);
         boolean rpEnabled       = prefs.getBoolean("retroAchievementsRichPresence", false);
         boolean unofficialEnabled = prefs.getBoolean("retroAchievementsUnofficialEnabled", false);
         bridge.rcheevosSetRichPresenceEnabled(rpEnabled ? 1 : 0);
@@ -135,6 +140,14 @@ public class RetroAchievementsManager {
     }
 
     public static String getUsername() { return sUsername; }
+
+    public static void setHostOverride(Context context, String host) {
+        String value = host == null ? "" : host.trim();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .edit().putString(PREF_HOST_OVERRIDE, value).apply();
+        if (sAeBridge != null) sAeBridge.rcheevosSetHost(value);
+        Log.i(TAG, "Host override " + (value.isEmpty() ? "cleared" : "set to " + value));
+    }
 
     public static void setGameLoadListener(GameLoadListener listener) {
         sGameLoadListener = listener != null ? new WeakReference<>(listener) : null;
