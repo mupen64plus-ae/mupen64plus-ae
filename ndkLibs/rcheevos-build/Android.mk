@@ -65,4 +65,14 @@ LOCAL_CFLAGS := \
     -fvisibility=hidden -Wno-error=implicit-function-declaration \
     -DRC_DISABLE_LUA -DRC_CLIENT_SUPPORTS_HASH
 
+# Same ABI-specific flags native_common.mk applies. -mfloat-abi in particular
+# must match the consumer or floats passed across the boundary (e.g.
+# rc_typed_value_compare_floats) would be read from the wrong registers.
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+LOCAL_CFLAGS +=                     \
+    -march=armv7-a                  \
+    -mfloat-abi=softfp              \
+    -mfpu=neon
+endif
+
 include $(BUILD_STATIC_LIBRARY)
