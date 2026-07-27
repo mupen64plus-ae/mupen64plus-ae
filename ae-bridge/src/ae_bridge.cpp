@@ -75,6 +75,11 @@ static std::string g_achievements_json;
 
 static std::string g_ra_host_override;
 
+// Restore requested before the game finished identifying; applied on game load.
+static std::string g_pending_progress_path;
+static bool        g_has_pending_progress = false;
+static void ra_apply_progress_file(const char* path);
+
 struct PendingServerCall {
     rc_client_server_callback_t callback;
     void* callback_data;
@@ -355,6 +360,16 @@ static void ra_game_loaded_callback(int result, const char* error_message,
     const rc_client_game_t* game = rc_client_get_game_info(client);
     if (!game) return;
 
+    // Apply a restore that arrived before the game was ready. Done before the
+    // achievement list is built below so the counts sent to Java reflect the
+    // restored runtime rather than a fresh one.
+    if (g_has_pending_progress) {
+        const std::string pending = g_pending_progress_path;
+        g_has_pending_progress = false;
+        g_pending_progress_path.clear();
+        ra_apply_progress_file(pending.empty() ? nullptr : pending.c_str());
+    }
+
     auto esc = [](const char* s) -> std::string {
         std::string out;
         if (!s) return out;
@@ -473,8 +488,10 @@ extern "C" DECLSPEC void rcheevosSaveProgress(const char* path) {
     RALOGI("rcheevosSaveProgress: wrote %zu bytes to %s", sz, path);
 }
 
-// JNA-callable: restore rcheevos runtime state from a save state companion file
-extern "C" DECLSPEC void rcheevosLoadProgress(const char* path) {
+// Reads a companion file and applies it to the runtime. The caller must have
+// already confirmed a game is loaded -- rc_client returns RC_NO_GAME_LOADED
+// otherwise, silently discarding the restore.
+static void ra_apply_progress_file(const char* path) {
     if (!g_rc_client) return;
     if (!path) { rc_client_deserialize_progress_sized(g_rc_client, nullptr, 0); return; }
     FILE* f = fopen(path, "rb");
@@ -511,6 +528,25 @@ extern "C" DECLSPEC void rcheevosLoadProgress(const char* path) {
         RALOGI("rcheevosLoadProgress: restored %u bytes from %s", stored_sz, path);
 }
 
+// JNA-callable: restore rcheevos runtime state from a save state companion file
+extern "C" DECLSPEC void rcheevosLoadProgress(const char* path) {
+    if (!g_rc_client) return;
+
+    // Game identification is asynchronous (it needs a server round trip), so on
+    // startup this is called while the client still has no game and rc_client
+    // would reject the restore with RC_NO_GAME_LOADED. Hold the path and let
+    // ra_game_loaded_callback apply it once the game is actually available.
+    if (!rc_client_is_game_loaded(g_rc_client)) {
+        g_pending_progress_path = path ? path : "";
+        g_has_pending_progress  = true;
+        RALOGI("rcheevosLoadProgress: game not loaded yet, deferring restore of %s",
+               path ? path : "(reset)");
+        return;
+    }
+
+    ra_apply_progress_file(path);
+}
+
 // JNA-callable: called when the emulator resets (user-initiated restart)
 extern "C" DECLSPEC void rcheevosReset() {
     if (g_rc_client) rc_client_reset(g_rc_client);
@@ -528,6 +564,8 @@ extern "C" DECLSPEC const char* rcheevosGetRichPresence() {
 extern "C" DECLSPEC void rcheevosShutdown() {
     if (g_rc_client) { rc_client_destroy(g_rc_client); g_rc_client = nullptr; }
     g_rdram = nullptr;
+    g_has_pending_progress = false;
+    g_pending_progress_path.clear();
 }
 
 // ----------------------------------------
