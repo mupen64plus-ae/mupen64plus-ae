@@ -1,7 +1,7 @@
 JNI_LOCAL_PATH := $(call my-dir)
 include $(JNI_LOCAL_PATH)/../build_common/native_common.mk
 
-RCHEEVOS_PATH := $(JNI_LOCAL_PATH)/../rcheevos
+RCHEEVOS_PATH := $(JNI_LOCAL_PATH)/../ndkLibs/rcheevos
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := ae-bridge
