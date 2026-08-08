@@ -226,7 +226,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     private void refreshViews()
     {
         PrefUtil.enablePreference(this, GlobalPrefs.PATH_GAME_SAVES,
-                mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "internal").equals("external"));
+                mPrefs.getString(GlobalPrefs.GAME_DATA_STORAGE_TYPE, "external").equals("external"));
     }
 
     private void startFolderPicker()

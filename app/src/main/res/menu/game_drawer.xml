@@ -72,5 +72,9 @@
     <item
         android:id="@+id/menuItem_reset"
         android:title="@string/inputMapActivity_reset"/>
+    <item
+        android:id="@+id/menuItem_achievements"
+        android:icon="@drawable/ic_about"
+        android:title="@string/menuItem_achievements"/>
 
 </menu>

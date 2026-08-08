@@ -60,7 +60,7 @@
         <item>external</item>
     </string-array>
 
-    <string name="gameDataStorageLocation_default" translatable="false">internal</string>
+    <string name="gameDataStorageLocation_default" translatable="false">external</string>
 
     <!-- Touchscreen Auto-Hold Methods -->
     <string-array name="touchscreenAutoHold_entries" translatable="false">

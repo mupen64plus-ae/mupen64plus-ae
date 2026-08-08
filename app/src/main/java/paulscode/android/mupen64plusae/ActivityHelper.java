@@ -46,6 +46,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.NetplayPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.RetroAchievementsPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.ShaderPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
@@ -233,6 +234,12 @@ public class ActivityHelper
     static void startNetplayPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, NetplayPrefsActivity.class );
+        context.startActivity( intent );
+    }
+
+    static void startRetroAchievementsPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, RetroAchievementsPrefsActivity.class );
         context.startActivity( intent );
     }
     

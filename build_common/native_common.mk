@@ -26,6 +26,13 @@ LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_A
 LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/GL
 include $(PREBUILT_STATIC_LIBRARY)
 
+#rcheevos (regenerate with ndkLibs/rcheevos-build/build.sh)
+include $(CLEAR_VARS)
+LOCAL_MODULE := rcheevos
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../ndkLibs/libs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/librcheevos.a
+LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/rcheevos/include $(JNI_LOCAL_PATH)/../ndkLibs/rcheevos/src
+include $(PREBUILT_STATIC_LIBRARY)
+
 #SDL_net
 include $(CLEAR_VARS)
 LOCAL_MODULE := SDL2_net
