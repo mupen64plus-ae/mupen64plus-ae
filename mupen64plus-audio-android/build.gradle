@@ -7,7 +7,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel = 'FULL'
             }
@@ -15,7 +15,7 @@ android {
         debug {
             minifyEnabled false
             jniDebuggable true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel = 'FULL'
             }
@@ -58,6 +58,12 @@ android {
             excludes += ['lib/x86/libsoundtouch.so', 'lib/x86_64/libsoundtouch.so', 'lib/armeabi-v7a/libsoundtouch.so', 'lib/arm64-v8a/libsoundtouch.so', 'lib/x86/libsoundtouch_fp.so', 'lib/x86_64/libsoundtouch_fp.so', 'lib/armeabi-v7a/libsoundtouch_fp.so', 'lib/arm64-v8a/libsoundtouch_fp.so']
             useLegacyPackaging = true
         }
+    }
+    lint {
+        targetSdk 36
+    }
+    testOptions {
+        targetSdk 36
     }
 
 }
