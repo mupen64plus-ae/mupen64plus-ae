@@ -241,35 +241,22 @@ public class TextureInfo
      */
     public static String getTexturePackNameFromSevenZ(Context context, Uri fileUri)
     {
-        SevenZFile zipfile = null;
-        ParcelFileDescriptor parcelFileDescriptor;
-        try
+        try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r"))
         {
-            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
-
             if (parcelFileDescriptor != null)
             {
-                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-                zipfile = SevenZFile.builder()
-                        .setSeekableByteChannel(fileInputStream.getChannel())
-                        .get();
-                return getTexturePackNameFromSevenZ(zipfile);
+                try (FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                     SevenZFile zipfile = SevenZFile.builder()
+                             .setSeekableByteChannel(fileInputStream.getChannel())
+                             .get())
+                {
+                    return getTexturePackNameFromSevenZ(zipfile);
+                }
             }
         }
         catch( Exception|OutOfMemoryError ze )
         {
             Log.e( "TextureInfo", "Exception: ", ze );
-        }
-        finally
-        {
-            if( zipfile != null )
-                try
-                {
-                    zipfile.close();
-                }
-                catch( IOException ignored )
-                {
-                }
         }
 
         Log.e( "TextureInfo", "No compatible textures found in 7zip archive: " + fileUri.toString());

@@ -796,12 +796,11 @@ public final class FileUtil
     {
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(fileUri, "r");
              FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-             FileChannel fileChannel = fis.getChannel())
+             FileChannel fileChannel = fis.getChannel();
+             SevenZFile zipfile = SevenZFile.builder()
+                     .setSeekableByteChannel(fileChannel)
+                     .get())
         {
-
-            SevenZFile zipfile = SevenZFile.builder()
-                    .setSeekableByteChannel(fileChannel)
-                    .get();
             SevenZArchiveEntry zipEntry;
 
             while( (zipEntry = zipfile.getNextEntry()) != null)
@@ -985,10 +984,10 @@ public final class FileUtil
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(zipPath, "r");
              FileInputStream fis = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
              FileChannel fileChannel = fis.getChannel();
-             ){
-            SevenZFile zipfile = SevenZFile.builder()
-                    .setSeekableByteChannel(fileChannel)
-                    .get();
+             SevenZFile zipfile = SevenZFile.builder()
+                     .setSeekableByteChannel(fileChannel)
+                     .get())
+        {
             SevenZArchiveEntry zipEntry;
 
             while( (zipEntry = zipfile.getNextEntry()) != null)
@@ -999,7 +998,6 @@ public final class FileUtil
 
                 if( extractedFile != null && header.isValid)
                 {
-                    zipfile.close();
                     return extractedFile.getPath();
                 }
             }
@@ -1091,31 +1089,30 @@ public final class FileUtil
 
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPath), "r")) {
             if (parcelFileDescriptor != null) {
-                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-
-                SevenZFile zipFile = SevenZFile.builder()
-                        .setSeekableByteChannel(fileInputStream.getChannel())
-                        .get();
-                SevenZArchiveEntry zipEntry;
-
-                while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                try (FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                     SevenZFile zipFile = SevenZFile.builder()
+                             .setSeekableByteChannel(fileInputStream.getChannel())
+                             .get())
                 {
-                    InputStream zipStream = new SevenZInputStream(zipFile);
-                    final String entryName = new File(zipEntry.getName()).getName();
+                    SevenZArchiveEntry zipEntry;
 
-                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
+                    while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                    {
+                        InputStream zipStream = new SevenZInputStream(zipFile);
+                        final String entryName = new File(zipEntry.getName()).getName();
 
-                    if (lbFound) {
+                        lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
-                        byte[] romHeader = FileUtil.extractRomHeader(zipStream);
-                        RomHeader extractedHeader;
-                        if(romHeader != null) {
-                            returnData = new RomHeader(romHeader);
+                        if (lbFound) {
+
+                            byte[] romHeader = FileUtil.extractRomHeader(zipStream);
+                            RomHeader extractedHeader;
+                            if(romHeader != null) {
+                                returnData = new RomHeader(romHeader);
+                            }
                         }
                     }
                 }
-
-                zipFile.close();
             }
         } catch (Exception|OutOfMemoryError e) {
             Log.w("FileUtil", e);

@@ -378,39 +378,38 @@ public class CacheRomInfoService extends Service
 
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
             if (parcelFileDescriptor != null) {
-                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                try (FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                     ZipFile zipFile = ZipFile.builder()
+                             .setSeekableByteChannel(fileInputStream.getChannel())
+                             .get())
+                {
+                    Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
 
-                ZipFile zipFile = ZipFile.builder()
-                        .setSeekableByteChannel(fileInputStream.getChannel())
-                        .get();
-                Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+                    // Limit how many times we will look for ROMs in a large zip file
+                    final int maxChances = 10;
+                    int currentChance = 0;
 
-                // Limit how many times we will look for ROMs in a large zip file
-                final int maxChances = 10;
-                int currentChance = 0;
+                    while (entries.hasMoreElements() && !mbStopped && currentChance < maxChances) {
 
-                while (entries.hasMoreElements() && !mbStopped && currentChance < maxChances) {
+                        ZipArchiveEntry zipEntry = entries.nextElement();
 
-                    ZipArchiveEntry zipEntry = entries.nextElement();
+                        InputStream zipStream;
 
-                    InputStream zipStream;
+                        mCurrentDialogSubText = getShortFileName(new File(zipEntry.getName()).getName());
+                        mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
+                        updateDialog();
 
-                    mCurrentDialogSubText = getShortFileName(new File(zipEntry.getName()).getName());
-                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
-                    updateDialog();
+                        zipStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+                        mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
+                        updateDialog();
 
-                    zipStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
-                    updateDialog();
-
-                    if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
-                        currentChance = 0;
-                    } else {
-                        ++currentChance;
+                        if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
+                            currentChance = 0;
+                        } else {
+                            ++currentChance;
+                        }
                     }
                 }
-                zipFile.close();
-                fileInputStream.close();
             }
         } catch (Exception|OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "IOException: " + e);
@@ -423,41 +422,40 @@ public class CacheRomInfoService extends Service
 
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
             if (parcelFileDescriptor != null) {
-                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-                SevenZFile zipFile = SevenZFile.builder()
-                        .setSeekableByteChannel(fileInputStream.getChannel())
-                        .get();
-                SevenZArchiveEntry zipEntry;
+                try (FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                     SevenZFile zipFile = SevenZFile.builder()
+                             .setSeekableByteChannel(fileInputStream.getChannel())
+                             .get())
+                {
+                    SevenZArchiveEntry zipEntry;
 
-                // Limit how many times we will look for ROMs in a large zip file
-                final int maxChances = 10;
-                int currentChance = 0;
+                    // Limit how many times we will look for ROMs in a large zip file
+                    final int maxChances = 10;
+                    int currentChance = 0;
 
-                while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped && currentChance < maxChances) {
+                    while ((zipEntry = zipFile.getNextEntry()) != null && !mbStopped && currentChance < maxChances) {
 
-                    // Skip entries with null file names
-                    if (zipEntry.getName() == null) {
-                        continue;
-                    }
+                        // Skip entries with null file names
+                        if (zipEntry.getName() == null) {
+                            continue;
+                        }
 
-                    InputStream zipStream;
-                    mCurrentDialogSubText = getShortFileName(new File(zipEntry.getName()).getName());
-                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
-                    updateDialog();
+                        InputStream zipStream;
+                        mCurrentDialogSubText = getShortFileName(new File(zipEntry.getName()).getName());
+                        mCurrentDialogMessage = getString(R.string.cacheRomInfo_searchingZip);
+                        updateDialog();
 
-                    zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
-                    mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
-                    updateDialog();
+                        zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+                        mCurrentDialogMessage = getString(R.string.cacheRomInfo_extractingZip);
+                        updateDialog();
 
-                    if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
-                        currentChance = 0;
-                    } else {
-                        ++currentChance;
+                        if (cacheZipFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(), zipStream)) {
+                            currentChance = 0;
+                        } else {
+                            ++currentChance;
+                        }
                     }
                 }
-                zipFile.close();
-                fileInputStream.close();
-
             }
         } catch (Exception|OutOfMemoryError e) {
             Log.w("CacheRomInfoService", "IOException: " + e);

@@ -14,7 +14,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.WordUtils;
 import paulscode.android.mupen64plusae.R;
 
-import java.util.IllformedLocaleException;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
@@ -46,23 +45,12 @@ public class LocaleDialog extends DialogFragment
             return null; // Handle null or empty input gracefully
         }
 
-        try {
-            // 1. Conform to the BCP 47 standard by replacing underscores with hyphens.
-            //    Example: "en_US" becomes "en-US"
-            String languageTag = code.replace('_', '-');
-
-            // 2. Use the modern, robust factory method to parse the entire tag.
-            //    This correctly handles cases like "en", "en-US", and even "en-US-WIN".
-            return Locale.forLanguageTag(languageTag);
-        } catch (IllformedLocaleException e) {
-            // This catch block handles cases where the input string is not a valid
-            // locale format (e.g., "123_invalid").
-            // Log.e("MyClass", "Invalid locale string provided: " + code, e);
-            return null; // Return null to match the original method's behavior
-        }
+        // Conform to the BCP 47 standard by replacing underscores with hyphens.
+        // Example: "en_US" becomes "en-US"
+        String languageTag = code.replace('_', '-');
+        return Locale.forLanguageTag(languageTag);
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private void createLocales(){
         mPreferences = PreferenceManager.getDefaultSharedPreferences( requireContext() );
         mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
@@ -87,7 +75,7 @@ public class LocaleDialog extends DialogFragment
             }
         }
         entries[0] = requireContext().getString( R.string.localeOverride_entrySystemDefault );
-        values[0] = Resources.getSystem().getConfiguration().locale.getLanguage();
+        values[0] = Resources.getSystem().getConfiguration().getLocales().get(0).getLanguage();
 
         mLocaleNames = entries;
         mLocaleCodes = values;

@@ -80,7 +80,6 @@ public class NativeInput
             return;
         
         if( active ) {
-            sVibrators[controllerNum].vibrate(VIBRATE_TIMEOUT);
             sVibrators[controllerNum].vibrate(VibrationEffect.createOneShot(VIBRATE_TIMEOUT, 100));
         }else
             sVibrators[controllerNum].cancel();

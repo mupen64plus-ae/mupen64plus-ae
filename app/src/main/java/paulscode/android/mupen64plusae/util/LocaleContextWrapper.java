@@ -21,7 +21,8 @@ public class LocaleContextWrapper extends ContextWrapper {
     public static ContextWrapper wrap(Context context, String language) {
         Configuration config = context.getResources().getConfiguration();
 
-        Locale locale = Locale.forLanguageTag(language);
+        String languageTag = language != null ? language.replace('_', '-') : "";
+        Locale locale = Locale.forLanguageTag(languageTag);
         Locale.setDefault(locale);
         setSystemLocale(config, locale);
 

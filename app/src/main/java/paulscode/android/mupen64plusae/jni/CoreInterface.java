@@ -358,32 +358,32 @@ class CoreInterface
 
         try (ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(Uri.parse(zipPath), "r")) {
             if (parcelFileDescriptor != null) {
-
-                FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-                SevenZFile zipFile = SevenZFile.builder()
-                        .setSeekableByteChannel(fileInputStream.getChannel())
-                        .get();
-
-                SevenZArchiveEntry zipEntry;
-
-                while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                try (FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
+                     SevenZFile zipFile = SevenZFile.builder()
+                             .setSeekableByteChannel(fileInputStream.getChannel())
+                             .get())
                 {
-                    InputStream zipStream = new SevenZInputStream(zipFile);
-                    final String entryName = new File(zipEntry.getName()).getName();
+                    SevenZArchiveEntry zipEntry;
 
-                    lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
+                    while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                    {
+                        InputStream zipStream = new SevenZInputStream(zipFile);
+                        final String entryName = new File(zipEntry.getName()).getName();
 
-                    if (lbFound) {
-                        returnData = new byte[(int) zipEntry.getSize()];
+                        lbFound = (entryName.equals(romFileName) || romFileName == null) && zipEntry.getSize() > 0;
 
-                        int numBytesRead = 0;
+                        if (lbFound) {
+                            returnData = new byte[(int) zipEntry.getSize()];
 
-                        while (numBytesRead < returnData.length) {
-                            numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
-                        }
+                            int numBytesRead = 0;
 
-                        if (numBytesRead != returnData.length) {
-                            returnData = null;
+                            while (numBytesRead < returnData.length) {
+                                numBytesRead += zipStream.read(returnData, numBytesRead, returnData.length - numBytesRead);
+                            }
+
+                            if (numBytesRead != returnData.length) {
+                                returnData = null;
+                            }
                         }
                     }
                 }
