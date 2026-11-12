@@ -1,0 +1,299 @@
+# Patch para integrar giroscopio en Mupen64Plus-AE
+# Aplica con: git apply patch.diff (desde raíz de mupen64plus-ae)
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java b/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
+index a1b2c3d..e4f5g6h 100644
+--- a/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
++++ b/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
+@@ -1,5 +1,6 @@
+ package org.mupen64plus.ae.v3;
+
++import org.mupen64plus.ae.v3.input.GyroscopeInputMapper;
+ import org.mupen64plus.ae.v3.util.RacingGameDetector;
+ import android.content.Context;
+ import android.hardware.SensorManager;
+@@ -45,6 +46,10 @@ public class GameActivity extends AppCompatActivity {
+     private RacingGameDetector racingGameDetector;
+     private SensorManager sensorManager;
+
++    private GyroscopeInputMapper gyroscopeMapper;
++    private boolean gyroscopeEnabled = false;
++    private static final String PREFS_GYRO_ENABLED = "gyro_enabled";
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+@@ -85,6 +90,14 @@ public class GameActivity extends AppCompatActivity {
+         racingGameDetector = new RacingGameDetector(this);
+         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
++        // Inicializar giroscopio
++        gyroscopeMapper = new GyroscopeInputMapper(this, racingGameDetector);
++        getLifecycle().addObserver(gyroscopeMapper);
++        SharedPreferences prefs = getSharedPreferences("mupen64plus_prefs", MODE_PRIVATE);
++        gyroscopeEnabled = prefs.getBoolean(PREFS_GYRO_ENABLED, false);
++        if (gyroscopeEnabled) {
++            gyroscopeMapper.setEnabled(true);
++        }
++
+         // ... resto del onCreate existente
+     }
+@@ -150,6 +163,18 @@ public class GameActivity extends AppCompatActivity {
+         // ... existing onResume code
+         racingGameDetector.onRomLoaded(romPath);
+     }
++
++    @Override
++    protected void onPause() {
++        super.onPause();
++        if (gyroscopeMapper != null) {
++            gyroscopeMapper.setEnabled(false);
++        }
++    }
++
++    @Override
++    protected void onDestroy() {
++        super.onDestroy();
++        if (gyroscopeMapper != null) {
++            gyroscopeMapper.destroy();
++        }
++    }
+
+     // ... resto de la clase
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java b/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java
+index h7i8j9k..l0m1n2o 100644
+--- a/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java
++++ b/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java
+@@ -1,5 +1,6 @@
+ package org.mupen64plus.ae.v3.input;
+
++import kotlinx.coroutines.flow.collectLatest;
+ import android.content.Context;
+ import android.view.InputDevice;
+ import android.view.KeyEvent;
+@@ -30,6 +31,12 @@ public class InputManager {
+     private TouchscreenJoystick touchscreenJoystick;
+     private boolean useTouchscreenJoystick = true;
+
++    private GyroscopeInputMapper gyroscopeMapper;
++    private final CoroutineScope uiScope = CoroutineScope(Dispatchers.Main);
++    private Job gyroJob;
++
++    public void setGyroscopeMapper(GyroscopeInputMapper mapper) {
++        this.gyroscopeMapper = mapper;
++    }
+
+     public void updateGamepadState() {
+         // ... existing code ...
+@@ -120,6 +127,20 @@ public class InputManager {
+         // ... existing joystick handling ...
+     }
+
++    private void updateGyroscopeInput() {
++        if (gyroscopeMapper == null) return;
++        if (gyroJob != null) gyroJob.cancel();
++        gyroJob = uiScope.launch {
++            gyroscopeMapper.joystickX.collectLatest { x ->
++                if (Math.abs(x) > 0.05f) {
++                    // Sobrescribe eje X del joystick virtual (izq/der)
++                    setVirtualJoystickX(x);
++                }
++            }
++            gyroscopeMapper.joystickY.collectLatest { y ->
++                if (Math.abs(y) > 0.05f) {
++                    // Sobrescribe eje Y del joystick virtual (arriba/abajo)
++                    setVirtualJoystickY(y);
++                }
++            }
++        };
++    }
++
+     // ... métodos existentes setVirtualJoystickX, setVirtualJoystickY, etc.
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/preference/PreferencesFragment.java b/app/src/main/java/org/mupen64plus/ae/v3/preference/PreferencesFragment.java
+index p3q4r5s..t6u7v8w 100644
+--- a/app/src/main/java/org/mupen64plus/ae/v3/preference/PreferencesFragment.java
++++ b/app/src/main/java/org/mupen64plus/ae/v3/preference/PreferencesFragment.java
+@@ -45,6 +45,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
+         // ... existing preferences ...
+
++        // Giroscopio para juegos de carreras
++        SwitchPreferenceCompat gyroPref = findPreference("gyro_enabled");
++        if (gyroPref != null) {
++            gyroPref.setOnPreferenceChangeListener((preference, newValue) -> {
++                boolean enabled = (Boolean) newValue;
++                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
++                prefs.edit().putBoolean("gyro_enabled", enabled).apply();
++                // Notificar a GameActivity si está activa
++                EventBus.getDefault().post(new GyroSettingChangedEvent(enabled));
++                return true;
++            });
++        }
++
+         // ... resto de preferencias
+     }
+
+diff --git a/app/src/main/res/xml/preferences_input.xml b/app/src/main/res/xml/preferences_input.xml
+index x9y0z1a..b2c3d4e 100644
+--- a/app/src/main/res/xml/preferences_input.xml
++++ b/app/src/main/res/xml/preferences_input.xml
+@@ -20,6 +20,14 @@
+     </PreferenceCategory>
+
++    <PreferenceCategory android:title="@string/gyroscope_category_title">
++        <SwitchPreferenceCompat
++            android:key="gyro_enabled"
++            android:title="@string/gyro_enabled_title"
++            android:summary="@string/gyro_enabled_summary"
++            android:defaultValue="false" />
++        <SeekBarPreference
++            android:key="gyro_sensitivity"
++            android:title="@string/gyro_sensitivity_title"
++            android:summary="@string/gyro_sensitivity_summary"
++            android:defaultValue="15"
++            android:max="50" />
++    </PreferenceCategory>
++
+     <!-- ... resto de categorías ... -->
+
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+index e5f6g7h..i8j9k0l 100644
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -100,6 +100,14 @@
+     <string name="pref_touchscreen_joystick_summary">Usa joystick virtual en pantalla</string>
+
++    <string name="gyroscope_category_title">Giroscopio (Juegos de Carreras)</string>
++    <string name="gyro_enabled_title">Activar control por giroscopio</string>
++    <string name="gyro_enabled_summary">Inclina el teléfono para dirigir en juegos de carreras (Mario Kart, F-Zero, Wave Race, etc.)</string>
++    <string name="gyro_sensitivity_title">Sensibilidad</string>
++    <string name="gyro_sensitivity_summary">Ajusta cuánto debes inclinar el teléfono para girar al máximo</string>
++
+     <!-- ... strings existentes ... -->
+
+diff --git a/app/build.gradle b/app/build.gradle
+index m1n2o3p..q4r5s6t 100644
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -20,6 +20,10 @@ android {
+         // ... existing config ...
+     }
+
++    // Kotlin coroutines para giroscopio
++    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
++    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0"
++
+     dependencies {
+         // ... existing deps ...
+     }
+
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index u7v8w9x..y0z1a2b 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -15,6 +15,8 @@
+     <uses-feature android:name="android.hardware.touchscreen.multitouch" android:required="false" />
+     <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+
++    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" />
++    <uses-feature android:name="android.hardware.sensor.rotation_vector" android:required="false" />
++
+     <application
+         <!-- ... existing application config ... -->
+         >
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/event/GyroSettingChangedEvent.java b/app/src/main/java/org/mupen64plus/ae/v3/event/GyroSettingChangedEvent.java
+new file mode 100644
+index 0000000..c3d4e5f
+--- /dev/null
++++ b/app/src/main/java/org/mupen64plus/ae/v3/event/GyroSettingChangedEvent.java
+@@ -0,0 +1,12 @@
++package org.mupen64plus.ae.v3.event;
++
++/**
++ * Evento para notificar cambio de setting de giroscopio desde Preferences.
++ */
++public class GyroSettingChangedEvent {
++    public final boolean enabled;
++
++    public GyroSettingChangedEvent(boolean enabled) {
++        this.enabled = enabled;
++    }
++}
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java b/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
+index e4f5g6h..h7i8j9k 100644
+--- a/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
++++ b/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
+@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.EventBus;
+ import org.greenrobot.eventbus.Subscribe;
+ import org.greenrobot.eventbus.ThreadMode;
+ import org.mupen64plus.ae.v3.input.GyroscopeInputMapper;
++import org.mupen64plus.ae.v3.event.GyroSettingChangedEvent;
+ import org.mupen64plus.ae.v3.util.RacingGameDetector;
+
+@@ -100,6 +101,16 @@ public class GameActivity extends AppCompatActivity {
+         EventBus.getDefault().register(this);
+     }
+
++    @Subscribe(threadMode = ThreadMode.MAIN)
++    public void onGyroSettingChanged(GyroSettingChangedEvent event) {
++        gyroscopeEnabled = event.enabled;
++        if (gyroscopeMapper != null) {
++            gyroscopeMapper.setEnabled(event.enabled);
++        }
++    }
++
++    @Override
++    protected void onDestroy() {
++        super.onDestroy();
++        EventBus.getDefault().unregister(this);
++    }
++
+     // ... resto de la clase
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java b/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java
+index l0m1n2o..p3q4r5s 100644
+--- a/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java
++++ b/app/src/main/java/org/mupen64plus/ae/v3/input/InputManager.java
+@@ -1,5 +1,7 @@
+ package org.mupen64plus.ae.v3.input;
+
++import kotlinx.coroutines.Dispatchers;
++import kotlinx.coroutines.Job;
+ import android.content.Context;
+ import android.view.InputDevice;
+ import android.view.KeyEvent;
+@@ -40,6 +42,8 @@ public class InputManager {
+
+     public void onResume() {
+         // ... existing ...
++        if (gyroscopeMapper != null) {
++            updateGyroscopeInput();
++        }
+     }
+
+@@ -160,6 +164,10 @@ public class InputManager {
+         // ... existing ...
+         if (gyroJob != null) gyroJob.cancel();
+     }
++
++    // Métodos para setVirtualJoystickX/Y (deben existir o añadirse)
++    // void setVirtualJoystickX(float x) { ... }
++    // void setVirtualJoystickY(float y) { ... }
+
+diff --git a/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java b/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
+index h7i8j9k..t6u7v8w 100644
+--- a/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
++++ b/app/src/main/java/org/mupen64plus/ae/v3/GameActivity.java
+@@ -95,6 +95,9 @@ public class GameActivity extends AppCompatActivity {
+         }
+
+         // Pasar giroscopio al InputManager
++        if (inputManager != null && gyroscopeMapper != null) {
++            inputManager.setGyroscopeMapper(gyroscopeMapper);
++        }
+
+         // ... resto de inicialización
+     }

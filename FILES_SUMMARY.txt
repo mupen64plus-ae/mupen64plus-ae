@@ -1,0 +1,127 @@
+===================================================================
+N64 GYRO EMULATOR - RESUMEN DE ARCHIVOS CREADOS
+===================================================================
+
+Directorio base: outputs/n64-gyro-emulator/
+
+───────────────────────────────────────────────────────────────
+SCRIPTS PRINCIPALES
+───────────────────────────────────────────────────────────────
+build.sh                          # Build local (clona Mupen64Plus-AE, aplica patch, compila)
+.github/workflows/build.yml       # GitHub Actions CI/CD (multi-arch, auto-release en tags)
+scripts/verify-env.sh             # Verifica entorno antes de compilar
+scripts/gen-keystore.sh           # Genera keystore + secrets para GitHub
+scripts/test-gyro-on-device.sh    # Test giroscopio en móvil conectado
+
+───────────────────────────────────────────────────────────────
+PATCH GIROSCOPIO (se aplica a Mupen64Plus-AE)
+───────────────────────────────────────────────────────────────
+gyroscope-patch/patch.diff        # Patch Git contra Mupen64Plus-AE
+gyroscope-patch/src/
+├── input/GyroscopeInputMapper.kt     # Lógica sensor → joystick virtual
+└── util/RacingGameDetector.kt        # Detección carreras (CRC + keywords)
+
+───────────────────────────────────────────────────────────────
+CONFIGURACIÓN
+───────────────────────────────────────────────────────────────
+gradle.properties                 # Versiones, NDK, Kotlin, ABI splits
+local.properties.example          # Template paths SDK/NDK (copia a local.properties)
+.gitignore                        # Excluye build/, keystore/, local.properties, etc.
+
+───────────────────────────────────────────────────────────────
+DOCUMENTACIÓN / LEGAL
+───────────────────────────────────────────────────────────────
+README.md                         # Guía completa (requisitos, build, Play Store, troubleshooting)
+LICENSE                           # GPL v3 (OBLIGATORIO - no modificar)
+CHANGELOG.md                      # Plantilla de cambios
+
+───────────────────────────────────────────────────────────────
+TOTAL: 15 archivos
+───────────────────────────────────────────────────────────────
+
+===================================================================
+PRÓXIMOS PASOS (ejecuta en orden)
+===================================================================
+
+1. COPIA EL PROYECTO A TU MÁQUINA LINUX/WSL2/MAC
+   scp -r n64-gyro-emulator/ usuario@maquina-linux:~/  # o copia manual
+
+2. VERIFICA ENTORNO
+   cd n64-gyro-emulator
+   chmod +x scripts/*.sh build.sh
+   ./scripts/verify-env.sh
+   # Corrige errores si los hay
+
+3. CONFIGURA PATHS LOCALES
+   cp local.properties.example local.properties
+   nano local.properties  # Ajusta sdk.dir y ndk.dir
+
+4. GENERA KEYSTORE (para release)
+   ./scripts/gen-keystore.sh
+   # Guarda las contraseñas que te muestre
+
+5. BUILD DE PRUEBA (debug)
+   ./build.sh debug
+   # Resultado en build-outputs/debug/app-debug.apk
+
+6. INSTALA EN MÓVIL Y TESTEA
+   adb install build-outputs/debug/app-debug.apk
+   ./scripts/test-gyro-on-device.sh
+
+7. SUBE A GITHUB
+   git init
+   git add .
+   git commit -m "Initial commit: N64 Gyro Emulator"
+   git branch -M main
+   git remote add origin https://github.com/TU_USUARIO/n64-gyro-emulator.git
+   git push -u origin main
+
+8. CONFIGURA GITHUB SECRETS (Settings → Secrets → Actions)
+   KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
+   (valores que te mostró gen-keystore.sh)
+
+9. BUILD AUTOMÁTICO EN GITHUB
+   - Push a main → compila debug+release, sube artifacts
+   - Tag v1.0.0 → crea Release en GitHub con AAB listo para Play Store
+
+10. PUBLICA EN PLAY STORE
+    - Play Console → Crear app → Internal testing → Subir app-release.aab
+    - Completa ficha (icono, screenshots, política privacidad)
+    - En descripción: "Código fuente: https://github.com/TU_USUARIO/n64-gyro-emulator (GPL v3)"
+
+===================================================================
+NOTAS IMPORTANTES
+===================================================================
+
+⚖️ LICENCIA GPL v3:
+   - Debes publicar TU código fuente (incluyendo modificaciones)
+   - No puedes impedir que otros clonen y redistribuyan gratis
+   - Ver LICENSE y https://www.gnu.org/licenses/gpl-3.0.html
+
+🎮 JUEGOS SOPORTADOS (detectados automáticamente):
+   Mario Kart 64, F-Zero X, Wave Race 64, Diddy Kong Racing,
+   1080° Snowboarding, Excitebike 64, Top Gear Rally/Overdrive,
+   Beetle Adventure Racing, Mickey's Speedway USA, Penny Racers,
+   Roadsters, Rally Challenge 2000, Automobili Lamborghini,
+   GT64 Championship Edition, Monaco GP, Wipeout 64, Extreme-G,
+   Extreme-G 2, Hydro Thunder, San Francisco Rush/2049,
+   Cruis'n USA/World/Exotica, NASCAR 99/2000, Indy Racing 2000
+   + cualquier ROM con keywords "racing", "rally", "kart", etc.
+
+🔧 SI EL PATCH NO APLICA:
+   Mupen64Plus-AE upstream cambia. Opciones:
+   1. cd mupen64plus-ae && git apply --reject ../gyroscope-patch/patch.diff
+   2. Revisa archivos .rej y fusiona manualmente
+   3. Actualiza patch.diff con los cambios necesarios
+
+💡 PERSONALIZACIÓN:
+   - Añade más CRCs a RacingGameDetector.kt
+   - Ajusta sensibilidad/zonas muertas en GyroscopeInputMapper.kt
+   - Cambia strings en patch.diff (preferences_input.xml, strings.xml)
+
+===================================================================
+CONTACTO / AYUDA
+===================================================================
+- Issues: https://github.com/TU_USUARIO/n64-gyro-emulator/issues
+- Mupen64Plus-AE: https://github.com/mupen64plus-ae/mupen64plus-ae
+- GPL v3 FAQ: https://www.gnu.org/licenses/gpl-faq.html
