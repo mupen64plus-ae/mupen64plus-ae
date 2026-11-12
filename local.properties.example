@@ -1,0 +1,13 @@
+# COPIA ESTE ARCHIVO A local.properties Y AJUSTA LOS PATHS
+# NO SUBIR local.properties A GIT (contiene paths locales y claves)
+
+## Linux / macOS / WSL2
+sdk.dir=/home/TU_USUARIO/Android/Sdk
+ndk.dir=/home/TU_USUARIO/Android/Sdk/ndk/26.1.10909125
+
+## Windows (ejemplo)
+# sdk.dir=C:\\Users\\TU_USUARIO\\AppData\\Local\\Android\\Sdk
+# ndk.dir=C:\\Users\\TU_USUARIO\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125
+
+# Si usas Android Studio, a veces solo necesitas sdk.dir
+# ndk.dir se detecta automáticamente si está en sdk.dir/ndk/<version>
